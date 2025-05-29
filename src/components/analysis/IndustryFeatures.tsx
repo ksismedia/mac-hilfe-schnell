@@ -1,0 +1,283 @@
+
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { CheckCircle, XCircle } from 'lucide-react';
+
+interface IndustryFeaturesProps {
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  url: string;
+}
+
+const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) => {
+  // Branchenspezifische Merkmalsgruppen
+  const industryFeatureGroups = {
+    shk: [
+      {
+        group: "Beratung & Service",
+        features: [
+          { name: "Kostenlose Beratung", found: true, importance: "hoch" },
+          { name: "Vor-Ort-Termin", found: true, importance: "hoch" },
+          { name: "Energieberatung", found: false, importance: "mittel" },
+          { name: "24h Notdienst", found: true, importance: "hoch" }
+        ]
+      },
+      {
+        group: "Transparenz & Vertrauen",
+        features: [
+          { name: "Kostenvoranschlag", found: true, importance: "hoch" },
+          { name: "Festpreisgarantie", found: false, importance: "mittel" },
+          { name: "Garantieleistungen", found: true, importance: "hoch" },
+          { name: "Zertifizierungen", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Referenzen & Qualität",
+        features: [
+          { name: "Referenzprojekte", found: true, importance: "hoch" },
+          { name: "Kundenbewertungen", found: true, importance: "hoch" },
+          { name: "Meisterbetrieb-Siegel", found: true, importance: "mittel" },
+          { name: "Vorher-Nachher Bilder", found: false, importance: "niedrig" }
+        ]
+      }
+    ],
+    maler: [
+      {
+        group: "Beratung & Service",
+        features: [
+          { name: "Farbberatung", found: true, importance: "hoch" },
+          { name: "Kostenlose Besichtigung", found: true, importance: "hoch" },
+          { name: "Materialberatung", found: false, importance: "mittel" },
+          { name: "Terminflexibilität", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Leistungsspektrum",
+        features: [
+          { name: "Innen- und Außenanstrich", found: true, importance: "hoch" },
+          { name: "Fassadensanierung", found: true, importance: "hoch" },
+          { name: "Tapezierarbeiten", found: true, importance: "mittel" },
+          { name: "Dekortechniken", found: false, importance: "niedrig" }
+        ]
+      }
+    ],
+    elektriker: [
+      {
+        group: "Sicherheit & Normen",
+        features: [
+          { name: "VDE-konforme Installation", found: true, importance: "hoch" },
+          { name: "Sicherheitsprüfungen", found: true, importance: "hoch" },
+          { name: "Blitzschutz", found: false, importance: "mittel" },
+          { name: "E-Check Prüfungen", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Moderne Technologien",
+        features: [
+          { name: "Smart Home Integration", found: true, importance: "hoch" },
+          { name: "LED-Beleuchtung", found: true, importance: "mittel" },
+          { name: "Photovoltaik", found: false, importance: "mittel" },
+          { name: "E-Mobilität/Wallbox", found: true, importance: "mittel" }
+        ]
+      }
+    ],
+    dachdecker: [
+      {
+        group: "Dacharten & Materialien",
+        features: [
+          { name: "Steildach", found: true, importance: "hoch" },
+          { name: "Flachdach", found: true, importance: "hoch" },
+          { name: "Gründach", found: false, importance: "niedrig" },
+          { name: "Solarintegration", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Sicherheit & Qualität",
+        features: [
+          { name: "Absturzsicherung", found: true, importance: "hoch" },
+          { name: "Gewährleistung", found: true, importance: "hoch" },
+          { name: "Sturmschäden-Service", found: true, importance: "mittel" },
+          { name: "Gerüstbau", found: false, importance: "mittel" }
+        ]
+      }
+    ]
+  };
+
+  const currentFeatures = industryFeatureGroups[industry];
+  
+  // Berechnung der Scores
+  const totalFeatures = currentFeatures.reduce((sum, group) => sum + group.features.length, 0);
+  const foundFeatures = currentFeatures.reduce((sum, group) => 
+    sum + group.features.filter(f => f.found).length, 0
+  );
+  const overallScore = Math.round((foundFeatures / totalFeatures) * 100);
+
+  const getImportanceColor = (importance: string) => {
+    switch (importance) {
+      case 'hoch': return 'text-red-600';
+      case 'mittel': return 'text-yellow-600';
+      case 'niedrig': return 'text-green-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getImportanceBadge = (importance: string) => {
+    switch (importance) {
+      case 'hoch': return 'destructive';
+      case 'mittel': return 'secondary';
+      case 'niedrig': return 'outline';
+      default: return 'outline';
+    }
+  };
+
+  const industryNames = {
+    shk: 'SHK (Sanitär, Heizung, Klima)',
+    maler: 'Maler und Lackierer',
+    elektriker: 'Elektriker',
+    dachdecker: 'Dachdecker'
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Branchenspezifische Merkmale
+            <Badge variant={overallScore >= 80 ? "default" : overallScore >= 60 ? "secondary" : "destructive"}>
+              {overallScore}/100 Punkte
+            </Badge>
+          </CardTitle>
+          <CardDescription>
+            Analyse der typischen {industryNames[industry]}-Inhalte
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Übersicht */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {foundFeatures}/{totalFeatures}
+                </div>
+                <div className="text-sm text-gray-600">Merkmale gefunden</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {overallScore}%
+                </div>
+                <div className="text-sm text-gray-600">Vollständigkeit</div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">
+                  {currentFeatures.length}
+                </div>
+                <div className="text-sm text-gray-600">Merkmalsgruppen</div>
+              </div>
+            </div>
+
+            <Progress value={overallScore} className="h-3" />
+
+            {/* Merkmalsgruppen */}
+            {currentFeatures.map((group, groupIndex) => (
+              <Card key={groupIndex}>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    {group.group}
+                    <Badge variant="outline">
+                      {group.features.filter(f => f.found).length}/{group.features.length}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {group.features.map((feature, featureIndex) => (
+                      <div key={featureIndex} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          {feature.found ? 
+                            <CheckCircle className="h-5 w-5 text-green-500" /> :
+                            <XCircle className="h-5 w-5 text-red-500" />
+                          }
+                          <span className="font-medium">{feature.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={getImportanceBadge(feature.importance)}>
+                            {feature.importance}
+                          </Badge>
+                          <Badge variant={feature.found ? "default" : "destructive"}>
+                            {feature.found ? "Vorhanden" : "Fehlt"}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Branchenspezifische Empfehlungen */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Branchenspezifische Empfehlungen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  {industry === 'shk' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-red-600">×</span>
+                        <span><strong>Kritisch:</strong> Energieberatung fehlt - wichtiger Trend im SHK-Bereich</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Festpreisgarantie anbieten für mehr Kundensicherheit</span>
+                      </div>
+                    </>
+                  )}
+                  {industry === 'maler' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> Farbberatung wird hervorgehoben</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Materialberatung ergänzen</span>
+                      </div>
+                    </>
+                  )}
+                  {industry === 'elektriker' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> Smart Home wird beworben</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Trend:</strong> Photovoltaik-Angebot ergänzen</span>
+                      </div>
+                    </>
+                  )}
+                  {industry === 'dachdecker' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> Sicherheitsaspekte werden betont</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Gerüstbau-Service erwähnen</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default IndustryFeatures;
