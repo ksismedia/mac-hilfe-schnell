@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 interface ImprintCheckProps {
@@ -12,86 +13,29 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
   // Simulierte Impressumsdaten
   const imprintData = {
     found: true,
-    overallScore: 85,
-    requirements: [
-      {
-        name: "Anbietername",
-        required: true,
-        found: true,
-        content: "Schmidt SHK Meisterbetrieb GmbH"
-      },
-      {
-        name: "Vollständige Anschrift",
-        required: true,
-        found: true,
-        content: "Musterstraße 123, 80333 München"
-      },
-      {
-        name: "Kontaktangaben",
-        required: true,
-        found: true,
-        content: "Tel: 089/123456, E-Mail: info@schmidt-shk.de"
-      },
-      {
-        name: "Vertretungsberechtigte Person",
-        required: true,
-        found: true,
-        content: "Geschäftsführer: Hans Schmidt"
-      },
-      {
-        name: "Handelsregistereintrag",
-        required: true,
-        found: true,
-        content: "HRB 123456, Amtsgericht München"
-      },
-      {
-        name: "Umsatzsteuer-ID",
-        required: true,
-        found: false,
-        content: null
-      },
-      {
-        name: "Kammerzugehörigkeit",
-        required: false,
-        found: true,
-        content: "Handwerkskammer München"
-      },
-      {
-        name: "Berufsbezeichnung",
-        required: false,
-        found: true,
-        content: "Installateur- und Heizungsbauermeister"
-      },
-      {
-        name: "Berufshaftpflichtversicherung",
-        required: false,
-        found: false,
-        content: null
-      }
-    ]
+    completeness: 85,
+    missingElements: ['USt-IdNr.', 'Berufsbezeichnung'],
+    foundElements: [
+      'Firmenname',
+      'Anschrift',
+      'Kontaktdaten',
+      'Geschäftsführer',
+      'Handelsregister',
+      'Datenschutzerklärung'
+    ],
+    legalCompliance: {
+      tmg: true,
+      dsgvo: true,
+      impressumspflicht: true
+    },
+    overallScore: 85
   };
 
-  const getStatusIcon = (found: boolean, required: boolean) => {
-    if (found) return <CheckCircle className="h-5 w-5 text-green-500" />;
-    if (required) return <XCircle className="h-5 w-5 text-red-500" />;
-    return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+  const getStatusIcon = (present: boolean) => {
+    return present ? 
+      <CheckCircle className="h-5 w-5 text-green-500" /> : 
+      <XCircle className="h-5 w-5 text-red-500" />;
   };
-
-  const getStatusBadge = (found: boolean, required: boolean) => {
-    if (found) return "default";
-    if (required) return "destructive";
-    return "secondary";
-  };
-
-  const getStatusText = (found: boolean, required: boolean) => {
-    if (found) return "Vorhanden";
-    if (required) return "Fehlt (Pflicht)";
-    return "Fehlt (Optional)";
-  };
-
-  const requiredCount = imprintData.requirements.filter(req => req.required).length;
-  const requiredFound = imprintData.requirements.filter(req => req.required && req.found).length;
-  const completeness = Math.round((requiredFound / requiredCount) * 100);
 
   return (
     <div className="space-y-6">
@@ -104,124 +48,141 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
             </Badge>
           </CardTitle>
           <CardDescription>
-            Prüfung der rechtlich relevanten Angaben im Impressum
+            Rechtliche Vollständigkeit für {url}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {/* Übersicht */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
-                  {imprintData.found ? "✓" : "✗"}
+            {/* Gesamtübersicht */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
+                  {imprintData.found ? '✓' : '✗'}
                 </div>
-                <div className="text-sm text-gray-600">Impressum gefunden</div>
+                <p className="text-sm text-gray-600">
+                  Impressum gefunden
+                </p>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  {requiredFound}/{requiredCount}
+              
+              <div className="text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">
+                  {imprintData.completeness}%
                 </div>
-                <div className="text-sm text-gray-600">Pflichtangaben</div>
+                <p className="text-sm text-gray-600">
+                  Vollständigkeit
+                </p>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
-                  {completeness}%
+              
+              <div className="text-center">
+                <div className="text-4xl font-bold text-yellow-600 mb-2">
+                  {imprintData.foundElements.length}
                 </div>
-                <div className="text-sm text-gray-600">Vollständigkeit</div>
+                <p className="text-sm text-gray-600">
+                  Vorhandene Elemente
+                </p>
               </div>
             </div>
 
-            {/* Detaillierte Prüfung */}
+            <Progress value={imprintData.completeness} className="h-3" />
+
+            {/* Gefundene Elemente */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Detaillierte Prüfung</CardTitle>
-                <CardDescription>
-                  Einzelne Impressumsangaben nach § 5 TMG
-                </CardDescription>
+                <CardTitle className="text-lg">Vorhandene Angaben</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {imprintData.requirements.map((requirement, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(requirement.found, requirement.required)}
-                          <span className="font-medium">{requirement.name}</span>
-                          {requirement.required && (
-                            <Badge variant="outline" size="sm">Pflicht</Badge>
-                          )}
-                        </div>
-                        <Badge variant={getStatusBadge(requirement.found, requirement.required)}>
-                          {getStatusText(requirement.found, requirement.required)}
-                        </Badge>
-                      </div>
-                      {requirement.content && (
-                        <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded mt-2">
-                          {requirement.content}
-                        </p>
-                      )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {imprintData.foundElements.map((element, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">{element}</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Rechtliche Hinweise */}
+            {/* Fehlende Elemente */}
+            {imprintData.missingElements.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg text-red-600">
+                    Fehlende Angaben
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {imprintData.missingElements.map((element, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <XCircle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm">{element}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Rechtliche Compliance */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Rechtliche Hinweise</CardTitle>
+                <CardTitle className="text-lg">Rechtliche Compliance</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start gap-2">
-                    <XCircle className="h-4 w-4 text-red-500 mt-0.5" />
-                    <span>
-                      <strong>Kritisch:</strong> Umsatzsteuer-ID fehlt - bei umsatzsteuerpflichtigen Unternehmen 
-                      ist die Angabe der Umsatzsteuer-Identifikationsnummer Pflicht.
-                    </span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">TMG (Telemediengesetz)</span>
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(imprintData.legalCompliance.tmg)}
+                      <Badge variant={imprintData.legalCompliance.tmg ? "default" : "destructive"}>
+                        {imprintData.legalCompliance.tmg ? 'Erfüllt' : 'Nicht erfüllt'}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
-                    <span>
-                      <strong>Empfehlung:</strong> Angabe der Berufshaftpflichtversicherung für mehr Vertrauen bei Kunden.
-                    </span>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">DSGVO (Datenschutz)</span>
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(imprintData.legalCompliance.dsgvo)}
+                      <Badge variant={imprintData.legalCompliance.dsgvo ? "default" : "destructive"}>
+                        {imprintData.legalCompliance.dsgvo ? 'Erfüllt' : 'Nicht erfüllt'}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
-                    <span>
-                      <strong>Positiv:</strong> Alle wichtigen Pflichtangaben nach § 5 TMG sind vorhanden.
-                    </span>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Impressumspflicht</span>
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(imprintData.legalCompliance.impressumspflicht)}
+                      <Badge variant={imprintData.legalCompliance.impressumspflicht ? "default" : "destructive"}>
+                        {imprintData.legalCompliance.impressumspflicht ? 'Erfüllt' : 'Nicht erfüllt'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Handlungsempfehlungen */}
+            {/* Verbesserungsempfehlungen */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Handlungsempfehlungen</CardTitle>
+                <CardTitle className="text-lg">Empfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-600 font-bold">1.</span>
-                    <span>
-                      <strong>Sofort:</strong> Umsatzsteuer-ID im Impressum ergänzen (falls zutreffend)
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-600 font-bold">2.</span>
-                    <span>
-                      <strong>Empfohlen:</strong> Berufshaftpflichtversicherung mit Versicherer und Geltungsbereich angeben
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">3.</span>
-                    <span>
-                      <strong>Optional:</strong> Link zum Impressum prominenter auf der Website platzieren
-                    </span>
-                  </li>
-                </ul>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm">USt-IdNr. hinzufügen für gewerbliche Kunden</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm">Berufsbezeichnung und zuständige Kammer angeben</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Datenschutzerklärung ist vollständig vorhanden</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
