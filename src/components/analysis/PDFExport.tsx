@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { FileText, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface BusinessData {
   address: string;
@@ -19,20 +19,83 @@ interface PDFExportProps {
 const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
   const { toast } = useToast();
 
-  const handlePDFExport = () => {
-    // Simuliere PDF-Export
+  const generatePDF = (isFullReport: boolean = true) => {
+    const doc = new jsPDF();
+    const currentDate = new Date().toLocaleDateString('de-DE');
+    const fileName = isFullReport 
+      ? `Vollstaendiger_Analysebericht_${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}_${currentDate.replace(/\./g, '-')}.pdf`
+      : `Management_Summary_${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}_${currentDate.replace(/\./g, '-')}.pdf`;
+
+    // PDF-Titel
+    doc.setFontSize(20);
+    doc.text(isFullReport ? 'Vollständiger Analysebericht' : 'Management Summary', 20, 30);
+    
+    doc.setFontSize(12);
+    doc.text(`Website: ${businessData.url}`, 20, 50);
+    doc.text(`Adresse: ${businessData.address}`, 20, 60);
+    doc.text(`Branche: ${industryNames[businessData.industry]}`, 20, 70);
+    doc.text(`Analysedatum: ${currentDate}`, 20, 80);
+
+    if (isFullReport) {
+      // Vollständiger Bericht
+      doc.text('Gesamtbewertung: 4.2/5 Sterne', 20, 100);
+      doc.text('', 20, 110);
+      doc.text('Analysebereiche:', 20, 120);
+      
+      const sections = [
+        '1. SEO-Auswertung - Bewertung: 4.5/5',
+        '2. Keyword-Analyse - Bewertung: 3.8/5', 
+        '3. Performance-Analyse - Bewertung: 4.1/5',
+        '4. Backlink-Analyse - Bewertung: 3.9/5',
+        '5. Google-Bewertungen - Bewertung: 4.7/5',
+        '6. Social Media Analyse - Bewertung: 3.2/5',
+        '7. Impressumsprüfung - Bewertung: 4.8/5',
+        '8. Branchenmerkmale - Bewertung: 4.0/5'
+      ];
+
+      sections.forEach((section, index) => {
+        doc.text(section, 20, 130 + (index * 10));
+      });
+
+      doc.text('Handlungsempfehlungen:', 20, 220);
+      doc.text('• Social Media Präsenz verstärken', 20, 230);
+      doc.text('• Keyword-Optimierung für lokale Suche', 20, 240);
+      doc.text('• Performance-Optimierung der Website', 20, 250);
+    } else {
+      // Management Summary
+      doc.text('Gesamtbewertung: 4.2/5 Sterne (85% Vollständigkeit)', 20, 100);
+      doc.text('', 20, 110);
+      doc.text('Top-Ergebnisse:', 20, 120);
+      doc.text('✓ Impressum vollständig (4.8/5)', 20, 130);
+      doc.text('✓ Google-Bewertungen sehr gut (4.7/5)', 20, 140);
+      doc.text('✓ SEO gut optimiert (4.5/5)', 20, 150);
+      doc.text('', 20, 160);
+      doc.text('Verbesserungsbedarf:', 20, 170);
+      doc.text('• Social Media Aktivität steigern (3.2/5)', 20, 180);
+      doc.text('• Keyword-Strategie überarbeiten (3.8/5)', 20, 190);
+    }
+
+    // PDF herunterladen
+    doc.save(fileName);
+    
+    return fileName;
+  };
+
+  const handlePDFExport = (isFullReport: boolean = true) => {
     toast({
       title: "PDF wird erstellt",
       description: "Der Analysebericht wird als PDF-Datei vorbereitet...",
     });
 
-    // Simuliere Verarbeitungszeit
+    // Kurze Verzögerung für bessere UX
     setTimeout(() => {
+      const fileName = generatePDF(isFullReport);
+      
       toast({
         title: "PDF-Export erfolgreich",
-        description: "Der Analysebericht wurde als PDF-Datei gespeichert.",
+        description: `Der Bericht wurde als "${fileName}" heruntergeladen.`,
       });
-    }, 2000);
+    }, 1000);
   };
 
   const reportSections = [
@@ -162,11 +225,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   </div>
 
                   <div className="flex gap-4 pt-4">
-                    <Button onClick={handlePDFExport} className="flex-1" size="lg">
+                    <Button onClick={() => handlePDFExport(true)} className="flex-1" size="lg">
                       <Download className="h-4 w-4 mr-2" />
                       Vollständigen Report exportieren
                     </Button>
-                    <Button onClick={handlePDFExport} variant="outline" className="flex-1" size="lg">
+                    <Button onClick={() => handlePDFExport(false)} variant="outline" className="flex-1" size="lg">
                       <Download className="h-4 w-4 mr-2" />
                       Management-Summary exportieren
                     </Button>
@@ -185,19 +248,19 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   <div className="flex items-start gap-2">
                     <span className="text-blue-600">ℹ</span>
                     <span>
-                      Der PDF-Report enthält alle aktuellen Analysedaten vom {currentDate}
+                      Das PDF wird automatisch in Ihren Download-Ordner gespeichert
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-green-600">✓</span>
                     <span>
-                      Hochauflösende Grafiken und Diagramme für professionelle Präsentation
+                      Dateiname enthält Website und Datum für einfache Zuordnung
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-yellow-600">⚡</span>
                     <span>
-                      Die PDF-Generierung kann bei umfangreichen Berichten einige Sekunden dauern
+                      Die PDF-Generierung dauert nur wenige Sekunden
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
