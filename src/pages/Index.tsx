@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -154,17 +153,23 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {[
             { title: "SEO-Auswertung", icon: "🔍", desc: "Title-Tags, Meta Description, Überschriften" },
             { title: "Keyword-Analyse", icon: "🎯", desc: "Branchenspezifische Keywords und Dichte" },
             { title: "Ladezeit-Messung", icon: "⚡", desc: "Performance und Geschwindigkeit" },
+            { title: "Mobile-Optimierung", icon: "📱", desc: "Responsive Design und Touch-Bedienung" },
+            { title: "Lokale SEO", icon: "📍", desc: "Google My Business und Citations" },
+            { title: "Content-Analyse", icon: "📝", desc: "Qualität und Relevanz der Inhalte" },
+            { title: "Konkurrenzanalyse", icon: "⚔️", desc: "Vergleich mit lokalen Mitbewerbern" },
             { title: "Backlink-Check", icon: "🔗", desc: "Interne und externe Verlinkungen" },
             { title: "Google-Bewertungen", icon: "⭐", desc: "Bewertungen und Rezensionen" },
-            { title: "Social Media", icon: "📱", desc: "Facebook & Instagram Analyse" },
+            { title: "Social Media", icon: "📲", desc: "Facebook & Instagram Analyse" },
+            { title: "Social Proof", icon: "👥", desc: "Testimonials und Vertrauenssignale" },
+            { title: "Conversion-Optimierung", icon: "🎯", desc: "Call-to-Actions und Kontaktmöglichkeiten" },
+            { title: "Arbeitsplatz-Bewertungen", icon: "💼", desc: "Kununu und andere HR-Plattformen" },
             { title: "Impressumsprüfung", icon: "📄", desc: "Rechtliche Vollständigkeit" },
             { title: "Branchenmerkmale", icon: "🏗️", desc: "Spezifische Inhaltsanalyse" },
-            { title: "Gesamtbewertung", icon: "🏆", desc: "Gewichtete Sterne-Bewertung" },
             { title: "PDF-Export", icon: "📊", desc: "Vollständiger Analysebericht" }
           ].map((feature, index) => (
             <Card key={index} className="text-center hover:shadow-md transition-shadow">

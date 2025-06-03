@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,13 @@ import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import OverallRating from './analysis/OverallRating';
 import PDFExport from './analysis/PDFExport';
+import CompetitorAnalysis from './analysis/CompetitorAnalysis';
+import MobileOptimization from './analysis/MobileOptimization';
+import LocalSEO from './analysis/LocalSEO';
+import ContentAnalysis from './analysis/ContentAnalysis';
+import SocialProof from './analysis/SocialProof';
+import ConversionOptimization from './analysis/ConversionOptimization';
+import WorkplaceReviews from './analysis/WorkplaceReviews';
 import { ArrowLeft } from 'lucide-react';
 
 interface BusinessData {
@@ -91,17 +97,24 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
 
         {/* Navigation Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
-            <TabsTrigger value="overview">Übersicht</TabsTrigger>
-            <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="keywords">Keywords</TabsTrigger>
-            <TabsTrigger value="performance">Ladezeit</TabsTrigger>
-            <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-            <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
-            <TabsTrigger value="social">Social Media</TabsTrigger>
-            <TabsTrigger value="imprint">Impressum</TabsTrigger>
-            <TabsTrigger value="industry">Branche</TabsTrigger>
-            <TabsTrigger value="export">Export</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 gap-1">
+            <TabsTrigger value="overview" className="text-xs">Übersicht</TabsTrigger>
+            <TabsTrigger value="seo" className="text-xs">SEO</TabsTrigger>
+            <TabsTrigger value="keywords" className="text-xs">Keywords</TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs">Ladezeit</TabsTrigger>
+            <TabsTrigger value="mobile" className="text-xs">Mobile</TabsTrigger>
+            <TabsTrigger value="local-seo" className="text-xs">Local SEO</TabsTrigger>
+            <TabsTrigger value="content" className="text-xs">Content</TabsTrigger>
+            <TabsTrigger value="competitor" className="text-xs">Konkurrenz</TabsTrigger>
+            <TabsTrigger value="backlinks" className="text-xs">Backlinks</TabsTrigger>
+            <TabsTrigger value="reviews" className="text-xs">Bewertungen</TabsTrigger>
+            <TabsTrigger value="social" className="text-xs">Social</TabsTrigger>
+            <TabsTrigger value="social-proof" className="text-xs">Social Proof</TabsTrigger>
+            <TabsTrigger value="conversion" className="text-xs">Conversion</TabsTrigger>
+            <TabsTrigger value="workplace" className="text-xs">Arbeitsplatz</TabsTrigger>
+            <TabsTrigger value="imprint" className="text-xs">Impressum</TabsTrigger>
+            <TabsTrigger value="industry" className="text-xs">Branche</TabsTrigger>
+            <TabsTrigger value="export" className="text-xs">Export</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -120,6 +133,22 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <PerformanceAnalysis url={businessData.url} />
           </TabsContent>
 
+          <TabsContent value="mobile">
+            <MobileOptimization url={businessData.url} />
+          </TabsContent>
+
+          <TabsContent value="local-seo">
+            <LocalSEO address={businessData.address} url={businessData.url} industry={businessData.industry} />
+          </TabsContent>
+
+          <TabsContent value="content">
+            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
+          </TabsContent>
+
+          <TabsContent value="competitor">
+            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} />
+          </TabsContent>
+
           <TabsContent value="backlinks">
             <BacklinkAnalysis url={businessData.url} />
           </TabsContent>
@@ -130,6 +159,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
 
           <TabsContent value="social">
             <SocialMediaAnalysis businessData={businessData} />
+          </TabsContent>
+
+          <TabsContent value="social-proof">
+            <SocialProof businessData={businessData} />
+          </TabsContent>
+
+          <TabsContent value="conversion">
+            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
+          </TabsContent>
+
+          <TabsContent value="workplace">
+            <WorkplaceReviews businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="imprint">
