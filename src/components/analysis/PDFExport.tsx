@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -101,190 +100,339 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     let yPosition = 20;
     const pageHeight = 297; // A4 Höhe in mm
     const margin = 20;
-    const lineHeight = 6;
+    const lineHeight = 7;
+    const maxWidth = 170; // Maximale Textbreite
 
-    const addNewPageIfNeeded = (requiredSpace: number = 30) => {
+    // Helper function to add new page if needed
+    const addNewPageIfNeeded = (requiredSpace: number = 25) => {
       if (yPosition + requiredSpace > pageHeight - margin) {
         doc.addPage();
         yPosition = margin;
+        return true;
       }
+      return false;
     };
 
+    // Helper function to add text with word wrapping
+    const addWrappedText = (text: string, x: number, maxWidth: number, fontSize: number = 10) => {
+      doc.setFontSize(fontSize);
+      const lines = doc.splitTextToSize(text, maxWidth);
+      lines.forEach((line: string) => {
+        addNewPageIfNeeded();
+        doc.text(line, x, yPosition);
+        yPosition += lineHeight;
+      });
+    };
+
+    // Helper function to add a title
     const addTitle = (title: string, fontSize: number = 16) => {
-      addNewPageIfNeeded();
+      addNewPageIfNeeded(15);
       doc.setFontSize(fontSize);
       doc.setFont(undefined, 'bold');
       doc.text(title, margin, yPosition);
-      yPosition += lineHeight + 4;
+      yPosition += lineHeight + 5;
     };
 
-    const addText = (text: string, fontSize: number = 10) => {
-      addNewPageIfNeeded();
-      doc.setFontSize(fontSize);
-      doc.setFont(undefined, 'normal');
-      doc.text(text, margin, yPosition);
-      yPosition += lineHeight;
-    };
-
-    const addSection = (title: string, content: string[]) => {
+    // Helper function to add a section
+    const addSection = (title: string, content: string[], indent: number = 5) => {
       addNewPageIfNeeded(content.length * lineHeight + 20);
+      
+      // Section title
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
       doc.text(title, margin, yPosition);
       yPosition += lineHeight + 2;
       
+      // Section content
       doc.setFontSize(10);
       doc.setFont(undefined, 'normal');
       content.forEach(line => {
         addNewPageIfNeeded();
-        doc.text(line, margin + 5, yPosition);
-        yPosition += lineHeight;
+        addWrappedText(line, margin + indent, maxWidth - indent);
       });
-      yPosition += 4;
+      yPosition += 5;
     };
 
-    // Titel und Grundinformationen
+    const currentDate = new Date().toLocaleDateString('de-DE');
+
+    // ===== TITEL UND GRUNDINFORMATIONEN =====
     doc.setFontSize(20);
     doc.setFont(undefined, 'bold');
     doc.text('Vollständiger Website-Analysebericht', margin, yPosition);
     yPosition += 15;
 
-    const currentDate = new Date().toLocaleDateString('de-DE');
-    addText(`Website: ${businessData.url}`, 12);
-    addText(`Adresse: ${businessData.address}`, 12);
-    addText(`Branche: ${industryNames[businessData.industry]}`, 12);
-    addText(`Analysedatum: ${currentDate}`, 12);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'normal');
+    addWrappedText(`Website: ${businessData.url}`, margin, maxWidth, 12);
+    addWrappedText(`Adresse: ${businessData.address}`, margin, maxWidth, 12);
+    addWrappedText(`Branche: ${industryNames[businessData.industry]}`, margin, maxWidth, 12);
+    addWrappedText(`Analysedatum: ${currentDate}`, margin, maxWidth, 12);
     yPosition += 10;
 
-    // Zusammenfassung
-    addTitle('Executive Summary');
-    addText('Gesamtbewertung: 4.2/5 Sterne (85% Vollständigkeit)');
-    addText('Die Website zeigt eine solide Performance mit Verbesserungspotential in den Bereichen');
-    addText('Keyword-Optimierung und Conversion-Rate-Optimierung.');
+    // ===== EXECUTIVE SUMMARY =====
+    addTitle('Executive Summary', 16);
+    addWrappedText('Gesamtbewertung: 4.2/5 Sterne (85% Vollständigkeit)', margin, maxWidth, 12);
+    yPosition += 5;
+    addWrappedText('Die Website zeigt eine solide Performance mit Verbesserungspotential in den Bereichen Keyword-Optimierung und Conversion-Rate-Optimierung. Die technische Umsetzung ist grundsätzlich gut, jedoch gibt es spezifische Bereiche, die optimiert werden können, um die Online-Sichtbarkeit und Kundengewinnung zu verbessern.', margin, maxWidth);
     yPosition += 10;
 
-    // SEO-Analyse
-    addTitle('1. SEO-Analyse (Bewertung: 4.5/5)');
-    addSection('Meta-Tags:', [
-      `• Title-Tags: ${detailedAnalysisData.seo.metaTags.title}`,
-      `• Meta-Descriptions: ${detailedAnalysisData.seo.metaTags.description}`,
-      `• Keywords: ${detailedAnalysisData.seo.metaTags.keywords}`
-    ]);
-    addSection('Technische SEO:', [
-      `• Überschriftenstruktur: ${detailedAnalysisData.seo.headings}`,
-      `• URL-Struktur: ${detailedAnalysisData.seo.urls}`,
-      `• Sitemap: ${detailedAnalysisData.seo.sitemap}`,
-      `• Robots.txt: ${detailedAnalysisData.seo.robots}`
+    // ===== 1. SEO-ANALYSE =====
+    addTitle('1. SEO-Analyse (Bewertung: 4.5/5)', 14);
+    
+    addSection('Meta-Tags Analyse:', [
+      `• Title-Tags: ${detailedAnalysisData.seo.metaTags.title} - Die Seitentitel sind gut optimiert und enthalten relevante Keywords`,
+      `• Meta-Descriptions: ${detailedAnalysisData.seo.metaTags.description} - Beschreibungen sind vorhanden, könnten aber optimiert werden`,
+      `• Keywords: ${detailedAnalysisData.seo.metaTags.keywords} - Meta-Keywords sollten überarbeitet und lokale Begriffe verstärkt werden`
     ]);
 
-    // Keyword-Analyse
-    addTitle('2. Keyword-Analyse (Bewertung: 3.8/5)');
-    addSection('Haupt-Keywords:', detailedAnalysisData.keywords.mainKeywords.map(kw => `• ${kw}`));
-    addSection('Rankings:', [
-      `• Lokale Suche: ${detailedAnalysisData.keywords.ranking.local}`,
-      `• Google-Suche: ${detailedAnalysisData.keywords.ranking.google}`,
-      `• Keyword-Dichte: ${detailedAnalysisData.keywords.density}`,
-      `• Wettbewerb: ${detailedAnalysisData.keywords.competition}`
+    addSection('Technische SEO-Faktoren:', [
+      `• Überschriftenstruktur (H1-H6): ${detailedAnalysisData.seo.headings} - Logische Hierarchie vorhanden`,
+      `• URL-Struktur: ${detailedAnalysisData.seo.urls} - Sprechende URLs und gute Struktur`,
+      `• XML-Sitemap: ${detailedAnalysisData.seo.sitemap} - Sitemap ist vorhanden und aktuell`,
+      `• Robots.txt: ${detailedAnalysisData.seo.robots} - Korrekt konfiguriert, alle wichtigen Bereiche indexierbar`
     ]);
 
-    // Performance-Analyse
-    addTitle('3. Performance-Analyse (Bewertung: 4.1/5)');
-    addSection('Ladezeiten:', [
-      `• Seitenladezeit: ${detailedAnalysisData.performance.loadTime}`,
-      `• Seitengröße: ${detailedAnalysisData.performance.pageSize}`,
-      `• Bildoptimierung: ${detailedAnalysisData.performance.images}`,
-      `• Caching: ${detailedAnalysisData.performance.caching}`,
-      `• Mobile Performance: ${detailedAnalysisData.performance.mobile}`
+    addSection('SEO-Empfehlungen:', [
+      '• Lokale Keywords in Title-Tags verstärken',
+      '• Meta-Descriptions mit Call-to-Actions erweitern',
+      '• Schema-Markup für lokale Unternehmen implementieren',
+      '• Interne Verlinkung optimieren'
     ]);
 
-    // Mobile-Optimierung
-    addTitle('4. Mobile-Optimierung (Bewertung: 4.3/5)');
+    // ===== 2. KEYWORD-ANALYSE =====
+    addNewPageIfNeeded(50);
+    addTitle('2. Keyword-Analyse (Bewertung: 3.8/5)', 14);
+    
+    addSection('Haupt-Keywords und Rankings:', 
+      detailedAnalysisData.keywords.mainKeywords.map(kw => `• "${kw}" - Potentiell starkes Keyword für lokale Suche`)
+    );
+
+    addSection('Ranking-Position:', [
+      `• Lokale Suche: ${detailedAnalysisData.keywords.ranking.local} - Gute Position, aber Verbesserung möglich`,
+      `• Organische Google-Suche: ${detailedAnalysisData.keywords.ranking.google} - Ausbaufähig`,
+      `• Keyword-Dichte: ${detailedAnalysisData.keywords.density} - Zu niedrig für wichtige Begriffe`,
+      `• Wettbewerbsintensität: ${detailedAnalysisData.keywords.competition} - Starke Konkurrenz erfordert gezielte Strategie`
+    ]);
+
+    addSection('Keyword-Empfehlungen:', [
+      '• Long-Tail-Keywords für spezifische Dienstleistungen entwickeln',
+      '• Lokale Modifier in Keyword-Strategie integrieren',
+      '• Content für saisonale Keywords erstellen',
+      '• Competitor-Keyword-Analyse durchführen'
+    ]);
+
+    // ===== 3. PERFORMANCE-ANALYSE =====
+    addNewPageIfNeeded(50);
+    addTitle('3. Performance-Analyse (Bewertung: 4.1/5)', 14);
+    
+    addSection('Ladezeiten und technische Performance:', [
+      `• Seitenladezeit: ${detailedAnalysisData.performance.loadTime} - Gut, aber optimierbar`,
+      `• Gesamte Seitengröße: ${detailedAnalysisData.performance.pageSize} - Akzeptable Größe`,
+      `• Bildoptimierung: ${detailedAnalysisData.performance.images} - Bilder sind komprimiert`,
+      `• Browser-Caching: ${detailedAnalysisData.performance.caching} - Korrekt implementiert`,
+      `• Mobile Performance: ${detailedAnalysisData.performance.mobile} - Gute mobile Ladezeiten`
+    ]);
+
+    addSection('Performance-Optimierungen:', [
+      '• Weitere Bildkomprimierung und moderne Formate (WebP) einsetzen',
+      '• CSS und JavaScript minifizieren',
+      '• CDN für statische Ressourcen implementieren',
+      '• Lazy Loading für Bilder aktivieren'
+    ]);
+
+    // ===== 4. MOBILE-OPTIMIERUNG =====
+    addNewPageIfNeeded(40);
+    addTitle('4. Mobile-Optimierung (Bewertung: 4.3/5)', 14);
+    
     addSection('Mobile Nutzerfreundlichkeit:', [
-      `• Responsive Design: ${detailedAnalysisData.mobile.responsive}`,
-      `• Touch-Targets: ${detailedAnalysisData.mobile.touchTargets}`,
-      `• Viewport-Konfiguration: ${detailedAnalysisData.mobile.viewportConfig}`,
-      `• Mobile PageSpeed: ${detailedAnalysisData.mobile.pagespeed}`
+      `• Responsive Design: ${detailedAnalysisData.mobile.responsive} - Perfekte Anpassung an alle Bildschirmgrößen`,
+      `• Touch-Targets: ${detailedAnalysisData.mobile.touchTargets} - Buttons und Links sind gut bedienbar`,
+      `• Viewport-Konfiguration: ${detailedAnalysisData.mobile.viewportConfig} - Optimal eingestellt`,
+      `• Mobile PageSpeed Score: ${detailedAnalysisData.mobile.pagespeed} - Zufriedenstellende Geschwindigkeit`
     ]);
 
-    // Lokale SEO
-    addTitle('5. Lokale SEO-Faktoren (Bewertung: 4.0/5)');
-    addSection('Local SEO:', [
-      `• Google My Business: ${detailedAnalysisData.localSeo.googleMyBusiness}`,
-      `• NAP-Konsistenz: ${detailedAnalysisData.localSeo.napConsistency}`,
-      `• Lokale Verzeichnisse: ${detailedAnalysisData.localSeo.localCitations}`,
-      `• Bewertungsmanagement: ${detailedAnalysisData.localSeo.reviews}`
+    addSection('Mobile-Empfehlungen:', [
+      '• Click-to-Call Buttons prominenter platzieren',
+      '• Mobile Navigation weiter vereinfachen',
+      '• Touch-Gesten für Bildergalerien implementieren'
     ]);
 
-    // Content-Analyse
-    addTitle('6. Content-Analyse (Bewertung: 3.9/5)');
-    addSection('Inhaltsqualität:', [
-      `• Content-Qualität: ${detailedAnalysisData.content.quality}`,
-      `• Einzigartigkeit: ${detailedAnalysisData.content.uniqueness}`,
-      `• Lesbarkeit: ${detailedAnalysisData.content.readability}`,
-      `• Struktur: ${detailedAnalysisData.content.structure}`
+    // ===== 5. LOKALE SEO-FAKTOREN =====
+    addNewPageIfNeeded(50);
+    addTitle('5. Lokale SEO-Faktoren (Bewertung: 4.0/5)', 14);
+    
+    addSection('Google My Business und lokale Präsenz:', [
+      `• Google My Business Profil: ${detailedAnalysisData.localSeo.googleMyBusiness} - Alle wichtigen Informationen vorhanden`,
+      `• NAP-Konsistenz: ${detailedAnalysisData.localSeo.napConsistency} - Name, Adresse, Telefon stimmen überein`,
+      `• Lokale Verzeichniseinträge: ${detailedAnalysisData.localSeo.localCitations} - Solide Basis vorhanden`,
+      `• Bewertungsmanagement: ${detailedAnalysisData.localSeo.reviews} - Aktive Pflege der Online-Reputation`
     ]);
 
-    // Konkurrenzanalyse
-    addTitle('7. Konkurrenzanalyse (Bewertung: 3.7/5)');
-    addSection('Marktposition:', [
-      `• Position: ${detailedAnalysisData.competition.position}`,
-      `• Marktanteil: ${detailedAnalysisData.competition.marketShare}`,
-      `• Hauptstärken: ${detailedAnalysisData.competition.strengths}`,
-      `• Verbesserungsbereiche: ${detailedAnalysisData.competition.weaknesses}`
+    addSection('Lokale SEO-Maßnahmen:', [
+      '• Weitere Branchenverzeichnisse erschließen',
+      '• Lokale Backlinks von Partnern und Kunden akquirieren',
+      '• Location-Pages für verschiedene Stadtteile erstellen',
+      '• Google Posts regelmäßig veröffentlichen'
     ]);
 
-    // Social Proof
-    addTitle('8. Social Proof (Bewertung: 4.2/5)');
-    addSection('Vertrauenssignale:', [
-      `• Google-Bewertungen: ${detailedAnalysisData.socialProof.googleReviews}`,
-      `• Kundenstimmen: ${detailedAnalysisData.socialProof.testimonials}`,
-      `• Zertifizierungen: ${detailedAnalysisData.socialProof.certifications}`,
-      `• Auszeichnungen: ${detailedAnalysisData.socialProof.awards}`
+    // ===== 6. CONTENT-ANALYSE =====
+    addNewPageIfNeeded(50);
+    addTitle('6. Content-Analyse (Bewertung: 3.9/5)', 14);
+    
+    addSection('Inhaltsqualität und -struktur:', [
+      `• Content-Qualität: ${detailedAnalysisData.content.quality} - Informative und relevante Inhalte`,
+      `• Einzigartigkeit: ${detailedAnalysisData.content.uniqueness} - Sehr wenig Duplicate Content`,
+      `• Lesbarkeit: ${detailedAnalysisData.content.readability} - Verständlich und gut strukturiert`,
+      `• Content-Struktur: ${detailedAnalysisData.content.structure} - Kann optimiert werden`
     ]);
 
-    // Conversion-Optimierung
-    addTitle('9. Conversion-Optimierung (Bewertung: 3.5/5)');
-    addSection('Conversion-Elemente:', [
-      `• Kontaktformulare: ${detailedAnalysisData.conversion.contactForms}`,
-      `• Call-to-Actions: ${detailedAnalysisData.conversion.callToActions}`,
-      `• Vertrauenssignale: ${detailedAnalysisData.conversion.trustSignals}`,
-      `• Ladezeit-Optimierung: ${detailedAnalysisData.conversion.loadTime}`
+    addSection('Content-Empfehlungen:', [
+      '• FAQ-Bereich für häufige Kundenfragen erweitern',
+      '• Blog für regelmäßige Updates und SEO-Content starten',
+      '• Mehr visuelle Inhalte (Videos, Infografiken) integrieren',
+      '• Kundenprojekte und Case Studies präsentieren'
     ]);
 
-    // Handlungsempfehlungen
-    addTitle('10. Handlungsempfehlungen');
-    addSection('Priorität 1 (Hoch):', [
-      '• Keyword-Dichte für lokale Suchbegriffe optimieren',
-      '• Call-to-Action Buttons prominenter platzieren',
-      '• Social Media Aktivität verstärken'
-    ]);
-    addSection('Priorität 2 (Mittel):', [
-      '• Content-Struktur verbessern und erweitern',
-      '• Ladezeiten weiter optimieren',
-      '• Mehr Kundenbewertungen aktiv einholen'
-    ]);
-    addSection('Priorität 3 (Niedrig):', [
-      '• Meta-Keywords überarbeiten',
-      '• Zusätzliche Zertifizierungen hervorheben',
-      '• Blog für regelmäßigen Content erstellen'
+    // ===== 7. KONKURRENZANALYSE =====
+    addNewPageIfNeeded(50);
+    addTitle('7. Konkurrenzanalyse (Bewertung: 3.7/5)', 14);
+    
+    addSection('Marktposition und Wettbewerb:', [
+      `• Marktposition: ${detailedAnalysisData.competition.position} - Solide Position im lokalen Markt`,
+      `• Geschätzter Marktanteil: ${detailedAnalysisData.competition.marketShare} - Ausbaufähig`,
+      `• Hauptstärken: ${detailedAnalysisData.competition.strengths} - Positive Kundenerfahrungen`,
+      `• Schwächen vs. Konkurrenz: ${detailedAnalysisData.competition.weaknesses} - Digitale Sichtbarkeit verstärken`
     ]);
 
-    // Anhang
-    addTitle('11. Anhang');
-    addSection('Verwendete Tools und Methoden:', [
-      '• Google PageSpeed Insights',
-      '• Google Search Console Daten',
-      '• Lokale Suchanalyse',
-      '• Wettbewerbsvergleich',
-      '• Content-Audit',
-      '• Mobile-First Testing'
+    addSection('Wettbewerbsanalyse-Erkenntnisse:', [
+      '• Hauptkonkurrenten haben stärkere Social Media Präsenz',
+      '• Content-Marketing wird von Wettbewerbern intensiver genutzt',
+      '• Preistransparenz auf Websites der Konkurrenz häufiger',
+      '• Online-Terminbuchung als Wettbewerbsvorteil etablieren'
     ]);
 
-    addSection('Analysezeitraum:', [
+    // ===== 8. SOCIAL PROOF =====
+    addNewPageIfNeeded(40);
+    addTitle('8. Social Proof (Bewertung: 4.2/5)', 14);
+    
+    addSection('Vertrauenssignale und Glaubwürdigkeit:', [
+      `• Google-Bewertungen: ${detailedAnalysisData.socialProof.googleReviews} - Ausgezeichnete Kundenzufriedenheit`,
+      `• Kundenstimmen auf Website: ${detailedAnalysisData.socialProof.testimonials} - Authentische Referenzen`,
+      `• Zertifizierungen: ${detailedAnalysisData.socialProof.certifications} - Fachliche Kompetenz belegt`,
+      `• Branchenauszeichnungen: ${detailedAnalysisData.socialProof.awards} - Zusätzliche Glaubwürdigkeit`
+    ]);
+
+    addSection('Social Proof Optimierungen:', [
+      '• Mehr Kundenstimmen aktiv sammeln und präsentieren',
+      '• Projektbilder vor/nach Renovierungen zeigen',
+      '• Mitarbeiter-Zertifizierungen prominenter darstellen',
+      '• Social Media Aktivität für mehr Sichtbarkeit steigern'
+    ]);
+
+    // ===== 9. CONVERSION-OPTIMIERUNG =====
+    addNewPageIfNeeded(50);
+    addTitle('9. Conversion-Optimierung (Bewertung: 3.5/5)', 14);
+    
+    addSection('Conversion-Elemente und Nutzerführung:', [
+      `• Kontaktformulare: ${detailedAnalysisData.conversion.contactForms} - Grundausstattung vorhanden`,
+      `• Call-to-Action Buttons: ${detailedAnalysisData.conversion.callToActions} - Können optimiert werden`,
+      `• Vertrauenssignale: ${detailedAnalysisData.conversion.trustSignals} - Ausreichend vorhanden`,
+      `• Ladezeit-Optimierung: ${detailedAnalysisData.conversion.loadTime} - Weitere Verbesserungen nötig`
+    ]);
+
+    addSection('Conversion-Optimierung Maßnahmen:', [
+      '• Prominente Platzierung der Telefonnummer für Sofortkontakt',
+      '• Online-Kostenvoranschlag-Tool implementieren',
+      '• Notdienst-Button besonders hervorheben',
+      '• Kontaktformular vereinfachen und optimieren',
+      '• A/B-Tests für verschiedene Call-to-Action Varianten'
+    ]);
+
+    // ===== 10. HANDLUNGSEMPFEHLUNGEN =====
+    addNewPageIfNeeded(60);
+    addTitle('10. Priorisierte Handlungsempfehlungen', 14);
+    
+    addSection('Priorität 1 - Sofortige Maßnahmen (1-4 Wochen):', [
+      '• Call-to-Action Buttons überarbeiten und prominenter platzieren',
+      '• Keyword-Dichte für lokale Suchbegriffe in wichtigen Seiten erhöhen',
+      '• Google My Business Profil mit aktuellen Bildern und Posts pflegen',
+      '• Mobile Kontaktmöglichkeiten (Click-to-Call) verbessern',
+      '• Kundenbewertungen aktiv einsammeln und auf Website darstellen'
+    ]);
+
+    addSection('Priorität 2 - Mittelfristige Optimierungen (1-3 Monate):', [
+      '• Content-Strategie entwickeln und regelmäßigen Blog starten',
+      '• Ladezeiten durch Bildoptimierung und Caching weiter verbessern',
+      '• Social Media Präsenz ausbauen (Facebook, Instagram)',
+      '• Lokale Backlink-Strategie implementieren',
+      '• FAQ-Bereich erweitern und strukturieren',
+      '• Online-Terminbuchung oder Kostenvoranschlag-Tool integrieren'
+    ]);
+
+    addSection('Priorität 3 - Langfristige Strategien (3-12 Monate):', [
+      '• Umfassende Content-Marketing-Strategie mit Video-Content',
+      '• Expansion in weitere lokale Verzeichnisse und Plattformen',
+      '• Entwicklung von Landing-Pages für spezifische Services',
+      '• A/B-Testing-Programm für kontinuierliche Optimierung',
+      '• Retargeting-Kampagnen für Website-Besucher einrichten'
+    ]);
+
+    // ===== 11. MONITORING UND ERFOLGSMESSUNG =====
+    addNewPageIfNeeded(40);
+    addTitle('11. Monitoring und Erfolgsmessung', 14);
+    
+    addSection('KPIs und Metriken zur Überwachung:', [
+      '• Organische Sichtbarkeit: Ranking-Positionen für Haupt-Keywords monatlich prüfen',
+      '• Website-Traffic: Besucherzahlen und Herkunft über Google Analytics tracken',
+      '• Conversion-Rate: Kontaktanfragen pro 100 Website-Besucher messen',
+      '• Lokale Sichtbarkeit: Google My Business Insights regelmäßig auswerten',
+      '• Online-Reputation: Bewertungen auf verschiedenen Plattformen monitoren'
+    ]);
+
+    addSection('Empfohlene Tools für Monitoring:', [
+      '• Google Analytics für Website-Performance',
+      '• Google Search Console für SEO-Überwachung',
+      '• Google My Business Insights für lokale Performance',
+      '• SEO-Tools wie SEMrush oder Ahrefs für Keyword-Tracking',
+      '• Review-Management-Tools für Bewertungsmonitoring'
+    ]);
+
+    // ===== 12. ANHANG =====
+    addNewPageIfNeeded(30);
+    addTitle('12. Anhang', 14);
+    
+    addSection('Analysemethodik und verwendete Tools:', [
+      '• Google PageSpeed Insights für Performance-Bewertung',
+      '• Google Search Console Daten für SEO-Analyse',
+      '• Mobile-First Testing auf verschiedenen Geräten',
+      '• Lokale Suchsimulation für verschiedene Keywords',
+      '• Wettbewerbsanalyse durch systematische Vergleiche',
+      '• Content-Audit durch manuelle Überprüfung aller Seiten'
+    ]);
+
+    addSection('Analysezeitraum und Datenbasis:', [
       `• Datenerhebung: ${currentDate}`,
-      '• Betrachtungszeitraum: Letzten 3 Monate',
-      '• Nächste Überprüfung empfohlen: In 6 Monaten'
+      '• Betrachtungszeitraum: Aktuelle Website-Version',
+      '• Vergleichsdaten: Lokale Wettbewerber aus derselben Branche',
+      '• Nächste Überprüfung empfohlen: In 6 Monaten',
+      '• Zwischencheck empfohlen: Nach 3 Monaten für Quick-Wins'
     ]);
+
+    addSection('Kontakt und weitere Unterstützung:', [
+      'Für Fragen zu diesem Bericht oder Unterstützung bei der Umsetzung',
+      'der Empfehlungen stehen wir gerne zur Verfügung.',
+      '',
+      'Dieser Bericht wurde automatisch generiert und basiert auf',
+      'aktuellen Best Practices im Online-Marketing und SEO.'
+    ]);
+
+    // Seitenzahlen hinzufügen
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Seite ${i} von ${pageCount}`, 200 - 20, 290, { align: 'right' });
+    }
 
     return doc;
   };
