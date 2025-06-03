@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -143,6 +144,25 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
         }
       ]
     },
+    backlinks: {
+      score: 3.6,
+      total: 45,
+      quality: "Gemischt",
+      domains: 23,
+      toxic: 3
+    },
+    googleReviews: {
+      score: 4.6,
+      total: 127,
+      average: 4.6,
+      recent: "Regelmäßig neue Bewertungen"
+    },
+    socialMedia: {
+      score: 3.4,
+      facebook: "Vorhanden aber inaktiv",
+      instagram: "Nicht vorhanden",
+      linkedin: "Basic Profil"
+    },
     socialProof: {
       score: 4.2,
       googleReviews: "4.6/5 (127 Bewertungen)",
@@ -156,6 +176,90 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       callToActions: "Verbesserungsbedarf",
       trustSignals: "Vorhanden",
       loadTime: "Optimierungsbedarf"
+    },
+    workplaceReviews: {
+      score: 3.6,
+      overallScore: 71,
+      platforms: [
+        {
+          name: "Kununu",
+          rating: 4.1,
+          reviews: 23,
+          verified: true,
+          categories: {
+            workLifeBalance: 4.2,
+            salary: 3.8,
+            atmosphere: 4.3,
+            management: 3.9,
+            career: 3.7
+          }
+        },
+        {
+          name: "Xing",
+          rating: 3.9,
+          reviews: 8,
+          verified: false,
+          categories: {
+            workLifeBalance: 4.0,
+            salary: 3.6,
+            atmosphere: 4.1,
+            management: 3.8,
+            career: 3.5
+          }
+        },
+        {
+          name: "StepStone",
+          rating: 4.0,
+          reviews: 12,
+          verified: true,
+          categories: {
+            workLifeBalance: 3.9,
+            salary: 3.7,
+            atmosphere: 4.2,
+            management: 3.8,
+            career: 3.6
+          }
+        }
+      ],
+      employerBranding: {
+        score: 68,
+        presence: "vorhanden",
+        jobPostings: 3,
+        companyDescription: true,
+        benefits: [
+          "Flexible Arbeitszeiten",
+          "Firmenwagen",
+          "Weiterbildungsmöglichkeiten",
+          "Betriebliche Altersvorsorge"
+        ],
+        weaknesses: [
+          "Begrenzte Karrieremöglichkeiten",
+          "Gehalt unter Branchendurchschnitt"
+        ]
+      },
+      recruitment: {
+        activeRecruiting: true,
+        responseTime: "3-5 Tage",
+        jobPortals: 4,
+        socialMediaRecruiting: false
+      },
+      employeeRetention: {
+        averageTenure: "4.2 Jahre",
+        turnoverRate: "15%",
+        satisfaction: 78
+      }
+    },
+    imprint: {
+      score: 4.4,
+      present: true,
+      complete: true,
+      accessible: true
+    },
+    industry: {
+      score: 4.0,
+      specific: true,
+      certifications: true,
+      services: "Vollständig"
     }
   };
 
@@ -426,9 +530,62 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Handwerksprofi24 zeigt Risiken einer vernachlässigten Digitalisierung'
     ]);
 
-    // ===== 8. SOCIAL PROOF =====
+    // ===== 8. BACKLINK-ANALYSE =====
     addNewPageIfNeeded(40);
-    addTitle('8. Social Proof (Bewertung: 4.2/5)', 14);
+    addTitle('8. Backlink-Analyse (Bewertung: 3.6/5)', 14);
+    
+    addSection('Backlink-Profil und Linkqualität:', [
+      `• Gesamtanzahl Backlinks: ${detailedAnalysisData.backlinks.total} - Moderate Anzahl für lokales Unternehmen`,
+      `• Verweisende Domains: ${detailedAnalysisData.backlinks.domains} - Gute Diversifizierung`,
+      `• Link-Qualität: ${detailedAnalysisData.backlinks.quality} - Überwiegend gute Links mit einigen schwächeren`,
+      `• Toxische Links: ${detailedAnalysisData.backlinks.toxic} - Wenige problematische Links identifiziert`
+    ]);
+
+    addSection('Backlink-Empfehlungen:', [
+      '• Qualitative Backlinks von lokalen Partnern aufbauen',
+      '• Branchenverzeichnisse und Kammern als Linkquellen nutzen',
+      '• Content-Marketing für natürliche Linkakquise',
+      '• Toxische Links regelmäßig überwachen und disavowen'
+    ]);
+
+    // ===== 9. GOOGLE-BEWERTUNGEN =====
+    addNewPageIfNeeded(40);
+    addTitle('9. Google-Bewertungen (Bewertung: 4.6/5)', 14);
+    
+    addSection('Bewertungsmanagement und Online-Reputation:', [
+      `• Durchschnittliche Bewertung: ${detailedAnalysisData.googleReviews.average}/5 - Hervorragende Kundenzufriedenheit`,
+      `• Gesamtanzahl Bewertungen: ${detailedAnalysisData.googleReviews.total} - Solide Basis für Vertrauen`,
+      `• Bewertungsfrequenz: ${detailedAnalysisData.googleReviews.recent} - Zeigt kontinuierliche Aktivität`,
+      '• Antwortverhalten: Aktive Kommunikation mit Kunden in Bewertungen'
+    ]);
+
+    addSection('Bewertungsoptimierung:', [
+      '• Systematisches Einsammeln von Bewertungen nach Projekten',
+      '• Professionelle Antworten auf alle Bewertungen',
+      '• Negative Bewertungen als Verbesserungschancen nutzen',
+      '• Bewertungs-QR-Codes für einfache Abgabe entwickeln'
+    ]);
+
+    // ===== 10. SOCIAL MEDIA ANALYSE =====
+    addNewPageIfNeeded(40);
+    addTitle('10. Social Media Analyse (Bewertung: 3.4/5)', 14);
+    
+    addSection('Social Media Präsenz und Aktivität:', [
+      `• Facebook: ${detailedAnalysisData.socialMedia.facebook} - Profil vorhanden aber wenig gepflegt`,
+      `• Instagram: ${detailedAnalysisData.socialMedia.instagram} - Großes Potential für Handwerksbetrieb ungenutzt`,
+      `• LinkedIn: ${detailedAnalysisData.socialMedia.linkedin} - Grundprofil ohne regelmäßige Aktivität`
+    ]);
+
+    addSection('Social Media Empfehlungen:', [
+      '• Instagram für Projekt-Dokumentation und Before/After Bilder nutzen',
+      '• Facebook für lokale Community-Interaktion aktivieren',
+      '• LinkedIn für B2B-Kontakte und Partnerschaften ausbauen',
+      '• Regelmäßige Posts mit handwerklichen Tipps und Projekten'
+    ]);
+
+    // ===== 11. SOCIAL PROOF =====
+    addNewPageIfNeeded(40);
+    addTitle('11. Social Proof (Bewertung: 4.2/5)', 14);
     
     addSection('Vertrauenssignale und Glaubwürdigkeit:', [
       `• Google-Bewertungen: ${detailedAnalysisData.socialProof.googleReviews} - Ausgezeichnete Kundenzufriedenheit`,
@@ -444,9 +601,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Social Media Aktivität für mehr Sichtbarkeit steigern'
     ]);
 
-    // ===== 9. CONVERSION-OPTIMIERUNG =====
+    // ===== 12. CONVERSION-OPTIMIERUNG =====
     addNewPageIfNeeded(50);
-    addTitle('9. Conversion-Optimierung (Bewertung: 3.5/5)', 14);
+    addTitle('12. Conversion-Optimierung (Bewertung: 3.5/5)', 14);
     
     addSection('Conversion-Elemente und Nutzerführung:', [
       `• Kontaktformulare: ${detailedAnalysisData.conversion.contactForms} - Grundausstattung vorhanden`,
@@ -463,40 +620,162 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• A/B-Tests für verschiedene Call-to-Action Varianten'
     ]);
 
-    // ===== 10. HANDLUNGSEMPFEHLUNGEN =====
+    // ===== 13. DETAILLIERTE ARBEITSPLATZ-BEWERTUNGEN =====
+    addNewPageIfNeeded(80);
+    addTitle('13. Detaillierte Arbeitsplatz-Bewertungen (Bewertung: 3.6/5)', 14);
+    
+    addSection('Übersicht der Arbeitsplatz-Bewertungen:', [
+      `• Gesamtscore: ${detailedAnalysisData.workplaceReviews.overallScore}/100 Punkte - Solide Arbeitgeberbewertung`,
+      '• Plattform-Verteilung: Präsenz auf 3 wichtigen Bewertungsplattformen',
+      '• Verifizierungsstatus: Teilweise verifizierte Profile vorhanden'
+    ]);
+
+    // Detaillierte Plattform-Analyse
+    addTitle('13.1 Plattform-spezifische Bewertungen', 12);
+    
+    detailedAnalysisData.workplaceReviews.platforms.forEach((platform, index) => {
+      addNewPageIfNeeded(40);
+      
+      doc.setFontSize(12);
+      doc.setFont(undefined, 'bold');
+      doc.text(`${platform.name} (${platform.verified ? 'Verifiziert' : 'Nicht verifiziert'})`, margin, yPosition);
+      yPosition += lineHeight + 2;
+      
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      addWrappedText(`Gesamtbewertung: ${platform.rating}/5 basierend auf ${platform.reviews} Bewertungen`, margin + 5, maxWidth - 5);
+      yPosition += 3;
+      
+      addSection('Detailbewertungen:', [
+        `• Work-Life-Balance: ${platform.categories.workLifeBalance}/5`,
+        `• Gehalt & Benefits: ${platform.categories.salary}/5`,
+        `• Arbeitsatmosphäre: ${platform.categories.atmosphere}/5`,
+        `• Führung & Management: ${platform.categories.management}/5`,
+        `• Karriere & Entwicklung: ${platform.categories.career}/5`
+      ], 10);
+      yPosition += 5;
+    });
+
+    // Employer Branding Analyse
+    addNewPageIfNeeded(50);
+    addTitle('13.2 Employer Branding Analyse', 12);
+    
+    addSection('Arbeitgeber-Marke und Online-Präsenz:', [
+      `• Employer Brand Score: ${detailedAnalysisData.workplaceReviews.employerBranding.score}/100`,
+      `• Online-Präsenz als Arbeitgeber: ${detailedAnalysisData.workplaceReviews.employerBranding.presence}`,
+      `• Aktuelle Stellenausschreibungen: ${detailedAnalysisData.workplaceReviews.employerBranding.jobPostings}`,
+      `• Unternehmensbeschreibung: ${detailedAnalysisData.workplaceReviews.employerBranding.companyDescription ? 'Vollständig' : 'Unvollständig'}`
+    ]);
+
+    addSection('Angebotene Benefits:', 
+      detailedAnalysisData.workplaceReviews.employerBranding.benefits.map(benefit => `✓ ${benefit}`)
+    );
+
+    addSection('Häufige Kritikpunkte:', 
+      detailedAnalysisData.workplaceReviews.employerBranding.weaknesses.map(weakness => `× ${weakness}`)
+    );
+
+    // Recruiting und Mitarbeiterbindung
+    addNewPageIfNeeded(40);
+    addTitle('13.3 Recruiting und Mitarbeiterbindung', 12);
+    
+    addSection('Recruiting-Performance:', [
+      `• Aktives Recruiting: ${detailedAnalysisData.workplaceReviews.recruitment.activeRecruiting ? 'Ja' : 'Nein'}`,
+      `• Durchschnittliche Antwortzeit: ${detailedAnalysisData.workplaceReviews.recruitment.responseTime}`,
+      `• Anzahl Job-Portale: ${detailedAnalysisData.workplaceReviews.recruitment.jobPortals}`,
+      `• Social Media Recruiting: ${detailedAnalysisData.workplaceReviews.recruitment.socialMediaRecruiting ? 'Aktiv' : 'Inaktiv'}`
+    ]);
+
+    addSection('Mitarbeiterbindung und Zufriedenheit:', [
+      `• Durchschnittliche Betriebszugehörigkeit: ${detailedAnalysisData.workplaceReviews.employeeRetention.averageTenure}`,
+      `• Fluktuationsrate: ${detailedAnalysisData.workplaceReviews.employeeRetention.turnoverRate}`,
+      `• Mitarbeiterzufriedenheit: ${detailedAnalysisData.workplaceReviews.employeeRetention.satisfaction}%`
+    ]);
+
+    addSection('Arbeitsplatz-Optimierungsempfehlungen:', [
+      '• Kununu-Profil regelmäßig pflegen und auf Bewertungen antworten',
+      '• Mitarbeiter-Benefits transparenter kommunizieren',
+      '• Karriereentwicklungsmöglichkeiten aufzeigen und fördern',
+      '• Gehaltsstruktur marktgerecht anpassen',
+      '• Social Media Recruiting-Strategie entwickeln',
+      '• Employer Branding durch Mitarbeiter-Testimonials stärken',
+      '• Onboarding-Prozess optimieren für bessere erste Eindrücke',
+      '• Work-Life-Balance Maßnahmen ausbauen'
+    ]);
+
+    // ===== 14. IMPRESSUM UND RECHTLICHES =====
+    addNewPageIfNeeded(40);
+    addTitle('14. Impressum und rechtliche Konformität (Bewertung: 4.4/5)', 14);
+    
+    addSection('Rechtliche Vollständigkeit:', [
+      `• Impressum vorhanden: ${detailedAnalysisData.imprint.present ? 'Ja' : 'Nein'} - Gesetzliche Anforderung erfüllt`,
+      `• Vollständigkeit: ${detailedAnalysisData.imprint.complete ? 'Vollständig' : 'Unvollständig'} - Alle Pflichtangaben enthalten`,
+      `• Erreichbarkeit: ${detailedAnalysisData.imprint.accessible ? 'Gut erreichbar' : 'Schwer auffindbar'} - Einfach zu finden`
+    ]);
+
+    addSection('Rechtliche Empfehlungen:', [
+      '• Datenschutzerklärung regelmäßig aktualisieren',
+      '• Cookie-Hinweise DSGVO-konform gestalten',
+      '• AGB für Dienstleistungen hinzufügen',
+      '• Haftungsausschlüsse überprüfen'
+    ]);
+
+    // ===== 15. BRANCHENSPEZIFISCHE FEATURES =====
+    addNewPageIfNeeded(40);
+    addTitle('15. Branchenspezifische Features (Bewertung: 4.0/5)', 14);
+    
+    addSection('Branchenspezifische Optimierung:', [
+      `• Branchenspezifische Inhalte: ${detailedAnalysisData.industry.specific ? 'Vorhanden' : 'Fehlen'} - Gute Ausrichtung auf ${industryNames[businessData.industry]}`,
+      `• Zertifizierungen sichtbar: ${detailedAnalysisData.industry.certifications ? 'Ja' : 'Nein'} - Fachkompetenz wird kommuniziert`,
+      `• Service-Portfolio: ${detailedAnalysisData.industry.services} - Umfassende Darstellung der Leistungen`
+    ]);
+
+    addSection('Branchenspezifische Empfehlungen:', [
+      '• Notdienst-Verfügbarkeit prominenter hervorheben',
+      '• Referenzprojekte mit Vorher-Nachher Bildern zeigen',
+      '• Wartungsverträge und Services erklären',
+      '• Energieeffizienz und Nachhaltigkeit betonen',
+      '• Lokale Expertise und Gebietskenntnisse herausstellen'
+    ]);
+
+    // ===== 16. PRIORISIERTE HANDLUNGSEMPFEHLUNGEN =====
     addNewPageIfNeeded(60);
-    addTitle('10. Priorisierte Handlungsempfehlungen', 14);
+    addTitle('16. Priorisierte Handlungsempfehlungen', 14);
     
     addSection('Priorität 1 - Sofortige Maßnahmen (1-4 Wochen):', [
+      '• Arbeitsplatz-Bewertungen aktiv managen und auf Kritik reagieren',
       '• Call-to-Action Buttons überarbeiten und prominenter platzieren',
       '• Keyword-Dichte für lokale Suchbegriffe in wichtigen Seiten erhöhen',
       '• Google My Business Profil mit aktuellen Bildern und Posts pflegen',
       '• Mobile Kontaktmöglichkeiten (Click-to-Call) verbessern',
-      '• Kundenbewertungen aktiv einsammeln und auf Website darstellen'
+      '• Social Media Profile reaktivieren und Content-Plan entwickeln'
     ]);
 
     addSection('Priorität 2 - Mittelfristige Optimierungen (1-3 Monate):', [
+      '• Employer Branding-Strategie entwickeln und umsetzen',
       '• Content-Strategie entwickeln und regelmäßigen Blog starten',
+      '• Instagram für Projektdokumentation und Kundengewinnung nutzen',
       '• Ladezeiten durch Bildoptimierung und Caching weiter verbessern',
-      '• Social Media Präsenz ausbauen (Facebook, Instagram)',
       '• Lokale Backlink-Strategie implementieren',
       '• FAQ-Bereich erweitern und strukturieren',
       '• Online-Terminbuchung oder Kostenvoranschlag-Tool integrieren',
-      '• Konkurrenzvorteile gegenüber Müller Handwerk GmbH erarbeiten',
-      '• Modernere Website-Gestaltung als Antwort auf Schmidt & Partner'
+      '• Mitarbeiter-Benefits transparenter kommunizieren'
     ]);
 
     addSection('Priorität 3 - Langfristige Strategien (3-12 Monate):', [
-      '• Umfassende Content-Marketing-Strategie mit Video-Content',
+      '• Umfassende Employer Branding-Kampagne mit Mitarbeiter-Testimonials',
+      '• Content-Marketing-Strategie mit Video-Content und Tutorials',
+      '• Social Media Recruiting-Programm etablieren',
       '• Expansion in weitere lokale Verzeichnisse und Plattformen',
       '• Entwicklung von Landing-Pages für spezifische Services',
       '• A/B-Testing-Programm für kontinuierliche Optimierung',
-      '• Retargeting-Kampagnen für Website-Besucher einrichten'
+      '• Retargeting-Kampagnen für Website-Besucher einrichten',
+      '• Mitarbeiterentwicklungsprogramme für bessere Bewertungen'
     ]);
 
-    // ===== 11. MONITORING UND ERFOLGSMESSUNG =====
+    // ===== 17. MONITORING UND ERFOLGSMESSUNG =====
     addNewPageIfNeeded(40);
-    addTitle('11. Monitoring und Erfolgsmessung', 14);
+    addTitle('17. Monitoring und Erfolgsmessung', 14);
     
     addSection('KPIs und Metriken zur Überwachung:', [
       '• Organische Sichtbarkeit: Ranking-Positionen für Haupt-Keywords monatlich prüfen',
@@ -504,6 +783,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Conversion-Rate: Kontaktanfragen pro 100 Website-Besucher messen',
       '• Lokale Sichtbarkeit: Google My Business Insights regelmäßig auswerten',
       '• Online-Reputation: Bewertungen auf verschiedenen Plattformen monitoren',
+      '• Arbeitsplatz-Bewertungen: Monatliche Überprüfung auf Kununu, Xing und StepStone',
+      '• Social Media Engagement: Reichweite, Interaktionen und Follower-Wachstum',
       '• Konkurrenz-Monitoring: Monatliche Überprüfung der Konkurrenten-Aktivitäten'
     ]);
 
@@ -511,13 +792,15 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Google Analytics für Website-Performance',
       '• Google Search Console für SEO-Überwachung',
       '• Google My Business Insights für lokale Performance',
+      '• Kununu Business für Employer Branding Monitoring',
+      '• Social Media Management Tools für Content-Planung',
       '• SEO-Tools wie SEMrush oder Ahrefs für Keyword-Tracking',
       '• Review-Management-Tools für Bewertungsmonitoring'
     ]);
 
-    // ===== 12. ANHANG =====
+    // ===== 18. ANHANG =====
     addNewPageIfNeeded(30);
-    addTitle('12. Anhang', 14);
+    addTitle('18. Anhang', 14);
     
     addSection('Analysemethodik und verwendete Tools:', [
       '• Google PageSpeed Insights für Performance-Bewertung',
@@ -525,13 +808,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Mobile-First Testing auf verschiedenen Geräten',
       '• Lokale Suchsimulation für verschiedene Keywords',
       '• Wettbewerbsanalyse durch systematische Vergleiche',
-      '• Content-Audit durch manuelle Überprüfung aller Seiten'
+      '• Content-Audit durch manuelle Überprüfung aller Seiten',
+      '• Arbeitsplatz-Bewertungsanalyse auf allen relevanten Plattformen',
+      '• Social Media Audit für Präsenz und Engagement-Analyse'
     ]);
 
     addSection('Analysezeitraum und Datenbasis:', [
       `• Datenerhebung: ${currentDate}`,
-      '• Betrachtungszeitraum: Aktuelle Website-Version',
+      '• Betrachtungszeitraum: Aktuelle Website-Version und 12 Monate Verlaufsdaten',
       '• Vergleichsdaten: Lokale Wettbewerber aus derselben Branche',
+      '• Arbeitsplatz-Bewertungen: Berücksichtigung der letzten 24 Monate',
       '• Nächste Überprüfung empfohlen: In 6 Monaten',
       '• Zwischencheck empfohlen: Nach 3 Monaten für Quick-Wins'
     ]);
@@ -540,8 +826,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       'Für Fragen zu diesem Bericht oder Unterstützung bei der Umsetzung',
       'der Empfehlungen stehen wir gerne zur Verfügung.',
       '',
+      'Besonders bei der Implementierung von Employer Branding-Maßnahmen',
+      'und der Optimierung der Arbeitsplatz-Bewertungen bieten wir',
+      'spezialisierte Beratung an.',
+      '',
       'Dieser Bericht wurde automatisch generiert und basiert auf',
-      'aktuellen Best Practices im Online-Marketing und SEO.'
+      'aktuellen Best Practices im Online-Marketing, SEO und Employer Branding.'
     ]);
 
     // Seitenzahlen hinzufügen
@@ -582,7 +872,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     doc.setFont(undefined, 'normal');
     doc.text('✓ SEO gut optimiert (4.5/5)', 20, 130);
     doc.text('✓ Mobile-Optimierung sehr gut (4.3/5)', 20, 140);
-    doc.text('✓ Social Proof stark (4.2/5)', 20, 150);
+    doc.text('✓ Google-Bewertungen hervorragend (4.6/5)', 20, 150);
     doc.text('✓ Performance zufriedenstellend (4.1/5)', 20, 160);
     
     doc.setFont(undefined, 'bold');
@@ -590,14 +880,15 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     doc.setFont(undefined, 'normal');
     doc.text('• Conversion-Rate optimieren (3.5/5)', 20, 190);
     doc.text('• Keyword-Strategie überarbeiten (3.8/5)', 20, 200);
-    doc.text('• Wettbewerbsposition stärken (3.7/5)', 20, 210);
+    doc.text('• Arbeitsplatz-Bewertungen verbessern (3.6/5)', 20, 210);
+    doc.text('• Social Media Präsenz stärken (3.4/5)', 20, 220);
 
     doc.setFont(undefined, 'bold');
-    doc.text('Sofortige Maßnahmen:', 20, 230);
+    doc.text('Sofortige Maßnahmen:', 20, 240);
     doc.setFont(undefined, 'normal');
-    doc.text('1. Call-to-Action Buttons optimieren', 20, 240);
-    doc.text('2. Lokale Keywords verstärken', 20, 250);
-    doc.text('3. Social Media Aktivität steigern', 20, 260);
+    doc.text('1. Arbeitsplatz-Bewertungen aktiv managen', 20, 250);
+    doc.text('2. Call-to-Action Buttons optimieren', 20, 260);
+    doc.text('3. Social Media Profile reaktivieren', 20, 270);
 
     return doc;
   };
@@ -633,8 +924,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     { name: "Lokale SEO-Faktoren", pages: 2, included: true },
     { name: "Content-Analyse", pages: 2, included: true },
     { name: "Detaillierte Konkurrenzanalyse", pages: 3, included: true },
+    { name: "Backlink-Analyse", pages: 1, included: true },
+    { name: "Google-Bewertungen", pages: 1, included: true },
+    { name: "Social Media Analyse", pages: 1, included: true },
     { name: "Social Proof", pages: 1, included: true },
     { name: "Conversion-Optimierung", pages: 2, included: true },
+    { name: "Detaillierte Arbeitsplatz-Bewertungen", pages: 3, included: true },
+    { name: "Impressum und rechtliche Konformität", pages: 1, included: true },
+    { name: "Branchenspezifische Features", pages: 1, included: true },
     { name: "Handlungsempfehlungen", pages: 2, included: true },
     { name: "Anhang", pages: 1, included: true }
   ];
@@ -651,7 +948,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
             PDF-Export
           </CardTitle>
           <CardDescription>
-            Vollständiger Analysebericht als PDF-Datei
+            Vollständiger Analysebericht mit allen 15 Bereichen als PDF-Datei
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -682,7 +979,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
             {/* Berichtsinhalt */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Berichtsinhalt</CardTitle>
+                <CardTitle className="text-lg">Berichtsinhalt - Alle 15 Analysebereiche</CardTitle>
                 <CardDescription>
                   Übersicht der enthaltenen Analysebereiche ({totalPages} Seiten)
                 </CardDescription>
@@ -720,13 +1017,13 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                     <div className="p-4 border rounded-lg">
                       <h4 className="font-medium mb-2">Vollständiger Report</h4>
                       <p className="text-sm text-gray-600 mb-3">
-                        Detaillierter Analysebericht mit allen Bewertungen, Daten und Empfehlungen
+                        Detaillierter Analysebericht mit allen 15 Bewertungen, Daten und Empfehlungen
                       </p>
                       <ul className="text-xs text-gray-500 space-y-1">
-                        <li>• Alle 11 Analysebereiche</li>
-                        <li>• Detaillierte Bewertungen und Daten</li>
+                        <li>• Alle 15 Analysebereiche vollständig</li>
+                        <li>• Detaillierte Arbeitsplatz-Bewertungen</li>
+                        <li>• Konkurrenzanalyse mit Vor-/Nachteilen</li>
                         <li>• Priorisierte Handlungsempfehlungen</li>
-                        <li>• Detaillierte Konkurrenzanalyse mit Vor-/Nachteilen</li>
                         <li>• Technische Details und Methodik</li>
                         <li>• {totalPages} Seiten umfassend</li>
                       </ul>
@@ -795,7 +1092,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   <div className="flex items-start gap-2">
                     <span className="text-orange-600">📊</span>
                     <span>
-                      Detaillierte Konkurrenzanalyse mit spezifischen Vor- und Nachteilen aller Mitbewerber
+                      Detaillierte Arbeitsplatz-Bewertungen mit allen Plattformen und Employer Branding
                     </span>
                   </div>
                 </div>
