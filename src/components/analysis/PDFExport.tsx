@@ -77,7 +77,71 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       position: "3 von 15",
       marketShare: "12%",
       strengths: "Gute Bewertungen",
-      weaknesses: "Weniger Online-Präsenz"
+      weaknesses: "Weniger Online-Präsenz",
+      competitors: [
+        {
+          name: "Müller Handwerk GmbH",
+          distance: "1.2 km",
+          rating: 4.3,
+          reviews: 89,
+          website: "professionell",
+          socialMedia: "aktiv",
+          ranking: "höher",
+          advantages: [
+            "Sehr professionelle Website mit modernem Design",
+            "Aktive Social Media Präsenz mit regelmäßigen Posts",
+            "Höhere Anzahl an Google-Bewertungen",
+            "Bessere lokale SEO-Optimierung"
+          ],
+          disadvantages: [
+            "Höhere Preise laut Kundenfeedback",
+            "Längere Wartezeiten für Termine",
+            "Weniger persönlicher Service"
+          ]
+        },
+        {
+          name: "Schmidt & Partner",
+          distance: "2.1 km", 
+          rating: 4.1,
+          reviews: 156,
+          website: "basic",
+          socialMedia: "wenig aktiv",
+          ranking: "ähnlich",
+          advantages: [
+            "Sehr viele Kundenbewertungen und Referenzen",
+            "Langjährige Erfahrung und Reputation",
+            "Breites Servicespektrum",
+            "Gute Erreichbarkeit und Standort"
+          ],
+          disadvantages: [
+            "Veraltetes Website-Design",
+            "Schwache Social Media Aktivität",
+            "Unübersichtliche Online-Präsenz",
+            "Fehlende moderne Online-Services"
+          ]
+        },
+        {
+          name: "Handwerksprofi24",
+          distance: "3.5 km",
+          rating: 3.9,
+          reviews: 67,
+          website: "veraltet",
+          socialMedia: "inaktiv",
+          ranking: "niedriger",
+          advantages: [
+            "24-Stunden Notdienst verfügbar",
+            "Günstige Preise",
+            "Flexible Terminvereinbarung"
+          ],
+          disadvantages: [
+            "Veraltete und unprofessionelle Website",
+            "Keine Social Media Präsenz",
+            "Wenige Online-Bewertungen",
+            "Schwache digitale Sichtbarkeit",
+            "Unklare Servicequalität"
+          ]
+        }
+      ]
     },
     socialProof: {
       score: 4.2,
@@ -293,9 +357,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Kundenprojekte und Case Studies präsentieren'
     ]);
 
-    // ===== 7. KONKURRENZANALYSE =====
-    addNewPageIfNeeded(50);
-    addTitle('7. Konkurrenzanalyse (Bewertung: 3.7/5)', 14);
+    // ===== 7. DETAILLIERTE KONKURRENZANALYSE =====
+    addNewPageIfNeeded(80);
+    addTitle('7. Detaillierte Konkurrenzanalyse (Bewertung: 3.7/5)', 14);
     
     addSection('Marktposition und Wettbewerb:', [
       `• Marktposition: ${detailedAnalysisData.competition.position} - Solide Position im lokalen Markt`,
@@ -304,11 +368,62 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       `• Schwächen vs. Konkurrenz: ${detailedAnalysisData.competition.weaknesses} - Digitale Sichtbarkeit verstärken`
     ]);
 
+    // Detaillierte Konkurrenten-Profile
+    addTitle('7.1 Konkurrenten-Profile im Detail', 12);
+    
+    detailedAnalysisData.competition.competitors.forEach((competitor, index) => {
+      addNewPageIfNeeded(60);
+      
+      // Konkurrent Überschrift
+      doc.setFontSize(12);
+      doc.setFont(undefined, 'bold');
+      doc.text(`${index + 1}. ${competitor.name}`, margin, yPosition);
+      yPosition += lineHeight + 3;
+      
+      // Basis-Informationen
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      addWrappedText(`Entfernung: ${competitor.distance} | Bewertung: ${competitor.rating}/5 (${competitor.reviews} Bewertungen)`, margin + 5, maxWidth - 5);
+      addWrappedText(`Website-Qualität: ${competitor.website} | Social Media: ${competitor.socialMedia} | Ranking: ${competitor.ranking}`, margin + 5, maxWidth - 5);
+      yPosition += 3;
+      
+      // Wettbewerbsvorteile
+      doc.setFontSize(11);
+      doc.setFont(undefined, 'bold');
+      doc.text('Wettbewerbsvorteile:', margin + 5, yPosition);
+      yPosition += lineHeight;
+      
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      competitor.advantages.forEach(advantage => {
+        addNewPageIfNeeded();
+        addWrappedText(`✓ ${advantage}`, margin + 10, maxWidth - 10);
+      });
+      yPosition += 3;
+      
+      // Schwächen/Nachteile
+      doc.setFontSize(11);
+      doc.setFont(undefined, 'bold');
+      doc.text('Schwächen/Nachteile:', margin + 5, yPosition);
+      yPosition += lineHeight;
+      
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      competitor.disadvantages.forEach(disadvantage => {
+        addNewPageIfNeeded();
+        addWrappedText(`× ${disadvantage}`, margin + 10, maxWidth - 10);
+      });
+      yPosition += 8;
+    });
+
     addSection('Wettbewerbsanalyse-Erkenntnisse:', [
       '• Hauptkonkurrenten haben stärkere Social Media Präsenz',
       '• Content-Marketing wird von Wettbewerbern intensiver genutzt',
       '• Preistransparenz auf Websites der Konkurrenz häufiger',
-      '• Online-Terminbuchung als Wettbewerbsvorteil etablieren'
+      '• Online-Terminbuchung als Wettbewerbsvorteil etablieren',
+      '• Müller Handwerk GmbH setzt Maßstäbe bei digitaler Präsenz',
+      '• Schmidt & Partner punktet mit Erfahrung trotz schwacher Online-Präsenz',
+      '• Handwerksprofi24 zeigt Risiken einer vernachlässigten Digitalisierung'
     ]);
 
     // ===== 8. SOCIAL PROOF =====
@@ -366,7 +481,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Social Media Präsenz ausbauen (Facebook, Instagram)',
       '• Lokale Backlink-Strategie implementieren',
       '• FAQ-Bereich erweitern und strukturieren',
-      '• Online-Terminbuchung oder Kostenvoranschlag-Tool integrieren'
+      '• Online-Terminbuchung oder Kostenvoranschlag-Tool integrieren',
+      '• Konkurrenzvorteile gegenüber Müller Handwerk GmbH erarbeiten',
+      '• Modernere Website-Gestaltung als Antwort auf Schmidt & Partner'
     ]);
 
     addSection('Priorität 3 - Langfristige Strategien (3-12 Monate):', [
@@ -386,7 +503,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       '• Website-Traffic: Besucherzahlen und Herkunft über Google Analytics tracken',
       '• Conversion-Rate: Kontaktanfragen pro 100 Website-Besucher messen',
       '• Lokale Sichtbarkeit: Google My Business Insights regelmäßig auswerten',
-      '• Online-Reputation: Bewertungen auf verschiedenen Plattformen monitoren'
+      '• Online-Reputation: Bewertungen auf verschiedenen Plattformen monitoren',
+      '• Konkurrenz-Monitoring: Monatliche Überprüfung der Konkurrenten-Aktivitäten'
     ]);
 
     addSection('Empfohlene Tools für Monitoring:', [
@@ -514,7 +632,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     { name: "Mobile-Optimierung", pages: 1, included: true },
     { name: "Lokale SEO-Faktoren", pages: 2, included: true },
     { name: "Content-Analyse", pages: 2, included: true },
-    { name: "Konkurrenzanalyse", pages: 2, included: true },
+    { name: "Detaillierte Konkurrenzanalyse", pages: 3, included: true },
     { name: "Social Proof", pages: 1, included: true },
     { name: "Conversion-Optimierung", pages: 2, included: true },
     { name: "Handlungsempfehlungen", pages: 2, included: true },
@@ -608,6 +726,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                         <li>• Alle 11 Analysebereiche</li>
                         <li>• Detaillierte Bewertungen und Daten</li>
                         <li>• Priorisierte Handlungsempfehlungen</li>
+                        <li>• Detaillierte Konkurrenzanalyse mit Vor-/Nachteilen</li>
                         <li>• Technische Details und Methodik</li>
                         <li>• {totalPages} Seiten umfassend</li>
                       </ul>
@@ -671,6 +790,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                     <span className="text-purple-600">🔒</span>
                     <span>
                       Alle Daten werden lokal verarbeitet - keine Übertragung an externe Server
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-orange-600">📊</span>
+                    <span>
+                      Detaillierte Konkurrenzanalyse mit spezifischen Vor- und Nachteilen aller Mitbewerber
                     </span>
                   </div>
                 </div>
