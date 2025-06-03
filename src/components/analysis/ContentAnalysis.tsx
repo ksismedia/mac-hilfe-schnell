@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -194,7 +193,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{topic.topic}</span>
-                        <Badge variant="outline" size="sm">
+                        <Badge variant="outline">
                           {topic.importance}
                         </Badge>
                       </div>

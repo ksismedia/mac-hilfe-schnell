@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -161,7 +160,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                       <div>
                         <span className="text-gray-600">Website:</span>
                         <div className="mt-1">
-                          <Badge variant={getWebsiteQuality(competitor.website)} size="sm">
+                          <Badge variant={getWebsiteQuality(competitor.website)}>
                             {competitor.website}
                           </Badge>
                         </div>

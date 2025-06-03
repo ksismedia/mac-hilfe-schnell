@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -166,15 +165,15 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{cta.type}</span>
-                        <Badge variant="outline" size="sm">
+                        <Badge variant="outline">
                           {cta.count}x
                         </Badge>
                       </div>
                       <div className="flex gap-2">
-                        <Badge variant={getPlacementBadge(cta.placement)} size="sm">
+                        <Badge variant={getPlacementBadge(cta.placement)}>
                           {cta.placement}
                         </Badge>
-                        <Badge variant={getEffectivenessBadge(cta.effectiveness)} size="sm">
+                        <Badge variant={getEffectivenessBadge(cta.effectiveness)}>
                           {cta.effectiveness}%
                         </Badge>
                       </div>
@@ -202,10 +201,10 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
                       Telefon
                     </span>
                     <div className="flex gap-1">
-                      <Badge variant={conversionData.contactMethods.phone.visible ? "default" : "destructive"} size="sm">
+                      <Badge variant={conversionData.contactMethods.phone.visible ? "default" : "destructive"}>
                         {conversionData.contactMethods.phone.visible ? "Sichtbar" : "Versteckt"}
                       </Badge>
-                      <Badge variant={conversionData.contactMethods.phone.prominent ? "default" : "secondary"} size="sm">
+                      <Badge variant={conversionData.contactMethods.phone.prominent ? "default" : "secondary"}>
                         {conversionData.contactMethods.phone.prominent ? "Prominent" : "Unauffällig"}
                       </Badge>
                     </div>
@@ -217,10 +216,10 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
                       E-Mail
                     </span>
                     <div className="flex gap-1">
-                      <Badge variant={conversionData.contactMethods.email.visible ? "default" : "destructive"} size="sm">
+                      <Badge variant={conversionData.contactMethods.email.visible ? "default" : "destructive"}>
                         {conversionData.contactMethods.email.visible ? "Sichtbar" : "Versteckt"}
                       </Badge>
-                      <Badge variant={conversionData.contactMethods.email.prominent ? "default" : "secondary"} size="sm">
+                      <Badge variant={conversionData.contactMethods.email.prominent ? "default" : "secondary"}>
                         {conversionData.contactMethods.email.prominent ? "Prominent" : "Unauffällig"}
                       </Badge>
                     </div>
@@ -230,14 +229,14 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">Kontaktformular</span>
-                    <Badge variant={conversionData.contactMethods.form.present ? "default" : "destructive"} size="sm">
+                    <Badge variant={conversionData.contactMethods.form.present ? "default" : "destructive"}>
                       {conversionData.contactMethods.form.present ? `${conversionData.contactMethods.form.fields} Felder` : "Nicht vorhanden"}
                     </Badge>
                   </div>
                   
                   <div className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">Live Chat</span>
-                    <Badge variant={conversionData.contactMethods.chat.present ? "default" : "destructive"} size="sm">
+                    <Badge variant={conversionData.contactMethods.chat.present ? "default" : "destructive"}>
                       {conversionData.contactMethods.chat.present ? "Aktiv" : "Nicht verfügbar"}
                     </Badge>
                   </div>

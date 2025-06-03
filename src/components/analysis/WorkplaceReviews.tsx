@@ -141,7 +141,7 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({ businessData }) => 
                   <CardTitle className="text-lg flex items-center justify-between">
                     {platform.name}
                     {platform.verified && (
-                      <Badge variant="default" size="sm">Verifiziert</Badge>
+                      <Badge variant="default">Verifiziert</Badge>
                     )}
                   </CardTitle>
                 </CardHeader>
