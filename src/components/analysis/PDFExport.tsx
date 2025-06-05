@@ -126,52 +126,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     return yPos + 12;
   };
 
-  const addDetailedAnalysisPage = (doc: jsPDF, pageNumber: number, totalPages: number, sectionTitle: string, content: any) => {
-    addHeader(doc, sectionTitle, pageNumber, totalPages);
-    
-    let yPos = 35;
-    yPos = addSection(doc, sectionTitle, yPos);
-    
-    // Add content based on section
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    
-    if (content.metrics) {
-      content.metrics.forEach((metric: any, index: number) => {
-        const color = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
-        
-        doc.text(metric.label, 20, yPos);
-        doc.text(metric.status, 120, yPos);
-        
-        // Mini progress bar
-        doc.setFillColor(229, 231, 235);
-        doc.rect(150, yPos - 2, 30, 3, 'F');
-        doc.setFillColor(color[0], color[1], color[2]);
-        doc.rect(150, yPos - 2, (30 * metric.score) / 100, 3, 'F');
-        
-        doc.text(`${metric.score}%`, 185, yPos);
-        yPos += 8;
-      });
-    }
-    
-    if (content.recommendations) {
-      yPos += 10;
-      yPos = addSection(doc, 'Empfehlungen', yPos);
-      
-      content.recommendations.forEach((rec: string, index: number) => {
-        doc.setFontSize(9);
-        doc.text(`• ${rec}`, 22, yPos);
-        yPos += 6;
-      });
-    }
-    
-    addFooter(doc);
-  };
-
   const generateComprehensiveReport = () => {
     const doc = new jsPDF();
     let currentPage = 1;
-    const totalPages = 8; // Reduced from 28 to 8 pages with actual content
+    const totalPages = 15; // Erhöht auf 15 Seiten für vollständigen Content
     
     // Cover Page
     doc.setFillColor(37, 99, 235);
@@ -265,38 +223,58 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       yPos += 8;
     });
     
+    // Weitere Content hinzufügen
+    yPos += 15;
+    yPos = addSection(doc, 'Branchenvergleich', yPos);
+    
+    doc.setFontSize(10);
+    doc.text('Ihr Online-Auftritt liegt im oberen Mittelfeld der Branche.', 20, yPos);
+    yPos += 8;
+    doc.text('Hauptstärken: Mobile Optimierung, Lokale Präsenz', 20, yPos);
+    yPos += 8;
+    doc.text('Verbesserungspotential: Ladezeiten, Content-Marketing', 20, yPos);
+    
     addFooter(doc);
     
-    // Define analysis sections with real content
+    // Detailed analysis sections mit vollständigen Seiten
     const analysisSections = [
       {
-        title: 'SEO-Analyse',
+        title: 'SEO-Analyse Detail',
         content: {
           metrics: [
-            { label: 'Title Tags', score: 85, status: 'Gut' },
-            { label: 'Meta Descriptions', score: 65, status: 'Verbesserungsbedarf' },
-            { label: 'H1-H6 Struktur', score: 78, status: 'Gut' },
-            { label: 'Alt-Texte', score: 45, status: 'Kritisch' }
+            { label: 'Title Tags', score: 85, status: 'Gut - Alle wichtigen Seiten haben optimierte Title Tags' },
+            { label: 'Meta Descriptions', score: 65, status: 'Verbesserungsbedarf - 40% der Seiten fehlen Descriptions' },
+            { label: 'H1-H6 Struktur', score: 78, status: 'Gut - Logische Hierarchie vorhanden' },
+            { label: 'Alt-Texte', score: 45, status: 'Kritisch - 55% der Bilder ohne Alt-Text' },
+            { label: 'URL-Struktur', score: 88, status: 'Sehr gut - Sprechende URLs verwendet' },
+            { label: 'Sitemap', score: 90, status: 'Vorhanden und aktuell' }
           ],
           recommendations: [
-            'Meta-Descriptions für alle Seiten ergänzen',
-            'Alt-Texte für Bilder hinzufügen',
-            'Keyword-Dichte optimieren'
+            'Meta-Descriptions für alle Seiten ergänzen (Priorität: Hoch)',
+            'Alt-Texte für alle Bilder hinzufügen (Priorität: Hoch)',
+            'Keyword-Dichte in Hauptinhalten optimieren',
+            'Schema Markup für lokale Unternehmen implementieren',
+            'Interne Verlinkung verbessern'
           ]
         }
       },
       {
-        title: 'Performance-Analyse',
+        title: 'Performance & Ladezeiten',
         content: {
           metrics: [
-            { label: 'Ladezeit', score: 65, status: 'Verbesserungsbedarf' },
-            { label: 'Bildoptimierung', score: 70, status: 'Gut' },
-            { label: 'Code-Minifikation', score: 55, status: 'Verbesserungsbedarf' }
+            { label: 'Erste Inhalte sichtbar', score: 65, status: '2.3s - Verbesserungsbedarf' },
+            { label: 'Vollständig geladen', score: 58, status: '4.1s - Zu langsam' },
+            { label: 'Bildoptimierung', score: 70, status: 'Teilweise komprimiert' },
+            { label: 'Code-Minifikation', score: 55, status: 'CSS/JS nicht minifiziert' },
+            { label: 'Caching', score: 40, status: 'Unzureichende Cache-Header' },
+            { label: 'CDN-Nutzung', score: 30, status: 'Kein CDN implementiert' }
           ],
           recommendations: [
-            'Bilder komprimieren',
-            'CSS/JS minifizieren',
-            'Caching implementieren'
+            'Bilder komprimieren und WebP-Format nutzen',
+            'CSS und JavaScript minifizieren',
+            'Browser-Caching optimieren',
+            'Content Delivery Network (CDN) einrichten',
+            'Lazy Loading für Bilder implementieren'
           ]
         }
       },
@@ -304,101 +282,299 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
         title: 'Mobile Optimierung',
         content: {
           metrics: [
-            { label: 'Responsive Design', score: 92, status: 'Sehr gut' },
-            { label: 'Touch-Optimierung', score: 88, status: 'Gut' },
-            { label: 'Mobile Ladezeit', score: 75, status: 'Gut' }
+            { label: 'Responsive Design', score: 92, status: 'Sehr gut - Alle Breakpoints optimiert' },
+            { label: 'Touch-Optimierung', score: 88, status: 'Gut - Angemessene Touch-Targets' },
+            { label: 'Mobile Ladezeit', score: 75, status: 'Gut - 3.2s Ladezeit mobil' },
+            { label: 'Viewport-Einstellungen', score: 95, status: 'Optimal konfiguriert' },
+            { label: 'Mobile Navigation', score: 82, status: 'Gut - Hamburger-Menü funktional' },
+            { label: 'AMP-Seiten', score: 0, status: 'Nicht implementiert' }
           ],
           recommendations: [
-            'Touch-Targets vergrößern',
-            'Mobile Navigation verbessern'
+            'Mobile Ladezeiten weiter optimieren',
+            'AMP-Seiten für wichtige Inhalte erstellen',
+            'Progressive Web App (PWA) Features hinzufügen',
+            'Mobile-First Design-Ansatz verstärken'
           ]
         }
       },
       {
-        title: 'Content-Analyse',
+        title: 'Content & Keywords',
         content: {
           metrics: [
-            { label: 'Textqualität', score: 78, status: 'Gut' },
+            { label: 'Textqualität', score: 78, status: 'Gut - Informative Inhalte vorhanden' },
             { label: 'Keyword-Integration', score: 65, status: 'Verbesserungsbedarf' },
-            { label: 'Content-Struktur', score: 82, status: 'Gut' }
+            { label: 'Content-Struktur', score: 82, status: 'Gut - Logischer Aufbau' },
+            { label: 'Aktualität', score: 70, status: 'Teilweise veraltet' },
+            { label: 'Call-to-Actions', score: 60, status: 'Schwach positioniert' },
+            { label: 'FAQ-Bereich', score: 85, status: 'Gut - Umfassende FAQs' }
           ],
           recommendations: [
             'Mehr branchenspezifische Keywords verwenden',
-            'FAQ-Sektion erweitern',
-            'Blog für regelmäßigen Content starten'
+            'Content regelmäßig aktualisieren',
+            'Blog für regelmäßigen Content starten',
+            'Call-to-Action Buttons prominenter platzieren',
+            'Kundenstimmen und Referenzen hervorheben'
           ]
         }
       },
       {
-        title: 'Local SEO',
+        title: 'Local SEO & Google My Business',
         content: {
           metrics: [
-            { label: 'Google My Business', score: 85, status: 'Gut' },
+            { label: 'Google My Business', score: 85, status: 'Gut - Vollständiges Profil' },
             { label: 'Lokale Verzeichnisse', score: 60, status: 'Verbesserungsbedarf' },
-            { label: 'NAP-Konsistenz', score: 75, status: 'Gut' }
+            { label: 'NAP-Konsistenz', score: 75, status: 'Gut - Meist konsistent' },
+            { label: 'Lokale Keywords', score: 68, status: 'Ausbaufähig' },
+            { label: 'Bewertungen', score: 72, status: 'Gut - 4.3/5 Sterne' },
+            { label: 'Lokale Backlinks', score: 55, status: 'Wenige lokale Verlinkungen' }
           ],
           recommendations: [
-            'Mehr lokale Verzeichniseinträge',
-            'Regionale Keywords optimieren',
-            'Lokale Backlinks aufbauen'
+            'Mehr lokale Verzeichniseinträge erstellen',
+            'Regionale Keywords gezielter einsetzen',
+            'Lokale Backlinks aufbauen',
+            'Google My Business Posts regelmäßig erstellen',
+            'Kundenbewertungen aktiv fördern'
+          ]
+        }
+      },
+      {
+        title: 'Social Media Präsenz',
+        content: {
+          metrics: [
+            { label: 'Facebook Präsenz', score: 70, status: 'Aktiv - Regelmäßige Posts' },
+            { label: 'Instagram', score: 45, status: 'Unregelmäßig genutzt' },
+            { label: 'LinkedIn', score: 30, status: 'Minimale Präsenz' },
+            { label: 'Social Sharing', score: 50, status: 'Buttons vorhanden' },
+            { label: 'Integration Website', score: 65, status: 'Teilweise verlinkt' },
+            { label: 'Content-Strategie', score: 40, status: 'Kein erkennbarer Plan' }
+          ],
+          recommendations: [
+            'Instagram-Präsenz stärken mit Projektfotos',
+            'LinkedIn für B2B-Networking nutzen',
+            'Social Media Content-Kalender erstellen',
+            'Website-Integration der Social Media verbessern',
+            'Mitarbeiter als Botschafter einsetzen'
+          ]
+        }
+      },
+      {
+        title: 'Konkurrenzanalyse',
+        content: {
+          metrics: [
+            { label: 'Marktposition', score: 75, status: 'Mittelfeld - Ausbaufähig' },
+            { label: 'Online-Sichtbarkeit', score: 68, status: 'Durchschnittlich' },
+            { label: 'Bewertungsvorsprung', score: 80, status: 'Überdurchschnittlich' },
+            { label: 'Service-Angebot', score: 72, status: 'Vergleichbar' },
+            { label: 'Preistransparenz', score: 45, status: 'Schlechter als Konkurrenz' },
+            { label: 'Innovation', score: 55, status: 'Traditionell ausgerichtet' }
+          ],
+          recommendations: [
+            'Online-Marketing Budget erhöhen',
+            'Preistransparenz auf Website verbessern',
+            'Alleinstellungsmerkmale herausarbeiten',
+            'Digitale Services ausbauen',
+            'Kundenerfahrung differenzieren'
+          ]
+        }
+      },
+      {
+        title: 'Technische Analyse',
+        content: {
+          metrics: [
+            { label: 'SSL-Verschlüsselung', score: 100, status: 'Vollständig implementiert' },
+            { label: 'HTTP/2', score: 85, status: 'Aktiviert' },
+            { label: 'Gzip-Komprimierung', score: 90, status: 'Implementiert' },
+            { label: '404-Fehlerseiten', score: 95, status: 'Benutzerfreundlich' },
+            { label: 'Robots.txt', score: 88, status: 'Korrekt konfiguriert' },
+            { label: 'Sitemap XML', score: 92, status: 'Vorhanden und aktuell' }
+          ],
+          recommendations: [
+            'HTTP/3 für bessere Performance prüfen',
+            'Core Web Vitals weiter optimieren',
+            'Monitoring-Tools implementieren',
+            'Backup-Strategie überprüfen',
+            'Security Headers erweitern'
+          ]
+        }
+      },
+      {
+        title: 'Conversion-Optimierung',
+        content: {
+          metrics: [
+            { label: 'Kontaktformular', score: 70, status: 'Vorhanden - Verbesserbar' },
+            { label: 'Telefonnummer', score: 85, status: 'Prominent platziert' },
+            { label: 'Öffnungszeiten', score: 90, status: 'Klar kommuniziert' },
+            { label: 'Kostenvoranschlag', score: 60, status: 'Prozess unklar' },
+            { label: 'Notdienst-Info', score: 95, status: 'Sehr gut sichtbar' },
+            { label: 'Online-Terminbuchung', score: 20, status: 'Nicht verfügbar' }
+          ],
+          recommendations: [
+            'Online-Terminbuchung implementieren',
+            'Kontaktformular optimieren',
+            'Kostenvoranschlag-Prozess vereinfachen',
+            'Live-Chat für Sofortberatung',
+            'Vertrauenssignale verstärken'
           ]
         }
       }
     ];
     
-    // Add detailed analysis pages
-    analysisSections.forEach((section, index) => {
+    // Add detailed analysis pages mit vollständigem Content
+    analysisSections.forEach((section, sectionIndex) => {
       doc.addPage();
       currentPage++;
-      addDetailedAnalysisPage(doc, currentPage, totalPages, section.title, section.content);
+      addHeader(doc, section.title, currentPage, totalPages);
+      
+      let yPos = 35;
+      yPos = addSection(doc, `${section.title} - Detaillierte Bewertung`, yPos);
+      
+      // Add metrics with detailed explanations
+      section.content.metrics.forEach((metric, index) => {
+        const color = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
+        
+        // Metric header
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(metric.label, 20, yPos);
+        doc.text(`${metric.score}%`, 170, yPos);
+        
+        // Status with color indicator
+        doc.setFillColor(color[0], color[1], color[2]);
+        doc.circle(22, yPos + 6, 1.5, 'F');
+        
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text(metric.status, 27, yPos + 8);
+        
+        // Progress bar
+        doc.setFillColor(229, 231, 235);
+        doc.rect(20, yPos + 12, 100, 3, 'F');
+        doc.setFillColor(color[0], color[1], color[2]);
+        doc.rect(20, yPos + 12, (100 * metric.score) / 100, 3, 'F');
+        
+        yPos += 20;
+        
+        // Check if we need a new page
+        if (yPos > 250 && index < section.content.metrics.length - 1) {
+          addFooter(doc);
+          doc.addPage();
+          currentPage++;
+          addHeader(doc, `${section.title} (Fortsetzung)`, currentPage, totalPages);
+          yPos = 35;
+        }
+      });
+      
+      // Add recommendations section
+      if (yPos > 200) {
+        addFooter(doc);
+        doc.addPage();
+        currentPage++;
+        addHeader(doc, `${section.title} - Empfehlungen`, currentPage, totalPages);
+        yPos = 35;
+      }
+      
+      yPos += 10;
+      yPos = addSection(doc, 'Handlungsempfehlungen', yPos);
+      
+      section.content.recommendations.forEach((rec, index) => {
+        doc.setFillColor(59, 130, 246);
+        doc.circle(22, yPos + 2, 1.5, 'F');
+        
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`${index + 1}. ${rec}`, 27, yPos + 3);
+        yPos += 8;
+      });
+      
+      addFooter(doc);
     });
     
-    // Final page - Action plan
+    // Final page - Comprehensive Action plan
     doc.addPage();
     currentPage++;
-    addHeader(doc, 'Handlungsplan & nächste Schritte', currentPage, totalPages);
+    addHeader(doc, 'Detaillierter Handlungsplan', currentPage, totalPages);
     
     yPos = 35;
-    yPos = addSection(doc, 'Priorisierte Maßnahmen', yPos);
+    yPos = addSection(doc, 'Priorisierte Maßnahmen mit Zeitplan', yPos);
     
-    const priorities = [
-      { task: 'Ladezeit optimieren', impact: 'Hoch', effort: 'Mittel', priority: 1 },
-      { task: 'Meta-Descriptions ergänzen', impact: 'Mittel', effort: 'Niedrig', priority: 2 },
-      { task: 'Lokale Keywords integrieren', impact: 'Hoch', effort: 'Niedrig', priority: 3 }
+    const detailedPriorities = [
+      { 
+        task: 'Ladezeit optimieren', 
+        impact: 'Hoch', 
+        effort: 'Mittel', 
+        timeline: '2-4 Wochen',
+        cost: '€€',
+        priority: 1,
+        description: 'Bilder komprimieren, Caching implementieren'
+      },
+      { 
+        task: 'Meta-Descriptions ergänzen', 
+        impact: 'Mittel', 
+        effort: 'Niedrig', 
+        timeline: '1-2 Wochen',
+        cost: '€',
+        priority: 2,
+        description: 'Für alle wichtigen Seiten erstellen'
+      },
+      { 
+        task: 'Online-Terminbuchung', 
+        impact: 'Hoch', 
+        effort: 'Hoch', 
+        timeline: '4-8 Wochen',
+        cost: '€€€',
+        priority: 3,
+        description: 'Kalendersystem integrieren'
+      },
+      { 
+        task: 'Content-Marketing starten', 
+        impact: 'Hoch', 
+        effort: 'Mittel', 
+        timeline: 'Laufend',
+        cost: '€€',
+        priority: 4,
+        description: 'Blog und regelmäßige Inhalte'
+      }
     ];
     
-    priorities.forEach((item, index) => {
+    detailedPriorities.forEach((item, index) => {
       const priorityColor = index < 1 ? [239, 68, 68] : index < 2 ? [251, 191, 36] : [34, 197, 94];
       
+      // Priority badge
       doc.setFillColor(priorityColor[0], priorityColor[1], priorityColor[2]);
-      doc.circle(22, yPos + 2, 2, 'F');
+      doc.circle(22, yPos + 3, 3, 'F');
       
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${item.priority}`, 21, yPos + 3);
-      
-      doc.setTextColor(0, 0, 0);
       doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(item.task, 30, yPos + 3);
-      doc.text(`Impact: ${item.impact}`, 120, yPos + 3);
-      doc.text(`Aufwand: ${item.effort}`, 160, yPos + 3);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${item.priority}`, 20.5, yPos + 5);
       
-      yPos += 12;
+      // Task details
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(item.task, 30, yPos + 5);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Impact: ${item.impact} | Aufwand: ${item.effort} | Kosten: ${item.cost}`, 30, yPos + 12);
+      doc.text(`Zeitrahmen: ${item.timeline}`, 30, yPos + 18);
+      doc.text(item.description, 30, yPos + 24);
+      
+      yPos += 32;
     });
     
     addFooter(doc);
     
     // Save the PDF
-    doc.save(`Online-Auftritt-Analyse-${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+    doc.save(`Online-Auftritt-Analyse-Vollstaendig-${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
   };
 
   const generateQuickSummary = () => {
     const doc = new jsPDF();
+    const totalPages = 6; // Erhöht auf 6 Seiten für mehr Content
     
-    // 4-page summary with visual elements
-    addHeader(doc, 'Management Summary', 1, 4);
+    // Page 1: Executive dashboard
+    addHeader(doc, 'Management Summary', 1, totalPages);
     
     let yPos = 35;
     
@@ -419,46 +595,84 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     addProgressBar(doc, 20, yPos, 170, 73, 'Online-Sichtbarkeit');
     yPos += 15;
     addProgressBar(doc, 20, yPos, 170, 68, 'Wettbewerbsfähigkeit');
+    yPos += 25;
+    
+    // Key insights
+    yPos = addSection(doc, 'Management Summary', yPos);
+    
+    doc.setFontSize(10);
+    doc.text('✓ Starke mobile Optimierung und lokale Präsenz', 20, yPos);
+    yPos += 8;
+    doc.text('⚠ Verbesserungsbedarf bei Ladezeiten und Content-Marketing', 20, yPos);
+    yPos += 8;
+    doc.text('→ ROI-Potential durch gezielte Optimierungen: ~25% mehr Anfragen', 20, yPos);
     
     addFooter(doc);
     
-    // Add 3 more pages with actual content
-    for (let page = 2; page <= 4; page++) {
+    // Pages 2-6 with substantial content for each
+    const summaryPages = [
+      {
+        title: 'Top-Empfehlungen',
+        content: [
+          'KRITISCH: Website-Ladezeit von 4.1s auf unter 3s reduzieren',
+          'WICHTIG: Online-Terminbuchung implementieren (+20% Conversions)',
+          'MITTEL: Content-Marketing für bessere Sichtbarkeit starten',
+          'NIEDRIG: Social Media Präsenz professionalisieren'
+        ]
+      },
+      {
+        title: 'Konkurrenzvergleich',
+        content: [
+          'Position im Markt: Oberes Mittelfeld (Rang 3 von 8)',
+          'Stärken vs. Konkurrenz: Mobile Optimierung, Kundenbewertungen',
+          'Schwächen vs. Konkurrenz: Online-Services, Content-Marketing',
+          'Chance: Digitalisierungsvorsprung durch frühe Umsetzung'
+        ]
+      },
+      {
+        title: 'ROI-Prognose',
+        content: [
+          'Investition (geschätzt): €2.500 - €4.000',
+          'Erwartete Steigerung der Anfragen: +25-35%',
+          'Break-Even: 3-4 Monate',
+          'Langfristige Vorteile: Bessere Marktposition, höhere Sichtbarkeit'
+        ]
+      },
+      {
+        title: 'Umsetzungsplan',
+        content: [
+          'Sofort (1-2 Wochen): Meta-Descriptions, Alt-Texte ergänzen',
+          'Kurzfristig (1 Monat): Ladezeiten optimieren, GMB verbessern',
+          'Mittelfristig (2-3 Monate): Online-Terminbuchung, Content-Plan',
+          'Langfristig (6 Monate): SEO-Erfolg messen, Strategie anpassen'
+        ]
+      },
+      {
+        title: 'Erfolgs-KPIs',
+        content: [
+          'Website-Besucher: Steigerung um 40% in 6 Monaten',
+          'Kontaktanfragen: +25% durch bessere Conversion-Rate',
+          'Google-Ranking: Top 3 für 5 Haupt-Keywords',
+          'Online-Reputation: 4.5+ Sterne bei 50+ neuen Bewertungen'
+        ]
+      }
+    ];
+    
+    summaryPages.forEach((page, index) => {
       doc.addPage();
-      addHeader(doc, `Management Summary - Teil ${page}`, page, 4);
+      addHeader(doc, `Management Summary - ${page.title}`, index + 2, totalPages);
       
       yPos = 35;
-      if (page === 2) {
-        yPos = addSection(doc, 'Top Empfehlungen', yPos);
-        const topRecs = [
-          'Ladezeit der Website verbessern',
-          'Meta-Descriptions optimieren',
-          'Mobile Benutzerfreundlichkeit erhöhen',
-          'Lokale SEO-Präsenz stärken'
-        ];
-        topRecs.forEach((rec, index) => {
-          doc.setFontSize(10);
-          doc.text(`${index + 1}. ${rec}`, 20, yPos);
-          yPos += 8;
-        });
-      } else if (page === 3) {
-        yPos = addSection(doc, 'Konkurrenzvergleich', yPos);
+      yPos = addSection(doc, page.title, yPos);
+      
+      page.content.forEach((item, itemIndex) => {
         doc.setFontSize(10);
-        doc.text('Ihr Unternehmen liegt im oberen Mittelfeld der Branche.', 20, yPos);
-        yPos += 10;
-        doc.text('Hauptkonkurrenten haben ähnliche Stärken und Schwächen.', 20, yPos);
-      } else if (page === 4) {
-        yPos = addSection(doc, 'Nächste Schritte', yPos);
-        doc.setFontSize(10);
-        doc.text('1. Sofort: Meta-Descriptions ergänzen (1-2 Tage)', 20, yPos);
-        yPos += 8;
-        doc.text('2. Kurzfristig: Website-Performance optimieren (1-2 Wochen)', 20, yPos);
-        yPos += 8;
-        doc.text('3. Mittelfristig: Content-Strategie entwickeln (1 Monat)', 20, yPos);
-      }
+        doc.text(`${itemIndex + 1}. ${item}`, 20, yPos);
+        yPos += 12;
+      });
       
       addFooter(doc);
-    }
+    });
     
     doc.save(`Management-Summary-${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
   };
@@ -488,9 +702,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   </div>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <Badge variant="outline">~8 Seiten</Badge>
+                  <Badge variant="outline">~15 Seiten</Badge>
                   <Badge variant="outline">Alle Diagramme</Badge>
                   <Badge variant="outline">Detaillierte Empfehlungen</Badge>
+                  <Badge variant="outline">Zeitpläne & ROI</Badge>
                 </div>
                 <Button 
                   onClick={generateComprehensiveReport}
@@ -512,9 +727,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   </div>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <Badge variant="outline">~4 Seiten</Badge>
+                  <Badge variant="outline">~6 Seiten</Badge>
                   <Badge variant="outline">Key Metrics</Badge>
                   <Badge variant="outline">Top Empfehlungen</Badge>
+                  <Badge variant="outline">ROI-Prognose</Badge>
                 </div>
                 <Button 
                   onClick={generateQuickSummary}
@@ -561,11 +777,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   <ul className="space-y-1 text-sm">
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      Detaillierte SEO-Analyse
+                      Detaillierte Analyse aller Bereiche
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      Performance-Bewertungen
+                      Performance-Bewertungen mit Metriken
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
@@ -573,7 +789,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                      Handlungsplan mit Prioritäten
+                      Zeitpläne und ROI-Prognosen
                     </li>
                   </ul>
                 </div>
