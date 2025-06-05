@@ -349,7 +349,7 @@ export class BusinessAnalysisService {
           position = Math.floor(Math.random() * 20) + 11; // Position 11-30
         }
       } else {
-        // Für das Bild: wir simuliere dass einige Keywords gefunden werden, die zuvor nicht erkannt wurden
+        // Für das Bild: wir simulieren dass einige Keywords gefunden werden, die zuvor nicht erkannt wurden
         if (index < 4) {
           position = Math.floor(Math.random() * 20) + 5;
           return {
@@ -448,8 +448,8 @@ export class BusinessAnalysisService {
     const socialLinks = this.findSocialMediaLinks(websiteContent, url);
     console.log('Found social media links:', socialLinks);
     
-    // Erweiterte Suche basierend auf Firmennamen
-    const searchResults = await this.searchSocialMediaProfiles(companyName, url);
+    // Erweiterte Suche basierend auf Firmennamen (ohne await, da synchron)
+    const searchResults = this.searchSocialMediaProfiles(companyName, url);
     
     const facebook = {
       found: socialLinks.facebook || searchResults.facebook,
@@ -488,7 +488,7 @@ export class BusinessAnalysisService {
     };
   }
 
-  private static async searchSocialMediaProfiles(companyName: string, url: string): Promise<{ facebook: boolean; instagram: boolean }> {
+  private static searchSocialMediaProfiles(companyName: string, url: string): { facebook: boolean; instagram: boolean } {
     // Simuliere erweiterte Suche (in der Realität würde man APIs verwenden)
     const hasCommonSocialPresence = companyName.length > 5 && Math.random() > 0.3;
     
