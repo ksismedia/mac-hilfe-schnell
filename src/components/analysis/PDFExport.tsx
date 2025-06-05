@@ -677,7 +677,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Detaillierte Konkurrenzanalyse', pageNumber, totalPages);
     
-    yPos = 35;
+    let yPos = 35;
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Wettbewerbsposition: Rang 2 von 12', 20, yPos, 170, 10, true);
@@ -716,10 +716,19 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     competitors.forEach(comp => {
       yPos += 5;
       
-      // Competitor Box
-      doc.setFillColor(comp.rank === 2 ? 240, 248, 255 : 248, 250, 252);
+      // Competitor Box - Fix the ternary operator syntax
+      if (comp.rank === 2) {
+        doc.setFillColor(240, 248, 255);
+      } else {
+        doc.setFillColor(248, 250, 252);
+      }
       doc.rect(20, yPos, 170, 25, 'F');
-      doc.setDrawColor(comp.rank === 2 ? 59, 130, 246 : 226, 232, 240);
+      
+      if (comp.rank === 2) {
+        doc.setDrawColor(59, 130, 246);
+      } else {
+        doc.setDrawColor(226, 232, 240);
+      }
       doc.rect(20, yPos, 170, 25, 'S');
       
       doc.setFontSize(11);
@@ -1537,8 +1546,6 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     addDetailedScoreCard(doc, 150, 160, 'Mobile', 88, [34, 197, 94], 'Excellent');
     
     // Seite 2-6 folgen dem ursprünglichen Muster, aber mit mehr Details
-    // ... (Kompakte Version wie zuvor, aber mit addFooter und addHeader)
-    
     for (let i = 2; i <= totalPages; i++) {
       doc.addPage();
       addHeader(doc, `Analyse Bereich ${i-1}`, i, totalPages);
