@@ -141,7 +141,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="local-seo">
-            <LocalSEO address={businessData.address} url={businessData.url} industry={businessData.industry} />
+            <LocalSEO businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="content">
@@ -181,7 +181,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="industry">
-            <IndustryFeatures industry={businessData.industry} url={businessData.url} />
+            <IndustryFeatures businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="export">

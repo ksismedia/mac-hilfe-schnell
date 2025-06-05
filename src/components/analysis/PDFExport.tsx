@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -261,9 +260,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     doc.setFillColor(229, 231, 235); // Gray-200
     doc.roundedRect(x, y, width, 4, 2, 2, 'F');
     
-    // Progress bar
+    // Progress bar with proper color typing
     const progressWidth = (width * percentage) / 100;
-    const color = percentage >= 80 ? [34, 197, 94] : percentage >= 60 ? [251, 191, 36] : [239, 68, 68];
+    const color: [number, number, number] = percentage >= 80 ? [34, 197, 94] : percentage >= 60 ? [251, 191, 36] : [239, 68, 68];
     doc.setFillColor(color[0], color[1], color[2]);
     doc.roundedRect(x, y, progressWidth, 4, 2, 2, 'F');
     
@@ -421,7 +420,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     ];
     
     recommendations.forEach((rec, index) => {
-      const color = index < 2 ? [239, 68, 68] : index < 4 ? [251, 191, 36] : [34, 197, 94];
+      const color: [number, number, number] = index < 2 ? [239, 68, 68] : index < 4 ? [251, 191, 36] : [34, 197, 94];
       yPos = addBulletPoint(doc, rec, 20, yPos, 170, color);
       yPos += 5;
     });
@@ -520,7 +519,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
           yPos = 35;
         }
         
-        const color = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
+        const color: [number, number, number] = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
         
         // Metric header with enhanced styling
         doc.setFillColor(248, 250, 252);
@@ -675,7 +674,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     ];
     
     insights.forEach((insight, index) => {
-      const colors = [[34, 197, 94], [251, 191, 36], [59, 130, 246]];
+      const colors: [number, number, number][] = [[34, 197, 94], [251, 191, 36], [59, 130, 246]];
       yPos = addBulletPoint(doc, insight, 20, yPos, 170, colors[index]);
       yPos += 5;
     });
