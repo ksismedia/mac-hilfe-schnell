@@ -190,7 +190,26 @@ export class WebsiteAnalysisService {
     
     return industryKeywords.map(keyword => {
       const keywordLower = keyword.toLowerCase();
-      const found = allText.includes(keywordLower);
+      
+      // Verbesserte Keyword-Suche - auch Teilwörter und Varianten berücksichtigen
+      let found = false;
+      
+      // Exakte Übereinstimmung
+      if (allText.includes(keywordLower)) {
+        found = true;
+      }
+      
+      // Wortgrenzen-basierte Suche für genauere Ergebnisse
+      const wordBoundaryRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      if (wordBoundaryRegex.test(allText)) {
+        found = true;
+      }
+      
+      // Für zusammengesetzte Wörter - prüfe auch Teilbegriffe
+      if (keywordLower.includes('bad') || keywordLower.includes('sanitär')) {
+        const parts = keywordLower.split(/[\s\-]/);
+        found = parts.some(part => part.length >= 3 && allText.includes(part));
+      }
       
       let density = 0;
       let position = 0;
@@ -200,8 +219,23 @@ export class WebsiteAnalysisService {
         // Berechne echte Keyword-Dichte
         const regex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
         const matches = allText.match(regex) || [];
+        
+        // Auch nach Teilbegriffen suchen für zusammengesetzte Wörter
+        let additionalMatches = 0;
+        if (keywordLower.includes(' ') || keywordLower.includes('-')) {
+          const parts = keywordLower.split(/[\s\-]/);
+          parts.forEach(part => {
+            if (part.length >= 3) {
+              const partRegex = new RegExp(`\\b${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+              const partMatches = allText.match(partRegex) || [];
+              additionalMatches += partMatches.length;
+            }
+          });
+        }
+        
+        const totalMatches = matches.length + Math.floor(additionalMatches / 2); // Teilbegriffe weniger gewichten
         const totalWords = allText.split(/\s+/).length;
-        density = totalWords > 0 ? (matches.length / totalWords) * 100 : 0;
+        density = totalWords > 0 ? (totalMatches / totalWords) * 100 : 0;
         
         // Simuliere Position basierend auf Keyword-Prominenz
         if (content.title.toLowerCase().includes(keywordLower)) {
@@ -244,7 +278,11 @@ export class WebsiteAnalysisService {
       'shk': [
         'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst',
         'rohrreinigung', 'badezimmer', 'bad', 'dusche', 'wc', 'toilette',
-        'heizungsbau', 'klimaanlage', 'lüftung', 'installateur', 'handwerker'
+        'heizungsbau', 'klimaanlage', 'lüftung', 'installateur', 'handwerker',
+        // Erweiterte Bad-Keywords
+        'badsanierung', 'badplanung', 'badumbau', 'badmodernisierung',
+        'badausstattung', 'badrenovierung', 'badeinrichtung', 'badfliesen',
+        'badkeramik', 'badmöbel', 'badewanne', 'badgarnitur', 'badezimmersanierung'
       ],
       'maler': [
         'malerei', 'maler', 'lackierung', 'fassade', 'anstrich', 'renovierung',
