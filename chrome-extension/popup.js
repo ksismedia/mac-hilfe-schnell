@@ -7,11 +7,13 @@ const analyzeBtn = document.getElementById('analyzeBtn');
 const statusDiv = document.getElementById('status');
 const currentUrlDiv = document.getElementById('currentUrl');
 
-// App-URLs (anpassbar)
+// App-URLs (anpassbar) - Lovable URLs hinzugefügt
 const APP_URLS = [
-  'http://localhost:8080',
-  'https://localhost:3000',
-  'https://your-app.lovable.app' // Ihre deployed App-URL
+  'https://mac-hilfe-schnell.lovable.app',  // Ihre deployed Lovable App
+  'http://localhost:3000',                   // Vite dev server
+  'http://localhost:5173',                   // Standard Vite port
+  'http://localhost:8080',                   // Alternative
+  'https://your-app.lovable.app'            // Fallback
 ];
 
 // Status-Funktionen
@@ -84,7 +86,10 @@ async function sendDataToApp(websiteData) {
     data: websiteData
   }));
   
-  const appUrl = `${APP_URLS[0]}/#/extension-data?data=${encodedData}`;
+  // Versuche zuerst die deployed Lovable App
+  const appUrl = `${APP_URLS[0]}?data=${encodedData}`;
+  
+  console.log('Öffne App unter:', appUrl);
   
   await chrome.tabs.create({ 
     url: appUrl,
