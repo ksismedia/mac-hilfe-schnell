@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -184,7 +183,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
             <CardHeader>
               <CardTitle className="text-lg">Branchenspezifische Themen-Abdeckung</CardTitle>
               <CardDescription>
-                Relevante Themen für {industry === 'shk' ? 'SHK-Betriebe' : industry === 'maler' ? 'Malerbetriebe' : industry === 'elektriker' ? 'Elektrikerbetriebe' : 'Dachdeckerbetriebe'}
+                Relevante Themen für {industry === 'shk' ? 'SHK-Betriebe' : industry === 'maler' ? 'Malerbetriebe' : industry === 'elektriker' ? 'Elektrikerbetriebe' : industry === 'dachdecker' ? 'Dachdeckerbetriebe' : industry === 'stukateur' ? 'Stukateur-Betriebe' : 'Planungsbüros'}
               </CardDescription>
             </CardHeader>
             <CardContent>
