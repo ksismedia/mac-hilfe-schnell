@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,12 +5,14 @@ import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, Clock, Phone, Globe } from 'lucide-react';
 
 interface LocalSEOProps {
-  address: string;
-  url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  businessData: {
+    address: string;
+    url: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
 }
 
-const LocalSEO: React.FC<LocalSEOProps> = ({ address, url, industry }) => {
+const LocalSEO: React.FC<LocalSEOProps> = ({ businessData }) => {
   // Simulierte Local SEO Daten
   const localSEOData = {
     overallScore: 74,
@@ -40,10 +41,10 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ address, url, industry }) => {
     localKeywords: {
       score: 71,
       ranking: [
-        { keyword: `${industry} ${address.split(',')[1]?.trim()}`, position: 8, volume: "hoch" },
-        { keyword: `Handwerker ${address.split(',')[1]?.trim()}`, position: 15, volume: "mittel" },
-        { keyword: `${industry} Notdienst`, position: 12, volume: "mittel" },
-        { keyword: `${industry} in der Nähe`, position: 6, volume: "hoch" }
+        { keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim()}`, position: 8, volume: "hoch" },
+        { keyword: `Handwerker ${businessData.address.split(',')[1]?.trim()}`, position: 15, volume: "mittel" },
+        { keyword: `${businessData.industry} Notdienst`, position: 12, volume: "mittel" },
+        { keyword: `${businessData.industry} in der Nähe`, position: 6, volume: "hoch" }
       ]
     },
     onPageLocal: {
@@ -93,7 +94,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ address, url, industry }) => {
             </Badge>
           </CardTitle>
           <CardDescription>
-            Analyse der lokalen Suchmaschinenoptimierung für {address}
+            Analyse der lokalen Suchmaschinenoptimierung für {businessData.address}
           </CardDescription>
         </CardHeader>
         <CardContent>

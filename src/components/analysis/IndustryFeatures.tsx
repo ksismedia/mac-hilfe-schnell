@@ -5,11 +5,14 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle } from 'lucide-react';
 
 interface IndustryFeaturesProps {
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
-  url: string;
+  businessData: {
+    address: string;
+    url: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
 }
 
-const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) => {
+const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => {
   // Branchenspezifische Merkmalsgruppen
   const industryFeatureGroups = {
     shk: [
@@ -161,7 +164,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
     ]
   };
 
-  const currentFeatures = industryFeatureGroups[industry];
+  const currentFeatures = industryFeatureGroups[businessData.industry];
   
   // Berechnung der Scores
   const totalFeatures = currentFeatures.reduce((sum, group) => sum + group.features.length, 0);
@@ -208,7 +211,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
             </Badge>
           </CardTitle>
           <CardDescription>
-            Analyse der typischen {industryNames[industry]}-Inhalte
+            Analyse der typischen {industryNames[businessData.industry]}-Inhalte
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -281,7 +284,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  {industry === 'shk' && (
+                  {businessData.industry === 'shk' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-red-600">×</span>
@@ -293,7 +296,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       </div>
                     </>
                   )}
-                  {industry === 'maler' && (
+                  {businessData.industry === 'maler' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
@@ -305,7 +308,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       </div>
                     </>
                   )}
-                  {industry === 'elektriker' && (
+                  {businessData.industry === 'elektriker' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
@@ -317,7 +320,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       </div>
                     </>
                   )}
-                  {industry === 'dachdecker' && (
+                  {businessData.industry === 'dachdecker' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
@@ -329,7 +332,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       </div>
                     </>
                   )}
-                  {industry === 'stukateur' && (
+                  {businessData.industry === 'stukateur' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
@@ -345,7 +348,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       </div>
                     </>
                   )}
-                  {industry === 'planungsbuero' && (
+                  {businessData.industry === 'planungsbuero' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
