@@ -1,4 +1,3 @@
-
 export interface WebsiteContent {
   title: string;
   metaDescription: string;
@@ -190,14 +189,31 @@ export class WebsiteAnalysisService {
     const allText = `${content.title} ${content.metaDescription} ${content.content}`.toLowerCase();
     
     return industryKeywords.map(keyword => {
-      const found = allText.includes(keyword.toLowerCase());
-      const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'gi');
-      const matches = allText.match(regex) || [];
-      const density = allText.length > 0 ? (matches.length / allText.split(/\s+/).length) * 100 : 0;
+      const keywordLower = keyword.toLowerCase();
+      const found = allText.includes(keywordLower);
       
-      // Simulate search position (would need real SEO tools for actual positions)
-      const position = found ? Math.floor(Math.random() * 20) + 1 : 0;
-      const volume = Math.floor(Math.random() * 1000) + 100;
+      let density = 0;
+      let position = 0;
+      let volume = this.getKeywordVolume(keyword, industry);
+      
+      if (found) {
+        // Berechne echte Keyword-Dichte
+        const regex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+        const matches = allText.match(regex) || [];
+        const totalWords = allText.split(/\s+/).length;
+        density = totalWords > 0 ? (matches.length / totalWords) * 100 : 0;
+        
+        // Simuliere Position basierend auf Keyword-Prominenz
+        if (content.title.toLowerCase().includes(keywordLower)) {
+          position = Math.floor(Math.random() * 8) + 1; // Position 1-8 wenn im Titel
+        } else if (content.metaDescription.toLowerCase().includes(keywordLower)) {
+          position = Math.floor(Math.random() * 15) + 8; // Position 8-22 wenn in Meta
+        } else if (content.headings.h1.some(h => h.toLowerCase().includes(keywordLower))) {
+          position = Math.floor(Math.random() * 12) + 5; // Position 5-16 wenn in H1
+        } else {
+          position = Math.floor(Math.random() * 30) + 15; // Position 15-44 sonst
+        }
+      }
       
       return {
         keyword,
@@ -209,7 +225,21 @@ export class WebsiteAnalysisService {
     });
   }
 
-  private static getIndustryKeywords(industry: string): string[] {
+  private static getKeywordVolume(keyword: string, industry: string): number {
+    // Realistische Suchvolumina basierend auf Keyword-Typ
+    const highVolumeKeywords = ['sanitär', 'heizung', 'elektriker', 'maler', 'dachdecker'];
+    const mediumVolumeKeywords = ['installation', 'wartung', 'reparatur', 'service', 'notdienst'];
+    
+    if (highVolumeKeywords.includes(keyword.toLowerCase())) {
+      return Math.floor(Math.random() * 800) + 500; // 500-1300
+    } else if (mediumVolumeKeywords.includes(keyword.toLowerCase())) {
+      return Math.floor(Math.random() * 400) + 200; // 200-600
+    } else {
+      return Math.floor(Math.random() * 200) + 50; // 50-250
+    }
+  }
+
+  static getIndustryKeywords(industry: string): string[] {
     const keywords = {
       'shk': [
         'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst',
@@ -255,22 +285,22 @@ export class WebsiteAnalysisService {
   } {
     const allText = `${content.title} ${content.content}`.toLowerCase();
     const linkTexts = content.links.map(link => link.text.toLowerCase()).join(' ');
+    const linkHrefs = content.links.map(link => link.href.toLowerCase()).join(' ');
     
-    // Check for Impressum page link
-    const imprintKeywords = ['impressum', 'imprint', 'rechtlich', 'legal', 'datenschutz'];
+    // Prüfe auf Impressum-Link
+    const imprintKeywords = ['impressum', 'imprint', 'rechtlich', 'legal'];
     const hasImprintLink = imprintKeywords.some(keyword => 
-      linkTexts.includes(keyword) || 
-      content.links.some(link => link.href.toLowerCase().includes(keyword))
+      linkTexts.includes(keyword) || linkHrefs.includes(keyword)
     );
     
-    // Check for required legal elements in content
+    // Prüfe auf rechtliche Elemente im Inhalt
     const legalElements = {
-      'Geschäftsführer/Inhaber': /geschäftsführer|inhaber|geschäftsleitung|chef|direktor/i,
-      'Firmenanschrift': /adresse|anschrift|sitz|straße|plz|ort|address/i,
-      'Kontaktdaten': /telefon|phone|tel|email|mail|kontakt|fax/i,
-      'Handelsregister': /handelsregister|hrb|hra|hr\s*[ab]/i,
-      'USt-IdNr.': /ust[\-\s]*id|umsatzsteuer[\-\s]*id|vat[\-\s]*id|steuer/i,
-      'Datenschutzerklärung': /datenschutz|privacy|gdpr|dsgvo/i
+      'Geschäftsführer/Inhaber': /geschäftsführer|inhaber|geschäftsleitung|chef|direktor|geschäftsführerin/i,
+      'Firmenanschrift': /adresse|anschrift|sitz|straße|str\.|platz|weg|address/i,
+      'Kontaktdaten': /telefon|phone|tel\.|email|mail|kontakt|fax|@/i,
+      'Handelsregister': /handelsregister|hrb|hra|hr\s*[ab]|registergericht/i,
+      'USt-IdNr.': /ust[\-\s]*id|umsatzsteuer[\-\s]*id|vat[\-\s]*id|de\d{9}/i,
+      'Datenschutzerklärung': /datenschutz|privacy|gdpr|dsgvo|datenschutzerkl/i
     };
     
     const foundElements: string[] = [];
@@ -286,14 +316,21 @@ export class WebsiteAnalysisService {
     
     const completeness = Math.round((foundElements.length / Object.keys(legalElements).length) * 100);
     const found = hasImprintLink || foundElements.length >= 3;
-    const score = found ? Math.max(30, completeness) : 0;
+    
+    // Verbesserte Score-Berechnung
+    let score = 0;
+    if (found) {
+      score = Math.max(25, completeness);
+      if (hasImprintLink) score += 15; // Bonus für separaten Impressum-Link
+      if (foundElements.includes('Datenschutzerklärung')) score += 10; // DSGVO-Bonus
+    }
     
     return {
       found,
       completeness,
       foundElements,
       missingElements,
-      score
+      score: Math.min(100, score)
     };
   }
 }
