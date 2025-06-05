@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -49,7 +48,6 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
 
   const competitorNames = generateCompetitorNames(industry, city);
 
-  // Realistische Konkurrenzdaten generieren
   const competitors = [
     {
       name: competitorNames[0],
