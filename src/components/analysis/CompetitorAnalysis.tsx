@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Star, Phone, Globe, Users, TrendingUp, Clock, Award } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Star, MapPin, Globe, Users, Search } from 'lucide-react';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -83,10 +82,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   ];
 
   const getTrendIcon = (trend: string) => {
-    switch(trend) {
-      case 'up': return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'down': return <TrendingDown className="h-4 w-4 text-red-500" />;
-      default: return <Minus className="h-4 w-4 text-gray-500" />;
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="h-4 w-4 text-green-600" />;
+      case 'down':
+        return <TrendingDown className="h-4 w-4 text-red-600" />;
+      default:
+        return <Minus className="h-4 w-4 text-gray-600" />;
     }
   };
 

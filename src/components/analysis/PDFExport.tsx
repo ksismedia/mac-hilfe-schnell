@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -117,6 +116,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     const doc = new jsPDF();
     let pageNumber = 1;
     const totalPages = 20;
+    let yPos = 35; // Declare yPos only once at the beginning
     
     // Seite 1: Executive Summary & Cover
     doc.setFillColor(37, 99, 235);
@@ -159,7 +159,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Inhaltsverzeichnis', pageNumber, totalPages);
     
-    let yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Inhaltsverzeichnis', 20, yPos, 170, 10, true);
@@ -203,7 +203,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Methodologie & Analysebereiche', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Analysemethodologie', 20, yPos, 170, 10, true);
@@ -261,7 +261,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'SEO-Analyse: Technische Grundlagen', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Technische SEO-Bewertung: 78/100', 20, yPos, 170, 10, true);
@@ -311,7 +311,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'SEO-Analyse: Content & Keywords', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Content-SEO Bewertung: 72/100', 20, yPos, 170, 10, true);
@@ -372,7 +372,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Performance & Ladegeschwindigkeit', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Performance Score: 92/100', 20, yPos, 170, 10, true);
@@ -431,7 +431,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Mobile Optimierung & Responsiveness', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Mobile Score: 88/100', 20, yPos, 170, 10, true);
@@ -484,7 +484,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Local SEO & Google My Business', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Local SEO Score: 85/100', 20, yPos, 170, 10, true);
@@ -549,7 +549,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Content-Analyse & Strategie (Teil 1)', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Content Score: 69/100', 20, yPos, 170, 10, true);
@@ -608,6 +608,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       doc.text('○ ' + topic, 30, yPos);
     });
     
+    yPos += 15;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Saisonale Themen:', 25, yPos);
+    yPos += 5;
+    doc.setFont('helvetica', 'normal');
+    industryTopics.seasonal.forEach(topic => {
+      yPos += 6;
+      doc.text('★ ' + topic, 30, yPos);
+    });
+    
     addFooter(doc, 'Content-Strategie und Themenabdeckung');
 
     // Fortsetzung Content-Strategie
@@ -615,7 +625,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Content-Analyse & Strategie (Teil 2)', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Content-Performance Metriken', 20, yPos, 170, 8, true);
@@ -677,7 +687,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Detaillierte Konkurrenzanalyse', pageNumber, totalPages);
     
-    let yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Wettbewerbsposition: Rang 2 von 12', 20, yPos, 170, 10, true);
@@ -773,7 +783,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Backlink-Profil & Authority', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Backlink Score: 69/100', 20, yPos, 170, 10, true);
@@ -861,7 +871,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Google Bewertungen & Online-Reputation', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Bewertungs-Score: 91/100', 20, yPos, 170, 10, true);
@@ -945,7 +955,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Social Media Analyse & Strategie', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Social Media Score: 58/100', 20, yPos, 170, 10, true);
@@ -1036,7 +1046,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Conversion-Optimierung & UX', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Conversion Score: 76/100', 20, yPos, 170, 10, true);
@@ -1121,7 +1131,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Rechtliche Compliance & DSGVO', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Compliance Score: 95/100', 20, yPos, 170, 10, true);
@@ -1190,7 +1200,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Branchenspezifische Features & Standards', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Branchenfeatures Score: 84/100', 20, yPos, 170, 10, true);
@@ -1260,7 +1270,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Handlungsempfehlungen & 12-Monats-Roadmap', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Prioritäre Handlungsempfehlungen', 20, yPos, 170, 10, true);
@@ -1334,7 +1344,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'ROI-Prognose & Investment-Planung', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Erwarteter ROI: 320% in 12 Monaten', 20, yPos, 170, 10, true);
@@ -1429,7 +1439,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     pageNumber++;
     addHeader(doc, 'Anhang & Monitoring-Metriken', pageNumber, totalPages);
     
-    yPos = 35;
+    yPos = 35; // Reset yPos for new page
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     yPos = addText(doc, 'Monitoring & KPI-Dashboard', 20, yPos, 170, 10, true);
@@ -1520,6 +1530,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     const doc = new jsPDF();
     let pageNumber = 1;
     const totalPages = 6;
+    let yPos = 35; // Declare yPos once
     
     // Seite 1: Cover & Übersicht
     doc.setFillColor(37, 99, 235);
@@ -1550,7 +1561,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
       doc.addPage();
       addHeader(doc, `Analyse Bereich ${i-1}`, i, totalPages);
       
-      let yPos = 35;
+      yPos = 35;
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       yPos = addText(doc, `Detaillierte Analyse - Bereich ${i-1}`, 20, yPos, 170, 8, true);
