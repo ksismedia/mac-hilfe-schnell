@@ -321,66 +321,128 @@ export class BusinessAnalysisService {
 
   private static analyzeKeywordsFromContent(websiteContent: any, industry: string) {
     const industryKeywords = this.getIndustryKeywords(industry);
-    const content = websiteContent?.content?.toLowerCase() || '';
+    
+    // Sammle ALLE verfügbaren Textinhalte
     const title = websiteContent?.title?.toLowerCase() || '';
     const metaDesc = websiteContent?.metaDescription?.toLowerCase() || '';
-    const headings = Object.values(websiteContent?.headings || {}).flat().join(' ').toLowerCase();
-    const allText = `${title} ${metaDesc} ${headings} ${content}`;
+    const content = websiteContent?.content?.toLowerCase() || '';
     
-    console.log('Analyzing keywords in content length:', allText.length);
-    console.log('Sample content for debugging:', allText.substring(0, 200));
+    // Sammle alle Headings
+    const headings = [];
+    if (websiteContent?.headings) {
+      headings.push(...(websiteContent.headings.h1 || []));
+      headings.push(...(websiteContent.headings.h2 || []));
+      headings.push(...(websiteContent.headings.h3 || []));
+    }
+    const headingsText = headings.join(' ').toLowerCase();
+    
+    // Sammle alle Link-Texte
+    const linkTexts = (websiteContent?.links || []).map((link: any) => link.text || '').join(' ').toLowerCase();
+    
+    // Kombiniere ALLE Textquellen
+    const allText = `${title} ${metaDesc} ${headingsText} ${content} ${linkTexts}`;
+    
+    console.log('=== KEYWORD ANALYSIS DEBUG ===');
+    console.log('Total text length:', allText.length);
+    console.log('Sample text (first 300 chars):', allText.substring(0, 300));
+    console.log('Industry keywords to search:', industryKeywords);
     
     return industryKeywords.map((keyword, index) => {
       const keywordLower = keyword.toLowerCase();
+      console.log(`\n--- Analyzing keyword: "${keyword}" ---`);
       
-      // Verbesserte Keyword-Erkennung - auch Teilwörter und Varianten berücksichtigen
       let found = false;
+      let matchReason = '';
       
-      // 1. Exakte Übereinstimmung
+      // 1. Direkte Übereinstimmung
       if (allText.includes(keywordLower)) {
         found = true;
-        console.log(`✓ Found exact match for: ${keyword}`);
+        matchReason = 'direct match';
+        console.log(`✓ FOUND "${keyword}": ${matchReason}`);
       }
       
-      // 2. Wortgrenzen-basierte Suche für genauere Ergebnisse
-      const wordBoundaryRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-      if (wordBoundaryRegex.test(allText)) {
-        found = true;
-        console.log(`✓ Found word boundary match for: ${keyword}`);
-      }
-      
-      // 3. Spezielle Behandlung für "Bad"-Keywords
-      if (keywordLower.startsWith('bad')) {
-        // Suche nach "bad" als Wortanfang
-        const badRegex = new RegExp(`\\bbad[a-zäöüß]*`, 'gi');
-        const badMatches = allText.match(badRegex) || [];
+      // 2. Spezielle Behandlung für "Bad"-Keywords
+      if (!found && keywordLower.startsWith('bad')) {
+        // Suche nach "bad" + beliebige Buchstaben
+        const badPattern = /\bbad[a-zäöüß]{0,20}\b/gi;
+        const badMatches = allText.match(badPattern) || [];
+        console.log(`Searching for "bad*" pattern in text, found matches:`, badMatches);
+        
         if (badMatches.length > 0) {
-          found = true;
-          console.log(`✓ Found "bad" variant for: ${keyword}, matches:`, badMatches);
+          // Prüfe ob eines der Matches dem gesuchten Keyword entspricht oder ähnlich ist
+          const relevantMatch = badMatches.find(match => {
+            const matchLower = match.toLowerCase();
+            return matchLower === keywordLower || 
+                   keywordLower.includes(matchLower) || 
+                   matchLower.includes(keywordLower.replace('bad', ''));
+          });
+          
+          if (relevantMatch) {
+            found = true;
+            matchReason = `bad pattern match: "${relevantMatch}"`;
+            console.log(`✓ FOUND "${keyword}": ${matchReason}`);
+          }
         }
         
-        // Suche auch nach dem spezifischen Begriff ohne "bad" Präfix
-        const suffixTerm = keywordLower.replace('bad', '');
-        if (suffixTerm.length >= 3 && allText.includes(suffixTerm)) {
-          found = true;
-          console.log(`✓ Found suffix match for: ${keyword} (${suffixTerm})`);
+        // Zusätzlich: Suche nach dem Begriff ohne "bad" Präfix
+        if (!found) {
+          const suffixTerm = keywordLower.replace('bad', '');
+          if (suffixTerm.length >= 3 && allText.includes(suffixTerm)) {
+            found = true;
+            matchReason = `suffix match: "${suffixTerm}"`;
+            console.log(`✓ FOUND "${keyword}": ${matchReason}`);
+          }
         }
       }
       
-      // 4. Für zusammengesetzte Wörter - prüfe auch Teilbegriffe
-      if (keywordLower.includes('bad') || keywordLower.includes('sanitär')) {
+      // 3. Wortgrenzen-Suche für exakte Begriffe
+      if (!found) {
+        try {
+          const wordBoundaryRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+          if (wordBoundaryRegex.test(allText)) {
+            found = true;
+            matchReason = 'word boundary match';
+            console.log(`✓ FOUND "${keyword}": ${matchReason}`);
+          }
+        } catch (e) {
+          console.log(`Regex error for "${keyword}":`, e);
+        }
+      }
+      
+      // 4. Teilwort-Suche für zusammengesetzte Begriffe
+      if (!found && (keywordLower.includes('sanitär') || keywordLower.includes('heizung') || keywordLower.includes('bad'))) {
         const parts = keywordLower.split(/[\s\-]/);
-        const foundParts = parts.filter(part => part.length >= 3 && allText.includes(part));
+        const foundParts = parts.filter(part => {
+          if (part.length >= 3) {
+            const partFound = allText.includes(part);
+            if (partFound) {
+              console.log(`Found part "${part}" of keyword "${keyword}"`);
+            }
+            return partFound;
+          }
+          return false;
+        });
+        
         if (foundParts.length > 0) {
           found = true;
-          console.log(`✓ Found partial matches for: ${keyword}, parts:`, foundParts);
+          matchReason = `partial match: ${foundParts.join(', ')}`;
+          console.log(`✓ FOUND "${keyword}": ${matchReason}`);
         }
       }
       
-      // 5. Fallback: Wenn es ein wichtiges Grundkeyword ist, simuliere Fund
-      if (!found && index < 6 && ['sanitär', 'heizung', 'bad', 'badezimmer', 'installation', 'handwerker'].includes(keywordLower)) {
-        found = true;
-        console.log(`✓ Fallback match for important keyword: ${keyword}`);
+      // 5. Log wenn nicht gefunden
+      if (!found) {
+        console.log(`✗ NOT FOUND: "${keyword}"`);
+        // Für Debug: Zeige ähnliche Begriffe im Text
+        const similarTerms = allText.split(/\s+/).filter(word => 
+          word.length >= 3 && (
+            word.includes(keywordLower.substring(0, 3)) || 
+            keywordLower.includes(word.substring(0, 3))
+          )
+        ).slice(0, 3);
+        if (similarTerms.length > 0) {
+          console.log(`  Similar terms found:`, similarTerms);
+        }
       }
       
       let position = 0;
@@ -389,7 +451,7 @@ export class BusinessAnalysisService {
           position = Math.floor(Math.random() * 5) + 1; // Position 1-5
         } else if (metaDesc.includes(keywordLower)) {
           position = Math.floor(Math.random() * 8) + 6; // Position 6-13
-        } else if (headings.includes(keywordLower)) {
+        } else if (headingsText.includes(keywordLower)) {
           position = Math.floor(Math.random() * 12) + 5; // Position 5-16
         } else {
           position = Math.floor(Math.random() * 20) + 11; // Position 11-30
