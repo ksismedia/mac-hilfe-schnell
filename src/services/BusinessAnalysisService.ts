@@ -1,3 +1,4 @@
+
 import { GoogleAPIService } from './GoogleAPIService';
 import { WebsiteAnalysisService } from './WebsiteAnalysisService';
 
@@ -439,60 +440,6 @@ export class BusinessAnalysisService {
         recent: recentReviews,
       }
     };
-  }
-
-  private static async getRealPlaceData(companyName: string, address: string, url: string): Promise<any> {
-    const queries = [
-      `${companyName} ${address}`,
-      `${companyName} ${this.extractCityFromAddress(address)}`,
-      url,
-      companyName
-    ];
-    
-    for (const query of queries) {
-      try {
-        const result = await GoogleAPIService.getPlaceDetails(query);
-        if (result && result.name) {
-          console.log('Found real place data for:', result.name);
-          return result;
-        }
-      } catch (error) {
-        continue;
-      }
-    }
-    
-    console.log('Using fallback place data');
-    return null;
-  }
-
-  private static async getRealPageSpeedData(url: string): Promise<any> {
-    try {
-      const result = await GoogleAPIService.getPageSpeedInsights(url);
-      return result;
-    } catch (error) {
-      console.log('Using fallback PageSpeed data');
-      return null;
-    }
-  }
-
-  private static async getRealCompetitorsData(address: string, industry: string): Promise<any[]> {
-    try {
-      const businessTypes = this.getIndustryTerms(industry);
-      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, businessTypes[0]);
-      
-      if (nearbyResult?.results && nearbyResult.results.length > 0) {
-        return nearbyResult.results.slice(0, 5).map((place: any) => ({
-          name: place.name,
-          distance: this.calculateDistance(place.geometry?.location) || '< 10 km',
-          rating: place.rating || 0,
-          reviews: place.user_ratings_total || 0
-        }));
-      }
-      
-      return this.generateRealisticCompetitors(address, industry);
-    } catch (error) {
-      return this.generateRealisticCompetitors(address, industry);
-    }
   }
 
   private static calculateDistance(location: any): string {
