@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Target, Phone, Mail, Calendar, MousePointer, CreditCard, TrendingUp, Users, Eye, Clock } from 'lucide-react';
+import { Target, Phone, Mail, Calendar, MousePointer, CreditCard, TrendingUp, Users, Eye, Clock, MessageSquare } from 'lucide-react';
 
 interface ConversionOptimizationProps {
   url: string;
@@ -284,7 +284,7 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
         progressIndicator: false
       },
       errorHandling: {
-        404Pages: "custom",
+        customPages404: "custom",
         formErrors: "benutzerfreundlich",
         serverErrors: "generisch",
         fallbacks: "basic"
