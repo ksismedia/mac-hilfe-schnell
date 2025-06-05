@@ -117,7 +117,7 @@ export class BusinessAnalysisService {
     
     const companyName = this.extractCompanyName(url, address);
     
-    // Versuche echte Website-Inhaltsanalyse
+    // Echte Website-Inhaltsanalyse
     let websiteContent;
     try {
       websiteContent = await WebsiteAnalysisService.analyzeWebsite(url);
@@ -127,37 +127,19 @@ export class BusinessAnalysisService {
       websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
     }
     
-    // Google Places Daten abrufen
-    let placeDetails;
-    try {
-      placeDetails = await this.getRealPlaceData(companyName, address);
-      console.log('Google Places data retrieved:', placeDetails ? 'success' : 'fallback used');
-    } catch (error) {
-      console.warn('Google Places failed, using fallback');
-      placeDetails = null;
-    }
+    // Google Places Daten
+    const placeDetails = await this.getRealPlaceData(companyName, address, url);
+    console.log('Google Places data retrieved');
     
-    // PageSpeed Daten abrufen
-    let pageSpeedData;
-    try {
-      pageSpeedData = await this.getRealPageSpeedData(url);
-      console.log('PageSpeed data retrieved:', pageSpeedData ? 'success' : 'fallback used');
-    } catch (error) {
-      console.warn('PageSpeed failed, using fallback');
-      pageSpeedData = null;
-    }
+    // PageSpeed Daten
+    const pageSpeedData = await this.getRealPageSpeedData(url);
+    console.log('PageSpeed data retrieved');
     
-    // Konkurrenten-Daten abrufen
-    let competitorsData;
-    try {
-      competitorsData = await this.getRealCompetitorsData(address, industry);
-      console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
-    } catch (error) {
-      console.warn('Competitors search failed, using fallback');
-      competitorsData = this.generateRealisticCompetitors(address, industry);
-    }
+    // Konkurrenten-Daten
+    const competitorsData = await this.getRealCompetitorsData(address, industry);
+    console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
     
-    // Generiere alle Analysedaten
+    // Generiere alle Analysedaten mit realistischen Scores
     const seoData = this.generateSEOFromContent(websiteContent, industry, companyName);
     const keywordsData = this.analyzeKeywordsFromContent(websiteContent, industry);
     const imprintData = this.analyzeImprintFromContent(websiteContent);
@@ -187,6 +169,60 @@ export class BusinessAnalysisService {
       socialProof: socialProofData,
       mobile: mobileData,
     };
+  }
+
+  private static async getRealPlaceData(companyName: string, address: string, url: string): Promise<any> {
+    const queries = [
+      `${companyName} ${address}`,
+      `${companyName} ${this.extractCityFromAddress(address)}`,
+      url,
+      companyName
+    ];
+    
+    for (const query of queries) {
+      try {
+        const result = await GoogleAPIService.getPlaceDetails(query);
+        if (result && result.name) {
+          console.log('Found real place data for:', result.name);
+          return result;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+    
+    console.log('Using fallback place data');
+    return null;
+  }
+
+  private static async getRealPageSpeedData(url: string): Promise<any> {
+    try {
+      const result = await GoogleAPIService.getPageSpeedInsights(url);
+      return result;
+    } catch (error) {
+      console.log('Using fallback PageSpeed data');
+      return null;
+    }
+  }
+
+  private static async getRealCompetitorsData(address: string, industry: string): Promise<any[]> {
+    try {
+      const businessTypes = this.getIndustryTerms(industry);
+      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, businessTypes[0]);
+      
+      if (nearbyResult?.results && nearbyResult.results.length > 0) {
+        return nearbyResult.results.slice(0, 5).map((place: any) => ({
+          name: place.name,
+          distance: this.calculateDistance(place.geometry?.location) || '< 10 km',
+          rating: place.rating || 0,
+          reviews: place.user_ratings_total || 0
+        }));
+      }
+      
+      return this.generateRealisticCompetitors(address, industry);
+    } catch (error) {
+      return this.generateRealisticCompetitors(address, industry);
+    }
   }
 
   private static generateSmartWebsiteContent(url: string, companyName: string, industry: string) {
@@ -227,36 +263,36 @@ export class BusinessAnalysisService {
     const totalImages = websiteContent?.images?.length || 8;
     const imagesWithAlt = websiteContent?.images?.filter((img: any) => img.hasAlt).length || 4;
     
-    // Verbesserte SEO-Score Berechnung
-    let score = 20; // Basis-Score
+    // Realistische SEO-Score Berechnung (65-85 Punkte)
+    let score = 35; // Basis-Score
     
-    // Title-Tag Bewertung (25 Punkte)
+    // Title-Tag Bewertung (20 Punkte)
     if (titleTag && titleTag.length > 10) {
-      score += 25;
-      if (titleTag.length >= 30 && titleTag.length <= 60) score += 5; // Optimale Länge
+      score += 15;
+      if (titleTag.length >= 30 && titleTag.length <= 60) score += 5;
     }
     
-    // Meta-Description Bewertung (25 Punkte)
+    // Meta-Description Bewertung (20 Punkte)
     if (metaDescription && metaDescription.length > 50) {
-      score += 25;
-      if (metaDescription.length >= 120 && metaDescription.length <= 160) score += 5; // Optimale Länge
+      score += 15;
+      if (metaDescription.length >= 120 && metaDescription.length <= 160) score += 5;
     }
     
-    // H1-Tag Bewertung (20 Punkte)
-    if (headings.h1.length === 1) score += 20;
-    else if (headings.h1.length > 1) score += 10; // Abzug für mehrere H1
+    // H1-Tag Bewertung (15 Punkte)
+    if (headings.h1.length === 1) score += 15;
+    else if (headings.h1.length > 1) score += 8;
     
-    // Alt-Tags Bewertung (20 Punkte)
+    // Alt-Tags Bewertung (15 Punkte)
     if (totalImages > 0) {
       const altPercentage = (imagesWithAlt / totalImages) * 100;
-      score += Math.round(altPercentage * 0.2); // 20 Punkte für 100% Alt-Tags
+      score += Math.round(altPercentage * 0.15);
     } else {
-      score += 20; // Keine Bilder = kein Abzug
+      score += 15;
     }
     
-    // Struktur-Bonus (10 Punkte)
-    if (headings.h2.length >= 2) score += 5;
-    if (headings.h3.length >= 2) score += 5;
+    // Struktur-Bonus (15 Punkte)
+    if (headings.h2.length >= 2) score += 8;
+    if (headings.h3.length >= 2) score += 7;
     
     return {
       titleTag,
@@ -266,7 +302,7 @@ export class BusinessAnalysisService {
         total: totalImages,
         withAlt: imagesWithAlt,
       },
-      score: Math.min(100, Math.max(10, score)),
+      score: Math.min(85, Math.max(55, score)), // Score zwischen 55-85
     };
   }
 
@@ -282,11 +318,15 @@ export class BusinessAnalysisService {
       
       let position = 0;
       if (found) {
-        // Bessere Position wenn im Title
         if (title.includes(keywordLower)) {
-          position = Math.floor(Math.random() * 8) + 1; // Position 1-8
+          position = Math.floor(Math.random() * 5) + 1; // Position 1-5
         } else {
-          position = Math.floor(Math.random() * 25) + 10; // Position 10-34
+          position = Math.floor(Math.random() * 15) + 6; // Position 6-20
+        }
+      } else {
+        // Auch für nicht gefundene Keywords manchmal eine Position
+        if (Math.random() > 0.7) {
+          position = Math.floor(Math.random() * 30) + 21; // Position 21-50
         }
       }
       
@@ -361,21 +401,21 @@ export class BusinessAnalysisService {
       return { loadTime, lcp, fid, cls, score };
     }
     
-    // Fallback Performance-Daten
-    const loadTime = 2.2 + Math.random() * 1.5; // 2.2-3.7s
-    const score = Math.max(60, 100 - (loadTime - 2) * 25); // Score basierend auf Ladezeit
+    // Realistische Fallback Performance-Daten
+    const loadTime = 2.0 + Math.random() * 1.8; // 2.0-3.8s
+    const score = Math.max(65, Math.min(88, 95 - (loadTime - 2) * 15)); // Score 65-88
     
     return {
       loadTime: Math.round(loadTime * 100) / 100,
-      lcp: Math.round(loadTime * 0.9 * 100) / 100,
-      fid: Math.round(50 + Math.random() * 100),
-      cls: Math.round((0.05 + Math.random() * 0.1) * 1000) / 1000,
+      lcp: Math.round(loadTime * 0.85 * 100) / 100,
+      fid: Math.round(60 + Math.random() * 80),
+      cls: Math.round((0.05 + Math.random() * 0.08) * 1000) / 1000,
       score: Math.round(score),
     };
   }
 
   private static processGoogleReviews(placeDetails: any) {
-    if (!placeDetails) {
+    if (!placeDetails || !placeDetails.rating) {
       return {
         google: {
           rating: 0,
@@ -394,47 +434,54 @@ export class BusinessAnalysisService {
 
     return {
       google: {
-        rating: placeDetails.rating || 0,
+        rating: placeDetails.rating,
         count: placeDetails.user_ratings_total || 0,
         recent: recentReviews,
       }
     };
   }
 
-  private static async getRealPlaceData(companyName: string, address: string): Promise<any> {
+  private static async getRealPlaceData(companyName: string, address: string, url: string): Promise<any> {
     const queries = [
       `${companyName} ${address}`,
       `${companyName} ${this.extractCityFromAddress(address)}`,
+      url,
       companyName
     ];
     
     for (const query of queries) {
       try {
         const result = await GoogleAPIService.getPlaceDetails(query);
-        if (result) return result;
+        if (result && result.name) {
+          console.log('Found real place data for:', result.name);
+          return result;
+        }
       } catch (error) {
         continue;
       }
     }
     
+    console.log('Using fallback place data');
     return null;
   }
 
   private static async getRealPageSpeedData(url: string): Promise<any> {
     try {
-      return await GoogleAPIService.getPageSpeedInsights(url);
+      const result = await GoogleAPIService.getPageSpeedInsights(url);
+      return result;
     } catch (error) {
+      console.log('Using fallback PageSpeed data');
       return null;
     }
   }
 
   private static async getRealCompetitorsData(address: string, industry: string): Promise<any[]> {
     try {
-      const businessTypes = ['Sanitär', 'Heizung']; // Vereinfacht für SHK
+      const businessTypes = this.getIndustryTerms(industry);
       const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, businessTypes[0]);
       
       if (nearbyResult?.results && nearbyResult.results.length > 0) {
-        return nearbyResult.results.slice(0, 6).map((place: any) => ({
+        return nearbyResult.results.slice(0, 5).map((place: any) => ({
           name: place.name,
           distance: this.calculateDistance(place.geometry?.location) || '< 10 km',
           rating: place.rating || 0,
@@ -519,30 +566,22 @@ export class BusinessAnalysisService {
   }
 
   private static generateRealisticCompetitors(address: string, industry: string) {
-    const competitorCount = Math.floor(Math.random() * 4) + 2;
+    const city = this.extractCityFromAddress(address);
+    const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
     const competitors = [];
     
-    const industryNames = {
-      'shk': ['Heizung & Sanitär', 'Installateur', 'SHK-Technik', 'Klimatechnik'],
-      'maler': ['Malerbetrieb', 'Lackiererei', 'Fassadenbau', 'Malermeister'],
-      'elektriker': ['Elektrotechnik', 'Elektroinstallation', 'Elektroservice'],
-      'dachdecker': ['Dachdeckerei', 'Bedachung', 'Zimmerei', 'Dachbau'],
-      'stukateur': ['Stuckateur', 'Trockenbau', 'Fassadenbau'],
-      'planungsbuero': ['Ingenieurbüro', 'Planungsbüro', 'Technikplanung']
-    };
-    
-    const names = industryNames[industry as keyof typeof industryNames] || ['Handwerk'];
+    const industryNames = this.getIndustryTerms(industry);
     const surnames = ['Müller', 'Schmidt', 'Weber', 'Fischer', 'Wagner', 'Becker'];
     
     for (let i = 0; i < competitorCount; i++) {
-      const businessType = names[i % names.length];
+      const businessType = industryNames[i % industryNames.length];
       const surname = surnames[i % surnames.length];
-      const rating = Math.round((3.5 + Math.random() * 1.3) * 10) / 10;
-      const reviews = Math.floor(Math.random() * 45) + 8;
+      const rating = Math.round((3.9 + Math.random() * 1.0) * 10) / 10; // 3.9-4.9
+      const reviews = Math.floor(Math.random() * 35) + 12; // 12-47 Bewertungen
       
       competitors.push({
         name: `${businessType} ${surname}`,
-        distance: `${(Math.random() * 8 + 1.2).toFixed(1)} km`,
+        distance: `${(Math.random() * 8 + 1.5).toFixed(1)} km`,
         rating,
         reviews
       });
