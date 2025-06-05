@@ -6,7 +6,7 @@ import { Target, Phone, Mail, Calendar, MousePointer, CreditCard } from 'lucide-
 
 interface ConversionOptimizationProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
 }
 
 const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, industry }) => {
