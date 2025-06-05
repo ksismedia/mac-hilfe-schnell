@@ -54,7 +54,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData })
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className="space-y-6">
         <Card>
           <CardHeader>
@@ -149,7 +149,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData })
           </CardContent>
         </Card>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
