@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +15,9 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
     shk: ['sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 'badezimmer', 'rohrreinigung'],
     maler: ['malerei', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'innenausbau', 'farbe', 'tapete'],
     elektriker: ['elektro', 'installation', 'beleuchtung', 'smart home', 'sicherheit', 'photovoltaik', 'stromnetz'],
-    dachdecker: ['dach', 'dachdeckung', 'ziegel', 'abdichtung', 'dachrinne', 'dachsanierung', 'schiefer', 'isolierung']
+    dachdecker: ['dach', 'dachdeckung', 'ziegel', 'abdichtung', 'dachrinne', 'dachsanierung', 'schiefer', 'isolierung'],
+    stukateur: ['stuck', 'putz', 'fassade', 'innenausbau', 'gips', 'verputz', 'sanierung', 'renovierung'],
+    planungsbuero: ['planung', 'versorgungstechnik', 'heizung', 'sanitär', 'klima', 'energie', 'beratung', 'konzept']
   };
 
   // Simulierte Keyword-Daten
