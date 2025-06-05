@@ -7,12 +7,8 @@ const analyzeBtn = document.getElementById('analyzeBtn');
 const statusDiv = document.getElementById('status');
 const currentUrlDiv = document.getElementById('currentUrl');
 
-// App-URLs (anpassbar) - Ihre deployed Lovable App URL
-const APP_URLS = [
-  'https://mac-hilfe-schnell.lovable.app',  // Ihre deployed Lovable App - HAUPT-URL
-  'http://localhost:3000',                   // Lokale Entwicklung
-  'http://localhost:5173'                    // Vite dev server
-];
+// Ihre deployed Lovable App URL
+const LOVABLE_APP_URL = 'https://mac-hilfe-schnell.lovable.app';
 
 // Status-Funktionen
 function showStatus(message, type = 'loading') {
@@ -36,156 +32,115 @@ async function displayCurrentUrl() {
   }
 }
 
-// Prüft ob die App geöffnet ist
-async function findAppTab() {
-  for (const appUrl of APP_URLS) {
-    try {
-      const tabs = await chrome.tabs.query({ url: `${appUrl}/*` });
-      if (tabs.length > 0) {
-        console.log(`App-Tab gefunden unter: ${appUrl}`);
-        return tabs[0];
-      }
-    } catch (error) {
-      console.log(`App nicht gefunden unter: ${appUrl}`);
-    }
-  }
-  return null;
-}
-
-// Sendet Daten an die App
-async function sendDataToApp(websiteData) {
-  console.log('Starte Datenübertragung zur App...');
-  
-  // 1. Versuche an bereits geöffnete App zu senden
-  const appTab = await findAppTab();
-  
-  if (appTab) {
-    console.log('App-Tab gefunden, sende Daten...');
-    
-    try {
-      // Sende direkt an den App-Tab
-      await chrome.tabs.sendMessage(appTab.id, {
-        type: 'EXTENSION_WEBSITE_DATA',
-        source: 'seo-analyzer-extension',
-        data: websiteData
-      });
-      
-      // Wechsle zur App
-      await chrome.tabs.update(appTab.id, { active: true });
-      await chrome.windows.update(appTab.windowId, { focused: true });
-      
-      return { success: true, method: 'existing-tab' };
-    } catch (error) {
-      console.log('Fehler beim Senden an bestehenden Tab:', error);
-    }
-  }
-  
-  // 2. Öffne neue App-Instanz mit Daten in URL
-  const encodedData = encodeURIComponent(JSON.stringify({
-    source: 'extension',
-    timestamp: Date.now(),
-    data: websiteData
-  }));
-  
-  // Verwende die Haupt-App-URL
-  const appUrl = `${APP_URLS[0]}?data=${encodedData}`;
-  
-  console.log('Öffne neue App-Instanz unter:', appUrl);
+// Öffnet Lovable App - vereinfacht und zuverlässiger
+async function openLovableApp(websiteData = null) {
+  console.log('Öffne Lovable App...');
   
   try {
+    let targetUrl = LOVABLE_APP_URL;
+    
+    // Wenn Website-Daten vorhanden sind, füge sie als URL-Parameter hinzu
+    if (websiteData) {
+      const dataString = JSON.stringify({
+        source: 'extension',
+        timestamp: Date.now(),
+        data: websiteData
+      });
+      const encodedData = encodeURIComponent(dataString);
+      targetUrl = `${LOVABLE_APP_URL}?extensionData=${encodedData}`;
+    }
+    
+    console.log('Öffne URL:', targetUrl);
+    
+    // Erstelle neuen Tab mit der Lovable App
     const newTab = await chrome.tabs.create({ 
-      url: appUrl,
+      url: targetUrl,
       active: true
     });
     
-    console.log('Neue App-Tab erstellt:', newTab.id);
-    return { success: true, method: 'new-tab' };
+    console.log('Lovable Tab erstellt:', newTab.id);
+    return { success: true, tabId: newTab.id };
+    
   } catch (error) {
-    console.error('Fehler beim Öffnen der neuen App-Tab:', error);
-    throw new Error('App konnte nicht geöffnet werden');
+    console.error('Fehler beim Öffnen der Lovable App:', error);
+    throw new Error(`App konnte nicht geöffnet werden: ${error.message}`);
+  }
+}
+
+// Website-Daten extrahieren
+async function extractWebsiteData() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  
+  if (!tab.url.startsWith('http')) {
+    throw new Error('Diese Seite kann nicht analysiert werden');
+  }
+  
+  try {
+    // Versuche Content Script zu kontaktieren
+    const response = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
+    
+    if (response && response.success) {
+      return response.data;
+    } else {
+      throw new Error('Content Script antwortet nicht');
+    }
+    
+  } catch (error) {
+    console.log('Content Script nicht verfügbar, versuche Injection...');
+    
+    // Injiziere Content Script
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['content.js']
+    });
+    
+    // Warte kurz und versuche erneut
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const retryResponse = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
+    
+    if (retryResponse && retryResponse.success) {
+      return retryResponse.data;
+    } else {
+      throw new Error('Content Script funktioniert nicht');
+    }
   }
 }
 
 // Hauptfunktion für Website-Analyse
 async function analyzeWebsite() {
+  console.log('Starte Website-Analyse...');
+  
   try {
     showStatus('Extrahiere Website-Daten...', 'loading');
     analyzeBtn.disabled = true;
     
-    // Aktuelle Tab-Informationen
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    if (!tab.url.startsWith('http')) {
-      throw new Error('Diese Seite kann nicht analysiert werden');
+    // Extrahiere Website-Daten
+    let websiteData = null;
+    try {
+      websiteData = await extractWebsiteData();
+      console.log('Website-Daten erfolgreich extrahiert:', websiteData);
+    } catch (extractError) {
+      console.log('Datenextraktion fehlgeschlagen:', extractError.message);
+      // Fahre ohne Daten fort
     }
     
-    console.log('Analysiere Website:', tab.url);
+    showStatus('Öffne Lovable App...', 'loading');
     
-    try {
-      const response = await chrome.tabs.sendMessage(tab.id, { 
-        action: 'extractData' 
-      });
-      
-      if (!response || !response.success) {
-        throw new Error(response?.error || 'Content Script antwortet nicht');
+    // Öffne Lovable App (mit oder ohne Daten)
+    const result = await openLovableApp(websiteData);
+    
+    if (result.success) {
+      if (websiteData) {
+        showStatus('✓ App geöffnet mit Website-Daten!', 'success');
+      } else {
+        showStatus('✓ App geöffnet (ohne Datenextraktion)', 'success');
       }
       
-      const websiteData = response.data;
-      console.log('Website-Daten erfolgreich extrahiert');
-      
-      showStatus('Öffne Analyzer-App...', 'loading');
-      
-      // Sende Daten an die App
-      const sendResult = await sendDataToApp(websiteData);
-      
-      if (sendResult.success) {
-        showStatus(`✓ App geöffnet! (${sendResult.method === 'existing-tab' ? 'Tab aktualisiert' : 'Neue Tab erstellt'})`, 'success');
-        
-        // Schließe Popup nach 3 Sekunden
-        setTimeout(() => {
-          window.close();
-        }, 3000);
-      }
-      
-    } catch (connectionError) {
-      console.log('Content Script nicht verfügbar, versuche Injection...');
-      
-      try {
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['content.js']
-        });
-        
-        showStatus('Content Script geladen, versuche erneut...', 'loading');
-        
-        // Warte und versuche erneut
-        setTimeout(async () => {
-          try {
-            const response = await chrome.tabs.sendMessage(tab.id, { 
-              action: 'extractData' 
-            });
-            
-            if (response && response.success) {
-              const websiteData = response.data;
-              showStatus('Öffne Analyzer-App...', 'loading');
-              const sendResult = await sendDataToApp(websiteData);
-              
-              if (sendResult.success) {
-                showStatus(`✓ App geöffnet!`, 'success');
-                setTimeout(() => window.close(), 3000);
-              }
-            } else {
-              throw new Error('Content Script funktioniert nicht richtig');
-            }
-          } catch (retryError) {
-            showStatus('❌ Fehler: Bitte Seite neu laden und erneut versuchen', 'error');
-          }
-        }, 1500);
-        
-      } catch (injectError) {
-        console.error('Script Injection fehlgeschlagen:', injectError);
-        showStatus('❌ Fehler: Bitte Seite neu laden und erneut versuchen', 'error');
-      }
+      // Schließe Popup nach 2 Sekunden
+      setTimeout(() => {
+        window.close();
+      }, 2000);
     }
     
   } catch (error) {
