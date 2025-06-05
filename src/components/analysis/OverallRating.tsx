@@ -54,102 +54,100 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData })
   };
 
   return (
-    <>
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Gesamtbewertung - {realData.company.name}</CardTitle>
-            <CardDescription>
-              Vollständige Analyse für {realData.company.url}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className={`text-6xl font-bold mb-2 ${getScoreColor(overallScore)}`}>
-                  {(overallScore/20).toFixed(1)}/5
-                </div>
-                <Badge variant={getScoreBadge(overallScore)}>
-                  {overallScore}/100 Punkte
-                </Badge>
-                <div className="mt-2 text-sm text-gray-600">
-                  Basierend auf {metrics.length} Analysebereichen
-                </div>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Gesamtbewertung - {realData.company.name}</CardTitle>
+          <CardDescription>
+            Vollständige Analyse für {realData.company.url}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className={`text-6xl font-bold mb-2 ${getScoreColor(overallScore)}`}>
+                {(overallScore/20).toFixed(1)}/5
               </div>
+              <Badge variant={getScoreBadge(overallScore)}>
+                {overallScore}/100 Punkte
+              </Badge>
+              <div className="mt-2 text-sm text-gray-600">
+                Basierend auf {metrics.length} Analysebereichen
+              </div>
+            </div>
 
-              <div className="space-y-4">
-                {metrics.map((metric, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{metric.name}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {metric.weight}% Gewichtung
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                          {Math.round(metric.score)}/100
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          ({Math.round(metric.score/20*10)/10}/5)
-                        </span>
-                      </div>
+            <div className="space-y-4">
+              {metrics.map((metric, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{metric.name}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {metric.weight}% Gewichtung
+                      </Badge>
                     </div>
-                    <Progress value={metric.score} className="h-2" />
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
+                        {Math.round(metric.score)}/100
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        ({Math.round(metric.score/20*10)/10}/5)
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <Progress value={metric.score} className="h-2" />
+                </div>
+              ))}
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {metrics.filter(m => m.score >= 80).length}
-                  </div>
-                  <div className="text-sm text-gray-600">Sehr gut (≥80%)</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {metrics.filter(m => m.score >= 80).length}
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {metrics.filter(m => m.score >= 60 && m.score < 80).length}
-                  </div>
-                  <div className="text-sm text-gray-600">Gut (60-79%)</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">
-                    {metrics.filter(m => m.score < 60).length}
-                  </div>
-                  <div className="text-sm text-gray-600">Verbesserung nötig (<60%)</div>
-                </div>
+                <div className="text-sm text-gray-600">Sehr gut (≥80%)</div>
               </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {metrics.filter(m => m.score >= 60 && m.score < 80).length}
+                </div>
+                <div className="text-sm text-gray-600">Gut (60-79%)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  {metrics.filter(m => m.score < 60).length}
+                </div>
+                <div className="text-sm text-gray-600">Verbesserung nötig (&lt;60%)</div>
+              </div>
+            </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">Live-Analyse Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
-                  <div>
-                    <h4 className="font-medium mb-1">Technische Analyse:</h4>
-                    <ul className="space-y-1">
-                      <li>• Website: {realData.company.url}</li>
-                      <li>• SEO-Faktoren: {realData.seo.score}/100</li>
-                      <li>• Ladezeit: {realData.performance.loadTime}s</li>
-                      <li>• Mobile Score: {realData.mobile.overallScore}/100</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Business-Analyse:</h4>
-                    <ul className="space-y-1">
-                      <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
-                      <li>• Google Bewertungen: {realData.reviews.google.count}</li>
-                      <li>• Konkurrenten: {realData.competitors.length}</li>
-                      <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
-                    </ul>
-                  </div>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-blue-900 mb-2">Live-Analyse Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                  <h4 className="font-medium mb-1">Technische Analyse:</h4>
+                  <ul className="space-y-1">
+                    <li>• Website: {realData.company.url}</li>
+                    <li>• SEO-Faktoren: {realData.seo.score}/100</li>
+                    <li>• Ladezeit: {realData.performance.loadTime}s</li>
+                    <li>• Mobile Score: {realData.mobile.overallScore}/100</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">Business-Analyse:</h4>
+                  <ul className="space-y-1">
+                    <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
+                    <li>• Google Bewertungen: {realData.reviews.google.count}</li>
+                    <li>• Konkurrenten: {realData.competitors.length}</li>
+                    <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
+                  </ul>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
