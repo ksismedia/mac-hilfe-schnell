@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -125,12 +126,54 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     return yPos + 12;
   };
 
+  const addDetailedAnalysisPage = (doc: jsPDF, pageNumber: number, totalPages: number, sectionTitle: string, content: any) => {
+    addHeader(doc, sectionTitle, pageNumber, totalPages);
+    
+    let yPos = 35;
+    yPos = addSection(doc, sectionTitle, yPos);
+    
+    // Add content based on section
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    if (content.metrics) {
+      content.metrics.forEach((metric: any, index: number) => {
+        const color = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
+        
+        doc.text(metric.label, 20, yPos);
+        doc.text(metric.status, 120, yPos);
+        
+        // Mini progress bar
+        doc.setFillColor(229, 231, 235);
+        doc.rect(150, yPos - 2, 30, 3, 'F');
+        doc.setFillColor(color[0], color[1], color[2]);
+        doc.rect(150, yPos - 2, (30 * metric.score) / 100, 3, 'F');
+        
+        doc.text(`${metric.score}%`, 185, yPos);
+        yPos += 8;
+      });
+    }
+    
+    if (content.recommendations) {
+      yPos += 10;
+      yPos = addSection(doc, 'Empfehlungen', yPos);
+      
+      content.recommendations.forEach((rec: string, index: number) => {
+        doc.setFontSize(9);
+        doc.text(`• ${rec}`, 22, yPos);
+        yPos += 6;
+      });
+    }
+    
+    addFooter(doc);
+  };
+
   const generateComprehensiveReport = () => {
     const doc = new jsPDF();
     let currentPage = 1;
-    const totalPages = 28; // Updated for comprehensive report
+    const totalPages = 8; // Reduced from 28 to 8 pages with actual content
     
-    // Cover Page with enhanced graphics
+    // Cover Page
     doc.setFillColor(37, 99, 235);
     doc.rect(0, 0, 210, 297, 'F');
     
@@ -170,7 +213,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     doc.text(`Adresse: ${businessData.address}`, 35, 192);
     doc.text(`Branche: ${industryNames[businessData.industry]}`, 35, 199);
     
-    // Score overview with enhanced graphics
+    // Score overview
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Gesamtbewertung:', 35, 220);
@@ -183,7 +226,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     doc.setFontSize(8);
     doc.text(`Analysedatum: ${new Date().toLocaleDateString('de-DE')}`, 105, 280, { align: 'center' });
     
-    // Page 2: Executive Summary with visual elements
+    // Page 2: Executive Summary
     doc.addPage();
     currentPage++;
     addHeader(doc, 'Executive Summary', currentPage, totalPages);
@@ -200,80 +243,117 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     addProgressBar(doc, 110, yPos + 5, 80, 67, 'Content Score');
     yPos += 25;
     
-    // Key findings with icons (simulated with colored circles)
+    // Key findings
     yPos = addSection(doc, 'Handlungsempfehlungen (Top 5)', yPos);
     
     const recommendations = [
-      '• Verbesserung der Ladegeschwindigkeit (Critical)',
-      '• Optimierung der Meta-Descriptions',
-      '• Ergänzung lokaler Keywords',
-      '• Erweiterung der Google My Business Informationen',
-      '• Integration von mehr Kundenbewertungen'
+      'Verbesserung der Ladegeschwindigkeit (Critical)',
+      'Optimierung der Meta-Descriptions',
+      'Ergänzung lokaler Keywords',
+      'Erweiterung der Google My Business Informationen',
+      'Integration von mehr Kundenbewertungen'
     ];
     
     recommendations.forEach((rec, index) => {
-      // Priority indicator
       const color = index < 2 ? [239, 68, 68] : index < 4 ? [251, 191, 36] : [34, 197, 94];
       doc.setFillColor(color[0], color[1], color[2]);
       doc.circle(22, yPos + 2, 1.5, 'F');
       
       doc.setFontSize(10);
       doc.setTextColor(0, 0, 0);
-      doc.text(rec, 27, yPos + 3);
+      doc.text(`• ${rec}`, 27, yPos + 3);
       yPos += 8;
     });
     
     addFooter(doc);
     
-    // Continue with detailed sections...
-    // SEO Analysis (Pages 3-4)
-    doc.addPage();
-    currentPage++;
-    addHeader(doc, 'SEO-Analyse', currentPage, totalPages);
-    
-    yPos = 35;
-    yPos = addSection(doc, 'On-Page SEO Faktoren', yPos);
-    
-    // SEO metrics visualization
-    const seoMetrics = [
-      { label: 'Title Tags', score: 85, status: 'Gut' },
-      { label: 'Meta Descriptions', score: 65, status: 'Verbesserungsbedarf' },
-      { label: 'H1-H6 Struktur', score: 78, status: 'Gut' },
-      { label: 'Alt-Texte', score: 45, status: 'Kritisch' }
+    // Define analysis sections with real content
+    const analysisSections = [
+      {
+        title: 'SEO-Analyse',
+        content: {
+          metrics: [
+            { label: 'Title Tags', score: 85, status: 'Gut' },
+            { label: 'Meta Descriptions', score: 65, status: 'Verbesserungsbedarf' },
+            { label: 'H1-H6 Struktur', score: 78, status: 'Gut' },
+            { label: 'Alt-Texte', score: 45, status: 'Kritisch' }
+          ],
+          recommendations: [
+            'Meta-Descriptions für alle Seiten ergänzen',
+            'Alt-Texte für Bilder hinzufügen',
+            'Keyword-Dichte optimieren'
+          ]
+        }
+      },
+      {
+        title: 'Performance-Analyse',
+        content: {
+          metrics: [
+            { label: 'Ladezeit', score: 65, status: 'Verbesserungsbedarf' },
+            { label: 'Bildoptimierung', score: 70, status: 'Gut' },
+            { label: 'Code-Minifikation', score: 55, status: 'Verbesserungsbedarf' }
+          ],
+          recommendations: [
+            'Bilder komprimieren',
+            'CSS/JS minifizieren',
+            'Caching implementieren'
+          ]
+        }
+      },
+      {
+        title: 'Mobile Optimierung',
+        content: {
+          metrics: [
+            { label: 'Responsive Design', score: 92, status: 'Sehr gut' },
+            { label: 'Touch-Optimierung', score: 88, status: 'Gut' },
+            { label: 'Mobile Ladezeit', score: 75, status: 'Gut' }
+          ],
+          recommendations: [
+            'Touch-Targets vergrößern',
+            'Mobile Navigation verbessern'
+          ]
+        }
+      },
+      {
+        title: 'Content-Analyse',
+        content: {
+          metrics: [
+            { label: 'Textqualität', score: 78, status: 'Gut' },
+            { label: 'Keyword-Integration', score: 65, status: 'Verbesserungsbedarf' },
+            { label: 'Content-Struktur', score: 82, status: 'Gut' }
+          ],
+          recommendations: [
+            'Mehr branchenspezifische Keywords verwenden',
+            'FAQ-Sektion erweitern',
+            'Blog für regelmäßigen Content starten'
+          ]
+        }
+      },
+      {
+        title: 'Local SEO',
+        content: {
+          metrics: [
+            { label: 'Google My Business', score: 85, status: 'Gut' },
+            { label: 'Lokale Verzeichnisse', score: 60, status: 'Verbesserungsbedarf' },
+            { label: 'NAP-Konsistenz', score: 75, status: 'Gut' }
+          ],
+          recommendations: [
+            'Mehr lokale Verzeichniseinträge',
+            'Regionale Keywords optimieren',
+            'Lokale Backlinks aufbauen'
+          ]
+        }
+      }
     ];
     
-    seoMetrics.forEach((metric, index) => {
-      const color = metric.score >= 70 ? [34, 197, 94] : metric.score >= 50 ? [251, 191, 36] : [239, 68, 68];
-      
-      doc.setFontSize(10);
-      doc.text(metric.label, 20, yPos);
-      doc.text(metric.status, 120, yPos);
-      
-      // Mini progress bar
-      doc.setFillColor(229, 231, 235);
-      doc.rect(150, yPos - 2, 30, 3, 'F');
-      doc.setFillColor(color[0], color[1], color[2]);
-      doc.rect(150, yPos - 2, (30 * metric.score) / 100, 3, 'F');
-      
-      doc.text(`${metric.score}%`, 185, yPos);
-      yPos += 8;
-    });
-    
-    // Continue adding all 15 analysis sections with enhanced graphics...
-    // For brevity, I'll add the key sections with enhanced visual elements
-    
-    // Add more detailed sections with similar visual enhancements
-    // Each section would include progress bars, score cards, and color-coded indicators
-    
-    // Final page - Summary and next steps
-    for (let i = currentPage; i < totalPages - 1; i++) {
+    // Add detailed analysis pages
+    analysisSections.forEach((section, index) => {
       doc.addPage();
       currentPage++;
-      addHeader(doc, `Detailanalyse - Teil ${currentPage - 2}`, currentPage, totalPages);
-      addFooter(doc);
-    }
+      addDetailedAnalysisPage(doc, currentPage, totalPages, section.title, section.content);
+    });
     
-    // Last page - Action plan
+    // Final page - Action plan
     doc.addPage();
     currentPage++;
     addHeader(doc, 'Handlungsplan & nächste Schritte', currentPage, totalPages);
@@ -281,7 +361,6 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     yPos = 35;
     yPos = addSection(doc, 'Priorisierte Maßnahmen', yPos);
     
-    // Priority matrix visualization
     const priorities = [
       { task: 'Ladezeit optimieren', impact: 'Hoch', effort: 'Mittel', priority: 1 },
       { task: 'Meta-Descriptions ergänzen', impact: 'Mittel', effort: 'Niedrig', priority: 2 },
@@ -311,14 +390,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     
     addFooter(doc);
     
-    // Save the enhanced PDF
+    // Save the PDF
     doc.save(`Online-Auftritt-Analyse-${businessData.url.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
   };
 
   const generateQuickSummary = () => {
     const doc = new jsPDF();
     
-    // Enhanced 4-page summary with visual elements
+    // 4-page summary with visual elements
     addHeader(doc, 'Management Summary', 1, 4);
     
     let yPos = 35;
@@ -326,7 +405,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     // Executive dashboard
     yPos = addSection(doc, 'Executive Dashboard', yPos);
     
-    // Score overview with enhanced graphics
+    // Score overview
     addScoreCard(doc, 20, yPos, 'Gesamt\nScore', 85, 100, [34, 197, 94]);
     addScoreCard(doc, 70, yPos, 'SEO\nScore', 78, 100, [251, 191, 36]);
     addScoreCard(doc, 120, yPos, 'Mobile\nScore', 92, 100, [34, 197, 94]);
@@ -334,7 +413,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     
     yPos += 35;
     
-    // Quick metrics with progress bars
+    // Quick metrics
     addProgressBar(doc, 20, yPos, 170, 85, 'Gesamtbewertung');
     yPos += 15;
     addProgressBar(doc, 20, yPos, 170, 73, 'Online-Sichtbarkeit');
@@ -343,10 +422,41 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
     
     addFooter(doc);
     
-    // Continue with 3 more summary pages...
+    // Add 3 more pages with actual content
     for (let page = 2; page <= 4; page++) {
       doc.addPage();
       addHeader(doc, `Management Summary - Teil ${page}`, page, 4);
+      
+      yPos = 35;
+      if (page === 2) {
+        yPos = addSection(doc, 'Top Empfehlungen', yPos);
+        const topRecs = [
+          'Ladezeit der Website verbessern',
+          'Meta-Descriptions optimieren',
+          'Mobile Benutzerfreundlichkeit erhöhen',
+          'Lokale SEO-Präsenz stärken'
+        ];
+        topRecs.forEach((rec, index) => {
+          doc.setFontSize(10);
+          doc.text(`${index + 1}. ${rec}`, 20, yPos);
+          yPos += 8;
+        });
+      } else if (page === 3) {
+        yPos = addSection(doc, 'Konkurrenzvergleich', yPos);
+        doc.setFontSize(10);
+        doc.text('Ihr Unternehmen liegt im oberen Mittelfeld der Branche.', 20, yPos);
+        yPos += 10;
+        doc.text('Hauptkonkurrenten haben ähnliche Stärken und Schwächen.', 20, yPos);
+      } else if (page === 4) {
+        yPos = addSection(doc, 'Nächste Schritte', yPos);
+        doc.setFontSize(10);
+        doc.text('1. Sofort: Meta-Descriptions ergänzen (1-2 Tage)', 20, yPos);
+        yPos += 8;
+        doc.text('2. Kurzfristig: Website-Performance optimieren (1-2 Wochen)', 20, yPos);
+        yPos += 8;
+        doc.text('3. Mittelfristig: Content-Strategie entwickeln (1 Monat)', 20, yPos);
+      }
+      
       addFooter(doc);
     }
     
@@ -374,11 +484,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   <BarChart3 className="h-8 w-8 text-blue-600" />
                   <div>
                     <h3 className="font-semibold text-lg">Vollständiger Report</h3>
-                    <p className="text-sm text-gray-600">Alle 15 Analysebereiche detailliert</p>
+                    <p className="text-sm text-gray-600">Alle Analysebereiche detailliert</p>
                   </div>
                 </div>
                 <div className="space-y-2 mb-4">
-                  <Badge variant="outline">~28 Seiten</Badge>
+                  <Badge variant="outline">~8 Seiten</Badge>
                   <Badge variant="outline">Alle Diagramme</Badge>
                   <Badge variant="outline">Detaillierte Empfehlungen</Badge>
                 </div>
@@ -418,10 +528,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
             </Card>
           </div>
 
-          {/* Enhanced Features Info */}
+          {/* Features Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Neue Premium-Features im PDF</CardTitle>
+              <CardTitle className="text-lg">Premium-Features im PDF</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -451,11 +561,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                   <ul className="space-y-1 text-sm">
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      Detaillierte Konkurrenzanalyse
+                      Detaillierte SEO-Analyse
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      Umfassende Arbeitsplatz-Bewertungen
+                      Performance-Bewertungen
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
@@ -463,7 +573,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData }) => {
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                      Handlungsplan mit Zeitschiene
+                      Handlungsplan mit Prioritäten
                     </li>
                   </ul>
                 </div>
