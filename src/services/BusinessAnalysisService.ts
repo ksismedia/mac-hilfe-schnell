@@ -1,4 +1,5 @@
 import { GoogleAPIService } from './GoogleAPIService';
+import { WebsiteAnalysisService } from './WebsiteAnalysisService';
 
 export interface RealBusinessData {
   company: {
@@ -112,26 +113,28 @@ export interface RealBusinessData {
 
 export class BusinessAnalysisService {
   static async analyzeWebsite(url: string, address: string, industry: string): Promise<RealBusinessData> {
-    console.log(`Analyzing website with improved Google APIs: ${url} for ${address} in ${industry} industry`);
+    console.log(`Analyzing website with Google APIs and real content analysis: ${url} for ${address} in ${industry} industry`);
     
     const companyName = this.extractCompanyName(url, address);
     
-    // Verbesserte echte Google Places Daten abrufen
+    // Real website content analysis
+    const websiteContent = await WebsiteAnalysisService.analyzeWebsite(url);
+    console.log('Website content analysis completed:', websiteContent);
+    
+    // Real Google Places data
     const placeDetails = await this.getRealPlaceData(companyName, address);
     
-    // Echte PageSpeed Daten abrufen
+    // Real PageSpeed data
     const pageSpeedData = await this.getRealPageSpeedData(url);
     
-    // Verbesserte Konkurrentendaten abrufen
+    // Real competitors data
     const competitorsData = await this.getRealCompetitorsData(address, industry);
     
-    // Verbesserte Website-Content-Analyse für Impressum
-    const websiteContent = await this.analyzeWebsiteContent(url);
-    
-    // Generate other realistic data
-    const seoData = await this.generateRealSEOData(url, industry, companyName, pageSpeedData);
-    const keywordsData = this.generateRealisticKeywords(industry);
-    const imprintData = this.generateImpressionAnalysisFromContent(websiteContent, url);
+    // Generate data based on real content
+    const seoData = this.generateSEOFromRealContent(websiteContent, industry, companyName);
+    const keywordsData = WebsiteAnalysisService.analyzeKeywordsForIndustry(websiteContent, industry);
+    const imprintData = WebsiteAnalysisService.detectImprintFromContent(websiteContent);
+    const performanceData = pageSpeedData || this.generateRealisticPerformanceData(url);
     const socialMediaData = this.generateRealisticSocialMediaData(companyName);
     const workplaceData = this.generateRealisticWorkplaceData(companyName);
     const socialProofData = this.generateRealisticSocialProofData(industry);
@@ -146,7 +149,7 @@ export class BusinessAnalysisService {
         phone: placeDetails?.formatted_phone_number,
       },
       seo: seoData,
-      performance: pageSpeedData || this.generateRealisticPerformanceData(url),
+      performance: performanceData,
       reviews: {
         google: this.processGoogleReviews(placeDetails)
       },
@@ -157,6 +160,42 @@ export class BusinessAnalysisService {
       workplace: workplaceData,
       socialProof: socialProofData,
       mobile: mobileData,
+    };
+  }
+
+  private static generateSEOFromRealContent(websiteContent: any, industry: string, companyName: string) {
+    // Use real content from website
+    const titleTag = websiteContent.title || `${companyName} - ${this.getIndustryTerms(industry)[0]}`;
+    const metaDescription = websiteContent.metaDescription || `Ihr zuverlässiger ${this.getIndustryTerms(industry)[0]}.`;
+    
+    // Use real headings structure
+    const headings = {
+      h1: websiteContent.headings.h1.length > 0 ? websiteContent.headings.h1 : [titleTag],
+      h2: websiteContent.headings.h2.length > 0 ? websiteContent.headings.h2 : [
+        `Unsere ${this.getIndustryTerms(industry)[0]} Leistungen`,
+        'Warum uns wählen?'
+      ],
+      h3: websiteContent.headings.h3.length > 0 ? websiteContent.headings.h3 : [
+        'Notdienst 24/7',
+        'Kostenlose Beratung'
+      ]
+    };
+
+    // Use real image data
+    const totalImages = websiteContent.images.length;
+    const imagesWithAlt = websiteContent.images.filter((img: any) => img.hasAlt).length;
+    
+    const score = this.calculateRealisticSEOScore(titleTag, metaDescription, headings, imagesWithAlt, totalImages);
+    
+    return {
+      titleTag,
+      metaDescription,
+      headings,
+      altTags: {
+        total: totalImages,
+        withAlt: imagesWithAlt,
+      },
+      score,
     };
   }
 
