@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown, Minus, Users, Star, Globe } from 'lucide-reac
 
 interface CompetitorAnalysisProps {
   address: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry }) => {
