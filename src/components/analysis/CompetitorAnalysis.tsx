@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, Minus, MapPin, Phone, Globe } from 'lucide-react';
+import { MapPin, Star, Phone, Globe, Users, TrendingUp, Clock, Award } from 'lucide-react';
 
 interface CompetitorAnalysisProps {
   address: string;
