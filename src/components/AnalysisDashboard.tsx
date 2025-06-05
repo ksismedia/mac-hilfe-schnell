@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -218,7 +217,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="mobile">
-            <MobileOptimization url={businessData.url} />
+            <MobileOptimization url={businessData.url} realData={realData} />
           </TabsContent>
 
           <TabsContent value="local-seo">
@@ -242,11 +241,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="social">
-            <SocialMediaAnalysis businessData={businessData} />
+            <SocialMediaAnalysis businessData={businessData} realData={realData} />
           </TabsContent>
 
           <TabsContent value="social-proof">
-            <SocialProof businessData={businessData} />
+            <SocialProof businessData={businessData} realData={realData} />
           </TabsContent>
 
           <TabsContent value="conversion">
@@ -254,11 +253,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="workplace">
-            <WorkplaceReviews businessData={businessData} />
+            <WorkplaceReviews businessData={businessData} realData={realData} />
           </TabsContent>
 
           <TabsContent value="imprint">
-            <ImprintCheck url={businessData.url} />
+            <ImprintCheck url={businessData.url} realData={realData} />
           </TabsContent>
 
           <TabsContent value="industry">
