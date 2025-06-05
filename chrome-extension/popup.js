@@ -1,4 +1,3 @@
-
 // Popup Script - UI Logic für die Chrome Extension
 console.log('SEO Analyzer Popup geladen');
 
@@ -112,40 +111,83 @@ async function analyzeWebsite() {
       throw new Error('Diese Seite kann nicht analysiert werden');
     }
     
-    // Extrahiere Daten von der Website
+    // Warte kurz und versuche dann das Content Script zu erreichen
     console.log('Sende Extraktions-Request an Content Script...');
-    const response = await chrome.tabs.sendMessage(tab.id, { 
-      action: 'extractData' 
-    });
     
-    if (!response || !response.success) {
-      throw new Error(response?.error || 'Fehler beim Extrahieren der Daten');
-    }
-    
-    const websiteData = response.data;
-    console.log('Website-Daten erhalten:', websiteData);
-    
-    showStatus('Sende Daten an Analyzer-App...', 'loading');
-    
-    // Sende Daten an die App
-    const sendResult = await sendDataToApp(websiteData);
-    
-    if (sendResult.success) {
-      showStatus(`✓ Analyse gestartet! (${sendResult.method === 'existing-tab' ? 'App aktualisiert' : 'App geöffnet'})`, 'success');
+    try {
+      const response = await chrome.tabs.sendMessage(tab.id, { 
+        action: 'extractData' 
+      });
       
-      // Schließe Popup nach 2 Sekunden
-      setTimeout(() => {
-        window.close();
-      }, 2000);
-    } else {
-      throw new Error('App konnte nicht erreicht werden');
+      if (!response || !response.success) {
+        throw new Error(response?.error || 'Content Script antwortet nicht');
+      }
+      
+      const websiteData = response.data;
+      console.log('Website-Daten erhalten:', websiteData);
+      
+      showStatus('Sende Daten an Analyzer-App...', 'loading');
+      
+      // Sende Daten an die App
+      const sendResult = await sendDataToApp(websiteData);
+      
+      if (sendResult.success) {
+        showStatus(`✓ Analyse gestartet! (${sendResult.method === 'existing-tab' ? 'App aktualisiert' : 'App geöffnet'})`, 'success');
+        
+        // Schließe Popup nach 2 Sekunden
+        setTimeout(() => {
+          window.close();
+        }, 2000);
+      } else {
+        throw new Error('App konnte nicht erreicht werden');
+      }
+      
+    } catch (connectionError) {
+      console.log('Content Script nicht verfügbar, lade es neu...');
+      
+      // Versuche das Content Script zu injizieren
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content.js']
+        });
+        
+        // Warte einen Moment und versuche es erneut
+        setTimeout(async () => {
+          try {
+            const response = await chrome.tabs.sendMessage(tab.id, { 
+              action: 'extractData' 
+            });
+            
+            if (response && response.success) {
+              const websiteData = response.data;
+              showStatus('Sende Daten an Analyzer-App...', 'loading');
+              const sendResult = await sendDataToApp(websiteData);
+              
+              if (sendResult.success) {
+                showStatus(`✓ Analyse gestartet! (${sendResult.method === 'existing-tab' ? 'App aktualisiert' : 'App geöffnet'})`, 'success');
+                setTimeout(() => window.close(), 2000);
+              }
+            } else {
+              throw new Error('Content Script funktioniert nicht');
+            }
+          } catch (retryError) {
+            showStatus('❌ Fehler: Seite neu laden und erneut versuchen', 'error');
+          }
+        }, 1000);
+        
+      } catch (injectError) {
+        showStatus('❌ Fehler: Bitte Seite neu laden und erneut versuchen', 'error');
+      }
     }
     
   } catch (error) {
     console.error('Fehler bei der Analyse:', error);
     showStatus(`❌ Fehler: ${error.message}`, 'error');
   } finally {
-    analyzeBtn.disabled = false;
+    setTimeout(() => {
+      analyzeBtn.disabled = false;
+    }, 2000);
   }
 }
 

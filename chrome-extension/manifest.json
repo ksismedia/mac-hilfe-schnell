@@ -6,7 +6,11 @@
   "description": "Analysiert Websites für SEO-Optimierung und sendet Daten an die Analyzer-App",
   "permissions": [
     "activeTab",
-    "tabs"
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "content_scripts": [
     {
