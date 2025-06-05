@@ -111,16 +111,24 @@ export const useExtensionData = () => {
     checkUrlParams();
     window.addEventListener('message', handleExtensionMessage);
     
-    // Chrome Extension API (falls verfügbar)
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-      chrome.runtime.onMessage.addListener(handleChromeMessage);
+    // Chrome Extension API (falls verfügbar) - mit Type Guards
+    if (typeof window !== 'undefined' && 
+        'chrome' in window && 
+        window.chrome && 
+        window.chrome.runtime && 
+        window.chrome.runtime.onMessage) {
+      window.chrome.runtime.onMessage.addListener(handleChromeMessage);
     }
 
     // Cleanup
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
-      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-        chrome.runtime.onMessage.removeListener(handleChromeMessage);
+      if (typeof window !== 'undefined' && 
+          'chrome' in window && 
+          window.chrome && 
+          window.chrome.runtime && 
+          window.chrome.runtime.onMessage) {
+        window.chrome.runtime.onMessage.removeListener(handleChromeMessage);
       }
     };
   }, []);
