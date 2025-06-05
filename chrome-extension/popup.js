@@ -32,22 +32,28 @@ async function displayCurrentUrl() {
   }
 }
 
-// Öffnet Lovable App - vereinfacht und zuverlässiger
+// Verbesserte Lovable App-Öffnung mit besserer Datenübertragung
 async function openLovableApp(websiteData = null) {
-  console.log('Öffne Lovable App...');
+  console.log('Öffne Lovable App mit Daten:', websiteData);
   
   try {
     let targetUrl = LOVABLE_APP_URL;
     
     // Wenn Website-Daten vorhanden sind, füge sie als URL-Parameter hinzu
-    if (websiteData) {
-      const dataString = JSON.stringify({
-        source: 'extension',
+    if (websiteData && websiteData.url) {
+      const extensionPayload = {
+        type: 'EXTENSION_WEBSITE_DATA',
+        source: 'seo-analyzer-extension',
         timestamp: Date.now(),
         data: websiteData
-      });
-      const encodedData = encodeURIComponent(dataString);
+      };
+      
+      // Encode als URL-Parameter für bessere Kompatibilität
+      const encodedData = encodeURIComponent(JSON.stringify(extensionPayload));
       targetUrl = `${LOVABLE_APP_URL}?extensionData=${encodedData}`;
+      
+      console.log('Übertrage Daten für:', websiteData.url);
+      console.log('Payload size:', JSON.stringify(extensionPayload).length, 'chars');
     }
     
     console.log('Öffne URL:', targetUrl);
@@ -57,6 +63,22 @@ async function openLovableApp(websiteData = null) {
       url: targetUrl,
       active: true
     });
+    
+    // Warte kurz, dann sende auch eine Message (Backup-Methode)
+    if (websiteData && newTab.id) {
+      setTimeout(async () => {
+        try {
+          await chrome.tabs.sendMessage(newTab.id, {
+            type: 'EXTENSION_WEBSITE_DATA',
+            source: 'seo-analyzer-extension',
+            data: websiteData
+          });
+          console.log('Backup-Message gesendet');
+        } catch (error) {
+          console.log('Backup-Message konnte nicht gesendet werden:', error);
+        }
+      }, 2000);
+    }
     
     console.log('Lovable Tab erstellt:', newTab.id);
     return { success: true, tabId: newTab.id };
@@ -80,6 +102,7 @@ async function extractWebsiteData() {
     const response = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
     
     if (response && response.success) {
+      console.log('Website-Daten erfolgreich extrahiert:', response.data);
       return response.data;
     } else {
       throw new Error('Content Script antwortet nicht');
@@ -95,11 +118,12 @@ async function extractWebsiteData() {
     });
     
     // Warte kurz und versuche erneut
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     const retryResponse = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
     
     if (retryResponse && retryResponse.success) {
+      console.log('Website-Daten nach Injection erfolgreich extrahiert:', retryResponse.data);
       return retryResponse.data;
     } else {
       throw new Error('Content Script funktioniert nicht');
@@ -119,22 +143,24 @@ async function analyzeWebsite() {
     let websiteData = null;
     try {
       websiteData = await extractWebsiteData();
-      console.log('Website-Daten erfolgreich extrahiert:', websiteData);
+      console.log('Website-Daten erfolgreich extrahiert für:', websiteData?.url);
+      
+      if (websiteData && websiteData.url) {
+        showStatus('✓ Daten extrahiert! Öffne App...', 'loading');
+      }
     } catch (extractError) {
       console.log('Datenextraktion fehlgeschlagen:', extractError.message);
-      // Fahre ohne Daten fort
+      showStatus('⚠️ Keine Daten extrahiert, öffne App...', 'loading');
     }
-    
-    showStatus('Öffne Lovable App...', 'loading');
     
     // Öffne Lovable App (mit oder ohne Daten)
     const result = await openLovableApp(websiteData);
     
     if (result.success) {
-      if (websiteData) {
+      if (websiteData && websiteData.url) {
         showStatus('✓ App geöffnet mit Website-Daten!', 'success');
       } else {
-        showStatus('✓ App geöffnet (ohne Datenextraktion)', 'success');
+        showStatus('✓ App geöffnet (ohne Website-Daten)', 'success');
       }
       
       // Schließe Popup nach 2 Sekunden
