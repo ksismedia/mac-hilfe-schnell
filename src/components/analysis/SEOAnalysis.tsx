@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, AlertCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface SEOAnalysisProps {
@@ -23,14 +23,16 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
       length: realData.seo.titleTag.length,
       content: realData.seo.titleTag,
       score: realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? 
-        (realData.seo.titleTag.length <= 70 ? 85 : 65) : 25
+        (realData.seo.titleTag.length <= 70 ? 85 : 65) : 25,
+      isRealData: !isUsingFallbackData
     },
     metaDescription: {
       present: realData.seo.metaDescription !== 'Keine Meta-Description gefunden',
       length: realData.seo.metaDescription.length,
       content: realData.seo.metaDescription,
       score: realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? 
-        (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25
+        (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25,
+      isRealData: !isUsingFallbackData
     },
     headingStructure: {
       h1Count: realData.seo.headings.h1.length,
@@ -39,7 +41,8 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
       structure: realData.seo.headings.h1.length === 1 ? "Gut strukturiert" : 
         realData.seo.headings.h1.length > 1 ? "Mehrere H1-Tags" : "Keine H1-Tags",
       score: realData.seo.headings.h1.length === 1 ? 80 : 
-        realData.seo.headings.h1.length > 1 ? 60 : 30
+        realData.seo.headings.h1.length > 1 ? 60 : 30,
+      isRealData: !isUsingFallbackData
     },
     altTags: {
       imagesTotal: realData.seo.altTags.total,
@@ -47,7 +50,8 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
       coverage: realData.seo.altTags.total > 0 ? 
         Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
       score: realData.seo.altTags.total > 0 ? 
-        Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100
+        Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
+      isRealData: !isUsingFallbackData
     },
     overallScore: realData.seo.score
   } : {
@@ -56,26 +60,30 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
       present: true,
       length: 65,
       content: "Daten werden geladen...",
-      score: 85
+      score: 85,
+      isRealData: false
     },
     metaDescription: {
       present: true,
       length: 155,
       content: "Daten werden geladen...",
-      score: 92
+      score: 92,
+      isRealData: false
     },
     headingStructure: {
       h1Count: 1,
       h2Count: 4,
       h3Count: 8,
       structure: "Wird analysiert...",
-      score: 78
+      score: 78,
+      isRealData: false
     },
     altTags: {
       imagesTotal: 0,
       imagesWithAlt: 0,
       coverage: 0,
-      score: 0
+      score: 0,
+      isRealData: false
     },
     overallScore: 0
   };
@@ -92,35 +100,50 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     return "text-red-600";
   };
 
+  const getDataSourceBadge = (isRealData: boolean) => {
+    if (isRealData) {
+      return (
+        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+          <Wifi className="h-3 w-3 mr-1" />
+          Live-Daten
+        </Badge>
+      );
+    } else {
+      return (
+        <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+          <Database className="h-3 w-3 mr-1" />
+          Fallback-Daten
+        </Badge>
+      );
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            {isUsingFallbackData ? 'SEO-Auswertung (Simulierte Daten)' : 'SEO-Auswertung (Echte Daten)'}
+            SEO-Auswertung
             <Badge variant={seoData.overallScore >= 80 ? "default" : seoData.overallScore >= 60 ? "secondary" : "destructive"}>
               {seoData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>
-            {isUsingFallbackData ? 
-              `Simulierte SEO-Analyse für ${url} (Website konnte nicht vollständig geladen werden)` :
-              `Live-Analyse der SEO-Faktoren für ${url}`
-            }
+            SEO-Analyse für {url} - Datenquellen werden pro Bereich angezeigt
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {/* Warnung bei Fallback-Daten */}
+            {/* Globale Warnung bei Fallback-Daten */}
             {isUsingFallbackData && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertTriangle className="h-5 w-5 text-amber-600" />
-                  <h4 className="font-semibold text-amber-800">Fallback-Daten verwendet</h4>
+                  <h4 className="font-semibold text-amber-800">Website konnte nicht vollständig analysiert werden</h4>
                 </div>
                 <p className="text-sm text-amber-700">
-                  Die Website {url} konnte nicht vollständig analysiert werden (möglicherweise durch CORS-Schutz oder Sicherheitseinstellungen). 
-                  Die angezeigten SEO-Daten sind simuliert und basieren auf typischen Branchenwerten.
+                  Die Website {url} konnte nicht vollständig gescannt werden (möglicherweise durch CORS-Schutz oder Sicherheitseinstellungen). 
+                  Bereiche mit Fallback-Daten sind entsprechend gekennzeichnet.
                 </p>
               </div>
             )}
@@ -128,10 +151,13 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
             {/* Title Tag */}
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold flex items-center gap-2">
-                  {getStatusIcon(seoData.titleTag.score)}
-                  Title-Tag {isUsingFallbackData ? '(Simuliert)' : '(Live-Daten)'}
-                </h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    {getStatusIcon(seoData.titleTag.score)}
+                    Title-Tag
+                  </h3>
+                  {getDataSourceBadge(seoData.titleTag.isRealData)}
+                </div>
                 <span className={`font-bold ${getScoreColor(seoData.titleTag.score)}`}>
                   {seoData.titleTag.score}/100
                 </span>
@@ -153,10 +179,13 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
             {/* Meta Description */}
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold flex items-center gap-2">
-                  {getStatusIcon(seoData.metaDescription.score)}
-                  Meta Description {isUsingFallbackData ? '(Simuliert)' : '(Live-Daten)'}
-                </h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    {getStatusIcon(seoData.metaDescription.score)}
+                    Meta Description
+                  </h3>
+                  {getDataSourceBadge(seoData.metaDescription.isRealData)}
+                </div>
                 <span className={`font-bold ${getScoreColor(seoData.metaDescription.score)}`}>
                   {seoData.metaDescription.score}/100
                 </span>
@@ -178,10 +207,13 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
             {/* Überschriftenstruktur */}
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold flex items-center gap-2">
-                  {getStatusIcon(seoData.headingStructure.score)}
-                  Überschriftenstruktur {isUsingFallbackData ? '(Simuliert)' : '(Live-Daten)'}
-                </h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    {getStatusIcon(seoData.headingStructure.score)}
+                    Überschriftenstruktur
+                  </h3>
+                  {getDataSourceBadge(seoData.headingStructure.isRealData)}
+                </div>
                 <span className={`font-bold ${getScoreColor(seoData.headingStructure.score)}`}>
                   {seoData.headingStructure.score}/100
                 </span>
@@ -209,10 +241,13 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
             {/* Alt-Tags */}
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold flex items-center gap-2">
-                  {getStatusIcon(seoData.altTags.score)}
-                  Alt-Tags für Bilder {isUsingFallbackData ? '(Simuliert)' : '(Live-Daten)'}
-                </h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    {getStatusIcon(seoData.altTags.score)}
+                    Alt-Tags für Bilder
+                  </h3>
+                  {getDataSourceBadge(seoData.altTags.isRealData)}
+                </div>
                 <span className={`font-bold ${getScoreColor(seoData.altTags.score)}`}>
                   {seoData.altTags.score}/100
                 </span>
@@ -229,12 +264,12 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
               </div>
             </div>
 
-            {/* Status-Hinweis */}
+            {/* Status-Hinweis für echte Daten */}
             {realData && !isUsingFallbackData && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h4 className="font-semibold text-green-800 mb-2">✓ Live-Datenanalyse</h4>
+                <h4 className="font-semibold text-green-800 mb-2">✓ Vollständige Live-Datenanalyse</h4>
                 <p className="text-sm text-green-700">
-                  Diese Daten wurden direkt von Ihrer Website {url} abgerufen und analysiert.
+                  Alle SEO-Daten wurden erfolgreich von Ihrer Website {url} abgerufen und analysiert.
                 </p>
               </div>
             )}
