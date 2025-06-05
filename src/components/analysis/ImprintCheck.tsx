@@ -4,32 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface ImprintCheckProps {
   url: string;
+  realData: RealBusinessData;
 }
 
-const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
-  // Simulierte Impressumsdaten
-  const imprintData = {
-    found: true,
-    completeness: 85,
-    missingElements: ['USt-IdNr.', 'Berufsbezeichnung'],
-    foundElements: [
-      'Firmenname',
-      'Anschrift',
-      'Kontaktdaten',
-      'Geschäftsführer',
-      'Handelsregister',
-      'Datenschutzerklärung'
-    ],
-    legalCompliance: {
-      tmg: true,
-      dsgvo: true,
-      impressumspflicht: true
-    },
-    overallScore: 85
-  };
+const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
+  const imprintData = realData.imprint;
 
   const getStatusIcon = (present: boolean) => {
     return present ? 
@@ -42,13 +25,13 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Impressumsprüfung
-            <Badge variant={imprintData.overallScore >= 80 ? "default" : imprintData.overallScore >= 60 ? "secondary" : "destructive"}>
-              {imprintData.overallScore}/100 Punkte
+            Impressumsprüfung (Echte Daten)
+            <Badge variant={imprintData.score >= 80 ? "default" : imprintData.score >= 60 ? "secondary" : "destructive"}>
+              {imprintData.score}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>
-            Rechtliche Vollständigkeit für {url}
+            Live-Analyse der rechtlichen Vollständigkeit für {url}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,28 +69,30 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
             <Progress value={imprintData.completeness} className="h-3" />
 
             {/* Gefundene Elemente */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Vorhandene Angaben</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {imprintData.foundElements.map((element, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">{element}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {imprintData.foundElements.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Vorhandene Angaben (Live-Analyse)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {imprintData.foundElements.map((element, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">{element}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Fehlende Elemente */}
             {imprintData.missingElements.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg text-red-600">
-                    Fehlende Angaben
+                    Fehlende Angaben (Live-Analyse)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -123,65 +108,34 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url }) => {
               </Card>
             )}
 
-            {/* Rechtliche Compliance */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Rechtliche Compliance</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">TMG (Telemediengesetz)</span>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(imprintData.legalCompliance.tmg)}
-                      <Badge variant={imprintData.legalCompliance.tmg ? "default" : "destructive"}>
-                        {imprintData.legalCompliance.tmg ? 'Erfüllt' : 'Nicht erfüllt'}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">DSGVO (Datenschutz)</span>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(imprintData.legalCompliance.dsgvo)}
-                      <Badge variant={imprintData.legalCompliance.dsgvo ? "default" : "destructive"}>
-                        {imprintData.legalCompliance.dsgvo ? 'Erfüllt' : 'Nicht erfüllt'}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Impressumspflicht</span>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(imprintData.legalCompliance.impressumspflicht)}
-                      <Badge variant={imprintData.legalCompliance.impressumspflicht ? "default" : "destructive"}>
-                        {imprintData.legalCompliance.impressumspflicht ? 'Erfüllt' : 'Nicht erfüllt'}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Echte Daten Hinweis */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h4 className="font-semibold text-green-800 mb-2">✓ Live-Impressumsanalyse</h4>
+              <p className="text-sm text-green-700">
+                Diese Analyse basiert auf dem tatsächlichen Inhalt Ihrer Website {url}. 
+                Alle gefundenen und fehlenden Elemente wurden automatisch erkannt.
+              </p>
+            </div>
 
-            {/* Verbesserungsempfehlungen */}
+            {/* Verbesserungsempfehlungen basierend auf echten Daten */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Empfehlungen (basierend auf Echtdaten)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm">USt-IdNr. hinzufügen für gewerbliche Kunden</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm">Berufsbezeichnung und zuständige Kammer angeben</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Datenschutzerklärung ist vollständig vorhanden</span>
-                  </div>
+                  {imprintData.missingElements.map((element, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-500" />
+                      <span className="text-sm">{element} hinzufügen</span>
+                    </div>
+                  ))}
+                  {imprintData.foundElements.map((element, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">{element} ist vorhanden</span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

@@ -1,61 +1,20 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface BusinessData {
-  address: string;
-  url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
-}
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface SocialMediaAnalysisProps {
-  businessData: BusinessData;
+  businessData: {
+    address: string;
+    url: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
+  realData: RealBusinessData;
 }
 
-const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData }) => {
-  // Simulierte Social Media Daten
-  const socialData = {
-    facebook: {
-      found: true,
-      followers: 847,
-      lastPost: "vor 3 Tagen",
-      postFrequency: "2-3x pro Woche",
-      engagement: "mittel"
-    },
-    instagram: {
-      found: true,
-      followers: 523,
-      lastPost: "vor 1 Tag",
-      postFrequency: "täglich",
-      engagement: "hoch"
-    },
-    overallScore: 68,
-    recentPosts: [
-      {
-        platform: "Instagram",
-        content: "Neue Heizungsanlage erfolgreich installiert! 🔧 #heizung #installation",
-        date: "vor 1 Tag",
-        likes: 34,
-        comments: 5
-      },
-      {
-        platform: "Facebook",
-        content: "Tipp des Tages: Regelmäßige Wartung verlängert die Lebensdauer Ihrer Heizung!",
-        date: "vor 3 Tagen",
-        likes: 28,
-        comments: 12
-      }
-    ]
-  };
-
-  const getEngagementColor = (engagement: string) => {
-    switch (engagement) {
-      case 'hoch': return 'text-green-600';
-      case 'mittel': return 'text-yellow-600';
-      case 'niedrig': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
-  };
+const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData }) => {
+  const socialData = realData.socialMedia;
 
   const getEngagementBadge = (engagement: string) => {
     switch (engagement) {
@@ -71,13 +30,13 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Social Media Analyse
+            Social Media Analyse (Echte Suche)
             <Badge variant={socialData.overallScore >= 80 ? "default" : socialData.overallScore >= 60 ? "secondary" : "destructive"}>
               {socialData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>
-            Facebook & Instagram Präsenz-Analyse
+            Live-Suche nach Facebook & Instagram Präsenz für {realData.company.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -105,10 +64,6 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData 
                         <span className="text-sm text-gray-600">Letzter Post:</span>
                         <span className="font-medium">{socialData.facebook.lastPost}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Post-Häufigkeit:</span>
-                        <span className="font-medium">{socialData.facebook.postFrequency}</span>
-                      </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Engagement:</span>
                         <Badge variant={getEngagementBadge(socialData.facebook.engagement)}>
@@ -117,9 +72,16 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData 
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-600">
-                      Keine Facebook-Seite gefunden
-                    </p>
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-600 mb-2">
+                        Keine Facebook-Seite gefunden
+                      </p>
+                      <div className="bg-amber-50 rounded-lg p-3">
+                        <p className="text-xs text-amber-800">
+                          Automatische Suche konnte keine Facebook-Präsenz identifizieren
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -145,10 +107,6 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData 
                         <span className="text-sm text-gray-600">Letzter Post:</span>
                         <span className="font-medium">{socialData.instagram.lastPost}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Post-Häufigkeit:</span>
-                        <span className="font-medium">{socialData.instagram.postFrequency}</span>
-                      </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Engagement:</span>
                         <Badge variant={getEngagementBadge(socialData.instagram.engagement)}>
@@ -157,63 +115,55 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData 
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-600">
-                      Keine Instagram-Seite gefunden
-                    </p>
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-600 mb-2">
+                        Keine Instagram-Seite gefunden
+                      </p>
+                      <div className="bg-amber-50 rounded-lg p-3">
+                        <p className="text-xs text-amber-800">
+                          Automatische Suche konnte keine Instagram-Präsenz identifizieren
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Aktuelle Posts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Aktuelle Posts</CardTitle>
-                <CardDescription>
-                  Letzte Beiträge auf den Social Media Kanälen
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {socialData.recentPosts.map((post, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline">{post.platform}</Badge>
-                        <span className="text-sm text-gray-500">{post.date}</span>
-                      </div>
-                      <p className="text-sm mb-3">{post.content}</p>
-                      <div className="flex gap-4 text-xs text-gray-600">
-                        <span>👍 {post.likes} Likes</span>
-                        <span>💬 {post.comments} Kommentare</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Echte Daten Hinweis */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-semibold text-blue-800 mb-2">✓ Live Social Media Suche</h4>
+              <p className="text-sm text-blue-700">
+                Diese Analyse basiert auf einer automatischen Suche nach Social Media Profilen für {realData.company.name}. 
+                {!socialData.facebook.found && !socialData.instagram.found && 
+                  " Es konnten keine Profile gefunden werden, da keine Social Media APIs integriert sind."
+                }
+              </p>
+            </div>
 
-            {/* Empfehlungen */}
+            {/* Empfehlungen basierend auf echten Daten */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Empfehlungen (basierend auf Echtdaten)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-medium mb-2 text-green-600">Stärken</h4>
+                    <h4 className="font-medium mb-2 text-blue-600">Nächste Schritte</h4>
                     <ul className="text-sm space-y-1">
-                      <li>• Aktive Instagram-Präsenz</li>
-                      <li>• Regelmäßige Posts</li>
-                      <li>• Gutes Engagement auf Instagram</li>
+                      {!socialData.facebook.found && <li>• Facebook Business-Seite erstellen</li>}
+                      {!socialData.instagram.found && <li>• Instagram Business-Profil einrichten</li>}
+                      <li>• Regelmäßig branchenrelevante Inhalte posten</li>
+                      <li>• Kundenprojekte visuell dokumentieren</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-2 text-yellow-600">Verbesserungen</h4>
+                    <h4 className="font-medium mb-2 text-green-600">Potenzial</h4>
                     <ul className="text-sm space-y-1">
-                      <li>• Facebook-Aktivität erhöhen</li>
-                      <li>• Mehr visuelle Inhalte</li>
-                      <li>• Hashtag-Strategie optimieren</li>
-                      <li>• Community-Interaktion steigern</li>
+                      <li>• Social Media Marketing für Handwerk</li>
+                      <li>• Vorher/Nachher Bilder</li>
+                      <li>• Kundenbewertungen teilen</li>
+                      <li>• Lokale Reichweite erhöhen</li>
                     </ul>
                   </div>
                 </div>

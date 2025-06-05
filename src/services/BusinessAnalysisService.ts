@@ -52,6 +52,60 @@ export interface RealBusinessData {
     foundElements: string[];
     score: number;
   };
+  socialMedia: {
+    facebook: {
+      found: boolean;
+      followers: number;
+      lastPost: string;
+      engagement: string;
+    };
+    instagram: {
+      found: boolean;
+      followers: number;
+      lastPost: string;
+      engagement: string;
+    };
+    overallScore: number;
+  };
+  workplace: {
+    kununu: {
+      found: boolean;
+      rating: number;
+      reviews: number;
+    };
+    glassdoor: {
+      found: boolean;
+      rating: number;
+      reviews: number;
+    };
+    overallScore: number;
+  };
+  socialProof: {
+    testimonials: number;
+    certifications: Array<{
+      name: string;
+      verified: boolean;
+      visible: boolean;
+    }>;
+    awards: Array<{
+      name: string;
+      source: string;
+      year: number;
+    }>;
+    overallScore: number;
+  };
+  mobile: {
+    responsive: boolean;
+    touchFriendly: boolean;
+    pageSpeedMobile: number;
+    pageSpeedDesktop: number;
+    overallScore: number;
+    issues: Array<{
+      type: string;
+      description: string;
+      impact: string;
+    }>;
+  };
 }
 
 export class BusinessAnalysisService {
@@ -66,6 +120,10 @@ export class BusinessAnalysisService {
     const competitorsData = await this.findCompetitors(address, industry);
     const keywordsData = await this.analyzeKeywords(url, industry);
     const imprintData = await this.analyzeImprint(url);
+    const socialMediaData = await this.analyzeSocialMedia(url, companyName);
+    const workplaceData = await this.analyzeWorkplace(companyName);
+    const socialProofData = await this.analyzeSocialProof(url);
+    const mobileData = await this.analyzeMobile(url);
     
     return {
       company: {
@@ -80,6 +138,10 @@ export class BusinessAnalysisService {
       competitors: competitorsData,
       keywords: keywordsData,
       imprint: imprintData,
+      socialMedia: socialMediaData,
+      workplace: workplaceData,
+      socialProof: socialProofData,
+      mobile: mobileData,
     };
   }
 
@@ -275,6 +337,173 @@ export class BusinessAnalysisService {
         foundElements: [],
         missingElements: ['Alle Pflichtangaben'],
         score: 0,
+      };
+    }
+  }
+
+  private static async analyzeSocialMedia(url: string, companyName: string) {
+    try {
+      console.log(`Analyzing social media presence for ${companyName}...`);
+      
+      // Echte Social Media Analyse würde hier über Social Media APIs stattfinden
+      // Für jetzt geben wir zurück, dass keine Profile gefunden wurden
+      return {
+        facebook: {
+          found: false,
+          followers: 0,
+          lastPost: 'Nicht gefunden',
+          engagement: 'keine',
+        },
+        instagram: {
+          found: false,
+          followers: 0,
+          lastPost: 'Nicht gefunden',
+          engagement: 'keine',
+        },
+        overallScore: 0,
+      };
+    } catch (error) {
+      console.error('Social media analysis failed:', error);
+      return {
+        facebook: { found: false, followers: 0, lastPost: 'Analyse fehlgeschlagen', engagement: 'keine' },
+        instagram: { found: false, followers: 0, lastPost: 'Analyse fehlgeschlagen', engagement: 'keine' },
+        overallScore: 0,
+      };
+    }
+  }
+
+  private static async analyzeWorkplace(companyName: string) {
+    try {
+      console.log(`Searching for workplace reviews for ${companyName}...`);
+      
+      // Echte Arbeitgeberbewertungen würden hier über kununu/Glassdoor APIs abgerufen
+      // Für jetzt geben wir zurück, dass keine Bewertungen gefunden wurden
+      return {
+        kununu: {
+          found: false,
+          rating: 0,
+          reviews: 0,
+        },
+        glassdoor: {
+          found: false,
+          rating: 0,
+          reviews: 0,
+        },
+        overallScore: 0,
+      };
+    } catch (error) {
+      console.error('Workplace analysis failed:', error);
+      return {
+        kununu: { found: false, rating: 0, reviews: 0 },
+        glassdoor: { found: false, rating: 0, reviews: 0 },
+        overallScore: 0,
+      };
+    }
+  }
+
+  private static async analyzeSocialProof(url: string) {
+    try {
+      console.log(`Analyzing social proof elements on ${url}...`);
+      
+      const response = await fetch(url);
+      const html = await response.text();
+      const htmlLower = html.toLowerCase();
+      
+      // Suche nach Testimonials
+      const testimonialCount = (html.match(/testimonial|kundenstimme|bewertung|referenz/gi) || []).length;
+      
+      // Suche nach Zertifizierungen
+      const certifications = [];
+      if (htmlLower.includes('handwerkskammer') || htmlLower.includes('hwk')) {
+        certifications.push({ name: 'Handwerkskammer-Mitglied', verified: true, visible: true });
+      }
+      if (htmlLower.includes('tüv') || htmlLower.includes('tuev')) {
+        certifications.push({ name: 'TÜV-Zertifiziert', verified: true, visible: true });
+      }
+      if (htmlLower.includes('fachbetrieb')) {
+        certifications.push({ name: 'Fachbetrieb', verified: true, visible: true });
+      }
+      
+      // Suche nach Auszeichnungen
+      const awards = [];
+      if (htmlLower.includes('auszeichnung') || htmlLower.includes('award')) {
+        awards.push({ name: 'Branchen-Auszeichnung', source: 'Website-Erwähnung', year: new Date().getFullYear() });
+      }
+      
+      const overallScore = Math.min(100, testimonialCount * 10 + certifications.length * 15 + awards.length * 20);
+      
+      return {
+        testimonials: testimonialCount,
+        certifications,
+        awards,
+        overallScore,
+      };
+    } catch (error) {
+      console.error('Social proof analysis failed:', error);
+      return {
+        testimonials: 0,
+        certifications: [],
+        awards: [],
+        overallScore: 0,
+      };
+    }
+  }
+
+  private static async analyzeMobile(url: string) {
+    try {
+      console.log(`Analyzing mobile optimization for ${url}...`);
+      
+      const response = await fetch(url);
+      const html = await response.text();
+      
+      // Prüfe Viewport Meta-Tag
+      const hasViewport = html.includes('viewport');
+      
+      // Prüfe responsive Design Indikatoren
+      const hasResponsiveCSS = html.includes('media') || html.includes('@media') || html.includes('responsive');
+      
+      // Performance-Messung (vereinfacht)
+      const start = performance.now();
+      await fetch(url);
+      const loadTime = (performance.now() - start) / 1000;
+      
+      const pageSpeedMobile = Math.max(0, Math.min(100, 100 - (loadTime - 1) * 30));
+      const pageSpeedDesktop = Math.max(0, Math.min(100, 100 - (loadTime - 1) * 20));
+      
+      const issues = [];
+      if (!hasViewport) {
+        issues.push({ type: 'Kritisch', description: 'Viewport Meta-Tag fehlt', impact: 'Hoch' });
+      }
+      if (!hasResponsiveCSS) {
+        issues.push({ type: 'Warnung', description: 'Responsive Design nicht erkannt', impact: 'Mittel' });
+      }
+      if (loadTime > 3) {
+        issues.push({ type: 'Warnung', description: 'Langsame Ladezeit auf mobilen Geräten', impact: 'Mittel' });
+      }
+      
+      const overallScore = Math.round(
+        (hasViewport ? 30 : 0) + 
+        (hasResponsiveCSS ? 30 : 0) + 
+        (pageSpeedMobile * 0.4)
+      );
+      
+      return {
+        responsive: hasResponsiveCSS,
+        touchFriendly: hasViewport,
+        pageSpeedMobile: Math.round(pageSpeedMobile),
+        pageSpeedDesktop: Math.round(pageSpeedDesktop),
+        overallScore,
+        issues,
+      };
+    } catch (error) {
+      console.error('Mobile analysis failed:', error);
+      return {
+        responsive: false,
+        touchFriendly: false,
+        pageSpeedMobile: 0,
+        pageSpeedDesktop: 0,
+        overallScore: 0,
+        issues: [{ type: 'Kritisch', description: 'Mobile-Analyse fehlgeschlagen', impact: 'Hoch' }],
       };
     }
   }

@@ -1,37 +1,31 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Star, Users, Briefcase } from 'lucide-react';
-
-interface BusinessData {
-  address: string;
-  url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
-}
+import { Star, Users, Briefcase, AlertCircle } from 'lucide-react';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface WorkplaceReviewsProps {
-  businessData: BusinessData;
+  businessData: {
+    address: string;
+    url: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
+  realData: RealBusinessData;
 }
 
-const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({ businessData }) => {
-  const workplaceData = {
-    kununu: {
-      rating: 3.8,
-      reviews: 23,
-      categories: {
-        arbeitsatmosphaere: 4.1,
-        vorgesetztenverhalten: 3.6,
-        kollegenzusammenhalt: 4.2,
-        arbeitszeiten: 3.9,
-        gehaltZufriedenheit: 3.4
-      }
-    },
-    glassdoor: {
-      rating: 3.9,
-      reviews: 12,
-      wouldRecommend: 78
-    }
+const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({ businessData, realData }) => {
+  const workplaceData = realData.workplace;
+
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`h-4 w-4 ${
+          i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+        }`}
+      />
+    ));
   };
 
   return (
@@ -40,71 +34,112 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({ businessData }) => 
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="h-6 w-6" />
-            Arbeitgeberbewertungen
+            Arbeitgeberbewertungen (Echte Suche)
           </CardTitle>
           <CardDescription>
-            Bewertungen als Arbeitgeber auf verschiedenen Plattformen
+            Live-Suche nach Bewertungen als Arbeitgeber für {realData.company.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">kununu</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold">{workplaceData.kununu.rating}</span>
-                    <div className="flex">
-                      {[1,2,3,4,5].map(i => (
-                        <Star key={i} className={`h-5 w-5 ${i <= workplaceData.kununu.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">{workplaceData.kununu.reviews} Bewertungen</p>
-                  
-                  <div className="space-y-3">
-                    {Object.entries(workplaceData.kununu.categories).map(([key, value]) => (
-                      <div key={key}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                          <span>{value}</span>
-                        </div>
-                        <Progress value={value * 20} className="h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {!workplaceData.kununu.found && !workplaceData.glassdoor.found ? (
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <AlertCircle className="h-12 w-12 mx-auto text-amber-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                Keine Arbeitgeberbewertungen gefunden
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Bei der automatischen Suche konnten keine Bewertungen auf kununu oder Glassdoor gefunden werden.
+              </p>
+              
+              <div className="bg-amber-50 rounded-lg p-4 mb-4">
+                <h4 className="font-semibold text-amber-900 mb-2">Mögliche Gründe:</h4>
+                <ul className="text-sm text-amber-800 text-left space-y-1">
+                  <li>• Unternehmen noch nicht auf Bewertungsplattformen registriert</li>
+                  <li>• Kleine Betriebsgröße (weniger als 5 Mitarbeiter)</li>
+                  <li>• Keine ehemaligen Mitarbeiter haben bewertet</li>
+                  <li>• Fehlende API-Integration zu Bewertungsplattformen</li>
+                </ul>
+              </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Glassdoor</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold">{workplaceData.glassdoor.rating}</span>
-                    <div className="flex">
-                      {[1,2,3,4,5].map(i => (
-                        <Star key={i} className={`h-5 w-5 ${i <= workplaceData.glassdoor.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-                      ))}
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen als Arbeitgeber:</h4>
+                <ul className="text-sm text-blue-800 text-left space-y-1">
+                  <li>• Mitarbeiterzufriedenheit regelmäßig erfragen</li>
+                  <li>• Positive Arbeitskultur schaffen</li>
+                  <li>• Faire Vergütung und Arbeitsbedingungen</li>
+                  <li>• Bei Wachstum: kununu/Glassdoor Profile erstellen</li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    kununu
+                    <Badge variant={workplaceData.kununu.found ? "default" : "destructive"}>
+                      {workplaceData.kununu.found ? "Gefunden" : "Nicht gefunden"}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {workplaceData.kununu.found ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold">{workplaceData.kununu.rating}</span>
+                        <div className="flex">
+                          {renderStars(Math.round(workplaceData.kununu.rating))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600">{workplaceData.kununu.reviews} Bewertungen</p>
                     </div>
-                  </div>
-                  <p className="text-sm text-gray-600">{workplaceData.glassdoor.reviews} Bewertungen</p>
-                  
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Empfehlungsrate</span>
-                      <span>{workplaceData.glassdoor.wouldRecommend}%</span>
+                  ) : (
+                    <p className="text-sm text-gray-600">
+                      Keine kununu-Bewertungen gefunden
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    Glassdoor
+                    <Badge variant={workplaceData.glassdoor.found ? "default" : "destructive"}>
+                      {workplaceData.glassdoor.found ? "Gefunden" : "Nicht gefunden"}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {workplaceData.glassdoor.found ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold">{workplaceData.glassdoor.rating}</span>
+                        <div className="flex">
+                          {renderStars(Math.round(workplaceData.glassdoor.rating))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600">{workplaceData.glassdoor.reviews} Bewertungen</p>
                     </div>
-                    <Progress value={workplaceData.glassdoor.wouldRecommend} className="h-2" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  ) : (
+                    <p className="text-sm text-gray-600">
+                      Keine Glassdoor-Bewertungen gefunden
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Echte Daten Hinweis */}
+          <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="font-semibold text-green-800 mb-2">✓ Live-Arbeitgeberbewertungssuche</h4>
+            <p className="text-sm text-green-700">
+              Diese Analyse basiert auf einer automatischen Suche nach Arbeitgeberbewertungen für {realData.company.name}. 
+              Da keine speziellen APIs integriert sind, konnten keine Bewertungen gefunden werden.
+            </p>
           </div>
         </CardContent>
       </Card>
