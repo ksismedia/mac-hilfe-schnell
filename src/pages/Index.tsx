@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { Search, Globe, MapPin, Building } from 'lucide-react';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
 }
 
 const Index = () => {
@@ -125,7 +126,7 @@ const Index = () => {
                 </Label>
                 <Select 
                   value={businessData.industry} 
-                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker') => 
+                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero') => 
                     setBusinessData({...businessData, industry: value})
                   }
                 >
@@ -137,6 +138,8 @@ const Index = () => {
                     <SelectItem value="maler">Maler und Lackierer</SelectItem>
                     <SelectItem value="elektriker">Elektriker</SelectItem>
                     <SelectItem value="dachdecker">Dachdecker</SelectItem>
+                    <SelectItem value="stukateur">Stukateure</SelectItem>
+                    <SelectItem value="planungsbuero">Planungsbüro Versorgungstechnik</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

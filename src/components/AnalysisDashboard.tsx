@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,7 @@ import { ArrowLeft } from 'lucide-react';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
 }
 
 interface AnalysisDashboardProps {
@@ -41,7 +42,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     shk: 'SHK (Sanitär, Heizung, Klima)',
     maler: 'Maler und Lackierer',
     elektriker: 'Elektriker',
-    dachdecker: 'Dachdecker'
+    dachdecker: 'Dachdecker',
+    stukateur: 'Stukateure',
+    planungsbuero: 'Planungsbüro Versorgungstechnik'
   };
 
   // Simulierte Gesamtbewertung

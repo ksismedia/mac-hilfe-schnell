@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle } from 'lucide-react';
 
 interface IndustryFeaturesProps {
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   url: string;
 }
 
@@ -101,6 +100,64 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
           { name: "Gerüstbau", found: false, importance: "mittel" }
         ]
       }
+    ],
+    stukateur: [
+      {
+        group: "Stuckarbeiten & Techniken",
+        features: [
+          { name: "Klassische Stucktechniken", found: true, importance: "hoch" },
+          { name: "Moderne Stuckelemente", found: true, importance: "hoch" },
+          { name: "Denkmalpflege", found: false, importance: "mittel" },
+          { name: "Fassadenstuck", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Putz & Oberflächen",
+        features: [
+          { name: "Innenwandputz", found: true, importance: "hoch" },
+          { name: "Außenputz", found: true, importance: "hoch" },
+          { name: "Dekorputz", found: true, importance: "mittel" },
+          { name: "Wärmedämmputz", found: false, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Restaurierung & Sanierung",
+        features: [
+          { name: "Stuckrestaurierung", found: true, importance: "hoch" },
+          { name: "Altbausanierung", found: true, importance: "mittel" },
+          { name: "Brandschadensanierung", found: false, importance: "niedrig" },
+          { name: "Schimmelsanierung", found: true, importance: "mittel" }
+        ]
+      }
+    ],
+    planungsbuero: [
+      {
+        group: "Planung & Engineering",
+        features: [
+          { name: "TGA-Planung", found: true, importance: "hoch" },
+          { name: "3D-BIM-Modellierung", found: true, importance: "hoch" },
+          { name: "Energiekonzepte", found: true, importance: "hoch" },
+          { name: "HOAI-konforme Planung", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Software & Tools",
+        features: [
+          { name: "CAD-Planung", found: true, importance: "hoch" },
+          { name: "BIM-Software", found: true, importance: "hoch" },
+          { name: "Simulationssoftware", found: false, importance: "mittel" },
+          { name: "Projektmanagement-Tools", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Beratung & Expertise",
+        features: [
+          { name: "Nachhaltigkeitsberatung", found: true, importance: "hoch" },
+          { name: "Energieeffizienz-Konzepte", found: true, importance: "hoch" },
+          { name: "Brandschutzplanung", found: false, importance: "mittel" },
+          { name: "Baubegleitung", found: true, importance: "mittel" }
+        ]
+      }
     ]
   };
 
@@ -135,7 +192,9 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
     shk: 'SHK (Sanitär, Heizung, Klima)',
     maler: 'Maler und Lackierer',
     elektriker: 'Elektriker',
-    dachdecker: 'Dachdecker'
+    dachdecker: 'Dachdecker',
+    stukateur: 'Stukateure',
+    planungsbuero: 'Planungsbüro Versorgungstechnik'
   };
 
   return (
@@ -267,6 +326,38 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ industry, url }) =>
                       <div className="flex items-start gap-2">
                         <span className="text-yellow-600">!</span>
                         <span><strong>Empfehlung:</strong> Gerüstbau-Service erwähnen</span>
+                      </div>
+                    </>
+                  )}
+                  {industry === 'stukateur' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> Klassische Stucktechniken werden hervorgehoben</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-red-600">×</span>
+                        <span><strong>Kritisch:</strong> Denkmalpflege fehlt - wichtiges Differenzierungsmerkmal</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Wärmedämmputz-Kompetenz ergänzen</span>
+                      </div>
+                    </>
+                  )}
+                  {industry === 'planungsbuero' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> BIM-Kompetenz wird betont</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Simulationssoftware-Expertise ergänzen</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Trend:</strong> Brandschutzplanung als zusätzliche Kompetenz</span>
                       </div>
                     </>
                   )}
