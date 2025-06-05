@@ -58,6 +58,20 @@ interface ExtensionMessage {
   data: ExtensionWebsiteData;
 }
 
+// Chrome API Typen für TypeScript
+declare global {
+  interface Window {
+    chrome?: {
+      runtime?: {
+        onMessage?: {
+          addListener: (callback: (message: any, sender: any, sendResponse: any) => void) => void;
+          removeListener: (callback: (message: any, sender: any, sendResponse: any) => void) => void;
+        };
+      };
+    };
+  }
+}
+
 export const useExtensionData = () => {
   const [extensionData, setExtensionData] = useState<ExtensionWebsiteData | null>(null);
   const [isFromExtension, setIsFromExtension] = useState(false);
@@ -111,9 +125,8 @@ export const useExtensionData = () => {
     checkUrlParams();
     window.addEventListener('message', handleExtensionMessage);
     
-    // Chrome Extension API (falls verfügbar) - mit Type Guards
+    // Chrome Extension API (falls verfügbar) - mit korrekter Typisierung
     if (typeof window !== 'undefined' && 
-        'chrome' in window && 
         window.chrome && 
         window.chrome.runtime && 
         window.chrome.runtime.onMessage) {
@@ -124,7 +137,6 @@ export const useExtensionData = () => {
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
       if (typeof window !== 'undefined' && 
-          'chrome' in window && 
           window.chrome && 
           window.chrome.runtime && 
           window.chrome.runtime.onMessage) {
