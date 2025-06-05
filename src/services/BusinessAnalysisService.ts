@@ -332,10 +332,25 @@ export class BusinessAnalysisService {
     return industryKeywords.map((keyword, index) => {
       const keywordLower = keyword.toLowerCase();
       
-      // Verbesserte Keyword-Erkennung
-      const keywordRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-      const matches = allText.match(keywordRegex) || [];
-      const found = matches.length > 0;
+      // Verbesserte Keyword-Erkennung - auch Teilwörter und Varianten berücksichtigen
+      let found = false;
+      
+      // Exakte Übereinstimmung
+      if (allText.includes(keywordLower)) {
+        found = true;
+      }
+      
+      // Wortgrenzen-basierte Suche für genauere Ergebnisse
+      const wordBoundaryRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      if (wordBoundaryRegex.test(allText)) {
+        found = true;
+      }
+      
+      // Für zusammengesetzte Wörter - prüfe auch Teilbegriffe
+      if (keywordLower.includes('bad') || keywordLower.includes('sanitär')) {
+        const parts = keywordLower.split(/[\s\-]/);
+        found = found || parts.some(part => part.length >= 3 && allText.includes(part));
+      }
       
       let position = 0;
       if (found) {
@@ -598,7 +613,15 @@ export class BusinessAnalysisService {
 
   private static getIndustryKeywords(industry: string): string[] {
     const keywords = {
-      'shk': ['sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 'rohrreinigung', 'badezimmer'],
+      'shk': [
+        'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 
+        'rohrreinigung', 'badezimmer', 'bad', 'dusche', 'wc', 'toilette',
+        'heizungsbau', 'klimaanlage', 'lüftung', 'installateur', 'handwerker',
+        // Erweiterte Bad-Keywords
+        'badsanierung', 'badplanung', 'badumbau', 'badmodernisierung',
+        'badausstattung', 'badrenovierung', 'badeinrichtung', 'badfliesen',
+        'badkeramik', 'badmöbel', 'badewanne', 'badgarnitur', 'badezimmersanierung'
+      ],
       'maler': ['malerei', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren'],
       'elektriker': ['elektro', 'installation', 'beleuchtung', 'smart home', 'strom'],
       'dachdecker': ['dach', 'dachdeckung', 'ziegel', 'abdichtung', 'flachdach'],
