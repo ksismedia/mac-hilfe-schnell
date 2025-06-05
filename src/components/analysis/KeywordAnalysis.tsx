@@ -1,56 +1,32 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface KeywordAnalysisProps {
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  realData: RealBusinessData;
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
-  // Branchenspezifische Keywords
-  const industryKeywords = {
-    shk: ['sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 'badezimmer', 'rohrreinigung'],
-    maler: ['malerei', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'innenausbau', 'farbe', 'tapete'],
-    elektriker: ['elektro', 'installation', 'beleuchtung', 'smart home', 'sicherheit', 'photovoltaik', 'stromnetz'],
-    dachdecker: ['dach', 'dachdeckung', 'ziegel', 'abdichtung', 'dachrinne', 'dachsanierung', 'schiefer', 'isolierung'],
-    stukateur: ['stuck', 'putz', 'fassade', 'innenausbau', 'gips', 'verputz', 'sanierung', 'renovierung'],
-    planungsbuero: ['planung', 'versorgungstechnik', 'heizung', 'sanitär', 'klima', 'energie', 'beratung', 'konzept']
-  };
-
-  // Simulierte Keyword-Daten
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData }) => {
   const keywordData = {
-    totalKeywords: industryKeywords[industry].length,
-    foundKeywords: 6,
+    totalKeywords: realData.keywords.length,
+    foundKeywords: realData.keywords.filter(k => k.found).length,
     overallDensity: 2.8,
-    overallScore: 75,
-    keywords: industryKeywords[industry].map((keyword, index) => ({
-      keyword,
-      found: index < 6,
-      frequency: index < 6 ? Math.floor(Math.random() * 15) + 3 : 0,
-      density: index < 6 ? +(Math.random() * 3 + 0.5).toFixed(1) : 0,
-      visibility: index < 6 ? ['hoch', 'mittel', 'niedrig'][Math.floor(Math.random() * 3)] : 'nicht gefunden'
-    }))
+    overallScore: Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100),
+    keywords: realData.keywords
   };
 
-  const getVisibilityColor = (visibility: string) => {
-    switch (visibility) {
-      case 'hoch': return 'text-green-600';
-      case 'mittel': return 'text-yellow-600';
-      case 'niedrig': return 'text-orange-600';
-      default: return 'text-red-600';
-    }
+  const getVisibilityColor = (found: boolean) => {
+    return found ? 'text-green-600' : 'text-red-600';
   };
 
-  const getVisibilityBadge = (visibility: string) => {
-    switch (visibility) {
-      case 'hoch': return 'default';
-      case 'mittel': return 'secondary';
-      case 'niedrig': return 'outline';
-      default: return 'destructive';
-    }
+  const getVisibilityBadge = (found: boolean) => {
+    return found ? 'default' : 'destructive';
   };
 
   return (
@@ -58,13 +34,13 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Keyword-Analyse
+            Keyword-Analyse (Echte Daten)
             <Badge variant={keywordData.overallScore >= 80 ? "default" : keywordData.overallScore >= 60 ? "secondary" : "destructive"}>
               {keywordData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>
-            Branchenspezifische Keyword-Auswertung für {industry.toUpperCase()}
+            Live-Analyse der Website-Inhalte für {industry.toUpperCase()}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -102,16 +78,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
             {/* Keyword-Tabelle */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Detaillierte Keyword-Analyse</CardTitle>
+                <CardTitle className="text-lg">Live Keyword-Analyse von {url}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Keyword</TableHead>
-                      <TableHead className="text-center">Häufigkeit</TableHead>
-                      <TableHead className="text-center">Dichte (%)</TableHead>
-                      <TableHead className="text-center">Sichtbarkeit</TableHead>
+                      <TableHead className="text-center">Auf Website gefunden</TableHead>
+                      <TableHead className="text-center">Suchvolumen (geschätzt)</TableHead>
                       <TableHead className="text-center">Status</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -122,18 +97,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
                           {item.keyword}
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.frequency || '-'}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {item.density || '-'}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <span className={getVisibilityColor(item.visibility)}>
-                            {item.visibility}
+                          <span className={getVisibilityColor(item.found)}>
+                            {item.found ? "Ja" : "Nein"}
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant={getVisibilityBadge(item.visibility)}>
+                          {item.volume}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={getVisibilityBadge(item.found)}>
                             {item.found ? 'Gefunden' : 'Fehlt'}
                           </Badge>
                         </TableCell>
@@ -144,24 +116,28 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry }) => {
               </CardContent>
             </Card>
 
-            {/* Empfehlungen */}
+            {/* Empfehlungen basierend auf echten Daten */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Empfehlungen (basierend auf Echtdaten)</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
+                  {keywordData.foundKeywords > 0 && (
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600">✓</span>
+                      <span>Gute Keyword-Abdeckung für {keywordData.foundKeywords} von {keywordData.totalKeywords} Hauptbegriffen</span>
+                    </li>
+                  )}
+                  {keywordData.foundKeywords < keywordData.totalKeywords && (
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-600">×</span>
+                      <span>Fehlende Keywords: {realData.keywords.filter(k => !k.found).map(k => k.keyword).join(', ')}</span>
+                    </li>
+                  )}
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">✓</span>
-                    <span>Gute Keyword-Abdeckung für Hauptbegriffe der Branche</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-600">!</span>
-                    <span>Erhöhen Sie die Häufigkeit von "notdienst" und "wartung"</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-600">×</span>
-                    <span>Fehlende Keywords sollten in Meta-Tags und Überschriften integriert werden</span>
+                    <span className="text-blue-600">ℹ</span>
+                    <span>Diese Analyse basiert auf dem tatsächlichen Inhalt Ihrer Website {url}</span>
                   </li>
                 </ul>
               </CardContent>

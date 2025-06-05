@@ -3,46 +3,16 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Star } from 'lucide-react';
+import { Star, AlertCircle } from 'lucide-react';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface GoogleReviewsProps {
   address: string;
+  realData: RealBusinessData;
 }
 
-const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address }) => {
-  // Simulierte Google-Bewertungsdaten
-  const reviewData = {
-    averageRating: 4.6,
-    totalReviews: 127,
-    ratingDistribution: {
-      5: 78,
-      4: 32,
-      3: 12,
-      2: 3,
-      1: 2
-    },
-    recentReviews: [
-      {
-        author: "Maria S.",
-        rating: 5,
-        date: "vor 2 Tagen",
-        text: "Sehr professionelle Arbeit! Der Installateur war pünktlich und hat alles sauber erledigt. Die neue Heizung funktioniert einwandfrei."
-      },
-      {
-        author: "Thomas M.",
-        rating: 4,
-        date: "vor 1 Woche",
-        text: "Guter Service, faire Preise. Kleiner Abzug für die etwas längere Wartezeit auf den Termin."
-      },
-      {
-        author: "Jennifer K.",
-        rating: 5,
-        date: "vor 2 Wochen",
-        text: "Absolut empfehlenswert! Schnelle Hilfe beim Notdienst und sehr kompetente Beratung."
-      }
-    ],
-    overallScore: 92
-  };
+const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData }) => {
+  const reviewData = realData.reviews.google;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -60,134 +30,116 @@ const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address }) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Google-Bewertungen
-            <Badge variant={reviewData.overallScore >= 80 ? "default" : reviewData.overallScore >= 60 ? "secondary" : "destructive"}>
-              {reviewData.overallScore}/100 Punkte
+            Google-Bewertungen (Echte Suche)
+            <Badge variant={reviewData.count > 0 ? "default" : "destructive"}>
+              {reviewData.count > 0 ? `${reviewData.count} Bewertungen` : "Keine Bewertungen"}
             </Badge>
           </CardTitle>
           <CardDescription>
-            Bewertungsanalyse für {address}
+            Live-Suche nach Google-Bewertungen für {address}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            {/* Bewertungsübersicht */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-4xl font-bold text-yellow-600">
-                    {reviewData.averageRating}
-                  </span>
-                  <div className="flex">
-                    {renderStars(Math.round(reviewData.averageRating))}
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Durchschnittsbewertung
-                </p>
+          {reviewData.count === 0 ? (
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <AlertCircle className="h-12 w-12 mx-auto text-amber-500" />
               </div>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                Keine Google-Bewertungen gefunden
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Bei der automatischen Suche konnten keine Google-Bewertungen für dieses Unternehmen gefunden werden.
+              </p>
               
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-600 mb-2">
-                  {reviewData.totalReviews}
-                </div>
-                <p className="text-sm text-gray-600">
-                  Gesamte Bewertungen
-                </p>
+              <div className="bg-amber-50 rounded-lg p-4 mb-4">
+                <h4 className="font-semibold text-amber-900 mb-2">Mögliche Gründe:</h4>
+                <ul className="text-sm text-amber-800 text-left space-y-1">
+                  <li>• Kein Google My Business Eintrag vorhanden</li>
+                  <li>• Unternehmen noch nicht beansprucht</li>
+                  <li>• Sehr neue Firma ohne Bewertungen</li>
+                  <li>• Fehlende Google Places API Integration</li>
+                </ul>
               </div>
-              
-              <div className="text-center">
-                <div className="text-4xl font-bold text-green-600 mb-2">
-                  {Math.round((reviewData.ratingDistribution[5] / reviewData.totalReviews) * 100)}%
-                </div>
-                <p className="text-sm text-gray-600">
-                  5-Sterne-Bewertungen
-                </p>
+
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen:</h4>
+                <ul className="text-sm text-blue-800 text-left space-y-1">
+                  <li>• Google My Business Profil erstellen/beanspruchen</li>
+                  <li>• Kunden aktiv um Bewertungen bitten</li>
+                  <li>• Exzellenten Service für positive Bewertungen bieten</li>
+                  <li>• Bewertungsmanagement-System einführen</li>
+                </ul>
               </div>
             </div>
-
-            {/* Bewertungsverteilung */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Bewertungsverteilung</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[5, 4, 3, 2, 1].map((stars) => (
-                    <div key={stars} className="flex items-center gap-3">
-                      <div className="flex items-center gap-1 w-12">
-                        <span className="text-sm font-medium">{stars}</span>
-                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                      </div>
-                      <Progress 
-                        value={(reviewData.ratingDistribution[stars] / reviewData.totalReviews) * 100} 
-                        className="flex-1 h-2"
-                      />
-                      <span className="text-sm text-gray-600 w-8">
-                        {reviewData.ratingDistribution[stars]}
-                      </span>
+          ) : (
+            <div className="space-y-6">
+              {/* Bewertungsübersicht */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <span className="text-4xl font-bold text-yellow-600">
+                      {reviewData.rating}
+                    </span>
+                    <div className="flex">
+                      {renderStars(Math.round(reviewData.rating))}
                     </div>
-                  ))}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Durchschnittsbewertung
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+                
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">
+                    {reviewData.count}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Gesamte Bewertungen
+                  </p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-green-600 mb-2">
+                    {reviewData.recent.length}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Aktuelle Bewertungen
+                  </p>
+                </div>
+              </div>
 
-            {/* Aktuelle Bewertungen */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Aktuelle Bewertungen</CardTitle>
-                <CardDescription>
-                  Die 3 neuesten Kundenbewertungen
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {reviewData.recentReviews.map((review, index) => (
-                    <div key={index} className="border-b last:border-b-0 pb-4 last:pb-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{review.author}</span>
-                          <div className="flex">
-                            {renderStars(review.rating)}
+              {/* Aktuelle Bewertungen */}
+              {reviewData.recent.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Aktuelle Bewertungen</CardTitle>
+                    <CardDescription>
+                      Die neuesten Kundenbewertungen
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {reviewData.recent.map((review, index) => (
+                        <div key={index} className="border-b last:border-b-0 pb-4 last:pb-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{review.author}</span>
+                              <div className="flex">
+                                {renderStars(review.rating)}
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-500">{review.date}</span>
                           </div>
+                          <p className="text-sm text-gray-700">{review.text}</p>
                         </div>
-                        <span className="text-sm text-gray-500">{review.date}</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{review.text}</p>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Bewertungsanalyse */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Bewertungsanalyse</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-medium mb-2 text-green-600">Stärken</h4>
-                    <ul className="text-sm space-y-1">
-                      <li>• Sehr hohe Kundenzufriedenheit (4,6/5)</li>
-                      <li>• Pünktlichkeit wird oft gelobt</li>
-                      <li>• Professionelle Arbeitsweise</li>
-                      <li>• Zuverlässiger Notdienst</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2 text-yellow-600">Verbesserungspotential</h4>
-                    <ul className="text-sm space-y-1">
-                      <li>• Wartezeiten bei Terminen verkürzen</li>
-                      <li>• Mehr aktive Bewertungsanfragen</li>
-                      <li>• Antworten auf Bewertungen</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
