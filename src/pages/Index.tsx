@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,13 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
-import { Search, Globe, MapPin, Building } from 'lucide-react';
+import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
+import { Search, Globe, MapPin, Building, Zap, Download } from 'lucide-react';
 
 interface BusinessData {
   address: string;
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  extensionData?: any;
 }
 
 const Index = () => {
@@ -24,6 +26,9 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
+  
+  // Extension Data Hook
+  const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +56,17 @@ const Index = () => {
     });
   };
 
+  const handleExtensionDataProcess = (processedData: BusinessData) => {
+    console.log('Extension-Daten verarbeitet:', processedData);
+    setBusinessData(processedData);
+    setShowResults(true);
+    
+    toast({
+      title: "Extension-Analyse gestartet",
+      description: `Live-Daten von ${processedData.url} erfolgreich verarbeitet.`,
+    });
+  };
+
   const resetAnalysis = () => {
     setShowResults(false);
     setBusinessData({
@@ -58,8 +74,21 @@ const Index = () => {
       url: '',
       industry: 'shk'
     });
+    clearExtensionData();
   };
 
+  // Zeige Extension-Datenverarbeitung wenn verfügbar
+  if (hasExtensionData && extensionData && !showResults) {
+    return (
+      <ExtensionDataProcessor
+        extensionData={extensionData}
+        onProcessData={handleExtensionDataProcess}
+        onDiscard={clearExtensionData}
+      />
+    );
+  }
+
+  // Zeige Analyse-Dashboard wenn Ergebnisse vorhanden
   if (showResults) {
     return <AnalysisDashboard businessData={businessData} onReset={resetAnalysis} />;
   }
@@ -76,14 +105,70 @@ const Index = () => {
           </p>
         </div>
 
+        {/* Extension Hinweis */}
+        <Card className="mb-6 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-800">
+              <Zap className="h-5 w-5" />
+              🚀 NEU: Chrome Extension verfügbar!
+            </CardTitle>
+            <CardDescription className="text-green-700">
+              Analysieren Sie jede Website direkt mit einem Klick - ohne CORS-Probleme oder API-Limits!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="text-sm text-green-800">
+                <strong>Vorteile der Extension:</strong>
+                <ul className="list-disc list-inside mt-1 space-y-1">
+                  <li>✓ Vollständige Website-Analyse ohne Einschränkungen</li>
+                  <li>✓ Echte SEO-Daten direkt von der Website</li>
+                  <li>✓ Keine API-Kosten oder Limits</li>
+                  <li>✓ Ein Klick zur Analyse jeder Website</li>
+                </ul>
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  variant="default" 
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    toast({
+                      title: "Extension-Installation",
+                      description: "Kopieren Sie den chrome-extension Ordner und laden Sie ihn in Chrome als Developer Extension.",
+                    });
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Installation anzeigen
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    // Öffne Chrome Extensions Seite
+                    window.open('chrome://extensions/', '_blank');
+                  }}
+                >
+                  Chrome Extensions öffnen
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-6 w-6" />
               Betriebsdaten eingeben
+              {isFromExtension && (
+                <Badge variant="default" className="bg-green-100 text-green-800 ml-2">
+                  <Zap className="h-3 w-3 mr-1" />
+                  Mit Extension-Unterstützung
+                </Badge>
+              )}
             </CardTitle>
             <CardDescription>
-              Geben Sie die Daten des zu analysierenden Handwerksbetriebs ein
+              Geben Sie die Daten des zu analysierenden Handwerksbetriebs ein oder nutzen Sie die Chrome Extension
             </CardDescription>
           </CardHeader>
           <CardContent>

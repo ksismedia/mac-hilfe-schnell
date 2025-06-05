@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      height: 400px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .header p {
+      margin: 5px 0 0 0;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .current-site {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    
+    .current-site strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .url {
+      word-break: break-all;
+      opacity: 0.9;
+    }
+    
+    .analyze-btn {
+      width: 100%;
+      padding: 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+    
+    .analyze-btn:hover {
+      background: #45a049;
+      transform: translateY(-1px);
+    }
+    
+    .analyze-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .status {
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    
+    .status.success {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      display: block;
+    }
+    
+    .status.error {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      display: block;
+    }
+    
+    .status.loading {
+      background: rgba(33, 150, 243, 0.2);
+      border: 1px solid rgba(33, 150, 243, 0.3);
+      display: block;
+    }
+    
+    .features {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+    
+    .features h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      opacity: 1;
+    }
+    
+    .features ul {
+      margin: 0;
+      padding-left: 15px;
+    }
+    
+    .features li {
+      margin-bottom: 3px;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>🔍 SEO Website Analyzer</h2>
+    <p>Umfassende SEO-Analyse für Handwerker</p>
+  </div>
+
+  <div class="current-site">
+    <strong>Aktuelle Seite:</strong>
+    <div class="url" id="currentUrl">Wird geladen...</div>
+  </div>
+
+  <button id="analyzeBtn" class="analyze-btn">
+    Website analysieren
+  </button>
+
+  <div id="status" class="status"></div>
+
+  <div class="features">
+    <h4>Analysiert wird:</h4>
+    <ul>
+      <li>SEO Meta-Daten (Title, Description)</li>
+      <li>Überschriften-Struktur (H1-H3)</li>
+      <li>Bilder und Alt-Tags</li>
+      <li>Links und Backlinks</li>
+      <li>Kontaktinformationen</li>
+      <li>Impressum & Datenschutz</li>
+      <li>Mobile-Optimierung</li>
+      <li>Branchenspezifische Keywords</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Daten werden sicher übertragen
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
