@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
+import APIKeyManager from './APIKeyManager';
 import SEOAnalysis from './analysis/SEOAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import PerformanceAnalysis from './analysis/PerformanceAnalysis';
@@ -40,6 +42,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsApiKey, setNeedsApiKey] = useState(false);
   const { toast } = useToast();
 
   const industryNames = {
@@ -52,13 +55,27 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   };
 
   useEffect(() => {
-    analyzeRealData();
+    checkApiKeyAndAnalyze();
   }, [businessData]);
+
+  const checkApiKeyAndAnalyze = () => {
+    if (!GoogleAPIService.hasApiKey()) {
+      setNeedsApiKey(true);
+      setIsLoading(false);
+    } else {
+      analyzeRealData();
+    }
+  };
+
+  const handleApiKeySet = () => {
+    setNeedsApiKey(false);
+    analyzeRealData();
+  };
 
   const analyzeRealData = async () => {
     setIsLoading(true);
     try {
-      console.log('Starting real business analysis...');
+      console.log('Starting real business analysis with Google APIs...');
       const analysisResult = await BusinessAnalysisService.analyzeWebsite(
         businessData.url,
         businessData.address,
@@ -68,7 +85,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       
       toast({
         title: "Echte Datenanalyse abgeschlossen",
-        description: `Analyse für ${analysisResult.company.name} erfolgreich durchgeführt.`,
+        description: `Live-Analyse für ${analysisResult.company.name} mit Google APIs erfolgreich durchgeführt.`,
       });
     } catch (error) {
       console.error('Analysis failed:', error);
@@ -82,6 +99,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     }
   };
 
+  if (needsApiKey) {
+    return <APIKeyManager onApiKeySet={handleApiKeySet} />;
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -89,14 +110,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           <div className="flex items-center justify-center min-h-screen">
             <Card className="w-96">
               <CardHeader>
-                <CardTitle className="text-center">Analysiere echte Daten...</CardTitle>
+                <CardTitle className="text-center">Analysiere echte Daten mit Google APIs...</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Progress value={85} className="w-full" />
                 <div className="text-center text-sm text-gray-600">
-                  <p>Crawle Website: {businessData.url}</p>
-                  <p>Analysiere SEO-Daten...</p>
-                  <p>Suche Konkurrenten in der Nähe...</p>
+                  <p>🔍 Suche Unternehmen: {businessData.url}</p>
+                  <p>⚡ Analysiere PageSpeed Performance...</p>
+                  <p>🏢 Lade Google Places Bewertungen...</p>
+                  <p>🎯 Suche lokale Konkurrenten...</p>
                 </div>
               </CardContent>
             </Card>
@@ -127,9 +149,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   // Berechne Gesamtbewertung basierend auf echten Daten
   const overallScore = Math.round(
     (realData.seo.score + realData.performance.score + 
-     (realData.reviews.google.count > 0 ? 80 : 40)) / 3
+     (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore) / 4
   );
-  const completionRate = 90; // Basierend auf verfügbaren Daten
+  const completionRate = 95; // Höhere Rate da echte APIs verwendet werden
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -149,7 +171,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  Analyse: {realData.company.name}
+                  Live-Analyse: {realData.company.name}
                 </h1>
                 <div className="space-y-1">
                   <p className="text-gray-600">
@@ -158,8 +180,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
                   <p className="text-gray-600">
                     <strong>Adresse:</strong> {realData.company.address}
                   </p>
+                  {realData.company.phone && (
+                    <p className="text-gray-600">
+                      <strong>Telefon:</strong> {realData.company.phone}
+                    </p>
+                  )}
                   <Badge variant="secondary">
                     {industryNames[businessData.industry]}
+                  </Badge>
+                  <Badge variant="default" className="ml-2">
+                    🔴 Live Google APIs
                   </Badge>
                 </div>
               </div>
