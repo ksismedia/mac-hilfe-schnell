@@ -1,260 +1,229 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useQuery } from '@tanstack/react-query';
-import { Separator } from '@/components/ui/separator';
-import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
-import OverallRating from '@/components/analysis/OverallRating';
-import SEOAnalysis from '@/components/analysis/SEOAnalysis';
-import PerformanceAnalysis from '@/components/analysis/PerformanceAnalysis';
-import MobileOptimization from '@/components/analysis/MobileOptimization';
-import KeywordAnalysis from '@/components/analysis/KeywordAnalysis';
-import LocalSEO from '@/components/analysis/LocalSEO';
-import ContentAnalysis from '@/components/analysis/ContentAnalysis';
-import CompetitorAnalysis from '@/components/analysis/CompetitorAnalysis';
-import BacklinkAnalysis from '@/components/analysis/BacklinkAnalysis';
-import GoogleReviews from '@/components/analysis/GoogleReviews';
-import SocialMediaAnalysis from '@/components/analysis/SocialMediaAnalysis';
-import SocialProof from '@/components/analysis/SocialProof';
-import ConversionOptimization from '@/components/analysis/ConversionOptimization';
-import WorkplaceReviews from '@/components/analysis/WorkplaceReviews';
-import ImprintCheck from '@/components/analysis/ImprintCheck';
-import IndustryFeatures from '@/components/analysis/IndustryFeatures';
-import PDFExport from '@/components/analysis/PDFExport';
-import { ArrowLeft, Download, RefreshCw } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, Search, Download } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+// Analysis Components
+import SEOAnalysis from './analysis/SEOAnalysis';
+import PerformanceAnalysis from './analysis/PerformanceAnalysis';
+import MobileOptimization from './analysis/MobileOptimization';
+import CompetitorAnalysis from './analysis/CompetitorAnalysis';
+import LocalSEO from './analysis/LocalSEO';
+import ContentAnalysis from './analysis/ContentAnalysis';
+import BacklinkAnalysis from './analysis/BacklinkAnalysis';
+import KeywordAnalysis from './analysis/KeywordAnalysis';
+import SocialMediaAnalysis from './analysis/SocialMediaAnalysis';
+import ConversionOptimization from './analysis/ConversionOptimization';
+import GoogleReviews from './analysis/GoogleReviews';
+import WorkplaceReviews from './analysis/WorkplaceReviews';
+import SocialProof from './analysis/SocialProof';
+import { PDFExport } from './analysis/PDFExport';
+import OverallRating from './analysis/OverallRating';
+import ImprintCheck from './analysis/ImprintCheck';
+import IndustryFeatures from './analysis/IndustryFeatures';
+
+// Services
+import { WebsiteAnalysisService } from '@/services/WebsiteAnalysisService';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 
 interface AnalysisDashboardProps {
-  businessData: {
-    address: string;
-    url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
-    extensionData?: any;
+  initialDomain?: string;
+}
+
+interface AnalysisData {
+  domain?: string;
+  overallRating?: { score: number };
+  seoData?: any;
+  performanceData?: any;
+  mobileData?: any;
+  competitorData?: any;
+  localSeoData?: any;
+  contentData?: any;
+  backlinkData?: any;
+  keywordData?: any;
+  socialMediaData?: any;
+  conversionData?: any;
+  googleReviewsData?: any;
+  workplaceReviewsData?: any;
+  socialProofData?: any;
+  imprintCheckData?: any;
+  industryFeaturesData?: any;
+}
+
+const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) => {
+  const [domain, setDomain] = useState(initialDomain || '');
+  const [analysisData, setAnalysisData] = useState<AnalysisData>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [apiKeySet, setApiKeySet] = useState(GoogleAPIService.hasApiKey());
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (initialDomain && apiKeySet) {
+      analyzeWebsite(initialDomain);
+    }
+  }, [initialDomain, apiKeySet]);
+
+  const handleApiKeySet = () => {
+    setApiKeySet(true);
   };
-  onReset: () => void;
-}
 
-interface ManualSocialData {
-  facebookUrl: string;
-  instagramUrl: string;
-  facebookFollowers: string;
-  instagramFollowers: string;
-  facebookLastPost: string;
-  instagramLastPost: string;
-}
-
-interface ManualImprintData {
-  found: boolean;
-  elements: string[];
-}
-
-const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
-  const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
-  const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
-
-  console.log('AnalysisDashboard: Starting analysis for:', businessData.url);
-  console.log('Google API Key available:', GoogleAPIService.hasApiKey());
-  console.log('Current manual social data:', manualSocialData);
-  console.log('Current manual imprint data:', manualImprintData);
-
-  const { data: realData, isLoading, error, refetch } = useQuery({
-    queryKey: ['businessAnalysis', businessData.url, businessData.address],
-    queryFn: async () => {
-      console.log('useQuery: Calling BusinessAnalysisService.analyzeWebsite with:', {
-        url: businessData.url,
-        address: businessData.address,
-        industry: businessData.industry,
-        hasApiKey: GoogleAPIService.hasApiKey()
+  const analyzeWebsite = async (domainToAnalyze: string = domain) => {
+    if (!domainToAnalyze.trim()) {
+      toast({
+        title: 'Bitte gib eine Domain ein.',
+        description: 'Gib eine gültige Domain ein, um die Analyse zu starten.',
+        variant: 'destructive',
       });
-      const result = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-      console.log('useQuery: Analysis completed, result:', result);
-      return result;
-    },
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
+      return;
+    }
 
-  const handleRefetch = () => {
-    console.log('Manual refetch triggered');
-    refetch();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await WebsiteAnalysisService.analyzeWebsite(domainToAnalyze);
+      setAnalysisData(data);
+      toast({
+        title: 'Analyse abgeschlossen!',
+        description: `Die Analyse für ${domainToAnalyze} wurde erfolgreich durchgeführt.`,
+      });
+    } catch (err: any) {
+      console.error('Analysis Error:', err);
+      setError(err.message || 'Ein Fehler ist bei der Analyse aufgetreten.');
+      toast({
+        title: 'Analyse fehlgeschlagen!',
+        description: err.message || 'Es gab einen Fehler bei der Durchführung der Analyse.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const handleManualSocialDataChange = (data: ManualSocialData | null) => {
-    console.log('AnalysisDashboard: Received manual social data:', data);
-    setManualSocialData(data);
-  };
-
-  const handleManualImprintDataChange = (data: ManualImprintData | null) => {
-    console.log('AnalysisDashboard: Received manual imprint data:', data);
-    setManualImprintData(data);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
-        <Card className="max-w-md w-full">
-          <CardHeader>
-            <CardTitle>Analyse wird durchgeführt...</CardTitle>
-            <CardDescription>
-              {GoogleAPIService.hasApiKey() 
-                ? "Echte API-Daten werden abgerufen..." 
-                : "Realistische Demo-Daten werden generiert..."
-              }
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center">
-            <RefreshCw className="animate-spin h-6 w-6" />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (error) {
-    console.error('Analysis error:', error);
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
-        <Card className="max-w-md w-full">
-          <CardHeader>
-            <CardTitle>Fehler bei der Analyse</CardTitle>
-            <CardDescription>Es gab ein Problem beim Abrufen der Daten. Bitte versuchen Sie es später noch einmal.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <p className="text-red-500">{error.message}</p>
-            <Button onClick={handleRefetch}>Erneut versuchen</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  console.log('AnalysisDashboard: Rendering with data:', realData);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-6xl mx-auto">
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-2xl font-bold">
-              Analyse-Dashboard
-              {!GoogleAPIService.hasApiKey() && (
-                <Badge variant="secondary" className="ml-2">Demo-Modus</Badge>
-              )}
-            </CardTitle>
-            <Button variant="outline" onClick={onReset}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Neue Analyse
-            </Button>
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Website Analyse</CardTitle>
+            <CardDescription>Gib eine Domain ein, um eine umfassende Analyse zu starten.</CardDescription>
           </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="domain">Domain:</Label>
+              <Input
+                id="domain"
+                type="url"
+                placeholder="example.com"
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                disabled={isLoading}
+              />
+              <Button onClick={() => analyzeWebsite()} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analysiere...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Analysieren
+                  </>
+                )}
+              </Button>
+            </div>
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
         </Card>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12">
-            <TabsTrigger value="overview">Übersicht</TabsTrigger>
-            <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="mobile">Mobile</TabsTrigger>
-            <TabsTrigger value="keywords">Keywords</TabsTrigger>
-            <TabsTrigger value="local-seo">Lokales SEO</TabsTrigger>
-            <TabsTrigger value="content">Inhalt</TabsTrigger>
-            <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
-            <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-            <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
-            <TabsTrigger value="social-media">Social Media</TabsTrigger>
-            <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
-            <TabsTrigger value="conversion">Conversion</TabsTrigger>
-            <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
-            <TabsTrigger value="industry">Branche</TabsTrigger>
-            <TabsTrigger value="imprint">Impressum</TabsTrigger>
-            <TabsTrigger value="export">Export</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <OverallRating businessData={businessData} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="seo" className="space-y-6">
-            <SEOAnalysis url={businessData.url} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="performance" className="space-y-6">
-            <PerformanceAnalysis url={businessData.url} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="mobile" className="space-y-6">
-            <MobileOptimization url={businessData.url} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="keywords" className="space-y-6">
-            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="local-seo" className="space-y-6">
-            <LocalSEO businessData={businessData} />
-          </TabsContent>
-
-          <TabsContent value="content" className="space-y-6">
-            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
-          </TabsContent>
-
-          <TabsContent value="competitors" className="space-y-6">
-            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="backlinks" className="space-y-6">
-            <BacklinkAnalysis url={businessData.url} />
-          </TabsContent>
-
-          <TabsContent value="reviews" className="space-y-6">
-            <GoogleReviews address={businessData.address} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="social-media" className="space-y-6">
-            <SocialMediaAnalysis 
-              businessData={businessData} 
-              realData={realData} 
-              onManualDataChange={handleManualSocialDataChange}
-              initialManualData={manualSocialData}
-            />
-          </TabsContent>
-
-          <TabsContent value="social-proof" className="space-y-6">
-            <SocialProof businessData={businessData} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="conversion" className="space-y-6">
-            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
-          </TabsContent>
-
-          <TabsContent value="workplace" className="space-y-6">
-            <WorkplaceReviews businessData={businessData} realData={realData} />
-          </TabsContent>
-
-          <TabsContent value="industry" className="space-y-6">
-            <IndustryFeatures businessData={businessData} />
-          </TabsContent>
-
-          <TabsContent value="imprint" className="space-y-6">
-            <ImprintCheck 
-              url={businessData.url} 
-              realData={realData}
-              onManualDataChange={handleManualImprintDataChange}
-              initialManualData={manualImprintData}
-            />
-          </TabsContent>
-
-          <TabsContent value="export" className="space-y-6">
-            <PDFExport 
-              businessData={businessData} 
-              realData={realData} 
-              manualSocialData={manualSocialData}
-              manualImprintData={manualImprintData}
-            />
-          </TabsContent>
-        </Tabs>
+        {analysisData.domain && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Analyse Ergebnisse für {analysisData.domain}</CardTitle>
+              <CardDescription>Detaillierte Einblicke in die Performance deiner Website.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <OverallRating overallRating={analysisData.overallRating} />
+              </div>
+              <Tabs defaultValue="seo" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="seo">SEO</TabsTrigger>
+                  <TabsTrigger value="performance">Performance</TabsTrigger>
+                  <TabsTrigger value="mobile">Mobile</TabsTrigger>
+                  <TabsTrigger value="competitor">Konkurrenzanalyse</TabsTrigger>
+                  <TabsTrigger value="local">Lokales SEO</TabsTrigger>
+                  <TabsTrigger value="content">Inhaltsanalyse</TabsTrigger>
+                  <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
+                  <TabsTrigger value="keywords">Keywords</TabsTrigger>
+                  <TabsTrigger value="social">Soziale Medien</TabsTrigger>
+                  <TabsTrigger value="conversion">Conversion</TabsTrigger>
+                  <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
+                  <TabsTrigger value="imprint">Impressum</TabsTrigger>
+                  <TabsTrigger value="industry">Branche</TabsTrigger>
+                  <TabsTrigger value="socialproof">Social Proof</TabsTrigger>
+                </TabsList>
+                <TabsContent value="seo">
+                  <SEOAnalysis seoData={analysisData.seoData} />
+                </TabsContent>
+                <TabsContent value="performance">
+                  <PerformanceAnalysis performanceData={analysisData.performanceData} />
+                </TabsContent>
+                <TabsContent value="mobile">
+                  <MobileOptimization mobileData={analysisData.mobileData} />
+                </TabsContent>
+                <TabsContent value="competitor">
+                  <CompetitorAnalysis competitorData={analysisData.competitorData} />
+                </TabsContent>
+                <TabsContent value="local">
+                  <LocalSEO localSeoData={analysisData.localSeoData} />
+                </TabsContent>
+                <TabsContent value="content">
+                  <ContentAnalysis contentData={analysisData.contentData} />
+                </TabsContent>
+                <TabsContent value="backlinks">
+                  <BacklinkAnalysis backlinkData={analysisData.backlinkData} />
+                </TabsContent>
+                <TabsContent value="keywords">
+                  <KeywordAnalysis keywordData={analysisData.keywordData} />
+                </TabsContent>
+                <TabsContent value="social">
+                  <SocialMediaAnalysis socialMediaData={analysisData.socialMediaData} />
+                </TabsContent>
+                <TabsContent value="conversion">
+                  <ConversionOptimization conversionData={analysisData.conversionData} />
+                </TabsContent>
+                <TabsContent value="reviews">
+                  <GoogleReviews googleReviewsData={analysisData.googleReviewsData} />
+                  <WorkplaceReviews workplaceReviewsData={analysisData.workplaceReviewsData} />
+                </TabsContent>
+                 <TabsContent value="socialproof">
+                  <SocialProof socialProofData={analysisData.socialProofData} />
+                </TabsContent>
+                <TabsContent value="imprint">
+                  <ImprintCheck imprintCheckData={analysisData.imprintCheckData} />
+                </TabsContent>
+                <TabsContent value="industry">
+                  <IndustryFeatures industryFeaturesData={analysisData.industryFeaturesData} />
+                </TabsContent>
+              </Tabs>
+              <div className="mt-4">
+                <PDFExport analysisData={analysisData} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
