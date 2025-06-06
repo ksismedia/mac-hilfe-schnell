@@ -55,15 +55,57 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   };
 
   useEffect(() => {
+    // Bei jeder neuen Analyse API-Key erneut prüfen
     checkApiKeyAndAnalyze();
   }, [businessData]);
 
-  const checkApiKeyAndAnalyze = () => {
-    if (!GoogleAPIService.hasApiKey()) {
+  const checkApiKeyAndAnalyze = async () => {
+    // Prüfe ob API-Key vorhanden und funktionsfähig ist
+    const apiKey = GoogleAPIService.getApiKey();
+    
+    if (!apiKey) {
+      console.log('Kein API-Key gefunden - APIKeyManager wird angezeigt');
       setNeedsApiKey(true);
       setIsLoading(false);
-    } else {
-      analyzeRealData();
+      return;
+    }
+
+    // Teste den API-Key mit einer einfachen Anfrage
+    try {
+      console.log('Teste vorhandenen API-Key...');
+      const testResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
+      );
+
+      if (testResponse.ok) {
+        const data = await testResponse.json();
+        if (data.status === 'OK') {
+          console.log('API-Key ist gültig - starte Analyse');
+          analyzeRealData();
+        } else {
+          console.log('API-Key ungültig:', data.status);
+          setNeedsApiKey(true);
+          setIsLoading(false);
+          toast({
+            title: "API-Key ungültig",
+            description: "Bitte geben Sie einen gültigen Google API-Key ein.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        console.log('API-Key Test fehlgeschlagen');
+        setNeedsApiKey(true);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('API-Key Validierung fehlgeschlagen:', error);
+      setNeedsApiKey(true);
+      setIsLoading(false);
+      toast({
+        title: "API-Key Validierung fehlgeschlagen",
+        description: "Bitte überprüfen Sie Ihren Google API-Key.",
+        variant: "destructive",
+      });
     }
   };
 
