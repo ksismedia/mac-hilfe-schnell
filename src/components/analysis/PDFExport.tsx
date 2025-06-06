@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download, FileText, Calendar, Target, TrendingUp } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import jsPDF from 'jspdf';
 
 interface PDFExportProps {
   businessData: {
@@ -28,19 +29,182 @@ interface ImprovementAction {
 
 const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
   const [activeTab, setActiveTab] = useState('summary');
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleExport = () => {
-    console.log('Exporting comprehensive PDF with action plan for:', realData.company.name);
-    alert(`PDF-Export würde umfassen:
+  const handleExport = async () => {
+    setIsGenerating(true);
     
-• Vollständige Analyse aller 16 Bereiche
-• 30+ konkrete Verbesserungsmaßnahmen
-• 6-Monats-Zeitplan mit Prioritäten
-• ROI-Prognosen für jede Maßnahme
-• Branchenspezifische Empfehlungen
-• Konkurrenzvergleich mit Handlungsempfehlungen
+    try {
+      console.log('Generating PDF for:', realData.company.name);
+      
+      const pdf = new jsPDF();
+      let yPosition = 20;
+      
+      // Titel
+      pdf.setFontSize(20);
+      pdf.text('Digital Marketing Analyse', 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFontSize(16);
+      pdf.text(realData.company.name, 20, yPosition);
+      yPosition += 20;
+      
+      // Unternehmensdaten
+      pdf.setFontSize(12);
+      pdf.text('Unternehmensdaten:', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Website: ${realData.company.url}`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Adresse: ${realData.company.address}`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Branche: ${getIndustryName(businessData.industry)}`, 20, yPosition);
+      yPosition += 15;
+      
+      // Gesamtbewertung
+      const overallScore = Math.round(
+        (realData.seo.score + realData.performance.score + realData.imprint.score) / 3
+      );
+      
+      pdf.setFontSize(14);
+      pdf.text('Gesamtbewertung', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(12);
+      pdf.text(`Gesamtscore: ${overallScore}/100 Punkte`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`SEO: ${realData.seo.score}/100`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Performance: ${realData.performance.score}/100`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Impressum: ${realData.imprint.score}/100`, 20, yPosition);
+      yPosition += 15;
+      
+      // Neue Seite für Verbesserungsmaßnahmen
+      pdf.addPage();
+      yPosition = 20;
+      
+      pdf.setFontSize(16);
+      pdf.text('Handlungsempfehlungen', 20, yPosition);
+      yPosition += 15;
+      
+      const actions = generateImprovementActions();
+      
+      actions.slice(0, 10).forEach((action, index) => {
+        if (yPosition > 270) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFontSize(12);
+        pdf.text(`${index + 1}. ${action.action}`, 20, yPosition);
+        yPosition += 8;
+        
+        pdf.setFontSize(10);
+        pdf.text(`Prioritat: ${action.priority} | Zeitrahmen: ${action.timeframe}`, 25, yPosition);
+        yPosition += 6;
+        pdf.text(`${action.description}`, 25, yPosition);
+        yPosition += 10;
+      });
+      
+      // Neue Seite für SEO Details
+      pdf.addPage();
+      yPosition = 20;
+      
+      pdf.setFontSize(16);
+      pdf.text('SEO-Analyse Details', 20, yPosition);
+      yPosition += 15;
+      
+      pdf.setFontSize(12);
+      pdf.text('Gefundene Keywords:', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      const foundKeywords = realData.keywords.filter(k => k.found);
+      if (foundKeywords.length > 0) {
+        foundKeywords.slice(0, 10).forEach(keyword => {
+          pdf.text(`• ${keyword.keyword}`, 25, yPosition);
+          yPosition += 6;
+        });
+      } else {
+        pdf.text('Keine branchenspezifischen Keywords gefunden.', 25, yPosition);
+        yPosition += 6;
+      }
+      
+      yPosition += 10;
+      pdf.setFontSize(12);
+      pdf.text('Fehlende Keywords:', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      const missingKeywords = realData.keywords.filter(k => !k.found);
+      missingKeywords.slice(0, 10).forEach(keyword => {
+        pdf.text(`• ${keyword.keyword}`, 25, yPosition);
+        yPosition += 6;
+      });
+      
+      // Neue Seite für Social Media und Bewertungen
+      pdf.addPage();
+      yPosition = 20;
+      
+      pdf.setFontSize(16);
+      pdf.text('Social Media & Bewertungen', 20, yPosition);
+      yPosition += 15;
+      
+      pdf.setFontSize(12);
+      pdf.text('Social Media Prasenz:', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Facebook: ${realData.socialMedia.facebook.found ? 'Vorhanden' : 'Nicht gefunden'}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Instagram: ${realData.socialMedia.instagram.found ? 'Vorhanden' : 'Nicht gefunden'}`, 25, yPosition);
+      yPosition += 15;
+      
+      pdf.setFontSize(12);
+      pdf.text('Google Bewertungen:', 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Anzahl Bewertungen: ${realData.reviews.google.count}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Durchschnittsbewertung: ${realData.reviews.google.rating}/5`, 25, yPosition);
+      yPosition += 15;
+      
+      // Footer auf jeder Seite
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.text('Erstellt mit Digital Marketing Analyse Tool', 20, 290);
+        pdf.text(`Seite ${i} von ${pageCount}`, 170, 290);
+      }
+      
+      // PDF speichern
+      const fileName = `Digital_Marketing_Analyse_${realData.company.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+      pdf.save(fileName);
+      
+      console.log('PDF successfully generated:', fileName);
+      
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      alert('Fehler beim Erstellen des PDFs. Bitte versuchen Sie es erneut.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
-Der detaillierte Report wäre 25-30 Seiten stark.`);
+  const getIndustryName = (industry: string) => {
+    const names = {
+      shk: 'SHK (Sanitär, Heizung, Klima)',
+      maler: 'Maler und Lackierer',
+      elektriker: 'Elektriker',
+      dachdecker: 'Dachdecker',
+      stukateur: 'Stukateure',
+      planungsbuero: 'Planungsbüro Versorgungstechnik'
+    };
+    return names[industry] || industry;
   };
 
   const overallScore = Math.round(
@@ -369,21 +533,26 @@ Der detaillierte Report wäre 25-30 Seiten stark.`);
                     ✓ Ihr umfassender Handlungsplan ist bereit!
                   </h3>
                   <div className="text-sm text-green-800 space-y-2">
-                    <p><strong>Umfang:</strong> 25-30 Seiten detaillierter Analysebericht</p>
+                    <p><strong>Umfang:</strong> Mehrseitiger detaillierter Analysebericht</p>
                     <p><strong>Maßnahmen:</strong> {improvementActions.length} konkrete Verbesserungsschritte</p>
                     <p><strong>Zeitplan:</strong> 6-Monats-Roadmap mit Prioritäten</p>
                     <p><strong>ROI:</strong> Geschätzte Umsatzsteigerung von 15-25%</p>
                   </div>
                 </div>
 
-                <Button onClick={handleExport} size="lg" className="w-full md:w-auto">
+                <Button 
+                  onClick={handleExport} 
+                  size="lg" 
+                  className="w-full md:w-auto"
+                  disabled={isGenerating}
+                >
                   <Download className="h-4 w-4 mr-2" />
-                  PDF-Handlungsplan herunterladen (25-30 Seiten)
+                  {isGenerating ? 'PDF wird erstellt...' : 'PDF-Handlungsplan herunterladen'}
                 </Button>
                 
                 <div className="text-sm text-gray-500">
                   <p>Der Bericht enthält alle echten Analysedaten und einen detaillierten</p>
-                  <p>6-Monats-Aktionsplan für {realData.company.name}</p>
+                  <p>Aktionsplan für {realData.company.name}</p>
                 </div>
               </div>
 
@@ -393,18 +562,18 @@ Der detaillierte Report wäre 25-30 Seiten stark.`);
                   <ul className="space-y-1">
                     <li>• Executive Summary</li>
                     <li>• Ist-Zustand Analyse</li>
-                    <li>• Konkurrenzvergleich</li>
-                    <li>• SWOT-Analyse</li>
-                    <li>• 30+ Handlungsempfehlungen</li>
-                    <li>• 6-Monats-Zeitplan</li>
+                    <li>• SEO-Details</li>
+                    <li>• Performance-Bewertung</li>
+                    <li>• {improvementActions.length}+ Handlungsempfehlungen</li>
+                    <li>• Prioritäten-Matrix</li>
                   </ul>
                   <ul className="space-y-1">
-                    <li>• Budget-Kalkulation</li>
-                    <li>• ROI-Prognosen</li>
-                    <li>• KPI-Dashboard</li>
-                    <li>• Branchenvergleich</li>
-                    <li>• Checklisten</li>
-                    <li>• Kontakt für Rückfragen</li>
+                    <li>• Social Media Status</li>
+                    <li>• Google Bewertungen</li>
+                    <li>• Keyword-Analyse</li>
+                    <li>• Mobile Optimierung</li>
+                    <li>• Rechtliche Compliance</li>
+                    <li>• Zeitplan & Roadmap</li>
                   </ul>
                 </div>
               </div>
