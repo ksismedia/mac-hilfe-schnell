@@ -28,7 +28,7 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showApiKeyInput, setShowApiKeyInput] = useState(!GoogleAPIService.hasApiKey());
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const { toast } = useToast();
   
   // Extension Data Hook
@@ -89,7 +89,7 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Zeige API-Key-Eingabe wenn noch kein Key gesetzt ist
+  // Zeige API-Key-Eingabe nur wenn explizit gewünscht
   if (showApiKeyInput) {
     return <APIKeyManager onApiKeySet={handleApiKeySet} />;
   }
@@ -136,17 +136,26 @@ const Index = () => {
               }
             </CardDescription>
           </CardHeader>
-          {GoogleAPIService.hasApiKey() && (
-            <CardContent>
+          <CardContent>
+            <div className="flex gap-3">
               <Button 
                 variant="outline" 
                 onClick={() => setShowApiKeyInput(true)}
                 className="text-green-700 border-green-300"
               >
-                API-Key ändern
+                {GoogleAPIService.hasApiKey() ? "API-Key ändern" : "API-Key eingeben"}
               </Button>
-            </CardContent>
-          )}
+              {!GoogleAPIService.hasApiKey() && (
+                <Button 
+                  variant="default"
+                  onClick={() => setShowApiKeyInput(true)}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  API-Key für echte Daten eingeben
+                </Button>
+              )}
+            </div>
+          </CardContent>
         </Card>
 
         {/* Extension Hinweis */}
