@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -88,67 +87,86 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           name: websiteContent.title || domainToAnalyze,
           url: domainToAnalyze,
           address: businessData?.address || '',
+          industry: businessData?.industry || 'shk',
           phone: '',
-          email: '',
-          description: websiteContent.metaDescription || ''
+          email: ''
         },
         seo: {
-          title: websiteContent.title,
+          titleTag: websiteContent.title,
           metaDescription: websiteContent.metaDescription,
           headings: websiteContent.headings,
-          keywords: websiteContent.keywords,
-          images: websiteContent.images.length,
-          imagesWithAlt: websiteContent.images.filter(img => img.hasAlt).length,
-          internalLinks: websiteContent.links.filter(link => link.isInternal).length,
-          externalLinks: websiteContent.links.filter(link => !link.isInternal).length,
+          altTags: {
+            total: websiteContent.images.length,
+            withAlt: websiteContent.images.filter(img => img.hasAlt).length
+          },
           score: Math.floor(Math.random() * 40) + 60 // 60-100
         },
         performance: {
           loadTime: Math.random() * 2 + 1, // 1-3 seconds
-          mobileScore: Math.floor(Math.random() * 30) + 70, // 70-100
-          desktopScore: Math.floor(Math.random() * 20) + 80, // 80-100
-          coreWebVitals: {
-            lcp: Math.random() * 1.5 + 1.5, // 1.5-3 seconds
-            fid: Math.random() * 50 + 50, // 50-100 ms
-            cls: Math.random() * 0.1 + 0.05 // 0.05-0.15
-          }
+          lcp: Math.random() * 1.5 + 1.5, // 1.5-3 seconds
+          fid: Math.random() * 50 + 50, // 50-100 ms
+          cls: Math.random() * 0.1 + 0.05, // 0.05-0.15
+          score: Math.floor(Math.random() * 20) + 80 // 80-100
         },
         reviews: {
           google: {
             rating: 0,
             count: 0,
             recent: []
-          },
-          workplace: {
-            kununu: { rating: 0, count: 0 },
-            glassdoor: { rating: 0, count: 0 },
-            indeed: { rating: 0, count: 0 }
           }
         },
-        backlinks: {
-          total: Math.floor(Math.random() * 50) + 10,
-          domains: Math.floor(Math.random() * 20) + 5,
-          quality: Math.floor(Math.random() * 30) + 40
-        },
-        content: {
-          wordCount: websiteContent.content.split(' ').length,
-          readabilityScore: Math.floor(Math.random() * 30) + 60,
-          keywordDensity: Math.random() * 3 + 1
-        },
         competitors: [],
+        keywords: websiteContent.keywords.map((keyword, index) => ({
+          keyword,
+          position: index + 1,
+          volume: Math.floor(Math.random() * 500) + 100,
+          found: true
+        })),
+        imprint: WebsiteAnalysisService.detectImprintFromContent(websiteContent),
         socialMedia: {
-          facebook: { url: '', followers: 0, engagement: 0 },
-          instagram: { url: '', followers: 0, engagement: 0 },
-          linkedin: { url: '', followers: 0, engagement: 0 },
-          twitter: { url: '', followers: 0, engagement: 0 }
+          facebook: {
+            found: false,
+            followers: 0,
+            lastPost: 'Nicht gefunden',
+            engagement: 'keine'
+          },
+          instagram: {
+            found: false,
+            followers: 0,
+            lastPost: 'Nicht gefunden',
+            engagement: 'keine'
+          },
+          overallScore: 0
         },
-        localSEO: {
-          googleMyBusiness: false,
-          citations: Math.floor(Math.random() * 20) + 5,
-          reviews: Math.floor(Math.random() * 10),
-          localKeywords: Math.floor(Math.random() * 15) + 5
+        workplace: {
+          kununu: {
+            found: false,
+            rating: 0,
+            reviews: 0
+          },
+          glassdoor: {
+            found: false,
+            rating: 0,
+            reviews: 0
+          },
+          overallScore: 0
         },
-        imprint: WebsiteAnalysisService.detectImprintFromContent(websiteContent)
+        socialProof: {
+          testimonials: Math.floor(Math.random() * 8) + 3,
+          certifications: [
+            { name: 'Handwerkskammer-Mitglied', verified: true, visible: true }
+          ],
+          awards: [],
+          overallScore: Math.floor(Math.random() * 40) + 60
+        },
+        mobile: {
+          responsive: true,
+          touchFriendly: true,
+          pageSpeedMobile: Math.floor(Math.random() * 30) + 70,
+          pageSpeedDesktop: Math.floor(Math.random() * 20) + 80,
+          overallScore: Math.floor(Math.random() * 30) + 70,
+          issues: []
+        }
       };
 
       setAnalysisData(mockBusinessData);
@@ -237,6 +255,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 />
               </div>
               <Tabs defaultValue="seo" className="w-full">
+                
                 <TabsList>
                   <TabsTrigger value="seo">SEO</TabsTrigger>
                   <TabsTrigger value="performance">Performance</TabsTrigger>
