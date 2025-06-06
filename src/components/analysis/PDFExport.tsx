@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,10 @@ interface PDFExportProps {
     instagramFollowers: string;
     facebookLastPost: string;
     instagramLastPost: string;
+  } | null;
+  manualImprintData?: {
+    found: boolean;
+    elements: string[];
   } | null;
 }
 
