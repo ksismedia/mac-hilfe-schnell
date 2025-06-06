@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Search, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ManualDataProvider } from '@/contexts/ManualDataContext';
 
 // Analysis Components
 import SEOAnalysis from './analysis/SEOAnalysis';
@@ -42,7 +43,7 @@ interface AnalysisDashboardProps {
   onReset?: () => void;
 }
 
-const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ 
+const AnalysisDashboardContent: React.FC<AnalysisDashboardProps> = ({ 
   initialDomain, 
   businessData,
   onReset 
@@ -192,8 +193,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const currentIndustry = businessData?.industry || 'shk';
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header with analysis summary */}
         <Card className="mb-4">
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Website Analyse</CardTitle>
@@ -238,133 +240,161 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         </Card>
 
         {analysisData && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Analyse Ergebnisse für {currentUrl}</CardTitle>
-              <CardDescription>Detaillierte Einblicke in die Performance deiner Website.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <OverallRating 
-                  businessData={{
-                    address: currentAddress,
-                    url: currentUrl,
-                    industry: currentIndustry
-                  }}
-                  realData={analysisData} 
-                />
-              </div>
-              <Tabs defaultValue="seo" className="w-full">
-                
-                <TabsList>
-                  <TabsTrigger value="seo">SEO</TabsTrigger>
-                  <TabsTrigger value="performance">Performance</TabsTrigger>
-                  <TabsTrigger value="mobile">Mobile</TabsTrigger>
-                  <TabsTrigger value="competitor">Konkurrenzanalyse</TabsTrigger>
-                  <TabsTrigger value="local">Lokales SEO</TabsTrigger>
-                  <TabsTrigger value="content">Inhaltsanalyse</TabsTrigger>
-                  <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-                  <TabsTrigger value="keywords">Keywords</TabsTrigger>
-                  <TabsTrigger value="social">Soziale Medien</TabsTrigger>
-                  <TabsTrigger value="conversion">Conversion</TabsTrigger>
-                  <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
-                  <TabsTrigger value="imprint">Impressum</TabsTrigger>
-                  <TabsTrigger value="industry">Branche</TabsTrigger>
-                  <TabsTrigger value="socialproof">Social Proof</TabsTrigger>
-                </TabsList>
-                <TabsContent value="seo">
-                  <SEOAnalysis url={currentUrl} realData={analysisData} />
-                </TabsContent>
-                <TabsContent value="performance">
-                  <PerformanceAnalysis url={currentUrl} realData={analysisData} />
-                </TabsContent>
-                <TabsContent value="mobile">
-                  <MobileOptimization url={currentUrl} realData={analysisData} />
-                </TabsContent>
-                <TabsContent value="competitor">
-                  <CompetitorAnalysis 
-                    address={currentAddress} 
-                    industry={currentIndustry} 
-                    realData={analysisData} 
-                  />
-                </TabsContent>
-                <TabsContent value="local">
-                  <LocalSEO 
-                    businessData={{
-                      address: currentAddress,
-                      url: currentUrl,
-                      industry: currentIndustry
-                    }}
-                  />
-                </TabsContent>
-                <TabsContent value="content">
-                  <ContentAnalysis url={currentUrl} industry={currentIndustry} />
-                </TabsContent>
-                <TabsContent value="backlinks">
-                  <BacklinkAnalysis url={currentUrl} />
-                </TabsContent>
-                <TabsContent value="keywords">
-                  <KeywordAnalysis 
-                    url={currentUrl} 
-                    industry={currentIndustry}
-                    realData={analysisData} 
-                  />
-                </TabsContent>
-                <TabsContent value="social">
-                  <SocialMediaAnalysis 
-                    businessData={{
-                      address: currentAddress,
-                      url: currentUrl,
-                      industry: currentIndustry
-                    }}
-                    realData={analysisData} 
-                  />
-                </TabsContent>
-                <TabsContent value="conversion">
-                  <ConversionOptimization url={currentUrl} industry={currentIndustry} />
-                </TabsContent>
-                <TabsContent value="reviews">
-                  <GoogleReviews address={currentAddress} realData={analysisData} />
-                  <WorkplaceReviews 
-                    businessData={{
-                      address: currentAddress,
-                      url: currentUrl,
-                      industry: currentIndustry
-                    }}
-                    realData={analysisData} 
-                  />
-                </TabsContent>
-                <TabsContent value="socialproof">
-                  <SocialProof 
-                    businessData={{
-                      address: currentAddress,
-                      url: currentUrl,
-                      industry: currentIndustry
-                    }}
-                    realData={analysisData} 
-                  />
-                </TabsContent>
-                <TabsContent value="imprint">
-                  <ImprintCheck url={currentUrl} realData={analysisData} />
-                </TabsContent>
-                <TabsContent value="industry">
-                  <IndustryFeatures 
-                    businessData={{
-                      address: currentAddress,
-                      url: currentUrl,
-                      industry: currentIndustry
-                    }}
-                  />
-                </TabsContent>
-              </Tabs>
-              <div className="mt-4">
-                <PDFExport analysisData={analysisData} />
-              </div>
-            </CardContent>
-          </Card>
+          <Tabs defaultValue="overall" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-8 lg:grid-cols-16">
+              <TabsTrigger value="overall">Gesamt</TabsTrigger>
+              <TabsTrigger value="seo">SEO</TabsTrigger>
+              <TabsTrigger value="performance">Performance</TabsTrigger>
+              <TabsTrigger value="mobile">Mobile</TabsTrigger>
+              <TabsTrigger value="keywords">Keywords</TabsTrigger>
+              <TabsTrigger value="competitor">Konkurrenz</TabsTrigger>
+              <TabsTrigger value="local">Local SEO</TabsTrigger>
+              <TabsTrigger value="content">Content</TabsTrigger>
+              <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
+              <TabsTrigger value="social">Social Media</TabsTrigger>
+              <TabsTrigger value="conversion">Conversion</TabsTrigger>
+              <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
+              <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
+              <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
+              <TabsTrigger value="imprint">Impressum</TabsTrigger>
+              <TabsTrigger value="industry">Branche</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overall">
+              <OverallRating 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="seo">
+              <SEOAnalysis 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="performance">
+              <PerformanceAnalysis 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="mobile">
+              <MobileOptimization 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="keywords">
+              <KeywordAnalysis 
+                url={currentUrl}
+                industry={currentIndustry}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="competitor">
+              <CompetitorAnalysis 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="local">
+              <LocalSEO 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="content">
+              <ContentAnalysis 
+                url={currentUrl}
+                industry={currentIndustry}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="backlinks">
+              <BacklinkAnalysis 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="social">
+              <SocialMediaAnalysis 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="conversion">
+              <ConversionOptimization 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="reviews">
+              <GoogleReviews 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="workplace">
+              <WorkplaceReviews 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="social-proof">
+              <SocialProof 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="imprint">
+              <ImprintCheck 
+                url={currentUrl}
+                realData={analysisData}
+              />
+            </TabsContent>
+
+            <TabsContent value="industry">
+              <IndustryFeatures 
+                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+                realData={analysisData}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
+
+        {/* PDF Export Section */}
+        {analysisData && (
+          <div className="mt-8 flex justify-center">
+            <PDFExport 
+              businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
+              analysisData={analysisData}
+            />
+          </div>
         )}
       </div>
     </div>
+  );
+};
+
+const AnalysisDashboard: React.FC<AnalysisDashboardProps> = (props) => {
+  return (
+    <ManualDataProvider>
+      <AnalysisDashboardContent {...props} />
+    </ManualDataProvider>
   );
 };
 
