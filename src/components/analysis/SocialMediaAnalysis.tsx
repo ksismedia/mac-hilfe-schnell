@@ -17,6 +17,7 @@ interface SocialMediaAnalysisProps {
   };
   realData: RealBusinessData;
   onManualDataChange?: (data: ManualSocialData | null) => void;
+  initialManualData?: ManualSocialData | null;
 }
 
 interface ManualSocialData {
@@ -28,18 +29,31 @@ interface ManualSocialData {
   instagramLastPost: string;
 }
 
-const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData, onManualDataChange }) => {
+const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ 
+  businessData, 
+  realData, 
+  onManualDataChange,
+  initialManualData 
+}) => {
   const [showManualInput, setShowManualInput] = useState(false);
-  const [manualData, setManualData] = useState<ManualSocialData | null>(null);
+  const [manualData, setManualData] = useState<ManualSocialData | null>(initialManualData || null);
   const [formData, setFormData] = useState<ManualSocialData>({
-    facebookUrl: '',
-    instagramUrl: '',
-    facebookFollowers: '',
-    instagramFollowers: '',
-    facebookLastPost: '',
-    instagramLastPost: ''
+    facebookUrl: initialManualData?.facebookUrl || '',
+    instagramUrl: initialManualData?.instagramUrl || '',
+    facebookFollowers: initialManualData?.facebookFollowers || '',
+    instagramFollowers: initialManualData?.instagramFollowers || '',
+    facebookLastPost: initialManualData?.facebookLastPost || '',
+    instagramLastPost: initialManualData?.instagramLastPost || ''
   });
   const { toast } = useToast();
+
+  // Initialize form data when initialManualData changes
+  useEffect(() => {
+    if (initialManualData) {
+      setManualData(initialManualData);
+      setFormData(initialManualData);
+    }
+  }, [initialManualData]);
 
   // Informiere Parent-Komponente über Änderungen
   useEffect(() => {

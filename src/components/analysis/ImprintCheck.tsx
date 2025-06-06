@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ interface ImprintCheckProps {
   url: string;
   realData: RealBusinessData;
   onManualDataChange?: (data: ManualImprintData | null) => void;
+  initialManualData?: ManualImprintData | null;
 }
 
 interface ManualImprintData {
@@ -35,11 +37,24 @@ const requiredElements = [
   'Aufsichtsbehörde'
 ];
 
-const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData, onManualDataChange }) => {
+const ImprintCheck: React.FC<ImprintCheckProps> = ({ 
+  url, 
+  realData, 
+  onManualDataChange,
+  initialManualData 
+}) => {
   const [showManualInput, setShowManualInput] = useState(false);
-  const [manualData, setManualData] = useState<ManualImprintData | null>(null);
-  const [selectedElements, setSelectedElements] = useState<string[]>([]);
+  const [manualData, setManualData] = useState<ManualImprintData | null>(initialManualData || null);
+  const [selectedElements, setSelectedElements] = useState<string[]>(initialManualData?.elements || []);
   const { toast } = useToast();
+
+  // Initialize selected elements when initialManualData changes
+  useEffect(() => {
+    if (initialManualData) {
+      setManualData(initialManualData);
+      setSelectedElements(initialManualData.elements);
+    }
+  }, [initialManualData]);
 
   // Informiere Parent-Komponente über Änderungen
   useEffect(() => {

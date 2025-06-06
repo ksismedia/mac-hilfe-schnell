@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +57,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
 
   console.log('AnalysisDashboard: Starting analysis for:', businessData.url);
   console.log('Google API Key available:', GoogleAPIService.hasApiKey());
+  console.log('Current manual social data:', manualSocialData);
+  console.log('Current manual imprint data:', manualImprintData);
 
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
@@ -77,6 +80,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const handleRefetch = () => {
     console.log('Manual refetch triggered');
     refetch();
+  };
+
+  const handleManualSocialDataChange = (data: ManualSocialData | null) => {
+    console.log('AnalysisDashboard: Received manual social data:', data);
+    setManualSocialData(data);
+  };
+
+  const handleManualImprintDataChange = (data: ManualImprintData | null) => {
+    console.log('AnalysisDashboard: Received manual imprint data:', data);
+    setManualImprintData(data);
   };
 
   if (isLoading) {
@@ -203,7 +216,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <SocialMediaAnalysis 
               businessData={businessData} 
               realData={realData} 
-              onManualDataChange={setManualSocialData}
+              onManualDataChange={handleManualSocialDataChange}
+              initialManualData={manualSocialData}
             />
           </TabsContent>
 
@@ -227,7 +241,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <ImprintCheck 
               url={businessData.url} 
               realData={realData}
-              onManualDataChange={setManualImprintData}
+              onManualDataChange={handleManualImprintDataChange}
+              initialManualData={manualImprintData}
             />
           </TabsContent>
 
