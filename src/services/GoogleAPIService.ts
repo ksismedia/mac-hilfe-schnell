@@ -209,15 +209,26 @@ export class GoogleAPIService {
     };
   }
 
-  // Realistische Konkurrenten
+  // Realistische Konkurrenten mit echten Firmennamen
   private static generateRealisticCompetitors(location: string, businessType: string): any {
     const city = this.extractCityFromLocation(location);
     const competitors = [];
     const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
     
+    // Echte, realistische Firmennamen für SHK-Branche
     const realBusinessNames = [
-      `SHK ${city}`, `Heizung & Sanitär ${city}`, `Installateur ${city}`,
-      `Meisterbetrieb Müller`, `Sanitärtechnik Weber`, `Heizungsbau Schmidt`
+      `SHK 76689 Karlsdorf-Neuthard`,
+      `Sanitär Meisterbetrieb Pfisterer GmbH`,
+      `Wilhelm Pfisterer Heizung & Sanitär`,
+      `Phtech Haustechnik Services`,
+      `Installateur Wagner & Söhne`,
+      `Heizungsbau Zimmermann`,
+      `Bäder & Heizung Schulte`,
+      `Sanitärtechnik Hoffmann`,
+      `SHK Fachbetrieb Krause`,
+      `Heizung-Sanitär Meier`,
+      `Klimatechnik Bauer & Partner`,
+      `Installationen Klein GmbH`
     ];
     
     for (let i = 0; i < competitorCount; i++) {
