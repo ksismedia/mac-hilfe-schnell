@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -139,7 +140,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12">
             <TabsTrigger value="overview">Übersicht</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -147,7 +148,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <TabsTrigger value="keywords">Keywords</TabsTrigger>
             <TabsTrigger value="local-seo">Lokales SEO</TabsTrigger>
             <TabsTrigger value="content">Inhalt</TabsTrigger>
+            <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
+            <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
+            <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
             <TabsTrigger value="social-media">Social Media</TabsTrigger>
+            <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
+            <TabsTrigger value="conversion">Conversion</TabsTrigger>
+            <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
+            <TabsTrigger value="industry">Branche</TabsTrigger>
             <TabsTrigger value="imprint">Impressum</TabsTrigger>
             <TabsTrigger value="export">Export</TabsTrigger>
           </TabsList>
@@ -180,12 +188,40 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <ContentAnalysis url={businessData.url} industry={businessData.industry} />
           </TabsContent>
 
+          <TabsContent value="competitors" className="space-y-6">
+            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="backlinks" className="space-y-6">
+            <BacklinkAnalysis url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="reviews" className="space-y-6">
+            <GoogleReviews businessData={businessData} realData={realData} />
+          </TabsContent>
+
           <TabsContent value="social-media" className="space-y-6">
             <SocialMediaAnalysis 
               businessData={businessData} 
               realData={realData} 
               onManualDataChange={setManualSocialData}
             />
+          </TabsContent>
+
+          <TabsContent value="social-proof" className="space-y-6">
+            <SocialProof businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="conversion" className="space-y-6">
+            <ConversionOptimization url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="workplace" className="space-y-6">
+            <WorkplaceReviews businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="industry" className="space-y-6">
+            <IndustryFeatures url={businessData.url} industry={businessData.industry} realData={realData} />
           </TabsContent>
 
           <TabsContent value="imprint" className="space-y-6">
