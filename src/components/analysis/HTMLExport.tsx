@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,6 +36,9 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
       (realData.seo.score + realData.performance.score + 
        (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore) / 4
     );
+
+    const currentDate = new Date().toLocaleDateString('de-DE');
+    const currentTime = new Date().toLocaleTimeString('de-DE');
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -115,7 +117,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             <h1>Online-Auftritt Analyse</h1>
             <div class="subtitle">Vollständige Bewertung für ${realData.company.name}</div>
             <div style="margin-top: 15px; color: #6b7280;">
-                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Live-Datenanalyse mit Google APIs
+                Erstellt am ${currentDate} | Live-Datenanalyse mit Google APIs
             </div>
         </div>
 
@@ -514,8 +516,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
 
         <!-- Footer -->
         <div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-            <p>Dieser Bericht wurde am ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE')} erstellt.</p>
-            <p>Analysedaten basieren auf Live-Messungen mit Google APIs und umfassen ${Math.ceil(htmlContent.length / 2000)} Seiten detaillierte Auswertung.</p>
+            <p>Dieser Bericht wurde am ${currentDate} um ${currentTime} erstellt.</p>
+            <p>Analysedaten basieren auf Live-Messungen mit Google APIs.</p>
             <p style="margin-top: 10px; font-style: italic;">Handwerker Online-Auftritt Analyse - Professionelle Bewertung für nachhaltigen digitalen Erfolg</p>
         </div>
     </div>
