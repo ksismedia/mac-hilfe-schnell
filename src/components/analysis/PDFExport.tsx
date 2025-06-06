@@ -82,6 +82,17 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         return colors.danger; // Rot
       };
 
+      // Helper für Zeitrahmen-Farben (innerhalb handleExport)
+      const getPDFTimeframeColor = (timeframe: string): number[] => {
+        switch (timeframe) {
+          case 'Sofort': return [234, 67, 53]; // Rot
+          case '1-2 Wochen': return [255, 171, 0]; // Orange
+          case '1-3 Monate': return [30, 136, 229]; // Blau
+          case '3-6 Monate': return [156, 39, 176]; // Lila
+          default: return [96, 125, 139]; // Grau
+        }
+      };
+
       // DECKBLATT mit Premium-Design
       drawBox(0, 0, 210, 297, colors.primary); // Vollständiger blauer Hintergrund
       
@@ -110,7 +121,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       );
       
       // Score Circle Background
-      pdf.setFillColor(...getScoreColor(overallScore));
+      const scoreColor = getScoreColor(overallScore);
+      pdf.setFillColor(scoreColor[0], scoreColor[1], scoreColor[2]);
       pdf.circle(105, yPosition + 20, 20, 'F');
       
       // Score Text
@@ -431,7 +443,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
           
           // Tags
           const tags = [
-            { label: action.timeframe, color: getTimeframeColor(action.timeframe) },
+            { label: action.timeframe, color: getPDFTimeframeColor(action.timeframe) },
             { label: `${action.effort} Aufwand`, color: colors.primary },
             { label: `${action.impact} Impact`, color: colors.secondary }
           ];
@@ -482,7 +494,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
     }
   };
 
-  // Helper functions bleiben gleich
+  // Helper functions für Component
   const getScoreRating = (score: number): string => {
     if (score >= 80) return 'Sehr gut';
     if (score >= 60) return 'Gut';
@@ -500,16 +512,6 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       planungsbuero: 'Planungsbüro Versorgungstechnik'
     };
     return names[industry] || industry;
-  };
-
-  const getTimeframeColor = (timeframe: string): number[] => {
-    switch (timeframe) {
-      case 'Sofort': return [234, 67, 53]; // Rot
-      case '1-2 Wochen': return [255, 171, 0]; // Orange
-      case '1-3 Monate': return [30, 136, 229]; // Blau
-      case '3-6 Monate': return [156, 39, 176]; // Lila
-      default: return [96, 125, 139]; // Grau
-    }
   };
 
   const getCompetitorStrategies = (competitor: any, ownRating: number, ownReviewCount: number): string[] => {
@@ -534,38 +536,6 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
     strategies.push(`Differenzierung durch Spezialisierung gegen ${competitor.name}`);
     
     return strategies;
-  };
-
-  const analyzeMarketGaps = (competitors: any[], ownRating: number, ownReviewCount: number) => {
-    const gaps = [];
-    
-    const hasStrongCompetitors = competitors.some(c => c.rating >= 4.5 && c.reviews >= 100);
-    if (!hasStrongCompetitors) {
-      gaps.push({
-        title: 'Marktführerschaft verfügbar',
-        description: 'Keine etablierten digitalen Marktführer identifiziert',
-        potential: 'Sehr hoch - First-Mover-Advantage möglich'
-      });
-    }
-    
-    const lowReviewCompetitors = competitors.filter(c => c.reviews < 30).length;
-    if (lowReviewCompetitors > competitors.length * 0.7) {
-      gaps.push({
-        title: 'Review-Marketing unterentwickelt',
-        description: '70%+ der Konkurrenten haben schwache Online-Reputation',
-        potential: 'Hoch - durch systematische Bewertungssammlung abheben'
-      });
-    }
-    
-    if (competitors.length < 5) {
-      gaps.push({
-        title: 'Schwache lokale Online-Präsenz',
-        description: 'Weniger als 5 aktive Konkurrenten online gefunden',
-        potential: 'Sehr hoch - digitale Marktlücke identifiziert'
-      });
-    }
-    
-    return gaps;
   };
 
   const generateImprovementActions = (): ImprovementAction[] => {
