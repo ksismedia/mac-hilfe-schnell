@@ -39,6 +39,16 @@ interface AnalysisDashboardProps {
   onReset: () => void;
 }
 
+// Industry names mapping
+const industryNames = {
+  'shk': 'Sanitär, Heizung, Klima',
+  'maler': 'Maler & Lackierer',
+  'elektriker': 'Elektroinstallation',
+  'dachdecker': 'Dachdeckerei',
+  'stukateur': 'Stuckateur & Trockenbau',
+  'planungsbuero': 'Planungsbüro'
+};
+
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
@@ -85,15 +95,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         ...enhanced.socialMedia,
         facebook: {
           found: !!manualSocialData.facebookUrl,
-          url: manualSocialData.facebookUrl || enhanced.socialMedia.facebook.url,
-          followers: manualSocialData.facebookFollowers || enhanced.socialMedia.facebook.followers,
+          url: manualSocialData.facebookUrl || enhanced.socialMedia.facebook.url || '',
+          followers: parseInt(manualSocialData.facebookFollowers) || enhanced.socialMedia.facebook.followers,
           lastPost: enhanced.socialMedia.facebook.lastPost,
           engagement: enhanced.socialMedia.facebook.engagement
         },
         instagram: {
           found: !!manualSocialData.instagramUrl,
-          url: manualSocialData.instagramUrl || enhanced.socialMedia.instagram.url,
-          followers: manualSocialData.instagramFollowers || enhanced.socialMedia.instagram.followers,
+          url: manualSocialData.instagramUrl || enhanced.socialMedia.instagram.url || '',
+          followers: parseInt(manualSocialData.instagramFollowers) || enhanced.socialMedia.instagram.followers,
           lastPost: enhanced.socialMedia.instagram.lastPost,
           engagement: enhanced.socialMedia.instagram.engagement
         }
@@ -421,8 +431,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <PDFExport 
               businessData={businessData} 
               realData={enhancedData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
             />
           </TabsContent>
         </Tabs>
