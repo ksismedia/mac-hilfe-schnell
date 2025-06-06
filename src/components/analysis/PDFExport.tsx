@@ -59,7 +59,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       .trim();
   };
 
-  // Verbesserte Textumbruch-Funktion
+  // Verbesserte Textumbruch-Funktion mit exakter Positionierung
   const addTextWithWrap = (pdf: any, text: string, x: number, y: number, maxWidth: number = 160, lineHeight: number = 6): number => {
     const words = cleanText(text).split(' ');
     let line = '';
@@ -86,7 +86,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
     return currentY;
   };
 
-  // Professionelle Box mit Farbschema
+  // Professionelle Box mit korrekter Innenpositionierung
   const drawStyledBox = (pdf: any, x: number, y: number, width: number, height: number, type: 'primary' | 'secondary' | 'info' | 'success' | 'warning') => {
     let borderColor, fillColor;
     
@@ -127,12 +127,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
     pdf.setTextColor(...colors.primary);
     pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(cleanText(title), 15, 25);
+    pdf.text(cleanText(title), 15, 27); // Korrigierte Y-Position für bessere Zentrierung
     
     if (pageNumber) {
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      pdf.text(`Seite ${pageNumber}`, 180, 25);
+      pdf.text(`Seite ${pageNumber}`, 180, 27); // Korrigierte Y-Position
     }
     
     // Trennlinie
@@ -166,14 +166,19 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
     pdf.text(`${pageNumber} / ${totalPages}`, 185, footerY, { align: 'right' });
   };
 
-  // Verbesserter Score-Indikator
+  // Verbesserter Score-Indikator mit besserer Positionierung
   const addScoreIndicator = (pdf: any, x: number, y: number, score: number, label: string) => {
     const barWidth = 40;
     const barHeight = 8;
     
+    // Label oberhalb der Box mit Abstand
+    pdf.setTextColor(...colors.darkGray);
+    pdf.setFontSize(8);
+    pdf.text(cleanText(label), x, y - 2);
+    
     // Hintergrund
     pdf.setFillColor(230, 230, 230);
-    pdf.roundedRect(x, y, barWidth, barHeight, 2, 2, 'F');
+    pdf.roundedRect(x, y + 2, barWidth, barHeight, 2, 2, 'F');
     
     // Score-Balken
     const fillWidth = (score / 100) * barWidth;
@@ -182,14 +187,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
     else if (score >= 60) color = colors.warning;
     
     pdf.setFillColor(...color);
-    pdf.roundedRect(x, y, fillWidth, barHeight, 2, 2, 'F');
+    pdf.roundedRect(x, y + 2, fillWidth, barHeight, 2, 2, 'F');
     
-    // Text
+    // Score-Text rechts neben der Box
     pdf.setTextColor(...colors.darkGray);
     pdf.setFontSize(9);
-    pdf.text(`${score}/100`, x + barWidth + 5, y + 6);
-    pdf.setFontSize(8);
-    pdf.text(cleanText(label), x, y - 3);
+    pdf.text(`${score}/100`, x + barWidth + 3, y + 8);
   };
 
   const handleExport = async () => {
@@ -219,7 +222,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       yPosition = addPageHeader(pdf, 'DIGITAL MARKETING ANALYSE', 1);
       yPosition += 10;
       
-      // Haupttitel-Box
+      // Haupttitel-Box mit korrekter Textpositionierung
       drawStyledBox(pdf, 15, yPosition, 180, 50, 'primary');
       
       pdf.setTextColor(255, 255, 255);
@@ -231,35 +234,36 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       
       yPosition += 65;
       
-      // Firmeninfo-Box
-      drawStyledBox(pdf, 20, yPosition, 170, 60, 'info');
+      // Firmeninfo-Box mit besserer Innenpositionierung
+      drawStyledBox(pdf, 20, yPosition, 170, 65, 'info');
       
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      yPosition = addTextWithWrap(pdf, realData.company.name, 30, yPosition + 15, 150, 8);
+      let innerY = yPosition + 15; // Abstand von oben
+      innerY = addTextWithWrap(pdf, realData.company.name, 30, innerY, 150, 8);
       
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
-      yPosition = addTextWithWrap(pdf, `Website: ${realData.company.url}`, 30, yPosition + 5, 150, 6);
-      yPosition = addTextWithWrap(pdf, `Branche: ${getIndustryName(businessData.industry)}`, 30, yPosition + 2, 150, 6);
-      yPosition = addTextWithWrap(pdf, `Adresse: ${realData.company.address}`, 30, yPosition + 2, 150, 6);
+      innerY = addTextWithWrap(pdf, `Website: ${realData.company.url}`, 30, innerY + 3, 150, 6);
+      innerY = addTextWithWrap(pdf, `Branche: ${getIndustryName(businessData.industry)}`, 30, innerY + 2, 150, 6);
+      innerY = addTextWithWrap(pdf, `Adresse: ${realData.company.address}`, 30, innerY + 2, 150, 6);
       
-      yPosition += 30;
+      yPosition += 75;
       
       // Executive Summary Box mit Score-Übersicht
       const overallScore = Math.round(
         (realData.seo.score + realData.performance.score + realData.imprint.score + realData.mobile.overallScore) / 4
       );
       
-      drawStyledBox(pdf, 20, yPosition, 170, 80, 'secondary');
+      drawStyledBox(pdf, 20, yPosition, 170, 90, 'secondary');
       
       pdf.setTextColor(...colors.primary);
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('EXECUTIVE SUMMARY', 30, yPosition + 15);
       
-      // Score-Indikatoren nebeneinander
+      // Score-Indikatoren nebeneinander mit korrekten Abständen
       const scoreY = yPosition + 30;
       addScoreIndicator(pdf, 30, scoreY, overallScore, 'Gesamtscore');
       addScoreIndicator(pdf, 90, scoreY, realData.seo.score, 'SEO');
@@ -268,18 +272,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'normal');
-      yPosition = addTextWithWrap(pdf, `Bewertung: ${getScoreRating(overallScore)} (${overallScore}/100 Punkte)`, 30, yPosition + 55, 150, 6);
-      yPosition = addTextWithWrap(pdf, `Verbesserungspotenzial: ${100 - overallScore} Punkte identifiziert`, 30, yPosition + 2, 150, 6);
+      let summaryY = yPosition + 55;
+      summaryY = addTextWithWrap(pdf, `Bewertung: ${getScoreRating(overallScore)} (${overallScore}/100 Punkte)`, 30, summaryY, 150, 6);
+      summaryY = addTextWithWrap(pdf, `Verbesserungspotenzial: ${100 - overallScore} Punkte identifiziert`, 30, summaryY + 2, 150, 6);
       
-      yPosition += 40;
+      yPosition += 100;
       
-      // Datum und Analysezeitraum
-      drawStyledBox(pdf, 50, yPosition, 110, 25, 'info');
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Analysedatum: ${new Date().toLocaleDateString('de-DE')}`, 60, yPosition + 10);
-      pdf.text('Live-Analyse durchgefuehrt', 60, yPosition + 18);
-
       // NEUE SEITE: Detaillierte Bewertung
       checkNewPage(50, 'Detaillierte Bewertung');
       yPosition += 10;
@@ -402,10 +400,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.setTextColor(...colors.primary);
       pdf.setFontSize(18);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('KONKURRENZANALYSE', 20, yPosition);
+      pdf.text('AUSFUEHRLICHE KONKURRENZANALYSE', 20, yPosition);
       yPosition += 20;
       
-      // Marktübersicht
+      // Marktübersicht mit besserer Positionierung
       const avgCompetitorRating = realData.competitors.length > 0 
         ? realData.competitors.reduce((sum, comp) => sum + comp.rating, 0) / realData.competitors.length 
         : 0;
@@ -415,98 +413,216 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       const ownRating = realData.reviews.google.rating || 4.2;
       const ownReviewCount = realData.reviews.google.count || 0;
       
-      drawStyledBox(pdf, 20, yPosition, 170, 50, 'info');
+      drawStyledBox(pdf, 20, yPosition, 170, 60, 'info');
       
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(11);
-      pdf.text(`Lokale Konkurrenten: ${realData.competitors.length}`, 30, yPosition + 12);
-      pdf.text(`Ø Bewertung Konkurrenz: ${avgCompetitorRating.toFixed(1)}/5`, 30, yPosition + 22);
-      pdf.text(`Ihre Bewertung: ${ownRating.toFixed(1)}/5`, 100, yPosition + 22);
-      pdf.text(`Ø Rezensionen: ${Math.round(avgCompetitorReviews)}`, 30, yPosition + 32);
-      pdf.text(`Ihre Rezensionen: ${ownReviewCount}`, 100, yPosition + 32);
+      let marketY = yPosition + 15;
+      pdf.text(`Lokale Konkurrenten analysiert: ${realData.competitors.length}`, 30, marketY);
+      pdf.text(`Durchschnittsbewertung Konkurrenz: ${avgCompetitorRating.toFixed(1)}/5`, 30, marketY + 10);
+      pdf.text(`Ihre aktuelle Bewertung: ${ownRating.toFixed(1)}/5`, 30, marketY + 20);
+      pdf.text(`Durchschnitt Rezensionen: ${Math.round(avgCompetitorReviews)}`, 30, marketY + 30);
+      pdf.text(`Ihre Rezensionen: ${ownReviewCount}`, 30, marketY + 40);
       
-      yPosition += 65;
+      yPosition += 75;
+
+      // Detaillierte Wettbewerbsposition
+      drawStyledBox(pdf, 20, yPosition, 170, 45, 'primary');
+      
+      pdf.setTextColor(...colors.primary);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('IHRE MARKTPOSITION', 30, yPosition + 15);
+      
+      pdf.setTextColor(...colors.darkGray);
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      
+      const betterThanCount = realData.competitors.filter(c => c.rating < ownRating).length;
+      const worseReviewsCount = realData.competitors.filter(c => c.reviews < ownReviewCount).length;
+      
+      let posY = yPosition + 25;
+      pdf.text(`Bessere Bewertung als ${betterThanCount}/${realData.competitors.length} Konkurrenten`, 30, posY);
+      pdf.text(`Mehr Rezensionen als ${worseReviewsCount}/${realData.competitors.length} Konkurrenten`, 30, posY + 8);
+      pdf.text(`Marktposition: ${ownRating > avgCompetitorRating ? 'UEBERDURCHSCHNITTLICH' : 'VERBESSERUNGSBEDARF'}`, 30, posY + 16);
+      
+      yPosition += 60;
 
       if (realData.competitors.length > 0) {
-        // Top Performers mit verbessertem Design
-        const topPerformers = realData.competitors
-          .filter(c => c.rating >= 4.5 && c.reviews >= 50)
-          .sort((a, b) => b.rating - a.rating);
+        // Top-Bedrohungen identifizieren
+        const topThreats = realData.competitors
+          .filter(c => c.rating > ownRating || c.reviews > ownReviewCount * 2)
+          .sort((a, b) => (b.rating * Math.log(b.reviews + 1)) - (a.rating * Math.log(a.reviews + 1)))
+          .slice(0, 3);
         
-        drawStyledBox(pdf, 20, yPosition, 170, 25, 'warning');
+        if (topThreats.length > 0) {
+          checkNewPage(80, 'Konkurrenzanalyse');
+          
+          drawStyledBox(pdf, 20, yPosition, 170, 30, 'danger');
+          
+          pdf.setTextColor(...colors.danger);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`⚠ TOP-BEDROHUNGEN: ${topThreats.length} IDENTIFIZIERT`, 30, yPosition + 20);
+          
+          yPosition += 40;
+          
+          topThreats.forEach((threat, index) => {
+            checkNewPage(60, 'Konkurrenzanalyse');
+            
+            drawStyledBox(pdf, 20, yPosition, 170, 55, 'warning');
+            
+            pdf.setTextColor(...colors.darkGray);
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`BEDROHUNG #${index + 1}: ${threat.name}`, 30, yPosition + 15);
+            
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            let threatY = yPosition + 25;
+            pdf.text(`Bewertung: ${threat.rating}/5 (+${(threat.rating - ownRating).toFixed(1)} vs. Sie)`, 30, threatY);
+            pdf.text(`Rezensionen: ${threat.reviews} (${threat.reviews > ownReviewCount ? `+${threat.reviews - ownReviewCount}` : ownReviewCount - threat.reviews} vs. Sie)`, 30, threatY + 8);
+            pdf.text(`Entfernung: ${threat.distance}`, 30, threatY + 16);
+            
+            // Bedrohungsanalyse
+            pdf.setTextColor(...colors.danger);
+            pdf.setFontSize(8);
+            const threatLevel = threat.rating > ownRating + 0.5 ? 'HOCH' : threat.rating > ownRating ? 'MITTEL' : 'NIEDRIG';
+            pdf.text(`Bedrohungslevel: ${threatLevel}`, 30, threatY + 24);
+            
+            yPosition += 65;
+          });
+        }
+
+        // Schwächere Konkurrenten - Chancen
+        const weakCompetitors = realData.competitors
+          .filter(c => c.rating < 4.0 || c.reviews < 20)
+          .sort((a, b) => a.rating - b.rating)
+          .slice(0, 5);
         
-        pdf.setTextColor(...colors.warning);
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`🏆 TOP PERFORMERS: ${topPerformers.length}`, 30, yPosition + 15);
-        
-        yPosition += 35;
-        
-        if (topPerformers.length > 0) {
-          topPerformers.slice(0, 3).forEach((comp, index) => {
-            checkNewPage(15, 'Konkurrenzanalyse');
+        if (weakCompetitors.length > 0) {
+          checkNewPage(60, 'Konkurrenzanalyse');
+          
+          drawStyledBox(pdf, 20, yPosition, 170, 25, 'success');
+          
+          pdf.setTextColor(...colors.success);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`🎯 UEBERHOLBARE KONKURRENTEN: ${weakCompetitors.length}`, 30, yPosition + 17);
+          
+          yPosition += 35;
+          
+          weakCompetitors.forEach((weak, index) => {
+            checkNewPage(25, 'Konkurrenzanalyse');
             
             pdf.setTextColor(...colors.darkGray);
             pdf.setFontSize(10);
-            pdf.text(`${index + 1}. ${comp.name}`, 30, yPosition);
-            pdf.setTextColor(...colors.warning);
-            pdf.text(`${comp.rating}/5 (${comp.reviews} Bewertungen)`, 120, yPosition);
-            yPosition += 10;
+            pdf.text(`${index + 1}. ${weak.name} - ${weak.rating}/5 (${weak.reviews} Bewertungen)`, 30, yPosition);
+            pdf.setTextColor(...colors.success);
+            pdf.setFontSize(8);
+            pdf.text('→ Leicht ueberholbar durch besseren Service', 35, yPosition + 8);
+            yPosition += 18;
           });
-        } else {
-          pdf.setTextColor(...colors.success);
-          pdf.setFontSize(10);
-          pdf.text('✓ Keine dominanten Marktfuehrer - CHANCE!', 30, yPosition);
-          yPosition += 10;
         }
 
-        // Detaillierte Konkurrenten-Profile (erste 5)
-        realData.competitors.slice(0, 5).forEach((competitor, index) => {
-          checkNewPage(55, 'Konkurrenzanalyse');
+        // Strategische Empfehlungen pro Konkurrent
+        checkNewPage(60, 'Konkurrenzanalyse');
+        
+        drawStyledBox(pdf, 20, yPosition, 170, 25, 'primary');
+        
+        pdf.setTextColor(...colors.primary);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('STRATEGISCHE HANDLUNGSEMPFEHLUNGEN', 30, yPosition + 17);
+        
+        yPosition += 35;
+        
+        // Top 3 Konkurrenten analysieren
+        const topCompetitors = realData.competitors
+          .sort((a, b) => (b.rating * Math.log(b.reviews + 1)) - (a.rating * Math.log(a.reviews + 1)))
+          .slice(0, 3);
+        
+        topCompetitors.forEach((comp, index) => {
+          checkNewPage(70, 'Konkurrenzanalyse');
           
-          // Konkurrenten-Box
-          const boxType = competitor.rating > ownRating ? 'warning' : 'success';
-          drawStyledBox(pdf, 20, yPosition, 170, 45, boxType);
+          drawStyledBox(pdf, 20, yPosition, 170, 65, 'info');
+          
+          pdf.setTextColor(...colors.secondary);
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`STRATEGIE VS. ${comp.name.toUpperCase()}`, 30, yPosition + 12);
           
           pdf.setTextColor(...colors.darkGray);
-          pdf.setFontSize(11);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(`KONKURRENT #${index + 1}: ${competitor.name}`, 30, yPosition + 12);
-          
-          pdf.setFontSize(9);
+          pdf.setFontSize(8);
           pdf.setFont('helvetica', 'normal');
-          pdf.text(`Bewertung: ${competitor.rating}/5`, 30, yPosition + 22);
-          pdf.text(`Rezensionen: ${competitor.reviews}`, 100, yPosition + 22);
-          pdf.text(`Entfernung: ${competitor.distance}`, 30, yPosition + 30);
           
-          // Status-Indikator
-          if (competitor.rating > ownRating) {
-            pdf.setTextColor(...colors.danger);
-            pdf.text('⚠ BEDROHUNG', 100, yPosition + 30);
-          } else {
-            pdf.setTextColor(...colors.success);
-            pdf.text('✓ VORTEIL', 100, yPosition + 30);
+          let stratY = yPosition + 20;
+          
+          // Spezifische Strategien basierend auf Konkurrent-Profil
+          if (comp.rating > ownRating) {
+            pdf.text('• Kundenbewertungen aktiv sammeln - Bewertungsvorsprung aufholen', 30, stratY);
+            stratY += 7;
+            pdf.text('• Servicequalitaet analysieren und uebertreffen', 30, stratY);
+            stratY += 7;
           }
           
-          yPosition += 55;
+          if (comp.reviews > ownReviewCount) {
+            pdf.text('• Follow-up-System nach jedem Auftrag etablieren', 30, stratY);
+            stratY += 7;
+            pdf.text('• Bewertungs-Kampagne starten (QR-Codes, E-Mail)', 30, stratY);
+            stratY += 7;
+          }
+          
+          pdf.text(`• Lokale SEO gegen "${comp.name}" optimieren`, 30, stratY);
+          stratY += 7;
+          pdf.text('• Alleinstellungsmerkmale in Marketing betonen', 30, stratY);
+          
+          yPosition += 75;
         });
+
+        // Marktlücken-Analyse
+        checkNewPage(50, 'Konkurrenzanalyse');
+        
+        drawStyledBox(pdf, 20, yPosition, 170, 40, 'accent');
+        
+        pdf.setTextColor(...colors.darkGray);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('IDENTIFIZIERTE MARKTLUECKEN', 30, yPosition + 15);
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        let gapY = yPosition + 25;
+        
+        if (realData.competitors.filter(c => c.rating >= 4.5).length === 0) {
+          pdf.text('• Keine Konkurrenten mit Spitzenbewertungen (4.5+)', 30, gapY);
+          gapY += 8;
+        }
+        if (realData.competitors.filter(c => c.reviews >= 100).length === 0) {
+          pdf.text('• Keine etablierten Online-Reputationen (100+ Bewertungen)', 30, gapY);
+          gapY += 8;
+        }
+        
+        yPosition += 50;
 
       } else {
         // Keine Konkurrenten - Marktchance
-        drawStyledBox(pdf, 20, yPosition, 170, 40, 'success');
+        drawStyledBox(pdf, 20, yPosition, 170, 50, 'success');
         
         pdf.setTextColor(...colors.success);
-        pdf.setFontSize(12);
+        pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('🚀 MARKTCHANCE IDENTIFIZIERT!', 30, yPosition + 15);
+        pdf.text('🚀 GROSSARTIGE MARKTCHANCE!', 30, yPosition + 18);
         
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...colors.darkGray);
-        pdf.text('Schwache lokale Online-Konkurrenz erkannt', 30, yPosition + 25);
-        pdf.text('Grosses Potenzial fuer digitale Marktfuehrerschaft', 30, yPosition + 33);
+        let chanceY = yPosition + 28;
+        pdf.text('Schwache lokale Online-Konkurrenz identifiziert', 30, chanceY);
+        pdf.text('Potential fuer digitale Marktfuehrerschaft sehr hoch', 30, chanceY + 8);
+        pdf.text('First-Mover-Advantage im digitalen Marketing moeglich', 30, chanceY + 16);
         
-        yPosition += 50;
+        yPosition += 60;
       }
 
       // HANDLUNGSEMPFEHLUNGEN mit Prioritäten-Matrix
@@ -527,10 +643,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(11);
-      pdf.text(`Identifizierte Massnahmen: ${actions.length}`, 30, yPosition + 12);
-      pdf.text(`Hohe Prioritaet: ${highPriorityActions.length}`, 30, yPosition + 22);
-      pdf.text(`Geschaetzte Umsetzungsdauer: 3-6 Monate`, 100, yPosition + 12);
-      pdf.text(`Erwarteter ROI: 300-500%`, 100, yPosition + 22);
+      let actionY = yPosition + 15;
+      pdf.text(`Identifizierte Massnahmen: ${actions.length}`, 30, actionY);
+      pdf.text(`Hohe Prioritaet: ${highPriorityActions.length}`, 30, actionY + 10);
+      pdf.text(`Geschaetzte Umsetzungsdauer: 3-6 Monate`, 100, actionY);
+      pdf.text(`Erwarteter ROI: 300-500%`, 100, actionY + 10);
       
       yPosition += 50;
       
@@ -539,23 +656,24 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         checkNewPage(45, 'Handlungsempfehlungen');
         
         // Action-Box
-        drawStyledBox(pdf, 20, yPosition, 170, 38, 'primary');
+        drawStyledBox(pdf, 20, yPosition, 170, 40, 'primary');
         
         pdf.setTextColor(...colors.primary);
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(`${index + 1}. ${action.action}`, 30, yPosition + 12);
+        pdf.text(`${index + 1}. ${action.action}`, 30, yPosition + 15);
         
         pdf.setTextColor(...colors.darkGray);
         pdf.setFontSize(8);
         pdf.setFont('helvetica', 'normal');
-        pdf.text(`Kategorie: ${action.category}`, 30, yPosition + 20);
-        pdf.text(`Aufwand: ${action.effort}`, 90, yPosition + 20);
-        pdf.text(`Impact: ${action.impact}`, 130, yPosition + 20);
-        pdf.text(`Zeitrahmen: ${action.timeframe}`, 30, yPosition + 28);
+        let detailY = yPosition + 23;
+        pdf.text(`Kategorie: ${action.category}`, 30, detailY);
+        pdf.text(`Aufwand: ${action.effort}`, 90, detailY);
+        pdf.text(`Impact: ${action.impact}`, 130, detailY);
+        pdf.text(`Zeitrahmen: ${action.timeframe}`, 30, detailY + 8);
         
-        yPosition = addTextWithWrap(pdf, action.description, 30, yPosition + 35, 140, 5);
-        yPosition += 10;
+        detailY = addTextWithWrap(pdf, action.description, 30, detailY + 15, 140, 5);
+        yPosition += 50;
       });
 
       // ROI-PROGNOSE mit visuellen Elementen
@@ -569,12 +687,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       yPosition += 20;
       
       // ROI-Übersicht
-      drawStyledBox(pdf, 20, yPosition, 170, 60, 'success');
+      drawStyledBox(pdf, 20, yPosition, 170, 70, 'success');
       
       pdf.setTextColor(...colors.success);
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('ERWARTETE VERBESSERUNGEN', 30, yPosition + 15);
+      pdf.text('ERWARTETE VERBESSERUNGEN', 30, yPosition + 18);
       
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(10);
@@ -589,13 +707,13 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         'Social Media: +100-200%'
       ];
       
-      let projY = yPosition + 25;
+      let projY = yPosition + 28;
       projections.forEach(proj => {
         pdf.text(`• ${proj}`, 30, projY);
         projY += 7;
       });
       
-      yPosition += 75;
+      yPosition += 85;
       
       // Investment ROI
       drawStyledBox(pdf, 20, yPosition, 170, 30, 'warning');
@@ -603,11 +721,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.setTextColor(...colors.warning);
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('GESCHAETZTE UMSATZSTEIGERUNG', 30, yPosition + 12);
+      pdf.text('GESCHAETZTE UMSATZSTEIGERUNG', 30, yPosition + 18);
       
       pdf.setTextColor(...colors.darkGray);
       pdf.setFontSize(10);
-      pdf.text('15-25% im ersten Jahr | ROI: 300-500% in 12 Monaten', 30, yPosition + 22);
+      pdf.text('15-25% im ersten Jahr | ROI: 300-500% in 12 Monaten', 30, yPosition + 25);
 
       // Erweiterte Social Media Analyse falls manuelle Daten vorhanden
       if (manualSocialData) {
@@ -969,10 +1087,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Professioneller PDF-Export (15+ Seiten)
+            Professioneller PDF-Export (20+ Seiten)
           </CardTitle>
           <CardDescription>
-            Detaillierter Bericht mit professionellem Design, verbesserter Typografie und gediegener Farbgebung
+            Detaillierter Bericht mit verbesserter Darstellung und ausführlicher Konkurrenzanalyse
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -986,30 +1104,26 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
 
             <TabsContent value="summary" className="space-y-4">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100">
-                <h3 className="font-semibold mb-4 text-blue-900">Professioneller PDF-Bericht mit verbessertem Design:</h3>
+                <h3 className="font-semibold mb-4 text-blue-900">Verbesserte PDF-Darstellung:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                   <div>
-                    <h4 className="font-medium mb-3 text-blue-800">Optische Verbesserungen:</h4>
+                    <h4 className="font-medium mb-3 text-blue-800">Layout-Verbesserungen:</h4>
                     <ul className="space-y-2 text-blue-700">
-                      <li>• Professionelle Farbpalette (gediegene Blau-/Grautöne)</li>
-                      <li>• Verbesserte Typografie und Schrifthierarchie</li>
-                      <li>• Elegante Boxen und Rahmen mit Rundungen</li>
-                      <li>• Score-Indikatoren mit visuellen Balken</li>
-                      <li>• Strukturierte Seitenlayouts mit Headern/Footern</li>
-                      <li>• Professionelle Tabellen und Listen</li>
-                      <li>• Optimierte Textumbrüche und Abstände</li>
+                      <li>• Korrekte Text-Positionierung in Boxen</li>
+                      <li>• Verbesserte Y-Koordinaten für Zentrierung</li>
+                      <li>• Optimierte Abstände und Margins</li>
+                      <li>• Saubere Score-Balken Darstellung</li>
+                      <li>• Professionelle Textumbrüche</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-3 text-blue-800">Inhaltliche Struktur:</h4>
+                    <h4 className="font-medium mb-3 text-blue-800">Erweiterte Konkurrenzanalyse:</h4>
                     <ul className="space-y-2 text-blue-700">
-                      <li>• Executive Summary mit visuellen Scores</li>
-                      <li>• Detaillierte Kategorien-Bewertung: {realData.seo.score}/100</li>
-                      <li>• Keyword-Analyse: {realData.keywords.filter(k => k.found).length}/{realData.keywords.length} gefunden</li>
-                      <li>• Konkurrenzanalyse: {realData.competitors.length} Mitbewerber</li>
-                      <li>• Handlungsempfehlungen mit Prioritäten-Matrix</li>
-                      <li>• ROI-Prognosen und KPIs</li>
-                      <li>• 6-Monats-Roadmap mit Zeitplänen</li>
+                      <li>• Top-Bedrohungen identifizieren</li>
+                      <li>• Überholbare Konkurrenten markieren</li>
+                      <li>• Strategien pro Konkurrent</li>
+                      <li>• Marktlücken-Analyse</li>
+                      <li>• Bedrohungslevel-Bewertung</li>
                     </ul>
                   </div>
                 </div>
@@ -1113,14 +1227,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
               <div className="text-center space-y-4">
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
                   <h3 className="font-semibold text-green-900 mb-3">
-                    ✓ Ihr professioneller Marketing-Plan ist bereit!
+                    ✓ Verbesserte PDF mit ausführlicher Konkurrenzanalyse!
                   </h3>
                   <div className="text-sm text-green-800 space-y-2">
-                    <p><strong>Design:</strong> Gediegen, professionell, geschäftstauglich</p>
-                    <p><strong>Umfang:</strong> 15+ Seiten mit verbesserter Typografie</p>
-                    <p><strong>Visualisierung:</strong> Score-Balken, farbkodierte Boxen, Strukturierung</p>
-                    <p><strong>Maßnahmen:</strong> {improvementActions.length} konkrete Verbesserungsschritte</p>
-                    <p><strong>ROI:</strong> Geschätzte Umsatzsteigerung von 15-25%</p>
+                    <p><strong>Darstellung:</strong> Korrigierte Text-Positionierung, saubere Boxen</p>
+                    <p><strong>Konkurrenz:</strong> Top-Bedrohungen, Strategien, Marktlücken</p>
+                    <p><strong>Umfang:</strong> 20+ Seiten mit detaillierter Analyse</p>
+                    <p><strong>Konkurrenten:</strong> {realData.competitors.length} analysiert</p>
+                    <p><strong>Strategien:</strong> Spezifische Handlungsempfehlungen pro Konkurrent</p>
                   </div>
                 </div>
 
@@ -1131,12 +1245,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
                   disabled={isGenerating}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {isGenerating ? 'Professioneller PDF wird erstellt...' : 'Professionellen PDF-Report herunterladen'}
+                  {isGenerating ? 'Verbesserte PDF wird erstellt...' : 'Detaillierte PDF-Analyse herunterladen'}
                 </Button>
                 
                 <div className="text-sm text-gray-500">
-                  <p>Optimierte Darstellung mit gediegener Farbpalette und</p>
-                  <p>professioneller Typografie für {realData.company.name}</p>
+                  <p>Korrigierte Darstellung mit ausführlicher Konkurrenzanalyse</p>
+                  <p>für {realData.company.name}</p>
                 </div>
               </div>
             </TabsContent>
