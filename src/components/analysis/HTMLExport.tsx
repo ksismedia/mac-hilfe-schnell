@@ -243,9 +243,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                 ${realData.competitors.map(competitor => `
                     <div class="competitor-card">
                         <h4 style="color: #1e40af; margin-bottom: 10px;">${competitor.name}</h4>
-                        <p><strong>Bewertungen:</strong> ${competitor.rating}/5 (${competitor.reviewCount} Bewertungen)</p>
-                        <p><strong>Typ:</strong> ${competitor.type}</p>
-                        <p><strong>Adresse:</strong> ${competitor.address}</p>
+                        <p><strong>Bewertungen:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
+                        <p><strong>Entfernung:</strong> ${competitor.distance}</p>
                         <div style="margin-top: 10px;">
                             ${competitor.rating > 4.0 ? '<span class="badge-success">Starker Konkurrent</span>' : 
                               competitor.rating > 3.5 ? '<span class="badge-warning">Durchschnitt</span>' : 
