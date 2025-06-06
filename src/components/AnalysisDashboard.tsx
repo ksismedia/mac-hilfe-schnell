@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,7 +42,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [needsApiKey, setNeedsApiKey] = useState(false);
+  const [needsApiKey, setNeedsApiKey] = useState(true); // Standardmäßig auf true setzen
   const { toast } = useToast();
 
   const industryNames = {
@@ -55,23 +54,20 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     planungsbuero: 'Planungsbüro Versorgungstechnik'
   };
 
+  // Bei jeder neuen Analyse immer API-Key prüfen
   useEffect(() => {
-    // Bei jeder neuen Analyse oder beim ersten Laden API-Key prüfen
-    console.log('AnalysisDashboard mounted - checking API key');
+    console.log('AnalysisDashboard mounted - resetting and checking API key');
+    // Reset der Komponente für neue Analyse
+    setRealData(null);
+    setNeedsApiKey(true);
+    setIsLoading(true);
+    
+    // API-Key prüfen
     checkApiKeyAndAnalyze();
-  }, []); // Leer, damit es nur beim Mount ausgeführt wird
-
-  useEffect(() => {
-    // Wenn businessData sich ändert, erneut prüfen
-    if (businessData.url && businessData.address) {
-      console.log('BusinessData changed - rechecking API key');
-      checkApiKeyAndAnalyze();
-    }
-  }, [businessData]);
+  }, [businessData.url, businessData.address, businessData.industry]); // Abhängig von allen businessData Feldern
 
   const checkApiKeyAndAnalyze = async () => {
     console.log('Checking API key...');
-    setIsLoading(true);
     
     // Prüfe ob API-Key vorhanden und funktionsfähig ist
     const apiKey = GoogleAPIService.getApiKey();
