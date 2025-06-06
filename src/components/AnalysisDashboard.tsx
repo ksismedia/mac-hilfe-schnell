@@ -156,7 +156,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <OverallRating realData={analysisData} />
+                <OverallRating 
+                  businessData={{
+                    address: currentAddress,
+                    url: currentUrl,
+                    industry: currentIndustry
+                  }}
+                  realData={analysisData} 
+                />
               </div>
               <Tabs defaultValue="seo" className="w-full">
                 <TabsList>
@@ -193,25 +200,31 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 </TabsContent>
                 <TabsContent value="local">
                   <LocalSEO 
-                    address={currentAddress} 
-                    industry={currentIndustry} 
-                    realData={analysisData} 
+                    businessData={{
+                      address: currentAddress,
+                      url: currentUrl,
+                      industry: currentIndustry
+                    }}
                   />
                 </TabsContent>
                 <TabsContent value="content">
-                  <ContentAnalysis url={currentUrl} realData={analysisData} />
+                  <ContentAnalysis url={currentUrl} />
                 </TabsContent>
                 <TabsContent value="backlinks">
                   <BacklinkAnalysis url={currentUrl} />
                 </TabsContent>
                 <TabsContent value="keywords">
-                  <KeywordAnalysis url={currentUrl} realData={analysisData} />
+                  <KeywordAnalysis 
+                    url={currentUrl} 
+                    industry={currentIndustry}
+                    realData={analysisData} 
+                  />
                 </TabsContent>
                 <TabsContent value="social">
-                  <SocialMediaAnalysis url={currentUrl} realData={analysisData} />
+                  <SocialMediaAnalysis realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="conversion">
-                  <ConversionOptimization url={currentUrl} realData={analysisData} />
+                  <ConversionOptimization url={currentUrl} />
                 </TabsContent>
                 <TabsContent value="reviews">
                   <GoogleReviews address={currentAddress} realData={analysisData} />
@@ -239,8 +252,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 </TabsContent>
                 <TabsContent value="industry">
                   <IndustryFeatures 
-                    industry={currentIndustry} 
-                    url={currentUrl} 
+                    businessData={{
+                      address: currentAddress,
+                      url: currentUrl,
+                      industry: currentIndustry
+                    }}
                     realData={analysisData} 
                   />
                 </TabsContent>
