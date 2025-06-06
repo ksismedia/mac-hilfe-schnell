@@ -326,7 +326,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         },
         { 
           name: 'Social Media Präsenz', 
-          score: (realData.socialMedia.facebook.found ? 50 : 0) + (realData.socialMedia.instagram.found ? 50 : 0), 
+          score: (() => {
+            let socialScore = 0;
+            if (realData.socialMedia.facebook.found) socialScore += 50;
+            if (realData.socialMedia.instagram.found) socialScore += 50;
+            return socialScore;
+          })(), 
           icon: 'SOCIAL',
           benchmark: 'Lokale Unternehmen: 2-3 aktive Kanäle',
           recommendation: 'Facebook Business und Instagram einrichten'
@@ -768,7 +773,13 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
     score += data.performance.score * 0.2;
     score += data.mobile.overallScore * 0.2;
     score += (data.reviews.google.count > 10 ? 80 : data.reviews.google.count * 4) * 0.15;
-    score += (data.socialMedia.facebook.found ? 50 : 0 + data.socialMedia.instagram.found ? 50 : 0) * 0.15;
+    
+    // Fix the boolean addition issue
+    let socialMediaScore = 0;
+    if (data.socialMedia.facebook.found) socialMediaScore += 50;
+    if (data.socialMedia.instagram.found) socialMediaScore += 50;
+    score += socialMediaScore * 0.15;
+    
     return Math.round(score);
   };
 
