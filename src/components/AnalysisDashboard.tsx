@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -193,11 +192,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="backlinks" className="space-y-6">
-            <BacklinkAnalysis url={businessData.url} realData={realData} />
+            <BacklinkAnalysis url={businessData.url} />
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-6">
-            <GoogleReviews businessData={businessData} realData={realData} />
+            <GoogleReviews address={businessData.address} realData={realData} />
           </TabsContent>
 
           <TabsContent value="social-media" className="space-y-6">
@@ -221,7 +220,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="industry" className="space-y-6">
-            <IndustryFeatures url={businessData.url} industry={businessData.industry} realData={realData} />
+            <IndustryFeatures businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="imprint" className="space-y-6">
