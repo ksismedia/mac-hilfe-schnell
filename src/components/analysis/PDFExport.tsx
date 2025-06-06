@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -169,34 +168,234 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         yPosition += 6;
       });
 
-      // Neue Seite für Konkurrenzanalyse
+      // ERWEITERTE KONKURRENZANALYSE - 4-5 Seiten
       pdf.addPage();
       yPosition = 20;
       
       pdf.setFontSize(16);
-      pdf.text('KONKURRENZANALYSE', 20, yPosition);
+      pdf.text('DETAILLIERTE KONKURRENZANALYSE', 20, yPosition);
       yPosition += 15;
       
+      // Executive Summary der Konkurrenz
+      pdf.setDrawColor(255, 165, 0);
+      pdf.setFillColor(255, 248, 240);
+      pdf.rect(15, yPosition - 5, 180, 30, 'FD');
+      
       pdf.setFontSize(12);
-      pdf.text(`Lokale Konkurrenten (${realData.competitors.length} gefunden):`, 20, yPosition);
-      yPosition += 10;
+      pdf.text('MARKTÜBERBLICK', 20, yPosition + 5);
+      yPosition += 12;
       
-      realData.competitors.slice(0, 8).forEach((competitor, index) => {
-        checkNewPage(25);
-        pdf.setFontSize(11);
-        pdf.text(`${index + 1}. ${competitor.name}`, 20, yPosition);
-        yPosition += 7;
-        pdf.setFontSize(10);
-        pdf.text(`   Bewertung: ${competitor.rating}/5 (${competitor.reviews} Bewertungen)`, 25, yPosition);
-        yPosition += 6;
-        pdf.text(`   Entfernung: ${competitor.distance}`, 25, yPosition);
-        yPosition += 10;
-      });
+      const avgCompetitorRating = realData.competitors.length > 0 
+        ? realData.competitors.reduce((sum, comp) => sum + comp.rating, 0) / realData.competitors.length 
+        : 0;
+      const avgCompetitorReviews = realData.competitors.length > 0
+        ? realData.competitors.reduce((sum, comp) => sum + comp.reviews, 0) / realData.competitors.length
+        : 0;
+      const ownRating = realData.reviews.google.rating || 4.2;
+      const ownReviewCount = realData.reviews.google.count || 0;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Lokale Konkurrenten gefunden: ${realData.competitors.length}`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Durchschnittliche Bewertung: ${avgCompetitorRating.toFixed(1)}/5 (Sie: ${ownRating.toFixed(1)}/5)`, 20, yPosition);
+      yPosition += 6;
+      pdf.text(`Durchschnittliche Rezensionen: ${Math.round(avgCompetitorReviews)} (Sie: ${ownReviewCount})`, 20, yPosition);
+      yPosition += 20;
 
-      // Neue Seite für Handlungsempfehlungen
-      pdf.addPage();
-      yPosition = 20;
-      
+      if (realData.competitors.length > 0) {
+        // Marktpositionierungs-Matrix
+        checkNewPage(40);
+        pdf.setFontSize(14);
+        pdf.text('MARKTPOSITIONIERUNGS-MATRIX', 20, yPosition);
+        yPosition += 15;
+        
+        // Top Performers
+        const topPerformers = realData.competitors
+          .filter(c => c.rating >= 4.5 && c.reviews >= 50)
+          .sort((a, b) => b.rating - a.rating);
+        
+        pdf.setFontSize(12);
+        pdf.text(`TOP PERFORMERS (Bewertung ≥4.5, Rezensionen ≥50): ${topPerformers.length}`, 20, yPosition);
+        yPosition += 10;
+        
+        if (topPerformers.length > 0) {
+          topPerformers.slice(0, 3).forEach((comp, index) => {
+            checkNewPage(15);
+            pdf.setFontSize(10);
+            pdf.text(`${index + 1}. ${comp.name} - ${comp.rating}/5 (${comp.reviews} Bewertungen)`, 25, yPosition);
+            yPosition += 6;
+            pdf.text(`   Entfernung: ${comp.distance} | Status: MARKTFÜHRER`, 25, yPosition);
+            yPosition += 10;
+          });
+        } else {
+          pdf.setFontSize(10);
+          pdf.text('Keine Top Performer identifiziert - MARKTCHANCE!', 25, yPosition);
+          yPosition += 10;
+        }
+        
+        // Schwache Konkurrenten
+        const weakCompetitors = realData.competitors.filter(c => c.rating < 4.0 || c.reviews < 20);
+        yPosition += 5;
+        checkNewPage(20);
+        pdf.setFontSize(12);
+        pdf.text(`SCHWACHE KONKURRENTEN (Bewertung <4.0 oder <20 Rezensionen): ${weakCompetitors.length}`, 20, yPosition);
+        yPosition += 10;
+        
+        if (weakCompetitors.length > 0) {
+          weakCompetitors.slice(0, 5).forEach((comp, index) => {
+            checkNewPage(8);
+            pdf.setFontSize(10);
+            pdf.text(`${index + 1}. ${comp.name} - ${comp.rating}/5 (${comp.reviews} Bewertungen)`, 25, yPosition);
+            yPosition += 8;
+          });
+        }
+
+        // Neue Seite für detaillierte Konkurrenten-Profile
+        pdf.addPage();
+        yPosition = 20;
+        
+        pdf.setFontSize(16);
+        pdf.text('DETAILLIERTE KONKURRENTEN-PROFILE', 20, yPosition);
+        yPosition += 15;
+        
+        realData.competitors.slice(0, 8).forEach((competitor, index) => {
+          checkNewPage(45);
+          
+          // Konkurrenten-Header
+          pdf.setDrawColor(100, 100, 100);
+          pdf.setFillColor(248, 249, 250);
+          pdf.rect(15, yPosition - 5, 180, 35, 'FD');
+          
+          pdf.setFontSize(14);
+          pdf.text(`KONKURRENT #${index + 1}: ${competitor.name}`, 20, yPosition + 5);
+          yPosition += 15;
+          
+          // Basis-Informationen
+          pdf.setFontSize(11);
+          pdf.text(`Bewertung: ${competitor.rating}/5 Sterne`, 20, yPosition);
+          yPosition += 7;
+          pdf.text(`Anzahl Bewertungen: ${competitor.reviews}`, 20, yPosition);
+          yPosition += 7;
+          pdf.text(`Entfernung: ${competitor.distance}`, 20, yPosition);
+          yPosition += 10;
+          
+          // Competitive Analysis
+          pdf.setFontSize(10);
+          pdf.text('WETTBEWERBSANALYSE:', 20, yPosition);
+          yPosition += 8;
+          
+          // Stärken/Schwächen Matrix
+          if (competitor.rating > ownRating) {
+            pdf.text('⚠️  BEDROHUNG: Höhere Bewertung als Ihr Unternehmen', 25, yPosition);
+            yPosition += 6;
+            pdf.text(`   Vorsprung: +${(competitor.rating - ownRating).toFixed(1)} Bewertungspunkte`, 25, yPosition);
+            yPosition += 6;
+          } else {
+            pdf.text('✅ VORTEIL: Niedrigere Bewertung als Ihr Unternehmen', 25, yPosition);
+            yPosition += 6;
+            pdf.text(`   Ihr Vorsprung: +${(ownRating - competitor.rating).toFixed(1)} Bewertungspunkte`, 25, yPosition);
+            yPosition += 6;
+          }
+          
+          if (competitor.reviews > ownReviewCount) {
+            pdf.text('⚠️  BEDROHUNG: Mehr Kundenbewertungen', 25, yPosition);
+            yPosition += 6;
+            pdf.text(`   Mehr Bewertungen: +${competitor.reviews - ownReviewCount}`, 25, yPosition);
+            yPosition += 6;
+          } else {
+            pdf.text('✅ VORTEIL: Weniger Kundenbewertungen', 25, yPosition);
+            yPosition += 6;
+          }
+          
+          // Strategische Empfehlungen für diesen Konkurrenten
+          pdf.text('STRATEGISCHE EMPFEHLUNGEN:', 25, yPosition);
+          yPosition += 8;
+          
+          const strategies = getCompetitorStrategies(competitor, ownRating, ownReviewCount);
+          strategies.forEach(strategy => {
+            checkNewPage(6);
+            pdf.text(`• ${strategy}`, 30, yPosition);
+            yPosition += 6;
+          });
+          
+          yPosition += 15;
+        });
+
+        // Neue Seite für Competitive Intelligence
+        pdf.addPage();
+        yPosition = 20;
+        
+        pdf.setFontSize(16);
+        pdf.text('COMPETITIVE INTELLIGENCE & MARKTCHANCEN', 20, yPosition);
+        yPosition += 15;
+        
+        // Marktlücken-Analyse
+        pdf.setFontSize(14);
+        pdf.text('IDENTIFIZIERTE MARKTLÜCKEN:', 20, yPosition);
+        yPosition += 12;
+        
+        const marketGaps = analyzeMarketGaps(realData.competitors, ownRating, ownReviewCount);
+        marketGaps.forEach(gap => {
+          checkNewPage(12);
+          pdf.setFontSize(11);
+          pdf.text(`🎯 ${gap.title}`, 20, yPosition);
+          yPosition += 8;
+          pdf.setFontSize(10);
+          pdf.text(`   ${gap.description}`, 25, yPosition);
+          yPosition += 6;
+          pdf.text(`   Potenzial: ${gap.potential}`, 25, yPosition);
+          yPosition += 12;
+        });
+        
+        // Preis-Positionierungs-Analyse (geschätzt)
+        yPosition += 10;
+        checkNewPage(30);
+        pdf.setFontSize(14);
+        pdf.text('GESCHÄTZTE MARKTPOSITIONIERUNG:', 20, yPosition);
+        yPosition += 12;
+        
+        pdf.setFontSize(10);
+        pdf.text('Basierend auf Bewertungsmustern und Rezensions-Volumen:', 20, yPosition);
+        yPosition += 10;
+        
+        const positioningAnalysis = [
+          `Premium-Segment (4.8+ Sterne): ${realData.competitors.filter(c => c.rating >= 4.8).length} Konkurrenten`,
+          `Mittelklasse (4.0-4.7 Sterne): ${realData.competitors.filter(c => c.rating >= 4.0 && c.rating < 4.8).length} Konkurrenten`,
+          `Budget-Segment (<4.0 Sterne): ${realData.competitors.filter(c => c.rating < 4.0).length} Konkurrenten`,
+          `Ihre Position: ${ownRating >= 4.8 ? 'Premium' : ownRating >= 4.0 ? 'Mittelklasse' : 'Budget'}-Segment (${ownRating}/5)`
+        ];
+        
+        positioningAnalysis.forEach(analysis => {
+          checkNewPage();
+          pdf.text(`• ${analysis}`, 20, yPosition);
+          yPosition += 8;
+        });
+
+      } else {
+        // Keine Konkurrenten gefunden - andere Analyse
+        pdf.setFontSize(12);
+        pdf.text('MARKTANALYSE: KEINE LOKALEN KONKURRENTEN GEFUNDEN', 20, yPosition);
+        yPosition += 15;
+        
+        pdf.setFontSize(10);
+        const noCompetitorAnalysis = [
+          '🚀 ERSTE-MOVER-VORTEIL: Sie können als digitaler Pionier auftreten',
+          '💎 MONOPOL-POTENZIAL: Schwache lokale Online-Konkurrenz erkannt',
+          '📈 MARKTFÜHRERSCHAFT: Großes Potenzial für digitale Dominanz',
+          '🎯 INVESTITIONS-EMPFEHLUNG: Aggressiv in Online-Marketing investieren',
+          '⚡ TIMING: Perfekter Zeitpunkt für digitale Markterschließung',
+          '🏆 LANGZEIT-STRATEGIE: Aufbau von Markeintrittsbarrieren für Nachzügler'
+        ];
+        
+        noCompetitorAnalysis.forEach(point => {
+          checkNewPage();
+          pdf.text(point, 20, yPosition);
+          yPosition += 10;
+        });
+      }
+
+      // Handlungsempfehlungen
+      checkNewPage(40);
       pdf.setFontSize(16);
       pdf.text('PRIORITÄTEN-MATRIX & HANDLUNGSPLAN', 20, yPosition);
       yPosition += 15;
@@ -338,7 +537,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       const fileName = `Detaillierte_Marketing_Analyse_${realData.company.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
       
-      console.log('Enhanced PDF successfully generated:', fileName, 'Total pages:', pageCount);
+      console.log('Enhanced PDF successfully generated:', fileName, 'Total pages:', pdf.getNumberOfPages());
       
     } catch (error) {
       console.error('PDF generation failed:', error);
@@ -365,6 +564,63 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       planungsbuero: 'Planungsbüro Versorgungstechnik'
     };
     return names[industry] || industry;
+  };
+
+  // Helper-Funktionen für detaillierte Konkurrenzanalyse
+  const getCompetitorStrategies = (competitor: any, ownRating: number, ownReviewCount: number): string[] => {
+    const strategies = [];
+    
+    if (competitor.rating > ownRating) {
+      strategies.push('Kundenerfahrung verbessern - analysieren Sie deren Bewertungen');
+      strategies.push('Service-Qualität steigern um Bewertungsvorsprung aufzuholen');
+    }
+    
+    if (competitor.reviews > ownReviewCount) {
+      strategies.push('Bewertungs-Kampagne starten - systematisch Rezensionen sammeln');
+      strategies.push('Follow-up-Prozess nach Aufträgen etablieren');
+    }
+    
+    if (competitor.rating < 4.0) {
+      strategies.push('Schwächen nutzen - in Marketing Qualitätsvorsprung betonen');
+      strategies.push('Unzufriedene Kunden dieses Konkurrenten ansprechen');
+    }
+    
+    strategies.push('Lokale SEO gegen diesen Konkurrenten optimieren');
+    strategies.push(`Differenzierung durch Spezialisierung gegen ${competitor.name}`);
+    
+    return strategies;
+  };
+
+  const analyzeMarketGaps = (competitors: any[], ownRating: number, ownReviewCount: number) => {
+    const gaps = [];
+    
+    const hasStrongCompetitors = competitors.some(c => c.rating >= 4.5 && c.reviews >= 100);
+    if (!hasStrongCompetitors) {
+      gaps.push({
+        title: 'Marktführerschaft verfügbar',
+        description: 'Keine etablierten digitalen Marktführer identifiziert',
+        potential: 'Sehr hoch - First-Mover-Advantage möglich'
+      });
+    }
+    
+    const lowReviewCompetitors = competitors.filter(c => c.reviews < 30).length;
+    if (lowReviewCompetitors > competitors.length * 0.7) {
+      gaps.push({
+        title: 'Review-Marketing unterentwickelt',
+        description: '70%+ der Konkurrenten haben schwache Online-Reputation',
+        potential: 'Hoch - durch systematische Bewertungssammlung abheben'
+      });
+    }
+    
+    if (competitors.length < 5) {
+      gaps.push({
+        title: 'Schwache lokale Online-Präsenz',
+        description: 'Weniger als 5 aktive Konkurrenten online gefunden',
+        potential: 'Sehr hoch - digitale Marktlücke identifiziert'
+      });
+    }
+    
+    return gaps;
   };
 
   // Generiere Verbesserungsmaßnahmen basierend auf echten Daten
@@ -755,4 +1011,3 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
 };
 
 export default PDFExport;
-
