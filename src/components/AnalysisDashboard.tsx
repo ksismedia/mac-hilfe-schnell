@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,44 +31,35 @@ import IndustryFeatures from './analysis/IndustryFeatures';
 // Services
 import { WebsiteAnalysisService } from '@/services/WebsiteAnalysisService';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface AnalysisDashboardProps {
   initialDomain?: string;
+  businessData?: {
+    url: string;
+    address: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
+  onReset?: () => void;
 }
 
-interface AnalysisData {
-  domain?: string;
-  overallRating?: { score: number };
-  seoData?: any;
-  performanceData?: any;
-  mobileData?: any;
-  competitorData?: any;
-  localSeoData?: any;
-  contentData?: any;
-  backlinkData?: any;
-  keywordData?: any;
-  socialMediaData?: any;
-  conversionData?: any;
-  googleReviewsData?: any;
-  workplaceReviewsData?: any;
-  socialProofData?: any;
-  imprintCheckData?: any;
-  industryFeaturesData?: any;
-}
-
-const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) => {
-  const [domain, setDomain] = useState(initialDomain || '');
-  const [analysisData, setAnalysisData] = useState<AnalysisData>({});
+const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ 
+  initialDomain, 
+  businessData,
+  onReset 
+}) => {
+  const [domain, setDomain] = useState(initialDomain || businessData?.url || '');
+  const [analysisData, setAnalysisData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiKeySet, setApiKeySet] = useState(GoogleAPIService.hasApiKey());
   const { toast } = useToast();
 
   useEffect(() => {
-    if (initialDomain && apiKeySet) {
-      analyzeWebsite(initialDomain);
+    if ((initialDomain || businessData?.url) && apiKeySet) {
+      analyzeWebsite(initialDomain || businessData?.url || '');
     }
-  }, [initialDomain, apiKeySet]);
+  }, [initialDomain, businessData?.url, apiKeySet]);
 
   const handleApiKeySet = () => {
     setApiKeySet(true);
@@ -106,6 +98,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) 
     }
   };
 
+  const currentUrl = analysisData?.company.url || domain;
+  const currentAddress = businessData?.address || analysisData?.company.address || '';
+  const currentIndustry = businessData?.industry || 'shk';
+
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -138,6 +134,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) 
                   </>
                 )}
               </Button>
+              {onReset && (
+                <Button variant="outline" onClick={onReset}>
+                  Zurück
+                </Button>
+              )}
             </div>
             {error && (
               <Alert variant="destructive">
@@ -147,15 +148,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) 
           </CardContent>
         </Card>
 
-        {analysisData.domain && (
+        {analysisData && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Analyse Ergebnisse für {analysisData.domain}</CardTitle>
+              <CardTitle className="text-lg font-semibold">Analyse Ergebnisse für {currentUrl}</CardTitle>
               <CardDescription>Detaillierte Einblicke in die Performance deiner Website.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <OverallRating overallRating={analysisData.overallRating} />
+                <OverallRating realData={analysisData} />
               </div>
               <Tabs defaultValue="seo" className="w-full">
                 <TabsList>
@@ -175,47 +176,73 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ initialDomain }) 
                   <TabsTrigger value="socialproof">Social Proof</TabsTrigger>
                 </TabsList>
                 <TabsContent value="seo">
-                  <SEOAnalysis seoData={analysisData.seoData} />
+                  <SEOAnalysis url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="performance">
-                  <PerformanceAnalysis performanceData={analysisData.performanceData} />
+                  <PerformanceAnalysis url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="mobile">
-                  <MobileOptimization mobileData={analysisData.mobileData} />
+                  <MobileOptimization url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="competitor">
-                  <CompetitorAnalysis competitorData={analysisData.competitorData} />
+                  <CompetitorAnalysis 
+                    address={currentAddress} 
+                    industry={currentIndustry} 
+                    realData={analysisData} 
+                  />
                 </TabsContent>
                 <TabsContent value="local">
-                  <LocalSEO localSeoData={analysisData.localSeoData} />
+                  <LocalSEO 
+                    address={currentAddress} 
+                    industry={currentIndustry} 
+                    realData={analysisData} 
+                  />
                 </TabsContent>
                 <TabsContent value="content">
-                  <ContentAnalysis contentData={analysisData.contentData} />
+                  <ContentAnalysis url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="backlinks">
-                  <BacklinkAnalysis backlinkData={analysisData.backlinkData} />
+                  <BacklinkAnalysis url={currentUrl} />
                 </TabsContent>
                 <TabsContent value="keywords">
-                  <KeywordAnalysis keywordData={analysisData.keywordData} />
+                  <KeywordAnalysis url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="social">
-                  <SocialMediaAnalysis socialMediaData={analysisData.socialMediaData} />
+                  <SocialMediaAnalysis url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="conversion">
-                  <ConversionOptimization conversionData={analysisData.conversionData} />
+                  <ConversionOptimization url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="reviews">
-                  <GoogleReviews googleReviewsData={analysisData.googleReviewsData} />
-                  <WorkplaceReviews workplaceReviewsData={analysisData.workplaceReviewsData} />
+                  <GoogleReviews address={currentAddress} realData={analysisData} />
+                  <WorkplaceReviews 
+                    businessData={{
+                      address: currentAddress,
+                      url: currentUrl,
+                      industry: currentIndustry
+                    }}
+                    realData={analysisData} 
+                  />
                 </TabsContent>
-                 <TabsContent value="socialproof">
-                  <SocialProof socialProofData={analysisData.socialProofData} />
+                <TabsContent value="socialproof">
+                  <SocialProof 
+                    businessData={{
+                      address: currentAddress,
+                      url: currentUrl,
+                      industry: currentIndustry
+                    }}
+                    realData={analysisData} 
+                  />
                 </TabsContent>
                 <TabsContent value="imprint">
-                  <ImprintCheck imprintCheckData={analysisData.imprintCheckData} />
+                  <ImprintCheck url={currentUrl} realData={analysisData} />
                 </TabsContent>
                 <TabsContent value="industry">
-                  <IndustryFeatures industryFeaturesData={analysisData.industryFeaturesData} />
+                  <IndustryFeatures 
+                    industry={currentIndustry} 
+                    url={currentUrl} 
+                    realData={analysisData} 
+                  />
                 </TabsContent>
               </Tabs>
               <div className="mt-4">
