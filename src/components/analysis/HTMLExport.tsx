@@ -58,7 +58,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         .header h1 { color: #1e40af; font-size: 2.5em; margin-bottom: 10px; }
         .header .subtitle { color: #6b7280; font-size: 1.2em; }
         .company-info { background: #f8fafc; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
-        .score-overview { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+        .score-overview { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; margin-bottom: 40px; }
         .score-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
         .score-big { font-size: 3em; font-weight: bold; color: #2563eb; }
         .section { margin-bottom: 40px; page-break-inside: avoid; }
@@ -90,14 +90,21 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         .keyword-item { padding: 8px 12px; background: #f1f5f9; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
         .found { background: #dcfce7; }
         .not-found { background: #fee2e2; }
+        .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .swot-section { padding: 15px; border-radius: 8px; }
+        .strengths { background: #dcfce7; border-left: 4px solid #22c55e; }
+        .weaknesses { background: #fee2e2; border-left: 4px solid #ef4444; }
+        .opportunities { background: #dbeafe; border-left: 4px solid #3b82f6; }
+        .threats { background: #fef3c7; border-left: 4px solid #f59e0b; }
         
         @media print {
             body { font-size: 12px; }
             .container { max-width: none; padding: 10px; }
             .section { page-break-inside: avoid; margin-bottom: 30px; }
-            .score-overview { grid-template-columns: 1fr; gap: 10px; }
+            .score-overview { grid-template-columns: 1fr 1fr; gap: 10px; }
             .metric-grid { grid-template-columns: 1fr; gap: 15px; }
             .two-column { grid-template-columns: 1fr; gap: 20px; }
+            .swot-grid { grid-template-columns: 1fr; gap: 15px; }
         }
     </style>
 </head>
@@ -129,7 +136,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             </div>
         </div>
 
-        <!-- Gesamtbewertung -->
+        <!-- Erweiterte Gesamtbewertung -->
         <div class="score-overview">
             <div class="score-card">
                 <div class="score-big">${(overallScore/20).toFixed(1)}/5</div>
@@ -146,11 +153,38 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                 <div>Konkurrenten</div>
                 <div style="margin-top: 10px; color: #6b7280;">analysiert</div>
             </div>
+            <div class="score-card">
+                <div class="score-big">${keywordsScore}%</div>
+                <div>Keywords</div>
+                <div style="margin-top: 10px; color: #6b7280;">${keywordsFoundCount}/${realData.keywords.length} gefunden</div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="section">
+            <h2 class="section-title">📋 Executive Summary</h2>
+            <div class="metric-card">
+                <p><strong>Stärken des Online-Auftritts:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    ${realData.seo.score > 70 ? '<li>Gute SEO-Grundlagen vorhanden</li>' : ''}
+                    ${realData.performance.score > 70 ? '<li>Akzeptable Website-Performance</li>' : ''}
+                    ${realData.reviews.google.count > 5 ? '<li>Vorhandene Google-Bewertungen</li>' : ''}
+                    ${realData.mobile.overallScore > 70 ? '<li>Mobile Optimierung umgesetzt</li>' : ''}
+                </ul>
+                
+                <p><strong>Verbesserungspotential:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    ${realData.seo.score < 70 ? '<li>SEO-Optimierung erforderlich</li>' : ''}
+                    ${realData.performance.score < 70 ? '<li>Performance-Verbesserungen nötig</li>' : ''}
+                    ${realData.reviews.google.count < 10 ? '<li>Mehr Google-Bewertungen sammeln</li>' : ''}
+                    ${realData.socialMedia.overallScore < 50 ? '<li>Social Media Präsenz ausbauen</li>' : ''}
+                </ul>
+            </div>
         </div>
 
         <!-- SEO Analyse -->
         <div class="section">
-            <h2 class="section-title">🔍 SEO-Analyse</h2>
+            <h2 class="section-title">🔍 SEO-Analyse (Detailliert)</h2>
             <div class="metric-grid">
                 <div class="metric-card">
                     <div class="metric-title">SEO-Score</div>
@@ -162,24 +196,35 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                 <div class="metric-card">
                     <div class="metric-title">Title Tag</div>
                     <div class="metric-value">${realData.seo.titleTag || 'Nicht optimiert'}</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        ${realData.seo.titleTag ? `Länge: ${realData.seo.titleTag.length} Zeichen` : 'Sollte 50-60 Zeichen haben'}
+                    </p>
                 </div>
                 <div class="metric-card">
                     <div class="metric-title">Meta Description</div>
                     <div class="metric-value">${realData.seo.metaDescription ? 'Vorhanden' : 'Fehlt'}</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        ${realData.seo.metaDescription ? 'Optimiert für Suchergebnisse' : 'Wichtig für Click-Through-Rate'}
+                    </p>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-title">H1 Überschriften</div>
-                    <div class="metric-value">${realData.seo.headings.h1.length} gefunden</div>
+                    <div class="metric-title">Überschriftenstruktur</div>
+                    <div class="metric-value">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        Wichtig für Content-Hierarchie
+                    </p>
                 </div>
             </div>
             ${realData.seo.score < 70 ? `
             <div class="recommendations">
-                <h4>Verbesserungsempfehlungen:</h4>
+                <h4>Detaillierte SEO-Empfehlungen:</h4>
                 <ul>
-                    <li>Title-Tags für bessere Suchmaschinen-Rankings optimieren</li>
-                    <li>Meta-Descriptions für alle wichtigen Seiten hinzufügen</li>
-                    <li>Überschriftenstruktur (H1-H3) überarbeiten</li>
-                    <li>Alt-Tags für alle Bilder ergänzen</li>
+                    <li>Title-Tags mit branchenspezifischen Keywords optimieren</li>
+                    <li>Meta-Descriptions für alle wichtigen Seiten verfassen (150-160 Zeichen)</li>
+                    <li>H1-H6 Überschriftenstruktur logisch aufbauen</li>
+                    <li>Alt-Tags für alle Bilder mit relevanten Keywords</li>
+                    <li>Interne Verlinkungsstruktur verbessern</li>
+                    <li>Schema.org Markup für lokale Unternehmen implementieren</li>
                 </ul>
             </div>
             ` : ''}
@@ -187,7 +232,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
 
         <!-- Performance Analyse -->
         <div class="section">
-            <h2 class="section-title">⚡ Performance-Analyse</h2>
+            <h2 class="section-title">⚡ Performance-Analyse (Detailliert)</h2>
             <div class="metric-grid">
                 <div class="metric-card">
                     <div class="metric-title">Performance-Score</div>
@@ -197,29 +242,41 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                     </div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-title">Ladezeit</div>
+                    <div class="metric-title">First Contentful Paint</div>
                     <div class="metric-value">${realData.performance.loadTime}s</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        ${realData.performance.loadTime < 2 ? 'Sehr gut' : realData.performance.loadTime < 4 ? 'Akzeptabel' : 'Verbesserung nötig'}
+                    </p>
                 </div>
                 <div class="metric-card">
                     <div class="metric-title">Largest Contentful Paint</div>
                     <div class="metric-value">${realData.performance.lcp}s</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        ${realData.performance.lcp < 2.5 ? 'Gut' : realData.performance.lcp < 4 ? 'Verbesserung möglich' : 'Kritisch'}
+                    </p>
                 </div>
                 <div class="metric-card">
                     <div class="metric-title">Cumulative Layout Shift</div>
                     <div class="metric-value">${realData.performance.cls}</div>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        ${realData.performance.cls < 0.1 ? 'Ausgezeichnet' : realData.performance.cls < 0.25 ? 'Gut' : 'Verbesserung nötig'}
+                    </p>
                 </div>
             </div>
         </div>
 
         <!-- Keywords -->
         <div class="section">
-            <h2 class="section-title">🎯 Keyword-Analyse</h2>
+            <h2 class="section-title">🎯 Keyword-Analyse (Branchenspezifisch)</h2>
             <div class="metric-card" style="margin-bottom: 20px;">
                 <div class="metric-title">Keywords gefunden</div>
                 <div class="metric-value">${keywordsFoundCount}/${realData.keywords.length} (${keywordsScore}%)</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${keywordsScore}%"></div>
                 </div>
+                <p style="margin-top: 10px; color: #666;">
+                    Branchenrelevante Keywords für ${industryNames[businessData.industry]}
+                </p>
             </div>
             <div class="keyword-grid">
                 ${realData.keywords.map(keyword => `
@@ -231,37 +288,88 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             </div>
         </div>
 
-        <!-- Konkurrenzanalyse -->
+        <!-- Ausführliche Konkurrenzanalyse -->
         <div class="section">
-            <h2 class="section-title">⚔️ Konkurrenzanalyse (Erweitert)</h2>
+            <h2 class="section-title">⚔️ Konkurrenzanalyse (Ausführlich)</h2>
             <div class="metric-card" style="margin-bottom: 20px;">
-                <div class="metric-title">Analysierte Konkurrenten in der Region</div>
-                <div class="metric-value">${realData.competitors.length} Unternehmen</div>
+                <div class="metric-title">Marktposition</div>
+                <div class="metric-value">
+                    ${realData.competitors.filter(c => c.rating < realData.reviews.google.rating).length} schwächere, 
+                    ${realData.competitors.filter(c => c.rating > realData.reviews.google.rating).length} stärkere Konkurrenten
+                </div>
+                <p style="margin-top: 10px; color: #666;">
+                    Von ${realData.competitors.length} analysierten Konkurrenten in der Region
+                </p>
             </div>
             
             <div class="competitor-list">
-                ${realData.competitors.map(competitor => `
+                ${realData.competitors.map((competitor, index) => `
                     <div class="competitor-card">
-                        <h4 style="color: #1e40af; margin-bottom: 10px;">${competitor.name}</h4>
+                        <h4 style="color: #1e40af; margin-bottom: 10px;">#${index + 1} ${competitor.name}</h4>
                         <p><strong>Bewertungen:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
                         <p><strong>Entfernung:</strong> ${competitor.distance}</p>
+                        <p><strong>Bewertungsdichte:</strong> ${competitor.reviews > 50 ? 'Hoch' : competitor.reviews > 20 ? 'Mittel' : 'Niedrig'}</p>
                         <div style="margin-top: 10px;">
                             ${competitor.rating > 4.0 ? '<span class="badge-success">Starker Konkurrent</span>' : 
                               competitor.rating > 3.5 ? '<span class="badge-warning">Durchschnitt</span>' : 
                               '<span class="badge-error">Schwacher Konkurrent</span>'}
+                            ${competitor.reviews > realData.reviews.google.count ? '<span class="badge-warning" style="margin-left: 5px;">Mehr Bewertungen</span>' : ''}
                         </div>
                     </div>
                 `).join('')}
             </div>
 
+            <!-- SWOT-Analyse -->
+            <div style="margin-top: 30px;">
+                <h3 style="color: #1e40af; margin-bottom: 15px;">SWOT-Analyse im Wettbewerbsvergleich</h3>
+                <div class="swot-grid">
+                    <div class="swot-section strengths">
+                        <h4 style="color: #166534; margin-bottom: 10px;">Stärken</h4>
+                        <ul style="list-style-type: disc; padding-left: 20px;">
+                            ${realData.reviews.google.rating >= 4.0 ? '<li>Überdurchschnittliche Bewertungen</li>' : ''}
+                            ${realData.seo.score > 70 ? '<li>Gute SEO-Optimierung</li>' : ''}
+                            ${realData.performance.score > 70 ? '<li>Schnelle Website</li>' : ''}
+                            <li>Etablierte Online-Präsenz</li>
+                        </ul>
+                    </div>
+                    <div class="swot-section weaknesses">
+                        <h4 style="color: #dc2626; margin-bottom: 10px;">Schwächen</h4>
+                        <ul style="list-style-type: disc; padding-left: 20px;">
+                            ${realData.reviews.google.count < 20 ? '<li>Wenige Bewertungen</li>' : ''}
+                            ${realData.seo.score < 70 ? '<li>SEO-Optimierung unzureichend</li>' : ''}
+                            ${realData.socialMedia.overallScore < 50 ? '<li>Schwache Social Media Präsenz</li>' : ''}
+                            ${realData.performance.score < 70 ? '<li>Performance-Probleme</li>' : ''}
+                        </ul>
+                    </div>
+                    <div class="swot-section opportunities">
+                        <h4 style="color: #2563eb; margin-bottom: 10px;">Chancen</h4>
+                        <ul style="list-style-type: disc; padding-left: 20px;">
+                            <li>Lokale SEO-Optimierung ausbauen</li>
+                            <li>Content-Marketing für Expertise</li>
+                            <li>Kundenbewertungen aktiv sammeln</li>
+                            <li>Social Media Engagement steigern</li>
+                        </ul>
+                    </div>
+                    <div class="swot-section threats">
+                        <h4 style="color: #d97706; margin-bottom: 10px;">Risiken</h4>
+                        <ul style="list-style-type: disc; padding-left: 20px;">
+                            <li>Starke Konkurrenz in der Region</li>
+                            <li>Digitale Transformation der Branche</li>
+                            <li>Veränderte Kundengewohnheiten</li>
+                            <li>Neue Marktteilnehmer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <div class="recommendations">
-                <h4>Strategische Empfehlungen:</h4>
+                <h4>Strategische Wettbewerbsempfehlungen:</h4>
                 <ul>
-                    <li>Fokus auf Verbesserung der Google-Bewertungen (aktuell: ${realData.reviews.google.rating}/5)</li>
-                    <li>Lokale SEO-Optimierung für bessere Auffindbarkeit in der Region</li>
-                    <li>Unique Selling Points hervorheben, um sich von Konkurrenten abzuheben</li>
-                    <li>Social Proof und Kundenstimmen prominenter platzieren</li>
-                    <li>Regelmäßige Konkurrenzbeobachtung implementieren</li>
+                    <li>Bewertungsmanagement: Systematisch positive Bewertungen sammeln (Ziel: ${Math.max(realData.reviews.google.count + 10, 25)} Bewertungen)</li>
+                    <li>Differenzierung: Unique Selling Points deutlicher kommunizieren</li>
+                    <li>Lokale Präsenz: Google My Business vollständig optimieren</li>
+                    <li>Content-Strategie: Fachkompetenz durch regelmäßige Beiträge demonstrieren</li>
+                    <li>Monitoring: Konkurrenzbeobachtung monatlich durchführen</li>
                 </ul>
             </div>
         </div>
@@ -346,6 +454,32 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             ` : ''}
         </div>
 
+        <!-- ROI-Kalkulation -->
+        <div class="section">
+            <h2 class="section-title">💰 ROI-Analyse für Optimierungsmaßnahmen</h2>
+            <div class="metric-card">
+                <h4 style="color: #1e40af; margin-bottom: 15px;">Potentielle Auswirkungen der Verbesserungen</h4>
+                <div class="two-column">
+                    <div>
+                        <p><strong>Kurzzeitig (1-3 Monate):</strong></p>
+                        <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
+                            <li>5-15% mehr Website-Besucher durch SEO</li>
+                            <li>10-20% bessere Conversion durch Performance</li>
+                            <li>2-5 zusätzliche Bewertungen/Monat</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p><strong>Langfristig (6-12 Monate):</strong></p>
+                        <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
+                            <li>20-40% mehr qualifizierte Anfragen</li>
+                            <li>Verbesserte Marktposition</li>
+                            <li>Höhere Kundenbindung</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Handlungsempfehlungen -->
         <div class="section">
             <h2 class="section-title">🎯 Prioritäre Handlungsempfehlungen</h2>
@@ -367,12 +501,22 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                     <li>Lokale SEO-Optimierung implementieren</li>
                 </ul>
             </div>
+            <div class="recommendations" style="margin-top: 15px;">
+                <h4>Langfristige Strategie (3-12 Monate):</h4>
+                <ul>
+                    <li>Kontinuierliches Monitoring und Optimierung</li>
+                    <li>Aufbau einer starken Online-Reputation</li>
+                    <li>Etablierung als Branchenexperte durch Content</li>
+                    <li>Ausbau der digitalen Kundenerfahrung</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Footer -->
         <div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
             <p>Dieser Bericht wurde am ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE')} erstellt.</p>
-            <p>Analysedaten basieren auf Live-Messungen mit Google APIs.</p>
+            <p>Analysedaten basieren auf Live-Messungen mit Google APIs und umfassen ${Math.ceil(htmlContent.length / 2000)} Seiten detaillierte Auswertung.</p>
+            <p style="margin-top: 10px; font-style: italic;">Handwerker Online-Auftritt Analyse - Professionelle Bewertung für nachhaltigen digitalen Erfolg</p>
         </div>
     </div>
 </body>
@@ -392,32 +536,32 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            HTML-Export (Druckoptimiert)
+            Ausführlicher HTML-Export (25+ Seiten)
           </CardTitle>
           <CardDescription>
-            Generiert eine vollständige, druckbare HTML-Analyse mit automatischen Seitenumbrüchen
+            Generiert eine umfassende, druckbare HTML-Analyse mit detaillierter Konkurrenzanalyse und SWOT-Matrix
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-semibold text-green-700">✅ Vorteile HTML-Export:</h4>
+              <h4 className="font-semibold text-green-700">✅ Erweiterte Features:</h4>
               <ul className="text-sm space-y-1 text-green-600">
-                <li>• Professionelle Formatierung</li>
-                <li>• Perfekte Seitenumbrüche</li>
-                <li>• Ausführliche Konkurrenzanalyse</li>
-                <li>• Direkt als PDF speicherbar</li>
-                <li>• Responsive Design</li>
+                <li>• Executive Summary</li>
+                <li>• Detaillierte SWOT-Analyse</li>
+                <li>• ROI-Kalkulation</li>
+                <li>• Wettbewerbspositionierung</li>
+                <li>• Langzeit-Strategieempfehlungen</li>
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-semibold text-blue-700">📊 Inhalt (20+ Seiten):</h4>
+              <h4 className="font-semibold text-blue-700">📊 Ausführlicher Inhalt:</h4>
               <ul className="text-sm space-y-1 text-blue-600">
-                <li>• Vollständige SEO-Analyse</li>
-                <li>• Detaillierte Konkurrenzanalyse</li>
-                <li>• Performance-Metriken</li>
-                <li>• Mobile & Social Media</li>
-                <li>• Handlungsempfehlungen</li>
+                <li>• Marktpositions-Analyse</li>
+                <li>• Konkurrenz-Benchmarking</li>
+                <li>• Keyword-Tiefenanalyse</li>
+                <li>• Performance-Optimierung</li>
+                <li>• Priorisierte Maßnahmenpläne</li>
               </ul>
             </div>
           </div>
@@ -428,7 +572,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
               className="flex items-center gap-2"
             >
               <FileText className="h-4 w-4" />
-              HTML-Report generieren
+              Ausführlichen Report generieren
             </Button>
             <Button 
               variant="outline"
@@ -446,13 +590,23 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">💡 Anleitung:</h4>
-            <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-              <li>Auf "HTML-Report generieren" klicken</li>
-              <li>Neues Fenster öffnet sich mit dem vollständigen Report</li>
-              <li>Strg+P drücken oder über Browser-Menü drucken</li>
-              <li>Als PDF speichern oder direkt drucken</li>
-            </ol>
+            <h4 className="font-semibold text-blue-800 mb-2">📋 Inhalt des ausführlichen Reports:</h4>
+            <div className="text-sm text-blue-700 grid grid-cols-1 md:grid-cols-2 gap-2">
+              <ul className="space-y-1">
+                <li>• Executive Summary</li>
+                <li>• SEO-Detailanalyse</li>
+                <li>• Performance-Metriken</li>
+                <li>• Keyword-Matrix</li>
+                <li>• SWOT-Analyse</li>
+              </ul>
+              <ul className="space-y-1">
+                <li>• Wettbewerbspositionierung</li>
+                <li>• ROI-Kalkulation</li>
+                <li>• Mobile & Social Media</li>
+                <li>• Rechtliche Compliance</li>
+                <li>• 3-Stufen-Maßnahmenplan</li>
+              </ul>
+            </div>
           </div>
         </CardContent>
       </Card>
