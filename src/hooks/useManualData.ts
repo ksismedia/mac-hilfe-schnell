@@ -11,6 +11,8 @@ export interface ManualSocialData {
   instagramUrl: string;
   facebookFollowers: string;
   instagramFollowers: string;
+  facebookLastPost: string;
+  instagramLastPost: string;
 }
 
 export const useManualData = () => {

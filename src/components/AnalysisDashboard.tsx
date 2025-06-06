@@ -96,13 +96,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         facebook: {
           found: !!manualSocialData.facebookUrl,
           followers: parseInt(manualSocialData.facebookFollowers) || enhanced.socialMedia.facebook.followers,
-          lastPost: enhanced.socialMedia.facebook.lastPost,
+          lastPost: manualSocialData.facebookLastPost || enhanced.socialMedia.facebook.lastPost,
           engagement: enhanced.socialMedia.facebook.engagement
         },
         instagram: {
           found: !!manualSocialData.instagramUrl,
           followers: parseInt(manualSocialData.instagramFollowers) || enhanced.socialMedia.instagram.followers,
-          lastPost: enhanced.socialMedia.instagram.lastPost,
+          lastPost: manualSocialData.instagramLastPost || enhanced.socialMedia.instagram.lastPost,
           engagement: enhanced.socialMedia.instagram.engagement
         }
       };
@@ -429,6 +429,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <PDFExport 
               businessData={businessData} 
               realData={enhancedData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
             />
           </TabsContent>
         </Tabs>

@@ -36,7 +36,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
       facebookUrl: manualData?.facebookUrl || '',
       instagramUrl: manualData?.instagramUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
-      instagramFollowers: manualData?.instagramFollowers || ''
+      instagramFollowers: manualData?.instagramFollowers || '',
+      facebookLastPost: manualData?.facebookLastPost || '',
+      instagramLastPost: manualData?.instagramLastPost || ''
     }
   });
 
@@ -56,7 +58,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
       facebookUrl: '',
       instagramUrl: '',
       facebookFollowers: '',
-      instagramFollowers: ''
+      instagramFollowers: '',
+      facebookLastPost: '',
+      instagramLastPost: ''
     });
     if (onManualDataChange) {
       onManualDataChange(null);
@@ -124,44 +128,74 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
               <div className="bg-blue-50 rounded-lg p-4 mb-4">
                 <h4 className="font-semibold text-blue-900 mb-2">Social Media Kanäle eingeben</h4>
                 <p className="text-sm text-blue-800">
-                  Tragen Sie hier Ihre Social Media URLs und Follower-Zahlen ein:
+                  Tragen Sie hier Ihre Social Media URLs, Follower-Zahlen und letzte Posts ein:
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="facebookUrl">Facebook URL</Label>
-                  <Input
-                    id="facebookUrl"
-                    placeholder="https://www.facebook.com/ihr-unternehmen"
-                    {...form.register('facebookUrl')}
-                  />
+              <div className="grid grid-cols-1 gap-6">
+                {/* Facebook Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-blue-700">📘 Facebook</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="facebookUrl">Facebook URL</Label>
+                      <Input
+                        id="facebookUrl"
+                        placeholder="https://www.facebook.com/ihr-unternehmen"
+                        {...form.register('facebookUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="facebookFollowers">Follower</Label>
+                      <Input
+                        id="facebookFollowers"
+                        placeholder="z.B. 250"
+                        {...form.register('facebookFollowers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="facebookLastPost">Letzter Post</Label>
+                      <Input
+                        id="facebookLastPost"
+                        placeholder="z.B. vor 3 Tagen"
+                        {...form.register('facebookLastPost')}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="facebookFollowers">Facebook Follower</Label>
-                  <Input
-                    id="facebookFollowers"
-                    placeholder="z.B. 250"
-                    {...form.register('facebookFollowers')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="instagramUrl">Instagram URL</Label>
-                  <Input
-                    id="instagramUrl"
-                    placeholder="https://www.instagram.com/ihr-unternehmen"
-                    {...form.register('instagramUrl')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="instagramFollowers">Instagram Follower</Label>
-                  <Input
-                    id="instagramFollowers"
-                    placeholder="z.B. 180"
-                    {...form.register('instagramFollowers')}
-                  />
+
+                {/* Instagram Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-purple-700">📷 Instagram</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="instagramUrl">Instagram URL</Label>
+                      <Input
+                        id="instagramUrl"
+                        placeholder="https://www.instagram.com/ihr-unternehmen"
+                        {...form.register('instagramUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="instagramFollowers">Follower</Label>
+                      <Input
+                        id="instagramFollowers"
+                        placeholder="z.B. 180"
+                        {...form.register('instagramFollowers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="instagramLastPost">Letzter Post</Label>
+                      <Input
+                        id="instagramLastPost"
+                        placeholder="z.B. vor 1 Woche"
+                        {...form.register('instagramLastPost')}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+              
               <div className="flex gap-3 pt-4">
                 <Button 
                   type="submit"
@@ -219,7 +253,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{socialData.facebook.lastPost}</span>
+                          <span className="font-medium">
+                            {hasManualData && manualData?.facebookLastPost ? manualData.facebookLastPost : socialData.facebook.lastPost}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>
@@ -269,7 +305,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{socialData.instagram.lastPost}</span>
+                          <span className="font-medium">
+                            {hasManualData && manualData?.instagramLastPost ? manualData.instagramLastPost : socialData.instagram.lastPost}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>

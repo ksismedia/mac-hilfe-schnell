@@ -14,6 +14,8 @@ interface PDFExportProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
+  manualImprintData?: any;
+  manualSocialData?: any;
 }
 
 interface ImprovementAction {
@@ -26,9 +28,50 @@ interface ImprovementAction {
   description: string;
 }
 
-const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
+const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImprintData, manualSocialData }) => {
   const [activeTab, setActiveTab] = useState('summary');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Helper-Funktion für saubere Textaufbereitung
+  const cleanText = (text: string): string => {
+    return text
+      .replace(/[^\x00-\x7F]/g, "") // Entferne Nicht-ASCII Zeichen
+      .replace(/ä/g, "ae")
+      .replace(/ö/g, "oe") 
+      .replace(/ü/g, "ue")
+      .replace(/ß/g, "ss")
+      .replace(/Ä/g, "Ae")
+      .replace(/Ö/g, "Oe")
+      .replace(/Ü/g, "Ue")
+      .trim();
+  };
+
+  // Helper-Funktion für automatische Textumbrüche
+  const addTextWithWrap = (pdf: any, text: string, x: number, y: number, maxWidth: number = 160): number => {
+    const words = cleanText(text).split(' ');
+    let line = '';
+    let currentY = y;
+    
+    for (const word of words) {
+      const testLine = line + word + ' ';
+      const textWidth = pdf.getTextWidth(testLine);
+      
+      if (textWidth > maxWidth && line !== '') {
+        pdf.text(line.trim(), x, currentY);
+        line = word + ' ';
+        currentY += 6;
+      } else {
+        line = testLine;
+      }
+    }
+    
+    if (line.trim()) {
+      pdf.text(line.trim(), x, currentY);
+      currentY += 6;
+    }
+    
+    return currentY;
+  };
 
   const handleExport = async () => {
     setIsGenerating(true);
@@ -38,7 +81,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       
       const pdf = new jsPDF();
       let yPosition = 20;
-      const pageHeight = 280; // Maximale Y-Position pro Seite
+      const pageHeight = 280;
       
       // Helper function für neue Seite
       const checkNewPage = (neededSpace: number = 15) => {
@@ -50,14 +93,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         return false;
       };
 
-      // Titel und Firmeninfo
+      // Titel und Firmeninfo mit verbesserter Formatierung
       pdf.setFontSize(24);
-      pdf.text('DIGITAL MARKETING ANALYSE', 20, yPosition);
+      pdf.text(cleanText('DIGITAL MARKETING ANALYSE'), 20, yPosition);
       yPosition += 15;
       
       pdf.setFontSize(18);
-      pdf.text(realData.company.name, 20, yPosition);
-      yPosition += 20;
+      yPosition = addTextWithWrap(pdf, realData.company.name, 20, yPosition, 160);
+      yPosition += 10;
       
       // Executive Summary Box
       pdf.setDrawColor(66, 139, 202);
@@ -75,12 +118,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       pdf.setFontSize(12);
       pdf.text(`Gesamtbewertung: ${overallScore}/100 Punkte (${getScoreRating(overallScore)})`, 20, yPosition);
       yPosition += 8;
-      pdf.text(`Website: ${realData.company.url}`, 20, yPosition);
-      yPosition += 8;
-      pdf.text(`Branche: ${getIndustryName(businessData.industry)}`, 20, yPosition);
-      yPosition += 20;
+      yPosition = addTextWithWrap(pdf, `Website: ${realData.company.url}`, 20, yPosition, 160);
+      yPosition = addTextWithWrap(pdf, `Branche: ${getIndustryName(businessData.industry)}`, 20, yPosition, 160);
+      yPosition += 15;
 
-      // Unternehmensdaten - Detaillierter
+      // Unternehmensdaten mit verbesserter Formatierung
       checkNewPage(50);
       pdf.setFontSize(16);
       pdf.text('UNTERNEHMENSDATEN', 20, yPosition);
@@ -88,22 +130,54 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       
       pdf.setFontSize(11);
       const companyData = [
-        `Firmenname: ${realData.company.name}`,
-        `Website: ${realData.company.url}`,
-        `Adresse: ${realData.company.address}`,
-        `Telefon: ${realData.company.phone || 'Nicht verfügbar'}`,
-        `Branche: ${getIndustryName(businessData.industry)}`,
-        `Google Bewertungen: ${realData.reviews.google.count} (⌀ ${realData.reviews.google.rating}/5)`,
-        `Social Media: Facebook ${realData.socialMedia.facebook.found ? '✓' : '✗'}, Instagram ${realData.socialMedia.instagram.found ? '✓' : '✗'}`
+        `Firmenname: ${cleanText(realData.company.name)}`,
+        `Website: ${cleanText(realData.company.url)}`,
+        `Adresse: ${cleanText(realData.company.address)}`,
+        `Telefon: ${cleanText(realData.company.phone || 'Nicht verfugbar')}`,
+        `Branche: ${cleanText(getIndustryName(businessData.industry))}`,
+        `Google Bewertungen: ${realData.reviews.google.count} (Durchschnitt ${realData.reviews.google.rating}/5)`,
+        `Social Media: Facebook ${realData.socialMedia.facebook.found ? 'vorhanden' : 'nicht gefunden'}, Instagram ${realData.socialMedia.instagram.found ? 'vorhanden' : 'nicht gefunden'}`
       ];
       
       companyData.forEach(line => {
-        pdf.text(line, 20, yPosition);
-        yPosition += 7;
+        yPosition = addTextWithWrap(pdf, line, 20, yPosition, 160);
+        yPosition += 2;
       });
       yPosition += 10;
 
-      // Detaillierte Bewertungsübersicht
+      // Erweiterte Social Media Analyse falls manuelle Daten vorhanden
+      if (manualSocialData) {
+        checkNewPage(40);
+        pdf.setFontSize(16);
+        pdf.text('SOCIAL MEDIA ANALYSE (Manuell eingegeben)', 20, yPosition);
+        yPosition += 15;
+        
+        pdf.setFontSize(12);
+        if (manualSocialData.facebookUrl) {
+          pdf.text('Facebook:', 20, yPosition);
+          yPosition += 8;
+          pdf.setFontSize(10);
+          yPosition = addTextWithWrap(pdf, `URL: ${manualSocialData.facebookUrl}`, 25, yPosition, 155);
+          pdf.text(`Follower: ${manualSocialData.facebookFollowers || 'nicht angegeben'}`, 25, yPosition);
+          yPosition += 6;
+          pdf.text(`Letzter Post: ${manualSocialData.facebookLastPost || 'nicht angegeben'}`, 25, yPosition);
+          yPosition += 12;
+        }
+        
+        if (manualSocialData.instagramUrl) {
+          pdf.setFontSize(12);
+          pdf.text('Instagram:', 20, yPosition);
+          yPosition += 8;
+          pdf.setFontSize(10);
+          yPosition = addTextWithWrap(pdf, `URL: ${manualSocialData.instagramUrl}`, 25, yPosition, 155);
+          pdf.text(`Follower: ${manualSocialData.instagramFollowers || 'nicht angegeben'}`, 25, yPosition);
+          yPosition += 6;
+          pdf.text(`Letzter Post: ${manualSocialData.instagramLastPost || 'nicht angegeben'}`, 25, yPosition);
+          yPosition += 12;
+        }
+      }
+
+      // Detaillierte Bewertungsübersicht mit besserer Formatierung
       checkNewPage(80);
       pdf.setFontSize(16);
       pdf.text('DETAILLIERTE BEWERTUNG', 20, yPosition);
@@ -114,18 +188,18 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         { name: 'Ladegeschwindigkeit', score: realData.performance.score, details: 'PageSpeed, Core Web Vitals, Optimierung' },
         { name: 'Mobile Optimierung', score: realData.mobile.overallScore, details: 'Responsive Design, Mobile Usability' },
         { name: 'Rechtliche Compliance', score: realData.imprint.score, details: 'Impressum, Datenschutz, DSGVO' },
-        { name: 'Online Reputation', score: realData.reviews.google.count > 10 ? 85 : 45, details: 'Google Bewertungen, Online-Präsenz' },
-        { name: 'Social Media Präsenz', score: (realData.socialMedia.facebook.found ? 50 : 0) + (realData.socialMedia.instagram.found ? 50 : 0), details: 'Facebook, Instagram, Social Proof' }
+        { name: 'Online Reputation', score: realData.reviews.google.count > 10 ? 85 : 45, details: 'Google Bewertungen, Online-Prasenz' },
+        { name: 'Social Media Prasenz', score: (realData.socialMedia.facebook.found ? 50 : 0) + (realData.socialMedia.instagram.found ? 50 : 0), details: 'Facebook, Instagram, Social Proof' }
       ];
       
       categories.forEach(cat => {
-        checkNewPage(20);
+        checkNewPage(25);
         pdf.setFontSize(12);
-        pdf.text(`${cat.name}: ${cat.score}/100 (${getScoreRating(cat.score)})`, 20, yPosition);
+        pdf.text(`${cleanText(cat.name)}: ${cat.score}/100 (${getScoreRating(cat.score)})`, 20, yPosition);
         yPosition += 8;
         pdf.setFontSize(10);
-        pdf.text(`   ${cat.details}`, 25, yPosition);
-        yPosition += 12;
+        yPosition = addTextWithWrap(pdf, `   ${cat.details}`, 25, yPosition, 150);
+        yPosition += 8;
       });
 
       // Neue Seite für Keywords
@@ -523,7 +597,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         yPosition += 6;
       });
 
-      // Footer auf allen Seiten
+      // Footer auf allen Seiten mit sauberer Formatierung
       const pageCount = pdf.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
@@ -533,8 +607,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         pdf.text(new Date().toLocaleDateString('de-DE'), 20, 285);
       }
       
-      // PDF speichern
-      const fileName = `Detaillierte_Marketing_Analyse_${realData.company.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+      // PDF speichern mit sauberem Dateinamen
+      const cleanCompanyName = cleanText(realData.company.name).replace(/\s+/g, '_');
+      const fileName = `Marketing_Analyse_${cleanCompanyName}_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
       
       console.log('Enhanced PDF successfully generated:', fileName, 'Total pages:', pdf.getNumberOfPages());
