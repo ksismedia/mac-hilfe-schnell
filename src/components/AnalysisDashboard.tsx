@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
 import { Separator } from '@/components/ui/separator';
-import { RealBusinessData, analyzeRealBusiness } from '@/services/BusinessAnalysisService';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import OverallRating from '@/components/analysis/OverallRating';
 import SEOAnalysis from '@/components/analysis/SEOAnalysis';
 import PerformanceAnalysis from '@/components/analysis/PerformanceAnalysis';
@@ -44,15 +45,100 @@ interface ManualSocialData {
   instagramLastPost: string;
 }
 
+// Mock function to simulate business analysis
+const mockAnalyzeRealBusiness = async (url: string, address: string, industry: string): Promise<RealBusinessData> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Return mock data structure
+  return {
+    company: {
+      name: "Test Unternehmen",
+      url: url,
+      address: address,
+      industry: industry
+    },
+    seo: {
+      score: 85,
+      titleTag: "Professionelle Dienstleistungen",
+      metaDescription: "Hochwertige Dienstleistungen in Ihrer Nähe",
+      headings: {
+        h1: ["Hauptüberschrift"],
+        h2: ["Sektion 1", "Sektion 2"],
+        h3: ["Untersektion 1", "Untersektion 2"]
+      },
+      altTags: {
+        total: 10,
+        withAlt: 8
+      }
+    },
+    performance: {
+      score: 75,
+      loadTime: 2.1,
+      lcp: 1.8,
+      fid: 45,
+      cls: 0.05
+    },
+    mobile: {
+      overallScore: 80,
+      pageSpeedMobile: 72,
+      pageSpeedDesktop: 85,
+      responsive: true,
+      touchFriendly: true,
+      issues: []
+    },
+    keywords: [
+      { keyword: "handwerker", found: true, volume: "hoch" },
+      { keyword: "reparatur", found: false, volume: "mittel" }
+    ],
+    socialMedia: {
+      overallScore: 60,
+      facebook: {
+        found: false,
+        followers: "0",
+        lastPost: "nie",
+        engagement: "niedrig"
+      },
+      instagram: {
+        found: false,
+        followers: "0",
+        lastPost: "nie",
+        engagement: "niedrig"
+      }
+    },
+    reviews: {
+      google: {
+        count: 15,
+        rating: 4.2
+      }
+    },
+    competitors: [],
+    imprint: {
+      found: true,
+      score: 90
+    },
+    socialProof: {
+      overallScore: 70
+    },
+    workplace: {
+      overallScore: 65
+    }
+  };
+};
+
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
 
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
-    queryFn: () => analyzeRealBusiness(businessData.url, businessData.address, businessData.industry),
+    queryFn: () => mockAnalyzeRealBusiness(businessData.url, businessData.address, businessData.industry),
     refetchOnWindowFocus: false,
     retry: 2,
   });
+
+  const handleRefetch = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -80,7 +166,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <p className="text-red-500">{error.message}</p>
-            <Button onClick={refetch}>Erneut versuchen</Button>
+            <Button onClick={handleRefetch}>Erneut versuchen</Button>
           </CardContent>
         </Card>
       </div>
@@ -110,43 +196,35 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <TabsTrigger value="local-seo">Lokales SEO</TabsTrigger>
             <TabsTrigger value="content">Inhalt</TabsTrigger>
             <TabsTrigger value="social-media">Social Media</TabsTrigger>
-            {/* <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
-            <TabsTrigger value="conversion">Conversion</TabsTrigger>
-            <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
-            <TabsTrigger value="imprint">Impressum</TabsTrigger>
-            <TabsTrigger value="industry">Branche</TabsTrigger>
-            <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
-            <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-            <TabsTrigger value="google-reviews">Google Reviews</TabsTrigger> */}
             <TabsTrigger value="export">Export</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <OverallRating realData={realData} />
+            <OverallRating businessData={businessData} realData={realData} />
           </TabsContent>
 
           <TabsContent value="seo" className="space-y-6">
-            <SEOAnalysis realData={realData} />
+            <SEOAnalysis url={businessData.url} realData={realData} />
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
-            <PerformanceAnalysis realData={realData} />
+            <PerformanceAnalysis url={businessData.url} realData={realData} />
           </TabsContent>
 
           <TabsContent value="mobile" className="space-y-6">
-            <MobileOptimization realData={realData} />
+            <MobileOptimization url={businessData.url} realData={realData} />
           </TabsContent>
 
           <TabsContent value="keywords" className="space-y-6">
-            <KeywordAnalysis realData={realData} />
+            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
           </TabsContent>
 
           <TabsContent value="local-seo" className="space-y-6">
-            <LocalSEO businessData={businessData} realData={realData} />
+            <LocalSEO businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">
-            <ContentAnalysis realData={realData} />
+            <ContentAnalysis />
           </TabsContent>
 
           <TabsContent value="social-media" className="space-y-6">
