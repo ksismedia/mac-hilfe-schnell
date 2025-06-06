@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,11 +56,23 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   };
 
   useEffect(() => {
-    // Bei jeder neuen Analyse API-Key erneut prüfen
+    // Bei jeder neuen Analyse oder beim ersten Laden API-Key prüfen
+    console.log('AnalysisDashboard mounted - checking API key');
     checkApiKeyAndAnalyze();
+  }, []); // Leer, damit es nur beim Mount ausgeführt wird
+
+  useEffect(() => {
+    // Wenn businessData sich ändert, erneut prüfen
+    if (businessData.url && businessData.address) {
+      console.log('BusinessData changed - rechecking API key');
+      checkApiKeyAndAnalyze();
+    }
   }, [businessData]);
 
   const checkApiKeyAndAnalyze = async () => {
+    console.log('Checking API key...');
+    setIsLoading(true);
+    
     // Prüfe ob API-Key vorhanden und funktionsfähig ist
     const apiKey = GoogleAPIService.getApiKey();
     
@@ -81,6 +94,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         const data = await testResponse.json();
         if (data.status === 'OK') {
           console.log('API-Key ist gültig - starte Analyse');
+          setNeedsApiKey(false);
           analyzeRealData();
         } else {
           console.log('API-Key ungültig:', data.status);
@@ -110,6 +124,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   };
 
   const handleApiKeySet = () => {
+    console.log('API-Key wurde gesetzt - starte Analyse');
     setNeedsApiKey(false);
     analyzeRealData();
   };
