@@ -212,7 +212,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="conversion" className="space-y-6">
-            <ConversionOptimization url={businessData.url} realData={realData} />
+            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
           </TabsContent>
 
           <TabsContent value="workplace" className="space-y-6">
