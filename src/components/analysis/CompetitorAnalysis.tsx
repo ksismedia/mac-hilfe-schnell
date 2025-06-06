@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { useManualData } from '@/hooks/useManualData';
+import CompetitorServicesInput from './CompetitorServicesInput';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -13,6 +14,8 @@ interface CompetitorAnalysisProps {
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry, realData }) => {
+  const { manualCompetitorServices, updateCompetitorServices } = useManualData();
+
   const extractCityFromAddress = (address: string) => {
     const parts = address.split(',');
     if (parts.length > 1) {
@@ -150,7 +153,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
         </CardContent>
       </Card>
 
-      {/* Detaillierte Konkurrenzanalyse */}
+      {/* Detaillierte Konkurrenzanalyse mit Leistungen */}
       <Card>
         <CardHeader>
           <CardTitle>Konkurrenzanalyse für {city}</CardTitle>
@@ -208,7 +211,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <span className="text-yellow-500">★</span>
@@ -227,6 +230,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                     
                     <Progress value={competitor.rating * 20} className="w-full" />
                   </div>
+
+                  {/* Leistungen-Eingabe */}
+                  <CompetitorServicesInput
+                    competitorName={competitor.name}
+                    existingServices={manualCompetitorServices[competitor.name] || []}
+                    onServicesChange={(services) => updateCompetitorServices(competitor.name, services)}
+                  />
                 </div>
               ))}
             </div>
