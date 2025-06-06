@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -49,125 +50,30 @@ interface ManualImprintData {
   elements: string[];
 }
 
-// Mock function to simulate business analysis
-const mockAnalyzeRealBusiness = async (url: string, address: string, industry: string): Promise<RealBusinessData> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Return mock data structure
-  return {
-    company: {
-      name: "Test Unternehmen",
-      url: url,
-      address: address,
-      industry: industry
-    },
-    seo: {
-      score: 85,
-      titleTag: "Professionelle Dienstleistungen",
-      metaDescription: "Hochwertige Dienstleistungen in Ihrer Nähe",
-      headings: {
-        h1: ["Hauptüberschrift"],
-        h2: ["Sektion 1", "Sektion 2"],
-        h3: ["Untersektion 1", "Untersektion 2"]
-      },
-      altTags: {
-        total: 10,
-        withAlt: 8
-      }
-    },
-    performance: {
-      score: 75,
-      loadTime: 2.1,
-      lcp: 1.8,
-      fid: 45,
-      cls: 0.05
-    },
-    mobile: {
-      overallScore: 80,
-      pageSpeedMobile: 72,
-      pageSpeedDesktop: 85,
-      responsive: true,
-      touchFriendly: true,
-      issues: []
-    },
-    keywords: [
-      { keyword: "handwerker", found: true, volume: 1200, position: 5 },
-      { keyword: "reparatur", found: false, volume: 800, position: 0 }
-    ],
-    socialMedia: {
-      overallScore: 60,
-      facebook: {
-        found: false,
-        followers: 0,
-        lastPost: "nie",
-        engagement: "niedrig"
-      },
-      instagram: {
-        found: false,
-        followers: 0,
-        lastPost: "nie",
-        engagement: "niedrig"
-      }
-    },
-    reviews: {
-      google: {
-        count: 15,
-        rating: 4.2,
-        recent: [
-          {
-            author: "Max Mustermann",
-            rating: 5,
-            text: "Sehr guter Service!",
-            date: "2024-01-15"
-          }
-        ]
-      }
-    },
-    competitors: [],
-    imprint: {
-      found: true,
-      score: 90,
-      completeness: 85,
-      foundElements: ["Geschäftsführer", "Adresse", "Kontakt"],
-      missingElements: ["USt-IdNr"]
-    },
-    socialProof: {
-      overallScore: 70,
-      testimonials: 5,
-      certifications: [
-        { name: "Handwerkskammer", verified: true, visible: true }
-      ],
-      awards: []
-    },
-    workplace: {
-      overallScore: 65,
-      kununu: {
-        found: false,
-        rating: 0,
-        reviews: 0
-      },
-      glassdoor: {
-        found: false,
-        rating: 0,
-        reviews: 0
-      }
-    }
-  };
-};
-
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
 
+  console.log('AnalysisDashboard: Starting analysis for:', businessData.url);
+
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
-    queryFn: () => BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry),
+    queryFn: async () => {
+      console.log('useQuery: Calling BusinessAnalysisService.analyzeWebsite with:', {
+        url: businessData.url,
+        address: businessData.address,
+        industry: businessData.industry
+      });
+      const result = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+      console.log('useQuery: Analysis completed, result:', result);
+      return result;
+    },
     refetchOnWindowFocus: false,
     retry: 2,
   });
 
   const handleRefetch = () => {
+    console.log('Manual refetch triggered');
     refetch();
   };
 
@@ -188,6 +94,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   }
 
   if (error) {
+    console.error('Analysis error:', error);
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
         <Card className="max-w-md w-full">
@@ -203,6 +110,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       </div>
     );
   }
+
+  console.log('AnalysisDashboard: Rendering with data:', realData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
