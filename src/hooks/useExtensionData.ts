@@ -58,54 +58,41 @@ interface ExtensionMessage {
   data: ExtensionWebsiteData;
 }
 
-// Chrome API Typen für TypeScript
-declare global {
-  interface Window {
-    chrome?: {
-      runtime?: {
-        onMessage?: {
-          addListener: (callback: (message: any, sender: any, sendResponse: any) => void) => void;
-          removeListener: (callback: (message: any, sender: any, sendResponse: any) => void) => void;
-        };
-      };
-    };
-  }
-}
-
 export const useExtensionData = () => {
   const [extensionData, setExtensionData] = useState<ExtensionWebsiteData | null>(null);
   const [isFromExtension, setIsFromExtension] = useState(false);
 
   useEffect(() => {
-    // 1. Verbesserte URL-Parameter-Prüfung
-    const checkUrlParams = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const extensionDataParam = urlParams.get('extensionData');
-      
-      if (extensionDataParam) {
-        try {
-          const parsedPayload = JSON.parse(decodeURIComponent(extensionDataParam));
-          console.log('Extension-Payload aus URL empfangen:', parsedPayload);
+    console.log('useExtensionData: Hook initialisiert');
+
+    // 1. Überprüfe localStorage sofort beim Laden
+    const checkLocalStorage = () => {
+      try {
+        const storedData = localStorage.getItem('seo_extension_data');
+        console.log('LocalStorage Check:', !!storedData);
+        
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
           
-          if (parsedPayload.type === 'EXTENSION_WEBSITE_DATA' && 
-              parsedPayload.source === 'seo-analyzer-extension' && 
-              parsedPayload.data) {
-            console.log('✓ Gültige Extension-Daten geladen:', parsedPayload.data);
-            setExtensionData(parsedPayload.data);
+          if (parsedData.timestamp > fiveMinutesAgo) {
+            console.log('✓ Extension-Daten aus localStorage geladen:', parsedData.data);
+            setExtensionData(parsedData.data);
             setIsFromExtension(true);
-            
-            // Säubere URL nach dem Laden
-            window.history.replaceState({}, document.title, window.location.pathname);
+            localStorage.removeItem('seo_extension_data');
             return true;
+          } else {
+            console.log('Extension-Daten zu alt, lösche sie');
+            localStorage.removeItem('seo_extension_data');
           }
-        } catch (error) {
-          console.error('Fehler beim Parsen der Extension-URL-Daten:', error);
         }
+      } catch (error) {
+        console.warn('Fehler beim Laden aus localStorage:', error);
       }
       return false;
     };
 
-    // 2. Verbesserte Message-Listener für Extension-Kommunikation
+    // 2. PostMessage-Listener für Extension-Kommunikation
     const handleExtensionMessage = (event: MessageEvent) => {
       console.log('PostMessage erhalten:', event.data);
       
@@ -118,76 +105,42 @@ export const useExtensionData = () => {
       }
     };
 
-    // 3. Chrome Extension Message-Listener
-    const handleChromeMessage = (message: any, sender: any, sendResponse: any) => {
-      console.log('Chrome Extension Message erhalten:', message);
+    // 3. Polling für localStorage (falls die Daten erst später ankommen)
+    let pollCount = 0;
+    const maxPolls = 10; // Max 10 Sekunden warten
+    
+    const pollForData = () => {
+      if (pollCount >= maxPolls) {
+        console.log('Polling beendet - keine Extension-Daten gefunden');
+        return;
+      }
       
-      if (message?.type === 'EXTENSION_WEBSITE_DATA' && 
-          message?.source === 'seo-analyzer-extension' &&
-          message?.data) {
-        console.log('✓ Extension-Daten über Chrome Message API erhalten:', message.data);
-        setExtensionData(message.data);
-        setIsFromExtension(true);
-        
-        if (sendResponse) {
-          sendResponse({ received: true, success: true });
-        }
+      if (!extensionData && checkLocalStorage()) {
+        console.log('Extension-Daten via Polling gefunden');
+        return;
       }
+      
+      pollCount++;
+      setTimeout(pollForData, 1000);
     };
 
-    // 4. Überprüfe auch localStorage für persistente Daten
-    const checkLocalStorage = () => {
-      try {
-        const storedData = localStorage.getItem('seo_extension_data');
-        if (storedData) {
-          const parsedData = JSON.parse(storedData);
-          // Nur verwenden wenn weniger als 5 Minuten alt
-          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-          if (parsedData.timestamp > fiveMinutesAgo) {
-            console.log('✓ Extension-Daten aus localStorage geladen:', parsedData.data);
-            setExtensionData(parsedData.data);
-            setIsFromExtension(true);
-            // Lösche alte Daten
-            localStorage.removeItem('seo_extension_data');
-            return true;
-          } else {
-            localStorage.removeItem('seo_extension_data');
-          }
-        }
-      } catch (error) {
-        console.warn('Fehler beim Laden aus localStorage:', error);
-      }
-      return false;
-    };
-
-    // Führe alle Checks durch
-    const urlSuccess = checkUrlParams();
-    if (!urlSuccess) {
-      checkLocalStorage();
-    }
+    // Starte sofortigen Check
+    const immediateSuccess = checkLocalStorage();
     
     // Event Listeners registrieren
     window.addEventListener('message', handleExtensionMessage);
     
-    // Chrome Extension API (falls verfügbar)
-    if (typeof window !== 'undefined' && 
-        window.chrome && 
-        window.chrome.runtime && 
-        window.chrome.runtime.onMessage) {
-      window.chrome.runtime.onMessage.addListener(handleChromeMessage);
+    // Starte Polling nur wenn keine Daten sofort gefunden wurden
+    if (!immediateSuccess) {
+      console.log('Starte Polling für Extension-Daten...');
+      setTimeout(pollForData, 1000);
     }
 
     // Cleanup
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
-      if (typeof window !== 'undefined' && 
-          window.chrome && 
-          window.chrome.runtime && 
-          window.chrome.runtime.onMessage) {
-        window.chrome.runtime.onMessage.removeListener(handleChromeMessage);
-      }
     };
-  }, []);
+  }, [extensionData]);
 
   const clearExtensionData = () => {
     setExtensionData(null);

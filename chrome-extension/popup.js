@@ -32,55 +32,54 @@ async function displayCurrentUrl() {
   }
 }
 
-// Verbesserte Lovable App-Öffnung mit besserer Datenübertragung
+// Verbesserte Lovable App-Öffnung
 async function openLovableApp(websiteData = null) {
   console.log('Öffne Lovable App mit Daten:', websiteData);
   
   try {
-    let targetUrl = LOVABLE_APP_URL;
-    
-    // Wenn Website-Daten vorhanden sind, füge sie als URL-Parameter hinzu
-    if (websiteData && websiteData.url) {
-      const extensionPayload = {
-        type: 'EXTENSION_WEBSITE_DATA',
-        source: 'seo-analyzer-extension',
-        timestamp: Date.now(),
-        data: websiteData
-      };
-      
-      // Encode als URL-Parameter für bessere Kompatibilität
-      const encodedData = encodeURIComponent(JSON.stringify(extensionPayload));
-      targetUrl = `${LOVABLE_APP_URL}?extensionData=${encodedData}`;
-      
-      console.log('Übertrage Daten für:', websiteData.url);
-      console.log('Payload size:', JSON.stringify(extensionPayload).length, 'chars');
-    }
-    
-    console.log('Öffne URL:', targetUrl);
-    
     // Erstelle neuen Tab mit der Lovable App
     const newTab = await chrome.tabs.create({ 
-      url: targetUrl,
+      url: LOVABLE_APP_URL,
       active: true
     });
     
-    // Warte kurz, dann sende auch eine Message (Backup-Methode)
+    console.log('Lovable Tab erstellt:', newTab.id);
+    
+    // Warte bis Tab geladen ist, dann sende Daten
     if (websiteData && newTab.id) {
+      // Warte etwas länger damit die App vollständig geladen ist
       setTimeout(async () => {
         try {
-          await chrome.tabs.sendMessage(newTab.id, {
+          const extensionPayload = {
             type: 'EXTENSION_WEBSITE_DATA',
             source: 'seo-analyzer-extension',
+            timestamp: Date.now(),
             data: websiteData
+          };
+          
+          // Speichere Daten im localStorage des neuen Tabs
+          await chrome.scripting.executeScript({
+            target: { tabId: newTab.id },
+            func: (payload) => {
+              console.log('Extension: Speichere Daten in localStorage:', payload);
+              localStorage.setItem('seo_extension_data', JSON.stringify({
+                data: payload.data,
+                timestamp: payload.timestamp
+              }));
+              
+              // Sende auch PostMessage
+              window.postMessage(payload, '*');
+            },
+            args: [extensionPayload]
           });
-          console.log('Backup-Message gesendet');
+          
+          console.log('Daten erfolgreich übertragen für:', websiteData.url);
         } catch (error) {
-          console.log('Backup-Message konnte nicht gesendet werden:', error);
+          console.error('Fehler beim Datenübertrag:', error);
         }
-      }, 2000);
+      }, 3000);
     }
     
-    console.log('Lovable Tab erstellt:', newTab.id);
     return { success: true, tabId: newTab.id };
     
   } catch (error) {
