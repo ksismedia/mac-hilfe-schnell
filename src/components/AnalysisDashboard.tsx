@@ -41,8 +41,9 @@ interface AnalysisDashboardProps {
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [needsApiKey, setNeedsApiKey] = useState(true); // Standardmäßig auf true setzen
+  const [isLoading, setIsLoading] = useState(false);
+  const [needsApiKey, setNeedsApiKey] = useState(true); // Immer mit API-Key-Abfrage starten
+  const [hasValidatedKey, setHasValidatedKey] = useState(false);
   const { toast } = useToast();
 
   const industryNames = {
@@ -54,34 +55,39 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     planungsbuero: 'Planungsbüro Versorgungstechnik'
   };
 
-  // Bei jeder neuen Analyse immer API-Key prüfen
+  // Bei jeder neuen businessData-Änderung den API-Key neu validieren
   useEffect(() => {
-    console.log('AnalysisDashboard mounted - resetting and checking API key');
-    // Reset der Komponente für neue Analyse
+    console.log('BusinessData changed - forcing API key validation');
+    console.log('BusinessData:', businessData);
+    
+    // Komplett zurücksetzen für neue Analyse
     setRealData(null);
     setNeedsApiKey(true);
-    setIsLoading(true);
+    setHasValidatedKey(false);
+    setIsLoading(false);
     
-    // API-Key prüfen
-    checkApiKeyAndAnalyze();
-  }, [businessData.url, businessData.address, businessData.industry]); // Abhängig von allen businessData Feldern
+    // API-Key aus localStorage entfernen, um Neuvalidierung zu erzwingen
+    localStorage.removeItem('google_api_key');
+    GoogleAPIService.setApiKey('');
+    
+  }, [businessData.url, businessData.address, businessData.industry]);
 
-  const checkApiKeyAndAnalyze = async () => {
-    console.log('Checking API key...');
+  const handleApiKeySet = async () => {
+    console.log('API-Key wurde gesetzt - validiere und starte Analyse');
     
-    // Prüfe ob API-Key vorhanden und funktionsfähig ist
     const apiKey = GoogleAPIService.getApiKey();
-    
     if (!apiKey) {
-      console.log('Kein API-Key gefunden - APIKeyManager wird angezeigt');
-      setNeedsApiKey(true);
-      setIsLoading(false);
+      toast({
+        title: "Fehler",
+        description: "Kein API-Key gefunden.",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Teste den API-Key mit einer einfachen Anfrage
+    // API-Key erneut validieren
+    setIsLoading(true);
     try {
-      console.log('Teste vorhandenen API-Key...');
       const testResponse = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
       );
@@ -89,43 +95,35 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       if (testResponse.ok) {
         const data = await testResponse.json();
         if (data.status === 'OK') {
-          console.log('API-Key ist gültig - starte Analyse');
+          console.log('API-Key erfolgreich validiert');
           setNeedsApiKey(false);
+          setHasValidatedKey(true);
           analyzeRealData();
         } else {
-          console.log('API-Key ungültig:', data.status);
-          setNeedsApiKey(true);
-          setIsLoading(false);
-          toast({
-            title: "API-Key ungültig",
-            description: "Bitte geben Sie einen gültigen Google API-Key ein.",
-            variant: "destructive",
-          });
+          throw new Error(`API-Key ungültig: ${data.status}`);
         }
       } else {
-        console.log('API-Key Test fehlgeschlagen');
-        setNeedsApiKey(true);
-        setIsLoading(false);
+        throw new Error('API-Key Validierung fehlgeschlagen');
       }
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
       setNeedsApiKey(true);
       setIsLoading(false);
       toast({
-        title: "API-Key Validierung fehlgeschlagen",
-        description: "Bitte überprüfen Sie Ihren Google API-Key.",
+        title: "API-Key ungültig",
+        description: "Bitte geben Sie einen gültigen Google API-Key ein.",
         variant: "destructive",
       });
     }
   };
 
-  const handleApiKeySet = () => {
-    console.log('API-Key wurde gesetzt - starte Analyse');
-    setNeedsApiKey(false);
-    analyzeRealData();
-  };
-
   const analyzeRealData = async () => {
+    if (!hasValidatedKey) {
+      console.log('Keine validierter API-Key - breche Analyse ab');
+      setNeedsApiKey(true);
+      return;
+    }
+
     setIsLoading(true);
     try {
       console.log('Starting real business analysis with Google APIs...');
@@ -152,6 +150,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     }
   };
 
+  // Zeige immer zuerst den API-Key Manager an
   if (needsApiKey) {
     return <APIKeyManager onApiKeySet={handleApiKeySet} />;
   }
