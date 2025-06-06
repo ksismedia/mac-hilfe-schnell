@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
@@ -83,7 +82,7 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Impressumsprüfung
-            <div className="flex gap-2">
+            <div className="flex gap-3 items-center">
               <Badge variant={manualData ? "default" : "secondary"}>
                 {manualData ? "✓ Manuell geprüft" : "Automatisch erkannt"}
               </Badge>
@@ -91,10 +90,12 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 {imprintData.score}/100 Punkte
               </Badge>
               <Button
-                variant="outline"
+                variant={showManualInput ? "secondary" : "outline"}
                 size="sm"
                 onClick={() => setShowManualInput(!showManualInput)}
+                className="bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-medium px-4 py-2 min-w-[120px]"
               >
+                <Edit className="h-4 w-4 mr-2" />
                 {showManualInput ? "Abbrechen" : "Manuell prüfen"}
               </Button>
             </div>
@@ -129,11 +130,18 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 ))}
               </div>
               
-              <div className="flex gap-2 pt-4">
-                <Button onClick={handleManualSubmit}>
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={handleManualSubmit}
+                  className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2"
+                >
                   Prüfung abschließen ({selectedElements.length} Elemente)
                 </Button>
-                <Button variant="outline" onClick={() => setShowManualInput(false)}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowManualInput(false)}
+                  className="border-2 border-gray-300 text-gray-600 hover:bg-gray-50 font-medium px-6 py-2"
+                >
                   Abbrechen
                 </Button>
               </div>

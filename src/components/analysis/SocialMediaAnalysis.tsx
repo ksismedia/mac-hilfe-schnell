@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { Edit, Plus } from 'lucide-react';
 
 interface SocialMediaAnalysisProps {
   businessData: {
@@ -68,16 +68,27 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Social Media Analyse
-            <div className="flex gap-2">
+            <div className="flex gap-3 items-center">
               <Badge variant={hasManualData ? "default" : "secondary"}>
                 {hasManualData ? "✓ Manuell eingegeben" : "Automatisch erkannt"}
               </Badge>
               <Button
-                variant="outline"
+                variant={showManualInput ? "secondary" : "outline"}
                 size="sm"
                 onClick={() => setShowManualInput(!showManualInput)}
+                className="bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-medium px-4 py-2 min-w-[140px]"
               >
-                {showManualInput ? "Abbrechen" : "Manuell eingeben"}
+                {showManualInput ? (
+                  <>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Abbrechen
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Manuell eingeben
+                  </>
+                )}
               </Button>
             </div>
           </CardTitle>
@@ -91,6 +102,13 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
         <CardContent>
           {showManualInput ? (
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Social Media Kanäle eingeben</h4>
+                <p className="text-sm text-blue-800">
+                  Tragen Sie hier Ihre Social Media URLs und Follower-Zahlen ein:
+                </p>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="facebookUrl">Facebook URL</Label>
@@ -125,9 +143,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   />
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button type="submit">Daten übernehmen</Button>
-                <Button type="button" variant="outline" onClick={() => setShowManualInput(false)}>
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2"
+                >
+                  Daten übernehmen
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setShowManualInput(false)}
+                  className="border-2 border-gray-300 text-gray-600 hover:bg-gray-50 font-medium px-6 py-2"
+                >
                   Abbrechen
                 </Button>
               </div>
