@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
+import { useManualData, ManualImprintData, ManualSocialData } from '@/hooks/useManualData';
 import APIKeyManager from './APIKeyManager';
 import SEOAnalysis from './analysis/SEOAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
@@ -42,17 +43,69 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [needsApiKey, setNeedsApiKey] = useState(true); // Immer mit API-Key-Abfrage starten
+  const [needsApiKey, setNeedsApiKey] = useState(true);
   const [hasValidatedKey, setHasValidatedKey] = useState(false);
   const { toast } = useToast();
 
-  const industryNames = {
-    shk: 'SHK (Sanitär, Heizung, Klima)',
-    maler: 'Maler und Lackierer',
-    elektriker: 'Elektriker',
-    dachdecker: 'Dachdecker',
-    stukateur: 'Stukateure',
-    planungsbuero: 'Planungsbüro Versorgungstechnik'
+  // Verwende den Hook für manuelle Daten
+  const {
+    manualImprintData,
+    manualSocialData,
+    updateImprintData,
+    updateSocialData
+  } = useManualData();
+
+  // Erstelle erweiterte Daten für PDF-Export und Komponenten
+  const getEnhancedRealData = (): RealBusinessData | null => {
+    if (!realData) return null;
+
+    const enhanced = { ...realData };
+
+    // Impressum-Daten überschreiben falls manuell eingegeben
+    if (manualImprintData) {
+      const requiredElements = [
+        'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse',
+        'Telefonnummer', 'E-Mail-Adresse', 'Handelsregisternummer',
+        'Steuernummer', 'USt-IdNr.', 'Kammerzugehörigkeit',
+        'Berufsbezeichnung', 'Aufsichtsbehörde'
+      ];
+
+      enhanced.imprint = {
+        found: manualImprintData.found,
+        foundElements: manualImprintData.elements,
+        missingElements: requiredElements.filter(e => !manualImprintData.elements.includes(e)),
+        completeness: Math.round((manualImprintData.elements.length / requiredElements.length) * 100),
+        score: Math.round((manualImprintData.elements.length / requiredElements.length) * 100)
+      };
+    }
+
+    // Social Media-Daten überschreiben falls manuell eingegeben
+    if (manualSocialData) {
+      enhanced.socialMedia = {
+        ...enhanced.socialMedia,
+        facebook: {
+          found: !!manualSocialData.facebookUrl,
+          url: manualSocialData.facebookUrl || enhanced.socialMedia.facebook.url,
+          followers: manualSocialData.facebookFollowers || enhanced.socialMedia.facebook.followers,
+          lastPost: enhanced.socialMedia.facebook.lastPost,
+          engagement: enhanced.socialMedia.facebook.engagement
+        },
+        instagram: {
+          found: !!manualSocialData.instagramUrl,
+          url: manualSocialData.instagramUrl || enhanced.socialMedia.instagram.url,
+          followers: manualSocialData.instagramFollowers || enhanced.socialMedia.instagram.followers,
+          lastPost: enhanced.socialMedia.instagram.lastPost,
+          engagement: enhanced.socialMedia.instagram.engagement
+        }
+      };
+
+      // Score neu berechnen
+      const facebookScore = enhanced.socialMedia.facebook.found ? 50 : 0;
+      const instagramScore = enhanced.socialMedia.instagram.found ? 50 : 0;
+      enhanced.socialMedia.overallScore = facebookScore + instagramScore;
+    }
+
+    return enhanced;
   };
 
   // Bei jeder neuen businessData-Änderung den API-Key neu validieren
@@ -198,12 +251,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     );
   }
 
-  // Berechne Gesamtbewertung basierend auf echten Daten
+  // Verwende die erweiterten Daten
+  const enhancedData = getEnhancedRealData();
+  if (!enhancedData) return null;
+
   const overallScore = Math.round(
-    (realData.seo.score + realData.performance.score + 
-     (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore) / 4
+    (enhancedData.seo.score + enhancedData.performance.score + 
+     (enhancedData.reviews.google.count > 0 ? 80 : 40) + enhancedData.mobile.overallScore) / 4
   );
-  const completionRate = 95; // Höhere Rate da echte APIs verwendet werden
+  const completionRate = 95;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -223,18 +279,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  Live-Analyse: {realData.company.name}
+                  Live-Analyse: {enhancedData.company.name}
                 </h1>
                 <div className="space-y-1">
                   <p className="text-gray-600">
-                    <strong>Website:</strong> {realData.company.url}
+                    <strong>Website:</strong> {enhancedData.company.url}
                   </p>
                   <p className="text-gray-600">
-                    <strong>Adresse:</strong> {realData.company.address}
+                    <strong>Adresse:</strong> {enhancedData.company.address}
                   </p>
-                  {realData.company.phone && (
+                  {enhancedData.company.phone && (
                     <p className="text-gray-600">
-                      <strong>Telefon:</strong> {realData.company.phone}
+                      <strong>Telefon:</strong> {enhancedData.company.phone}
                     </p>
                   )}
                   <Badge variant="secondary">
@@ -243,6 +299,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
                   <Badge variant="default" className="ml-2">
                     🔴 Live Google APIs
                   </Badge>
+                  {(manualImprintData || manualSocialData) && (
+                    <Badge variant="outline" className="ml-2">
+                      ✓ Manuelle Eingaben
+                    </Badge>
+                  )}
                 </div>
               </div>
               
@@ -283,23 +344,23 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <OverallRating businessData={businessData} realData={realData} />
+            <OverallRating businessData={businessData} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="seo">
-            <SEOAnalysis url={businessData.url} realData={realData} />
+            <SEOAnalysis url={businessData.url} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="keywords">
-            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
+            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="performance">
-            <PerformanceAnalysis url={businessData.url} realData={realData} />
+            <PerformanceAnalysis url={businessData.url} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="mobile">
-            <MobileOptimization url={businessData.url} realData={realData} />
+            <MobileOptimization url={businessData.url} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="local-seo">
@@ -311,7 +372,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="competitor">
-            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={realData} />
+            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="backlinks">
@@ -319,15 +380,20 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="reviews">
-            <GoogleReviews address={businessData.address} realData={realData} />
+            <GoogleReviews address={businessData.address} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="social">
-            <SocialMediaAnalysis businessData={businessData} realData={realData} />
+            <SocialMediaAnalysis 
+              businessData={businessData} 
+              realData={enhancedData}
+              manualData={manualSocialData}
+              onManualDataChange={updateSocialData}
+            />
           </TabsContent>
 
           <TabsContent value="social-proof">
-            <SocialProof businessData={businessData} realData={realData} />
+            <SocialProof businessData={businessData} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="conversion">
@@ -335,11 +401,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="workplace">
-            <WorkplaceReviews businessData={businessData} realData={realData} />
+            <WorkplaceReviews businessData={businessData} realData={enhancedData} />
           </TabsContent>
 
           <TabsContent value="imprint">
-            <ImprintCheck url={businessData.url} realData={realData} />
+            <ImprintCheck 
+              url={businessData.url} 
+              realData={enhancedData}
+              manualData={manualImprintData}
+              onManualDataChange={updateImprintData}
+            />
           </TabsContent>
 
           <TabsContent value="industry">
@@ -347,7 +418,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="export">
-            <PDFExport businessData={businessData} realData={realData} />
+            <PDFExport 
+              businessData={businessData} 
+              realData={enhancedData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+            />
           </TabsContent>
         </Tabs>
       </div>

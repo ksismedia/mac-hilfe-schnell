@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,15 +9,13 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualImprintData } from '@/hooks/useManualData';
 
 interface ImprintCheckProps {
   url: string;
   realData: RealBusinessData;
-}
-
-interface ManualImprintData {
-  found: boolean;
-  elements: string[];
+  manualData?: ManualImprintData | null;
+  onManualDataChange?: (data: ManualImprintData | null) => void;
 }
 
 const requiredElements = [
@@ -34,10 +33,16 @@ const requiredElements = [
   'Aufsichtsbehörde'
 ];
 
-const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
+const ImprintCheck: React.FC<ImprintCheckProps> = ({ 
+  url, 
+  realData, 
+  manualData, 
+  onManualDataChange 
+}) => {
   const [showManualInput, setShowManualInput] = useState(false);
-  const [manualData, setManualData] = useState<ManualImprintData | null>(null);
-  const [selectedElements, setSelectedElements] = useState<string[]>([]);
+  const [selectedElements, setSelectedElements] = useState<string[]>(
+    manualData?.elements || []
+  );
   const { toast } = useToast();
 
   const handleElementChange = (element: string, checked: boolean) => {
@@ -53,11 +58,27 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
       found: selectedElements.length > 0,
       elements: selectedElements
     };
-    setManualData(newManualData);
+    
+    if (onManualDataChange) {
+      onManualDataChange(newManualData);
+    }
+    
     setShowManualInput(false);
     toast({
       title: "Impressum-Daten aktualisiert",
       description: `${selectedElements.length} Elemente wurden manuell bestätigt.`,
+    });
+  };
+
+  const handleClearManual = () => {
+    setSelectedElements([]);
+    if (onManualDataChange) {
+      onManualDataChange(null);
+    }
+    setShowManualInput(false);
+    toast({
+      title: "Manuelle Eingaben zurückgesetzt",
+      description: "Es werden wieder die automatisch erkannten Daten verwendet.",
     });
   };
 
@@ -69,12 +90,6 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
     completeness: Math.round((manualData.elements.length / requiredElements.length) * 100),
     score: Math.round((manualData.elements.length / requiredElements.length) * 100)
   } : realData.imprint;
-
-  const getStatusIcon = (present: boolean) => {
-    return present ? 
-      <CheckCircle className="h-5 w-5 text-green-500" /> : 
-      <XCircle className="h-5 w-5 text-red-500" />;
-  };
 
   return (
     <div className="space-y-6">
@@ -144,6 +159,15 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 >
                   Abbrechen
                 </Button>
+                {manualData && (
+                  <Button 
+                    variant="destructive" 
+                    onClick={handleClearManual}
+                    className="font-medium px-6 py-2"
+                  >
+                    Zurücksetzen
+                  </Button>
+                )}
               </div>
             </div>
           ) : (
@@ -180,7 +204,6 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
 
               <Progress value={imprintData.completeness} className="h-3" />
 
-              {/* Gefundene Elemente */}
               {imprintData.foundElements.length > 0 && (
                 <Card>
                   <CardHeader>
@@ -201,7 +224,6 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 </Card>
               )}
 
-              {/* Fehlende Elemente */}
               {imprintData.missingElements.length > 0 && (
                 <Card>
                   <CardHeader>
@@ -222,7 +244,6 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 </Card>
               )}
 
-              {/* Datenquelle Hinweis */}
               <div className={`${manualData ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'} rounded-lg p-4`}>
                 <h4 className={`font-semibold ${manualData ? 'text-green-800' : 'text-blue-800'} mb-2`}>
                   {manualData ? "✓ Manuell geprüfte Daten" : "✓ Live-Impressumsanalyse"}
@@ -235,7 +256,6 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
                 </p>
               </div>
 
-              {/* Verbesserungsempfehlungen */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Empfehlungen</CardTitle>

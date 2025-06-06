@@ -1,13 +1,14 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualSocialData } from '@/hooks/useManualData';
 import { Edit, Plus } from 'lucide-react';
 
 interface SocialMediaAnalysisProps {
@@ -17,35 +18,53 @@ interface SocialMediaAnalysisProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
+  manualData?: ManualSocialData | null;
+  onManualDataChange?: (data: ManualSocialData | null) => void;
 }
 
-interface ManualSocialData {
-  facebookUrl: string;
-  instagramUrl: string;
-  facebookFollowers: string;
-  instagramFollowers: string;
-}
-
-const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData }) => {
+const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ 
+  businessData, 
+  realData, 
+  manualData,
+  onManualDataChange 
+}) => {
   const [showManualInput, setShowManualInput] = useState(false);
-  const [manualData, setManualData] = useState<ManualSocialData | null>(null);
   const { toast } = useToast();
   
   const form = useForm<ManualSocialData>({
     defaultValues: {
-      facebookUrl: '',
-      instagramUrl: '',
-      facebookFollowers: '',
-      instagramFollowers: ''
+      facebookUrl: manualData?.facebookUrl || '',
+      instagramUrl: manualData?.instagramUrl || '',
+      facebookFollowers: manualData?.facebookFollowers || '',
+      instagramFollowers: manualData?.instagramFollowers || ''
     }
   });
 
   const onSubmit = (data: ManualSocialData) => {
-    setManualData(data);
+    if (onManualDataChange) {
+      onManualDataChange(data);
+    }
     setShowManualInput(false);
     toast({
       title: "Social Media Daten aktualisiert",
       description: "Die manuell eingegebenen Daten wurden übernommen.",
+    });
+  };
+
+  const handleClearManual = () => {
+    form.reset({
+      facebookUrl: '',
+      instagramUrl: '',
+      facebookFollowers: '',
+      instagramFollowers: ''
+    });
+    if (onManualDataChange) {
+      onManualDataChange(null);
+    }
+    setShowManualInput(false);
+    toast({
+      title: "Manuelle Eingaben zurückgesetzt",
+      description: "Es werden wieder die automatisch erkannten Daten verwendet.",
     });
   };
 
@@ -158,6 +177,16 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                 >
                   Abbrechen
                 </Button>
+                {hasManualData && (
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    onClick={handleClearManual}
+                    className="font-medium px-6 py-2"
+                  >
+                    Zurücksetzen
+                  </Button>
+                )}
               </div>
             </form>
           ) : (
