@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +42,11 @@ interface ManualSocialData {
   instagramFollowers: string;
   facebookLastPost: string;
   instagramLastPost: string;
+}
+
+interface ManualImprintData {
+  found: boolean;
+  elements: string[];
 }
 
 // Mock function to simulate business analysis
@@ -154,6 +158,7 @@ const mockAnalyzeRealBusiness = async (url: string, address: string, industry: s
 
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
+  const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
 
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
@@ -222,6 +227,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             <TabsTrigger value="local-seo">Lokales SEO</TabsTrigger>
             <TabsTrigger value="content">Inhalt</TabsTrigger>
             <TabsTrigger value="social-media">Social Media</TabsTrigger>
+            <TabsTrigger value="imprint">Impressum</TabsTrigger>
             <TabsTrigger value="export">Export</TabsTrigger>
           </TabsList>
 
@@ -261,11 +267,20 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
             />
           </TabsContent>
 
+          <TabsContent value="imprint" className="space-y-6">
+            <ImprintCheck 
+              url={businessData.url} 
+              realData={realData}
+              onManualDataChange={setManualImprintData}
+            />
+          </TabsContent>
+
           <TabsContent value="export" className="space-y-6">
             <PDFExport 
               businessData={businessData} 
               realData={realData} 
               manualSocialData={manualSocialData}
+              manualImprintData={manualImprintData}
             />
           </TabsContent>
         </Tabs>

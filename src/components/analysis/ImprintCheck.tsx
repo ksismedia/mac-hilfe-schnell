@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 interface ImprintCheckProps {
   url: string;
   realData: RealBusinessData;
+  onManualDataChange?: (data: ManualImprintData | null) => void;
 }
 
 interface ManualImprintData {
@@ -34,11 +35,18 @@ const requiredElements = [
   'Aufsichtsbehörde'
 ];
 
-const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData }) => {
+const ImprintCheck: React.FC<ImprintCheckProps> = ({ url, realData, onManualDataChange }) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualData, setManualData] = useState<ManualImprintData | null>(null);
   const [selectedElements, setSelectedElements] = useState<string[]>([]);
   const { toast } = useToast();
+
+  // Informiere Parent-Komponente über Änderungen
+  useEffect(() => {
+    if (onManualDataChange) {
+      onManualDataChange(manualData);
+    }
+  }, [manualData, onManualDataChange]);
 
   const handleElementChange = (element: string, checked: boolean) => {
     if (checked) {
