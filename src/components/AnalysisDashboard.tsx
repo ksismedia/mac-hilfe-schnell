@@ -95,14 +95,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         ...enhanced.socialMedia,
         facebook: {
           found: !!manualSocialData.facebookUrl,
-          url: manualSocialData.facebookUrl || enhanced.socialMedia.facebook.url || '',
           followers: parseInt(manualSocialData.facebookFollowers) || enhanced.socialMedia.facebook.followers,
           lastPost: enhanced.socialMedia.facebook.lastPost,
           engagement: enhanced.socialMedia.facebook.engagement
         },
         instagram: {
           found: !!manualSocialData.instagramUrl,
-          url: manualSocialData.instagramUrl || enhanced.socialMedia.instagram.url || '',
           followers: parseInt(manualSocialData.instagramFollowers) || enhanced.socialMedia.instagram.followers,
           lastPost: enhanced.socialMedia.instagram.lastPost,
           engagement: enhanced.socialMedia.instagram.engagement
