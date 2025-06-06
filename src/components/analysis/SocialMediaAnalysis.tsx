@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ interface SocialMediaAnalysisProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
+  onManualDataChange?: (data: ManualSocialData | null) => void;
 }
 
 interface ManualSocialData {
@@ -26,7 +28,7 @@ interface ManualSocialData {
   instagramLastPost: string;
 }
 
-const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData }) => {
+const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData, onManualDataChange }) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualData, setManualData] = useState<ManualSocialData | null>(null);
   const [formData, setFormData] = useState<ManualSocialData>({
@@ -38,6 +40,13 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
     instagramLastPost: ''
   });
   const { toast } = useToast();
+
+  // Informiere Parent-Komponente über Änderungen
+  useEffect(() => {
+    if (onManualDataChange) {
+      onManualDataChange(manualData);
+    }
+  }, [manualData, onManualDataChange]);
 
   const handleInputChange = (field: keyof ManualSocialData, value: string) => {
     setFormData(prev => ({
