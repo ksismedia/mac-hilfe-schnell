@@ -38,6 +38,631 @@ interface ImprovementAction {
   description: string;
 }
 
+// Constants
+const PAGE_HEIGHT = 280;
+
+// Color scheme
+const colors = {
+  primary: [30, 136, 229],
+  secondary: [52, 168, 83],
+  accent: [255, 171, 0],
+  danger: [234, 67, 53],
+  dark: [60, 64, 67],
+  light: [248, 249, 250],
+  white: [255, 255, 255]
+};
+
+// Helper functions moved outside component for reuse
+const checkNewPage = (pdf: any, yPosition: number, neededSpace: number = 15) => {
+  if (yPosition + neededSpace > PAGE_HEIGHT) {
+    pdf.addPage();
+    return 30;
+  }
+  return yPosition;
+};
+
+const addWrappedText = (pdf: any, text: string, x: number, y: number, maxWidth: number, fontSize: number = 11) => {
+  pdf.setFontSize(fontSize);
+  const cleanText = text
+    .replace(/['"]/g, '"')
+    .replace(/['']/g, "'")
+    .replace(/[–—]/g, '-')
+    .replace(/[…]/g, '...')
+    .replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]/g, '');
+  
+  const lines = pdf.splitTextToSize(cleanText, maxWidth);
+  const lineHeight = fontSize * 0.35;
+  let currentY = y;
+  
+  lines.forEach((line: string) => {
+    if (currentY + lineHeight > PAGE_HEIGHT - 15) {
+      pdf.addPage();
+      currentY = 30;
+    }
+    pdf.text(line, x, currentY);
+    currentY += lineHeight;
+  });
+  
+  return currentY + 3;
+};
+
+const drawBox = (pdf: any, x: number, y: number, width: number, height: number, fillColor: number[], borderColor?: number[]) => {
+  if (fillColor) {
+    pdf.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
+    pdf.rect(x, y, width, height, 'F');
+  }
+  if (borderColor) {
+    pdf.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
+    pdf.setLineWidth(0.5);
+    pdf.rect(x, y, width, height, 'S');
+  }
+};
+
+const getScoreColor = (score: number): number[] => {
+  if (score >= 80) return colors.secondary;
+  if (score >= 60) return colors.accent;
+  if (score >= 40) return colors.primary;
+  return colors.danger;
+};
+
+// Detail page generation functions
+const generateSEODetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('4. SEO-DETAILANALYSE', 20, 20);
+  
+  yPosition = 45;
+  
+  const seoCategories = [
+    { name: 'Meta-Tags', score: data.seo.score, details: 'Title-Tags, Meta-Descriptions, Header-Struktur' },
+    { name: 'Content-Qualität', score: Math.max(40, data.seo.score - 10), details: 'Keyword-Dichte, Textlänge, Relevanz' },
+    { name: 'Technisches SEO', score: Math.max(30, data.seo.score - 20), details: 'URL-Struktur, Sitemap, Robots.txt' },
+    { name: 'Lokales SEO', score: Math.max(50, data.seo.score + 10), details: 'Adresse, NAP-Konsistenz, lokale Keywords' }
+  ];
+  
+  seoCategories.forEach(category => {
+    const scoreColor = getScoreColor(category.score);
+    drawBox(pdf, leftMargin, yPosition, 180, 25, colors.light, scoreColor);
+    
+    pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+    pdf.setFontSize(12);
+    pdf.text(`${category.name}: ${category.score}/100`, leftMargin + 10, yPosition + 8);
+    
+    pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+    pdf.setFontSize(9);
+    addWrappedText(pdf, category.details, leftMargin + 10, yPosition + 18, textWidth - 20, 9);
+    
+    yPosition += 35;
+  });
+  
+  if (data.keywords.length > 0) {
+    yPosition += 10;
+    pdf.setFontSize(12);
+    pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+    pdf.text('IDENTIFIZIERTE KEYWORDS:', leftMargin, yPosition);
+    yPosition += 15;
+    
+    const keywordText = data.keywords.slice(0, 15).join(', ');
+    addWrappedText(pdf, keywordText, leftMargin + 5, yPosition, textWidth - 10, 10);
+  }
+};
+
+const generatePerformanceDetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('5. PERFORMANCE-ANALYSE', 20, 20);
+  
+  yPosition = 45;
+  
+  const performanceMetrics = [
+    { name: 'Ladezeit', value: `${(100 - data.performance.score) / 10 + 1}s`, target: '< 3s' },
+    { name: 'First Contentful Paint', value: `${(100 - data.performance.score) / 8 + 0.8}s`, target: '< 1.8s' },
+    { name: 'Largest Contentful Paint', value: `${(100 - data.performance.score) / 5 + 1.2}s`, target: '< 2.5s' },
+    { name: 'Cumulative Layout Shift', value: (100 - data.performance.score) / 500, target: '< 0.1' }
+  ];
+  
+  performanceMetrics.forEach(metric => {
+    drawBox(pdf, leftMargin, yPosition, 180, 20, colors.light);
+    
+    pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+    pdf.setFontSize(11);
+    pdf.text(`${metric.name}: ${metric.value}`, leftMargin + 10, yPosition + 8);
+    pdf.text(`Ziel: ${metric.target}`, leftMargin + 120, yPosition + 8);
+    
+    const isGood = data.performance.score > 70;
+    const statusColor = isGood ? colors.secondary : colors.danger;
+    drawBox(pdf, leftMargin + 160, yPosition + 3, 15, 14, statusColor);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(8);
+    pdf.text(isGood ? 'OK' : 'FIX', leftMargin + 167.5, yPosition + 11, { align: 'center' });
+    
+    yPosition += 25;
+  });
+};
+
+const generateMobileDetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('6. MOBILE OPTIMIERUNG', 20, 20);
+  
+  yPosition = 45;
+  
+  const mobileAspects = [
+    { name: 'Responsive Design', score: data.mobile.overallScore },
+    { name: 'Touch-Freundlichkeit', score: Math.max(40, data.mobile.overallScore - 10) },
+    { name: 'Mobile Ladezeit', score: Math.max(30, data.mobile.overallScore - 15) },
+    { name: 'Viewport-Konfiguration', score: Math.max(60, data.mobile.overallScore + 5) }
+  ];
+  
+  mobileAspects.forEach(aspect => {
+    const scoreColor = getScoreColor(aspect.score);
+    drawBox(pdf, leftMargin, yPosition, 180, 20, scoreColor);
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(11);
+    pdf.text(`${aspect.name}: ${aspect.score}/100`, leftMargin + 10, yPosition + 12);
+    
+    yPosition += 25;
+  });
+};
+
+const generateSocialMediaDetailPage = (pdf: any, data: any, manualData: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('7. SOCIAL MEDIA ANALYSE', 20, 20);
+  
+  yPosition = 45;
+  
+  const platforms = [
+    {
+      name: 'Facebook',
+      present: manualData?.facebookUrl || data.socialMedia.facebook.found,
+      followers: manualData?.facebookFollowers || 'Unbekannt',
+      lastPost: manualData?.facebookLastPost || 'Unbekannt'
+    },
+    {
+      name: 'Instagram',
+      present: manualData?.instagramUrl || data.socialMedia.instagram.found,
+      followers: manualData?.instagramFollowers || 'Unbekannt',
+      lastPost: manualData?.instagramLastPost || 'Unbekannt'
+    }
+  ];
+  
+  platforms.forEach(platform => {
+    const statusColor = platform.present ? colors.secondary : colors.danger;
+    drawBox(pdf, leftMargin, yPosition, 180, 35, colors.light, statusColor);
+    
+    pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+    pdf.setFontSize(12);
+    pdf.text(`${platform.name}: ${platform.present ? 'Vorhanden' : 'Nicht gefunden'}`, leftMargin + 10, yPosition + 10);
+    
+    if (platform.present) {
+      pdf.setFontSize(9);
+      pdf.text(`Follower: ${platform.followers}`, leftMargin + 10, yPosition + 20);
+      pdf.text(`Letzter Post: ${platform.lastPost}`, leftMargin + 10, yPosition + 28);
+    }
+    
+    yPosition += 40;
+  });
+};
+
+const generateKeywordStrategyPage = (pdf: any, data: any, industry: string, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('9. KEYWORD-STRATEGIE', 20, 20);
+  
+  yPosition = 45;
+  
+  const industryKeywords = {
+    shk: ['Heizung Reparatur', 'Sanitär Notdienst', 'Klimaanlage Installation', 'Rohrreinigung'],
+    maler: ['Malerbetrieb', 'Fassade streichen', 'Innenräume renovieren', 'Lackierarbeiten'],
+    elektriker: ['Elektriker Notdienst', 'Elektroinstallation', 'Smart Home', 'Sicherung defekt'],
+    dachdecker: ['Dach reparieren', 'Dachsanierung', 'Dachrinne reinigen', 'Dachdämmung'],
+    stukateur: ['Stuckarbeiten', 'Putz erneuern', 'Fassade verputzen', 'Trockenbau'],
+    planungsbuero: ['Haustechnik Planung', 'Versorgungstechnik', 'TGA Planung', 'Energieberatung']
+  };
+  
+  const recommendedKeywords = industryKeywords[industry] || [];
+  
+  drawBox(pdf, leftMargin, yPosition, 180, 40, colors.light);
+  pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+  pdf.setFontSize(12);
+  pdf.text('EMPFOHLENE KEYWORDS FÜR IHRE BRANCHE:', leftMargin + 10, yPosition + 10);
+  
+  yPosition += 20;
+  recommendedKeywords.forEach(keyword => {
+    pdf.setFontSize(10);
+    pdf.text(`• ${keyword}`, leftMargin + 15, yPosition);
+    yPosition += 8;
+  });
+  
+  yPosition += 20;
+  
+  if (data.keywords.length > 0) {
+    drawBox(pdf, leftMargin, yPosition, 180, 30, colors.light);
+    pdf.setFontSize(12);
+    pdf.text('AUF IHRER WEBSITE GEFUNDEN:', leftMargin + 10, yPosition + 10);
+    yPosition += 15;
+    
+    const foundKeywords = data.keywords.slice(0, 10).join(', ');
+    addWrappedText(pdf, foundKeywords, leftMargin + 15, yPosition, textWidth - 30, 10);
+  }
+};
+
+const generateTechnicalAnalysisPage = (pdf: any, data: any, imprintData: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('10. TECHNISCHE ANALYSE', 20, 20);
+  
+  yPosition = 45;
+  
+  const technicalAspects = [
+    { name: 'HTTPS-Verschlüsselung', status: 'Aktiv', color: colors.secondary },
+    { name: 'Impressum', status: imprintData?.found || data.imprint.score > 80 ? 'Vorhanden' : 'Unvollständig', color: imprintData?.found || data.imprint.score > 80 ? colors.secondary : colors.danger },
+    { name: 'Datenschutzerklärung', status: data.imprint.score > 70 ? 'Vorhanden' : 'Prüfen', color: data.imprint.score > 70 ? colors.secondary : colors.accent },
+    { name: 'Cookie-Banner', status: 'Standard', color: colors.accent }
+  ];
+  
+  technicalAspects.forEach(aspect => {
+    drawBox(pdf, leftMargin, yPosition, 180, 20, aspect.color);
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(11);
+    pdf.text(`${aspect.name}: ${aspect.status}`, leftMargin + 10, yPosition + 12);
+    
+    yPosition += 25;
+  });
+};
+
+const generateActionPlanPages = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('11. HANDLUNGSEMPFEHLUNGEN', 20, 20);
+  
+  yPosition = 45;
+  
+  const priorityGroups = {
+    'Hoch': actions.filter(a => a.priority === 'Hoch'),
+    'Mittel': actions.filter(a => a.priority === 'Mittel'),
+    'Niedrig': actions.filter(a => a.priority === 'Niedrig')
+  };
+  
+  Object.entries(priorityGroups).forEach(([priority, priorityActions]) => {
+    if (priorityActions.length === 0) return;
+    
+    yPosition = checkNewPage(pdf, yPosition, 100);
+    
+    const priorityColor = priority === 'Hoch' ? colors.danger : priority === 'Mittel' ? colors.accent : colors.secondary;
+    
+    drawBox(pdf, leftMargin, yPosition - 5, 180, 15, priorityColor);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(14);
+    pdf.text(`${priority.toUpperCase()} PRIORITÄT (${priorityActions.length} Maßnahmen)`, 20, yPosition + 4);
+    yPosition += 25;
+    
+    priorityActions.slice(0, 8).forEach((action, index) => {
+      yPosition = checkNewPage(pdf, yPosition, 35);
+      
+      drawBox(pdf, leftMargin + 5, yPosition, 170, 30, colors.light, priorityColor);
+      
+      pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+      pdf.setFontSize(11);
+      pdf.text(`${index + 1}. ${action.action}`, leftMargin + 10, yPosition + 8);
+      
+      pdf.setFontSize(8);
+      yPosition = addWrappedText(pdf, action.description, leftMargin + 10, yPosition + 15, 160, 8);
+      
+      pdf.text(`Zeitrahmen: ${action.timeframe} | Aufwand: ${action.effort} | Impact: ${action.impact}`, leftMargin + 10, yPosition + 5);
+      
+      yPosition += 20;
+    });
+    
+    yPosition += 15;
+  });
+};
+
+const generatePriorityMatrixPage = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('12. PRIORITÄTEN-MATRIX', 20, 20);
+  
+  yPosition = 45;
+  
+  drawBox(pdf, leftMargin, yPosition, 180, 150, colors.light);
+  
+  pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+  pdf.setFontSize(10);
+  pdf.text('AUFWAND →', leftMargin + 80, yPosition + 140);
+  pdf.text('IMPACT ↑', leftMargin + 10, yPosition + 75);
+  
+  const quadrants = [
+    { x: leftMargin + 20, y: yPosition + 20, label: 'Quick Wins\n(niedriger Aufwand,\nhoher Impact)', color: colors.secondary },
+    { x: leftMargin + 100, y: yPosition + 20, label: 'Strategische\nProjekte\n(hoher Impact)', color: colors.primary },
+    { x: leftMargin + 20, y: yPosition + 80, label: 'Einfache\nVerbesserungen', color: colors.accent },
+    { x: leftMargin + 100, y: yPosition + 80, label: 'Überdenken\n(hoher Aufwand,\nniedriger Impact)', color: colors.danger }
+  ];
+  
+  quadrants.forEach(quad => {
+    drawBox(pdf, quad.x, quad.y, 70, 50, quad.color);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(8);
+    const lines = quad.label.split('\n');
+    lines.forEach((line, i) => {
+      pdf.text(line, quad.x + 35, quad.y + 15 + i * 8, { align: 'center' });
+    });
+  });
+};
+
+const generateImplementationPlanPage = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('13. IMPLEMENTIERUNGSPLAN', 20, 20);
+  
+  yPosition = 45;
+  
+  const timeframes = ['Sofort', '1-2 Wochen', '1-3 Monate', '3-6 Monate'];
+  
+  timeframes.forEach((timeframe, index) => {
+    const timeframeActions = actions.filter(a => a.timeframe === timeframe);
+    if (timeframeActions.length === 0) return;
+    
+    yPosition = checkNewPage(pdf, yPosition, 60);
+    
+    const timeframeColor = [colors.danger, colors.accent, colors.primary, colors.secondary][index];
+    
+    drawBox(pdf, leftMargin, yPosition, 180, 15, timeframeColor);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.text(`${timeframe.toUpperCase()} (${timeframeActions.length} Maßnahmen)`, leftMargin + 10, yPosition + 10);
+    
+    yPosition += 20;
+    
+    timeframeActions.slice(0, 5).forEach(action => {
+      drawBox(pdf, leftMargin + 10, yPosition, 160, 12, colors.light);
+      pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+      pdf.setFontSize(9);
+      pdf.text(`• ${action.action}`, leftMargin + 15, yPosition + 8);
+      yPosition += 15;
+    });
+    
+    yPosition += 10;
+  });
+};
+
+const generateROIPrognosePage = (pdf: any, currentScore: number, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('14. ROI-PROGNOSE', 20, 20);
+  
+  yPosition = 45;
+  
+  const investment = Math.max(5000, actions.length * 400);
+  const potentialIncrease = (100 - currentScore) * 0.7;
+  const revenue = Math.round(investment * (3 + potentialIncrease / 15));
+  const roi = Math.round(((revenue - investment) / investment) * 100);
+  
+  const roiData = [
+    { label: 'Geschätzte Investition', value: `${investment.toLocaleString('de-DE')} EUR`, color: colors.danger },
+    { label: 'Erwarteter Umsatzzuwachs', value: `${revenue.toLocaleString('de-DE')} EUR`, color: colors.secondary },
+    { label: 'ROI nach 12 Monaten', value: `${roi}%`, color: colors.primary },
+    { label: 'Break-Even-Zeitpunkt', value: `${Math.max(4, Math.round(12 - potentialIncrease / 8))} Monate`, color: colors.accent }
+  ];
+  
+  roiData.forEach(item => {
+    drawBox(pdf, leftMargin, yPosition, 180, 25, item.color);
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.text(item.label, leftMargin + 10, yPosition + 10);
+    pdf.setFontSize(14);
+    pdf.text(item.value, leftMargin + 120, yPosition + 15);
+    
+    yPosition += 30;
+  });
+  
+  yPosition += 20;
+  
+  drawBox(pdf, leftMargin, yPosition, 180, 60, colors.light);
+  pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+  pdf.setFontSize(12);
+  pdf.text('ROI-TREIBER:', leftMargin + 10, yPosition + 15);
+  
+  const roiFactors = [
+    '• Mehr Website-Besucher durch bessere SEO',
+    '• Höhere Conversion-Rate durch bessere UX',
+    '• Mehr Kundenanfragen durch Vertrauen',
+    '• Geringere Bounce-Rate durch Performance'
+  ];
+  
+  yPosition += 25;
+  roiFactors.forEach(factor => {
+    pdf.setFontSize(10);
+    pdf.text(factor, leftMargin + 15, yPosition);
+    yPosition += 10;
+  });
+};
+
+const generateKPIPage = (pdf: any, data: any, currentScore: number, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('15. ERFOLGS-KPIS', 20, 20);
+  
+  yPosition = 45;
+  
+  const kpis = [
+    {
+      category: 'SEO & Traffic',
+      metrics: [
+        { name: 'Organische Besucher', current: 'Baseline', target: '+150%' },
+        { name: 'Google Rankings', current: `Position ${Math.max(10, 50 - data.seo.score/2)}`, target: 'Top 5' },
+        { name: 'Click-Through-Rate', current: '2-3%', target: '5-7%' }
+      ]
+    },
+    {
+      category: 'Conversions',
+      metrics: [
+        { name: 'Anfragen/Monat', current: Math.max(5, Math.round(data.reviews.google.count / 3)), target: '+200%' },
+        { name: 'Telefonanrufe', current: 'Baseline', target: '+180%' },
+        { name: 'E-Mail-Anfragen', current: 'Baseline', target: '+250%' }
+      ]
+    },
+    {
+      category: 'Reputation',
+      metrics: [
+        { name: 'Google Bewertungen', current: data.reviews.google.count, target: `${data.reviews.google.count + 25}+` },
+        { name: 'Durchschnittsbewertung', current: `${data.reviews.google.rating}/5`, target: '4.5+/5' },
+        { name: 'Online-Erwähnungen', current: 'Baseline', target: '+300%' }
+      ]
+    }
+  ];
+  
+  kpis.forEach(kpi => {
+    yPosition = checkNewPage(pdf, yPosition, 80);
+    
+    drawBox(pdf, leftMargin, yPosition, 180, 15, colors.primary);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.text(kpi.category.toUpperCase(), leftMargin + 10, yPosition + 10);
+    
+    yPosition += 20;
+    
+    kpi.metrics.forEach(metric => {
+      drawBox(pdf, leftMargin + 10, yPosition, 160, 18, colors.light);
+      
+      pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+      pdf.setFontSize(10);
+      pdf.text(metric.name, leftMargin + 15, yPosition + 8);
+      pdf.text(`Aktuell: ${metric.current}`, leftMargin + 80, yPosition + 8);
+      pdf.text(`Ziel: ${metric.target}`, leftMargin + 130, yPosition + 8);
+      
+      yPosition += 20;
+    });
+    
+    yPosition += 10;
+  });
+};
+
+const generateAppendixPages = (pdf: any, data: any, businessData: any, socialData: any, imprintData: any, leftMargin: number, textWidth: number) => {
+  let yPosition = 30;
+  
+  drawBox(pdf, leftMargin, 10, 180, 15, colors.dark);
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.text('16. ANHANG: DETAILDATEN', 20, 20);
+  
+  yPosition = 45;
+  
+  const getIndustryName = (industry: string) => {
+    const names = {
+      shk: 'SHK (Sanitär, Heizung, Klima)',
+      maler: 'Maler und Lackierer',
+      elektriker: 'Elektriker',
+      dachdecker: 'Dachdecker',
+      stukateur: 'Stukateure',
+      planungsbuero: 'Planungsbüro Versorgungstechnik'
+    };
+    return names[industry] || industry;
+  };
+  
+  const appendixSections = [
+    {
+      title: 'UNTERNEHMENSDATEN',
+      data: [
+        `Name: ${data.company.name}`,
+        `URL: ${data.company.url}`,
+        `Adresse: ${data.company.address}`,
+        `Branche: ${getIndustryName(businessData.industry)}`,
+        `Analysedatum: ${new Date().toLocaleDateString('de-DE')}`
+      ]
+    },
+    {
+      title: 'BEWERTUNGSDETAILS',
+      data: [
+        `Google Rating: ${data.reviews.google.rating}/5`,
+        `Anzahl Bewertungen: ${data.reviews.google.count}`,
+        `SEO-Score: ${data.seo.score}/100`,
+        `Performance-Score: ${data.performance.score}/100`,
+        `Mobile-Score: ${data.mobile.overallScore}/100`,
+        `Impressum-Score: ${data.imprint.score}/100`
+      ]
+    }
+  ];
+  
+  if (socialData) {
+    appendixSections.push({
+      title: 'SOCIAL MEDIA (MANUELL EINGEGEBEN)',
+      data: [
+        `Facebook: ${socialData.facebookUrl || 'Nicht angegeben'}`,
+        `Facebook Follower: ${socialData.facebookFollowers || 'Nicht angegeben'}`,
+        `Instagram: ${socialData.instagramUrl || 'Nicht angegeben'}`,
+        `Instagram Follower: ${socialData.instagramFollowers || 'Nicht angegeben'}`
+      ]
+    });
+  }
+  
+  if (data.competitors.length > 0) {
+    appendixSections.push({
+      title: 'KONKURRENTEN',
+      data: data.competitors.slice(0, 8).map((comp, i) => 
+        `${i+1}. ${comp.name} - ${comp.rating}/5 (${comp.reviews} Bewertungen)`
+      )
+    });
+  }
+  
+  appendixSections.forEach(section => {
+    yPosition = checkNewPage(pdf, yPosition, section.data.length * 12 + 30);
+    
+    drawBox(pdf, leftMargin, yPosition, 180, 15, colors.primary);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(11);
+    pdf.text(section.title, leftMargin + 10, yPosition + 10);
+    
+    yPosition += 20;
+    
+    section.data.forEach(item => {
+      pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
+      pdf.setFontSize(9);
+      addWrappedText(pdf, item, leftMargin + 10, yPosition, textWidth - 20, 9);
+      yPosition += 12;
+    });
+    
+    yPosition += 15;
+  });
+};
+
 const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSocialData = null, manualImprintData = null }) => {
   const [activeTab, setActiveTab] = useState('summary');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -50,84 +675,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       
       const pdf = new jsPDF();
       let yPosition = 20;
-      const pageHeight = 280;
       const leftMargin = 15;
       const rightMargin = 195;
       const textWidth = rightMargin - leftMargin;
       
-      // Farbschema definieren
-      const colors = {
-        primary: [30, 136, 229], // Blau
-        secondary: [52, 168, 83], // Grün
-        accent: [255, 171, 0], // Orange
-        danger: [234, 67, 53], // Rot
-        dark: [60, 64, 67], // Dunkelgrau
-        light: [248, 249, 250], // Hellgrau
-        white: [255, 255, 255]
-      };
-      
-      // Helper function für neue Seite
-      const checkNewPage = (neededSpace: number = 15) => {
-        if (yPosition + neededSpace > pageHeight) {
-          pdf.addPage();
-          yPosition = 30;
-          return true;
-        }
-        return false;
-      };
-
-      // Helper für Text mit automatischem Umbruch
-      const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 11) => {
-        pdf.setFontSize(fontSize);
-        const cleanText = text
-          .replace(/['"]/g, '"')
-          .replace(/['']/g, "'")
-          .replace(/[–—]/g, '-')
-          .replace(/[…]/g, '...')
-          .replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]/g, '');
-        
-        const lines = pdf.splitTextToSize(cleanText, maxWidth);
-        const lineHeight = fontSize * 0.35;
-        let currentY = y;
-        
-        lines.forEach((line: string) => {
-          if (currentY + lineHeight > pageHeight - 15) {
-            pdf.addPage();
-            currentY = 30;
-            yPosition = 30;
-          }
-          pdf.text(line, x, currentY);
-          currentY += lineHeight;
-        });
-        
-        return currentY + 3;
-      };
-
-      // Helper für Boxen/Rahmen
-      const drawBox = (x: number, y: number, width: number, height: number, fillColor: number[], borderColor?: number[]) => {
-        if (fillColor) {
-          pdf.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
-          pdf.rect(x, y, width, height, 'F');
-        }
-        if (borderColor) {
-          pdf.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-          pdf.setLineWidth(0.5);
-          pdf.rect(x, y, width, height, 'S');
-        }
-      };
-
-      // Helper für Score-basierte Farben
-      const getScoreColor = (score: number): number[] => {
-        if (score >= 80) return colors.secondary;
-        if (score >= 60) return colors.accent;
-        if (score >= 40) return colors.primary;
-        return colors.danger;
-      };
-
       // DECKBLATT
-      drawBox(0, 0, 210, 297, colors.primary);
-      drawBox(20, 30, 170, 220, colors.white);
-      drawBox(25, 35, 160, 25, colors.light);
+      drawBox(pdf, 0, 0, 210, 297, colors.primary);
+      drawBox(pdf, 20, 30, 170, 220, colors.white);
+      drawBox(pdf, 25, 35, 160, 25, colors.light);
       
       pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
       pdf.setFontSize(20);
@@ -185,7 +740,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       
       metrics.forEach((metric, index) => {
         const x = startX + index * (boxWidth + 5);
-        drawBox(x, yPosition, boxWidth, 20, metric.color);
+        drawBox(pdf, x, yPosition, boxWidth, 20, metric.color);
         
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(8);
@@ -205,7 +760,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       pdf.addPage();
       yPosition = 30;
       
-      drawBox(leftMargin, 10, 180, 15, colors.primary);
+      drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text('INHALTSVERZEICHNIS', 20, 20);
@@ -235,7 +790,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       pdf.setFontSize(12);
       
       tableOfContents.forEach((item) => {
-        if (yPosition > pageHeight - 20) {
+        if (yPosition > PAGE_HEIGHT - 20) {
           pdf.addPage();
           yPosition = 30;
         }
@@ -247,7 +802,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       pdf.addPage();
       yPosition = 30;
       
-      drawBox(leftMargin, 10, 180, 15, colors.secondary);
+      drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text('1. EXECUTIVE SUMMARY', 20, 20);
@@ -255,7 +810,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       yPosition = 40;
       
       // Summary Box
-      drawBox(leftMargin, yPosition - 5, 180, 60, colors.light, colors.secondary);
+      drawBox(pdf, leftMargin, yPosition - 5, 180, 60, colors.light, colors.secondary);
       
       pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
       pdf.setFontSize(14);
@@ -279,12 +834,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       yPosition += 20;
 
       // Wichtigste Erkenntnisse
-      if (yPosition + 80 > pageHeight) {
+      if (yPosition + 80 > PAGE_HEIGHT) {
         pdf.addPage();
         yPosition = 30;
       }
       
-      drawBox(leftMargin, yPosition - 5, 180, 15, colors.accent);
+      drawBox(pdf, leftMargin, yPosition - 5, 180, 15, colors.accent);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(14);
       pdf.text('WICHTIGSTE ERKENNTNISSE', 20, yPosition + 4);
@@ -292,12 +847,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       
       const keyInsights = generateKeyInsights(realData, businessData.industry, manualSocialData);
       keyInsights.forEach((insight, index) => {
-        if (yPosition + 20 > pageHeight) {
+        if (yPosition + 20 > PAGE_HEIGHT) {
           pdf.addPage();
           yPosition = 30;
         }
         
-        drawBox(leftMargin + 5, yPosition, 170, 18, colors.light);
+        drawBox(pdf, leftMargin + 5, yPosition, 170, 18, colors.light);
         yPosition = addWrappedText(`${index + 1}. ${insight}`, leftMargin + 10, yPosition + 8, 160, 10);
         yPosition += 10;
       });
@@ -306,7 +861,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       pdf.addPage();
       yPosition = 30;
       
-      drawBox(leftMargin, 10, 180, 15, colors.primary);
+      drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text('2. GESAMTBEWERTUNG & SCORECARDS', 20, 20);
@@ -323,7 +878,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       ];
       
       detailCategories.forEach((cat) => {
-        if (yPosition + 45 > pageHeight) {
+        if (yPosition + 45 > PAGE_HEIGHT) {
           pdf.addPage();
           yPosition = 30;
         }
@@ -331,8 +886,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
         const scoreColor = getScoreColor(cat.score);
         
         // Header
-        drawBox(leftMargin, yPosition - 2, 180, 20, scoreColor);
-        drawBox(leftMargin + 5, yPosition + 1, 25, 12, colors.white);
+        drawBox(pdf, leftMargin, yPosition - 2, 180, 20, scoreColor);
+        drawBox(pdf, leftMargin + 5, yPosition + 1, 25, 12, colors.white);
         
         pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
         pdf.setFontSize(10);
@@ -360,7 +915,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       pdf.addPage();
       yPosition = 30;
       
-      drawBox(leftMargin, 10, 180, 15, colors.accent);
+      drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text('3. SWOT-ANALYSE', 20, 20);
@@ -380,7 +935,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
         const boxX = leftMargin + (sectionIndex % 2) * 90;
         const boxY = yPosition + Math.floor(sectionIndex / 2) * 65;
         
-        drawBox(boxX, boxY, 85, 55, section.color);
+        drawBox(pdf, boxX, boxY, 85, 55, section.color);
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(11);
         pdf.text(section.title, boxX + 42.5, boxY + 8, { align: 'center' });
@@ -400,25 +955,25 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       // SEITEN 6-9 - DETAILANALYSEN
       // SEO-Detailanalyse
       pdf.addPage();
-      generateSEODetailPage(pdf, realData, colors, leftMargin, textWidth);
+      generateSEODetailPage(pdf, realData, leftMargin, textWidth);
       
       // Performance-Analyse
       pdf.addPage();
-      generatePerformanceDetailPage(pdf, realData, colors, leftMargin, textWidth);
+      generatePerformanceDetailPage(pdf, realData, leftMargin, textWidth);
       
       // Mobile Optimierung
       pdf.addPage();
-      generateMobileDetailPage(pdf, realData, colors, leftMargin, textWidth);
+      generateMobileDetailPage(pdf, realData, leftMargin, textWidth);
       
       // Social Media Analyse
       pdf.addPage();
-      generateSocialMediaDetailPage(pdf, realData, manualSocialData, colors, leftMargin, textWidth);
+      generateSocialMediaDetailPage(pdf, realData, manualSocialData, leftMargin, textWidth);
 
       // SEITEN 10-11 - KONKURRENZANALYSE
       pdf.addPage();
       yPosition = 30;
       
-      drawBox(leftMargin, 10, 180, 15, colors.danger);
+      drawBox(pdf, leftMargin, 10, 180, 15, colors.danger);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text('8. KONKURRENZANALYSE', 20, 20);
@@ -427,7 +982,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       
       if (realData.competitors.length > 0) {
         // Marktübersicht
-        drawBox(leftMargin, yPosition - 5, 180, 50, colors.light, colors.danger);
+        drawBox(pdf, leftMargin, yPosition - 5, 180, 50, colors.light, colors.danger);
         
         pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
         pdf.setFontSize(14);
@@ -455,13 +1010,13 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
         
         // Top 5 Konkurrenten mit Details
         realData.competitors.slice(0, 5).forEach((competitor, index) => {
-          if (yPosition + 60 > pageHeight) {
+          if (yPosition + 60 > PAGE_HEIGHT) {
             pdf.addPage();
             yPosition = 30;
           }
           
           const headerColor = index === 0 ? colors.danger : colors.primary;
-          drawBox(leftMargin, yPosition - 5, 180, 20, headerColor);
+          drawBox(pdf, leftMargin, yPosition - 5, 180, 20, headerColor);
           
           pdf.setTextColor(255, 255, 255);
           pdf.setFontSize(12);
@@ -491,43 +1046,43 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
 
       // SEITE 12 - KEYWORD-STRATEGIE
       pdf.addPage();
-      generateKeywordStrategyPage(pdf, realData, businessData.industry, colors, leftMargin, textWidth);
+      generateKeywordStrategyPage(pdf, realData, businessData.industry, leftMargin, textWidth);
 
       // SEITE 13 - TECHNISCHE ANALYSE
       pdf.addPage();
-      generateTechnicalAnalysisPage(pdf, realData, manualImprintData, colors, leftMargin, textWidth);
+      generateTechnicalAnalysisPage(pdf, realData, manualImprintData, leftMargin, textWidth);
 
       // SEITEN 14-15 - HANDLUNGSEMPFEHLUNGEN
       pdf.addPage();
       const actions = generateImprovementActions();
-      generateActionPlanPages(pdf, actions, colors, leftMargin, textWidth);
+      generateActionPlanPages(pdf, actions, leftMargin, textWidth);
 
       // SEITE 16 - PRIORITÄTEN-MATRIX
       pdf.addPage();
-      generatePriorityMatrixPage(pdf, actions, colors, leftMargin, textWidth);
+      generatePriorityMatrixPage(pdf, actions, leftMargin, textWidth);
 
       // SEITE 17 - IMPLEMENTIERUNGSPLAN
       pdf.addPage();
-      generateImplementationPlanPage(pdf, actions, colors, leftMargin, textWidth);
+      generateImplementationPlanPage(pdf, actions, leftMargin, textWidth);
 
       // SEITE 18 - ROI-PROGNOSE
       pdf.addPage();
-      generateROIPrognosePage(pdf, overallScore, actions, colors, leftMargin, textWidth);
+      generateROIPrognosePage(pdf, overallScore, actions, leftMargin, textWidth);
 
       // SEITE 19 - ERFOLGS-KPIS
       pdf.addPage();
-      generateKPIPage(pdf, realData, overallScore, colors, leftMargin, textWidth);
+      generateKPIPage(pdf, realData, overallScore, leftMargin, textWidth);
 
       // SEITE 20+ - ANHANG
       pdf.addPage();
-      generateAppendixPages(pdf, realData, businessData, manualSocialData, manualImprintData, colors, leftMargin, textWidth);
+      generateAppendixPages(pdf, realData, businessData, manualSocialData, manualImprintData, leftMargin, textWidth);
 
       // Footer auf allen Seiten
       const pageCount = pdf.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
         
-        drawBox(0, 285, 210, 12, colors.dark);
+        drawBox(pdf, 0, 285, 210, 12, colors.dark);
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(8);
         pdf.text('Premium Digital Marketing Analyse', leftMargin, 292);
@@ -713,18 +1268,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
   };
 
   // Neue Helper-Funktionen für die Detail-Seiten
-  const generateSEODetailPage = (pdf: any, data: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generateSEODetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    pdf.setPage(pdf.getNumberOfPages());
-    drawBox(leftMargin, 10, 180, 15, colors.secondary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('4. SEO-DETAILANALYSE', 20, 20);
     
     yPosition = 45;
     
-    // SEO-Score Breakdown
     const seoCategories = [
       { name: 'Meta-Tags', score: data.seo.score, details: 'Title-Tags, Meta-Descriptions, Header-Struktur' },
       { name: 'Content-Qualität', score: Math.max(40, data.seo.score - 10), details: 'Keyword-Dichte, Textlänge, Relevanz' },
@@ -734,7 +1287,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     
     seoCategories.forEach(category => {
       const scoreColor = getScoreColor(category.score);
-      drawBox(leftMargin, yPosition, 180, 25, colors.light, scoreColor);
+      drawBox(pdf, leftMargin, yPosition, 180, 25, colors.light, scoreColor);
       
       pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
       pdf.setFontSize(12);
@@ -742,12 +1295,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       
       pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
       pdf.setFontSize(9);
-      addWrappedText(category.details, leftMargin + 10, yPosition + 18, textWidth - 20, 9);
+      addWrappedText(pdf, category.details, leftMargin + 10, yPosition + 18, textWidth - 20, 9);
       
       yPosition += 35;
     });
     
-    // Keywords gefunden
     if (data.keywords.length > 0) {
       yPosition += 10;
       pdf.setFontSize(12);
@@ -756,14 +1308,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       yPosition += 15;
       
       const keywordText = data.keywords.slice(0, 15).join(', ');
-      addWrappedText(keywordText, leftMargin + 5, yPosition, textWidth - 10, 10);
+      addWrappedText(pdf, keywordText, leftMargin + 5, yPosition, textWidth - 10, 10);
     }
   };
 
-  const generatePerformanceDetailPage = (pdf: any, data: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generatePerformanceDetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.accent);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('5. PERFORMANCE-ANALYSE', 20, 20);
@@ -778,7 +1330,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     ];
     
     performanceMetrics.forEach(metric => {
-      drawBox(leftMargin, yPosition, 180, 20, colors.light);
+      drawBox(pdf, leftMargin, yPosition, 180, 20, colors.light);
       
       pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
       pdf.setFontSize(11);
@@ -788,7 +1340,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       // Status indicator
       const isGood = data.performance.score > 70;
       const statusColor = isGood ? colors.secondary : colors.danger;
-      drawBox(leftMargin + 160, yPosition + 3, 15, 14, statusColor);
+      drawBox(pdf, leftMargin + 160, yPosition + 3, 15, 14, statusColor);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(8);
       pdf.text(isGood ? 'OK' : 'FIX', leftMargin + 167.5, yPosition + 11, { align: 'center' });
@@ -797,10 +1349,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateMobileDetailPage = (pdf: any, data: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generateMobileDetailPage = (pdf: any, data: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.primary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('6. MOBILE OPTIMIERUNG', 20, 20);
@@ -816,7 +1368,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     
     mobileAspects.forEach(aspect => {
       const scoreColor = getScoreColor(aspect.score);
-      drawBox(leftMargin, yPosition, 180, 20, scoreColor);
+      drawBox(pdf, leftMargin, yPosition, 180, 20, scoreColor);
       
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(11);
@@ -826,10 +1378,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateSocialMediaDetailPage = (pdf: any, data: any, manualData: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generateSocialMediaDetailPage = (pdf: any, data: any, manualData: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.secondary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('7. SOCIAL MEDIA ANALYSE', 20, 20);
@@ -853,7 +1405,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     
     platforms.forEach(platform => {
       const statusColor = platform.present ? colors.secondary : colors.danger;
-      drawBox(leftMargin, yPosition, 180, 35, colors.light, statusColor);
+      drawBox(pdf, leftMargin, yPosition, 180, 35, colors.light, statusColor);
       
       pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
       pdf.setFontSize(12);
@@ -869,10 +1421,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateKeywordStrategyPage = (pdf: any, data: any, industry: string, colors: any, leftMargin: number, textWidth: number) => {
+  const generateKeywordStrategyPage = (pdf: any, data: any, industry: string, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.accent);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('9. KEYWORD-STRATEGIE', 20, 20);
@@ -891,7 +1443,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     
     const recommendedKeywords = industryKeywords[industry] || [];
     
-    drawBox(leftMargin, yPosition, 180, 40, colors.light);
+    drawBox(pdf, leftMargin, yPosition, 180, 40, colors.light);
     pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
     pdf.setFontSize(12);
     pdf.text('EMPFOHLENE KEYWORDS FÜR IHRE BRANCHE:', leftMargin + 10, yPosition + 10);
@@ -907,20 +1459,20 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     
     // Gefundene Keywords
     if (data.keywords.length > 0) {
-      drawBox(leftMargin, yPosition, 180, 30, colors.light);
+      drawBox(pdf, leftMargin, yPosition, 180, 30, colors.light);
       pdf.setFontSize(12);
       pdf.text('AUF IHRER WEBSITE GEFUNDEN:', leftMargin + 10, yPosition + 10);
       yPosition += 15;
       
       const foundKeywords = data.keywords.slice(0, 10).join(', ');
-      addWrappedText(foundKeywords, leftMargin + 15, yPosition, textWidth - 30, 10);
+      addWrappedText(pdf, foundKeywords, leftMargin + 15, yPosition, textWidth - 30, 10);
     }
   };
 
-  const generateTechnicalAnalysisPage = (pdf: any, data: any, imprintData: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generateTechnicalAnalysisPage = (pdf: any, data: any, imprintData: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.primary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('10. TECHNISCHE ANALYSE', 20, 20);
@@ -935,7 +1487,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     ];
     
     technicalAspects.forEach(aspect => {
-      drawBox(leftMargin, yPosition, 180, 20, aspect.color);
+      drawBox(pdf, leftMargin, yPosition, 180, 20, aspect.color);
       
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(11);
@@ -945,10 +1497,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateActionPlanPages = (pdf: any, actions: ImprovementAction[], colors: any, leftMargin: number, textWidth: number) => {
+  const generateActionPlanPages = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.secondary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('11. HANDLUNGSEMPFEHLUNGEN', 20, 20);
@@ -964,26 +1516,26 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     Object.entries(priorityGroups).forEach(([priority, priorityActions]) => {
       if (priorityActions.length === 0) return;
       
-      if (yPosition + 100 > pageHeight) {
+      if (yPosition + 100 > PAGE_HEIGHT) {
         pdf.addPage();
         yPosition = 30;
       }
       
       const priorityColor = priority === 'Hoch' ? colors.danger : priority === 'Mittel' ? colors.accent : colors.secondary;
       
-      drawBox(leftMargin, yPosition - 5, 180, 15, priorityColor);
+      drawBox(pdf, leftMargin, yPosition - 5, 180, 15, priorityColor);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(14);
       pdf.text(`${priority.toUpperCase()} PRIORITÄT (${priorityActions.length} Maßnahmen)`, 20, yPosition + 4);
       yPosition += 25;
       
       priorityActions.slice(0, 8).forEach((action, index) => {
-        if (yPosition + 35 > pageHeight) {
+        if (yPosition + 35 > PAGE_HEIGHT) {
           pdf.addPage();
           yPosition = 30;
         }
         
-        drawBox(leftMargin + 5, yPosition, 170, 30, colors.light, priorityColor);
+        drawBox(pdf, leftMargin + 5, yPosition, 170, 30, colors.light, priorityColor);
         
         pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
         pdf.setFontSize(11);
@@ -1002,10 +1554,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generatePriorityMatrixPage = (pdf: any, actions: ImprovementAction[], colors: any, leftMargin: number, textWidth: number) => {
+  const generatePriorityMatrixPage = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.accent);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('12. PRIORITÄTEN-MATRIX', 20, 20);
@@ -1013,7 +1565,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     yPosition = 45;
     
     // Impact vs Effort Matrix
-    drawBox(leftMargin, yPosition, 180, 150, colors.light);
+    drawBox(pdf, leftMargin, yPosition, 180, 150, colors.light);
     
     pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
     pdf.setFontSize(10);
@@ -1029,7 +1581,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     ];
     
     quadrants.forEach(quad => {
-      drawBox(quad.x, quad.y, 70, 50, quad.color);
+      drawBox(pdf, quad.x, quad.y, 70, 50, quad.color);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(8);
       const lines = quad.label.split('\n');
@@ -1039,10 +1591,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateImplementationPlanPage = (pdf: any, actions: ImprovementAction[], colors: any, leftMargin: number, textWidth: number) => {
+  const generateImplementationPlanPage = (pdf: any, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.primary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.primary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('13. IMPLEMENTIERUNGSPLAN', 20, 20);
@@ -1055,14 +1607,14 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       const timeframeActions = actions.filter(a => a.timeframe === timeframe);
       if (timeframeActions.length === 0) return;
       
-      if (yPosition + 60 > pageHeight) {
+      if (yPosition + 60 > PAGE_HEIGHT) {
         pdf.addPage();
         yPosition = 30;
       }
       
       const timeframeColor = [colors.danger, colors.accent, colors.primary, colors.secondary][index];
       
-      drawBox(leftMargin, yPosition, 180, 15, timeframeColor);
+      drawBox(pdf, leftMargin, yPosition, 180, 15, timeframeColor);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(12);
       pdf.text(`${timeframe.toUpperCase()} (${timeframeActions.length} Maßnahmen)`, leftMargin + 10, yPosition + 10);
@@ -1070,7 +1622,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       yPosition += 20;
       
       timeframeActions.slice(0, 5).forEach(action => {
-        drawBox(leftMargin + 10, yPosition, 160, 12, colors.light);
+        drawBox(pdf, leftMargin + 10, yPosition, 160, 12, colors.light);
         pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
         pdf.setFontSize(9);
         pdf.text(`• ${action.action}`, leftMargin + 15, yPosition + 8);
@@ -1081,10 +1633,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateROIPrognosePage = (pdf: any, currentScore: number, actions: ImprovementAction[], colors: any, leftMargin: number, textWidth: number) => {
+  const generateROIPrognosePage = (pdf: any, currentScore: number, actions: ImprovementAction[], leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.secondary);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.secondary);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('14. ROI-PROGNOSE', 20, 20);
@@ -1104,7 +1656,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     ];
     
     roiData.forEach(item => {
-      drawBox(leftMargin, yPosition, 180, 25, item.color);
+      drawBox(pdf, leftMargin, yPosition, 180, 25, item.color);
       
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(12);
@@ -1118,7 +1670,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     yPosition += 20;
     
     // ROI-Faktoren
-    drawBox(leftMargin, yPosition, 180, 60, colors.light);
+    drawBox(pdf, leftMargin, yPosition, 180, 60, colors.light);
     pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
     pdf.setFontSize(12);
     pdf.text('ROI-TREIBER:', leftMargin + 10, yPosition + 15);
@@ -1138,10 +1690,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateKPIPage = (pdf: any, data: any, currentScore: number, colors: any, leftMargin: number, textWidth: number) => {
+  const generateKPIPage = (pdf: any, data: any, currentScore: number, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.accent);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.accent);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('15. ERFOLGS-KPIS', 20, 20);
@@ -1176,12 +1728,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     ];
     
     kpis.forEach(kpi => {
-      if (yPosition + 80 > pageHeight) {
+      if (yPosition + 80 > PAGE_HEIGHT) {
         pdf.addPage();
         yPosition = 30;
       }
       
-      drawBox(leftMargin, yPosition, 180, 15, colors.primary);
+      drawBox(pdf, leftMargin, yPosition, 180, 15, colors.primary);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(12);
       pdf.text(kpi.category.toUpperCase(), leftMargin + 10, yPosition + 10);
@@ -1189,7 +1741,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       yPosition += 20;
       
       kpi.metrics.forEach(metric => {
-        drawBox(leftMargin + 10, yPosition, 160, 18, colors.light);
+        drawBox(pdf, leftMargin + 10, yPosition, 160, 18, colors.light);
         
         pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
         pdf.setFontSize(10);
@@ -1204,17 +1756,28 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     });
   };
 
-  const generateAppendixPages = (pdf: any, data: any, businessData: any, socialData: any, imprintData: any, colors: any, leftMargin: number, textWidth: number) => {
+  const generateAppendixPages = (pdf: any, data: any, businessData: any, socialData: any, imprintData: any, leftMargin: number, textWidth: number) => {
     let yPosition = 30;
     
-    drawBox(leftMargin, 10, 180, 15, colors.dark);
+    drawBox(pdf, leftMargin, 10, 180, 15, colors.dark);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(16);
     pdf.text('16. ANHANG: DETAILDATEN', 20, 20);
     
     yPosition = 45;
     
-    // Rohdaten
+    const getIndustryName = (industry: string) => {
+      const names = {
+        shk: 'SHK (Sanitär, Heizung, Klima)',
+        maler: 'Maler und Lackierer',
+        elektriker: 'Elektriker',
+        dachdecker: 'Dachdecker',
+        stukateur: 'Stukateure',
+        planungsbuero: 'Planungsbüro Versorgungstechnik'
+      };
+      return names[industry] || industry;
+    };
+    
     const appendixSections = [
       {
         title: 'UNTERNEHMENSDATEN',
@@ -1261,12 +1824,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
     }
     
     appendixSections.forEach(section => {
-      if (yPosition + (section.data.length * 12 + 30) > pageHeight) {
+      if (yPosition + (section.data.length * 12 + 30) > PAGE_HEIGHT) {
         pdf.addPage();
         yPosition = 30;
       }
       
-      drawBox(leftMargin, yPosition, 180, 15, colors.primary);
+      drawBox(pdf, leftMargin, yPosition, 180, 15, colors.primary);
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(11);
       pdf.text(section.title, leftMargin + 10, yPosition + 10);
@@ -1276,7 +1839,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSoc
       section.data.forEach(item => {
         pdf.setTextColor(colors.dark[0], colors.dark[1], colors.dark[2]);
         pdf.setFontSize(9);
-        addWrappedText(item, leftMargin + 10, yPosition, textWidth - 20, 9);
+        addWrappedText(pdf, item, leftMargin + 10, yPosition, textWidth - 20, 9);
         yPosition += 12;
       });
       
