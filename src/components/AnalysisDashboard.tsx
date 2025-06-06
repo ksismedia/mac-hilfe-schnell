@@ -88,20 +88,20 @@ const mockAnalyzeRealBusiness = async (url: string, address: string, industry: s
       issues: []
     },
     keywords: [
-      { keyword: "handwerker", found: true, volume: "hoch" },
-      { keyword: "reparatur", found: false, volume: "mittel" }
+      { keyword: "handwerker", found: true, volume: 1200, position: 5 },
+      { keyword: "reparatur", found: false, volume: 800, position: 0 }
     ],
     socialMedia: {
       overallScore: 60,
       facebook: {
         found: false,
-        followers: "0",
+        followers: 0,
         lastPost: "nie",
         engagement: "niedrig"
       },
       instagram: {
         found: false,
-        followers: "0",
+        followers: 0,
         lastPost: "nie",
         engagement: "niedrig"
       }
@@ -109,19 +109,45 @@ const mockAnalyzeRealBusiness = async (url: string, address: string, industry: s
     reviews: {
       google: {
         count: 15,
-        rating: 4.2
+        rating: 4.2,
+        recent: [
+          {
+            author: "Max Mustermann",
+            rating: 5,
+            text: "Sehr guter Service!",
+            date: "2024-01-15"
+          }
+        ]
       }
     },
     competitors: [],
     imprint: {
       found: true,
-      score: 90
+      score: 90,
+      completeness: 85,
+      foundElements: ["Geschäftsführer", "Adresse", "Kontakt"],
+      missingElements: ["USt-IdNr"]
     },
     socialProof: {
-      overallScore: 70
+      overallScore: 70,
+      testimonials: 5,
+      certifications: [
+        { name: "Handwerkskammer", verified: true, visible: true }
+      ],
+      awards: []
     },
     workplace: {
-      overallScore: 65
+      overallScore: 65,
+      kununu: {
+        found: false,
+        rating: 0,
+        reviews: 0
+      },
+      glassdoor: {
+        found: false,
+        rating: 0,
+        reviews: 0
+      }
     }
   };
 };
@@ -224,7 +250,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">
-            <ContentAnalysis />
+            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
           </TabsContent>
 
           <TabsContent value="social-media" className="space-y-6">
