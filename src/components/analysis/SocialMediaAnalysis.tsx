@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +25,8 @@ interface ManualSocialData {
   instagramUrl: string;
   facebookFollowers: string;
   instagramFollowers: string;
+  facebookLastPost: string;
+  instagramLastPost: string;
 }
 
 const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData }) => {
@@ -36,7 +39,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
       facebookUrl: '',
       instagramUrl: '',
       facebookFollowers: '',
-      instagramFollowers: ''
+      instagramFollowers: '',
+      facebookLastPost: '',
+      instagramLastPost: ''
     }
   });
 
@@ -105,7 +110,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
               <div className="bg-blue-50 rounded-lg p-4 mb-4">
                 <h4 className="font-semibold text-blue-900 mb-2">Social Media Kanäle eingeben</h4>
                 <p className="text-sm text-blue-800">
-                  Tragen Sie hier Ihre Social Media URLs und Follower-Zahlen ein:
+                  Tragen Sie hier Ihre Social Media URLs, Follower-Zahlen und Informationen zu letzten Posts ein:
                 </p>
               </div>
               
@@ -127,6 +132,14 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="facebookLastPost">Facebook - Letzter Post</Label>
+                  <Input
+                    id="facebookLastPost"
+                    placeholder="z.B. vor 2 Tagen, vor 1 Woche"
+                    {...form.register('facebookLastPost')}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="instagramUrl">Instagram URL</Label>
                   <Input
                     id="instagramUrl"
@@ -140,6 +153,14 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                     id="instagramFollowers"
                     placeholder="z.B. 180"
                     {...form.register('instagramFollowers')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="instagramLastPost">Instagram - Letzter Post</Label>
+                  <Input
+                    id="instagramLastPost"
+                    placeholder="z.B. vor 1 Tag, vor 3 Tagen"
+                    {...form.register('instagramLastPost')}
                   />
                 </div>
               </div>
@@ -190,7 +211,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{socialData.facebook.lastPost}</span>
+                          <span className="font-medium">
+                            {hasManualData && manualData?.facebookLastPost ? manualData.facebookLastPost : socialData.facebook.lastPost}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>
@@ -240,7 +263,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{socialData.instagram.lastPost}</span>
+                          <span className="font-medium">
+                            {hasManualData && manualData?.instagramLastPost ? manualData.instagramLastPost : socialData.instagram.lastPost}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>

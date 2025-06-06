@@ -14,6 +14,14 @@ interface PDFExportProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
+  manualSocialData?: {
+    facebookUrl: string;
+    instagramUrl: string;
+    facebookFollowers: string;
+    instagramFollowers: string;
+    facebookLastPost: string;
+    instagramLastPost: string;
+  } | null;
 }
 
 interface ImprovementAction {
@@ -26,7 +34,7 @@ interface ImprovementAction {
   description: string;
 }
 
-const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
+const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualSocialData = null }) => {
   const [activeTab, setActiveTab] = useState('summary');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -67,20 +75,30 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       // Helper für Text mit automatischem Umbruch
       const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 11) => {
         pdf.setFontSize(fontSize);
-        const cleanText = text.replace(/[^\x20-\x7E\u00A0-\u017F\u0100-\u024F]/g, ''); // Entferne problematische Sonderzeichen
+        // Bessere Sonderzeichen-Behandlung
+        const cleanText = text
+          .replace(/['"]/g, '"')  // Anführungszeichen normalisieren
+          .replace(/['']/g, "'")  // Apostrophe normalisieren
+          .replace(/[–—]/g, '-')  // Gedankenstriche normalisieren
+          .replace(/[…]/g, '...')  // Auslassungspunkte
+          .replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]/g, ''); // Erweiterte Zeichen
+        
         const lines = pdf.splitTextToSize(cleanText, maxWidth);
-        const lineHeight = fontSize * 0.35;
+        const lineHeight = fontSize * 0.4; // Verbesserte Zeilenhöhe
         
         lines.forEach((line: string, index: number) => {
-          if (y + (index * lineHeight) > pageHeight - 10) {
+          const currentY = y + (index * lineHeight);
+          if (currentY > pageHeight - 15) {
             pdf.addPage();
             yPosition = 20;
-            y = 20;
+            const newY = 20 + (index * lineHeight);
+            pdf.text(line, x, newY);
+          } else {
+            pdf.text(line, x, currentY);
           }
-          pdf.text(line, x, y + (index * lineHeight));
         });
         
-        return y + (lines.length * lineHeight) + 3;
+        return y + (lines.length * lineHeight) + 4; // Mehr Abstand
       };
 
       // Helper für Boxen/Rahmen
@@ -830,8 +848,10 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
     return strategies;
   };
 
+  // Verbesserte generateImprovementActions Funktion die manuelle Social Media Daten berücksichtigt
   const generateImprovementActions = (): ImprovementAction[] => {
     const actions: ImprovementAction[] = [];
+    const hasManualSocial = manualSocialData && (manualSocialData.facebookUrl || manualSocialData.instagramUrl);
 
     // SEO Verbesserungen
     if (realData.seo.score < 80) {
@@ -883,8 +903,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       });
     }
 
-    // Social Media
-    if (!realData.socialMedia.facebook.found) {
+    // Social Media - berücksichtigt manuelle Eingaben
+    if (!hasManualSocial && !realData.socialMedia.facebook.found) {
       actions.push({
         category: 'Social Media',
         action: 'Facebook Business-Seite erstellen',
@@ -894,9 +914,19 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         impact: 'Mittel',
         description: 'Professionelle Facebook-Präsenz für lokale Reichweite'
       });
+    } else if (hasManualSocial && manualSocialData?.facebookUrl) {
+      actions.push({
+        category: 'Social Media',
+        action: 'Facebook Content-Strategie entwickeln',
+        priority: 'Mittel',
+        timeframe: '1-3 Monate',
+        effort: 'Mittel',
+        impact: 'Hoch',
+        description: 'Regelmäßige Posts und Kundeninteraktion auf Facebook'
+      });
     }
 
-    if (!realData.socialMedia.instagram.found) {
+    if (!hasManualSocial && !realData.socialMedia.instagram.found) {
       actions.push({
         category: 'Social Media',
         action: 'Instagram Business-Profil einrichten',
@@ -905,6 +935,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         effort: 'Niedrig',
         impact: 'Mittel',
         description: 'Visuelle Projekt-Dokumentation für Handwerksbetriebe'
+      });
+    } else if (hasManualSocial && manualSocialData?.instagramUrl) {
+      actions.push({
+        category: 'Social Media',
+        action: 'Instagram Content-Kalender erstellen',
+        priority: 'Mittel',
+        timeframe: '1-3 Monate',
+        effort: 'Mittel',
+        impact: 'Hoch',
+        description: 'Systematische Veröffentlichung von Projekt-Fotos und Stories'
       });
     }
 
@@ -1045,8 +1085,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
                       <li>• 90-Tage Implementierungsplan</li>
                       <li>• Detaillierte Marktpositionsanalyse</li>
                       <li>• Benchmarking gegen Branchenstandards</li>
-                      <li>• Verbesserte Textumbrüche</li>
-                      <li>• Sonderzeichen-Behandlung</li>
+                      <li>• Verbesserte Textumbrüche und Sonderzeichen</li>
+                      <li>• Social Media Integration (manuell/automatisch)</li>
                       <li>• Mehr strategische Empfehlungen</li>
                     </ul>
                   </div>
@@ -1062,6 +1102,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
                   <p><strong>Branche:</strong> {realData.company.industry}</p>
                   <p><strong>Gesamtbewertung:</strong> {overallScore}/100 Punkte</p>
                   <p><strong>Verbesserungspotenzial:</strong> {100 - overallScore} Punkte möglich</p>
+                  {manualSocialData && (manualSocialData.facebookUrl || manualSocialData.instagramUrl) && (
+                    <p><strong>Social Media:</strong> Manuell eingegebene Daten werden berücksichtigt</p>
+                  )}
                 </div>
               </div>
             </TabsContent>
@@ -1152,15 +1195,15 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
               <div className="text-center space-y-4">
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
                   <h3 className="font-semibold text-green-900 mb-3">
-                    ✨ Ihr erweiterte Premium-Design Marketing-Plan ist bereit!
+                    ✨ Ihr optimierte Premium Marketing-Plan ist bereit!
                   </h3>
                   <div className="text-sm text-green-800 space-y-2">
-                    <p><strong>Design:</strong> Professionelles Layout mit verbesserter Textformatierung</p>
+                    <p><strong>Design:</strong> Verbesserte Textformatierung und Sonderzeichen-Behandlung</p>
                     <p><strong>Umfang:</strong> Umfassender Analysebericht mit SWOT, ROI und Implementierungsplan</p>
-                    <p><strong>Maßnahmen:</strong> {improvementActions.length} konkrete Verbesserungsschritte</p>
+                    <p><strong>Maßnahmen:</strong> {improvementActions.length} konkrete, angepasste Verbesserungsschritte</p>
                     <p><strong>Konkurrenz:</strong> Analyse von {realData.competitors.length} lokalen Mitbewerbern</p>
                     <p><strong>Keywords:</strong> {realData.keywords.length} branchenspezifische Begriffe analysiert</p>
-                    <p><strong>Neu:</strong> Optimierte Seitenumbrüche und Sonderzeichen-Behandlung</p>
+                    <p><strong>Social Media:</strong> {manualSocialData ? 'Manuell eingegebene Daten integriert' : 'Automatische Erkennung'}</p>
                   </div>
                 </div>
 
@@ -1171,12 +1214,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
                   disabled={isGenerating}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {isGenerating ? 'Erweiterte Premium PDF wird erstellt...' : '🎨 Erweiterte Premium PDF-Report herunterladen'}
+                  {isGenerating ? 'Optimierte Premium PDF wird erstellt...' : '🎨 Optimierte Premium PDF-Report herunterladen'}
                 </Button>
                 
                 <div className="text-sm text-gray-500">
-                  <p>Der erweiterte Premium-Bericht enthält alle echten Live-Analysedaten mit</p>
-                  <p>verbesserter Formatierung und zusätzlichen strategischen Inhalten für {realData.company.name}</p>
+                  <p>Der optimierte Premium-Bericht enthält alle echten Live-Analysedaten mit</p>
+                  <p>verbesserter Formatierung und angepassten Empfehlungen für {realData.company.name}</p>
                 </div>
               </div>
             </TabsContent>
