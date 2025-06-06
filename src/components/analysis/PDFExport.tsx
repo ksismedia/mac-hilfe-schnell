@@ -275,9 +275,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      yPosition = addTextWithWrap(pdf, `Title Tag: ${realData.seo.title || 'Nicht optimiert'}`, 30, yPosition + 25, 150);
+      yPosition = addTextWithWrap(pdf, `Title Tag: ${realData.seo.titleTag || 'Nicht optimiert'}`, 30, yPosition + 25, 150);
       yPosition = addTextWithWrap(pdf, `Meta Description: ${realData.seo.metaDescription || 'Nicht vorhanden'}`, 30, yPosition + 5, 150);
-      yPosition = addTextWithWrap(pdf, `H1 Headings: ${realData.seo.h1Count || 0} gefunden`, 30, yPosition + 5, 150);
+      yPosition = addTextWithWrap(pdf, `H1 Headings: ${realData.seo.headings.h1.length || 0} gefunden`, 30, yPosition + 5, 150);
       yPosition += 20;
 
       // SEO Empfehlungen
@@ -315,8 +315,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.text(`Ladezeit: ${realData.performance.loadTime || 'Unbekannt'}`, 30, yPosition + 30);
-      pdf.text(`First Contentful Paint: ${realData.performance.fcp || 'Unbekannt'}`, 30, yPosition + 40);
-      pdf.text(`Largest Contentful Paint: ${realData.performance.lcp || 'Unbekannt'}`, 30, yPosition + 50);
+      pdf.text(`Largest Contentful Paint: ${realData.performance.lcp || 'Unbekannt'}`, 30, yPosition + 40);
+      pdf.text(`First Input Delay: ${realData.performance.fid || 'Unbekannt'}`, 30, yPosition + 50);
       pdf.text(`Cumulative Layout Shift: ${realData.performance.cls || 'Unbekannt'}`, 30, yPosition + 60);
       yPosition += 90;
 
@@ -385,7 +385,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.text(`Facebook: ${realData.socialMedia.facebook.found ? 'Gefunden' : 'Nicht gefunden'}`, 30, yPosition + 15);
       pdf.text(`Instagram: ${realData.socialMedia.instagram.found ? 'Gefunden' : 'Nicht gefunden'}`, 30, yPosition + 25);
       pdf.text(`Google My Business: ${realData.reviews.google.count > 0 ? 'Aktiv' : 'Inaktiv'}`, 30, yPosition + 35);
-      pdf.text(`LinkedIn: ${realData.socialMedia.linkedin?.found ? 'Gefunden' : 'Nicht gefunden'}`, 30, yPosition + 45);
+      pdf.text(`Social Media Score: ${realData.socialMedia.overallScore}/100`, 30, yPosition + 45);
       yPosition += 80;
 
       console.log('Social Media section completed, starting Mobile section...');
@@ -409,7 +409,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.text(`Responsive Design: ${realData.mobile.responsive ? 'Ja' : 'Nein'}`, 30, yPosition + 30);
-      pdf.text(`Mobile Performance: ${realData.mobile.performance || 'Unbekannt'}`, 30, yPosition + 40);
+      pdf.text(`Touch Friendly: ${realData.mobile.touchFriendly ? 'Ja' : 'Nein'}`, 30, yPosition + 40);
       yPosition += 70;
 
       console.log('Mobile section completed, starting Action Plan...');
