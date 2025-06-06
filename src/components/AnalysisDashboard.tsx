@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
 import { Separator } from '@/components/ui/separator';
-import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
 import OverallRating from '@/components/analysis/OverallRating';
 import SEOAnalysis from '@/components/analysis/SEOAnalysis';
 import PerformanceAnalysis from '@/components/analysis/PerformanceAnalysis';
@@ -162,7 +162,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
 
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
-    queryFn: () => mockAnalyzeRealBusiness(businessData.url, businessData.address, businessData.industry),
+    queryFn: () => BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry),
     refetchOnWindowFocus: false,
     retry: 2,
   });
