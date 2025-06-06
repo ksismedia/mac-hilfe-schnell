@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { MapPin, Star, TrendingUp, TrendingDown, Minus, Award, Users, Clock, CheckCircle } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface CompetitorAnalysisProps {
@@ -28,6 +28,27 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   const ownRating = realData.reviews.google.rating || 4.2;
   const ownReviewCount = realData.reviews.google.count || 0;
 
+  // Erweiterte Leistungsanalyse basierend auf verfügbaren Daten
+  const analyzeCompetitorPerformance = (competitor: any) => {
+    const performance = {
+      customerSatisfaction: competitor.rating,
+      marketPresence: Math.min(100, (competitor.reviews / 10) * 20), // Reviews als Indikator für Marktpräsenz
+      reliability: competitor.rating > 4.0 ? 85 : competitor.rating > 3.5 ? 70 : 50,
+      digitalPresence: competitor.reviews > 20 ? 80 : competitor.reviews > 10 ? 60 : 40,
+      trustworthiness: Math.min(100, (competitor.rating * 20) + (competitor.reviews > 5 ? 20 : 0))
+    };
+
+    // Geschätzte Leistungskategorien basierend auf Bewertungsmustern
+    const estimatedServices = {
+      quality: competitor.rating >= 4.5 ? 'Sehr gut' : competitor.rating >= 4.0 ? 'Gut' : competitor.rating >= 3.5 ? 'Durchschnitt' : 'Verbesserungsbedarf',
+      customerService: competitor.rating >= 4.0 && competitor.reviews >= 10 ? 'Exzellent' : 'Standard',
+      pricingCompetitiveness: competitor.reviews >= 15 ? 'Wettbewerbsfähig' : 'Unbekannt',
+      responseTime: competitor.rating >= 4.0 ? 'Schnell' : 'Standard'
+    };
+
+    return { performance, estimatedServices };
+  };
+
   const getComparisonIcon = (competitorValue: number, ownValue: number) => {
     if (competitorValue > ownValue) return <TrendingUp className="h-4 w-4 text-red-500" />;
     if (competitorValue < ownValue) return <TrendingDown className="h-4 w-4 text-green-500" />;
@@ -49,113 +70,94 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
     ? realData.competitors.reduce((sum, comp) => sum + comp.reviews, 0) / realData.competitors.length
     : 0;
 
+  // Marktpositionierung berechnen
+  const strongerCompetitors = realData.competitors.filter(c => c.rating > ownRating).length;
+  const weakerCompetitors = realData.competitors.filter(c => c.rating < ownRating).length;
+  const marketPosition = strongerCompetitors === 0 ? 'Marktführer' : 
+                        strongerCompetitors <= 2 ? 'Top-Position' : 
+                        weakerCompetitors >= strongerCompetitors ? 'Oberes Mittelfeld' : 'Verbesserungspotential';
+
   return (
     <div className="space-y-6">
-      {/* Vergleichs-Übersicht */}
+      {/* Erweiterte Marktpositionierung */}
       <Card>
         <CardHeader>
-          <CardTitle>Ihr Unternehmen vs. lokale Konkurrenz</CardTitle>
+          <CardTitle>Marktpositionierung & Leistungsvergleich</CardTitle>
           <CardDescription>
-            Direkter Leistungsvergleich mit {realData.competitors.length} lokalen Konkurrenten in {city}
+            Ihre Position unter {realData.competitors.length} lokalen Konkurrenten in {city}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Eigene Performance */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <Card className="border-blue-200">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-blue-600">
-                  {realData.company.name}
+                <CardTitle className="text-lg text-blue-600 flex items-center gap-2">
+                  <Award className="h-5 w-5" />
+                  Marktposition
                 </CardTitle>
-                <Badge variant="default">Ihr Unternehmen</Badge>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Bewertung:</span>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="font-bold">{ownRating.toFixed(1)}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Rezensionen:</span>
-                    <span className="font-bold">{ownReviewCount}</span>
-                  </div>
-                  <Progress value={ownRating * 20} className="h-2" />
-                </div>
+                <div className="text-xl font-bold text-blue-600">{marketPosition}</div>
+                <p className="text-sm text-gray-600 mt-1">
+                  {strongerCompetitors} stärker, {weakerCompetitors} schwächer
+                </p>
               </CardContent>
             </Card>
 
-            {/* Konkurrenz-Durchschnitt */}
-            <Card className="border-gray-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-gray-600">
-                  Konkurrenz-Durchschnitt
-                </CardTitle>
-                <Badge variant="secondary">
-                  {realData.competitors.length} Unternehmen
-                </Badge>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Bewertung:</span>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="font-bold">{avgCompetitorRating.toFixed(1)}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Rezensionen:</span>
-                    <span className="font-bold">{Math.round(avgCompetitorReviews)}</span>
-                  </div>
-                  <Progress value={avgCompetitorRating * 20} className="h-2" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Performance-Vergleich */}
             <Card className="border-green-200">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-green-600">
-                  Ihr Vorsprung
+                <CardTitle className="text-lg text-green-600 flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Kundenzufriedenheit
                 </CardTitle>
-                <Badge variant="outline">Vergleich</Badge>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Bewertung:</span>
-                    <div className="flex items-center gap-1">
-                      {getComparisonIcon(avgCompetitorRating, ownRating)}
-                      <span className={`font-bold ${getPerformanceColor(avgCompetitorRating, ownRating)}`}>
-                        {ownRating > avgCompetitorRating ? '+' : ''}{(ownRating - avgCompetitorRating).toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Rezensionen:</span>
-                    <div className="flex items-center gap-1">
-                      {getComparisonIcon(avgCompetitorReviews, ownReviewCount)}
-                      <span className={`font-bold ${getPerformanceColor(avgCompetitorReviews, ownReviewCount)}`}>
-                        {ownReviewCount > avgCompetitorReviews ? '+' : ''}{ownReviewCount - Math.round(avgCompetitorReviews)}
-                      </span>
-                    </div>
-                  </div>
+                <div className="text-xl font-bold text-green-600">{ownRating.toFixed(1)}/5</div>
+                <p className="text-sm text-gray-600 mt-1">
+                  {ownRating > avgCompetitorRating ? 'Überdurchschnittlich' : 'Verbesserungsbedarf'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-yellow-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-yellow-600 flex items-center gap-2">
+                  <Star className="h-5 w-5" />
+                  Bewertungsdichte
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl font-bold text-yellow-600">{ownReviewCount}</div>
+                <p className="text-sm text-gray-600 mt-1">
+                  {ownReviewCount > avgCompetitorReviews ? 'Gut etabliert' : 'Ausbaufähig'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-purple-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-purple-600 flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5" />
+                  Wettbewerbsvorteil
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl font-bold text-purple-600">
+                  {Math.round(((ownRating - avgCompetitorRating) * 20) + ((ownReviewCount - avgCompetitorReviews) / 5))}%
                 </div>
+                <p className="text-sm text-gray-600 mt-1">Relativer Vorteil</p>
               </CardContent>
             </Card>
           </div>
         </CardContent>
       </Card>
 
-      {/* Detaillierte Konkurrenzanalyse */}
+      {/* Detaillierte Konkurrenzanalyse mit Leistungsvergleich */}
       <Card>
         <CardHeader>
-          <CardTitle>Konkurrenzanalyse für {city}</CardTitle>
+          <CardTitle>Detaillierte Leistungsanalyse der Konkurrenz</CardTitle>
           <CardDescription>
-            Echte Konkurrenten-Suche in der {industry.toUpperCase()}-Branche im Umkreis von {address}
+            Umfassender Vergleich von Servicequalität, Kundenzufriedenheit und Marktpräsenz
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -181,79 +183,168 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              {realData.competitors.map((competitor, index) => (
-                <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-lg">{competitor.name}</h3>
-                        {competitor.rating > ownRating && (
-                          <Badge variant="destructive" className="text-xs">
-                            Stärker
+            <div className="space-y-6">
+              {realData.competitors.map((competitor, index) => {
+                const analysis = analyzeCompetitorPerformance(competitor);
+                return (
+                  <div key={index} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold text-lg">{competitor.name}</h3>
+                          <Badge variant={competitor.rating > ownRating ? "destructive" : "default"} className={competitor.rating <= ownRating ? "bg-green-600" : ""}>
+                            Rang #{index + 1}
                           </Badge>
-                        )}
-                        {competitor.rating < ownRating && (
-                          <Badge variant="default" className="text-xs bg-green-600">
-                            Schwächer
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {competitor.distance} entfernt
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-yellow-500">★</span>
-                        <span className="font-medium">{competitor.rating}</span>
-                        <span className="text-sm text-gray-600">({competitor.reviews} Bewertungen)</span>
+                          {competitor.rating >= 4.5 && (
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                              <Star className="h-3 w-3 mr-1" />
+                              Premium
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {competitor.distance} entfernt
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Star className="h-3 w-3 text-yellow-500" />
+                            {competitor.rating}/5 ({competitor.reviews} Bewertungen)
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">vs. Sie:</span>
-                      {getComparisonIcon(competitor.rating, ownRating)}
-                      <span className={`text-sm font-medium ${getPerformanceColor(competitor.rating, ownRating)}`}>
-                        {competitor.rating > ownRating ? 'Besser' : competitor.rating < ownRating ? 'Schlechter' : 'Gleich'}
-                      </span>
+                    {/* Leistungsvergleich */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                      <div className="bg-blue-50 p-3 rounded-lg">
+                        <div className="text-sm font-medium text-blue-800 mb-1">Servicequalität</div>
+                        <div className="text-lg font-bold text-blue-600">{analysis.estimatedServices.quality}</div>
+                        <Progress value={analysis.performance.customerSatisfaction * 20} className="h-2 mt-2" />
+                      </div>
+                      
+                      <div className="bg-green-50 p-3 rounded-lg">
+                        <div className="text-sm font-medium text-green-800 mb-1">Marktpräsenz</div>
+                        <div className="text-lg font-bold text-green-600">{analysis.performance.marketPresence}%</div>
+                        <Progress value={analysis.performance.marketPresence} className="h-2 mt-2" />
+                      </div>
+                      
+                      <div className="bg-yellow-50 p-3 rounded-lg">
+                        <div className="text-sm font-medium text-yellow-800 mb-1">Zuverlässigkeit</div>
+                        <div className="text-lg font-bold text-yellow-600">{analysis.performance.reliability}%</div>
+                        <Progress value={analysis.performance.reliability} className="h-2 mt-2" />
+                      </div>
+                      
+                      <div className="bg-purple-50 p-3 rounded-lg">
+                        <div className="text-sm font-medium text-purple-800 mb-1">Vertrauenswürdigkeit</div>
+                        <div className="text-lg font-bold text-purple-600">{analysis.performance.trustworthiness}%</div>
+                        <Progress value={analysis.performance.trustworthiness} className="h-2 mt-2" />
+                      </div>
                     </div>
-                    
-                    <Progress value={competitor.rating * 20} className="w-full" />
+
+                    {/* Geschätzte Leistungsdetails */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+                      <div>
+                        <h4 className="font-semibold text-gray-800 mb-2">Geschätzte Stärken:</h4>
+                        <ul className="text-sm space-y-1">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            Kundenservice: {analysis.estimatedServices.customerService}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-blue-500" />
+                            Reaktionszeit: {analysis.estimatedServices.responseTime}
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-purple-500" />
+                            Preisgestaltung: {analysis.estimatedServices.pricingCompetitiveness}
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-gray-800 mb-2">Direkter Vergleich zu Ihnen:</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-center">
+                            <span>Bewertung:</span>
+                            <div className="flex items-center gap-2">
+                              {getComparisonIcon(competitor.rating, ownRating)}
+                              <span className={`font-medium ${getPerformanceColor(competitor.rating, ownRating)}`}>
+                                {competitor.rating > ownRating ? `+${(competitor.rating - ownRating).toFixed(1)}` : 
+                                 competitor.rating < ownRating ? `${(competitor.rating - ownRating).toFixed(1)}` : 'Gleich'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span>Bewertungen:</span>
+                            <div className="flex items-center gap-2">
+                              {getComparisonIcon(competitor.reviews, ownReviewCount)}
+                              <span className={`font-medium ${getPerformanceColor(competitor.reviews, ownReviewCount)}`}>
+                                {competitor.reviews > ownReviewCount ? `+${competitor.reviews - ownReviewCount}` : 
+                                 competitor.reviews < ownReviewCount ? `${competitor.reviews - ownReviewCount}` : 'Gleich'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
-          {/* Strategische Empfehlungen */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-900 mb-2">
-              Strategische Empfehlungen basierend auf Konkurrenzanalyse
+          {/* Strategische Handlungsempfehlungen basierend auf Leistungsanalyse */}
+          <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-4">
+              🎯 Strategische Empfehlungen basierend auf Leistungsanalyse
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium mb-1">Sofort umsetzbar:</h4>
-                <ul className="space-y-1">
-                  {ownRating < avgCompetitorRating && <li>• Kundenbewertungen aktiv sammeln</li>}
-                  {ownReviewCount < avgCompetitorReviews && <li>• Mehr Google-Rezensionen generieren</li>}
-                  <li>• Google My Business Profil optimieren</li>
-                  <li>• Lokale SEO-Keywords verwenden</li>
+                <h4 className="font-medium text-blue-800 mb-3">Sofortige Optimierungen:</h4>
+                <ul className="space-y-2 text-sm text-blue-700">
+                  {ownRating < avgCompetitorRating && (
+                    <li className="flex items-start gap-2">
+                      <TrendingUp className="h-4 w-4 text-red-500 mt-0.5" />
+                      Servicequalität steigern - Konkurrenz liegt bei {avgCompetitorRating.toFixed(1)}/5
+                    </li>
+                  )}
+                  {ownReviewCount < avgCompetitorReviews && (
+                    <li className="flex items-start gap-2">
+                      <Users className="h-4 w-4 text-yellow-500 mt-0.5" />
+                      Mehr Kundenbewertungen sammeln - Ziel: {Math.ceil(avgCompetitorReviews)} Bewertungen
+                    </li>
+                  )}
+                  <li className="flex items-start gap-2">
+                    <Award className="h-4 w-4 text-green-500 mt-0.5" />
+                    Alleinstellungsmerkmale deutlicher kommunizieren
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5" />
+                    Kundenservice-Prozesse optimieren
+                  </li>
                 </ul>
               </div>
+              
               <div>
-                <h4 className="font-medium mb-1">Mittelfristig:</h4>
-                <ul className="space-y-1">
-                  <li>• Social Media Präsenz aufbauen</li>
-                  <li>• Referenzprojekte dokumentieren</li>
-                  <li>• Website-Performance verbessern</li>
-                  <li>• Kundenservice-Qualität steigern</li>
+                <h4 className="font-medium text-blue-800 mb-3">Langzeit-Strategien:</h4>
+                <ul className="space-y-2 text-sm text-blue-700">
+                  <li className="flex items-start gap-2">
+                    <Star className="h-4 w-4 text-purple-500 mt-0.5" />
+                    Premium-Positionierung durch Qualitätsnachweis
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-indigo-500 mt-0.5" />
+                    Schnellere Reaktionszeiten als Wettbewerbsvorteil
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-green-500 mt-0.5" />
+                    Lokale Marktführerschaft durch kontinuierliche Verbesserung
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <TrendingUp className="h-4 w-4 text-blue-500 mt-0.5" />
+                    Regelmäßiges Monitoring der Konkurrenzentwicklung
+                  </li>
                 </ul>
               </div>
             </div>
