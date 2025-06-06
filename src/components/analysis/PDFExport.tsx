@@ -458,9 +458,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         if (topThreats.length > 0) {
           checkNewPage(80, 'Konkurrenzanalyse');
           
-          drawStyledBox(pdf, 20, yPosition, 170, 30, 'danger');
+          drawStyledBox(pdf, 20, yPosition, 170, 30, 'warning');
           
-          pdf.setTextColor(...colors.danger);
+          pdf.setTextColor(...colors.warning);
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'bold');
           pdf.text(`⚠ TOP-BEDROHUNGEN: ${topThreats.length} IDENTIFIZIERT`, 30, yPosition + 20);
@@ -485,7 +485,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
             pdf.text(`Entfernung: ${threat.distance}`, 30, threatY + 16);
             
             // Bedrohungsanalyse
-            pdf.setTextColor(...colors.danger);
+            pdf.setTextColor(...colors.warning);
             pdf.setFontSize(8);
             const threatLevel = threat.rating > ownRating + 0.5 ? 'HOCH' : threat.rating > ownRating ? 'MITTEL' : 'NIEDRIG';
             pdf.text(`Bedrohungslevel: ${threatLevel}`, 30, threatY + 24);
@@ -583,7 +583,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         // Marktlücken-Analyse
         checkNewPage(50, 'Konkurrenzanalyse');
         
-        drawStyledBox(pdf, 20, yPosition, 170, 40, 'accent');
+        drawStyledBox(pdf, 20, yPosition, 170, 40, 'primary');
         
         pdf.setTextColor(...colors.darkGray);
         pdf.setFontSize(12);
