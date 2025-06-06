@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,8 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
-import APIKeyManager from '@/components/APIKeyManager';
-import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Search, Globe, MapPin, Building, Zap, Download } from 'lucide-react';
 
 interface BusinessData {
@@ -28,19 +27,10 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const { toast } = useToast();
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
-
-  const handleApiKeySet = () => {
-    setShowApiKeyInput(false);
-    toast({
-      title: "API Key gesetzt",
-      description: "Sie können jetzt mit echten API-Daten analysieren.",
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,11 +79,6 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Zeige API-Key-Eingabe nur wenn explizit gewünscht
-  if (showApiKeyInput) {
-    return <APIKeyManager onApiKeySet={handleApiKeySet} />;
-  }
-
   // Zeige Extension-Datenverarbeitung wenn verfügbar
   if (hasExtensionData && extensionData && !showResults) {
     return (
@@ -122,56 +107,20 @@ const Index = () => {
           </p>
         </div>
 
-        {/* API Key Status */}
+        {/* Extension Hinweis */}
         <Card className="mb-6 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-800">
               <Zap className="h-5 w-5" />
-              API-Status: {GoogleAPIService.hasApiKey() ? "✓ Aktiviert" : "⚠ Demo-Modus"}
-            </CardTitle>
-            <CardDescription className="text-green-700">
-              {GoogleAPIService.hasApiKey() 
-                ? "Echte Google API-Daten werden verwendet für präzise Analysen."
-                : "Demo-Modus aktiv - realistische Testdaten werden generiert."
-              }
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowApiKeyInput(true)}
-                className="text-green-700 border-green-300"
-              >
-                {GoogleAPIService.hasApiKey() ? "API-Key ändern" : "API-Key eingeben"}
-              </Button>
-              {!GoogleAPIService.hasApiKey() && (
-                <Button 
-                  variant="default"
-                  onClick={() => setShowApiKeyInput(true)}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  API-Key für echte Daten eingeben
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Extension Hinweis */}
-        <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-800">
-              <Zap className="h-5 w-5" />
               🚀 NEU: Chrome Extension verfügbar!
             </CardTitle>
-            <CardDescription className="text-blue-700">
+            <CardDescription className="text-green-700">
               Analysieren Sie jede Website direkt mit einem Klick - ohne CORS-Probleme oder API-Limits!
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="text-sm text-blue-800">
+              <div className="text-sm text-green-800">
                 <strong>Vorteile der Extension:</strong>
                 <ul className="list-disc list-inside mt-1 space-y-1">
                   <li>✓ Vollständige Website-Analyse ohne Einschränkungen</li>
@@ -183,7 +132,7 @@ const Index = () => {
               <div className="flex gap-3">
                 <Button 
                   variant="default" 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-green-600 hover:bg-green-700"
                   onClick={() => {
                     toast({
                       title: "Extension-Installation",
@@ -197,6 +146,7 @@ const Index = () => {
                 <Button 
                   variant="outline"
                   onClick={() => {
+                    // Öffne Chrome Extensions Seite
                     window.open('chrome://extensions/', '_blank');
                   }}
                 >

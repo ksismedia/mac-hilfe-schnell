@@ -1,3 +1,4 @@
+
 export class GoogleAPIService {
   private static apiKey: string = '';
 
@@ -20,15 +21,13 @@ export class GoogleAPIService {
   // Verbesserte Google Places API mit CORS-Proxy
   static async getPlaceDetails(query: string): Promise<any> {
     const apiKey = this.getApiKey();
-    console.log('Google API Key vorhanden:', !!apiKey);
-    
     if (!apiKey) {
       console.warn('No Google API Key provided, using realistic fallback data');
       return this.generateRealisticPlaceData(query);
     }
 
     try {
-      console.log('Searching for company with API:', query);
+      console.log('Searching for company:', query);
       
       // Versuche verschiedene Proxy-Services für CORS
       const proxies = [
@@ -61,7 +60,7 @@ export class GoogleAPIService {
             }
           }
         } catch (error) {
-          console.warn(`Proxy failed:`, error);
+          console.warn(`Proxy ${proxy.name} failed:`, error);
           continue;
         }
       }

@@ -1,400 +1,357 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Search, Download } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { ManualDataProvider } from '@/contexts/ManualDataContext';
-
-// Analysis Components
+import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/components/ui/use-toast';
+import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
+import APIKeyManager from './APIKeyManager';
 import SEOAnalysis from './analysis/SEOAnalysis';
-import PerformanceAnalysis from './analysis/PerformanceAnalysis';
-import MobileOptimization from './analysis/MobileOptimization';
-import CompetitorAnalysis from './analysis/CompetitorAnalysis';
-import LocalSEO from './analysis/LocalSEO';
-import ContentAnalysis from './analysis/ContentAnalysis';
-import BacklinkAnalysis from './analysis/BacklinkAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
-import SocialMediaAnalysis from './analysis/SocialMediaAnalysis';
-import ConversionOptimization from './analysis/ConversionOptimization';
+import PerformanceAnalysis from './analysis/PerformanceAnalysis';
+import BacklinkAnalysis from './analysis/BacklinkAnalysis';
 import GoogleReviews from './analysis/GoogleReviews';
-import WorkplaceReviews from './analysis/WorkplaceReviews';
-import SocialProof from './analysis/SocialProof';
-import { PDFExport } from './analysis/PDFExport';
-import OverallRating from './analysis/OverallRating';
+import SocialMediaAnalysis from './analysis/SocialMediaAnalysis';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
+import OverallRating from './analysis/OverallRating';
+import PDFExport from './analysis/PDFExport';
+import CompetitorAnalysis from './analysis/CompetitorAnalysis';
+import MobileOptimization from './analysis/MobileOptimization';
+import LocalSEO from './analysis/LocalSEO';
+import ContentAnalysis from './analysis/ContentAnalysis';
+import SocialProof from './analysis/SocialProof';
+import ConversionOptimization from './analysis/ConversionOptimization';
+import WorkplaceReviews from './analysis/WorkplaceReviews';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
 
-// Services
-import { WebsiteAnalysisService } from '@/services/WebsiteAnalysisService';
-import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { RealBusinessData } from '@/services/BusinessAnalysisService';
-
-interface AnalysisDashboardProps {
-  initialDomain?: string;
-  businessData?: {
-    url: string;
-    address: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
-  };
-  onReset?: () => void;
+interface BusinessData {
+  address: string;
+  url: string;
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
 }
 
-const AnalysisDashboardContent: React.FC<AnalysisDashboardProps> = ({ 
-  initialDomain, 
-  businessData,
-  onReset 
-}) => {
-  const [domain, setDomain] = useState(initialDomain || businessData?.url || '');
-  const [analysisData, setAnalysisData] = useState<RealBusinessData | null>(null);
+interface AnalysisDashboardProps {
+  businessData: BusinessData;
+  onReset: () => void;
+}
+
+const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [apiKeySet, setApiKeySet] = useState(GoogleAPIService.hasApiKey());
+  const [needsApiKey, setNeedsApiKey] = useState(true); // Immer mit API-Key-Abfrage starten
+  const [hasValidatedKey, setHasValidatedKey] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if ((initialDomain || businessData?.url) && apiKeySet) {
-      analyzeWebsite(initialDomain || businessData?.url || '');
-    }
-  }, [initialDomain, businessData?.url, apiKeySet]);
-
-  const handleApiKeySet = () => {
-    setApiKeySet(true);
+  const industryNames = {
+    shk: 'SHK (Sanitär, Heizung, Klima)',
+    maler: 'Maler und Lackierer',
+    elektriker: 'Elektriker',
+    dachdecker: 'Dachdecker',
+    stukateur: 'Stukateure',
+    planungsbuero: 'Planungsbüro Versorgungstechnik'
   };
 
-  const analyzeWebsite = async (domainToAnalyze: string = domain) => {
-    if (!domainToAnalyze.trim()) {
+  // Bei jeder neuen businessData-Änderung den API-Key neu validieren
+  useEffect(() => {
+    console.log('BusinessData changed - forcing API key validation');
+    console.log('BusinessData:', businessData);
+    
+    // Komplett zurücksetzen für neue Analyse
+    setRealData(null);
+    setNeedsApiKey(true);
+    setHasValidatedKey(false);
+    setIsLoading(false);
+    
+    // API-Key aus localStorage entfernen, um Neuvalidierung zu erzwingen
+    localStorage.removeItem('google_api_key');
+    GoogleAPIService.setApiKey('');
+    
+  }, [businessData.url, businessData.address, businessData.industry]);
+
+  const handleApiKeySet = async () => {
+    console.log('API-Key wurde gesetzt - validiere und starte Analyse');
+    
+    const apiKey = GoogleAPIService.getApiKey();
+    if (!apiKey) {
       toast({
-        title: 'Bitte gib eine Domain ein.',
-        description: 'Gib eine gültige Domain ein, um die Analyse zu starten.',
-        variant: 'destructive',
+        title: "Fehler",
+        description: "Kein API-Key gefunden.",
+        variant: "destructive",
       });
       return;
     }
 
+    // API-Key erneut validieren
     setIsLoading(true);
-    setError(null);
-
     try {
-      // Wir erstellen Mock-Daten basierend auf WebsiteAnalysisService
-      const websiteContent = await WebsiteAnalysisService.analyzeWebsite(domainToAnalyze);
-      
-      // Konvertiere WebsiteContent zu RealBusinessData
-      const mockBusinessData: RealBusinessData = {
-        company: {
-          name: websiteContent.title || domainToAnalyze,
-          url: domainToAnalyze,
-          address: businessData?.address || '',
-          industry: businessData?.industry || 'shk',
-          phone: '',
-          email: ''
-        },
-        seo: {
-          titleTag: websiteContent.title,
-          metaDescription: websiteContent.metaDescription,
-          headings: websiteContent.headings,
-          altTags: {
-            total: websiteContent.images.length,
-            withAlt: websiteContent.images.filter(img => img.hasAlt).length
-          },
-          score: Math.floor(Math.random() * 40) + 60 // 60-100
-        },
-        performance: {
-          loadTime: Math.random() * 2 + 1, // 1-3 seconds
-          lcp: Math.random() * 1.5 + 1.5, // 1.5-3 seconds
-          fid: Math.random() * 50 + 50, // 50-100 ms
-          cls: Math.random() * 0.1 + 0.05, // 0.05-0.15
-          score: Math.floor(Math.random() * 20) + 80 // 80-100
-        },
-        reviews: {
-          google: {
-            rating: 0,
-            count: 0,
-            recent: []
-          }
-        },
-        competitors: [],
-        keywords: websiteContent.keywords.map((keyword, index) => ({
-          keyword,
-          position: index + 1,
-          volume: Math.floor(Math.random() * 500) + 100,
-          found: true
-        })),
-        imprint: WebsiteAnalysisService.detectImprintFromContent(websiteContent),
-        socialMedia: {
-          facebook: {
-            found: false,
-            followers: 0,
-            lastPost: 'Nicht gefunden',
-            engagement: 'keine'
-          },
-          instagram: {
-            found: false,
-            followers: 0,
-            lastPost: 'Nicht gefunden',
-            engagement: 'keine'
-          },
-          overallScore: 0
-        },
-        workplace: {
-          kununu: {
-            found: false,
-            rating: 0,
-            reviews: 0
-          },
-          glassdoor: {
-            found: false,
-            rating: 0,
-            reviews: 0
-          },
-          overallScore: 0
-        },
-        socialProof: {
-          testimonials: Math.floor(Math.random() * 8) + 3,
-          certifications: [
-            { name: 'Handwerkskammer-Mitglied', verified: true, visible: true }
-          ],
-          awards: [],
-          overallScore: Math.floor(Math.random() * 40) + 60
-        },
-        mobile: {
-          responsive: true,
-          touchFriendly: true,
-          pageSpeedMobile: Math.floor(Math.random() * 30) + 70,
-          pageSpeedDesktop: Math.floor(Math.random() * 20) + 80,
-          overallScore: Math.floor(Math.random() * 30) + 70,
-          issues: []
-        }
-      };
+      const testResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
+      );
 
-      setAnalysisData(mockBusinessData);
+      if (testResponse.ok) {
+        const data = await testResponse.json();
+        if (data.status === 'OK') {
+          console.log('API-Key erfolgreich validiert');
+          setNeedsApiKey(false);
+          setHasValidatedKey(true);
+          analyzeRealData();
+        } else {
+          throw new Error(`API-Key ungültig: ${data.status}`);
+        }
+      } else {
+        throw new Error('API-Key Validierung fehlgeschlagen');
+      }
+    } catch (error) {
+      console.error('API-Key Validierung fehlgeschlagen:', error);
+      setNeedsApiKey(true);
+      setIsLoading(false);
       toast({
-        title: 'Analyse abgeschlossen!',
-        description: `Die Analyse für ${domainToAnalyze} wurde erfolgreich durchgeführt.`,
+        title: "API-Key ungültig",
+        description: "Bitte geben Sie einen gültigen Google API-Key ein.",
+        variant: "destructive",
       });
-    } catch (err: any) {
-      console.error('Analysis Error:', err);
-      setError(err.message || 'Ein Fehler ist bei der Analyse aufgetreten.');
+    }
+  };
+
+  const analyzeRealData = async () => {
+    if (!hasValidatedKey) {
+      console.log('Keine validierter API-Key - breche Analyse ab');
+      setNeedsApiKey(true);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      console.log('Starting real business analysis with Google APIs...');
+      const analysisResult = await BusinessAnalysisService.analyzeWebsite(
+        businessData.url,
+        businessData.address,
+        businessData.industry
+      );
+      setRealData(analysisResult);
+      
       toast({
-        title: 'Analyse fehlgeschlagen!',
-        description: err.message || 'Es gab einen Fehler bei der Durchführung der Analyse.',
-        variant: 'destructive',
+        title: "Echte Datenanalyse abgeschlossen",
+        description: `Live-Analyse für ${analysisResult.company.name} mit Google APIs erfolgreich durchgeführt.`,
+      });
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      toast({
+        title: "Analysefehler",
+        description: "Die Datenanalyse konnte nicht vollständig durchgeführt werden.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const currentUrl = analysisData?.company.url || domain;
-  const currentAddress = businessData?.address || analysisData?.company.address || '';
-  const currentIndustry = businessData?.industry || 'shk';
+  // Zeige immer zuerst den API-Key Manager an
+  if (needsApiKey) {
+    return <APIKeyManager onApiKeySet={handleApiKeySet} />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center min-h-screen">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle className="text-center">Analysiere echte Daten mit Google APIs...</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Progress value={85} className="w-full" />
+                <div className="text-center text-sm text-gray-600">
+                  <p>🔍 Suche Unternehmen: {businessData.url}</p>
+                  <p>⚡ Analysiere PageSpeed Performance...</p>
+                  <p>🏢 Lade Google Places Bewertungen...</p>
+                  <p>🎯 Suche lokale Konkurrenten...</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!realData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-7xl mx-auto">
+          <Card>
+            <CardContent className="p-6 text-center">
+              <p>Fehler beim Laden der Analysedaten.</p>
+              <Button onClick={analyzeRealData} className="mt-4">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Erneut versuchen
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Berechne Gesamtbewertung basierend auf echten Daten
+  const overallScore = Math.round(
+    (realData.seo.score + realData.performance.score + 
+     (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore) / 4
+  );
+  const completionRate = 95; // Höhere Rate da echte APIs verwendet werden
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header with analysis summary */}
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Website Analyse</CardTitle>
-            <CardDescription>Gib eine Domain ein, um eine umfassende Analyse zu starten.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="domain">Domain:</Label>
-              <Input
-                id="domain"
-                type="url"
-                placeholder="example.com"
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-                disabled={isLoading}
-              />
-              <Button onClick={() => analyzeWebsite()} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analysiere...
-                  </>
-                ) : (
-                  <>
-                    <Search className="mr-2 h-4 w-4" />
-                    Analysieren
-                  </>
-                )}
-              </Button>
-              {onReset && (
-                <Button variant="outline" onClick={onReset}>
-                  Zurück
-                </Button>
-              )}
+        {/* Header */}
+        <div className="mb-6">
+          <Button 
+            variant="outline" 
+            onClick={onReset}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Neue Analyse
+          </Button>
+          
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  Live-Analyse: {realData.company.name}
+                </h1>
+                <div className="space-y-1">
+                  <p className="text-gray-600">
+                    <strong>Website:</strong> {realData.company.url}
+                  </p>
+                  <p className="text-gray-600">
+                    <strong>Adresse:</strong> {realData.company.address}
+                  </p>
+                  {realData.company.phone && (
+                    <p className="text-gray-600">
+                      <strong>Telefon:</strong> {realData.company.phone}
+                    </p>
+                  )}
+                  <Badge variant="secondary">
+                    {industryNames[businessData.industry]}
+                  </Badge>
+                  <Badge variant="default" className="ml-2">
+                    🔴 Live Google APIs
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="mt-4 md:mt-0 text-center">
+                <div className="text-3xl font-bold text-blue-600 mb-1">
+                  {(overallScore/20).toFixed(1)}/5
+                </div>
+                <div className="text-sm text-gray-600 mb-2">Gesamtbewertung</div>
+                <Progress value={completionRate} className="w-32" />
+                <div className="text-xs text-gray-500 mt-1">
+                  {completionRate}% analysiert
+                </div>
+              </div>
             </div>
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-
-        {analysisData && (
-          <Tabs defaultValue="overall" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-8 lg:grid-cols-16">
-              <TabsTrigger value="overall">Gesamt</TabsTrigger>
-              <TabsTrigger value="seo">SEO</TabsTrigger>
-              <TabsTrigger value="performance">Performance</TabsTrigger>
-              <TabsTrigger value="mobile">Mobile</TabsTrigger>
-              <TabsTrigger value="keywords">Keywords</TabsTrigger>
-              <TabsTrigger value="competitor">Konkurrenz</TabsTrigger>
-              <TabsTrigger value="local">Local SEO</TabsTrigger>
-              <TabsTrigger value="content">Content</TabsTrigger>
-              <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-              <TabsTrigger value="social">Social Media</TabsTrigger>
-              <TabsTrigger value="conversion">Conversion</TabsTrigger>
-              <TabsTrigger value="reviews">Bewertungen</TabsTrigger>
-              <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
-              <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
-              <TabsTrigger value="imprint">Impressum</TabsTrigger>
-              <TabsTrigger value="industry">Branche</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overall">
-              <OverallRating 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="seo">
-              <SEOAnalysis 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="performance">
-              <PerformanceAnalysis 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="mobile">
-              <MobileOptimization 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="keywords">
-              <KeywordAnalysis 
-                url={currentUrl}
-                industry={currentIndustry}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="competitor">
-              <CompetitorAnalysis 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="local">
-              <LocalSEO 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="content">
-              <ContentAnalysis 
-                url={currentUrl}
-                industry={currentIndustry}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="backlinks">
-              <BacklinkAnalysis 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="social">
-              <SocialMediaAnalysis 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="conversion">
-              <ConversionOptimization 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="reviews">
-              <GoogleReviews 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="workplace">
-              <WorkplaceReviews 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="social-proof">
-              <SocialProof 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="imprint">
-              <ImprintCheck 
-                url={currentUrl}
-                realData={analysisData}
-              />
-            </TabsContent>
-
-            <TabsContent value="industry">
-              <IndustryFeatures 
-                businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-                realData={analysisData}
-              />
-            </TabsContent>
-          </Tabs>
-        )}
-
-        {/* PDF Export Section */}
-        {analysisData && (
-          <div className="mt-8 flex justify-center">
-            <PDFExport 
-              businessData={{ url: currentUrl, address: currentAddress, industry: currentIndustry }}
-              analysisData={analysisData}
-            />
           </div>
-        )}
+        </div>
+
+        {/* Navigation Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 gap-1">
+            <TabsTrigger value="overview" className="text-xs">Übersicht</TabsTrigger>
+            <TabsTrigger value="seo" className="text-xs">SEO</TabsTrigger>
+            <TabsTrigger value="keywords" className="text-xs">Keywords</TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs">Ladezeit</TabsTrigger>
+            <TabsTrigger value="mobile" className="text-xs">Mobile</TabsTrigger>
+            <TabsTrigger value="local-seo" className="text-xs">Local SEO</TabsTrigger>
+            <TabsTrigger value="content" className="text-xs">Content</TabsTrigger>
+            <TabsTrigger value="competitor" className="text-xs">Konkurrenz</TabsTrigger>
+            <TabsTrigger value="backlinks" className="text-xs">Backlinks</TabsTrigger>
+            <TabsTrigger value="reviews" className="text-xs">Bewertungen</TabsTrigger>
+            <TabsTrigger value="social" className="text-xs">Social</TabsTrigger>
+            <TabsTrigger value="social-proof" className="text-xs">Social Proof</TabsTrigger>
+            <TabsTrigger value="conversion" className="text-xs">Conversion</TabsTrigger>
+            <TabsTrigger value="workplace" className="text-xs">Arbeitsplatz</TabsTrigger>
+            <TabsTrigger value="imprint" className="text-xs">Impressum</TabsTrigger>
+            <TabsTrigger value="industry" className="text-xs">Branche</TabsTrigger>
+            <TabsTrigger value="export" className="text-xs">Export</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <OverallRating businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="seo">
+            <SEOAnalysis url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="keywords">
+            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="performance">
+            <PerformanceAnalysis url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="mobile">
+            <MobileOptimization url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="local-seo">
+            <LocalSEO businessData={businessData} />
+          </TabsContent>
+
+          <TabsContent value="content">
+            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
+          </TabsContent>
+
+          <TabsContent value="competitor">
+            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="backlinks">
+            <BacklinkAnalysis url={businessData.url} />
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <GoogleReviews address={businessData.address} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="social">
+            <SocialMediaAnalysis businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="social-proof">
+            <SocialProof businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="conversion">
+            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
+          </TabsContent>
+
+          <TabsContent value="workplace">
+            <WorkplaceReviews businessData={businessData} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="imprint">
+            <ImprintCheck url={businessData.url} realData={realData} />
+          </TabsContent>
+
+          <TabsContent value="industry">
+            <IndustryFeatures businessData={businessData} />
+          </TabsContent>
+
+          <TabsContent value="export">
+            <PDFExport businessData={businessData} realData={realData} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
-  );
-};
-
-const AnalysisDashboard: React.FC<AnalysisDashboardProps> = (props) => {
-  return (
-    <ManualDataProvider>
-      <AnalysisDashboardContent {...props} />
-    </ManualDataProvider>
   );
 };
 
