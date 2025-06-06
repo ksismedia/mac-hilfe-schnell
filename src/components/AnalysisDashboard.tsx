@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +24,7 @@ import ImprintCheck from '@/components/analysis/ImprintCheck';
 import IndustryFeatures from '@/components/analysis/IndustryFeatures';
 import PDFExport from '@/components/analysis/PDFExport';
 import { ArrowLeft, Download, RefreshCw } from 'lucide-react';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
 
 interface AnalysisDashboardProps {
   businessData: {
@@ -55,6 +55,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
 
   console.log('AnalysisDashboard: Starting analysis for:', businessData.url);
+  console.log('Google API Key available:', GoogleAPIService.hasApiKey());
 
   const { data: realData, isLoading, error, refetch } = useQuery({
     queryKey: ['businessAnalysis', businessData.url, businessData.address],
@@ -62,7 +63,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       console.log('useQuery: Calling BusinessAnalysisService.analyzeWebsite with:', {
         url: businessData.url,
         address: businessData.address,
-        industry: businessData.industry
+        industry: businessData.industry,
+        hasApiKey: GoogleAPIService.hasApiKey()
       });
       const result = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
       console.log('useQuery: Analysis completed, result:', result);
@@ -83,7 +85,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
         <Card className="max-w-md w-full">
           <CardHeader>
             <CardTitle>Analyse wird durchgeführt...</CardTitle>
-            <CardDescription>Bitte warten Sie, während wir Ihre Daten analysieren.</CardDescription>
+            <CardDescription>
+              {GoogleAPIService.hasApiKey() 
+                ? "Echte API-Daten werden abgerufen..." 
+                : "Realistische Demo-Daten werden generiert..."
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
             <RefreshCw className="animate-spin h-6 w-6" />
@@ -118,7 +125,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       <div className="max-w-6xl mx-auto">
         <Card className="mb-8">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-2xl font-bold">Analyse-Dashboard</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              Analyse-Dashboard
+              {!GoogleAPIService.hasApiKey() && (
+                <Badge variant="secondary" className="ml-2">Demo-Modus</Badge>
+              )}
+            </CardTitle>
             <Button variant="outline" onClick={onReset}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Neue Analyse
