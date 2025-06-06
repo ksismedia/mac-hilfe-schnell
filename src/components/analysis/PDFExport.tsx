@@ -32,17 +32,17 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
   const [activeTab, setActiveTab] = useState('summary');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Professionelle Farbpalette (RGB-Werte)
+  // Professionelle Farbpalette als Tupel (RGB-Werte)
   const colors = {
-    primary: [33, 77, 129],        // Dunkles professionelles Blau
-    secondary: [52, 152, 219],     // Helles Blau
-    accent: [241, 196, 15],        // Gediegenes Gold
-    darkGray: [52, 73, 94],        // Dunkelgrau für Text
-    lightGray: [149, 165, 166],    // Hellgrau für Rahmen
-    background: [248, 249, 250],   // Sehr helles Grau für Boxen
-    success: [39, 174, 96],        // Professionelles Grün
-    warning: [230, 126, 34],       // Gediegenes Orange
-    danger: [192, 57, 43]          // Professionelles Rot
+    primary: [33, 77, 129] as [number, number, number],        // Dunkles professionelles Blau
+    secondary: [52, 152, 219] as [number, number, number],     // Helles Blau
+    accent: [241, 196, 15] as [number, number, number],        // Gediegenes Gold
+    darkGray: [52, 73, 94] as [number, number, number],        // Dunkelgrau für Text
+    lightGray: [149, 165, 166] as [number, number, number],    // Hellgrau für Rahmen
+    background: [248, 249, 250] as [number, number, number],   // Sehr helles Grau für Boxen
+    success: [39, 174, 96] as [number, number, number],        // Professionelles Grün
+    warning: [230, 126, 34] as [number, number, number],       // Gediegenes Orange
+    danger: [192, 57, 43] as [number, number, number]          // Professionelles Rot
   };
 
   // Helper-Funktion für saubere Textaufbereitung
@@ -93,11 +93,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
     switch (type) {
       case 'primary':
         borderColor = colors.primary;
-        fillColor = [240, 248, 255]; // Sehr helles Blau
+        fillColor = [240, 248, 255] as [number, number, number]; // Sehr helles Blau
         break;
       case 'secondary':
         borderColor = colors.secondary;
-        fillColor = [245, 245, 245]; // Hellgrau
+        fillColor = [245, 245, 245] as [number, number, number]; // Hellgrau
         break;
       case 'info':
         borderColor = colors.lightGray;
@@ -105,11 +105,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
         break;
       case 'success':
         borderColor = colors.success;
-        fillColor = [240, 255, 240]; // Sehr helles Grün
+        fillColor = [240, 255, 240] as [number, number, number]; // Sehr helles Grün
         break;
       case 'warning':
         borderColor = colors.warning;
-        fillColor = [255, 248, 230]; // Sehr helles Orange
+        fillColor = [255, 248, 230] as [number, number, number]; // Sehr helles Orange
         break;
     }
     
@@ -361,7 +361,6 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
           
           pdf.setTextColor(...colors.darkGray);
           pdf.setFontSize(10);
-          pdf.setFont('helvetica', 'normal');
           pdf.text(`• ${keyword.keyword}`, 30, yPosition);
           pdf.setTextColor(...colors.lightGray);
           pdf.text(`${keyword.volume} Suchanfragen/Monat`, 140, yPosition);
