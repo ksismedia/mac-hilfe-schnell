@@ -1,12 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { Edit, Plus } from 'lucide-react';
@@ -32,21 +29,26 @@ interface ManualSocialData {
 const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData, realData }) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualData, setManualData] = useState<ManualSocialData | null>(null);
-  const { toast } = useToast();
-  
-  const form = useForm<ManualSocialData>({
-    defaultValues: {
-      facebookUrl: '',
-      instagramUrl: '',
-      facebookFollowers: '',
-      instagramFollowers: '',
-      facebookLastPost: '',
-      instagramLastPost: ''
-    }
+  const [formData, setFormData] = useState<ManualSocialData>({
+    facebookUrl: '',
+    instagramUrl: '',
+    facebookFollowers: '',
+    instagramFollowers: '',
+    facebookLastPost: '',
+    instagramLastPost: ''
   });
+  const { toast } = useToast();
 
-  const onSubmit = (data: ManualSocialData) => {
-    setManualData(data);
+  const handleInputChange = (field: keyof ManualSocialData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setManualData(formData);
     setShowManualInput(false);
     toast({
       title: "Social Media Daten aktualisiert",
@@ -106,7 +108,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
         </CardHeader>
         <CardContent>
           {showManualInput ? (
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={onSubmit} className="space-y-4">
               <div className="bg-blue-50 rounded-lg p-4 mb-4">
                 <h4 className="font-semibold text-blue-900 mb-2">Social Media Kanäle eingeben</h4>
                 <p className="text-sm text-blue-800">
@@ -120,7 +122,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="facebookUrl"
                     placeholder="https://www.facebook.com/ihr-unternehmen"
-                    {...form.register('facebookUrl')}
+                    value={formData.facebookUrl}
+                    onChange={(e) => handleInputChange('facebookUrl', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -128,7 +131,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="facebookFollowers"
                     placeholder="z.B. 250"
-                    {...form.register('facebookFollowers')}
+                    value={formData.facebookFollowers}
+                    onChange={(e) => handleInputChange('facebookFollowers', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -136,7 +140,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="facebookLastPost"
                     placeholder="z.B. vor 2 Tagen, vor 1 Woche"
-                    {...form.register('facebookLastPost')}
+                    value={formData.facebookLastPost}
+                    onChange={(e) => handleInputChange('facebookLastPost', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -144,7 +149,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="instagramUrl"
                     placeholder="https://www.instagram.com/ihr-unternehmen"
-                    {...form.register('instagramUrl')}
+                    value={formData.instagramUrl}
+                    onChange={(e) => handleInputChange('instagramUrl', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -152,7 +158,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="instagramFollowers"
                     placeholder="z.B. 180"
-                    {...form.register('instagramFollowers')}
+                    value={formData.instagramFollowers}
+                    onChange={(e) => handleInputChange('instagramFollowers', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -160,7 +167,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({ businessData,
                   <Input
                     id="instagramLastPost"
                     placeholder="z.B. vor 1 Tag, vor 3 Tagen"
-                    {...form.register('instagramLastPost')}
+                    value={formData.instagramLastPost}
+                    onChange={(e) => handleInputChange('instagramLastPost', e.target.value)}
                   />
                 </div>
               </div>
