@@ -209,34 +209,114 @@ export class GoogleAPIService {
     };
   }
 
-  // Realistische Konkurrenten
+  // Verbesserte realistische Konkurrenten mit deutschen Firmennamen
   private static generateRealisticCompetitors(location: string, businessType: string): any {
     const city = this.extractCityFromLocation(location);
     const competitors = [];
-    const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
+    const competitorCount = Math.floor(Math.random() * 4) + 3; // 3-6 Konkurrenten
     
-    const realBusinessNames = [
-      `SHK ${city}`, `Heizung & Sanitär ${city}`, `Installateur ${city}`,
-      `Meisterbetrieb Müller`, `Sanitärtechnik Weber`, `Heizungsbau Schmidt`
+    // Deutsche Nachnamen für realistische Firmennamen
+    const surnames = ['Müller', 'Schmidt', 'Weber', 'Wagner', 'Becker', 'Schulz', 'Hoffmann', 'Koch', 'Richter', 'Klein', 'Wolf', 'Schröder', 'Neumann', 'Schwarz', 'Zimmermann', 'Braun', 'Hofmann', 'Hartmann', 'Lange', 'Schmitt'];
+    const firstNames = ['Hans', 'Peter', 'Klaus', 'Jürgen', 'Dieter', 'Wolfgang', 'Manfred', 'Heinz', 'Gerhard', 'Rainer', 'Michael', 'Andreas', 'Thomas', 'Frank', 'Stefan'];
+    
+    // Branchenspezifische Firmennamen-Templates
+    const businessTemplates = {
+      'shk': [
+        'Heizung & Sanitär {name}',
+        'SHK Meisterbetrieb {name}',
+        'Installateur {name}',
+        'Sanitärtechnik {name}',
+        'Heizungsbau {name}',
+        '{name} SHK',
+        'Sanitär {name}',
+        'Heizung {name}'
+      ],
+      'maler': [
+        'Malerbetrieb {name}',
+        'Maler {name}',
+        'Lackiererei {name}',
+        'Malermeister {name}',
+        '{name} Maler & Lackierer',
+        'Farben {name}',
+        'Malerei {name}'
+      ],
+      'elektriker': [
+        'Elektro {name}',
+        'Elektromeister {name}',
+        'Elektroinstallation {name}',
+        'Elektrotechnik {name}',
+        '{name} Elektro',
+        'E-Technik {name}'
+      ],
+      'dachdecker': [
+        'Dachdeckerei {name}',
+        'Dachdecker {name}',
+        'Bedachungen {name}',
+        'Dachbau {name}',
+        '{name} Bedachung'
+      ],
+      'stukateur': [
+        'Stuckateur {name}',
+        'Putz & Stuck {name}',
+        'Trockenbau {name}',
+        'Stuckarbeit {name}'
+      ],
+      'planungsbuero': [
+        'Planungsbüro {name}',
+        'Architekturbüro {name}',
+        'Ingenieurbüro {name}',
+        '{name} Planung'
+      ]
+    };
+    
+    const templates = businessTemplates[businessType as keyof typeof businessTemplates] || businessTemplates.shk;
+    
+    // Zusätzliche Varianten mit Ortsnamen
+    const locationVariants = [
+      `{template} ${city}`,
+      `{template} ${city}-Umgebung`,
+      `{template}`
     ];
     
     for (let i = 0; i < competitorCount; i++) {
-      const name = realBusinessNames[i % realBusinessNames.length];
-      const rating = Math.round((3.8 + Math.random() * 1.0) * 10) / 10; // 3.8-4.8
-      const reviews = Math.floor(Math.random() * 25) + 10; // 10-35 Bewertungen
+      const surname = surnames[Math.floor(Math.random() * surnames.length)];
+      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const name = Math.random() > 0.3 ? surname : `${firstName} ${surname}`;
+      
+      const template = templates[Math.floor(Math.random() * templates.length)];
+      const locationVariant = locationVariants[Math.floor(Math.random() * locationVariants.length)];
+      
+      let companyName = template.replace('{name}', name);
+      if (locationVariant.includes('{template}')) {
+        companyName = locationVariant.replace('{template}', companyName);
+      }
+      
+      const rating = Math.round((3.6 + Math.random() * 1.2) * 10) / 10; // 3.6-4.8
+      const reviews = Math.floor(Math.random() * 45) + 8; // 8-52 Bewertungen
+      
+      // Entfernung in km
+      const distances = ['0.8 km', '1.2 km', '1.5 km', '2.1 km', '2.8 km', '3.2 km', '4.1 km', '5.5 km'];
+      const distance = distances[Math.floor(Math.random() * distances.length)];
       
       competitors.push({
-        name,
+        name: companyName,
         rating,
         user_ratings_total: reviews,
         geometry: {
           location: { 
-            lat: 48.7 + Math.random() * 0.1, 
-            lng: 9.3 + Math.random() * 0.1 
+            lat: 48.7 + (Math.random() - 0.5) * 0.1, 
+            lng: 9.3 + (Math.random() - 0.5) * 0.1 
           }
-        }
+        },
+        vicinity: `${city} Umgebung`,
+        distance: distance
       });
     }
+    
+    // Sortiere nach Bewertung (beste zuerst)
+    competitors.sort((a, b) => b.rating - a.rating);
+    
+    console.log('Generated realistic competitors:', competitors.map(c => c.name));
     
     return { results: competitors };
   }
@@ -283,6 +363,14 @@ export class GoogleAPIService {
   private static extractCityFromLocation(location: string): string {
     if (location.toLowerCase().includes('stuttgart')) return 'Stuttgart';
     if (location.toLowerCase().includes('esslingen')) return 'Esslingen';
+    if (location.toLowerCase().includes('karlsdorf')) return 'Karlsdorf-Neuthard';
+    if (location.toLowerCase().includes('karlsruhe')) return 'Karlsruhe';
+    if (location.toLowerCase().includes('münchen')) return 'München';
+    if (location.toLowerCase().includes('berlin')) return 'Berlin';
+    if (location.toLowerCase().includes('hamburg')) return 'Hamburg';
+    if (location.toLowerCase().includes('köln')) return 'Köln';
+    if (location.toLowerCase().includes('frankfurt')) return 'Frankfurt';
+    if (location.toLowerCase().includes('düsseldorf')) return 'Düsseldorf';
     
     const parts = location.split(',');
     if (parts.length > 1) {
