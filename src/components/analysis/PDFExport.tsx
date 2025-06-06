@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -186,9 +187,9 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
         pdf.text(`${index + 1}. ${competitor.name}`, 20, yPosition);
         yPosition += 7;
         pdf.setFontSize(10);
-        pdf.text(`   Bewertung: ${competitor.rating}/5 (${competitor.reviewCount} Bewertungen)`, 25, yPosition);
+        pdf.text(`   Bewertung: ${competitor.rating}/5 (${competitor.reviews} Bewertungen)`, 25, yPosition);
         yPosition += 6;
-        pdf.text(`   Adresse: ${competitor.address}`, 25, yPosition);
+        pdf.text(`   Entfernung: ${competitor.distance}`, 25, yPosition);
         yPosition += 10;
       });
 
@@ -303,18 +304,17 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
       pdf.text('TECHNISCHE ANALYSE-DETAILS', 20, yPosition);
       yPosition += 15;
       
-      // Performance Details
+      // Performance Details - korrigierte Property-Namen
       pdf.setFontSize(12);
       pdf.text('Performance-Metriken:', 20, yPosition);
       yPosition += 10;
       
       pdf.setFontSize(10);
       const performanceDetails = [
-        `Ladezeit Desktop: ${realData.performance.metrics.fcp}ms (First Contentful Paint)`,
-        `Ladezeit Mobile: ${realData.performance.metrics.lcp}ms (Largest Contentful Paint)`,
-        `Cumulative Layout Shift: ${realData.performance.metrics.cls}`,
-        `Total Blocking Time: ${realData.performance.metrics.tbt}ms`,
-        `Speed Index: ${realData.performance.metrics.si}`,
+        `Ladezeit Desktop: ${realData.performance.loadTime}ms (Load Time)`,
+        `Largest Contentful Paint: ${realData.performance.lcp}ms`,
+        `Cumulative Layout Shift: ${realData.performance.cls}`,
+        `First Input Delay: ${realData.performance.fid}ms`,
         `Performance Score: ${realData.performance.score}/100`
       ];
       
@@ -755,3 +755,4 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData }) => {
 };
 
 export default PDFExport;
+
