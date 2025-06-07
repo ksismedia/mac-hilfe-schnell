@@ -703,29 +703,17 @@ export class BusinessAnalysisService {
     const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
     const competitors = [];
     
-    // Realistische Firmennamen basierend auf echten SHK-Betrieben
-    const realBusinessNames = [
-      `SHK 76689 Karlsdorf-Neuthard`,
-      `Sanitär Meisterbetrieb Pfisterer GmbH`,
-      `Wilhelm Pfisterer Heizung & Sanitär`,
-      `Phtech Haustechnik Services`,
-      `Heizung & Sanitär Zimmermann`,
-      `Bäder Meisterbetrieb Wagner`,
-      `SHK Fachbetrieb Schulte`,
-      `Installateur Klein & Partner`,
-      `Sanitärtechnik Hoffmann GmbH`,
-      `Heizungsbau Meier & Söhne`,
-      `Klimatechnik Bauer`,
-      `SHK-Service Krause`
-    ];
+    const industryNames = this.getIndustryTerms(industry);
+    const surnames = ['Müller', 'Schmidt', 'Weber', 'Fischer', 'Wagner', 'Becker'];
     
     for (let i = 0; i < competitorCount; i++) {
-      const name = realBusinessNames[i % realBusinessNames.length];
+      const businessType = industryNames[i % industryNames.length];
+      const surname = surnames[i % surnames.length];
       const rating = Math.round((3.9 + Math.random() * 1.0) * 10) / 10; // 3.9-4.9
       const reviews = Math.floor(Math.random() * 35) + 12; // 12-47 Bewertungen
       
       competitors.push({
-        name,
+        name: `${businessType} ${surname}`,
         distance: `${(Math.random() * 8 + 1.5).toFixed(1)} km`,
         rating,
         reviews
