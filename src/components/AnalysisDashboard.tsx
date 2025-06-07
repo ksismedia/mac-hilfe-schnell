@@ -39,6 +39,7 @@ interface BusinessData {
 interface AnalysisDashboardProps {
   businessData: BusinessData;
   onReset: () => void;
+  onBusinessDataChange?: (newBusinessData: BusinessData) => void;
 }
 
 // Industry names mapping
@@ -51,7 +52,7 @@ const industryNames = {
   'planungsbuero': 'Planungsbüro'
 };
 
-const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset }) => {
+const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onReset, onBusinessDataChange }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -222,6 +223,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
 
   const handleLoadSavedAnalysis = (savedAnalysis: any) => {
     console.log('Loading saved analysis:', savedAnalysis);
+    
+    // Update business data in parent component if callback is provided
+    if (onBusinessDataChange && savedAnalysis.businessData) {
+      onBusinessDataChange(savedAnalysis.businessData);
+    }
     
     // Setze die Business-Daten (diese sollten von außen kommen, aber wir können sie auch aus der gespeicherten Analyse nehmen)
     setRealData(savedAnalysis.realData);

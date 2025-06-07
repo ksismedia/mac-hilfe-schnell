@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,6 +68,11 @@ const Index = () => {
     });
   };
 
+  const handleBusinessDataChange = (newBusinessData: BusinessData) => {
+    console.log('Business data updated from saved analysis:', newBusinessData);
+    setBusinessData(newBusinessData);
+  };
+
   const resetAnalysis = () => {
     setShowResults(false);
     setBusinessData({
@@ -92,7 +96,13 @@ const Index = () => {
 
   // Zeige Analyse-Dashboard wenn Ergebnisse vorhanden
   if (showResults) {
-    return <AnalysisDashboard businessData={businessData} onReset={resetAnalysis} />;
+    return (
+      <AnalysisDashboard 
+        businessData={businessData} 
+        onReset={resetAnalysis}
+        onBusinessDataChange={handleBusinessDataChange}
+      />
+    );
   }
 
   return (
