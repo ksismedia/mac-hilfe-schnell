@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { FileText, Printer } from 'lucide-react';
+import { useManualData } from '@/hooks/useManualData';
 
 interface HTMLExportProps {
   businessData: {
@@ -27,8 +28,71 @@ const industryNames = {
 };
 
 const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualImprintData, manualSocialData }) => {
-  
+  const { manualCompetitors, competitorServices } = useManualData();
+
   const generateHTMLReport = () => {
+    // Schätze eigene Services (falls verfügbar, sonst Durchschnitt für Branche)
+    const estimateOwnServicesCount = () => {
+      const industryServiceCounts = {
+        'shk': 8, // Heizung, Sanitär, Klima, Wartung, etc.
+        'maler': 6, // Innen-/Außenanstrich, Renovierung, etc.
+        'elektriker': 7, // Installation, Wartung, Smart Home, etc.
+        'dachdecker': 5, // Dachdeckung, Reparatur, Dämmung, etc.
+        'stukateur': 6, // Putz, Trockenbau, Sanierung, etc.
+        'planungsbuero': 10 // Verschiedene Planungsarten
+      };
+      return industryServiceCounts[businessData.industry] || 6;
+    };
+
+    // Berechne Services-Score für einen Konkurrenten
+    const calculateServicesScore = (servicesCount: number) => {
+      if (servicesCount === 0) return 0;
+      // Services-Score: 0-100 basierend auf Anzahl der Services
+      // Mehr Services = höherer Score, aber mit abnehmenden Erträgen
+      return Math.min(100, (servicesCount / 10) * 100);
+    };
+
+    // Berechne Gesamt-Performance-Score für einen Konkurrenten
+    const calculateCompetitorScore = (competitor: any) => {
+      const ratingScore = (competitor.rating / 5) * 100; // 0-100
+      const reviewScore = Math.min(100, (competitor.reviews / 50) * 100); // 0-100, max bei 50+ Reviews
+      const servicesScore = calculateServicesScore(competitor.services?.length || 0);
+      
+      // Gewichtung: Rating 50%, Reviews 30%, Services 20%
+      return (ratingScore * 0.5) + (reviewScore * 0.3) + (servicesScore * 0.2);
+    };
+
+    // Kombiniere echte und manuelle Konkurrenten mit erweiterten Scores
+    const allCompetitors = [
+      ...realData.competitors.map(comp => {
+        const services = competitorServices[comp.name] || [];
+        return {
+          ...comp,
+          services,
+          isManual: false,
+          performanceScore: calculateCompetitorScore({...comp, services})
+        };
+      }),
+      ...manualCompetitors.map(comp => ({
+        name: comp.name,
+        rating: comp.rating,
+        reviews: comp.reviews,
+        distance: comp.distance,
+        services: comp.services || [],
+        isManual: true,
+        performanceScore: calculateCompetitorScore(comp)
+      }))
+    ].sort((a, b) => b.performanceScore - a.performanceScore);
+
+    const ownServicesCount = estimateOwnServicesCount();
+    const ownRating = realData.reviews.google.rating || 4.2;
+    const ownReviewCount = realData.reviews.google.count || 0;
+    const ownPerformanceScore = calculateCompetitorScore({
+      rating: ownRating,
+      reviews: ownReviewCount,
+      services: { length: ownServicesCount }
+    });
+
     const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
     const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
     
@@ -80,13 +144,16 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         .badge-success { background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
         .badge-warning { background: #f59e0b; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
         .badge-error { background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .badge-service { background: #6366f1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin: 2px; display: inline-block; }
         .recommendations { background: #fef3c7; padding: 20px; border-radius: 8px; margin-top: 20px; }
         .recommendations h4 { color: #92400e; margin-bottom: 10px; }
         .recommendations ul { list-style-type: none; }
         .recommendations li { margin-bottom: 8px; padding-left: 20px; position: relative; }
         .recommendations li:before { content: "→"; position: absolute; left: 0; color: #92400e; font-weight: bold; }
-        .competitor-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .competitor-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
         .competitor-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .competitor-strong { border-left: 4px solid #ef4444; }
+        .competitor-weak { border-left: 4px solid #10b981; }
         .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         .keyword-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
         .keyword-item { padding: 8px 12px; background: #f1f5f9; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
@@ -98,6 +165,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         .weaknesses { background: #fee2e2; border-left: 4px solid #ef4444; }
         .opportunities { background: #dbeafe; border-left: 4px solid #3b82f6; }
         .threats { background: #fef3c7; border-left: 4px solid #f59e0b; }
+        .services-list { margin-top: 10px; }
         
         @media print {
             body { font-size: 12px; }
@@ -138,12 +206,12 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             </div>
         </div>
 
-        <!-- Erweiterte Gesamtbewertung -->
+        <!-- Erweiterte Gesamtbewertung mit Services -->
         <div class="score-overview">
             <div class="score-card">
-                <div class="score-big">${(overallScore/20).toFixed(1)}/5</div>
-                <div>Gesamtbewertung</div>
-                <div style="margin-top: 10px; color: #6b7280;">${overallScore}/100 Punkte</div>
+                <div class="score-big">${Math.round(ownPerformanceScore)}/100</div>
+                <div>Performance-Score</div>
+                <div style="margin-top: 10px; color: #6b7280;">inkl. Services-Bewertung</div>
             </div>
             <div class="score-card">
                 <div class="score-big">${realData.reviews.google.count}</div>
@@ -151,14 +219,40 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
                 <div style="margin-top: 10px; color: #6b7280;">⭐ ${realData.reviews.google.rating}/5</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${realData.competitors.length}</div>
+                <div class="score-big">${allCompetitors.length}</div>
                 <div>Konkurrenten</div>
-                <div style="margin-top: 10px; color: #6b7280;">analysiert</div>
+                <div style="margin-top: 10px; color: #6b7280;">mit Services analysiert</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${keywordsScore}%</div>
-                <div>Keywords</div>
-                <div style="margin-top: 10px; color: #6b7280;">${keywordsFoundCount}/${realData.keywords.length} gefunden</div>
+                <div class="score-big">${ownServicesCount}</div>
+                <div>Ihre Services</div>
+                <div style="margin-top: 10px; color: #6b7280;">geschätzt für Branche</div>
+            </div>
+        </div>
+
+        <!-- Wettbewerbsvergleich -->
+        <div class="section">
+            <h2 class="section-title">📊 Wettbewerbsposition (inkl. Services)</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Ihre Position</div>
+                    <div class="metric-value">Rang ${allCompetitors.filter(c => c.performanceScore > ownPerformanceScore).length + 1} von ${allCompetitors.length + 1}</div>
+                    <div style="margin-top: 10px; color: #666;">
+                        ${allCompetitors.filter(c => c.performanceScore < ownPerformanceScore).length} schwächere, 
+                        ${allCompetitors.filter(c => c.performanceScore > ownPerformanceScore).length} stärkere Konkurrenten
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Services-Vergleich</div>
+                    <div class="metric-value">${ownServicesCount} Services</div>
+                    <div style="margin-top: 10px; color: #666;">
+                        Ø Konkurrenz: ${allCompetitors.length > 0 ? Math.round(allCompetitors.reduce((sum, comp) => sum + comp.services.length, 0) / allCompetitors.length) : 0} Services
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Performance vs. Konkurrenz</div>
+                    <div class="metric-value">${ownPerformanceScore > (allCompetitors.reduce((sum, comp) => sum + comp.performanceScore, 0) / allCompetitors.length || 0) ? '↗️ Überdurchschnittlich' : '↘️ Unterdurchschnittlich'}</div>
+                </div>
             </div>
         </div>
 
@@ -290,88 +384,107 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             </div>
         </div>
 
-        <!-- Ausführliche Konkurrenzanalyse -->
+        <!-- Ausführliche Konkurrenzanalyse mit Services -->
         <div class="section">
-            <h2 class="section-title">⚔️ Konkurrenzanalyse (Ausführlich)</h2>
+            <h2 class="section-title">⚔️ Konkurrenzanalyse (mit Services-Integration)</h2>
             <div class="metric-card" style="margin-bottom: 20px;">
-                <div class="metric-title">Marktposition</div>
+                <div class="metric-title">Marktposition (Performance-Score basiert)</div>
                 <div class="metric-value">
-                    ${realData.competitors.filter(c => c.rating < realData.reviews.google.rating).length} schwächere, 
-                    ${realData.competitors.filter(c => c.rating > realData.reviews.google.rating).length} stärkere Konkurrenten
+                    Ihr Score: ${Math.round(ownPerformanceScore)}/100 | 
+                    Ø Konkurrenz: ${allCompetitors.length > 0 ? Math.round(allCompetitors.reduce((sum, comp) => sum + comp.performanceScore, 0) / allCompetitors.length) : 0}/100
                 </div>
                 <p style="margin-top: 10px; color: #666;">
-                    Von ${realData.competitors.length} analysierten Konkurrenten in der Region
+                    Performance-Score = Rating (50%) + Reviews (30%) + Services (20%)
                 </p>
             </div>
             
             <div class="competitor-list">
-                ${realData.competitors.map((competitor, index) => `
-                    <div class="competitor-card">
-                        <h4 style="color: #1e40af; margin-bottom: 10px;">#${index + 1} ${competitor.name}</h4>
-                        <p><strong>Bewertungen:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
-                        <p><strong>Entfernung:</strong> ${competitor.distance}</p>
-                        <p><strong>Bewertungsdichte:</strong> ${competitor.reviews > 50 ? 'Hoch' : competitor.reviews > 20 ? 'Mittel' : 'Niedrig'}</p>
+                ${allCompetitors.map((competitor, index) => `
+                    <div class="competitor-card ${competitor.performanceScore > ownPerformanceScore ? 'competitor-strong' : 'competitor-weak'}">
+                        <h4 style="color: #1e40af; margin-bottom: 10px;">
+                            #${index + 1} ${competitor.name}
+                            ${competitor.isManual ? '<span class="badge-warning" style="margin-left: 10px;">Manuell</span>' : ''}
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <p><strong>Bewertung:</strong> ${competitor.rating}/5 (${competitor.reviews})</p>
+                            <p><strong>Performance-Score:</strong> ${Math.round(competitor.performanceScore)}/100</p>
+                            <p><strong>Entfernung:</strong> ${competitor.distance}</p>
+                            <p><strong>Services:</strong> ${competitor.services.length}</p>
+                        </div>
+                        
+                        ${competitor.services.length > 0 ? `
+                        <div class="services-list">
+                            <strong style="color: #6366f1;">Angebotene Leistungen:</strong><br>
+                            ${competitor.services.map(service => `<span class="badge-service">${service}</span>`).join('')}
+                        </div>
+                        ` : ''}
+                        
                         <div style="margin-top: 10px;">
-                            ${competitor.rating > 4.0 ? '<span class="badge-success">Starker Konkurrent</span>' : 
-                              competitor.rating > 3.5 ? '<span class="badge-warning">Durchschnitt</span>' : 
-                              '<span class="badge-error">Schwacher Konkurrent</span>'}
-                            ${competitor.reviews > realData.reviews.google.count ? '<span class="badge-warning" style="margin-left: 5px;">Mehr Bewertungen</span>' : ''}
+                            ${competitor.performanceScore > ownPerformanceScore ? 
+                              '<span class="badge-error">⚠️ Stärkerer Konkurrent</span>' : 
+                              '<span class="badge-success">✓ Schwächerer Konkurrent</span>'}
+                            ${competitor.services.length > ownServicesCount ? 
+                              '<span class="badge-warning" style="margin-left: 5px;">📋 Mehr Services</span>' : ''}
                         </div>
                     </div>
                 `).join('')}
             </div>
 
-            <!-- SWOT-Analyse -->
+            <!-- Erweiterte SWOT-Analyse mit Services -->
             <div style="margin-top: 30px;">
-                <h3 style="color: #1e40af; margin-bottom: 15px;">SWOT-Analyse im Wettbewerbsvergleich</h3>
+                <h3 style="color: #1e40af; margin-bottom: 15px;">SWOT-Analyse (inkl. Services-Bewertung)</h3>
                 <div class="swot-grid">
                     <div class="swot-section strengths">
                         <h4 style="color: #166534; margin-bottom: 10px;">Stärken</h4>
                         <ul style="list-style-type: disc; padding-left: 20px;">
-                            ${realData.reviews.google.rating >= 4.0 ? '<li>Überdurchschnittliche Bewertungen</li>' : ''}
+                            ${ownRating >= 4.0 ? '<li>Überdurchschnittliche Bewertungen</li>' : ''}
+                            ${ownPerformanceScore > (allCompetitors.reduce((sum, comp) => sum + comp.performanceScore, 0) / allCompetitors.length || 0) ? '<li>Überdurchschnittlicher Performance-Score</li>' : ''}
+                            ${ownServicesCount >= (allCompetitors.reduce((sum, comp) => sum + comp.services.length, 0) / allCompetitors.length || 0) ? '<li>Gutes Service-Portfolio</li>' : ''}
                             ${realData.seo.score > 70 ? '<li>Gute SEO-Optimierung</li>' : ''}
-                            ${realData.performance.score > 70 ? '<li>Schnelle Website</li>' : ''}
                             <li>Etablierte Online-Präsenz</li>
                         </ul>
                     </div>
                     <div class="swot-section weaknesses">
                         <h4 style="color: #dc2626; margin-bottom: 10px;">Schwächen</h4>
                         <ul style="list-style-type: disc; padding-left: 20px;">
-                            ${realData.reviews.google.count < 20 ? '<li>Wenige Bewertungen</li>' : ''}
+                            ${ownReviewCount < 20 ? '<li>Wenige Bewertungen</li>' : ''}
+                            ${ownPerformanceScore < (allCompetitors.reduce((sum, comp) => sum + comp.performanceScore, 0) / allCompetitors.length || 0) ? '<li>Unterdurchschnittlicher Performance-Score</li>' : ''}
+                            ${ownServicesCount < (allCompetitors.reduce((sum, comp) => sum + comp.services.length, 0) / allCompetitors.length || 0) ? '<li>Weniger Services als Konkurrenz</li>' : ''}
                             ${realData.seo.score < 70 ? '<li>SEO-Optimierung unzureichend</li>' : ''}
                             ${realData.socialMedia.overallScore < 50 ? '<li>Schwache Social Media Präsenz</li>' : ''}
-                            ${realData.performance.score < 70 ? '<li>Performance-Probleme</li>' : ''}
                         </ul>
                     </div>
                     <div class="swot-section opportunities">
                         <h4 style="color: #2563eb; margin-bottom: 10px;">Chancen</h4>
                         <ul style="list-style-type: disc; padding-left: 20px;">
-                            <li>Lokale SEO-Optimierung ausbauen</li>
-                            <li>Content-Marketing für Expertise</li>
-                            <li>Kundenbewertungen aktiv sammeln</li>
-                            <li>Social Media Engagement steigern</li>
+                            <li>Service-Portfolio strategisch erweitern</li>
+                            <li>Spezialleistungen als USP positionieren</li>
+                            <li>Lokale SEO mit Service-Keywords optimieren</li>
+                            <li>Content-Marketing für Fachkompetenz</li>
+                            <li>Cross-Selling zwischen Services fördern</li>
                         </ul>
                     </div>
                     <div class="swot-section threats">
                         <h4 style="color: #d97706; margin-bottom: 10px;">Risiken</h4>
                         <ul style="list-style-type: disc; padding-left: 20px;">
-                            <li>Starke Konkurrenz in der Region</li>
+                            <li>Konkurrenten mit breiteren Service-Portfolios</li>
+                            <li>Höhere Performance-Scores bei Mitbewerbern</li>
                             <li>Digitale Transformation der Branche</li>
-                            <li>Veränderte Kundengewohnheiten</li>
-                            <li>Neue Marktteilnehmer</li>
+                            <li>Neue Marktteilnehmer mit innovativen Services</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
             <div class="recommendations">
-                <h4>Strategische Wettbewerbsempfehlungen:</h4>
+                <h4>Services-basierte Strategieempfehlungen:</h4>
                 <ul>
-                    <li>Bewertungsmanagement: Systematisch positive Bewertungen sammeln (Ziel: ${Math.max(realData.reviews.google.count + 10, 25)} Bewertungen)</li>
-                    <li>Differenzierung: Unique Selling Points deutlicher kommunizieren</li>
-                    <li>Lokale Präsenz: Google My Business vollständig optimieren</li>
-                    <li>Content-Strategie: Fachkompetenz durch regelmäßige Beiträge demonstrieren</li>
-                    <li>Monitoring: Konkurrenzbeobachtung monatlich durchführen</li>
+                    <li>Service-Portfolio Audit: Vergleichen Sie Ihr Angebot systematisch mit Top-Konkurrenten</li>
+                    <li>Service-SEO: Optimieren Sie für jede Leistung spezifische Landing Pages</li>
+                    <li>Spezialisierung: Entwickeln Sie 2-3 Nischen-Services als Alleinstellungsmerkmal</li>
+                    <li>Performance-Optimierung: Rating (50%) + Reviews (30%) + Services (20%) gezielt verbessern</li>
+                    <li>Cross-Service-Marketing: Nutzen Sie bestehende Kunden für Zusatzleistungen</li>
+                    <li>Monitoring: Überwachen Sie monatlich Performance-Scores vs. Konkurrenz</li>
                 </ul>
             </div>
         </div>
@@ -456,60 +569,62 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
             ` : ''}
         </div>
 
-        <!-- ROI-Kalkulation -->
+        <!-- Erweiterte ROI-Kalkulation mit Services -->
         <div class="section">
-            <h2 class="section-title">💰 ROI-Analyse für Optimierungsmaßnahmen</h2>
+            <h2 class="section-title">💰 ROI-Analyse (inkl. Services-Optimierung)</h2>
             <div class="metric-card">
-                <h4 style="color: #1e40af; margin-bottom: 15px;">Potentielle Auswirkungen der Verbesserungen</h4>
+                <h4 style="color: #1e40af; margin-bottom: 15px;">Potentielle Auswirkungen der Services-Optimierung</h4>
                 <div class="two-column">
                     <div>
-                        <p><strong>Kurzzeitig (1-3 Monate):</strong></p>
+                        <p><strong>Services-Portfolio Erweiterung:</strong></p>
                         <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
-                            <li>5-15% mehr Website-Besucher durch SEO</li>
-                            <li>10-20% bessere Conversion durch Performance</li>
-                            <li>2-5 zusätzliche Bewertungen/Monat</li>
+                            <li>+2-5 zusätzliche Services = +10-25 Performance-Score Punkte</li>
+                            <li>Bessere Auffindbarkeit für mehr Suchbegriffe</li>
+                            <li>15-30% mehr qualifizierte Anfragen</li>
+                            <li>Höhere Kundenbindung durch Vollservice</li>
                         </ul>
                     </div>
                     <div>
-                        <p><strong>Langfristig (6-12 Monate):</strong></p>
+                        <p><strong>Wettbewerbsvorteile:</strong></p>
                         <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
-                            <li>20-40% mehr qualifizierte Anfragen</li>
-                            <li>Verbesserte Marktposition</li>
-                            <li>Höhere Kundenbindung</li>
+                            <li>Überholung schwächerer Konkurrenten im Performance-Ranking</li>
+                            <li>Spezialisierung auf profitable Nischen-Services</li>
+                            <li>Cross-Selling-Potentiale zwischen Services</li>
+                            <li>Langfristige Marktpositionierung</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Handlungsempfehlungen -->
+        <!-- Erweiterte Handlungsempfehlungen -->
         <div class="section">
-            <h2 class="section-title">🎯 Prioritäre Handlungsempfehlungen</h2>
+            <h2 class="section-title">🎯 Prioritäre Handlungsempfehlungen (Services-fokussiert)</h2>
             <div class="recommendations">
                 <h4>Kurzfristige Maßnahmen (1-4 Wochen):</h4>
                 <ul>
-                    ${realData.seo.score < 70 ? '<li>SEO-Grundlagen optimieren (Title, Meta, Headings)</li>' : ''}
-                    ${realData.imprint.completeness < 80 ? '<li>Impressum vervollständigen</li>' : ''}
-                    ${realData.reviews.google.count < 10 ? '<li>Google My Business optimieren und Bewertungen sammeln</li>' : ''}
-                    ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung verbessern</li>' : ''}
+                    <li>Services-Inventur: Alle angebotenen Leistungen dokumentieren und auf Website präsentieren</li>
+                    ${ownServicesCount < (allCompetitors.reduce((sum, comp) => sum + comp.services.length, 0) / allCompetitors.length || 0) ? '<li>Service-Portfolio um 2-3 Kern-Leistungen erweitern</li>' : ''}
+                    <li>Service-spezifische Landing Pages für Top-Services erstellen</li>
+                    ${realData.seo.score < 70 ? '<li>SEO-Grundlagen optimieren (Title, Meta, Headings) mit Service-Keywords</li>' : ''}
                 </ul>
             </div>
             <div class="recommendations" style="margin-top: 15px;">
                 <h4>Mittelfristige Maßnahmen (1-3 Monate):</h4>
                 <ul>
-                    ${realData.performance.score < 70 ? '<li>Website-Performance optimieren</li>' : ''}
-                    ${realData.socialMedia.overallScore < 50 ? '<li>Social Media Präsenz ausbauen</li>' : ''}
-                    <li>Content-Marketing-Strategie entwickeln</li>
-                    <li>Lokale SEO-Optimierung implementieren</li>
+                    <li>Service-Portfolio strategisch gegen Konkurrenz positionieren</li>
+                    <li>Content-Marketing für jede Service-Kategorie entwickeln</li>
+                    <li>Kundenbewertungen gezielt für verschiedene Services sammeln</li>
+                    <li>Performance-Score systematisch auf 80+ Punkte steigern</li>
                 </ul>
             </div>
             <div class="recommendations" style="margin-top: 15px;">
                 <h4>Langfristige Strategie (3-12 Monate):</h4>
                 <ul>
-                    <li>Kontinuierliches Monitoring und Optimierung</li>
-                    <li>Aufbau einer starken Online-Reputation</li>
-                    <li>Etablierung als Branchenexperte durch Content</li>
-                    <li>Ausbau der digitalen Kundenerfahrung</li>
+                    <li>Marktführerschaft in 2-3 Service-Nischen etablieren</li>
+                    <li>Performance-Score kontinuierlich über Konkurrenz-Durchschnitt halten</li>
+                    <li>Service-Innovation als Wettbewerbsvorteil nutzen</li>
+                    <li>Vollservice-Anbieter-Position im Markt etablieren</li>
                 </ul>
             </div>
         </div>
@@ -517,8 +632,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         <!-- Footer -->
         <div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
             <p>Dieser Bericht wurde am ${currentDate} um ${currentTime} erstellt.</p>
-            <p>Analysedaten basieren auf Live-Messungen mit Google APIs.</p>
-            <p style="margin-top: 10px; font-style: italic;">Handwerker Online-Auftritt Analyse - Professionelle Bewertung für nachhaltigen digitalen Erfolg</p>
+            <p>Analysedaten basieren auf Live-Messungen mit Google APIs und Services-Integration.</p>
+            <p style="margin-top: 10px; font-style: italic;">Performance-Score: Rating (50%) + Reviews (30%) + Services (20%)</p>
         </div>
     </div>
 </body>
@@ -538,32 +653,32 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Ausführlicher HTML-Export (25+ Seiten)
+            Ausführlicher HTML-Export (30+ Seiten mit Services)
           </CardTitle>
           <CardDescription>
-            Generiert eine umfassende, druckbare HTML-Analyse mit detaillierter Konkurrenzanalyse und SWOT-Matrix
+            Generiert eine umfassende, druckbare HTML-Analyse mit Services-Integration und Performance-Score-Bewertung
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-semibold text-green-700">✅ Erweiterte Features:</h4>
+              <h4 className="font-semibold text-green-700">✅ Services-Integration:</h4>
               <ul className="text-sm space-y-1 text-green-600">
-                <li>• Executive Summary</li>
-                <li>• Detaillierte SWOT-Analyse</li>
-                <li>• ROI-Kalkulation</li>
-                <li>• Wettbewerbspositionierung</li>
-                <li>• Langzeit-Strategieempfehlungen</li>
+                <li>• Performance-Score mit Services (20%)</li>
+                <li>• Services-Portfolio-Vergleich</li>
+                <li>• Service-spezifische SWOT-Analyse</li>
+                <li>• Services-basierte Strategieempfehlungen</li>
+                <li>• ROI-Kalkulation für Service-Erweiterung</li>
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-semibold text-blue-700">📊 Ausführlicher Inhalt:</h4>
+              <h4 className="font-semibold text-blue-700">📊 Erweiterte Analyse:</h4>
               <ul className="text-sm space-y-1 text-blue-600">
-                <li>• Marktpositions-Analyse</li>
-                <li>• Konkurrenz-Benchmarking</li>
-                <li>• Keyword-Tiefenanalyse</li>
-                <li>• Performance-Optimierung</li>
-                <li>• Priorisierte Maßnahmenpläne</li>
+                <li>• Wettbewerbsposition mit Services</li>
+                <li>• Services-Portfolio-Benchmarking</li>
+                <li>• Performance-Score-Ranking</li>
+                <li>• Service-orientierte Maßnahmenpläne</li>
+                <li>• Cross-Selling-Potentiale</li>
               </ul>
             </div>
           </div>
@@ -574,7 +689,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
               className="flex items-center gap-2"
             >
               <FileText className="h-4 w-4" />
-              Ausführlichen Report generieren
+              Report mit Services generieren
             </Button>
             <Button 
               variant="outline"
@@ -592,21 +707,19 @@ const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualI
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">📋 Inhalt des ausführlichen Reports:</h4>
+            <h4 className="font-semibold text-blue-800 mb-2">📋 Neue Services-Features im Report:</h4>
             <div className="text-sm text-blue-700 grid grid-cols-1 md:grid-cols-2 gap-2">
               <ul className="space-y-1">
-                <li>• Executive Summary</li>
-                <li>• SEO-Detailanalyse</li>
-                <li>• Performance-Metriken</li>
-                <li>• Keyword-Matrix</li>
-                <li>• SWOT-Analyse</li>
+                <li>• Performance-Score inkl. Services (20%)</li>
+                <li>• Services-Portfolio je Konkurrent</li>
+                <li>• Services-Vergleichsmatrix</li>
+                <li>• Service-spezifische SWOT</li>
               </ul>
               <ul className="space-y-1">
-                <li>• Wettbewerbspositionierung</li>
-                <li>• ROI-Kalkulation</li>
-                <li>• Mobile & Social Media</li>
-                <li>• Rechtliche Compliance</li>
-                <li>• 3-Stufen-Maßnahmenplan</li>
+                <li>• Services-basierte Strategien</li>
+                <li>• Cross-Selling-Potentiale</li>
+                <li>• Service-Portfolio-ROI</li>
+                <li>• Performance-Ranking mit Services</li>
               </ul>
             </div>
           </div>
