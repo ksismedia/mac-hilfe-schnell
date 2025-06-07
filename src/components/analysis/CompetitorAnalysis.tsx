@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import ManualCompetitorInput from './ManualCompetitorInput';
+import { useManualData } from '@/hooks/useManualData';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -13,6 +15,8 @@ interface CompetitorAnalysisProps {
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry, realData }) => {
+  const { manualCompetitors, updateCompetitors } = useManualData();
+
   const extractCityFromAddress = (address: string) => {
     const parts = address.split(',');
     if (parts.length > 1) {
@@ -28,6 +32,22 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   const ownRating = realData.reviews.google.rating || 4.2;
   const ownReviewCount = realData.reviews.google.count || 0;
 
+  // Kombiniere echte und manuelle Konkurrenten
+  const allCompetitors = [
+    ...realData.competitors.map(comp => ({
+      ...comp,
+      isManual: false
+    })),
+    ...manualCompetitors.map(comp => ({
+      name: comp.name,
+      rating: comp.rating,
+      reviews: comp.reviews,
+      distance: comp.distance,
+      services: comp.services,
+      isManual: true
+    }))
+  ];
+
   const getComparisonIcon = (competitorValue: number, ownValue: number) => {
     if (competitorValue > ownValue) return <TrendingUp className="h-4 w-4 text-red-500" />;
     if (competitorValue < ownValue) return <TrendingDown className="h-4 w-4 text-green-500" />;
@@ -41,22 +61,33 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   };
 
   // Berechne durchschnittliche Konkurrenz-Performance
-  const avgCompetitorRating = realData.competitors.length > 0 
-    ? realData.competitors.reduce((sum, comp) => sum + comp.rating, 0) / realData.competitors.length 
+  const avgCompetitorRating = allCompetitors.length > 0 
+    ? allCompetitors.reduce((sum, comp) => sum + comp.rating, 0) / allCompetitors.length 
     : 0;
   
-  const avgCompetitorReviews = realData.competitors.length > 0
-    ? realData.competitors.reduce((sum, comp) => sum + comp.reviews, 0) / realData.competitors.length
+  const avgCompetitorReviews = allCompetitors.length > 0
+    ? allCompetitors.reduce((sum, comp) => sum + comp.reviews, 0) / allCompetitors.length
     : 0;
 
   return (
     <div className="space-y-6">
+      {/* Manuelle Eingabe */}
+      <ManualCompetitorInput 
+        competitors={manualCompetitors}
+        onCompetitorsChange={updateCompetitors}
+      />
+
       {/* Vergleichs-Übersicht */}
       <Card>
         <CardHeader>
           <CardTitle>Ihr Unternehmen vs. lokale Konkurrenz</CardTitle>
           <CardDescription>
-            Direkter Leistungsvergleich mit {realData.competitors.length} lokalen Konkurrenten in {city}
+            Direkter Leistungsvergleich mit {allCompetitors.length} lokalen Konkurrenten in {city}
+            {manualCompetitors.length > 0 && (
+              <span className="ml-2">
+                (davon {manualCompetitors.length} manuell hinzugefügt)
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,7 +125,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                   Konkurrenz-Durchschnitt
                 </CardTitle>
                 <Badge variant="secondary">
-                  {realData.competitors.length} Unternehmen
+                  {allCompetitors.length} Unternehmen
                 </Badge>
               </CardHeader>
               <CardContent>
@@ -155,20 +186,21 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
         <CardHeader>
           <CardTitle>Konkurrenzanalyse für {city}</CardTitle>
           <CardDescription>
-            Echte Konkurrenten-Suche in der {industry.toUpperCase()}-Branche im Umkreis von {address}
+            Lokale Konkurrenten in der {industry.toUpperCase()}-Branche im Umkreis von {address}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {realData.competitors.length === 0 ? (
+          {allCompetitors.length === 0 ? (
             <div className="text-center py-8">
               <div className="mb-4">
                 <MapPin className="h-12 w-12 mx-auto text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                Keine lokalen Konkurrenten gefunden
+                Keine Konkurrenten gefunden
               </h3>
               <p className="text-gray-500 mb-4">
-                Bei der automatischen Suche konnten keine direkten Konkurrenten in der Nähe von {address} identifiziert werden.
+                Es konnten keine direkten Konkurrenten in der Nähe von {address} gefunden werden.
+                Nutzen Sie die manuelle Eingabe oben, um bekannte Konkurrenten hinzuzufügen.
               </p>
               <div className="bg-green-50 rounded-lg p-4">
                 <h4 className="font-semibold text-green-900 mb-2">✓ Marktchance für Sie!</h4>
@@ -182,12 +214,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
             </div>
           ) : (
             <div className="space-y-4">
-              {realData.competitors.map((competitor, index) => (
+              {allCompetitors.map((competitor, index) => (
                 <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">{competitor.name}</h3>
+                        {competitor.isManual && (
+                          <Badge variant="outline" className="text-xs">
+                            Manuell
+                          </Badge>
+                        )}
                         {competitor.rating > ownRating && (
                           <Badge variant="destructive" className="text-xs">
                             Stärker
@@ -204,6 +241,15 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                           <MapPin className="h-3 w-3" />
                           {competitor.distance} entfernt
                         </span>
+                        {competitor.services && competitor.services.length > 0 && (
+                          <div className="flex gap-1">
+                            {competitor.services.slice(0, 3).map((service, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">
+                                {service}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

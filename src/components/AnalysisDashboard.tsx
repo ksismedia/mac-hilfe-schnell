@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { useManualData, ManualImprintData, ManualSocialData } from '@/hooks/useManualData';
+import { useManualData, ManualImprintData, ManualSocialData, ManualCompetitors } from '@/hooks/useManualData';
 import APIKeyManager from './APIKeyManager';
 import SEOAnalysis from './analysis/SEOAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
@@ -57,12 +57,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [hasValidatedKey, setHasValidatedKey] = useState(false);
   const { toast } = useToast();
 
-  // Verwende den Hook für manuelle Daten
+  // Verwende den Hook für manuelle Daten (einschließlich Konkurrenten)
   const {
     manualImprintData,
     manualSocialData,
+    manualCompetitors,
     updateImprintData,
-    updateSocialData
+    updateSocialData,
+    updateCompetitors
   } = useManualData();
 
   // Erstelle erweiterte Daten für PDF-Export und Komponenten
@@ -307,7 +309,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
                   <Badge variant="default" className="ml-2">
                     🔴 Live Google APIs
                   </Badge>
-                  {(manualImprintData || manualSocialData) && (
+                  {(manualImprintData || manualSocialData || manualCompetitors.length > 0) && (
                     <Badge variant="outline" className="ml-2">
                       ✓ Manuelle Eingaben
                     </Badge>

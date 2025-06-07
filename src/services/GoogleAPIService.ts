@@ -1,4 +1,3 @@
-
 export class GoogleAPIService {
   private static apiKey: string = '';
 
@@ -18,12 +17,12 @@ export class GoogleAPIService {
     return this.getApiKey().length > 0;
   }
 
-  // Verbesserte Google Places API mit CORS-Proxy
+  // Verbesserte Google Places API mit CORS-Proxy - nur echte Daten
   static async getPlaceDetails(query: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No Google API Key provided, using realistic fallback data');
-      return this.generateRealisticPlaceData(query);
+      console.warn('No Google API Key provided - cannot fetch real data');
+      return null;
     }
 
     try {
@@ -31,8 +30,8 @@ export class GoogleAPIService {
       
       // Versuche verschiedene Proxy-Services für CORS
       const proxies = [
-        (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
         (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
         (url: string) => url // Direkter Aufruf als letzter Versuch
       ];
 
@@ -65,19 +64,20 @@ export class GoogleAPIService {
         }
       }
       
-      throw new Error('All proxy attempts failed');
+      console.warn('All proxy attempts failed - no real data available');
+      return null;
     } catch (error) {
-      console.error('Google Places API error, using realistic fallback:', error);
-      return this.generateRealisticPlaceData(query);
+      console.error('Google Places API error:', error);
+      return null;
     }
   }
 
-  // PageSpeed Insights API mit verbessertem CORS-Handling
+  // PageSpeed Insights API mit verbessertem CORS-Handling - nur echte Daten
   static async getPageSpeedInsights(url: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No API Key, using realistic PageSpeed data');
-      return this.generateRealisticPageSpeedData();
+      console.warn('No API Key - cannot fetch PageSpeed data');
+      return null;
     }
 
     try {
@@ -87,8 +87,8 @@ export class GoogleAPIService {
       
       // Versuche mit CORS-Proxy
       const proxies = [
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
         `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
         apiUrl
       ];
 
@@ -107,23 +107,24 @@ export class GoogleAPIService {
         }
       }
       
-      throw new Error('PageSpeed API unavailable');
+      console.warn('PageSpeed API unavailable');
+      return null;
     } catch (error) {
-      console.error('PageSpeed API error, using realistic fallback:', error);
-      return this.generateRealisticPageSpeedData();
+      console.error('PageSpeed API error:', error);
+      return null;
     }
   }
 
-  // Nearby Search mit realistischen Ergebnissen
+  // Nearby Search mit nur echten lokalen Firmen - maximal 15km Radius
   static async getNearbyCompetitors(location: string, businessType: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No API Key, generating realistic competitors');
-      return this.generateRealisticCompetitors(location, businessType);
+      console.warn('No API Key - cannot search for competitors');
+      return { results: [] };
     }
 
     try {
-      console.log('Finding competitors near:', location, 'for business type:', businessType);
+      console.log('Finding real competitors near:', location, 'for business type:', businessType);
       
       // Geocoding für Koordinaten
       const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`;
@@ -134,35 +135,59 @@ export class GoogleAPIService {
         if (geocodeData?.results?.length > 0) {
           const { lat, lng } = geocodeData.results[0].geometry.location;
           
-          // Nearby Search
-          const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=10000&keyword=${encodeURIComponent(businessType)}&key=${apiKey}`;
+          // Spezifische Suchbegriffe je nach Branche
+          const industryKeywords = {
+            'shk': ['Sanitär', 'Heizung', 'Klima', 'Installateur', 'SHK'],
+            'maler': ['Maler', 'Lackierer', 'Anstrich'],
+            'elektriker': ['Elektriker', 'Elektro', 'Elektroinstallation'],
+            'dachdecker': ['Dachdecker', 'Dach', 'Bedachung'],
+            'stukateur': ['Stuckateur', 'Trockenbau', 'Putz'],
+            'planungsbuero': ['Planungsbüro', 'Architekt', 'Ingenieurbüro']
+          };
           
-          const proxies = [
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(nearbyUrl)}`,
-            nearbyUrl
-          ];
+          const keywords = industryKeywords[businessType as keyof typeof industryKeywords] || [businessType];
+          
+          // Nearby Search mit reduziertem Radius (15km) und spezifischen Keywords
+          for (const keyword of keywords) {
+            const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=15000&keyword=${encodeURIComponent(keyword)}&type=establishment&key=${apiKey}`;
+            
+            const proxies = [
+              `https://corsproxy.io/?${encodeURIComponent(nearbyUrl)}`,
+              nearbyUrl
+            ];
 
-          for (const proxyUrl of proxies) {
-            try {
-              const nearbyResponse = await fetch(proxyUrl);
-              if (nearbyResponse.ok) {
-                const nearbyData = await nearbyResponse.json();
-                if (nearbyData?.results) {
-                  console.log('Real competitors data retrieved');
-                  return nearbyData;
+            for (const proxyUrl of proxies) {
+              try {
+                const nearbyResponse = await fetch(proxyUrl);
+                if (nearbyResponse.ok) {
+                  const nearbyData = await nearbyResponse.json();
+                  if (nearbyData?.results?.length > 0) {
+                    // Filtere nur Firmen mit Bewertungen (echte Geschäfte)
+                    const realBusinesses = nearbyData.results.filter((place: any) => 
+                      place.rating && 
+                      place.user_ratings_total > 0 &&
+                      place.business_status === 'OPERATIONAL'
+                    );
+                    
+                    if (realBusinesses.length > 0) {
+                      console.log(`Found ${realBusinesses.length} real competitors for keyword: ${keyword}`);
+                      return { results: realBusinesses.slice(0, 5) }; // Maximal 5 Konkurrenten
+                    }
+                  }
                 }
+              } catch (error) {
+                continue;
               }
-            } catch (error) {
-              continue;
             }
           }
         }
       }
       
-      throw new Error('Nearby search failed');
+      console.warn('No real competitors found');
+      return { results: [] };
     } catch (error) {
-      console.error('Nearby search API error, using realistic fallback:', error);
-      return this.generateRealisticCompetitors(location, businessType);
+      console.error('Nearby search API error:', error);
+      return { results: [] };
     }
   }
 
@@ -292,7 +317,7 @@ export class GoogleAPIService {
     return 'Region';
   }
 
-  // Website-Inhalt für Impressum-Analyse
+  // Website-Inhalt für Impressum-Analyse - nur mit API
   static async analyzeWebsiteContent(url: string): Promise<any> {
     try {
       console.log('Analyzing website content for:', url);
@@ -310,20 +335,10 @@ export class GoogleAPIService {
         };
       }
       
-      return {
-        hasImprint: Math.random() > 0.4, // 60% haben ein Impressum
-        title: 'Professioneller Handwerksbetrieb',
-        metaDescription: 'Ihr zuverlässiger Partner für Handwerksleistungen',
-        links: []
-      };
+      return null;
     } catch (error) {
       console.error('Website content analysis error:', error);
-      return {
-        hasImprint: Math.random() > 0.4,
-        title: 'Professioneller Handwerksbetrieb',
-        metaDescription: 'Ihr zuverlässiger Partner für Handwerksleistungen',
-        links: []
-      };
+      return null;
     }
   }
 

@@ -15,9 +15,18 @@ export interface ManualSocialData {
   instagramLastPost: string;
 }
 
+export interface ManualCompetitor {
+  name: string;
+  rating: number;
+  reviews: number;
+  distance: string;
+  services?: string[];
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
+  const [manualCompetitors, setManualCompetitors] = useState<ManualCompetitor[]>([]);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -29,10 +38,17 @@ export const useManualData = () => {
     console.log('Manual Social Data Updated:', data);
   }, []);
 
+  const updateCompetitors = useCallback((competitors: ManualCompetitor[]) => {
+    setManualCompetitors(competitors);
+    console.log('Manual Competitors Updated:', competitors);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
+    manualCompetitors,
     updateImprintData,
-    updateSocialData
+    updateSocialData,
+    updateCompetitors
   };
 };
