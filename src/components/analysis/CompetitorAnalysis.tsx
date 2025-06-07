@@ -1,11 +1,14 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MapPin, Star, TrendingUp, TrendingDown, Minus, Trash2 } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { useManualData } from '@/hooks/useManualData';
 import CompetitorServicesInput from './CompetitorServicesInput';
+import ManualCompetitorInput from './ManualCompetitorInput';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -14,7 +17,13 @@ interface CompetitorAnalysisProps {
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry, realData }) => {
-  const { manualCompetitorServices, updateCompetitorServices } = useManualData();
+  const { 
+    manualCompetitorServices, 
+    manualCompetitors,
+    updateCompetitorServices,
+    addManualCompetitor,
+    removeManualCompetitor
+  } = useManualData();
 
   const extractCityFromAddress = (address: string) => {
     const parts = address.split(',');
@@ -26,6 +35,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   };
 
   const city = extractCityFromAddress(address);
+
+  // Kombiniere echte API-Konkurrenten mit manuell hinzugefügten
+  const allCompetitors = [
+    ...realData.competitors.map(comp => ({ ...comp, isManual: false })),
+    ...manualCompetitors.map(comp => ({ ...comp, isManual: true }))
+  ];
 
   // Berechne eigene Bewertung basierend auf realData
   const ownRating = realData.reviews.google.rating || 4.2;
@@ -44,12 +59,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   };
 
   // Berechne durchschnittliche Konkurrenz-Performance
-  const avgCompetitorRating = realData.competitors.length > 0 
-    ? realData.competitors.reduce((sum, comp) => sum + comp.rating, 0) / realData.competitors.length 
+  const avgCompetitorRating = allCompetitors.length > 0 
+    ? allCompetitors.reduce((sum, comp) => sum + comp.rating, 0) / allCompetitors.length 
     : 0;
   
-  const avgCompetitorReviews = realData.competitors.length > 0
-    ? realData.competitors.reduce((sum, comp) => sum + comp.reviews, 0) / realData.competitors.length
+  const avgCompetitorReviews = allCompetitors.length > 0
+    ? allCompetitors.reduce((sum, comp) => sum + comp.reviews, 0) / allCompetitors.length
     : 0;
 
   return (
@@ -59,7 +74,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
         <CardHeader>
           <CardTitle>Ihr Unternehmen vs. lokale Konkurrenz</CardTitle>
           <CardDescription>
-            Direkter Leistungsvergleich mit {realData.competitors.length} lokalen Konkurrenten in {city}
+            Direkter Leistungsvergleich mit {allCompetitors.length} lokalen Konkurrenten in {city}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -97,7 +112,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                   Konkurrenz-Durchschnitt
                 </CardTitle>
                 <Badge variant="secondary">
-                  {realData.competitors.length} Unternehmen
+                  {allCompetitors.length} Unternehmen
                 </Badge>
               </CardHeader>
               <CardContent>
@@ -153,25 +168,34 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
         </CardContent>
       </Card>
 
-      {/* Detaillierte Konkurrenzanalyse mit Leistungen */}
+      {/* Manuelle Eingabe */}
+      <ManualCompetitorInput onAddCompetitor={addManualCompetitor} />
+
+      {/* Detaillierte Konkurrenzanalyse */}
       <Card>
         <CardHeader>
           <CardTitle>Konkurrenzanalyse für {city}</CardTitle>
           <CardDescription>
-            Echte Konkurrenten-Suche in der {industry.toUpperCase()}-Branche im Umkreis von {address}
+            {realData.competitors.length > 0 && (
+              <>Echte Konkurrenten-Suche in der {industry.toUpperCase()}-Branche im Umkreis von {address}</>
+            )}
+            {realData.competitors.length === 0 && (
+              <>Keine automatisch gefundenen Konkurrenten. Fügen Sie bekannte Konkurrenten manuell hinzu.</>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {realData.competitors.length === 0 ? (
+          {allCompetitors.length === 0 ? (
             <div className="text-center py-8">
               <div className="mb-4">
                 <MapPin className="h-12 w-12 mx-auto text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                Keine lokalen Konkurrenten gefunden
+                Keine Konkurrenten gefunden
               </h3>
               <p className="text-gray-500 mb-4">
-                Bei der automatischen Suche konnten keine direkten Konkurrenten in der Nähe von {address} identifiziert werden.
+                Bei der automatischen Suche konnten keine Konkurrenten gefunden werden. 
+                Nutzen Sie das Formular oben, um bekannte Konkurrenten manuell hinzuzufügen.
               </p>
               <div className="bg-green-50 rounded-lg p-4">
                 <h4 className="font-semibold text-green-900 mb-2">✓ Marktchance für Sie!</h4>
@@ -185,12 +209,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
             </div>
           ) : (
             <div className="space-y-4">
-              {realData.competitors.map((competitor, index) => (
+              {allCompetitors.map((competitor, index) => (
                 <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">{competitor.name}</h3>
+                        {competitor.isManual && (
+                          <Badge variant="outline" className="text-xs">
+                            Manuell
+                          </Badge>
+                        )}
                         {competitor.rating > ownRating && (
                           <Badge variant="destructive" className="text-xs">
                             Stärker
@@ -207,6 +236,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                           <MapPin className="h-3 w-3" />
                           {competitor.distance} entfernt
                         </span>
+                        {competitor.isManual && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeManualCompetitor(index - realData.competitors.length)}
+                            className="text-red-600 hover:text-red-800 h-6 px-2"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -243,31 +282,33 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
           )}
 
           {/* Strategische Empfehlungen */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-900 mb-2">
-              Strategische Empfehlungen basierend auf Konkurrenzanalyse
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
-              <div>
-                <h4 className="font-medium mb-1">Sofort umsetzbar:</h4>
-                <ul className="space-y-1">
-                  {ownRating < avgCompetitorRating && <li>• Kundenbewertungen aktiv sammeln</li>}
-                  {ownReviewCount < avgCompetitorReviews && <li>• Mehr Google-Rezensionen generieren</li>}
-                  <li>• Google My Business Profil optimieren</li>
-                  <li>• Lokale SEO-Keywords verwenden</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-1">Mittelfristig:</h4>
-                <ul className="space-y-1">
-                  <li>• Social Media Präsenz aufbauen</li>
-                  <li>• Referenzprojekte dokumentieren</li>
-                  <li>• Website-Performance verbessern</li>
-                  <li>• Kundenservice-Qualität steigern</li>
-                </ul>
+          {allCompetitors.length > 0 && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <h3 className="font-semibold text-blue-900 mb-2">
+                Strategische Empfehlungen basierend auf Konkurrenzanalyse
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                  <h4 className="font-medium mb-1">Sofort umsetzbar:</h4>
+                  <ul className="space-y-1">
+                    {ownRating < avgCompetitorRating && <li>• Kundenbewertungen aktiv sammeln</li>}
+                    {ownReviewCount < avgCompetitorReviews && <li>• Mehr Google-Rezensionen generieren</li>}
+                    <li>• Google My Business Profil optimieren</li>
+                    <li>• Lokale SEO-Keywords verwenden</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">Mittelfristig:</h4>
+                  <ul className="space-y-1">
+                    <li>• Social Media Präsenz aufbauen</li>
+                    <li>• Referenzprojekte dokumentieren</li>
+                    <li>• Website-Performance verbessern</li>
+                    <li>• Kundenservice-Qualität steigern</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

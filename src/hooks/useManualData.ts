@@ -19,10 +19,18 @@ export interface ManualCompetitorServices {
   [competitorName: string]: string[];
 }
 
+export interface ManualCompetitor {
+  name: string;
+  rating: number;
+  reviews: number;
+  distance: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
   const [manualCompetitorServices, setManualCompetitorServices] = useState<ManualCompetitorServices>({});
+  const [manualCompetitors, setManualCompetitors] = useState<ManualCompetitor[]>([]);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -42,12 +50,25 @@ export const useManualData = () => {
     console.log('Manual Competitor Services Updated:', competitorName, services);
   }, []);
 
+  const addManualCompetitor = useCallback((competitor: ManualCompetitor) => {
+    setManualCompetitors(prev => [...prev, competitor]);
+    console.log('Manual Competitor Added:', competitor);
+  }, []);
+
+  const removeManualCompetitor = useCallback((index: number) => {
+    setManualCompetitors(prev => prev.filter((_, i) => i !== index));
+    console.log('Manual Competitor Removed at index:', index);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
     manualCompetitorServices,
+    manualCompetitors,
     updateImprintData,
     updateSocialData,
-    updateCompetitorServices
+    updateCompetitorServices,
+    addManualCompetitor,
+    removeManualCompetitor
   };
 };
