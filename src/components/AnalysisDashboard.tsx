@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +55,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const [isLoading, setIsLoading] = useState(false);
   const [needsApiKey, setNeedsApiKey] = useState(true);
   const [hasValidatedKey, setHasValidatedKey] = useState(false);
+  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | undefined>();
   const { toast } = useToast();
 
   // Verwende den Hook für manuelle Daten (einschließlich Konkurrenten)
@@ -218,9 +218,71 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     }
   };
 
+  const handleLoadSavedAnalysis = (savedAnalysis: any) => {
+    console.log('Loading saved analysis:', savedAnalysis);
+    
+    // Setze die Business-Daten (diese sollten von außen kommen, aber wir können sie auch aus der gespeicherten Analyse nehmen)
+    setRealData(savedAnalysis.realData);
+    setCurrentAnalysisId(savedAnalysis.id);
+    
+    // Lade manuelle Daten
+    if (savedAnalysis.manualData.imprint) {
+      updateImprintData(savedAnalysis.manualData.imprint);
+    }
+    if (savedAnalysis.manualData.social) {
+      updateSocialData(savedAnalysis.manualData.social);
+    }
+    if (savedAnalysis.manualData.workplace) {
+      updateWorkplaceData(savedAnalysis.manualData.workplace);
+    }
+    if (savedAnalysis.manualData.competitors) {
+      updateCompetitors(savedAnalysis.manualData.competitors);
+    }
+    
+    // API-Key Status setzen (da wir echte Daten haben)
+    setNeedsApiKey(false);
+    setHasValidatedKey(true);
+    
+    toast({
+      title: "Analyse geladen",
+      description: `Die Analyse "${savedAnalysis.name}" wurde erfolgreich geladen.`,
+    });
+  };
+
   // Zeige immer zuerst den API-Key Manager an
   if (needsApiKey) {
-    return <APIKeyManager onApiKeySet={handleApiKeySet} />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={onReset}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Neue Analyse
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
+              <SaveAnalysisDialog 
+                businessData={businessData}
+                realData={enhancedData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualWorkplaceData={manualWorkplaceData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                currentAnalysisId={currentAnalysisId}
+              />
+            </div>
+          </div>
+          
+          <APIKeyManager onApiKeySet={handleApiKeySet} onLoadSavedAnalysis={handleLoadSavedAnalysis} />
+        </div>
+      </div>
+    );
   }
 
   if (isLoading) {
@@ -281,14 +343,29 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={onReset}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Neue Analyse
-          </Button>
+          <div className="flex items-center justify-between mb-4">
+            <Button 
+              variant="outline" 
+              onClick={onReset}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Neue Analyse
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
+              <SaveAnalysisDialog 
+                businessData={businessData}
+                realData={enhancedData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualWorkplaceData={manualWorkplaceData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                currentAnalysisId={currentAnalysisId}
+              />
+            </div>
+          </div>
           
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex flex-col md:flex-row md:items-center justify-between">

@@ -1,116 +1,146 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/components/ui/use-toast';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { Key, CheckCircle, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, Key } from 'lucide-react';
+import SavedAnalysesManager from './SavedAnalysesManager';
 
 interface APIKeyManagerProps {
   onApiKeySet: () => void;
+  onLoadSavedAnalysis?: (analysis: any) => void;
 }
 
-const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet }) => {
+const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedAnalysis }) => {
   const [apiKey, setApiKey] = useState('');
-  const [isValid, setIsValid] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const { toast } = useToast();
 
-  const validateAndSetApiKey = async () => {
-    if (!apiKey.trim()) return;
+  useEffect(() => {
+    // Prüfe ob bereits ein API-Key gespeichert ist
+    const savedKey = GoogleAPIService.getApiKey();
+    if (savedKey) {
+      setApiKey(savedKey);
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!apiKey.trim()) {
+      toast({
+        title: "Fehler",
+        description: "Bitte geben Sie einen API-Key ein.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsValidating(true);
-    
+
     try {
-      // Test API Key mit einer einfachen Geocoding-Anfrage
+      // API-Key setzen
+      GoogleAPIService.setApiKey(apiKey);
+      
+      // API-Key validieren
       const testResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey.trim()}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
       );
 
       if (testResponse.ok) {
         const data = await testResponse.json();
         if (data.status === 'OK') {
-          GoogleAPIService.setApiKey(apiKey.trim());
-          setIsValid(true);
-          setTimeout(() => {
-            onApiKeySet();
-          }, 1000);
+          toast({
+            title: "API-Key erfolgreich",
+            description: "Der Google API-Key wurde erfolgreich validiert.",
+          });
+          onApiKeySet();
         } else {
-          throw new Error('Invalid API key');
+          throw new Error(`API-Key ungültig: ${data.status}`);
         }
       } else {
-        throw new Error('API key validation failed');
+        throw new Error('API-Key Validierung fehlgeschlagen');
       }
     } catch (error) {
-      console.error('API key validation error:', error);
-      setIsValid(false);
+      console.error('API-Key Validierung fehlgeschlagen:', error);
+      toast({
+        title: "Ungültiger API-Key",
+        description: "Der eingegebene Google API-Key ist ungültig. Bitte überprüfen Sie Ihren Key.",
+        variant: "destructive",
+      });
     } finally {
       setIsValidating(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
-            <Key className="h-8 w-8 text-blue-600" />
-          </div>
-          <CardTitle className="text-2xl">Google API Konfiguration</CardTitle>
+    <div className="max-w-2xl mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Key className="h-5 w-5" />
+            Google API-Key erforderlich
+          </CardTitle>
           <CardDescription>
-            Geben Sie Ihren Google API Key ein, um echte Daten zu analysieren
+            Für die Live-Analyse mit echten Google-Daten wird ein Google API-Key benötigt. 
+            Dieser wird sicher in Ihrem Browser gespeichert.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="apiKey">Google API Key</Label>
-            <Input
-              id="apiKey"
-              type="password"
-              placeholder="AIzaSy..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              disabled={isValidating}
-            />
-          </div>
-
-          <Button 
-            onClick={validateAndSetApiKey}
-            disabled={!apiKey.trim() || isValidating}
-            className="w-full"
-          >
-            {isValidating ? 'Validiere...' : 'API Key setzen'}
-          </Button>
-
-          {isValid && (
-            <Alert className="border-green-200 bg-green-50">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
-                API Key erfolgreich validiert! Analyse wird gestartet...
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="bg-blue-50 rounded-lg p-4 space-y-3">
-            <h4 className="font-semibold text-blue-900">Benötigte APIs:</h4>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="apiKey">Google API-Key</Label>
+              <div className="relative mt-1">
+                <Input
+                  id="apiKey"
+                  type={showApiKey ? "text" : "password"}
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <Button type="submit" disabled={isValidating} className="w-full">
+              {isValidating ? 'Validiere API-Key...' : 'API-Key validieren und Analyse starten'}
+            </Button>
+          </form>
+          
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-medium text-blue-900 mb-2">Benötigte APIs:</h4>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Places API (Firmendetails & Bewertungen)</li>
-              <li>• PageSpeed Insights API (Performance)</li>
-              <li>• Geocoding API (Standortdaten)</li>
+              <li>• Places API (für Unternehmensdaten und Bewertungen)</li>
+              <li>• PageSpeed Insights API (für Performance-Analyse)</li>
+              <li>• Geocoding API (für Standortdaten)</li>
             </ul>
-            <a 
-              href="https://console.cloud.google.com/apis/credentials"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-            >
-              <ExternalLink className="h-3 w-3" />
-              Google Cloud Console
-            </a>
           </div>
         </CardContent>
       </Card>
+
+      {onLoadSavedAnalysis && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Oder gespeicherte Analyse laden</CardTitle>
+            <CardDescription>
+              Laden Sie eine zuvor gespeicherte Analyse, ohne einen neuen API-Key zu benötigen.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SavedAnalysesManager onLoadAnalysis={onLoadSavedAnalysis} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

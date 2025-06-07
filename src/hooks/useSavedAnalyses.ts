@@ -1,0 +1,121 @@
+
+import { useState, useCallback, useEffect } from 'react';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices } from './useManualData';
+
+export interface SavedAnalysis {
+  id: string;
+  name: string;
+  savedAt: string;
+  businessData: {
+    address: string;
+    url: string;
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  };
+  realData: RealBusinessData;
+  manualData: {
+    imprint?: ManualImprintData;
+    social?: ManualSocialData;
+    workplace?: ManualWorkplaceData;
+    competitors: ManualCompetitor[];
+    competitorServices: CompetitorServices;
+  };
+}
+
+const STORAGE_KEY = 'saved_analyses';
+
+export const useSavedAnalyses = () => {
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+
+  // Lade gespeicherte Analysen beim Start
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const analyses = JSON.parse(stored);
+        setSavedAnalyses(analyses);
+      } catch (error) {
+        console.error('Fehler beim Laden der gespeicherten Analysen:', error);
+      }
+    }
+  }, []);
+
+  // Speichere eine Analyse
+  const saveAnalysis = useCallback((
+    name: string,
+    businessData: SavedAnalysis['businessData'],
+    realData: RealBusinessData,
+    manualData: SavedAnalysis['manualData']
+  ) => {
+    const newAnalysis: SavedAnalysis = {
+      id: Date.now().toString(),
+      name,
+      savedAt: new Date().toISOString(),
+      businessData,
+      realData,
+      manualData
+    };
+
+    const updatedAnalyses = [...savedAnalyses, newAnalysis];
+    setSavedAnalyses(updatedAnalyses);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+    
+    return newAnalysis.id;
+  }, [savedAnalyses]);
+
+  // Aktualisiere eine bestehende Analyse
+  const updateAnalysis = useCallback((
+    id: string,
+    name: string,
+    businessData: SavedAnalysis['businessData'],
+    realData: RealBusinessData,
+    manualData: SavedAnalysis['manualData']
+  ) => {
+    const updatedAnalyses = savedAnalyses.map(analysis => 
+      analysis.id === id 
+        ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
+        : analysis
+    );
+    
+    setSavedAnalyses(updatedAnalyses);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+  }, [savedAnalyses]);
+
+  // Lösche eine Analyse
+  const deleteAnalysis = useCallback((id: string) => {
+    const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id);
+    setSavedAnalyses(updatedAnalyses);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+  }, [savedAnalyses]);
+
+  // Lade eine Analyse
+  const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
+    return savedAnalyses.find(analysis => analysis.id === id) || null;
+  }, [savedAnalyses]);
+
+  // Exportiere eine Analyse als JSON
+  const exportAnalysis = useCallback((id: string) => {
+    const analysis = loadAnalysis(id);
+    if (!analysis) return;
+
+    const dataStr = JSON.stringify(analysis, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${analysis.name}_${analysis.savedAt.split('T')[0]}.json`;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+  }, [loadAnalysis]);
+
+  return {
+    savedAnalyses,
+    saveAnalysis,
+    updateAnalysis,
+    deleteAnalysis,
+    loadAnalysis,
+    exportAnalysis
+  };
+};
