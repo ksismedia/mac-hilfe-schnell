@@ -9,6 +9,8 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { useManualData, ManualImprintData, ManualSocialData, ManualCompetitor } from '@/hooks/useManualData';
 import APIKeyManager from './APIKeyManager';
+import SavedAnalysesManager from './SavedAnalysesManager';
+import SaveAnalysisDialog from './SaveAnalysisDialog';
 import SEOAnalysis from './analysis/SEOAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import PerformanceAnalysis from './analysis/PerformanceAnalysis';
@@ -249,6 +251,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     });
   };
 
+  // Verwende die erweiterten Daten - moved before usage
+  const enhancedData = getEnhancedRealData();
+
   // Zeige immer zuerst den API-Key Manager an
   if (needsApiKey) {
     return (
@@ -310,26 +315,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
     );
   }
 
-  if (!realData) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-7xl mx-auto">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <p>Fehler beim Laden der Analysedaten.</p>
-              <Button onClick={analyzeRealData} className="mt-4">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Erneut versuchen
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // Verwende die erweiterten Daten
-  const enhancedData = getEnhancedRealData();
   if (!enhancedData) return null;
 
   const overallScore = Math.round(
