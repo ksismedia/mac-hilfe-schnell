@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { FileText, Printer } from 'lucide-react';
-import { useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor } from '@/hooks/useManualData';
 
 interface HTMLExportProps {
   businessData: {
@@ -16,6 +16,8 @@ interface HTMLExportProps {
   realData: RealBusinessData;
   manualImprintData?: any;
   manualSocialData?: any;
+  manualCompetitors?: ManualCompetitor[];
+  competitorServices?: { [competitorName: string]: string[] };
 }
 
 const industryNames = {
@@ -27,9 +29,14 @@ const industryNames = {
   'planungsbuero': 'Planungsbüro'
 };
 
-const HTMLExport: React.FC<HTMLExportProps> = ({ businessData, realData, manualImprintData, manualSocialData }) => {
-  const { manualCompetitors, competitorServices } = useManualData();
-
+const HTMLExport: React.FC<HTMLExportProps> = ({ 
+  businessData, 
+  realData, 
+  manualImprintData, 
+  manualSocialData,
+  manualCompetitors = [],
+  competitorServices = {}
+}) => {
   const generateHTMLReport = () => {
     // Schätze eigene Services (falls verfügbar, sonst Durchschnitt für Branche)
     const estimateOwnServicesCount = () => {

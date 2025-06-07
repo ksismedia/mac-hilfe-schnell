@@ -513,6 +513,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
               realData={enhancedData}
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
             />
           </TabsContent>
         </Tabs>

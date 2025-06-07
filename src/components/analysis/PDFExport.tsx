@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualCompetitor } from '@/hooks/useManualData';
 import HTMLExport from './HTMLExport';
 import { FileText, Download } from 'lucide-react';
 
@@ -14,9 +15,18 @@ interface PDFExportProps {
   realData: RealBusinessData;
   manualImprintData?: any;
   manualSocialData?: any;
+  manualCompetitors?: ManualCompetitor[];
+  competitorServices?: { [competitorName: string]: string[] };
 }
 
-const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImprintData, manualSocialData }) => {
+const PDFExport: React.FC<PDFExportProps> = ({ 
+  businessData, 
+  realData, 
+  manualImprintData, 
+  manualSocialData,
+  manualCompetitors = [],
+  competitorServices = {}
+}) => {
   
   return (
     <div className="space-y-6">
@@ -36,6 +46,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ businessData, realData, manualImp
             realData={realData}
             manualImprintData={manualImprintData}
             manualSocialData={manualSocialData}
+            manualCompetitors={manualCompetitors}
+            competitorServices={competitorServices}
           />
         </CardContent>
       </Card>
