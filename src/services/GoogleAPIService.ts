@@ -18,12 +18,12 @@ export class GoogleAPIService {
     return this.getApiKey().length > 0;
   }
 
-  // Verbesserte Google Places API mit CORS-Proxy
+  // Echte Google Places API - nur reale Daten
   static async getPlaceDetails(query: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No Google API Key provided, using realistic fallback data');
-      return this.generateRealisticPlaceData(query);
+      console.warn('No Google API Key provided');
+      return null;
     }
 
     try {
@@ -65,19 +65,20 @@ export class GoogleAPIService {
         }
       }
       
-      throw new Error('All proxy attempts failed');
+      console.warn('Could not find real company data');
+      return null;
     } catch (error) {
-      console.error('Google Places API error, using realistic fallback:', error);
-      return this.generateRealisticPlaceData(query);
+      console.error('Google Places API error:', error);
+      return null;
     }
   }
 
-  // PageSpeed Insights API mit verbessertem CORS-Handling
+  // PageSpeed Insights API
   static async getPageSpeedInsights(url: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No API Key, using realistic PageSpeed data');
-      return this.generateRealisticPageSpeedData();
+      console.warn('No API Key, cannot get PageSpeed data');
+      return null;
     }
 
     try {
@@ -107,189 +108,171 @@ export class GoogleAPIService {
         }
       }
       
-      throw new Error('PageSpeed API unavailable');
+      console.warn('PageSpeed API unavailable');
+      return null;
     } catch (error) {
-      console.error('PageSpeed API error, using realistic fallback:', error);
-      return this.generateRealisticPageSpeedData();
+      console.error('PageSpeed API error:', error);
+      return null;
     }
   }
 
-  // Nearby Search mit realistischen Ergebnissen
+  // Nearby Search - nur echte lokale Konkurrenten
   static async getNearbyCompetitors(location: string, businessType: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      console.warn('No API Key, generating realistic competitors');
-      return this.generateRealisticCompetitors(location, businessType);
+      console.warn('No API Key, cannot search for competitors');
+      return { results: [] };
     }
 
     try {
-      console.log('Finding competitors near:', location, 'for business type:', businessType);
+      console.log('Finding real competitors near:', location, 'for business type:', businessType);
       
-      // Geocoding für Koordinaten
+      // Zunächst Geocoding für exakte Koordinaten
       const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`;
-      const geocodeResponse = await fetch(geocodeUrl);
+      
+      try {
+        const geocodeResponse = await fetch(geocodeUrl);
+        if (!geocodeResponse.ok) {
+          throw new Error('Geocoding failed');
+        }
 
-      if (geocodeResponse.ok) {
         const geocodeData = await geocodeResponse.json();
-        if (geocodeData?.results?.length > 0) {
-          const { lat, lng } = geocodeData.results[0].geometry.location;
-          
-          // Nearby Search
-          const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=10000&keyword=${encodeURIComponent(businessType)}&key=${apiKey}`;
-          
-          const proxies = [
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(nearbyUrl)}`,
-            nearbyUrl
-          ];
+        if (!geocodeData?.results?.length) {
+          throw new Error('No geocoding results');
+        }
 
-          for (const proxyUrl of proxies) {
-            try {
-              const nearbyResponse = await fetch(proxyUrl);
-              if (nearbyResponse.ok) {
-                const nearbyData = await nearbyResponse.json();
-                if (nearbyData?.results) {
-                  console.log('Real competitors data retrieved');
-                  return nearbyData;
-                }
+        const { lat, lng } = geocodeData.results[0].geometry.location;
+        console.log('Found coordinates:', lat, lng);
+        
+        // Verschiedene Suchbegriffe je nach Branche
+        const searchTerms = this.getIndustrySearchTerms(businessType);
+        let allCompetitors = [];
+        
+        // Für jeden Suchbegriff eine separate Suche
+        for (const term of searchTerms) {
+          const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=15000&keyword=${encodeURIComponent(term)}&type=establishment&key=${apiKey}`;
+          
+          try {
+            const nearbyResponse = await fetch(nearbyUrl);
+            if (nearbyResponse.ok) {
+              const nearbyData = await nearbyResponse.json();
+              if (nearbyData?.results?.length) {
+                console.log(`Found ${nearbyData.results.length} results for "${term}"`);
+                
+                // Filtere nur Unternehmen mit Bewertungen und relevanten Typen
+                const validCompetitors = nearbyData.results.filter(place => 
+                  place.rating && 
+                  place.user_ratings_total > 0 &&
+                  this.isRelevantBusinessType(place, businessType) &&
+                  this.calculateDistance(lat, lng, place.geometry.location.lat, place.geometry.location.lng) <= 15 // Max 15km
+                );
+                
+                allCompetitors = allCompetitors.concat(validCompetitors);
               }
-            } catch (error) {
-              continue;
             }
+          } catch (error) {
+            console.warn(`Search for "${term}" failed:`, error);
           }
         }
+        
+        // Duplikate entfernen und nach Bewertung sortieren
+        const uniqueCompetitors = this.removeDuplicates(allCompetitors);
+        const sortedCompetitors = uniqueCompetitors
+          .sort((a, b) => (b.rating * b.user_ratings_total) - (a.rating * a.user_ratings_total))
+          .slice(0, 5); // Top 5 Konkurrenten
+        
+        console.log(`Found ${sortedCompetitors.length} real competitors`);
+        return { results: sortedCompetitors };
+        
+      } catch (error) {
+        console.error('Competitor search failed:', error);
+        return { results: [] };
       }
       
-      throw new Error('Nearby search failed');
     } catch (error) {
-      console.error('Nearby search API error, using realistic fallback:', error);
-      return this.generateRealisticCompetitors(location, businessType);
+      console.error('Nearby search API error:', error);
+      return { results: [] };
     }
   }
 
-  // Realistische Fallback-Daten für Places
-  private static generateRealisticPlaceData(query: string): any {
-    const companyName = this.extractCompanyNameFromQuery(query);
-    
-    return {
-      name: companyName,
-      rating: Math.round((4.0 + Math.random() * 1.0) * 10) / 10, // 4.0-5.0
-      user_ratings_total: Math.floor(Math.random() * 40) + 15, // 15-55 Bewertungen
-      formatted_address: "Röntgenstraße 12/3, 73730 Esslingen am Neckar, Deutschland",
-      formatted_phone_number: "0711 3456789",
-      website: query.includes('http') ? query : undefined,
-      reviews: this.generateRealisticReviews()
+  // Branchenspezifische Suchbegriffe
+  private static getIndustrySearchTerms(businessType: string): string[] {
+    const searchTerms = {
+      'shk': ['Sanitär', 'Heizung', 'Klempner', 'Installateur', 'SHK', 'Heizungsbau'],
+      'maler': ['Maler', 'Lackierer', 'Malerbetrieb', 'Anstreicher'],
+      'elektriker': ['Elektriker', 'Elektroinstallation', 'Elektrotechnik', 'Elektrobetrieb'],
+      'dachdecker': ['Dachdecker', 'Dachbau', 'Bedachung'],
+      'stukateur': ['Stuckateur', 'Trockenbau', 'Putz'],
+      'planungsbuero': ['Planungsbüro', 'Architekt', 'Bauplanung', 'Ingenieur']
     };
+    
+    return searchTerms[businessType] || ['Handwerker'];
   }
 
-  // Realistische PageSpeed Daten
-  private static generateRealisticPageSpeedData(): any {
-    const performanceScore = 0.65 + Math.random() * 0.25; // 65-90%
+  // Prüfe ob der Geschäftstyp relevant ist
+  private static isRelevantBusinessType(place: any, businessType: string): boolean {
+    const placeTypes = place.types || [];
+    const name = (place.name || '').toLowerCase();
     
-    return {
-      lighthouseResult: {
-        categories: {
-          performance: { score: performanceScore }
-        },
-        audits: {
-          'largest-contentful-paint': { numericValue: 2000 + Math.random() * 2000 },
-          'max-potential-fid': { numericValue: 80 + Math.random() * 120 },
-          'cumulative-layout-shift': { numericValue: 0.05 + Math.random() * 0.10 },
-          'document-title': {
-            details: {
-              items: [{ text: "Professioneller Handwerksbetrieb" }]
-            }
-          },
-          'meta-description': {
-            details: {
-              items: [{ description: "Ihr zuverlässiger Partner für Handwerksleistungen" }]
-            }
-          }
-        }
+    const relevantTypes = {
+      'shk': ['plumber', 'electrician', 'general_contractor'],
+      'maler': ['painter', 'general_contractor'],
+      'elektriker': ['electrician', 'general_contractor'],
+      'dachdecker': ['roofing_contractor', 'general_contractor'],
+      'stukateur': ['general_contractor'],
+      'planungsbuero': ['architect', 'engineer', 'general_contractor']
+    };
+    
+    const keywords = {
+      'shk': ['sanitär', 'heizung', 'klempner', 'installateur', 'shk'],
+      'maler': ['maler', 'lackier', 'anstreich'],
+      'elektriker': ['elektr'],
+      'dachdecker': ['dach', 'bedach'],
+      'stukateur': ['stuck', 'putz', 'trocken'],
+      'planungsbuero': ['plan', 'architekt', 'ingenieur']
+    };
+    
+    // Prüfe Geschäftstypen
+    const hasRelevantType = placeTypes.some(type => 
+      relevantTypes[businessType]?.includes(type)
+    );
+    
+    // Prüfe Keywords im Namen
+    const hasRelevantKeyword = keywords[businessType]?.some(keyword => 
+      name.includes(keyword)
+    );
+    
+    return hasRelevantType || hasRelevantKeyword;
+  }
+
+  // Berechne Entfernung zwischen zwei Koordinaten
+  private static calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Erdradius in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  private static deg2rad(deg: number): number {
+    return deg * (Math.PI/180);
+  }
+
+  // Entferne Duplikate basierend auf Name und Adresse
+  private static removeDuplicates(competitors: any[]): any[] {
+    const seen = new Set();
+    return competitors.filter(comp => {
+      const key = `${comp.name}_${comp.vicinity}`;
+      if (seen.has(key)) {
+        return false;
       }
-    };
-  }
-
-  // Realistische Konkurrenten
-  private static generateRealisticCompetitors(location: string, businessType: string): any {
-    const city = this.extractCityFromLocation(location);
-    const competitors = [];
-    const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
-    
-    const realBusinessNames = [
-      `SHK ${city}`, `Heizung & Sanitär ${city}`, `Installateur ${city}`,
-      `Meisterbetrieb Müller`, `Sanitärtechnik Weber`, `Heizungsbau Schmidt`
-    ];
-    
-    for (let i = 0; i < competitorCount; i++) {
-      const name = realBusinessNames[i % realBusinessNames.length];
-      const rating = Math.round((3.8 + Math.random() * 1.0) * 10) / 10; // 3.8-4.8
-      const reviews = Math.floor(Math.random() * 25) + 10; // 10-35 Bewertungen
-      
-      competitors.push({
-        name,
-        rating,
-        user_ratings_total: reviews,
-        geometry: {
-          location: { 
-            lat: 48.7 + Math.random() * 0.1, 
-            lng: 9.3 + Math.random() * 0.1 
-          }
-        }
-      });
-    }
-    
-    return { results: competitors };
-  }
-
-  // Realistische Bewertungen
-  private static generateRealisticReviews(): any[] {
-    const reviews = [];
-    const reviewCount = Math.floor(Math.random() * 3) + 1; // 1-3 Bewertungen
-    
-    const reviewTexts = [
-      "Sehr professioneller Service. Termin wurde pünktlich eingehalten.",
-      "Faire Preise und saubere Arbeit. Gerne wieder.",
-      "Kompetente Beratung und schnelle Hilfe im Notfall."
-    ];
-    
-    const authorNames = ['Thomas M.', 'Sandra K.', 'Michael B.', 'Julia S.'];
-    
-    for (let i = 0; i < reviewCount; i++) {
-      reviews.push({
-        author_name: authorNames[i % authorNames.length],
-        rating: Math.floor(Math.random() * 2) + 4, // 4-5 Sterne
-        text: reviewTexts[i % reviewTexts.length],
-        time: Date.now() - (Math.random() * 30 * 24 * 60 * 60 * 1000) // Letzten 30 Tage
-      });
-    }
-    
-    return reviews;
-  }
-
-  private static extractCompanyNameFromQuery(query: string): string {
-    // Extrahiere den Firmennamen aus der Query
-    if (query.includes('phtech')) return 'Phtech';
-    if (query.includes('pfisterer')) return 'Wilhelm Pfisterer';
-    
-    const urlMatch = query.match(/https?:\/\/([^.]+)/);
-    if (urlMatch) {
-      return urlMatch[1].charAt(0).toUpperCase() + urlMatch[1].slice(1);
-    }
-    
-    const parts = query.split(' ');
-    return parts[0] || 'Handwerksbetrieb';
-  }
-
-  private static extractCityFromLocation(location: string): string {
-    if (location.toLowerCase().includes('stuttgart')) return 'Stuttgart';
-    if (location.toLowerCase().includes('esslingen')) return 'Esslingen';
-    
-    const parts = location.split(',');
-    if (parts.length > 1) {
-      return parts[parts.length - 1].trim();
-    }
-    
-    return 'Region';
+      seen.add(key);
+      return true;
+    });
   }
 
   // Website-Inhalt für Impressum-Analyse
@@ -310,20 +293,10 @@ export class GoogleAPIService {
         };
       }
       
-      return {
-        hasImprint: Math.random() > 0.4, // 60% haben ein Impressum
-        title: 'Professioneller Handwerksbetrieb',
-        metaDescription: 'Ihr zuverlässiger Partner für Handwerksleistungen',
-        links: []
-      };
+      return null;
     } catch (error) {
       console.error('Website content analysis error:', error);
-      return {
-        hasImprint: Math.random() > 0.4,
-        title: 'Professioneller Handwerksbetrieb',
-        metaDescription: 'Ihr zuverlässiger Partner für Handwerksleistungen',
-        links: []
-      };
+      return null;
     }
   }
 
