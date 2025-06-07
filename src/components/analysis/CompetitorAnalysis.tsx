@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -5,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualCompetitorInput from './ManualCompetitorInput';
+import CompetitorServicesInput from './CompetitorServicesInput';
 import { useManualData } from '@/hooks/useManualData';
 
 interface CompetitorAnalysisProps {
@@ -14,7 +16,7 @@ interface CompetitorAnalysisProps {
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry, realData }) => {
-  const { manualCompetitors, updateCompetitors } = useManualData();
+  const { manualCompetitors, competitorServices, updateCompetitors, updateCompetitorServices } = useManualData();
 
   const extractCityFromAddress = (address: string) => {
     const parts = address.split(',');
@@ -35,7 +37,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   const allCompetitors = [
     ...realData.competitors.map(comp => ({
       ...comp,
-      services: [], // Real competitors don't have services, so set empty array
+      services: competitorServices[comp.name] || [], // Services aus competitorServices laden
       isManual: false
     })),
     ...manualCompetitors.map(comp => ({
@@ -241,15 +243,6 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                           <MapPin className="h-3 w-3" />
                           {competitor.distance} entfernt
                         </span>
-                        {competitor.services && competitor.services.length > 0 && (
-                          <div className="flex gap-1">
-                            {competitor.services.slice(0, 3).map((service, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">
-                                {service}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -273,6 +266,29 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                     
                     <Progress value={competitor.rating * 20} className="w-full" />
                   </div>
+
+                  {/* Services Input für automatisch gefundene Konkurrenten */}
+                  {!competitor.isManual && (
+                    <CompetitorServicesInput
+                      competitorName={competitor.name}
+                      currentServices={competitor.services}
+                      onServicesChange={(services) => updateCompetitorServices(competitor.name, services)}
+                    />
+                  )}
+
+                  {/* Services Display für manuelle Konkurrenten */}
+                  {competitor.isManual && competitor.services.length > 0 && (
+                    <div className="mt-3">
+                      <span className="text-sm font-medium text-gray-700">Leistungen:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {competitor.services.map((service, i) => (
+                          <Badge key={i} variant="outline" className="text-xs">
+                            {service}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
