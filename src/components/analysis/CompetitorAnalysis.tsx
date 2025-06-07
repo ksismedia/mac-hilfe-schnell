@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +35,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   const allCompetitors = [
     ...realData.competitors.map(comp => ({
       ...comp,
-      services: comp.services || [], // Ensure services array exists
+      services: [], // Real competitors don't have services, so set empty array
       isManual: false
     })),
     ...manualCompetitors.map(comp => ({
