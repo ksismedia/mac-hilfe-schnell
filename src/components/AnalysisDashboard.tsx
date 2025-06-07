@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { useManualData, ManualImprintData, ManualSocialData, ManualCompetitors } from '@/hooks/useManualData';
+import { useManualData, ManualImprintData, ManualSocialData, ManualCompetitor } from '@/hooks/useManualData';
 import APIKeyManager from './APIKeyManager';
 import SEOAnalysis from './analysis/SEOAnalysis';
 import KeywordAnalysis from './analysis/KeywordAnalysis';

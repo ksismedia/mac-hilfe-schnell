@@ -36,6 +36,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
   const allCompetitors = [
     ...realData.competitors.map(comp => ({
       ...comp,
+      services: comp.services || [], // Ensure services array exists
       isManual: false
     })),
     ...manualCompetitors.map(comp => ({
@@ -43,7 +44,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
       rating: comp.rating,
       reviews: comp.reviews,
       distance: comp.distance,
-      services: comp.services,
+      services: comp.services || [], // Ensure services array exists
       isManual: true
     }))
   ];
