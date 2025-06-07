@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,17 +7,27 @@ import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualCompetitorInput from './ManualCompetitorInput';
 import CompetitorServicesInput from './CompetitorServicesInput';
-import { useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
 
 interface CompetitorAnalysisProps {
   address: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   realData: RealBusinessData;
+  manualCompetitors: ManualCompetitor[];
+  competitorServices: CompetitorServices;
+  onCompetitorsChange: (competitors: ManualCompetitor[]) => void;
+  onCompetitorServicesChange: (competitorName: string, services: string[]) => void;
 }
 
-const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, industry, realData }) => {
-  const { manualCompetitors, competitorServices, updateCompetitors, updateCompetitorServices } = useManualData();
-
+const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
+  address, 
+  industry, 
+  realData,
+  manualCompetitors,
+  competitorServices,
+  onCompetitorsChange,
+  onCompetitorServicesChange
+}) => {
   const extractCityFromAddress = (address: string) => {
     const parts = address.split(',');
     if (parts.length > 1) {
@@ -128,7 +139,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
       {/* Manuelle Eingabe */}
       <ManualCompetitorInput 
         competitors={manualCompetitors}
-        onCompetitorsChange={updateCompetitors}
+        onCompetitorsChange={onCompetitorsChange}
       />
 
       {/* Vergleichs-Übersicht */}
@@ -307,7 +318,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
           ) : (
             <div className="space-y-4">
               {allCompetitors
-                .sort((a, b) => b.performanceScore - a.performanceScore) // Sortiere nach Performance-Score
+                .sort((a, b) => b.performanceScore - a.performanceScore)
                 .map((competitor, index) => (
                 <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
@@ -372,7 +383,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ address, indust
                     <CompetitorServicesInput
                       competitorName={competitor.name}
                       currentServices={competitor.services}
-                      onServicesChange={(services) => updateCompetitorServices(competitor.name, services)}
+                      onServicesChange={(services) => onCompetitorServicesChange(competitor.name, services)}
                     />
                   )}
 
