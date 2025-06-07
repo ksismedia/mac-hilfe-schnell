@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,10 +62,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
   const {
     manualImprintData,
     manualSocialData,
+    manualWorkplaceData,
     manualCompetitors,
+    competitorServices,
     updateImprintData,
     updateSocialData,
-    updateCompetitors
+    updateWorkplaceData,
+    updateCompetitors,
+    updateCompetitorServices
   } = useManualData();
 
   // Erstelle erweiterte Daten für PDF-Export und Komponenten
@@ -382,7 +387,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="competitor">
-            <CompetitorAnalysis address={businessData.address} industry={businessData.industry} realData={enhancedData} />
+            <CompetitorAnalysis 
+              address={businessData.address} 
+              industry={businessData.industry} 
+              realData={enhancedData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              onCompetitorsChange={updateCompetitors}
+              onCompetitorServicesChange={updateCompetitorServices}
+            />
           </TabsContent>
 
           <TabsContent value="backlinks">
@@ -411,7 +424,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ businessData, onR
           </TabsContent>
 
           <TabsContent value="workplace">
-            <WorkplaceReviews businessData={businessData} realData={enhancedData} />
+            <WorkplaceReviews 
+              businessData={businessData} 
+              realData={enhancedData}
+              manualData={manualWorkplaceData}
+              onManualDataChange={updateWorkplaceData}
+            />
           </TabsContent>
 
           <TabsContent value="imprint">
