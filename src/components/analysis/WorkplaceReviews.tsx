@@ -45,15 +45,10 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
 
   // Reset form when manualData changes
   React.useEffect(() => {
-    form.reset({
-      kununuFound: manualData?.kununuFound || false,
-      kununuRating: manualData?.kununuRating || '',
-      kununuReviews: manualData?.kununuReviews || '',
-      glassdoorFound: manualData?.glassdoorFound || false,
-      glassdoorRating: manualData?.glassdoorRating || '',
-      glassdoorReviews: manualData?.glassdoorReviews || ''
-    });
-    console.log('Form reset with manual workplace data:', manualData);
+    if (manualData) {
+      form.reset(manualData);
+      console.log('Form reset with manual workplace data:', manualData);
+    }
   }, [manualData, form]);
 
   const onSubmit = (data: ManualWorkplaceData) => {
@@ -69,14 +64,15 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
   };
 
   const handleClearManual = () => {
-    form.reset({
+    const emptyData = {
       kununuFound: false,
       kununuRating: '',
       kununuReviews: '',
       glassdoorFound: false,
       glassdoorRating: '',
       glassdoorReviews: ''
-    });
+    };
+    form.reset(emptyData);
     if (onManualDataChange) {
       onManualDataChange(null);
     }
@@ -87,7 +83,13 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
     });
   };
 
-  const hasManualData = manualData && (manualData.kununuFound || manualData.glassdoorFound);
+  // Improved logic to check for manual data
+  const hasManualData = manualData && (
+    manualData.kununuFound || 
+    manualData.glassdoorFound || 
+    manualData.kununuRating !== '' || 
+    manualData.glassdoorRating !== ''
+  );
 
   console.log('Current manual workplace data:', manualData);
   console.log('Has manual workplace data:', hasManualData);
@@ -102,6 +104,30 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
       />
     ));
   };
+
+  // Helper function to get display data (manual or automatic)
+  const getDisplayData = () => {
+    if (hasManualData && manualData) {
+      return {
+        kununu: {
+          found: manualData.kununuFound,
+          rating: manualData.kununuRating,
+          reviews: manualData.kununuReviews
+        },
+        glassdoor: {
+          found: manualData.glassdoorFound,
+          rating: manualData.glassdoorRating,
+          reviews: manualData.glassdoorReviews
+        }
+      };
+    }
+    return {
+      kununu: workplaceData.kununu,
+      glassdoor: workplaceData.glassdoor
+    };
+  };
+
+  const displayData = getDisplayData();
 
   return (
     <div className="space-y-6">
@@ -254,7 +280,7 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
             </form>
           ) : (
             <>
-              {!workplaceData.kununu.found && !workplaceData.glassdoor.found && !hasManualData ? (
+              {!displayData.kununu.found && !displayData.glassdoor.found ? (
                 <div className="text-center py-8">
                   <div className="mb-4">
                     <AlertCircle className="h-12 w-12 mx-auto text-amber-500" />
@@ -292,24 +318,24 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         kununu
-                        <Badge variant={(hasManualData && manualData?.kununuFound) || workplaceData.kununu.found ? "default" : "destructive"}>
-                          {(hasManualData && manualData?.kununuFound) || workplaceData.kununu.found ? "Gefunden" : "Nicht gefunden"}
+                        <Badge variant={displayData.kununu.found ? "default" : "destructive"}>
+                          {displayData.kununu.found ? "Gefunden" : "Nicht gefunden"}
                         </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {(hasManualData && manualData?.kununuFound) || workplaceData.kununu.found ? (
+                      {displayData.kununu.found ? (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-2xl font-bold">
-                              {hasManualData && manualData?.kununuRating ? manualData.kununuRating : workplaceData.kununu.rating}
+                              {displayData.kununu.rating}
                             </span>
                             <div className="flex">
-                              {renderStars(Math.round(parseFloat(hasManualData && manualData?.kununuRating ? manualData.kununuRating : workplaceData.kununu.rating.toString())))}
+                              {renderStars(Math.round(parseFloat(displayData.kununu.rating.toString())))}
                             </div>
                           </div>
                           <p className="text-sm text-gray-600">
-                            {hasManualData && manualData?.kununuReviews ? manualData.kununuReviews : workplaceData.kununu.reviews} Bewertungen
+                            {displayData.kununu.reviews} Bewertungen
                           </p>
                         </div>
                       ) : (
@@ -324,24 +350,24 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         Glassdoor
-                        <Badge variant={(hasManualData && manualData?.glassdoorFound) || workplaceData.glassdoor.found ? "default" : "destructive"}>
-                          {(hasManualData && manualData?.glassdoorFound) || workplaceData.glassdoor.found ? "Gefunden" : "Nicht gefunden"}
+                        <Badge variant={displayData.glassdoor.found ? "default" : "destructive"}>
+                          {displayData.glassdoor.found ? "Gefunden" : "Nicht gefunden"}
                         </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {(hasManualData && manualData?.glassdoorFound) || workplaceData.glassdoor.found ? (
+                      {displayData.glassdoor.found ? (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-2xl font-bold">
-                              {hasManualData && manualData?.glassdoorRating ? manualData.glassdoorRating : workplaceData.glassdoor.rating}
+                              {displayData.glassdoor.rating}
                             </span>
                             <div className="flex">
-                              {renderStars(Math.round(parseFloat(hasManualData && manualData?.glassdoorRating ? manualData.glassdoorRating : workplaceData.glassdoor.rating.toString())))}
+                              {renderStars(Math.round(parseFloat(displayData.glassdoor.rating.toString())))}
                             </div>
                           </div>
                           <p className="text-sm text-gray-600">
-                            {hasManualData && manualData?.glassdoorReviews ? manualData.glassdoorReviews : workplaceData.glassdoor.reviews} Bewertungen
+                            {displayData.glassdoor.reviews} Bewertungen
                           </p>
                         </div>
                       ) : (
