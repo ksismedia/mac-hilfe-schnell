@@ -42,7 +42,21 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     }
   });
 
+  // Reset form when manualData changes
+  React.useEffect(() => {
+    form.reset({
+      facebookUrl: manualData?.facebookUrl || '',
+      instagramUrl: manualData?.instagramUrl || '',
+      facebookFollowers: manualData?.facebookFollowers || '',
+      instagramFollowers: manualData?.instagramFollowers || '',
+      facebookLastPost: manualData?.facebookLastPost || '',
+      instagramLastPost: manualData?.instagramLastPost || ''
+    });
+    console.log('Form reset with manual data:', manualData);
+  }, [manualData, form]);
+
   const onSubmit = (data: ManualSocialData) => {
+    console.log('Submitting social media data:', data);
     if (onManualDataChange) {
       onManualDataChange(data);
     }
@@ -75,6 +89,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
   // Verwende manuelle Daten falls vorhanden, sonst Fallback
   const socialData = realData.socialMedia;
   const hasManualData = manualData && (manualData.facebookUrl || manualData.instagramUrl);
+
+  console.log('Current manual data:', manualData);
+  console.log('Has manual data:', hasManualData);
 
   const getEngagementBadge = (engagement: string) => {
     switch (engagement) {
