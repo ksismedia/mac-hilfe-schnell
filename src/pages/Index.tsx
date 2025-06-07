@@ -9,7 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
-import { Search, Globe, MapPin, Building, Zap, Download } from 'lucide-react';
+import SavedAnalysesManager from '@/components/SavedAnalysesManager';
+import { Search, Globe, MapPin, Building, Zap, Download, FolderOpen } from 'lucide-react';
 
 interface BusinessData {
   address: string;
@@ -73,6 +74,23 @@ const Index = () => {
     setBusinessData(newBusinessData);
   };
 
+  const handleLoadSavedAnalysis = (analysis: any) => {
+    console.log('Loading saved analysis on main page:', analysis);
+    
+    // Setze die Business-Daten aus der gespeicherten Analyse
+    if (analysis.businessData) {
+      setBusinessData(analysis.businessData);
+    }
+    
+    // Zeige das Dashboard an
+    setShowResults(true);
+    
+    toast({
+      title: "Analyse geladen",
+      description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
+    });
+  };
+
   const resetAnalysis = () => {
     setShowResults(false);
     setBusinessData({
@@ -115,6 +133,11 @@ const Index = () => {
           <p className="text-xl text-gray-600">
             Umfassende Bewertung von Webseite, Google-Bewertungen und Social-Media-Kanälen
           </p>
+        </div>
+
+        {/* Gespeicherte Analysen Button */}
+        <div className="mb-6 text-center">
+          <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
         </div>
 
         {/* Extension Hinweis */}
