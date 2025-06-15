@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -656,10 +655,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Follower-Basis</span>
-                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%</span>
+                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -821,7 +820,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
                     <p style="color: #2c7a7b;">
                         Mit den empfohlenen Optimierungen können Sie Ihren Gesamt-Score von aktuell ${overallScore} auf über 
                         ${Math.min(95, overallScore + 25)} Punkte steigern. Dies entspricht einer deutlichen Verbesserung Ihrer Online-Präsenz 
-                        und kann zu ${Math.round((Math.min(95, overallScore + 25) - overallScore) * 2)}% mehr qualifizierten Anfragen führen.
+                        und kann zu ${Math.round((Math.min(95, overallScore + 25) - overallScore) * 2}% mehr qualifizierten Anfragen führen.
                     </p>
                 </div>
 
