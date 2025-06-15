@@ -65,6 +65,11 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       return Math.min(100, score);
     };
 
+    // Prüfe ob Meta-Description vorhanden ist
+    const hasMetaDescription = realData.seo.metaDescription && 
+                               realData.seo.metaDescription !== 'Keine Meta-Description gefunden' &&
+                               realData.seo.metaDescription !== 'Website-Inhalte konnten nicht abgerufen werden';
+
     // Anonymisiere Konkurrenten
     const anonymizedCompetitors = [
       ...realData.competitors.map((comp, index) => ({
@@ -345,16 +350,16 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 
                     <div class="metric-item">
                         <div class="metric-title">Website-Struktur</div>
-                        <div class="metric-value ${realData.seo.hasMetaDescription ? 'excellent' : 'warning'}">
-                            ${realData.seo.hasMetaDescription ? 'Vollständig optimiert' : 'Verbesserungspotenzial'}
+                        <div class="metric-value ${hasMetaDescription ? 'excellent' : 'warning'}">
+                            ${hasMetaDescription ? 'Vollständig optimiert' : 'Verbesserungspotenzial'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Meta-Tags & Struktur</span>
-                                <span>${realData.seo.hasMetaDescription ? '100' : '60'}%</span>
+                                <span>${hasMetaDescription ? '100' : '60'}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.seo.hasMetaDescription ? 'warning' : ''}" style="width: ${realData.seo.hasMetaDescription ? 100 : 60}%"></div>
+                                <div class="progress-fill ${!hasMetaDescription ? 'warning' : ''}" style="width: ${hasMetaDescription ? 100 : 60}%"></div>
                             </div>
                         </div>
                     </div>
