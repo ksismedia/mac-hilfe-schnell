@@ -216,6 +216,7 @@ const Index = () => {
                   </Label>
                   <Input
                     id="address"
+                    type="text"
                     placeholder="z.B. Musterstraße 123, 12345 Musterhausen"
                     value={businessData.address}
                     onChange={(e) => setBusinessData({...businessData, address: e.target.value})}
@@ -230,7 +231,7 @@ const Index = () => {
                   </Label>
                   <Input
                     id="url"
-                    type="url"
+                    type="text"
                     placeholder="https://www.beispiel-handwerker.de"
                     value={businessData.url}
                     onChange={(e) => setBusinessData({...businessData, url: e.target.value})}
