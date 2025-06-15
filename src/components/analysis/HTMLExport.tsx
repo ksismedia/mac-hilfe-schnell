@@ -39,6 +39,27 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   competitorServices = {},
   hourlyRateData
 }) => {
+  const calculateHourlyRateScore = () => {
+    if (!hourlyRateData || hourlyRateData.regionAverage === 0) return 50;
+    
+    const ratio = hourlyRateData.ownRate / hourlyRateData.regionAverage;
+    
+    // Optimal range: 0.9 - 1.1 (90% - 110% of regional average)
+    if (ratio >= 0.9 && ratio <= 1.1) return 100;
+    
+    // Good range: 0.8 - 1.2 (80% - 120% of regional average)
+    if (ratio >= 0.8 && ratio <= 1.2) return 80;
+    
+    // Acceptable range: 0.7 - 1.3 (70% - 130% of regional average)
+    if (ratio >= 0.7 && ratio <= 1.3) return 60;
+    
+    // Outside acceptable range
+    if (ratio < 0.7) return 30; // Too low
+    if (ratio > 1.3) return 40; // Too high
+    
+    return 50;
+  };
+
   const generateHTMLReport = () => {
     // Schätze eigene Services (falls verfügbar, sonst Durchschnitt für Branche)
     const estimateOwnServicesCount = () => {
