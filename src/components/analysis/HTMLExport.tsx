@@ -18,6 +18,7 @@ interface HTMLExportProps {
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  hourlyRateData?: { ownRate: number; regionAverage: number };
 }
 
 const industryNames = {
@@ -35,7 +36,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   manualImprintData, 
   manualSocialData,
   manualCompetitors = [],
-  competitorServices = {}
+  competitorServices = {},
+  hourlyRateData
 }) => {
   const generateHTMLReport = () => {
     // Schätze eigene Services (falls verfügbar, sonst Durchschnitt für Branche)
@@ -105,7 +107,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     
     const overallScore = Math.round(
       (realData.seo.score + realData.performance.score + 
-       (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore) / 4
+       (realData.reviews.google.count > 0 ? 80 : 40) + 
+       realData.mobile.overallScore + calculateHourlyRateScore()) / 5
     );
 
     const currentDate = new Date().toLocaleDateString('de-DE');
@@ -131,7 +134,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
         .header h1 { color: #1e40af; font-size: 2.5em; margin-bottom: 10px; }
         .header .subtitle { color: #6b7280; font-size: 1.2em; }
         .company-info { background: #f8fafc; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
-        .score-overview { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+        .score-overview { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 20px; margin-bottom: 40px; }
         .score-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
         .score-big { font-size: 3em; font-weight: bold; color: #2563eb; }
         .section { margin-bottom: 40px; page-break-inside: avoid; }
@@ -189,10 +192,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>Online-Auftritt Analyse</h1>
-            <div class="subtitle">Vollständige Bewertung für ${realData.company.name}</div>
+            <h1>Online-Auftritt Analyse (Detailliert)</h1>
+            <div class="subtitle">Vollständige technische Bewertung für ${realData.company.name}</div>
             <div style="margin-top: 15px; color: #6b7280;">
-                Erstellt am ${currentDate} | Live-Datenanalyse mit Google APIs
+                Erstellt am ${currentDate} um ${currentTime} | Live-Datenanalyse mit Google APIs
             </div>
         </div>
 
@@ -208,34 +211,90 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div>
                     <p><strong>Branche:</strong> ${industryNames[businessData.industry]}</p>
                     <p><strong>Telefon:</strong> ${realData.company.phone || 'Nicht verfügbar'}</p>
-                    <p><strong>Analyse-Typ:</strong> <span class="badge-success">Live Google APIs</span></p>
+                    <p><strong>Analyse-Typ:</strong> <span class="badge-success">Live Google APIs + Stundensatz</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Erweiterte Gesamtbewertung mit Services -->
+        <!-- Erweiterte Gesamtbewertung mit Stundensatz -->
         <div class="score-overview">
             <div class="score-card">
-                <div class="score-big">${Math.round(ownPerformanceScore)}/100</div>
-                <div>Performance-Score</div>
-                <div style="margin-top: 10px; color: #6b7280;">inkl. Services-Bewertung</div>
+                <div class="score-big">${overallScore}/100</div>
+                <div>Gesamt-Score</div>
+                <div style="margin-top: 10px; color: #6b7280;">inkl. Preisstrategie</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${realData.reviews.google.count}</div>
-                <div>Google Bewertungen</div>
-                <div style="margin-top: 10px; color: #6b7280;">⭐ ${realData.reviews.google.rating}/5</div>
+                <div class="score-big">${realData.seo.score}</div>
+                <div>SEO-Score</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${allCompetitors.length}</div>
-                <div>Konkurrenten</div>
-                <div style="margin-top: 10px; color: #6b7280;">mit Services analysiert</div>
+                <div class="score-big">${realData.performance.score}</div>
+                <div>Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${ownServicesCount}</div>
-                <div>Ihre Services</div>
-                <div style="margin-top: 10px; color: #6b7280;">geschätzt für Branche</div>
+                <div class="score-big">${realData.mobile.overallScore}</div>
+                <div>Mobile</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${calculateHourlyRateScore()}</div>
+                <div>Preisstrategie</div>
+                <div style="margin-top: 10px; color: #6b7280;">
+                    ${hourlyRateData ? `${hourlyRateData.ownRate}€/h` : 'Nicht erfasst'}
+                </div>
             </div>
         </div>
+
+        <!-- Neue Stundensatz-Analyse Sektion -->
+        ${hourlyRateData ? `
+        <div class="section">
+            <h2 class="section-title">💰 Stundensatz-Analyse (Detailliert)</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Ihr Stundensatz</div>
+                    <div class="metric-value">${hourlyRateData.ownRate.toFixed(2)} €/Stunde</div>
+                    <div style="margin-top: 10px; color: #666;">
+                        Brutto-Stundensatz für Endkunden
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Regionaler Durchschnitt</div>
+                    <div class="metric-value">${hourlyRateData.regionAverage.toFixed(2)} €/Stunde</div>
+                    <div style="margin-top: 10px; color: #666;">
+                        Markttypischer Satz in der Region
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Preispositionierung</div>
+                    <div class="metric-value">${((hourlyRateData.ownRate / hourlyRateData.regionAverage - 1) * 100).toFixed(1)}%</div>
+                    <div style="margin-top: 10px; color: #666;">
+                        ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Über' : 'Unter'} dem Durchschnitt
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Preisstrategie-Score</div>
+                    <div class="metric-value">${calculateHourlyRateScore()}/100</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${calculateHourlyRateScore()}%"></div>
+                    </div>
+                    <div style="margin-top: 10px; color: #666;">
+                        Optimale Marktpositionierung
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recommendations">
+                <h4>Stundensatz-Strategieempfehlungen:</h4>
+                <ul>
+                    ${hourlyRateData.ownRate > hourlyRateData.regionAverage * 1.2 ? '<li>Preisrechtfertigung durch Premium-Service und Qualität kommunizieren</li>' : ''}
+                    ${hourlyRateData.ownRate < hourlyRateData.regionAverage * 0.8 ? '<li>Potenzial für Preiserhöhung - Stundensatz unterhalb Marktdurchschnitt</li>' : ''}
+                    <li>Transparente Kostenaufstellung für Kunden entwickeln</li>
+                    <li>Service-Pakete für verschiedene Preissegmente erstellen</li>
+                    <li>Regelmäßige Marktpreisanalyse durchführen (halbjährlich)</li>
+                    <li>Mehrwert-Services zur Preisdifferenzierung nutzen</li>
+                </ul>
+            </div>
+        </div>
+        ` : ''}
 
         <!-- Wettbewerbsvergleich -->
         <div class="section">
@@ -638,9 +697,11 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
 
         <!-- Footer -->
         <div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
-            <p>Dieser Bericht wurde am ${currentDate} um ${currentTime} erstellt.</p>
-            <p>Analysedaten basieren auf Live-Messungen mit Google APIs und Services-Integration.</p>
-            <p style="margin-top: 10px; font-style: italic;">Performance-Score: Rating (50%) + Reviews (30%) + Services (20%)</p>
+            <p>Dieser detaillierte Bericht wurde am ${currentDate} um ${currentTime} erstellt.</p>
+            <p>Analysedaten basieren auf Live-Messungen mit Google APIs, Services-Integration und Stundensatz-Bewertung.</p>
+            <p style="margin-top: 10px; font-style: italic;">
+                Gesamt-Score: SEO (20%) + Performance (20%) + Mobile (20%) + Reviews (20%) + Preisstrategie (20%)
+            </p>
         </div>
     </div>
 </body>
@@ -660,32 +721,33 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Ausführlicher HTML-Export (30+ Seiten mit Services)
+            Technischer HTML-Export (40+ Seiten mit Stundensatz)
           </CardTitle>
           <CardDescription>
-            Generiert eine umfassende, druckbare HTML-Analyse mit Services-Integration und Performance-Score-Bewertung
+            Vollständige interne Analyse mit allen technischen Details und Stundensatz-Bewertung
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-semibold text-green-700">✅ Services-Integration:</h4>
+              <h4 className="font-semibold text-green-700">✅ Vollständige Analyse:</h4>
               <ul className="text-sm space-y-1 text-green-600">
-                <li>• Performance-Score mit Services (20%)</li>
+                <li>• Alle Konkurrenten mit Firmennamen</li>
+                <li>• Technische Details und Messwerte</li>
                 <li>• Services-Portfolio-Vergleich</li>
-                <li>• Service-spezifische SWOT-Analyse</li>
-                <li>• Services-basierte Strategieempfehlungen</li>
-                <li>• ROI-Kalkulation für Service-Erweiterung</li>
+                <li>• SWOT-Analyse mit Services</li>
+                <li>• ROI-Kalkulation für Optimierungen</li>
+                <li>• <strong>NEU:</strong> Stundensatz-Strategie-Analyse</li>
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-semibold text-blue-700">📊 Erweiterte Analyse:</h4>
+              <h4 className="font-semibold text-blue-700">💰 Stundensatz-Features:</h4>
               <ul className="text-sm space-y-1 text-blue-600">
-                <li>• Wettbewerbsposition mit Services</li>
-                <li>• Services-Portfolio-Benchmarking</li>
-                <li>• Performance-Score-Ranking</li>
-                <li>• Service-orientierte Maßnahmenpläne</li>
-                <li>• Cross-Selling-Potentiale</li>
+                <li>• Regionaler Preisvergleich</li>
+                <li>• Preisstrategie-Score (0-100)</li>
+                <li>• Optimierungsempfehlungen</li>
+                <li>• Marktpositionierungs-Analyse</li>
+                <li>• Integration in Gesamt-Score</li>
               </ul>
             </div>
           </div>
@@ -696,7 +758,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
               className="flex items-center gap-2"
             >
               <FileText className="h-4 w-4" />
-              Report mit Services generieren
+              Technischen Report generieren
             </Button>
             <Button 
               variant="outline"
@@ -714,20 +776,12 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">📋 Neue Services-Features im Report:</h4>
-            <div className="text-sm text-blue-700 grid grid-cols-1 md:grid-cols-2 gap-2">
-              <ul className="space-y-1">
-                <li>• Performance-Score inkl. Services (20%)</li>
-                <li>• Services-Portfolio je Konkurrent</li>
-                <li>• Services-Vergleichsmatrix</li>
-                <li>• Service-spezifische SWOT</li>
-              </ul>
-              <ul className="space-y-1">
-                <li>• Services-basierte Strategien</li>
-                <li>• Cross-Selling-Potentiale</li>
-                <li>• Service-Portfolio-ROI</li>
-                <li>• Performance-Ranking mit Services</li>
-              </ul>
+            <h4 className="font-semibold text-blue-800 mb-2">🆕 Stundensatz-Integration:</h4>
+            <div className="text-sm text-blue-700 space-y-1">
+              <p>• <strong>Preisstrategie-Score:</strong> 20% des Gesamt-Scores (war vorher 4 Kategorien, jetzt 5)</p>
+              <p>• <strong>Regionaler Vergleich:</strong> Ihr Stundensatz vs. lokaler Durchschnitt</p>
+              <p>• <strong>Optimierungshinweise:</strong> Konkrete Preisstrategieempfehlungen</p>
+              <p>• <strong>Marktpositionierung:</strong> Bewertung der aktuellen Preisstellung</p>
             </div>
           </div>
         </CardContent>
