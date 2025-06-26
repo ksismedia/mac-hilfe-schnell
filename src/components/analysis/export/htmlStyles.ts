@@ -101,27 +101,25 @@ export const getHTMLStyles = () => `
             position: relative;
             overflow: hidden;
         }
-        .progress-fill::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                #dc2626 0%,     /* rot bei 0% */
-                #f59e0b 40%,    /* orange bei 40% */
-                #eab308 70%,    /* gelb bei 70% */
-                #fbbf24 100%    /* gold bei 100% */
-            );
-            border-radius: 6px;
+        
+        /* Dynamisches Progress-Gradient basierend auf Wert */
+        .progress-fill[data-value="0"] { background: #dc2626; }
+        .progress-fill[data-value="10"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 90%, #f59e0b 100%); }
+        .progress-fill[data-value="20"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 80%, #f59e0b 100%); }
+        .progress-fill[data-value="30"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 100%); }
+        .progress-fill[data-value="40"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 70%, #eab308 100%); }
+        .progress-fill[data-value="50"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 100%); }
+        .progress-fill[data-value="60"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 40%, #eab308 80%, #fbbf24 100%); }
+        .progress-fill[data-value="70"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 30%, #eab308 70%, #fbbf24 100%); }
+        .progress-fill[data-value="80"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%); }
+        .progress-fill[data-value="90"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 20%, #eab308 40%, #fbbf24 100%); }
+        .progress-fill[data-value="100"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%); }
+
+        /* Fallback für Zwischenwerte */
+        .progress-fill:not([data-value]) { 
+            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%);
         }
-        .progress-fill.warning::before { 
-            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 100%);
-        }
-        .progress-fill.danger::before { 
-            background: linear-gradient(90deg, #dc2626 0%, #f87171 100%);
-        }
+
         .excellent { color: #fbbf24; font-weight: bold; }
         .good { color: #60a5fa; font-weight: bold; }
         .warning { color: #f59e0b; font-weight: bold; }

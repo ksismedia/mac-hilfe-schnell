@@ -4,6 +4,24 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
+const getProgressColor = (value: number) => {
+  if (value <= 25) {
+    // 0-25%: Rot zu Orange
+    return `linear-gradient(90deg, #dc2626 0%, #f59e0b ${(value/25) * 100}%)`;
+  } else if (value <= 50) {
+    // 25-50%: Orange zu Gelb
+    const progress = ((value - 25) / 25) * 100;
+    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 ${50 + progress/2}%)`;
+  } else if (value <= 75) {
+    // 50-75%: Gelb zu helles Gold
+    const progress = ((value - 50) / 25) * 100;
+    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 ${75 + progress/4}%)`;
+  } else {
+    // 75-100%: Volles Gold-Gradient
+    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%)`;
+  }
+};
+
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
@@ -20,12 +38,7 @@ const Progress = React.forwardRef<
       className="h-full w-full flex-1 transition-all relative overflow-hidden rounded-full"
       style={{ 
         transform: `translateX(-${100 - (value || 0)}%)`,
-        background: `linear-gradient(90deg, 
-          #dc2626 0%,     /* rot bei 0% */
-          #f59e0b 40%,    /* orange bei 40% */
-          #eab308 70%,    /* gelb bei 70% */
-          #fbbf24 100%    /* gold bei 100% */
-        )`
+        background: getProgressColor(value || 0)
       }}
     />
   </ProgressPrimitive.Root>
