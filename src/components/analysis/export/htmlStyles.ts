@@ -1,4 +1,3 @@
-
 export const getHTMLStyles = () => `
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -93,15 +92,36 @@ export const getHTMLStyles = () => `
             border-radius: 6px; 
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
         }
         .progress-fill { 
             height: 100%; 
             border-radius: 6px; 
             transition: width 0.8s ease;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            position: relative;
+            overflow: hidden;
         }
-        .progress-fill.warning { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .progress-fill.danger { background: linear-gradient(90deg, #dc2626, #b91c1c); }
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                #dc2626 0%,     /* rot bei 0% */
+                #f59e0b 40%,    /* orange bei 40% */
+                #eab308 70%,    /* gelb bei 70% */
+                #fbbf24 100%    /* gold bei 100% */
+            );
+            border-radius: 6px;
+        }
+        .progress-fill.warning::before { 
+            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 100%);
+        }
+        .progress-fill.danger::before { 
+            background: linear-gradient(90deg, #dc2626 0%, #f87171 100%);
+        }
         .excellent { color: #fbbf24; font-weight: bold; }
         .good { color: #60a5fa; font-weight: bold; }
         .warning { color: #f59e0b; font-weight: bold; }
