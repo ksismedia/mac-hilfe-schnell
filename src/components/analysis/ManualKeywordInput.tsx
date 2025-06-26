@@ -102,7 +102,7 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
                 size="sm"
                 onClick={() => addSuggestedKeyword(suggestion)}
                 className="text-xs"
-                disabled={manualKeywords.find(kw => kw.keyword === suggestion)}
+                disabled={!!manualKeywords.find(kw => kw.keyword === suggestion)}
               >
                 <Plus className="h-3 w-3 mr-1" />
                 {suggestion}
