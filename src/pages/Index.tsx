@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
-import { Search, Globe, MapPin, Building, Zap, Download, FolderOpen } from 'lucide-react';
+import { Search, Globe, MapPin, Building, Star, FolderOpen } from 'lucide-react';
 
 interface BusinessData {
   address: string;
@@ -124,15 +125,29 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-4xl mx-auto">
+        {/* Header mit Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Handwerker Online-Auftritt Analyse
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src="/lovable-uploads/99a19f1f-f125-4be7-8031-e08d72b47f78.png" 
+              alt="Handwerk Stars Logo" 
+              className="h-32 w-auto"
+            />
+          </div>
+          <h1 className="text-4xl font-bold text-yellow-400 mb-4">
+            Online-Auftritt Analyse
           </h1>
-          <p className="text-xl text-gray-600">
-            Umfassende Bewertung von Webseite, Google-Bewertungen und Social-Media-Kanälen
+          <p className="text-xl text-gray-300">
+            Professionelle Bewertung von Webseite, Google-Bewertungen und Social-Media-Kanälen
           </p>
+          <div className="mt-4">
+            <Badge variant="secondary" className="bg-yellow-400 text-black font-semibold">
+              <Star className="h-4 w-4 mr-1" />
+              Zertifizierter Partner
+            </Badge>
+          </div>
         </div>
 
         {/* Gespeicherte Analysen Button */}
@@ -140,77 +155,27 @@ const Index = () => {
           <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
         </div>
 
-        {/* Extension Hinweis */}
-        <Card className="mb-6 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+        <Card className="mb-8 bg-gray-800 border-yellow-400/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-800">
-              <Zap className="h-5 w-5" />
-              🚀 NEU: Chrome Extension verfügbar!
-            </CardTitle>
-            <CardDescription className="text-green-700">
-              Analysieren Sie jede Website direkt mit einem Klick - ohne CORS-Probleme oder API-Limits!
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="text-sm text-green-800">
-                <strong>Vorteile der Extension:</strong>
-                <ul className="list-disc list-inside mt-1 space-y-1">
-                  <li>✓ Vollständige Website-Analyse ohne Einschränkungen</li>
-                  <li>✓ Echte SEO-Daten direkt von der Website</li>
-                  <li>✓ Keine API-Kosten oder Limits</li>
-                  <li>✓ Ein Klick zur Analyse jeder Website</li>
-                </ul>
-              </div>
-              <div className="flex gap-3">
-                <Button 
-                  variant="default" 
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() => {
-                    toast({
-                      title: "Extension-Installation",
-                      description: "Kopieren Sie den chrome-extension Ordner und laden Sie ihn in Chrome als Developer Extension.",
-                    });
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Installation anzeigen
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    // Öffne Chrome Extensions Seite
-                    window.open('chrome://extensions/', '_blank');
-                  }}
-                >
-                  Chrome Extensions öffnen
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-yellow-400">
               <Search className="h-6 w-6" />
               Betriebsdaten eingeben
               {isFromExtension && (
-                <Badge variant="default" className="bg-green-100 text-green-800 ml-2">
-                  <Zap className="h-3 w-3 mr-1" />
+                <Badge variant="default" className="bg-yellow-400 text-black ml-2">
+                  <Star className="h-3 w-3 mr-1" />
                   Mit Extension-Unterstützung
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription>
-              Geben Sie die Daten des zu analysierenden Handwerksbetriebs ein oder nutzen Sie die Chrome Extension
+            <CardDescription className="text-gray-300">
+              Geben Sie die Daten des zu analysierenden Handwerksbetriebs ein
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="address" className="flex items-center gap-2">
+                  <Label htmlFor="address" className="flex items-center gap-2 text-gray-200">
                     <MapPin className="h-4 w-4" />
                     Adresse des Betriebs *
                   </Label>
@@ -220,12 +185,13 @@ const Index = () => {
                     placeholder="z.B. Musterstraße 123, 12345 Musterhausen"
                     value={businessData.address}
                     onChange={(e) => setBusinessData({...businessData, address: e.target.value})}
+                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                     required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="url" className="flex items-center gap-2">
+                  <Label htmlFor="url" className="flex items-center gap-2 text-gray-200">
                     <Globe className="h-4 w-4" />
                     Website-URL *
                   </Label>
@@ -235,13 +201,14 @@ const Index = () => {
                     placeholder="https://www.beispiel-handwerker.de"
                     value={businessData.url}
                     onChange={(e) => setBusinessData({...businessData, url: e.target.value})}
+                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                     required
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="industry" className="flex items-center gap-2">
+                <Label htmlFor="industry" className="flex items-center gap-2 text-gray-200">
                   <Building className="h-4 w-4" />
                   Branche *
                 </Label>
@@ -251,10 +218,10 @@ const Index = () => {
                     setBusinessData({...businessData, industry: value})
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                     <SelectValue placeholder="Branche auswählen" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-gray-700 border-gray-600">
                     <SelectItem value="shk">SHK (Sanitär, Heizung, Klima)</SelectItem>
                     <SelectItem value="maler">Maler und Lackierer</SelectItem>
                     <SelectItem value="elektriker">Elektriker</SelectItem>
@@ -267,7 +234,7 @@ const Index = () => {
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold" 
                 disabled={isAnalyzing}
                 size="lg"
               >
@@ -296,11 +263,11 @@ const Index = () => {
             { title: "Branchenmerkmale", icon: "🏗️", desc: "Spezifische Inhaltsanalyse" },
             { title: "PDF-Export", icon: "📊", desc: "Vollständiger Analysebericht" }
           ].map((feature, index) => (
-            <Card key={index} className="text-center hover:shadow-md transition-shadow">
+            <Card key={index} className="text-center hover:shadow-lg transition-all bg-gray-800 border-gray-600 hover:border-yellow-400/50">
               <CardContent className="p-4">
                 <div className="text-2xl mb-2">{feature.icon}</div>
-                <h3 className="font-semibold text-sm mb-1">{feature.title}</h3>
-                <p className="text-xs text-gray-600">{feature.desc}</p>
+                <h3 className="font-semibold text-sm mb-1 text-yellow-400">{feature.title}</h3>
+                <p className="text-xs text-gray-400">{feature.desc}</p>
               </CardContent>
             </Card>
           ))}
