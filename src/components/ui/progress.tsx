@@ -5,20 +5,24 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
-  if (value <= 25) {
-    // 0-25%: Rot zu Orange
-    return `linear-gradient(90deg, #dc2626 0%, #f59e0b ${(value/25) * 100}%)`;
-  } else if (value <= 50) {
-    // 25-50%: Orange zu Gelb
-    const progress = ((value - 25) / 25) * 100;
-    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 ${50 + progress/2}%)`;
-  } else if (value <= 75) {
-    // 50-75%: Gelb zu helles Gold
-    const progress = ((value - 50) / 25) * 100;
-    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 ${75 + progress/4}%)`;
+  if (value <= 20) {
+    // 0-20%: Rot
+    return `linear-gradient(90deg, #dc2626 0%, #dc2626 100%)`;
+  } else if (value <= 40) {
+    // 20-40%: Rot zu Orange
+    const progress = ((value - 20) / 20) * 100;
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c ${progress}%)`;
+  } else if (value <= 60) {
+    // 40-60%: Orange zu Gelb
+    const progress = ((value - 40) / 20) * 100;
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 50%, #eab308 ${50 + progress/2}%)`;
+  } else if (value <= 80) {
+    // 60-80%: Gelb zu helles Gold
+    const progress = ((value - 60) / 20) * 100;
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #eab308 66%, #fbbf24 ${66 + progress/3}%)`;
   } else {
-    // 75-100%: Volles Gold-Gradient
-    return `linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%)`;
+    // 80-100%: Volles Gold-Gradient
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #eab308 50%, #fbbf24 75%, #f59e0b 100%)`;
   }
 };
 

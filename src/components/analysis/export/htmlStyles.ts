@@ -102,22 +102,41 @@ export const getHTMLStyles = () => `
             overflow: hidden;
         }
         
-        /* Dynamisches Progress-Gradient basierend auf Wert */
-        .progress-fill[data-value="0"] { background: #dc2626; }
-        .progress-fill[data-value="10"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 90%, #f59e0b 100%); }
-        .progress-fill[data-value="20"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 80%, #f59e0b 100%); }
-        .progress-fill[data-value="30"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 100%); }
-        .progress-fill[data-value="40"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 70%, #eab308 100%); }
-        .progress-fill[data-value="50"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #eab308 100%); }
-        .progress-fill[data-value="60"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 40%, #eab308 80%, #fbbf24 100%); }
-        .progress-fill[data-value="70"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 30%, #eab308 70%, #fbbf24 100%); }
-        .progress-fill[data-value="80"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%); }
-        .progress-fill[data-value="90"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 20%, #eab308 40%, #fbbf24 100%); }
-        .progress-fill[data-value="100"] { background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%); }
+        /* Verbesserte Progress-Gradienten mit deutlichen Zwischenfarben */
+        .progress-fill[data-value="0"], .progress-fill[data-value="10"] { 
+            background: #dc2626; 
+        }
+        .progress-fill[data-value="20"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #dc2626 80%, #ea580c 100%); 
+        }
+        .progress-fill[data-value="30"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%); 
+        }
+        .progress-fill[data-value="40"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 60%, #f59e0b 100%); 
+        }
+        .progress-fill[data-value="50"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 40%, #f59e0b 80%, #eab308 100%); 
+        }
+        .progress-fill[data-value="60"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 30%, #f59e0b 60%, #eab308 100%); 
+        }
+        .progress-fill[data-value="70"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 75%, #fbbf24 100%); 
+        }
+        .progress-fill[data-value="80"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 100%); 
+        }
+        .progress-fill[data-value="90"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 50%, #fbbf24 85%, #f59e0b 100%); 
+        }
+        .progress-fill[data-value="100"] { 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 80%, #f59e0b 100%); 
+        }
 
         /* Fallback für Zwischenwerte */
         .progress-fill:not([data-value]) { 
-            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 25%, #eab308 50%, #fbbf24 100%);
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 75%, #fbbf24 100%);
         }
 
         .excellent { color: #fbbf24; font-weight: bold; }
