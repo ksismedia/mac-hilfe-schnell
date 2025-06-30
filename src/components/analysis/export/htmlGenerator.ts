@@ -61,6 +61,13 @@ export const generateCustomerHTML = (data: any) => {
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const currentDate = new Date().toLocaleDateString('de-DE');
 
+  // Check if hourly rate data is complete
+  const hasValidHourlyRateData = hourlyRateData && 
+                                 hourlyRateData.ownRate && 
+                                 hourlyRateData.regionAverage && 
+                                 hourlyRateData.ownRate > 0 && 
+                                 hourlyRateData.regionAverage > 0;
+
   return `
 <!DOCTYPE html>
 <html lang="de">
@@ -101,7 +108,7 @@ export const generateCustomerHTML = (data: any) => {
         
         ${generateMobileSection(realData)}
 
-        ${hourlyRateData && hourlyRateData.ownRate && hourlyRateData.regionAverage ? 
+        ${hasValidHourlyRateData ? 
           generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
           ''}
 
@@ -405,7 +412,7 @@ export const generateCustomerHTML = (data: any) => {
                         ${realData.performance.score < 70 ? '<li>Website-Geschwindigkeit verbessern für bessere Nutzererfahrung</li>' : ''}
                         ${realData.reviews.google.count < 10 ? '<li>Mehr Kundenbewertungen sammeln für höhere Glaubwürdigkeit</li>' : ''}
                         ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung für Smartphone-Nutzer verbessern</li>' : ''}
-                        ${hourlyRateData && calculateHourlyRateScore(hourlyRateData) < 70 ? '<li>Preisstrategie überdenken und Marktpositionierung anpassen</li>' : ''}
+                        ${hasValidHourlyRateData && calculateHourlyRateScore(hourlyRateData) < 70 ? '<li>Preisstrategie überdenken und Marktpositionierung anpassen</li>' : ''}
                         ${socialMediaScore < 60 ? '<li>Social Media Präsenz aufbauen für bessere Kundenbindung</li>' : ''}
                         <li>Content-Marketing für Fachkompetenz und Vertrauen aufbauen</li>
                         <li>Lokale SEO für bessere regionale Auffindbarkeit optimieren</li>

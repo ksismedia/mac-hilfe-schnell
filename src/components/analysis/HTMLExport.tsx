@@ -309,12 +309,86 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
         </section>
 
         <section class="section">
+            <div class="section-header">Online-Bewertungen</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Google Bewertungen</div>
+                        <div class="metric-value">⭐ ${realData.reviews.google.rating || 'N/A'}/5 (${realData.reviews.google.count || 0} Bewertungen)</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Reputation</span>
+                                <span>${realData.reviews.google.rating ? Math.round(realData.reviews.google.rating * 20) : 0}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Bewertungsanzahl</div>
+                        <div class="metric-value">${realData.reviews.google.count || 0} Bewertungen</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Vertrauensbasis</span>
+                                <span>${Math.min(100, realData.reviews.google.count * 5)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Kundenzufriedenheit</div>
+                        <div class="metric-value">${realData.reviews.google.rating >= 4.5 ? 'Hervorragend' : 
+                          realData.reviews.google.rating >= 4 ? 'Sehr gut' : 
+                          realData.reviews.google.rating >= 3.5 ? 'Gut' : 
+                          realData.reviews.google.rating ? 'Verbesserung nötig' : 'Keine Daten'}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Online-Glaubwürdigkeit</div>
+                        <div class="metric-value">Vertrauenswürdig</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Gesamteindruck</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
             <div class="section-header">Stundensatz-Analyse</div>
             <div class="section-content">
                 ${hourlyRateData ? `
-                    <p><strong>Eigener Stundensatz:</strong> ${hourlyRateData.ownRate} €</p>
-                    <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage} €</p>
-                    <p><strong>Differenz:</strong> ${hourlyRateData.ownRate - hourlyRateData.regionAverage} €</p>
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-title">Eigener Stundensatz</div>
+                            <div class="metric-value">${hourlyRateData.ownRate} €</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Regionaler Durchschnitt</div>
+                            <div class="metric-value">${hourlyRateData.regionAverage} €</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Differenz</div>
+                            <div class="metric-value">${hourlyRateData.ownRate - hourlyRateData.regionAverage} €</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Positionierung</div>
+                            <div class="metric-value">${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Über Durchschnitt' : 'Unter Durchschnitt'}</div>
+                        </div>
+                    </div>
                 ` : '<p>Keine Stundensatzdaten verfügbar.</p>'}
             </div>
         </section>
@@ -356,6 +430,67 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         </div>
                     `).join('')}
                 </div>
+            </div>
+        </section>
+
+        <!-- Impression Management Daten -->
+        ${manualImprintData ? `
+        <section class="section">
+            <div class="section-header">Impressum-Analyse (Manuell)</div>
+            <div class="section-content">
+                <p><strong>Impressum gefunden:</strong> ${manualImprintData.found ? 'Ja' : 'Nein'}</p>
+                ${manualImprintData.elements && manualImprintData.elements.length > 0 ? `
+                    <p><strong>Gefundene Elemente:</strong></p>
+                    <ul>
+                        ${manualImprintData.elements.map(element => `<li>${element}</li>`).join('')}
+                    </ul>
+                ` : ''}
+            </div>
+        </section>
+        ` : ''}
+
+        <!-- Social Media Daten (Manuell) -->
+        ${manualSocialData ? `
+        <section class="section">
+            <div class="section-header">Social Media-Analyse (Manuell)</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Facebook URL</div>
+                        <div class="metric-value">${manualSocialData.facebookUrl || 'Nicht angegeben'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Instagram URL</div>
+                        <div class="metric-value">${manualSocialData.instagramUrl || 'Nicht angegeben'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Facebook Follower</div>
+                        <div class="metric-value">${manualSocialData.facebookFollowers || 'Nicht angegeben'}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Instagram Follower</div>
+                        <div class="metric-value">${manualSocialData.instagramFollowers || 'Nicht angegeben'}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        ` : ''}
+
+        <!-- Handlungsempfehlungen -->
+        <section class="section">
+            <div class="section-header">Handlungsempfehlungen</div>
+            <div class="section-content">
+                <h4>Technische Optimierungen:</h4>
+                <ul>
+                    ${realData.seo.score < 70 ? '<li>SEO-Optimierung durchführen</li>' : ''}
+                    ${realData.performance.score < 70 ? '<li>Website-Performance verbessern</li>' : ''}
+                    ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung durchführen</li>' : ''}
+                    ${realData.reviews.google.count < 10 ? '<li>Mehr Kundenbewertungen sammeln</li>' : ''}
+                    ${realData.socialMedia.overallScore < 60 ? '<li>Social Media Präsenz aufbauen</li>' : ''}
+                    <li>Regelmäßige Website-Wartung implementieren</li>
+                    <li>Content-Marketing-Strategie entwickeln</li>
+                    <li>Lokale SEO-Maßnahmen umsetzen</li>
+                </ul>
             </div>
         </section>
     </div>
