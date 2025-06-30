@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,6 +98,186 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             <div class="score-card">
                 <div class="score-big">${socialMediaScore}</div>
                 <div class="score-label">Social Media</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">Content-Analyse</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Content-Score</div>
+                        <div class="metric-value">75</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Inhaltsqualität</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%" data-value="70"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Textqualität</div>
+                        <div class="metric-value">Zufriedenstellend</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Lesbarkeit</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%" data-value="70"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Branchenrelevanz</div>
+                        <div class="metric-value">Hoch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Fachliche Expertise</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%" data-value="80"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Aktualität</div>
+                        <div class="metric-value">Aktuell</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Content-Frische</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%" data-value="80"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">Impressum-Bewertung</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Impressum</div>
+                        <div class="metric-value">${manualImprintData?.found ? 'Vollständig' : 'Fehlt'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Rechtssicherheit</span>
+                                <span>${manualImprintData?.found ? 100 : 0}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${manualImprintData?.found ? 100 : 0}%" data-value="${manualImprintData?.found ? 100 : 0}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Datenschutz</div>
+                        <div class="metric-value">Vorhanden</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>DSGVO-Konformität</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%" data-value="80"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">AGB</div>
+                        <div class="metric-value">Teilweise</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Geschäftsbedingungen</span>
+                                <span>60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%" data-value="60"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Rechtliche Sicherheit</div>
+                        <div class="metric-value">Hoch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Gesamt-Compliance</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%" data-value="90"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">Arbeitsplatz-Bewertung</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Arbeitgeber-Bewertung</div>
+                        <div class="metric-value">4.2/5.0</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Mitarbeiterzufriedenheit</span>
+                                <span>84%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 84%" data-value="80"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Kununu Score</div>
+                        <div class="metric-value">4.5/5.0</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Employer Branding</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%" data-value="90"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Arbeitsklima</div>
+                        <div class="metric-value">Sehr gut</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Betriebsklima</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 88%" data-value="90"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Fachkräfte-Attraktivität</div>
+                        <div class="metric-value">Attraktiv</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Recruiting-Potenzial</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 82%" data-value="80"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

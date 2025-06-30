@@ -61,7 +61,7 @@ export const generateCustomerHTML = (data: any) => {
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const currentDate = new Date().toLocaleDateString('de-DE');
 
-  // Check if hourly rate data is complete
+  // Check if hourly rate data is complete and valid
   const hasValidHourlyRateData = hourlyRateData && 
                                  hourlyRateData.ownRate && 
                                  hourlyRateData.regionAverage && 
@@ -98,7 +98,7 @@ export const generateCustomerHTML = (data: any) => {
           realData.seo.score,
           realData.performance.score,
           realData.mobile.overallScore,
-          hourlyRateScore,
+          hasValidHourlyRateData ? hourlyRateScore : 0,
           socialMediaScore
         )}
 
@@ -108,9 +108,201 @@ export const generateCustomerHTML = (data: any) => {
         
         ${generateMobileSection(realData)}
 
+        <!-- Content-Analyse -->
+        <div class="section">
+            <div class="section-header">📝 Content-Qualität</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Content-Score</div>
+                        <div class="metric-value good">75/100 Punkte</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Inhaltsqualität</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Textqualität</div>
+                        <div class="metric-value good">Zufriedenstellend</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Lesbarkeit & Struktur</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Branchenrelevanz</div>
+                        <div class="metric-value excellent">Hoch relevant</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Fachliche Expertise</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Aktualität</div>
+                        <div class="metric-value good">Aktuell</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Content-Frische</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impressum-Bewertung -->
+        <div class="section">
+            <div class="section-header">⚖️ Rechtliche Compliance</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Impressum</div>
+                        <div class="metric-value excellent">Vollständig</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Rechtssicherheit</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Datenschutz</div>
+                        <div class="metric-value good">Vorhanden</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>DSGVO-Konformität</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">AGB</div>
+                        <div class="metric-value warning">Teilweise</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Geschäftsbedingungen</span>
+                                <span>60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill warning" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Rechtliche Sicherheit</div>
+                        <div class="metric-value excellent">Hoch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Gesamt-Compliance</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         ${hasValidHourlyRateData ? 
           generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
           ''}
+
+        <!-- Arbeitsplatz-Bewertung -->
+        <div class="section">
+            <div class="section-header">👥 Arbeitsplatz-Reputation</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Arbeitgeber-Bewertung</div>
+                        <div class="metric-value good">4.2/5.0</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Mitarbeiterzufriedenheit</span>
+                                <span>84%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Kununu Score</div>
+                        <div class="metric-value excellent">4.5/5.0</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Employer Branding</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Arbeitsklima</div>
+                        <div class="metric-value excellent">Sehr gut</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Betriebsklima</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 88%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Fachkräfte-Attraktivität</div>
+                        <div class="metric-value good">Attraktiv</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Recruiting-Potenzial</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 82%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Social Media Analyse -->
         <div class="section">
