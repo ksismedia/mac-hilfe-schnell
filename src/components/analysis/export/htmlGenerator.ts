@@ -1,4 +1,3 @@
-
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -31,13 +30,9 @@ interface GenerateHTMLParams {
   hourlyRateData?: { ownRate: number; regionAverage: number };
 }
 
-export const generateCustomerHTML = ({
-  businessData,
-  realData,
-  manualCompetitors = [],
-  competitorServices = {},
-  hourlyRateData
-}: GenerateHTMLParams): string => {
+export const generateCustomerHTML = (data: any) => {
+  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData } = data;
+  
   // Calculate scores
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   const socialMediaScore = calculateSocialMediaScore(realData);
@@ -71,13 +66,22 @@ export const generateCustomerHTML = ({
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online-Marketing Analyse - ${realData.company.name}</title>
-    <style>
-        ${getHTMLStyles()}
-    </style>
+    <title>Handwerk Stars - Digitale Analyse für ${businessData.address}</title>
+    <style>${getHTMLStyles()}</style>
 </head>
 <body>
     <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="/lovable-uploads/99a19f1f-f125-4be7-8031-e08d72b47f78.png" alt="Handwerk Stars Logo" class="logo" />
+            </div>
+            <h1>Digitale Analyse</h1>
+            <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
+            <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
+                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Powered by Handwerk Stars
+            </p>
+        </div>
+
         ${generateHeaderSection(
           realData.company.name,
           industryNames[businessData.industry],

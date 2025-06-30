@@ -21,8 +21,8 @@ const getProgressColor = (value: number) => {
     const progress = ((value - 60) / 20) * 100;
     return `linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #eab308 66%, #fbbf24 ${66 + progress/3}%)`;
   } else {
-    // 80-100%: Volles Gold-Gradient
-    return `linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #eab308 50%, #fbbf24 75%, #f59e0b 100%)`;
+    // 80-100%: Knalliges Gold-Gradient mit leuchtenden Farben
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%)`;
   }
 };
 

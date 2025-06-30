@@ -119,14 +119,16 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Verbesserte Progress Bar Gradienten mit deutlichen Zwischenfarben */
+/* Verbesserte Progress Bar Gradienten mit knalligerem Gold für 80-100% */
 .progress-gradient {
   background: linear-gradient(90deg, 
     #dc2626 0%,     /* rot bei 0% */
-    #ea580c 25%,    /* dunkelorange bei 25% */
-    #f59e0b 50%,    /* orange bei 50% */
-    #eab308 75%,    /* gelb bei 75% */
-    #fbbf24 100%    /* gold bei 100% */
+    #ea580c 20%,    /* dunkelorange bei 20% */
+    #f59e0b 40%,    /* orange bei 40% */
+    #eab308 60%,    /* gelb bei 60% */
+    #fbbf24 75%,    /* gold bei 75% */
+    #ffd700 90%,    /* knalliges gold bei 90% */
+    #ffed4a 100%    /* leuchtend gelb-gold bei 100% */
   );
 }
 
@@ -139,5 +141,5 @@
 }
 
 .progress-gradient-high {
-  background: linear-gradient(90deg, #f59e0b 0%, #eab308 50%, #fbbf24 100%);
+  background: linear-gradient(90deg, #f59e0b 0%, #eab308 40%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%);
 }

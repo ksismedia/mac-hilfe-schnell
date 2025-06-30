@@ -27,6 +27,17 @@ export const getHTMLStyles = () => `
             font-weight: 700;
         }
         .header .subtitle { color: #d1d5db; font-size: 1.3em; font-weight: 300; }
+        .logo-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        .logo { 
+            max-width: 200px; 
+            height: auto; 
+            filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3)); 
+        }
         .score-overview { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
@@ -102,7 +113,7 @@ export const getHTMLStyles = () => `
             overflow: hidden;
         }
         
-        /* Verbesserte Progress-Gradienten mit deutlichen Zwischenfarben */
+        /* Verbesserte Progress-Gradienten mit knalligerem Gold */
         .progress-fill[data-value="0"], .progress-fill[data-value="10"] { 
             background: #dc2626; 
         }
@@ -125,18 +136,18 @@ export const getHTMLStyles = () => `
             background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 75%, #fbbf24 100%); 
         }
         .progress-fill[data-value="80"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 80%, #ffd700 100%); 
         }
         .progress-fill[data-value="90"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 50%, #fbbf24 85%, #f59e0b 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 45%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%); 
         }
         .progress-fill[data-value="100"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 80%, #f59e0b 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 45%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%); 
         }
 
-        /* Fallback für Zwischenwerte */
+        /* Fallback für Zwischenwerte mit knalligem Gold */
         .progress-fill:not([data-value]) { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 75%, #fbbf24 100%);
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 75%, #ffd700 90%, #ffed4a 100%);
         }
 
         .excellent { color: #fbbf24; font-weight: bold; }
