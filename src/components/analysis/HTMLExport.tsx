@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -357,7 +358,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%</span>
+                                <span>${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${(realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%" data-value="${Math.round(((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100) / 10) * 10}"></div>

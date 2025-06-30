@@ -1,3 +1,4 @@
+
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -130,7 +131,7 @@ export const generateCustomerHTML = (data: any) => {
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NEgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
             </div>
             <h1>Digitale Analyse</h1>
             <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
@@ -443,10 +444,10 @@ export const generateCustomerHTML = (data: any) => {
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Follower-Basis</span>
-                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%</span>
+                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%"></div>
                             </div>
                         </div>
                     </div>
