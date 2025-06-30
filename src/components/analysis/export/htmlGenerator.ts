@@ -1,3 +1,4 @@
+
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -100,7 +101,9 @@ export const generateCustomerHTML = (data: any) => {
         
         ${generateMobileSection(realData)}
 
-        ${hourlyRateData ? generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : ''}
+        ${hourlyRateData && hourlyRateData.ownRate && hourlyRateData.regionAverage ? 
+          generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
+          ''}
 
         <!-- Social Media Analyse -->
         <div class="section">
@@ -298,6 +301,95 @@ export const generateCustomerHTML = (data: any) => {
                             • ${realData.performance.score >= 70 ? 'Schnelle Website' : 'Grundlegende Performance'}
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technische Details -->
+        <div class="section">
+            <div class="section-header">🔧 Technische Details</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">LCP (Largest Contentful Paint)</div>
+                        <div class="metric-value ${realData.performance.lcp < 2.5 ? 'excellent' : realData.performance.lcp < 4 ? 'good' : 'warning'}">${realData.performance.lcp}s</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Ladegeschwindigkeit</span>
+                                <span>${realData.performance.lcp < 2.5 ? '100' : realData.performance.lcp < 4 ? '70' : '40'}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${realData.performance.lcp >= 4 ? 'warning' : ''}" style="width: ${realData.performance.lcp < 2.5 ? 100 : realData.performance.lcp < 4 ? 70 : 40}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-title">FID (First Input Delay)</div>
+                        <div class="metric-value ${realData.performance.fid < 100 ? 'excellent' : realData.performance.fid < 300 ? 'good' : 'warning'}">${realData.performance.fid}ms</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Interaktivität</span>
+                                <span>${realData.performance.fid < 100 ? '100' : realData.performance.fid < 300 ? '70' : '40'}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${realData.performance.fid >= 300 ? 'warning' : ''}" style="width: ${realData.performance.fid < 100 ? 100 : realData.performance.fid < 300 ? 70 : 40}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-title">CLS (Cumulative Layout Shift)</div>
+                        <div class="metric-value ${realData.performance.cls < 0.1 ? 'excellent' : realData.performance.cls < 0.25 ? 'good' : 'warning'}">${realData.performance.cls}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Layoutstabilität</span>
+                                <span>${realData.performance.cls < 0.1 ? '100' : realData.performance.cls < 0.25 ? '70' : '40'}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${realData.performance.cls >= 0.25 ? 'warning' : ''}" style="width: ${realData.performance.cls < 0.1 ? 100 : realData.performance.cls < 0.25 ? 70 : 40}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-title">Alt-Tags Optimierung</div>
+                        <div class="metric-value ${realData.seo.altTags.withAlt === realData.seo.altTags.total ? 'excellent' : realData.seo.altTags.withAlt / realData.seo.altTags.total > 0.8 ? 'good' : 'warning'}">
+                            ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Barrierefreiheit</span>
+                                <span>${Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${(realData.seo.altTags.withAlt / realData.seo.altTags.total) < 0.8 ? 'warning' : ''}" style="width: ${(realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keywords Details -->
+        <div class="section">
+            <div class="section-header">🔍 Keyword-Analyse Details</div>
+            <div class="section-content">
+                <div class="highlight-box">
+                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">📈 Keyword-Performance</h4>
+                    <p style="color: #2c7a7b;">
+                        Von ${realData.keywords.length} analysierten Keywords wurden ${keywordsFoundCount} erfolgreich gefunden.
+                        Das entspricht einer Trefferquote von ${keywordsScore}%.
+                    </p>
+                </div>
+                
+                <div class="keyword-grid" style="margin-top: 20px;">
+                    ${realData.keywords.map(keyword => `
+                        <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
+                            <span>${keyword.keyword}</span>
+                            <span>${keyword.found ? '✓ Gefunden' : '✗ Nicht gefunden'}</span>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         </div>
