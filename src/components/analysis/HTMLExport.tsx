@@ -56,11 +56,11 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   const agbScore = 60; // Assumed score
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
-  // Calculate workplace scores based on actual data
-  const workplaceRating = realData.workplace?.rating || 0;
-  const workplaceScore = workplaceRating > 0 ? Math.round((workplaceRating / 5) * 100) : 0;
-  const kununuRating = realData.workplace?.kununuScore || 0;
-  const kununuScore = kununuRating > 0 ? Math.round((kununuRating / 5) * 100) : 0;
+  // Calculate workplace scores based on actual data structure
+  const workplaceKununuRating = realData.workplace?.kununu?.rating || 0;
+  const workplaceGlassdoorRating = realData.workplace?.glassdoor?.rating || 0;
+  const workplaceScore = workplaceKununuRating > 0 ? Math.round((workplaceKununuRating / 5) * 100) : 0;
+  const kununuScore = workplaceKununuRating > 0 ? Math.round((workplaceKununuRating / 5) * 100) : 0;
 
   // Enhanced Social Media Score calculation including last post timing
   const calculateEnhancedSocialMediaScore = () => {
@@ -281,7 +281,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Arbeitgeber-Bewertung</div>
-                        <div class="metric-value">${workplaceRating > 0 ? workplaceRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
+                        <div class="metric-value">${workplaceKununuRating > 0 ? workplaceKununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mitarbeiterzufriedenheit</span>
@@ -294,7 +294,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Kununu Score</div>
-                        <div class="metric-value">${kununuRating > 0 ? kununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
+                        <div class="metric-value">${workplaceKununuRating > 0 ? workplaceKununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Employer Branding</span>
