@@ -1,10 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { FileText, Download, Printer } from 'lucide-react';
-import { generateHTML } from './export/htmlGenerator';
 import { getHTMLStyles } from './export/htmlStyles';
 
 interface HTMLExportProps {
@@ -30,7 +30,31 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   competitorServices = {},
   hourlyRateData
 }) => {
+  // Calculate scores based on available data
+  const calculateOverallScore = () => {
+    const scores = [
+      realData.seo.score,
+      realData.performance.score,
+      realData.mobile.overallScore,
+      realData.socialMedia.overallScore
+    ];
+    return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+  };
+
+  const calculateVisibilityScore = () => {
+    // Base on SEO score and reviews
+    const seoWeight = 0.7;
+    const reviewsWeight = 0.3;
+    const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+    return Math.round(realData.seo.score * seoWeight + reviewsScore * reviewsWeight);
+  };
+
   const generateInternalReport = () => {
+    const overallScore = calculateOverallScore();
+    const visibilityScore = calculateVisibilityScore();
+    const performanceScore = realData.performance.score;
+    const socialMediaScore = realData.socialMedia.overallScore;
+
     const htmlContent = `
 <!DOCTYPE html>
 <html lang="de">
@@ -44,7 +68,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="/lovable-uploads/99a19f1f-f125-4be7-8031-e08d72b47f78.png" alt="Handwerk Stars Logo" class="logo" />
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Handwerk Stars Logo" class="logo" />
             </div>
             <h1>Interne Digitale Analyse</h1>
             <p class="subtitle">Technischer Report für ${businessData.address}</p>
@@ -61,19 +85,19 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
 
         <section class="score-overview">
             <div class="score-card">
-                <div class="score-big">${realData.overallScore.toFixed(2)}</div>
+                <div class="score-big">${overallScore.toFixed(2)}</div>
                 <div class="score-label">Gesamtbewertung</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${realData.visibilityScore.toFixed(2)}</div>
+                <div class="score-big">${visibilityScore.toFixed(2)}</div>
                 <div class="score-label">Sichtbarkeit</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${realData.performanceScore.toFixed(2)}</div>
+                <div class="score-big">${performanceScore.toFixed(2)}</div>
                 <div class="score-label">Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${realData.socialMediaScore.toFixed(2)}</div>
+                <div class="score-big">${socialMediaScore.toFixed(2)}</div>
                 <div class="score-label">Social Media</div>
             </div>
         </section>
@@ -83,54 +107,54 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
-                        <div class="metric-title">Google Ranking</div>
-                        <div class="metric-value">${realData.googleRanking}</div>
+                        <div class="metric-title">SEO Score</div>
+                        <div class="metric-value">${realData.seo.score}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.googleRanking}%</span>
+                                <span>${realData.seo.score}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.googleRanking}%" data-value="${Math.round(realData.googleRanking / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.seo.score}%" data-value="${Math.round(realData.seo.score / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Lokale Suche</div>
-                        <div class="metric-value">${realData.localSearch}%</div>
+                        <div class="metric-title">Keywords gefunden</div>
+                        <div class="metric-value">${realData.keywords.filter(k => k.found).length}/${realData.keywords.length}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.localSearch}%</span>
+                                <span>${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.localSearch}%" data-value="${Math.round(realData.localSearch / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${(realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%" data-value="${Math.round(((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100) / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Backlinks</div>
-                        <div class="metric-value">${realData.backlinks}</div>
+                        <div class="metric-title">Meta Description</div>
+                        <div class="metric-value">${realData.seo.metaDescription ? 'Vorhanden' : 'Fehlt'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.backlinks}%</span>
+                                <span>${realData.seo.metaDescription ? 100 : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.backlinks}%" data-value="${Math.round(realData.backlinks / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 100 : 0}%" data-value="${realData.seo.metaDescription ? 100 : 0}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Keyword-Optimierung</div>
-                        <div class="metric-value">${realData.keywordOptimization}%</div>
+                        <div class="metric-title">Title Tag</div>
+                        <div class="metric-value">${realData.seo.title ? 'Vorhanden' : 'Fehlt'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.keywordOptimization}%</span>
+                                <span>${realData.seo.title ? 100 : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.keywordOptimization}%" data-value="${Math.round(realData.keywordOptimization / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.seo.title ? 100 : 0}%" data-value="${realData.seo.title ? 100 : 0}"></div>
                             </div>
                         </div>
                     </div>
@@ -144,53 +168,53 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Ladezeit</div>
-                        <div class="metric-value">${realData.loadingTime}s</div>
+                        <div class="metric-value">${realData.performance.loadTime}s</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Fortschritt</span>
-                                <span>${realData.loadingTime}%</span>
+                                <span>Performance Score</span>
+                                <span>${realData.performance.score}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.loadingTime}%" data-value="${Math.round(realData.loadingTime / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.performance.score}%" data-value="${Math.round(realData.performance.score / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Mobile Optimierung</div>
-                        <div class="metric-value">${realData.mobileOptimization}%</div>
+                        <div class="metric-value">${realData.mobile.overallScore}%</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.mobileOptimization}%</span>
+                                <span>${realData.mobile.overallScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.mobileOptimization}%" data-value="${Math.round(realData.mobileOptimization / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.mobile.overallScore}%" data-value="${Math.round(realData.mobile.overallScore / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Benutzerfreundlichkeit</div>
-                        <div class="metric-value">${realData.userExperience}%</div>
+                        <div class="metric-title">Responsive Design</div>
+                        <div class="metric-value">${realData.mobile.responsive ? 'Ja' : 'Nein'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.userExperience}%</span>
+                                <span>${realData.mobile.responsive ? 100 : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.userExperience}%" data-value="${Math.round(realData.userExperience / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.mobile.responsive ? 100 : 0}%" data-value="${realData.mobile.responsive ? 100 : 0}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Absprungrate</div>
-                        <div class="metric-value">${realData.bounceRate}%</div>
+                        <div class="metric-title">Core Web Vitals</div>
+                        <div class="metric-value">${realData.performance.coreWebVitals ? 'Gut' : 'Verbesserung nötig'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.bounceRate}%</span>
+                                <span>${realData.performance.coreWebVitals ? 85 : 45}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.bounceRate}%" data-value="${Math.round(realData.bounceRate / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.performance.coreWebVitals ? 85 : 45}%" data-value="${realData.performance.coreWebVitals ? 80 : 40}"></div>
                             </div>
                         </div>
                     </div>
@@ -203,54 +227,54 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
-                        <div class="metric-title">Follower</div>
-                        <div class="metric-value">${realData.socialMediaFollowers}</div>
+                        <div class="metric-title">Facebook</div>
+                        <div class="metric-value">${realData.socialMedia.facebook.found ? 'Aktiv' : 'Nicht vorhanden'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Fortschritt</span>
-                                <span>${realData.socialMediaFollowers}%</span>
+                                <span>Follower</span>
+                                <span>${realData.socialMedia.facebook.followers}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.socialMediaFollowers}%" data-value="${Math.round(realData.socialMediaFollowers / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.facebook.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.facebook.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Engagement Rate</div>
-                        <div class="metric-value">${realData.socialMediaEngagement}%</div>
+                        <div class="metric-title">Instagram</div>
+                        <div class="metric-value">${realData.socialMedia.instagram.found ? 'Aktiv' : 'Nicht vorhanden'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Fortschritt</span>
-                                <span>${realData.socialMediaEngagement}%</span>
+                                <span>Follower</span>
+                                <span>${realData.socialMedia.instagram.followers}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.socialMediaEngagement}%" data-value="${Math.round(realData.socialMediaEngagement / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.instagram.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.instagram.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Social Shares</div>
-                        <div class="metric-value">${realData.socialMediaShares}</div>
+                        <div class="metric-title">Gesamtscore</div>
+                        <div class="metric-value">${realData.socialMedia.overallScore}%</div>
                          <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.socialMediaShares}%</span>
+                                <span>${realData.socialMedia.overallScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.socialMediaShares}%" data-value="${Math.round(realData.socialMediaShares / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${realData.socialMedia.overallScore}%" data-value="${Math.round(realData.socialMedia.overallScore / 10) * 10}"></div>
                             </div>
                         </div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-title">Influencer Kooperationen</div>
-                        <div class="metric-value">${realData.socialMediaInfluence}%</div>
+                        <div class="metric-title">Online Präsenz</div>
+                        <div class="metric-value">${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 'Vorhanden' : 'Aufbau nötig'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${realData.socialMediaInfluence}%</span>
+                                <span>${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.socialMediaInfluence}%" data-value="${Math.round(realData.socialMediaInfluence / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%" data-value="${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 70 : 20}"></div>
                             </div>
                         </div>
                     </div>
@@ -268,7 +292,9 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                             <div class="competitor-card">
                                 <h4>Wettbewerber ${index + 1}</h4>
                                 <p><strong>Name:</strong> ${competitor.name}</p>
-                                <p><strong>URL:</strong> <a href="${competitor.url}" target="_blank">${competitor.url}</a></p>
+                                <p><strong>Bewertung:</strong> ${competitor.rating}/5</p>
+                                <p><strong>Anzahl Bewertungen:</strong> ${competitor.reviews}</p>
+                                <p><strong>Entfernung:</strong> ${competitor.distance}</p>
                                 ${competitorServices[competitor.name] ? `
                                     <p><strong>Services:</strong></p>
                                     <ul class="services-list">
