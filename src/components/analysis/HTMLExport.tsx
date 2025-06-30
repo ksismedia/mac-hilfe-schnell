@@ -51,13 +51,15 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   // Calculate legal compliance scores
   const impressumScore = manualImprintData?.found ? 100 : 0;
   const impressumMissingElements = manualImprintData?.missingElements || [];
-  const legalComplianceScore = Math.round((impressumScore + 85 + 60) / 3);
+  const datenschutzScore = 85; // Assumed score
+  const agbScore = 60; // Assumed score
+  const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
   // Calculate workplace scores based on actual data
-  const workplaceRating = realData.workplace?.rating || 4.2;
-  const workplaceScore = Math.round((workplaceRating / 5) * 100);
-  const kununuRating = realData.workplace?.kununuScore || 4.5;
-  const kununuScore = Math.round((kununuRating / 5) * 100);
+  const workplaceRating = realData.workplace?.rating || 0;
+  const workplaceScore = workplaceRating > 0 ? Math.round((workplaceRating / 5) * 100) : 0;
+  const kununuRating = realData.workplace?.kununuScore || 0;
+  const kununuScore = kununuRating > 0 ? Math.round((kununuRating / 5) * 100) : 0;
 
   // Enhanced Social Media Score calculation including last post timing
   const calculateEnhancedSocialMediaScore = () => {
@@ -109,7 +111,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" alt="Handwerk Stars Logo" class="logo" />
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
             </div>
             <h1>Interne Digitale Analyse</h1>
             <p class="subtitle">Technischer Report für ${businessData.address}</p>
@@ -234,10 +236,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>DSGVO-Konformität</span>
-                                <span>85%</span>
+                                <span>${datenschutzScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%" data-value="80"></div>
+                                <div class="progress-fill" style="width: ${datenschutzScore}%" data-value="80"></div>
                             </div>
                         </div>
                     </div>
@@ -247,10 +249,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Geschäftsbedingungen</span>
-                                <span>60%</span>
+                                <span>${agbScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 60%" data-value="60"></div>
+                                <div class="progress-fill" style="width: ${agbScore}%" data-value="60"></div>
                             </div>
                         </div>
                     </div>
@@ -278,7 +280,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Arbeitgeber-Bewertung</div>
-                        <div class="metric-value">${workplaceRating.toFixed(1)}/5.0</div>
+                        <div class="metric-value">${workplaceRating > 0 ? workplaceRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mitarbeiterzufriedenheit</span>
@@ -291,7 +293,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Kununu Score</div>
-                        <div class="metric-value">${kununuRating.toFixed(1)}/5.0</div>
+                        <div class="metric-value">${kununuRating > 0 ? kununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Employer Branding</span>
@@ -304,7 +306,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Arbeitsklima</div>
-                        <div class="metric-value">${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}</div>
+                        <div class="metric-value">${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : workplaceScore > 0 ? 'Verbesserungsbedarf' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Betriebsklima</span>
@@ -317,7 +319,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Fachkräfte-Attraktivität</div>
-                        <div class="metric-value">${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : 'Wenig attraktiv'}</div>
+                        <div class="metric-value">${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : workplaceScore > 0 ? 'Wenig attraktiv' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Recruiting-Potenzial</span>

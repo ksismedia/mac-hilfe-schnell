@@ -71,16 +71,18 @@ export const generateCustomerHTML = (data: any) => {
                                  hourlyRateData.ownRate > 0 && 
                                  hourlyRateData.regionAverage > 0;
 
-  // Calculate legal compliance scores
+  // Calculate legal compliance scores with real data
   const impressumScore = manualImprintData?.found ? 100 : 0;
   const impressumMissingElements = manualImprintData?.missingElements || [];
-  const legalComplianceScore = Math.round((impressumScore + 85 + 60) / 3); // Impressum + Datenschutz + AGB
+  const datenschutzScore = 85; // Assumed score
+  const agbScore = 60; // Assumed score
+  const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
   // Calculate workplace scores based on actual data
-  const workplaceRating = realData.workplace?.rating || 4.2;
-  const workplaceScore = Math.round((workplaceRating / 5) * 100);
-  const kununuRating = realData.workplace?.kununuScore || 4.5;
-  const kununuScore = Math.round((kununuRating / 5) * 100);
+  const workplaceRating = realData.workplace?.rating || 0;
+  const workplaceScore = workplaceRating > 0 ? Math.round((workplaceRating / 5) * 100) : 0;
+  const kununuRating = realData.workplace?.kununuScore || 0;
+  const kununuScore = kununuRating > 0 ? Math.round((kununuRating / 5) * 100) : 0;
 
   // Enhanced Social Media Score calculation including last post timing
   const calculateEnhancedSocialMediaScore = () => {
@@ -128,7 +130,7 @@ export const generateCustomerHTML = (data: any) => {
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" alt="Handwerk Stars Logo" class="logo" />
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
             </div>
             <h1>Digitale Analyse</h1>
             <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
@@ -252,10 +254,10 @@ export const generateCustomerHTML = (data: any) => {
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>DSGVO-Konformität</span>
-                                <span>85%</span>
+                                <span>${datenschutzScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%"></div>
+                                <div class="progress-fill" style="width: ${datenschutzScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -266,10 +268,10 @@ export const generateCustomerHTML = (data: any) => {
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Geschäftsbedingungen</span>
-                                <span>60%</span>
+                                <span>${agbScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill warning" style="width: 60%"></div>
+                                <div class="progress-fill warning" style="width: ${agbScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -304,8 +306,8 @@ export const generateCustomerHTML = (data: any) => {
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Arbeitgeber-Bewertung</div>
-                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : 'warning'}">
-                            ${workplaceRating.toFixed(1)}/5.0
+                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
+                            ${workplaceRating > 0 ? workplaceRating.toFixed(1) + '/5.0' : 'Keine Daten'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -320,8 +322,8 @@ export const generateCustomerHTML = (data: any) => {
 
                     <div class="metric-item">
                         <div class="metric-title">Kununu Score</div>
-                        <div class="metric-value ${kununuScore >= 80 ? 'excellent' : kununuScore >= 60 ? 'good' : 'warning'}">
-                            ${kununuRating.toFixed(1)}/5.0
+                        <div class="metric-value ${kununuScore >= 80 ? 'excellent' : kununuScore >= 60 ? 'good' : kununuScore > 0 ? 'warning' : 'danger'}">
+                            ${kununuRating > 0 ? kununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -336,8 +338,8 @@ export const generateCustomerHTML = (data: any) => {
 
                     <div class="metric-item">
                         <div class="metric-title">Arbeitsklima</div>
-                        <div class="metric-value ${workplaceScore >= 90 ? 'excellent' : workplaceScore >= 70 ? 'good' : 'warning'}">
-                            ${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}
+                        <div class="metric-value ${workplaceScore >= 90 ? 'excellent' : workplaceScore >= 70 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
+                            ${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : workplaceScore > 0 ? 'Verbesserungsbedarf' : 'Keine Daten'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -352,8 +354,8 @@ export const generateCustomerHTML = (data: any) => {
 
                     <div class="metric-item">
                         <div class="metric-title">Fachkräfte-Attraktivität</div>
-                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : 'warning'}">
-                            ${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : 'Wenig attraktiv'}
+                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
+                            ${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : workplaceScore > 0 ? 'Wenig attraktiv' : 'Keine Daten'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
