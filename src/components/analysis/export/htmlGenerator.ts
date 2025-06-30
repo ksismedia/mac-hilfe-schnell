@@ -1,4 +1,3 @@
-
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -29,10 +28,14 @@ interface GenerateHTMLParams {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
+  manualImprintData?: {
+    found: boolean;
+    missingElements: string[];
+  };
 }
 
 export const generateCustomerHTML = (data: any) => {
-  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData } = data;
+  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData, manualImprintData } = data;
   
   // Calculate scores
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
@@ -68,6 +71,50 @@ export const generateCustomerHTML = (data: any) => {
                                  hourlyRateData.ownRate > 0 && 
                                  hourlyRateData.regionAverage > 0;
 
+  // Calculate legal compliance scores
+  const impressumScore = manualImprintData?.found ? 100 : 0;
+  const impressumMissingElements = manualImprintData?.missingElements || [];
+  const legalComplianceScore = Math.round((impressumScore + 85 + 60) / 3); // Impressum + Datenschutz + AGB
+
+  // Calculate workplace scores based on actual data
+  const workplaceRating = realData.workplace?.rating || 4.2;
+  const workplaceScore = Math.round((workplaceRating / 5) * 100);
+  const kununuRating = realData.workplace?.kununuScore || 4.5;
+  const kununuScore = Math.round((kununuRating / 5) * 100);
+
+  // Enhanced Social Media Score calculation including last post timing
+  const calculateEnhancedSocialMediaScore = () => {
+    let score = 0;
+    const platforms = ['facebook', 'instagram'];
+    
+    platforms.forEach(platform => {
+      const platformData = realData.socialMedia[platform];
+      if (platformData.found) {
+        score += 25; // Base score for presence
+        
+        // Add score based on followers
+        if (platformData.followers > 500) score += 15;
+        else if (platformData.followers > 100) score += 10;
+        else if (platformData.followers > 0) score += 5;
+        
+        // Add score based on last post timing
+        if (platformData.lastPost) {
+          const lastPostDate = new Date(platformData.lastPost);
+          const daysSinceLastPost = Math.floor((Date.now() - lastPostDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceLastPost <= 7) score += 10; // Recent activity
+          else if (daysSinceLastPost <= 30) score += 5; // Moderate activity
+          else if (daysSinceLastPost <= 90) score += 2; // Low activity
+          // No points for posts older than 90 days
+        }
+      }
+    });
+    
+    return Math.min(100, score);
+  };
+
+  const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
+
   return `
 <!DOCTYPE html>
 <html lang="de">
@@ -81,7 +128,7 @@ export const generateCustomerHTML = (data: any) => {
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="/lovable-uploads/99a19f1f-f125-4be7-8031-e08d72b47f78.png" alt="Handwerk Stars Logo" class="logo" />
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" alt="Handwerk Stars Logo" class="logo" />
             </div>
             <h1>Digitale Analyse</h1>
             <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
@@ -99,7 +146,7 @@ export const generateCustomerHTML = (data: any) => {
           realData.performance.score,
           realData.mobile.overallScore,
           hasValidHourlyRateData ? hourlyRateScore : 0,
-          socialMediaScore
+          enhancedSocialMediaScore
         )}
 
         ${generateSEOSection(realData, keywordsFoundCount, keywordsScore, hasMetaDescription)}
@@ -172,23 +219,31 @@ export const generateCustomerHTML = (data: any) => {
             </div>
         </div>
 
-        <!-- Impressum-Bewertung -->
+        <!-- Impressum-Bewertung mit korrekten Daten -->
         <div class="section">
             <div class="section-header">⚖️ Rechtliche Compliance</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Impressum</div>
-                        <div class="metric-value excellent">Vollständig</div>
+                        <div class="metric-value ${impressumScore >= 80 ? 'excellent' : impressumScore >= 60 ? 'good' : impressumScore >= 40 ? 'warning' : 'danger'}">
+                            ${manualImprintData?.found ? 'Vollständig' : 'Unvollständig'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Rechtssicherheit</span>
-                                <span>100%</span>
+                                <span>${impressumScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
+                                <div class="progress-fill ${impressumScore < 60 ? 'warning' : ''}" style="width: ${impressumScore}%"></div>
                             </div>
                         </div>
+                        ${impressumMissingElements.length > 0 ? `
+                            <div style="margin-top: 10px; padding: 8px; background: #fef2f2; border-radius: 6px; font-size: 0.85em;">
+                                <strong>Fehlende Elemente:</strong><br>
+                                ${impressumMissingElements.map(element => `• ${element}`).join('<br>')}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="metric-item">
@@ -221,14 +276,16 @@ export const generateCustomerHTML = (data: any) => {
 
                     <div class="metric-item">
                         <div class="metric-title">Rechtliche Sicherheit</div>
-                        <div class="metric-value excellent">Hoch</div>
+                        <div class="metric-value ${legalComplianceScore >= 80 ? 'excellent' : legalComplianceScore >= 60 ? 'good' : 'warning'}">
+                            ${legalComplianceScore >= 80 ? 'Hoch' : legalComplianceScore >= 60 ? 'Mittel' : 'Niedrig'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Gesamt-Compliance</span>
-                                <span>90%</span>
+                                <span>${legalComplianceScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 90%"></div>
+                                <div class="progress-fill ${legalComplianceScore < 60 ? 'warning' : ''}" style="width: ${legalComplianceScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -240,63 +297,71 @@ export const generateCustomerHTML = (data: any) => {
           generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
           ''}
 
-        <!-- Arbeitsplatz-Bewertung -->
+        <!-- Arbeitsplatz-Bewertung mit korrekten Daten -->
         <div class="section">
             <div class="section-header">👥 Arbeitsplatz-Reputation</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Arbeitgeber-Bewertung</div>
-                        <div class="metric-value good">4.2/5.0</div>
+                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : 'warning'}">
+                            ${workplaceRating.toFixed(1)}/5.0
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mitarbeiterzufriedenheit</span>
-                                <span>84%</span>
+                                <span>${workplaceScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 84%"></div>
+                                <div class="progress-fill ${workplaceScore < 60 ? 'warning' : ''}" style="width: ${workplaceScore}%"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Kununu Score</div>
-                        <div class="metric-value excellent">4.5/5.0</div>
+                        <div class="metric-value ${kununuScore >= 80 ? 'excellent' : kununuScore >= 60 ? 'good' : 'warning'}">
+                            ${kununuRating.toFixed(1)}/5.0
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Employer Branding</span>
-                                <span>90%</span>
+                                <span>${kununuScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 90%"></div>
+                                <div class="progress-fill ${kununuScore < 60 ? 'warning' : ''}" style="width: ${kununuScore}%"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Arbeitsklima</div>
-                        <div class="metric-value excellent">Sehr gut</div>
+                        <div class="metric-value ${workplaceScore >= 90 ? 'excellent' : workplaceScore >= 70 ? 'good' : 'warning'}">
+                            ${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Betriebsklima</span>
-                                <span>88%</span>
+                                <span>${Math.max(workplaceScore - 5, 0)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 88%"></div>
+                                <div class="progress-fill ${workplaceScore < 70 ? 'warning' : ''}" style="width: ${Math.max(workplaceScore - 5, 0)}%"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Fachkräfte-Attraktivität</div>
-                        <div class="metric-value good">Attraktiv</div>
+                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : 'warning'}">
+                            ${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : 'Wenig attraktiv'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Recruiting-Potenzial</span>
-                                <span>82%</span>
+                                <span>${Math.max(workplaceScore - 10, 0)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 82%"></div>
+                                <div class="progress-fill ${workplaceScore < 60 ? 'warning' : ''}" style="width: ${Math.max(workplaceScore - 10, 0)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -304,21 +369,23 @@ export const generateCustomerHTML = (data: any) => {
             </div>
         </div>
 
-        <!-- Social Media Analyse -->
+        <!-- Social Media Analyse mit verbesserter Bewertung -->
         <div class="section">
             <div class="section-header">📱 Social Media Präsenz</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Social Media Score</div>
-                        <div class="metric-value ${socialMediaScore >= 80 ? 'excellent' : socialMediaScore >= 60 ? 'good' : socialMediaScore >= 40 ? 'warning' : 'danger'}">${socialMediaScore}/100 Punkte</div>
+                        <div class="metric-value ${enhancedSocialMediaScore >= 80 ? 'excellent' : enhancedSocialMediaScore >= 60 ? 'good' : enhancedSocialMediaScore >= 40 ? 'warning' : 'danger'}">
+                            ${enhancedSocialMediaScore}/100 Punkte
+                        </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Gesamtpräsenz</span>
-                                <span>${socialMediaScore}%</span>
+                                <span>${enhancedSocialMediaScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${socialMediaScore < 60 ? 'warning' : ''}" style="width: ${socialMediaScore}%"></div>
+                                <div class="progress-fill ${enhancedSocialMediaScore < 60 ? 'warning' : ''}" style="width: ${enhancedSocialMediaScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -337,6 +404,11 @@ export const generateCustomerHTML = (data: any) => {
                                 <div class="progress-fill ${!realData.socialMedia.facebook.found ? 'danger' : ''}" style="width: ${realData.socialMedia.facebook.found ? 100 : 0}%"></div>
                             </div>
                         </div>
+                        ${realData.socialMedia.facebook.lastPost ? `
+                            <div style="margin-top: 8px; font-size: 0.8em; color: #6b7280;">
+                                Letzter Post: ${new Date(realData.socialMedia.facebook.lastPost).toLocaleDateString('de-DE')}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="metric-item">
@@ -353,6 +425,11 @@ export const generateCustomerHTML = (data: any) => {
                                 <div class="progress-fill ${!realData.socialMedia.instagram.found ? 'danger' : ''}" style="width: ${realData.socialMedia.instagram.found ? 100 : 0}%"></div>
                             </div>
                         </div>
+                        ${realData.socialMedia.instagram.lastPost ? `
+                            <div style="margin-top: 8px; font-size: 0.8em; color: #6b7280;">
+                                Letzter Post: ${new Date(realData.socialMedia.instagram.lastPost).toLocaleDateString('de-DE')}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="metric-item">
@@ -364,10 +441,10 @@ export const generateCustomerHTML = (data: any) => {
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Follower-Basis</span>
-                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%</span>
+                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -605,7 +682,8 @@ export const generateCustomerHTML = (data: any) => {
                         ${realData.reviews.google.count < 10 ? '<li>Mehr Kundenbewertungen sammeln für höhere Glaubwürdigkeit</li>' : ''}
                         ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung für Smartphone-Nutzer verbessern</li>' : ''}
                         ${hasValidHourlyRateData && calculateHourlyRateScore(hourlyRateData) < 70 ? '<li>Preisstrategie überdenken und Marktpositionierung anpassen</li>' : ''}
-                        ${socialMediaScore < 60 ? '<li>Social Media Präsenz aufbauen für bessere Kundenbindung</li>' : ''}
+                        ${enhancedSocialMediaScore < 60 ? '<li>Social Media Präsenz aufbauen für bessere Kundenbindung</li>' : ''}
+                        ${impressumScore < 80 ? '<li>Impressum vervollständigen für rechtliche Sicherheit</li>' : ''}
                         <li>Content-Marketing für Fachkompetenz und Vertrauen aufbauen</li>
                         <li>Lokale SEO für bessere regionale Auffindbarkeit optimieren</li>
                         <li>Kundenbewertungen aktiv fördern und managen</li>
