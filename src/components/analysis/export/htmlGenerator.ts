@@ -298,7 +298,7 @@ export const generateCustomerHTML = (data: any) => {
         ${hasValidHourlyRateData ? 
           generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
           ''}
-
+        
         <!-- Arbeitsplatz-Bewertung mit korrekten Daten -->
         <div class="section">
             <div class="section-header">👥 Arbeitsplatz-Reputation</div>
