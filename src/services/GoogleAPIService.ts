@@ -138,42 +138,52 @@ export class GoogleAPIService {
 
       console.log('Found coordinates:', coordinates);
 
-      // Sehr spezifische Suchbegriffe pro Branche - nur deutsche Begriffe
+      // Erweiterte Suchbegriffe pro Branche - mehr Varianten
       const industrySearchTerms = {
         'shk': [
           'Sanitär Heizung Klima',
           'SHK Betrieb',
           'Heizungsbau',
           'Sanitärinstallation',
-          'Installateur'
+          'Installateur',
+          'Klempner',
+          'Heizung',
+          'Sanitär',
+          'Klima'
         ],
         'maler': [
           'Malerbetrieb',
           'Maler Lackierer',
           'Malerei',
-          'Anstrich'
+          'Anstrich',
+          'Maler',
+          'Lackierer'
         ],
         'elektriker': [
           'Elektrobetrieb',
           'Elektriker',
           'Elektroinstallation',
-          'Elektrotechnik'
+          'Elektrotechnik',
+          'Elektro'
         ],
         'dachdecker': [
           'Dachdeckerei',
           'Dachdecker',
           'Bedachung',
-          'Dachbau'
+          'Dachbau',
+          'Dach'
         ],
         'stukateur': [
           'Stuckateur',
           'Trockenbau',
-          'Putzarbeit'
+          'Putzarbeit',
+          'Stuck'
         ],
         'planungsbuero': [
           'Planungsbüro',
           'Ingenieurbüro',
-          'Architekturbüro'
+          'Architekturbüro',
+          'Planung'
         ]
       };
 
@@ -195,7 +205,7 @@ export class GoogleAPIService {
       const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location, ownCompanyName);
       
       console.log(`Final result: ${uniqueCompetitors.length} real competitors found`);
-      return { results: uniqueCompetitors.slice(0, 5) }; // Maximal 5 beste
+      return { results: uniqueCompetitors.slice(0, 8) }; // Mehr Ergebnisse zurückgeben
 
     } catch (error) {
       console.error('Competitor search error:', error);
@@ -240,8 +250,8 @@ export class GoogleAPIService {
     const results: any[] = [];
 
     try {
-      // Mehrere Suchradien testen: 5km, 10km, 15km
-      const radii = [5000, 10000, 15000];
+      // Erweiterte Suchradien: 1km, 2km, 5km, 10km, 15km für bessere lokale Abdeckung
+      const radii = [1000, 2000, 5000, 10000, 15000];
       
       for (const radius of radii) {
         const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=${radius}&keyword=${encodeURIComponent(searchTerm)}&type=establishment&key=${apiKey}`;
@@ -257,9 +267,9 @@ export class GoogleAPIService {
             if (response.ok) {
               const data = await response.json();
               if (data?.results?.length > 0) {
-                // Nur echte Geschäfte mit strengen Kriterien und ohne eigene Firma
+                // Gelockerte Kriterien für echte Geschäfte mit strengen Kriterien und ohne eigene Firma
                 const realBusinesses = data.results.filter((place: any) => 
-                  this.isRealBusiness(place, searchTerm, originalLocation) &&
+                  this.isRealBusinessRelaxed(place, searchTerm, originalLocation) &&
                   !this.isOwnCompany(place, ownCompanyName, originalLocation)
                 );
                 
@@ -268,13 +278,14 @@ export class GoogleAPIService {
                   ...place,
                   locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
                   // Verbesserte Firmennamenerkennung
-                  name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity)
+                  name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity),
+                  searchRadius: radius // Für Debugging
                 }));
                 
                 results.push(...businessesWithLocation);
                 console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} real businesses (excluding own company)`);
                 
-                if (results.length >= 5) break; // Genug gefunden
+                if (results.length >= 8) break; // Sammle mehr Ergebnisse
               }
             }
           } catch (error) {
@@ -282,7 +293,7 @@ export class GoogleAPIService {
           }
         }
         
-        if (results.length >= 5) break; // Genug gefunden
+        if (results.length >= 8) break; // Genug gefunden
       }
 
     } catch (error) {
@@ -495,51 +506,71 @@ export class GoogleAPIService {
     return { postalCode: '', city: '', display: '' };
   }
 
-  // Neue Methode: Strengere Validierung für echte Geschäfte
-  private static isRealBusiness(place: any, searchTerm: string, originalLocation: string): boolean {
+  // Neue Methode: Gelockerte Validierung für echte Geschäfte
+  private static isRealBusinessRelaxed(place: any, searchTerm: string, originalLocation: string): boolean {
     // Basis-Validierung
-    if (!place.name || !place.rating || !place.user_ratings_total) {
+    if (!place.name) {
       return false;
     }
 
-    // Mindestens 3 Bewertungen für Glaubwürdigkeit
-    if (place.user_ratings_total < 3) {
+    // Gelockerte Bewertungsanforderungen - auch Geschäfte ohne oder mit wenig Bewertungen
+    if (place.user_ratings_total !== undefined && place.user_ratings_total === 0 && !place.rating) {
+      // Nur ausschließen wenn explizit 0 Bewertungen UND keine Bewertung
+      // Aber Geschäfte ohne diese Felder durchlassen
+    }
+
+    // Geschäft muss geöffnet/aktiv sein (falls Status vorhanden)
+    if (place.business_status && place.business_status === 'CLOSED_PERMANENTLY') {
       return false;
     }
 
-    // Geschäft muss geöffnet/aktiv sein
-    if (place.business_status && place.business_status !== 'OPERATIONAL') {
-      return false;
-    }
-
-    // Name sollte zum Suchbegriff passen (deutsche Begriffe)
+    // Gelockerte Namensvalidierung
     const nameWords = place.name.toLowerCase().split(' ');
     const searchWords = searchTerm.toLowerCase().split(' ');
     
     const hasRelevantName = searchWords.some(searchWord => 
       nameWords.some(nameWord => 
-        nameWord.includes(searchWord) || searchWord.includes(nameWord)
+        nameWord.includes(searchWord) || 
+        searchWord.includes(nameWord) ||
+        // Erweiterte Ähnlichkeit
+        this.calculateStringSimilarity(nameWord, searchWord) > 0.6
       )
     );
 
-    // Oder Business-Typ sollte relevant sein
+    // Erweiterte Business-Typ Validierung
     const hasRelevantType = place.types && place.types.some((type: string) => 
-      ['plumber', 'electrician', 'painter', 'roofing_contractor', 'general_contractor', 'home_improvement_store'].includes(type)
+      [
+        'plumber', 'electrician', 'painter', 'roofing_contractor', 
+        'general_contractor', 'home_improvement_store', 'hardware_store',
+        'establishment', 'point_of_interest', 'store'
+      ].includes(type)
+    );
+
+    // Spezielle Handwerker-Keywords in der Adresse oder Umgebung
+    const addressText = (place.formatted_address || place.vicinity || '').toLowerCase();
+    const hasHandwerkerContext = [
+      'sanitär', 'heizung', 'klima', 'elektr', 'maler', 'dach', 
+      'install', 'handwerk', 'bau', 'technik'
+    ].some(keyword => 
+      addressText.includes(keyword) || 
+      place.name.toLowerCase().includes(keyword)
     );
 
     // Adresse sollte nicht zu identisch mit ursprünglicher sein (vermeidet Duplikate)
     if (place.formatted_address && originalLocation) {
       const similarity = this.calculateAddressSimilarity(place.formatted_address, originalLocation);
-      if (similarity > 0.8) {
-        console.log('Skipping duplicate address:', place.name);
+      if (similarity > 0.9) { // Erhöhte Schwelle für mehr Ergebnisse
+        console.log('Skipping very similar address:', place.name);
         return false;
       }
     }
 
-    const isValid = hasRelevantName || hasRelevantType;
+    const isValid = hasRelevantName || hasRelevantType || hasHandwerkerContext;
     
     if (!isValid) {
       console.log(`Filtered out "${place.name}" - not relevant for "${searchTerm}"`);
+    } else {
+      console.log(`✓ Included "${place.name}" - ${hasRelevantName ? 'name match' : hasRelevantType ? 'type match' : 'context match'}`);
     }
 
     return isValid;
