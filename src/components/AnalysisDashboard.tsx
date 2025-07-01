@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +22,7 @@ import WorkplaceReviews from './analysis/WorkplaceReviews';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
-import HTMLExport from './analysis/HTMLExport';
+import HTMLExport from './HTMLExport';
 import OverallRating from './analysis/OverallRating';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
@@ -106,7 +105,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             // Set real data
             setRealData(savedAnalysis.realData);
             
-            // Load manual data using utility function - FIX: Pass all required parameters
+            // Load manual data using utility function
             loadSavedAnalysisData(
               savedAnalysis,
               updateImprintData,
