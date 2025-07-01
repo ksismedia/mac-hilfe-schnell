@@ -27,6 +27,7 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const { toast } = useToast();
   
   // Extension Data Hook
@@ -61,6 +62,7 @@ const Index = () => {
   const handleExtensionDataProcess = (processedData: BusinessData) => {
     console.log('Extension-Daten verarbeitet:', processedData);
     setBusinessData(processedData);
+    setLoadedAnalysisId(undefined); // Clear any loaded analysis
     setShowResults(true);
     
     toast({
@@ -82,6 +84,9 @@ const Index = () => {
       setBusinessData(analysis.businessData);
     }
     
+    // Setze die Analysis-ID für das Dashboard
+    setLoadedAnalysisId(analysis.id);
+    
     // Zeige das Dashboard an
     setShowResults(true);
     
@@ -93,6 +98,7 @@ const Index = () => {
 
   const resetAnalysis = () => {
     setShowResults(false);
+    setLoadedAnalysisId(undefined);
     setBusinessData({
       address: '',
       url: '',
@@ -119,6 +125,7 @@ const Index = () => {
         businessData={businessData} 
         onReset={resetAnalysis}
         onBusinessDataChange={handleBusinessDataChange}
+        loadedAnalysisId={loadedAnalysisId}
       />
     );
   }
