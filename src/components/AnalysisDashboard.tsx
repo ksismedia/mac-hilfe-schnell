@@ -69,7 +69,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
-  const [hasInitialApiKeyCheck, setHasInitialApiKeyCheck] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(GoogleAPIService.hasApiKey());
   const { toast } = useToast();
 
   // Manual data management
@@ -92,21 +92,20 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     return acc;
   }, {} as { [competitorName: string]: string[] });
 
-  // Initial API key check - show dialog immediately if no key
+  // Check for API key on component mount
   useEffect(() => {
-    if (!hasInitialApiKeyCheck) {
-      const hasApiKey = GoogleAPIService.hasApiKey();
-      if (!hasApiKey) {
-        setShowAPIKeyDialog(true);
-      }
-      setHasInitialApiKeyCheck(true);
+    const apiKeyExists = GoogleAPIService.hasApiKey();
+    setHasApiKey(apiKeyExists);
+    
+    if (!apiKeyExists) {
+      setShowAPIKeyDialog(true);
     }
-  }, [hasInitialApiKeyCheck]);
+  }, []);
 
-  // Load analysis data
+  // Load analysis data when API key is available
   useEffect(() => {
     const loadAnalysisData = async () => {
-      if (!hasInitialApiKeyCheck) return; // Wait for API key check
+      if (showAPIKeyDialog) return; // Don't start analysis if API dialog is shown
       
       console.log('Performing analysis for:', businessData);
       setIsLoading(true);
@@ -126,17 +125,29 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       }
     };
 
-    loadAnalysisData();
-  }, [businessData, toast, hasInitialApiKeyCheck]);
+    if (!showAPIKeyDialog) {
+      loadAnalysisData();
+    }
+  }, [businessData, toast, showAPIKeyDialog]);
 
   const handleApiKeySet = () => {
+    setHasApiKey(true);
     setShowAPIKeyDialog(false);
     toast({
       title: "API-Schlüssel gesetzt",
       description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
     });
-    // Restart analysis with real data
-    window.location.reload();
+    // Analysis will start automatically through useEffect
+  };
+
+  const handleContinueWithoutApiKey = () => {
+    setShowAPIKeyDialog(false);
+    toast({
+      title: "Ohne API-Schlüssel fortfahren",
+      description: "Die Analyse verwendet Beispieldaten.",
+      variant: "default",
+    });
+    // Analysis will start automatically through useEffect
   };
 
   // Show API Key dialog first if no key is set
@@ -156,21 +167,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <APIKeyManager 
             onApiKeySet={handleApiKeySet}
             onLoadSavedAnalysis={(analysis) => {
-              // Handle loading saved analysis
               console.log('Loading saved analysis:', analysis);
             }}
           />
           
           <div className="mt-6 text-center">
             <Button 
-              onClick={() => {
-                setShowAPIKeyDialog(false);
-                toast({
-                  title: "Ohne API-Schlüssel fortfahren",
-                  description: "Die Analyse verwendet Beispieldaten.",
-                  variant: "default",
-                });
-              }}
+              onClick={handleContinueWithoutApiKey}
               variant="outline"
             >
               Ohne API-Schlüssel fortfahren (mit Beispieldaten)
@@ -370,7 +373,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       </div>
 
       {/* API Key Dialog Overlay */}
-      {showAPIKeyDialog && hasInitialApiKeyCheck && (
+      {showAPIKeyDialog && hasApiKey && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
             <APIKeyManager onApiKeySet={handleApiKeySet} />
