@@ -219,7 +219,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               realData={realData}
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
             />
@@ -228,7 +227,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               realData={realData}
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
             />
@@ -239,9 +237,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         <div className="mb-6">
           <OverallRating 
             realData={realData}
-            manualImprintData={manualImprintData}
-            manualSocialData={manualSocialData}
-            manualWorkplaceData={manualWorkplaceData}
             manualCompetitors={manualCompetitors}
           />
         </div>
@@ -262,9 +257,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <TabsContent value="seo" className="space-y-6">
             <SEOAnalysis url={businessData.url} realData={realData} />
             <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
-            <LocalSEO businessData={businessData} realData={realData} />
-            <ContentAnalysis url={businessData.url} realData={realData} />
-            <BacklinkAnalysis url={businessData.url} realData={realData} />
+            <LocalSEO address={businessData.address} />
+            <ContentAnalysis url={businessData.url} />
+            <BacklinkAnalysis url={businessData.url} />
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
@@ -282,17 +277,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualData={manualSocialData}
               onManualDataChange={updateSocialData}
             />
-            <SocialProof url={businessData.url} realData={realData} />
-            <ConversionOptimization url={businessData.url} realData={realData} />
+            <SocialProof realData={realData} />
+            <ConversionOptimization url={businessData.url} />
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-6">
-            <GoogleReviews businessData={businessData} realData={realData} />
+            <GoogleReviews address={businessData.address} />
           </TabsContent>
 
           <TabsContent value="competitors" className="space-y-6">
             <CompetitorAnalysis 
-              businessData={businessData} 
+              address={businessData.address} 
+              industry={businessData.industry}
               realData={realData}
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
@@ -312,7 +308,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualData={manualImprintData}
               onManualDataChange={updateImprintData}
             />
-            <IndustryFeatures industry={businessData.industry} realData={realData} />
+            <IndustryFeatures />
           </TabsContent>
 
           <TabsContent value="workplace" className="space-y-6">
