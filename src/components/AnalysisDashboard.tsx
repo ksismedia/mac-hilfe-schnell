@@ -115,10 +115,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             updateCompetitors(savedAnalysis.manualData.competitors);
           }
           if (savedAnalysis.manualData.competitorServices) {
-            Object.entries(savedAnalysis.manualData.competitorServices).forEach((entry) => {
-              const [name, services] = entry;
-              updateCompetitorServices(name, services);
-            });
+            for (const [competitorName, services] of Object.entries(savedAnalysis.manualData.competitorServices)) {
+              updateCompetitorServices(competitorName, services);
+            }
           }
           
           setIsLoading(false);
