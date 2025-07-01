@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -131,7 +130,7 @@ const Index = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
             <img 
-              src="/lovable-uploads/99a19f1f-f125-4be7-8031-e08d72b47f78.png" 
+              src="/lovable-uploads/5a2019ec-f8dd-42b4-bf03-3a7fdb9696b8.png" 
               alt="Handwerk Stars Logo" 
               className="h-32 w-auto"
             />
