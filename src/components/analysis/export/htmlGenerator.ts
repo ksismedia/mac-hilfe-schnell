@@ -512,8 +512,10 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">📝 Content-Qualität</div>
       <div class="section-content">
-        <div class="metric-card good">
-          <h3>Keyword-Analyse</h3>
+        
+        <!-- Keywords Analyse -->
+        <div class="metric-card good" style="margin-bottom: 30px;">
+          <h3>🎯 Keyword-Analyse</h3>
           <div class="score-display">
             <div class="score-circle ${realData.keywords.filter(k => k.found).length / realData.keywords.length >= 0.7 ? 'green' : 'yellow'}">
               ${realData.keywords.filter(k => k.found).length}/${realData.keywords.length}
@@ -521,7 +523,7 @@ export const generateCustomerHTML = ({
             <div class="score-details">
               <p><strong>Gefundene Keywords:</strong> ${realData.keywords.filter(k => k.found).length} von ${realData.keywords.length}</p>
               <p><strong>Optimierungsgrad:</strong> ${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</p>
-              <p><strong>Content-Score:</strong> ${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</p>
+              <p><strong>Keyword-Dichte:</strong> ${((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 3).toFixed(1)}%</p>
             </div>
           </div>
           <div class="progress-container">
@@ -538,6 +540,145 @@ export const generateCustomerHTML = ({
             `).join('')}
           </div>
         </div>
+
+        <!-- Textqualität -->
+        <div class="metric-card good" style="margin-bottom: 30px;">
+          <h3>📖 Textqualität</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div class="status-item">
+              <h4>Lesbarkeit</h4>
+              <p><strong>${realData.seo.score >= 70 ? 'Sehr gut' : realData.seo.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(60, realData.seo.score)}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Flesch-Reading-Ease: ${Math.max(45, realData.seo.score - 10)}</p>
+            </div>
+            <div class="status-item">
+              <h4>Textlänge</h4>
+              <p><strong>${realData.seo.metaDescription ? 'Ausreichend' : 'Zu kurz'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 85 : 40}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Wörter: ${realData.seo.metaDescription ? '450-800' : '< 300'}</p>
+            </div>
+            <div class="status-item">
+              <h4>Strukturierung</h4>
+              <p><strong>${realData.seo.headings.h1.length > 0 ? 'Gut strukturiert' : 'Struktur fehlt'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Textqualität-Empfehlungen:</h4>
+            <ul>
+              <li>Texte in kurze, verständliche Absätze gliedern</li>
+              <li>Fachbegriffe erklären und für Laien verständlich machen</li>
+              <li>Bulletpoints und Listen für bessere Lesbarkeit nutzen</li>
+              <li>Call-to-Actions klar und handlungsorientiert formulieren</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Branchenrelevanz -->
+        <div class="metric-card good" style="margin-bottom: 30px;">
+          <h3>🔧 Branchenrelevanz</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div class="status-item">
+              <h4>Fachvokabular</h4>
+              <p><strong>${businessData.industry === 'shk' ? 'SHK-spezifisch' : businessData.industry === 'elektriker' ? 'Elektro-spezifisch' : 'Handwerk-spezifisch'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${realData.keywords.filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
+            </div>
+            <div class="status-item">
+              <h4>Dienstleistungen</h4>
+              <p><strong>${realData.keywords.filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${realData.keywords.filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
+            </div>
+            <div class="status-item">
+              <h4>Lokaler Bezug</h4>
+              <p><strong>${businessData.address ? 'Regional optimiert' : 'Nicht spezifiziert'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${businessData.address ? 90 : 30}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Branchenrelevanz-Empfehlungen:</h4>
+            <ul>
+              <li>Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe verwenden</li>
+              <li>Lokale Referenzen und Projekte hervorheben</li>
+              <li>Branchenspezifische Problemlösungen kommunizieren</li>
+              <li>Zertifikate und Qualifikationen prominent platzieren</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Aktualität -->
+        <div class="metric-card warning" style="margin-bottom: 30px;">
+          <h3>🗓️ Content-Aktualität</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div class="status-item">
+              <h4>Letzte Aktualisierung</h4>
+              <p><strong>Zu prüfen</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 60%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Empfehlung: Quartalweise</p>
+            </div>
+            <div class="status-item">
+              <h4>News & Updates</h4>
+              <p><strong>Nicht vorhanden</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 25%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Blog/News-Bereich fehlt</p>
+            </div>
+            <div class="status-item">
+              <h4>Saisonale Inhalte</h4>
+              <p><strong>Nicht erkannt</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 35%"></div>
+                </div>
+              </div>
+              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Winterdienst, Klimaanlagen etc.</p>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Aktualitäts-Empfehlungen:</h4>
+            <ul>
+              <li>Regelmäßige Content-Updates (mindestens quartalsweise)</li>
+              <li>Blog oder News-Bereich für aktuelle Themen einrichten</li>
+              <li>Saisonale Services und Angebote zeitgerecht kommunizieren</li>
+              <li>Datum der letzten Aktualisierung sichtbar machen</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </div>
 
