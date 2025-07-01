@@ -41,61 +41,68 @@ const PDFExport: React.FC<PDFExportProps> = ({
   };
   
   return (
-    <div className="space-y-4">
-      <div className="mb-6">
-        <HourlyRateInput 
-          data={hourlyRateData}
-          onDataChange={handleHourlyRateChange}
-        />
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Konfiguration */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Stundensatz-Konfiguration</CardTitle>
+          <CardDescription>Geben Sie Ihren Stundensatz für die Kalkulation ein</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <HourlyRateInput 
+            data={hourlyRateData}
+            onDataChange={handleHourlyRateChange}
+          />
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-700">
-              <Users className="h-5 w-5" />
-              Kunden-Report
-            </CardTitle>
-            <CardDescription>
-              Professioneller Report für Kundenpräsentationen
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CustomerHTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              hourlyRateData={hourlyRateData}
-            />
-          </CardContent>
-        </Card>
+      {/* Kunden-Report */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-700">
+            <Users className="h-5 w-5" />
+            Kunden-Report
+          </CardTitle>
+          <CardDescription>
+            Professioneller Report für Kundenpräsentationen
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CustomerHTMLExport 
+            businessData={businessData}
+            realData={realData}
+            manualImprintData={manualImprintData}
+            manualSocialData={manualSocialData}
+            manualCompetitors={manualCompetitors}
+            competitorServices={competitorServices}
+            hourlyRateData={hourlyRateData}
+          />
+        </CardContent>
+      </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-700">
-              <FileText className="h-5 w-5" />
-              Technischer Report
-            </CardTitle>
-            <CardDescription>
-              Detaillierte Analyse für interne Zwecke
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <HTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              hourlyRateData={hourlyRateData}
-            />
-          </CardContent>
-        </Card>
-      </div>
+      {/* Technischer Report */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-700">
+            <FileText className="h-5 w-5" />
+            Technischer Report
+          </CardTitle>
+          <CardDescription>
+            Detaillierte Analyse für interne Zwecke
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <HTMLExport 
+            businessData={businessData}
+            realData={realData}
+            manualImprintData={manualImprintData}
+            manualSocialData={manualSocialData}
+            manualCompetitors={manualCompetitors}
+            competitorServices={competitorServices}
+            hourlyRateData={hourlyRateData}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
