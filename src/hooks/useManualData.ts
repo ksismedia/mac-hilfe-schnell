@@ -63,12 +63,12 @@ export const useManualData = () => {
     console.log('Manual Competitors Updated:', competitors);
   }, []);
 
-  const updateCompetitorServices = useCallback((competitorName: string, services: string[]) => {
+  const updateCompetitorServices = useCallback((competitorName: string, services: string[], source?: string) => {
     setCompetitorServices(prev => ({
       ...prev,
       [competitorName]: services
     }));
-    console.log('Competitor Services Updated:', competitorName, services);
+    console.log('Competitor Services Updated:', competitorName, services, source || 'default');
   }, []);
 
   return {
