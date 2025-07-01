@@ -1,4 +1,3 @@
-
 export const getHTMLStyles = () => `
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
@@ -97,6 +96,82 @@ body {
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
+
+/* Progress-Balken mit korrekten Farbverläufen */
+.progress-container { margin-top: 15px; }
+.progress-bar { 
+  background: #374151; 
+  height: 12px; 
+  border-radius: 6px; 
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+  position: relative;
+}
+.progress-fill { 
+  height: 100%; 
+  border-radius: 6px; 
+  transition: width 0.8s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Farbverläufe von rot über grün nach gold */
+.progress-fill[data-value="0"] { background: #dc2626; }
+.progress-fill[data-value="10"] { background: #dc2626; }
+.progress-fill[data-value="20"] { background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%); }
+.progress-fill[data-value="30"] { background: linear-gradient(90deg, #dc2626 0%, #ea580c 50%, #f59e0b 100%); }
+.progress-fill[data-value="40"] { background: linear-gradient(90deg, #ea580c 0%, #f59e0b 100%); }
+.progress-fill[data-value="50"] { background: linear-gradient(90deg, #f59e0b 0%, #eab308 50%, #84cc16 100%); }
+.progress-fill[data-value="60"] { background: linear-gradient(90deg, #eab308 0%, #84cc16 100%); }
+.progress-fill[data-value="70"] { background: linear-gradient(90deg, #84cc16 0%, #22c55e 50%, #10b981 100%); }
+.progress-fill[data-value="80"] { background: linear-gradient(90deg, #22c55e 0%, #10b981 50%, #fbbf24 100%); }
+.progress-fill[data-value="90"] { background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #f59e0b 100%); }
+.progress-fill[data-value="100"] { background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #dc2626 100%); }
+
+/* Fallback für alle anderen Werte */
+.progress-fill:not([data-value]) { 
+  background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #fbbf24 80%, #f59e0b 100%);
+}
+
+.company-info { 
+  background: rgba(17, 24, 39, 0.6); 
+  padding: 25px; 
+  border-radius: 12px; 
+  border-left: 5px solid #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  margin-bottom: 20px;
+}
+.company-info h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.3em; }
+.company-info p { margin-bottom: 8px; color: #d1d5db; }
+.company-info strong { color: #fbbf24; }
+
+.keyword-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 10px; 
+  margin-top: 15px;
+}
+.keyword-item { 
+  padding: 8px 12px; 
+  background: rgba(17, 24, 39, 0.6); 
+  border-radius: 6px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  color: #d1d5db;
+}
+.found { 
+  background: rgba(34, 197, 94, 0.3); 
+  border-color: rgba(34, 197, 94, 0.6); 
+  color: #22c55e;
+}
+.not-found { 
+  background: rgba(239, 68, 68, 0.3); 
+  border-color: rgba(239, 68, 68, 0.6); 
+  color: #ef4444;
+}
+
 .platform-details { margin: 20px 0; }
 .platform-details h4 { color: #fbbf24; margin-bottom: 10px; }
 .platform-details ul { list-style: none; padding-left: 0; }
@@ -107,6 +182,22 @@ body {
   border-radius: 6px; 
   color: #d1d5db;
 }
+
+.competitor-item { 
+  background: rgba(17, 24, 39, 0.6); 
+  padding: 20px; 
+  border-radius: 12px; 
+  margin-bottom: 15px;
+  border-left: 4px solid #6b7280;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+.competitor-rank { 
+  font-size: 1.2em; 
+  font-weight: bold; 
+  color: #fbbf24; 
+  margin-bottom: 8px; 
+}
+
 .recommendations { 
   background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); 
   padding: 20px; 
@@ -130,6 +221,7 @@ body {
   color: #fbbf24; 
   font-weight: bold;
 }
+
 @media print {
   body { background: #1a1a1a; color: #f5f5f5; }
   .container { max-width: none; }
