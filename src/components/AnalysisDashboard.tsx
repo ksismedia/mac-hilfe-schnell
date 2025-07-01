@@ -257,7 +257,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <TabsContent value="seo" className="space-y-6">
             <SEOAnalysis url={businessData.url} realData={realData} />
             <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
-            <LocalSEO address={businessData.address} url={businessData.url} industry={businessData.industry} />
+            <LocalSEO businessData={businessData} />
             <ContentAnalysis url={businessData.url} industry={businessData.industry} />
             <BacklinkAnalysis url={businessData.url} />
           </TabsContent>
