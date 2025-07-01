@@ -4,10 +4,10 @@ import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompeti
 
 export const loadCompetitorServices = (
   competitorServices: CompetitorServices,
-  updateCompetitorServices: (competitorName: string, services: string[], source: string) => void
+  updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void
 ) => {
-  Object.entries(competitorServices).forEach(([competitorName, services]) => {
-    updateCompetitorServices(competitorName, services, 'loaded');
+  Object.entries(competitorServices).forEach(([competitorName, serviceData]) => {
+    updateCompetitorServices(competitorName, serviceData.services, serviceData.source);
   });
 };
 
@@ -17,7 +17,7 @@ export const loadSavedAnalysisData = (
   updateSocialData: (data: ManualSocialData | null) => void,
   updateWorkplaceData: (data: ManualWorkplaceData | null) => void,
   updateCompetitors: (competitors: ManualCompetitor[]) => void,
-  updateCompetitorServices: (competitorName: string, services: string[], source: string) => void
+  updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void
 ) => {
   // Load manual data
   if (savedAnalysis.manualData.imprint) {
