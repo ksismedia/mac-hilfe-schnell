@@ -74,15 +74,17 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         const elementKey = element.toLowerCase().split(' ')[0];
         const foundKey = found.toLowerCase();
         return foundKey.includes(elementKey) || 
-               foundKey.includes('firma') && elementKey === 'vollständiger' ||
+               (foundKey.includes('firma') || foundKey.includes('firmenname') || foundKey.includes('name')) && elementKey === 'vollständiger' ||
                foundKey.includes('geschäftsführer') && elementKey === 'vertretungsberechtigte' ||
                foundKey.includes('inhaber') && elementKey === 'vertretungsberechtigte' ||
-               foundKey.includes('telefon') && elementKey === 'kontaktdaten' ||
-               foundKey.includes('e-mail') && elementKey === 'kontaktdaten' ||
+               (foundKey.includes('telefon') || foundKey.includes('email') || foundKey.includes('e-mail')) && elementKey === 'kontaktdaten' ||
                foundKey.includes('handels') && elementKey === 'handelsregisternummer' ||
-               foundKey.includes('ust') && elementKey === 'steuernummer' ||
-               foundKey.includes('steuer') && elementKey === 'steuernummer' ||
-               foundKey.includes('adresse') && elementKey === 'geschäftsadresse';
+               (foundKey.includes('ust') || foundKey.includes('steuer')) && elementKey === 'steuernummer' ||
+               foundKey.includes('adresse') && elementKey === 'geschäftsadresse' ||
+               foundKey.includes('rechtsform') && elementKey === 'rechtsform' ||
+               foundKey.includes('aufsicht') && elementKey === 'aufsichtsbehörde' ||
+               foundKey.includes('kammer') && elementKey === 'kammerzugehörigkeit' ||
+               foundKey.includes('haftpflicht') && elementKey === 'haftpflichtversicherung';
       });
       return !isFound;
     });
