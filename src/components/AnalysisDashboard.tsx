@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -87,7 +86,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       console.log('Performing new analysis for:', businessData);
       
       try {
-        const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData);
+        const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
         setRealData(analysisData);
         setIsLoading(false);
       } catch (error) {
