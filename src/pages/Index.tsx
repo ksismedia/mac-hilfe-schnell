@@ -22,14 +22,12 @@ interface BusinessData {
 }
 
 const Index = () => {
+  const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
   const [businessData, setBusinessData] = useState<BusinessData>({
     address: '',
     url: '',
     industry: 'shk'
   });
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [needsApiKey, setNeedsApiKey] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
@@ -39,47 +37,52 @@ const Index = () => {
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
-  // Check for API key immediately when component mounts
+  // Check for existing API key on mount
   useEffect(() => {
-    console.log('=== API Key Check on Mount ===');
     const existingKey = GoogleAPIService.getApiKey();
-    console.log('Existing API key:', existingKey ? 'EXISTS' : 'MISSING');
-    
-    if (!existingKey) {
-      console.log('No API key found - showing form');
-      setNeedsApiKey(true);
-    } else {
-      console.log('API key found - hiding form');
+    if (existingKey) {
       setApiKey(existingKey);
-      setNeedsApiKey(false);
     }
   }, []);
 
+  const handleBusinessSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!businessData.address || !businessData.url) {
+      toast({
+        title: "Fehler",
+        description: "Bitte füllen Sie alle Pflichtfelder aus.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if API key already exists
+    const existingKey = GoogleAPIService.getApiKey();
+    if (existingKey) {
+      setStep('results');
+    } else {
+      setStep('api');
+    }
+  };
+
   const validateAndSaveApiKey = async (keyToValidate: string) => {
-    console.log('=== Validating API Key ===');
     setIsValidatingApiKey(true);
 
     try {
-      // Test the API key with a simple geocoding request
       const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
-      console.log('Testing API key with URL:', testUrl);
-      
       const response = await fetch(testUrl);
       const data = await response.json();
-      
-      console.log('API Response:', data);
 
       if (response.ok && data.status === 'OK') {
-        // Save the valid key
         GoogleAPIService.setApiKey(keyToValidate);
-        setNeedsApiKey(false);
+        setStep('results');
         
         toast({
           title: "✅ API-Key erfolgreich",
           description: "Der Google API-Key wurde erfolgreich validiert und gespeichert.",
         });
         
-        console.log('API key validated and saved successfully');
         return true;
       } else {
         throw new Error(`API validation failed: ${data.status || 'Unknown error'}`);
@@ -112,38 +115,10 @@ const Index = () => {
     await validateAndSaveApiKey(apiKey.trim());
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!businessData.address || !businessData.url) {
-      toast({
-        title: "Fehler",
-        description: "Bitte füllen Sie alle Pflichtfelder aus.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    startAnalysis();
-  };
-
-  const startAnalysis = () => {
-    setIsAnalyzing(true);
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setShowResults(true);
-      toast({
-        title: "Analyse abgeschlossen",
-        description: "Die Auswertung des Online-Auftritts wurde erfolgreich durchgeführt.",
-      });
-    }, 1000);
-  };
-
   const handleExtensionDataProcess = (processedData: BusinessData) => {
-    console.log('Extension-Daten verarbeitet:', processedData);
     setBusinessData(processedData);
     setLoadedAnalysisId(undefined);
-    setShowResults(true);
+    setStep('results');
     toast({
       title: "Extension-Analyse gestartet",
       description: `Live-Daten von ${processedData.url} erfolgreich verarbeitet.`,
@@ -151,19 +126,16 @@ const Index = () => {
   };
 
   const handleBusinessDataChange = (newBusinessData: BusinessData) => {
-    console.log('Business data updated from saved analysis:', newBusinessData);
     setBusinessData(newBusinessData);
   };
 
   const handleLoadSavedAnalysis = (analysis: any) => {
-    console.log('Loading saved analysis on main page:', analysis);
-    
     if (analysis.businessData) {
       setBusinessData(analysis.businessData);
     }
     
     setLoadedAnalysisId(analysis.id);
-    setShowResults(true);
+    setStep('results');
     
     toast({
       title: "Analyse geladen",
@@ -171,8 +143,8 @@ const Index = () => {
     });
   };
 
-  const resetAnalysis = () => {
-    setShowResults(false);
+  const resetToStart = () => {
+    setStep('business');
     setLoadedAnalysisId(undefined);
     setBusinessData({
       address: '',
@@ -182,8 +154,31 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Show API Key form if needed
-  if (needsApiKey) {
+  // Handle extension data if available
+  if (hasExtensionData && extensionData && step === 'business') {
+    return (
+      <ExtensionDataProcessor
+        extensionData={extensionData}
+        onProcessData={handleExtensionDataProcess}
+        onDiscard={clearExtensionData}
+      />
+    );
+  }
+
+  // Show results when ready
+  if (step === 'results') {
+    return (
+      <AnalysisDashboard 
+        businessData={businessData} 
+        onReset={resetToStart}
+        onBusinessDataChange={handleBusinessDataChange}
+        loadedAnalysisId={loadedAnalysisId}
+      />
+    );
+  }
+
+  // Show API Key form
+  if (step === 'api') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
         <div className="max-w-2xl mx-auto pt-8">
@@ -226,13 +221,23 @@ const Index = () => {
                     </button>
                   </div>
                 </div>
-                <Button 
-                  type="submit" 
-                  disabled={isValidatingApiKey || !apiKey.trim()} 
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
-                >
-                  {isValidatingApiKey ? '🔄 Validiere API-Key...' : '✅ API-Key validieren'}
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep('business')}
+                    className="flex-1"
+                  >
+                    Zurück
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={isValidatingApiKey || !apiKey.trim()} 
+                    className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
+                  >
+                    {isValidatingApiKey ? '🔄 Validiere...' : '✅ Weiter zur Analyse'}
+                  </Button>
+                </div>
               </form>
               
               <div className="mt-6 p-4 bg-blue-900/20 rounded-lg border border-blue-500/30">
@@ -245,53 +250,12 @@ const Index = () => {
               </div>
             </CardContent>
           </Card>
-          
-          <div className="mt-6 text-center">
-            <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
-          </div>
         </div>
       </div>
     );
   }
 
-  // Show loading screen
-  if (isAnalyzing) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-yellow-400 mb-2">Website wird analysiert...</h2>
-            <p className="text-gray-300">Dies kann einige Sekunden dauern</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Zeige Extension-Datenverarbeitung wenn verfügbar
-  if (hasExtensionData && extensionData && !showResults) {
-    return (
-      <ExtensionDataProcessor
-        extensionData={extensionData}
-        onProcessData={handleExtensionDataProcess}
-        onDiscard={clearExtensionData}
-      />
-    );
-  }
-
-  // Zeige Analyse-Dashboard wenn Ergebnisse vorhanden
-  if (showResults) {
-    return (
-      <AnalysisDashboard 
-        businessData={businessData} 
-        onReset={resetAnalysis}
-        onBusinessDataChange={handleBusinessDataChange}
-        loadedAnalysisId={loadedAnalysisId}
-      />
-    );
-  }
-
+  // Show business data form (default)
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-4xl mx-auto">
@@ -334,7 +298,7 @@ const Index = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleBusinessSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="address" className="flex items-center gap-2 text-gray-200">
@@ -397,10 +361,9 @@ const Index = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold" 
-                disabled={isAnalyzing}
                 size="lg"
               >
-                {isAnalyzing ? "Analyse läuft..." : "Online-Auftritt analysieren"}
+                Weiter zur Analyse
               </Button>
             </form>
           </CardContent>

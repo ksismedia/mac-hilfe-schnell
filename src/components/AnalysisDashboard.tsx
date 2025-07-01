@@ -24,7 +24,6 @@ import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
 import HTMLExport from './analysis/HTMLExport';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
-import OverallRating from './analysis/OverallRating';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
@@ -141,6 +140,25 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     );
   }
 
+  // Calculate scores for the overview tiles
+  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
+  const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-400';
+    if (score >= 60) return 'text-yellow-400';
+    if (score >= 40) return 'text-orange-400';
+    return 'text-red-400';
+  };
+
+  const getScoreBg = (score: number) => {
+    if (score >= 80) return 'bg-green-900/20 border-green-400/30';
+    if (score >= 60) return 'bg-yellow-900/20 border-yellow-400/30';
+    if (score >= 40) return 'bg-orange-900/20 border-orange-400/30';
+    return 'bg-red-900/20 border-red-400/30';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-7xl mx-auto">
@@ -165,12 +183,84 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* Overall Rating - Prominent at the top */}
+        {/* Score Overview Tiles - Prominent at the top */}
         <div className="mb-8">
-          <OverallRating 
-            businessData={businessData}
-            realData={realData}
-          />
+          <h2 className="text-xl font-bold text-yellow-400 mb-4">Gesamtbewertung - {realData.company.name}</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+            <div className={`p-4 rounded-lg border ${getScoreBg(realData.seo.score)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(realData.seo.score)}`}>
+                  {realData.seo.score}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">SEO</div>
+              </div>
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${getScoreBg(realData.performance.score)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(realData.performance.score)}`}>
+                  {realData.performance.score}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Performance</div>
+              </div>
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${getScoreBg(realData.mobile.overallScore)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(realData.mobile.overallScore)}`}>
+                  {realData.mobile.overallScore}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Mobile</div>
+              </div>
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${getScoreBg(keywordsScore)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(keywordsScore)}`}>
+                  {keywordsScore}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Keywords</div>
+              </div>
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${getScoreBg(reviewsScore)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(reviewsScore)}`}>
+                  {reviewsScore}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Bewertungen</div>
+              </div>
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${getScoreBg(realData.socialMedia.overallScore)}`}>
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${getScoreColor(realData.socialMedia.overallScore)}`}>
+                  {realData.socialMedia.overallScore}
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Social Media</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+              <div className="text-lg font-semibold text-yellow-400">{realData.performance.loadTime}s</div>
+              <div className="text-sm text-gray-300">Ladezeit</div>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+              <div className="text-lg font-semibold text-yellow-400">{keywordsFoundCount}/{realData.keywords.length}</div>
+              <div className="text-sm text-gray-300">Keywords gefunden</div>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+              <div className="text-lg font-semibold text-yellow-400">{realData.reviews.google.count}</div>
+              <div className="text-sm text-gray-300">Google Bewertungen</div>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+              <div className="text-lg font-semibold text-yellow-400">{realData.competitors.length}</div>
+              <div className="text-sm text-gray-300">Konkurrenten</div>
+            </div>
+          </div>
         </div>
 
         {/* Analysis Tabs */}
