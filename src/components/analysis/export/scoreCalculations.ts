@@ -28,15 +28,14 @@ const getLastPostScore = (lastPost: string): number => {
   return 8; // Älter als ein Monat
 };
 
-// KOMPLETT NEU: Social Media Score Berechnung mit fairer Bewertung
+// KOMPLETT ÜBERARBEITETE Social Media Score Berechnung
 export const calculateSocialMediaScore = (realData: RealBusinessData, manualSocialData?: ManualSocialData | null) => {
-  console.log('=== NEUE SOCIAL MEDIA SCORE BERECHNUNG START ===');
+  console.log('=== SOCIAL MEDIA SCORE BERECHNUNG GESTARTET ===');
   console.log('Manual Data:', manualSocialData);
-  console.log('Real Data:', realData.socialMedia);
+  console.log('Real Data Social Media:', realData.socialMedia);
   
   let totalScore = 0;
   let activePlatforms = 0;
-  const platformScores: { [key: string]: number } = {};
   
   // Prüfe ob manuelle Daten vorhanden sind
   const hasManualData = manualSocialData && (
@@ -44,117 +43,116 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
     manualSocialData.linkedinUrl || manualSocialData.twitterUrl || manualSocialData.youtubeUrl
   );
   
-  console.log('Has manual data:', hasManualData);
+  console.log('Hat manuelle Daten:', hasManualData);
   
   if (hasManualData) {
-    // FACEBOOK - Manuelle Daten mit fairer Bewertung
+    console.log('=== VERWENDE MANUELLE DATEN ===');
+    
+    // FACEBOOK
     if (manualSocialData.facebookUrl) {
-      let score = 50; // Höhere Basis für Präsenz
-      
-      // Follower Bonus - verbessert
+      let score = 60; // Höhere Basis für Präsenz
       const followers = parseInt(manualSocialData.facebookFollowers || '0');
+      
+      // Follower Bonus
       if (followers >= 1000) score += 25;
       else if (followers >= 500) score += 20;
       else if (followers >= 100) score += 15;
       else if (followers >= 50) score += 10;
       else if (followers >= 10) score += 5;
       
-      // Post Aktivität Bonus
+      // Post Aktivität
       score += getLastPostScore(manualSocialData.facebookLastPost || '');
       
-      platformScores.facebook = Math.min(100, score);
-      totalScore += platformScores.facebook;
+      const facebookScore = Math.min(100, score);
+      totalScore += facebookScore;
       activePlatforms++;
-      console.log(`Facebook Score: ${platformScores.facebook} (Follower: ${followers}, Post: ${manualSocialData.facebookLastPost})`);
+      console.log(`Facebook: ${facebookScore} Punkte (${followers} Follower, Post: ${manualSocialData.facebookLastPost})`);
     }
     
-    // INSTAGRAM - Manuelle Daten mit fairer Bewertung
+    // INSTAGRAM
     if (manualSocialData.instagramUrl) {
-      let score = 50; // Höhere Basis für Präsenz
-      
-      // Follower Bonus (Instagram Standards)
+      let score = 60;
       const followers = parseInt(manualSocialData.instagramFollowers || '0');
+      
+      // Instagram hat höhere Follower-Standards
       if (followers >= 2000) score += 25;
       else if (followers >= 1000) score += 20;
       else if (followers >= 500) score += 15;
       else if (followers >= 100) score += 10;
       else if (followers >= 50) score += 5;
       
-      // Post Aktivität Bonus
       score += getLastPostScore(manualSocialData.instagramLastPost || '');
       
-      platformScores.instagram = Math.min(100, score);
-      totalScore += platformScores.instagram;
+      const instagramScore = Math.min(100, score);
+      totalScore += instagramScore;
       activePlatforms++;
-      console.log(`Instagram Score: ${platformScores.instagram} (Follower: ${followers}, Post: ${manualSocialData.instagramLastPost})`);
+      console.log(`Instagram: ${instagramScore} Punkte (${followers} Follower, Post: ${manualSocialData.instagramLastPost})`);
     }
     
-    // LINKEDIN - Manuelle Daten mit fairer Bewertung
+    // LINKEDIN
     if (manualSocialData.linkedinUrl) {
-      let score = 50; // Höhere Basis für Präsenz
-      
-      // Follower Bonus (LinkedIn Standards - niedriger)
+      let score = 60;
       const followers = parseInt(manualSocialData.linkedinFollowers || '0');
+      
+      // LinkedIn hat niedrigere Standards
       if (followers >= 500) score += 25;
       else if (followers >= 200) score += 20;
       else if (followers >= 100) score += 15;
       else if (followers >= 50) score += 10;
       else if (followers >= 10) score += 5;
       
-      // Post Aktivität Bonus
       score += getLastPostScore(manualSocialData.linkedinLastPost || '');
       
-      platformScores.linkedin = Math.min(100, score);
-      totalScore += platformScores.linkedin;
+      const linkedinScore = Math.min(100, score);
+      totalScore += linkedinScore;
       activePlatforms++;
-      console.log(`LinkedIn Score: ${platformScores.linkedin} (Follower: ${followers}, Post: ${manualSocialData.linkedinLastPost})`);
+      console.log(`LinkedIn: ${linkedinScore} Punkte (${followers} Follower, Post: ${manualSocialData.linkedinLastPost})`);
     }
     
-    // TWITTER - Manuelle Daten mit fairer Bewertung
+    // TWITTER
     if (manualSocialData.twitterUrl) {
-      let score = 50; // Höhere Basis für Präsenz
-      
-      // Follower Bonus
+      let score = 60;
       const followers = parseInt(manualSocialData.twitterFollowers || '0');
+      
       if (followers >= 1000) score += 25;
       else if (followers >= 500) score += 20;
       else if (followers >= 100) score += 15;
       else if (followers >= 50) score += 10;
       else if (followers >= 10) score += 5;
       
-      // Post Aktivität Bonus
       score += getLastPostScore(manualSocialData.twitterLastPost || '');
       
-      platformScores.twitter = Math.min(100, score);
-      totalScore += platformScores.twitter;
+      const twitterScore = Math.min(100, score);
+      totalScore += twitterScore;
       activePlatforms++;
-      console.log(`Twitter Score: ${platformScores.twitter} (Follower: ${followers}, Post: ${manualSocialData.twitterLastPost})`);
+      console.log(`Twitter: ${twitterScore} Punkte (${followers} Follower, Post: ${manualSocialData.twitterLastPost})`);
     }
     
-    // YOUTUBE - Manuelle Daten mit fairer Bewertung
+    // YOUTUBE
     if (manualSocialData.youtubeUrl) {
-      let score = 50; // Höhere Basis für Präsenz
-      
-      // Subscriber Bonus (YouTube Standards - niedriger)
+      let score = 60;
       const subscribers = parseInt(manualSocialData.youtubeSubscribers || '0');
+      
+      // YouTube hat niedrigere Standards
       if (subscribers >= 500) score += 25;
       else if (subscribers >= 100) score += 20;
       else if (subscribers >= 50) score += 15;
       else if (subscribers >= 10) score += 10;
       else if (subscribers >= 1) score += 5;
       
-      // Video Aktivität Bonus
       score += getLastPostScore(manualSocialData.youtubeLastPost || '');
       
-      platformScores.youtube = Math.min(100, score);
-      totalScore += platformScores.youtube;
+      const youtubeScore = Math.min(100, score);
+      totalScore += youtubeScore;
       activePlatforms++;
-      console.log(`YouTube Score: ${platformScores.youtube} (Subscriber: ${subscribers}, Video: ${manualSocialData.youtubeLastPost})`);
+      console.log(`YouTube: ${youtubeScore} Punkte (${subscribers} Subscriber, Video: ${manualSocialData.youtubeLastPost})`);
     }
   } else {
+    console.log('=== VERWENDE AUTOMATISCH ERKANNTE DATEN ===');
+    
     // Automatisch erkannte Daten (nur Facebook und Instagram verfügbar)
     if (realData.socialMedia.facebook.found) {
-      let score = 50;
+      let score = 60;
       
       if (realData.socialMedia.facebook.followers >= 1000) score += 25;
       else if (realData.socialMedia.facebook.followers >= 500) score += 20;
@@ -164,14 +162,14 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
       
       score += getLastPostScore(realData.socialMedia.facebook.lastPost);
       
-      platformScores.facebook = Math.min(100, score);
-      totalScore += platformScores.facebook;
+      const facebookScore = Math.min(100, score);
+      totalScore += facebookScore;
       activePlatforms++;
-      console.log(`Facebook Score (auto): ${platformScores.facebook}`);
+      console.log(`Facebook (auto): ${facebookScore} Punkte`);
     }
     
     if (realData.socialMedia.instagram.found) {
-      let score = 50;
+      let score = 60;
       
       if (realData.socialMedia.instagram.followers >= 2000) score += 25;
       else if (realData.socialMedia.instagram.followers >= 1000) score += 20;
@@ -181,41 +179,43 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
       
       score += getLastPostScore(realData.socialMedia.instagram.lastPost);
       
-      platformScores.instagram = Math.min(100, score);
-      totalScore += platformScores.instagram;
+      const instagramScore = Math.min(100, score);
+      totalScore += instagramScore;
       activePlatforms++;
-      console.log(`Instagram Score (auto): ${platformScores.instagram}`);
+      console.log(`Instagram (auto): ${instagramScore} Punkte`);
     }
   }
   
-  // FINALE BERECHNUNG - Komplett überarbeitet
+  // FINALE BERECHNUNG
   let finalScore = 0;
   
   if (activePlatforms === 0) {
     finalScore = 0;
+    console.log('Keine aktiven Plattformen gefunden -> Score: 0');
   } else {
-    // Durchschnittsscore der aktiven Plattformen
+    // Durchschnitt aller Plattformen
     const averageScore = totalScore / activePlatforms;
     console.log(`Durchschnittsscore: ${averageScore} (${totalScore} / ${activePlatforms})`);
     
-    // Multi-Platform Bonus: Mehr Plattformen = höherer Bonus
-    let multiPlatformBonus = 0;
-    if (activePlatforms >= 5) multiPlatformBonus = 15;      // +15 für alle 5
-    else if (activePlatforms >= 4) multiPlatformBonus = 12; // +12 für 4 - HIER IST DER WICHTIGE CASE!
-    else if (activePlatforms >= 3) multiPlatformBonus = 8;  // +8 für 3
-    else if (activePlatforms >= 2) multiPlatformBonus = 5;  // +5 für 2
+    // Multi-Platform Bonus für Diversität
+    let diversityBonus = 0;
+    if (activePlatforms >= 5) diversityBonus = 15;      // Alle 5 Plattformen
+    else if (activePlatforms >= 4) diversityBonus = 12; // 4 Plattformen -> WICHTIG!
+    else if (activePlatforms >= 3) diversityBonus = 8;  // 3 Plattformen
+    else if (activePlatforms >= 2) diversityBonus = 5;  // 2 Plattformen
     
-    finalScore = Math.min(100, Math.round(averageScore + multiPlatformBonus));
+    console.log(`Diversitäts-Bonus: ${diversityBonus} für ${activePlatforms} Plattformen`);
+    
+    finalScore = Math.min(100, Math.round(averageScore + diversityBonus));
   }
   
-  console.log('=== FINALE BERECHNUNG NEU ===');
-  console.log('Active Platforms:', activePlatforms);
-  console.log('Platform Scores:', platformScores);
-  console.log('Total Score:', totalScore);
-  console.log('Average Score:', activePlatforms > 0 ? totalScore / activePlatforms : 0);
-  console.log('Multi-Platform Bonus:', activePlatforms >= 5 ? 15 : activePlatforms >= 4 ? 12 : activePlatforms >= 3 ? 8 : activePlatforms >= 2 ? 5 : 0);
-  console.log('FINAL SCORE NEU:', finalScore);
-  console.log('=== SOCIAL MEDIA SCORE BERECHNUNG ENDE ===');
+  console.log('=== FINALES ERGEBNIS ===');
+  console.log(`Aktive Plattformen: ${activePlatforms}`);
+  console.log(`Gesamt-Score: ${totalScore}`);
+  console.log(`Durchschnitt: ${activePlatforms > 0 ? (totalScore / activePlatforms).toFixed(1) : 0}`);
+  console.log(`Diversitäts-Bonus: ${activePlatforms >= 5 ? 15 : activePlatforms >= 4 ? 12 : activePlatforms >= 3 ? 8 : activePlatforms >= 2 ? 5 : 0}`);
+  console.log(`FINALER SOCIAL MEDIA SCORE: ${finalScore}`);
+  console.log('=== BERECHNUNG BEENDET ===');
   
   return finalScore;
 };
