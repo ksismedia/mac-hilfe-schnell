@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +55,34 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   const agbScore = 60; // Assumed score
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
+  // Function to get missing imprint elements with detailed descriptions
+  const getMissingImprintElements = () => {
+    if (!manualImprintData || manualImprintData.found) {
+      return [];
+    }
+
+    const standardElements = [
+      'Vollständiger Name des Unternehmens',
+      'Rechtsform (GmbH, AG, etc.)',
+      'Anschrift der Hauptniederlassung',
+      'Kontaktmöglichkeiten (Telefon, E-Mail)',
+      'Handelsregistereintrag und -nummer',
+      'Umsatzsteuer-Identifikationsnummer',
+      'Aufsichtsbehörde (bei erlaubnispflichtigen Tätigkeiten)',
+      'Berufsbezeichnung und Kammer',
+      'Haftpflichtversicherung (Versicherer und Geltungsbereich)',
+      'Vertretungsberechtigte Personen'
+    ];
+
+    const foundElements = manualImprintData?.elements || [];
+    
+    return standardElements.filter(element => 
+      !foundElements.some(found => 
+        found.toLowerCase().includes(element.toLowerCase().split(' ')[0])
+      )
+    );
+  };
+
   // Calculate workplace scores based on actual data structure
   const workplaceKununuRating = realData.workplace?.kununu?.rating || 0;
   const workplaceGlassdoorRating = realData.workplace?.glassdoor?.rating || 0;
@@ -98,6 +125,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     const visibilityScore = calculateVisibilityScore();
     const performanceScore = realData.performance.score;
     const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
+    const missingImprintElements = getMissingImprintElements();
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -207,13 +235,13 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             </div>
         </section>
 
-        <!-- Impressum-Bewertung mit korrekten Daten -->
+        <!-- Impressum-Bewertung mit detaillierten fehlenden Angaben -->
         <section class="section">
-            <div class="section-header">⚖️ Rechtliche Compliance</div>
+            <div class="section-header">⚖️ Rechtliche Compliance - Detailanalyse</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
-                        <div class="metric-title">Impressum</div>
+                        <div class="metric-title">Impressum-Status</div>
                         <div class="metric-value">${manualImprintData?.found ? 'Vollständig' : 'Unvollständig'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -224,12 +252,24 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                                 <div class="progress-fill" style="width: ${impressumScore}%" data-value="${impressumScore}"></div>
                             </div>
                         </div>
-                        ${impressumMissingElements.length > 0 ? `
-                            <div style="margin-top: 10px; padding: 8px; background: #fef2f2; border-radius: 6px; font-size: 0.85em;">
-                                <strong>Fehlende Elemente:</strong><br>
-                                ${impressumMissingElements.map(element => `• ${element}`).join('<br>')}
+                        ${missingImprintElements.length > 0 ? `
+                            <div style="margin-top: 15px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 0.9em;">
+                                <strong style="color: #dc2626; display: block; margin-bottom: 8px;">⚠️ Fehlende Pflichtangaben im Impressum:</strong>
+                                <ul style="margin: 0; padding-left: 20px; color: #991b1b; line-height: 1.6;">
+                                    ${missingImprintElements.map(element => `<li style="margin-bottom: 4px;"><strong>${element}</strong></li>`).join('')}
+                                </ul>
+                                <div style="margin-top: 12px; padding: 8px; background: #fee2e2; border-radius: 6px; font-size: 0.85em; color: #7f1d1d;">
+                                    <strong>Rechtliche Hinweise:</strong><br>
+                                    • Fehlende Impressumsangaben können zu Abmahnungen führen<br>
+                                    • Bußgelder bis zu 50.000 € möglich<br>
+                                    • Wettbewerbsrechtliche Risiken durch Konkurrenten
+                                </div>
                             </div>
-                        ` : ''}
+                        ` : `
+                            <div style="margin-top: 10px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; color: #166534;">
+                                ✅ <strong>Impressum ist vollständig und rechtssicher</strong>
+                            </div>
+                        `}
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Datenschutz</div>
@@ -271,6 +311,18 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         </div>
                     </div>
                 </div>
+                
+                ${missingImprintElements.length > 0 ? `
+                    <div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px;">
+                        <h4 style="color: #92400e; margin-bottom: 10px;">📋 Handlungsempfehlungen für das Impressum:</h4>
+                        <ol style="margin: 0; padding-left: 20px; color: #78350f; line-height: 1.6;">
+                            <li><strong>Sofortige Vervollständigung:</strong> Ergänzen Sie alle fehlenden Pflichtangaben</li>
+                            <li><strong>Rechtsprüfung:</strong> Lassen Sie das Impressum von einem Anwalt prüfen</li>
+                            <li><strong>Regelmäßige Updates:</strong> Aktualisieren Sie Änderungen sofort</li>
+                            <li><strong>Gut sichtbare Platzierung:</strong> Impressum auf jeder Seite erreichbar</li>
+                        </ol>
+                    </div>
+                ` : ''}
             </div>
         </section>
 
@@ -757,7 +809,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
           Technischer Report (Intern)
         </CardTitle>
         <CardDescription>
-          Generiert einen vollständigen HTML-Report mit allen Details.
+          Generiert einen vollständigen HTML-Report mit allen Details inkl. fehlender Impressum-Angaben.
         </CardDescription>
       </CardHeader>
       <CardContent>

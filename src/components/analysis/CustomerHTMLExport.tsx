@@ -30,13 +30,44 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   competitorServices = {},
   hourlyRateData
 }) => {
+  // Function to get missing imprint elements with detailed descriptions for customer report
+  const getMissingImprintElements = () => {
+    if (!manualImprintData || manualImprintData.found) {
+      return [];
+    }
+
+    const standardElements = [
+      'Vollständiger Firmenname',
+      'Rechtsform des Unternehmens',
+      'Geschäftsadresse',
+      'Kontaktdaten (Telefon/E-Mail)',
+      'Handelsregisternummer',
+      'Steuernummer/USt-ID',
+      'Aufsichtsbehörde',
+      'Kammerzugehörigkeit',
+      'Haftpflichtversicherung',
+      'Vertretungsberechtigte'
+    ];
+
+    const foundElements = manualImprintData?.elements || [];
+    
+    return standardElements.filter(element => 
+      !foundElements.some(found => 
+        found.toLowerCase().includes(element.toLowerCase().split(' ')[0])
+      )
+    );
+  };
+
   const generateCustomerReport = () => {
+    const missingImprintElements = getMissingImprintElements();
+    
     const htmlContent = generateCustomerHTML({
       businessData,
       realData,
       manualCompetitors,
       competitorServices,
-      hourlyRateData
+      hourlyRateData,
+      missingImprintElements // Übergabe der fehlenden Elemente
     });
 
     const newWindow = window.open('', '_blank');
@@ -45,6 +76,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       newWindow.document.close();
     }
   };
+
+  const missingElements = getMissingImprintElements();
 
   return (
     <div className="space-y-6">
@@ -55,7 +88,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             Kundenfreundlicher HTML-Export
           </CardTitle>
           <CardDescription>
-            Umfassende, professionelle Analyse für die Kundenpräsentation - mit Stundensatz-Bewertung und erweiterten Inhalten
+            Umfassende, professionelle Analyse für die Kundenpräsentation - mit detaillierter Impressum-Prüfung
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -68,21 +101,32 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
                 <li>• Professionelles Design</li>
                 <li>• Verständliche Sprache</li>
                 <li>• Strategische Empfehlungen</li>
-                <li>• Stundensatz-Bewertung integriert</li>
+                <li>• Detaillierte Impressum-Analyse</li>
               </ul>
             </div>
             <div className="space-y-2">
               <h4 className="font-semibold text-green-700">📊 Erweiterte Features:</h4>
               <ul className="text-sm space-y-1 text-green-600">
-                <li>• Ausführliche Social Media Analyse</li>
-                <li>• Detaillierte Performance-Metriken</li>
-                <li>• Marktpositionierungs-Charts</li>
-                <li>• Wachstumspotenzial-Aufzeigung</li>
-                <li>• Kurz-/Mittel-/Langfrist-Roadmap</li>
+                <li>• Ausführliche Rechtssicherheits-Prüfung</li>
+                <li>• Konkrete Impressum-Handlungsempfehlungen</li>
+                <li>• Performance-Metriken</li>
                 <li>• ROI-Potenzial-Berechnung</li>
+                <li>• Kurz-/Mittel-/Langfrist-Roadmap</li>
+                <li>• Wettbewerbspositionierung</li>
               </ul>
             </div>
           </div>
+
+          {missingElements.length > 0 && (
+            <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">
+              <h4 className="font-semibold text-red-800 mb-2">⚠️ Impressum-Warnung erkannt:</h4>
+              <div className="text-sm text-red-700 space-y-1">
+                <p>• <strong>{missingElements.length} fehlende Pflichtangaben</strong> im Impressum identifiziert</p>
+                <p>• <strong>Rechtliche Risiken:</strong> Abmahnungen und Bußgelder möglich</p>
+                <p>• <strong>Kundenreport:</strong> Enthält detaillierte Handlungsempfehlungen</p>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <Button 
@@ -110,11 +154,11 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
             <h4 className="font-semibold text-blue-800 mb-2">🎯 Perfekt für professionelle Kundenpräsentationen:</h4>
             <div className="text-sm text-blue-700 space-y-1">
+              <p>• <strong>Rechtssicherheit:</strong> Detaillierte Impressum-Analyse mit konkreten Handlungsempfehlungen</p>
               <p>• <strong>Umfassend:</strong> 6 Hauptbereiche mit je 4 detaillierten Metriken</p>
-              <p>• <strong>Stundensatz-Analyse:</strong> Vollständige Preisstrategie-Bewertung integriert</p>
               <p>• <strong>Visuell:</strong> Alle Werte als Fortschrittsbalken mit Farbkodierung</p>
               <p>• <strong>Strategisch:</strong> Kurz-, Mittel- und Langfrist-Empfehlungen</p>
-              <p>• <strong>Wachstumsfokus:</strong> Potenzial-Aufzeigung mit konkreten Zahlen</p>
+              <p>• <strong>Compliance-Fokus:</strong> Rechtliche Risiken werden klar aufgezeigt</p>
             </div>
           </div>
         </CardContent>
