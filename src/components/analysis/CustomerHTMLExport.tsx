@@ -32,13 +32,27 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 }) => {
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
-    if (!manualImprintData || manualImprintData.found) {
-      return [];
+    console.log('manualImprintData:', manualImprintData);
+    
+    // Wenn kein manualImprintData vorhanden ist oder es nicht found ist
+    if (!manualImprintData || !manualImprintData.found) {
+      return [
+        'Vollständiger Firmenname',
+        'Rechtsform des Unternehmens',
+        'Geschäftsadresse',
+        'Kontaktdaten (Telefon/E-Mail)',
+        'Handelsregisternummer',
+        'Steuernummer/USt-ID',
+        'Aufsichtsbehörde',
+        'Kammerzugehörigkeit',
+        'Haftpflichtversicherung',
+        'Vertretungsberechtigte'
+      ];
     }
 
     const standardElements = [
       'Vollständiger Firmenname',
-      'Rechtsform des Unternehmens',
+      'Rechtsform des Unternehmens', 
       'Geschäftsadresse',
       'Kontaktdaten (Telefon/E-Mail)',
       'Handelsregisternummer',
@@ -50,16 +64,33 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     ];
 
     const foundElements = manualImprintData?.elements || [];
+    console.log('foundElements:', foundElements);
     
-    return standardElements.filter(element => 
-      !foundElements.some(found => 
-        found.toLowerCase().includes(element.toLowerCase().split(' ')[0])
-      )
-    );
+    const missingElements = standardElements.filter(element => {
+      const isFound = foundElements.some(found => {
+        const elementKey = element.toLowerCase().split(' ')[0];
+        const foundKey = found.toLowerCase();
+        return foundKey.includes(elementKey) || 
+               foundKey.includes('firma') && elementKey === 'vollständiger' ||
+               foundKey.includes('geschäftsführer') && elementKey === 'vertretungsberechtigte' ||
+               foundKey.includes('inhaber') && elementKey === 'vertretungsberechtigte' ||
+               foundKey.includes('telefon') && elementKey === 'kontaktdaten' ||
+               foundKey.includes('e-mail') && elementKey === 'kontaktdaten' ||
+               foundKey.includes('handels') && elementKey === 'handelsregisternummer' ||
+               foundKey.includes('ust') && elementKey === 'steuernummer' ||
+               foundKey.includes('steuer') && elementKey === 'steuernummer' ||
+               foundKey.includes('adresse') && elementKey === 'geschäftsadresse';
+      });
+      return !isFound;
+    });
+    
+    console.log('missingElements:', missingElements);
+    return missingElements;
   };
 
   const generateCustomerReport = () => {
     const missingImprintElements = getMissingImprintElements();
+    console.log('Passing missingImprintElements to HTML generator:', missingImprintElements);
     
     const htmlContent = generateCustomerHTML({
       businessData,
@@ -67,7 +98,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualCompetitors,
       competitorServices,
       hourlyRateData,
-      missingImprintElements // Übergabe der fehlenden Elemente
+      missingImprintElements
     });
 
     const newWindow = window.open('', '_blank');

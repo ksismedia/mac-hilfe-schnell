@@ -1,4 +1,3 @@
-
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -24,6 +23,8 @@ export const generateCustomerHTML = ({
   hourlyRateData,
   missingImprintElements = []
 }: CustomerReportData) => {
+  console.log('HTML Generator received missingImprintElements:', missingImprintElements);
+  
   // Calculate scores
   const calculateOverallScore = () => {
     const scores = [
@@ -79,9 +80,12 @@ export const generateCustomerHTML = ({
                            hourlyRateData.regionAverage > 0;
 
   // Calculate legal compliance scores with CORRECT impressum evaluation
-  const impressumScore = missingImprintElements && missingImprintElements.length > 0 ? 
-    Math.max(0, 100 - (missingImprintElements.length * 8)) : 
+  const impressumScore = missingImprintElements.length > 0 ? 
+    Math.max(20, 100 - (missingImprintElements.length * 8)) : 
     (realData.imprint.found ? Math.max(realData.imprint.score, 85) : 30);
+  
+  console.log('Calculated impressumScore:', impressumScore);
+  console.log('missingImprintElements.length:', missingImprintElements.length);
   
   const datenschutzScore = 85;
   const agbScore = 60;
@@ -100,6 +104,14 @@ export const generateCustomerHTML = ({
     return insights[businessData.industry] || 'Branchenspezifische Optimierung empfohlen.';
   };
 
+  // Helper function to get progress bar color based on score
+  const getProgressBarColor = (score: number) => {
+    if (score >= 80) return '#10b981'; // green
+    if (score >= 60) return '#f59e0b'; // yellow/orange
+    if (score >= 40) return '#f97316'; // orange
+    return '#ef4444'; // red
+  };
+
   return `
 <!DOCTYPE html>
 <html lang="de">
@@ -107,7 +119,21 @@ export const generateCustomerHTML = ({
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Listening und Monitoring Report - ${businessData.address}</title>
-    <style>${getHTMLStyles()}</style>
+    <style>
+        ${getHTMLStyles()}
+        
+        /* Ensure all progress bars have colored backgrounds */
+        .progress-fill {
+            background: linear-gradient(90deg, #ef4444 0%, #f97316 25%, #f59e0b 50%, #10b981 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill[data-value="100"] { background-color: #10b981 !important; }
+        .progress-fill[data-value^="9"], .progress-fill[data-value^="8"] { background-color: #10b981 !important; }
+        .progress-fill[data-value^="7"], .progress-fill[data-value^="6"] { background-color: #f59e0b !important; }
+        .progress-fill[data-value^="5"], .progress-fill[data-value^="4"] { background-color: #f97316 !important; }
+        .progress-fill[data-value^="3"], .progress-fill[data-value^="2"], .progress-fill[data-value^="1"] { background-color: #ef4444 !important; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -141,7 +167,7 @@ export const generateCustomerHTML = ({
                 <div class="score-label">Gesamtbewertung</div>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${overallScore}%" data-value="${overallScore}"></div>
+                        <div class="progress-fill" style="width: ${overallScore}%; background-color: ${getProgressBarColor(overallScore)} !important;" data-value="${overallScore}"></div>
                     </div>
                 </div>
             </div>
@@ -150,7 +176,7 @@ export const generateCustomerHTML = ({
                 <div class="score-label">Online-Sichtbarkeit</div>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${visibilityScore}%" data-value="${visibilityScore}"></div>
+                        <div class="progress-fill" style="width: ${visibilityScore}%; background-color: ${getProgressBarColor(visibilityScore)} !important;" data-value="${visibilityScore}"></div>
                     </div>
                 </div>
             </div>
@@ -159,7 +185,7 @@ export const generateCustomerHTML = ({
                 <div class="score-label">Website-Performance</div>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${performanceScore}%" data-value="${performanceScore}"></div>
+                        <div class="progress-fill" style="width: ${performanceScore}%; background-color: ${getProgressBarColor(performanceScore)} !important;" data-value="${performanceScore}"></div>
                     </div>
                 </div>
             </div>
@@ -168,7 +194,7 @@ export const generateCustomerHTML = ({
                 <div class="score-label">Social Media</div>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%" data-value="${enhancedSocialMediaScore}"></div>
+                        <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%; background-color: ${getProgressBarColor(enhancedSocialMediaScore)} !important;" data-value="${enhancedSocialMediaScore}"></div>
                     </div>
                 </div>
             </div>
@@ -190,10 +216,10 @@ export const generateCustomerHTML = ({
                                 <span>${impressumScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${impressumScore}%" data-value="${impressumScore}"></div>
+                                <div class="progress-fill" style="width: ${impressumScore}%; background-color: ${getProgressBarColor(impressumScore)} !important;" data-value="${impressumScore}"></div>
                             </div>
                         </div>
-                        ${impressumScore < 100 && missingImprintElements && missingImprintElements.length > 0 ? `
+                        ${missingImprintElements.length > 0 ? `
                             <div style="margin-top: 15px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 0.9em;">
                                 <strong style="color: #dc2626; display: block; margin-bottom: 8px;">⚠️ Fehlende Pflichtangaben im Impressum:</strong>
                                 <ul style="margin: 0; padding-left: 20px; color: #991b1b; line-height: 1.6;">
@@ -206,7 +232,7 @@ export const generateCustomerHTML = ({
                                     • Wettbewerbsrechtliche Risiken durch Konkurrenten
                                 </div>
                             </div>
-                        ` : impressumScore === 100 ? `
+                        ` : impressumScore >= 95 ? `
                             <div style="margin-top: 10px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; color: #166534;">
                                 ✅ <strong>Impressum ist vollständig und rechtssicher</strong>
                             </div>
@@ -221,7 +247,7 @@ export const generateCustomerHTML = ({
                                 <span>${datenschutzScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${datenschutzScore}%" data-value="${datenschutzScore}"></div>
+                                <div class="progress-fill" style="width: ${datenschutzScore}%; background-color: ${getProgressBarColor(datenschutzScore)} !important;" data-value="${datenschutzScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -234,7 +260,7 @@ export const generateCustomerHTML = ({
                                 <span>${agbScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${agbScore}%" data-value="${agbScore}"></div>
+                                <div class="progress-fill" style="width: ${agbScore}%; background-color: ${getProgressBarColor(agbScore)} !important;" data-value="${agbScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -247,13 +273,13 @@ export const generateCustomerHTML = ({
                                 <span>${legalComplianceScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${legalComplianceScore}%" data-value="${legalComplianceScore}"></div>
+                                <div class="progress-fill" style="width: ${legalComplianceScore}%; background-color: ${getProgressBarColor(legalComplianceScore)} !important;" data-value="${legalComplianceScore}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                ${impressumScore < 100 && missingImprintElements && missingImprintElements.length > 0 ? `
+                ${missingImprintElements.length > 0 ? `
                     <div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px;">
                         <h4 style="color: #92400e; margin-bottom: 10px;">📋 Sofortige Handlungsempfehlungen:</h4>
                         <ol style="margin: 0; padding-left: 20px; color: #78350f; line-height: 1.6;">
@@ -281,7 +307,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.seo.score}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.seo.score}%" data-value="${realData.seo.score}"></div>
+                                <div class="progress-fill" style="width: ${realData.seo.score}%; background-color: ${getProgressBarColor(realData.seo.score)} !important;" data-value="${realData.seo.score}"></div>
                             </div>
                         </div>
                     </div>
@@ -294,7 +320,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.performance.score}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.performance.score}%" data-value="${realData.performance.score}"></div>
+                                <div class="progress-fill" style="width: ${realData.performance.score}%; background-color: ${getProgressBarColor(realData.performance.score)} !important;" data-value="${realData.performance.score}"></div>
                             </div>
                         </div>
                     </div>
@@ -307,7 +333,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.mobile.overallScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.mobile.overallScore}%" data-value="${realData.mobile.overallScore}"></div>
+                                <div class="progress-fill" style="width: ${realData.mobile.overallScore}%; background-color: ${getProgressBarColor(realData.mobile.overallScore)} !important;" data-value="${realData.mobile.overallScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -320,7 +346,7 @@ export const generateCustomerHTML = ({
                                 <span>${visibilityScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${visibilityScore}%" data-value="${visibilityScore}"></div>
+                                <div class="progress-fill" style="width: ${visibilityScore}%; background-color: ${getProgressBarColor(visibilityScore)} !important;" data-value="${visibilityScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -342,7 +368,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.socialMedia.facebook.followers} Follower</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.facebook.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.facebook.followers / 10) / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.facebook.followers / 10)}%; background-color: ${getProgressBarColor(Math.min(100, realData.socialMedia.facebook.followers / 10))} !important;" data-value="${Math.round(Math.min(100, realData.socialMedia.facebook.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                         ${realData.socialMedia.facebook.lastPost ? `
@@ -360,7 +386,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.socialMedia.instagram.followers} Follower</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.instagram.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.instagram.followers / 10) / 10) * 10}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.instagram.followers / 10)}%; background-color: ${getProgressBarColor(Math.min(100, realData.socialMedia.instagram.followers / 10))} !important;" data-value="${Math.round(Math.min(100, realData.socialMedia.instagram.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                         ${realData.socialMedia.instagram.lastPost ? `
@@ -378,7 +404,7 @@ export const generateCustomerHTML = ({
                                 <span>${enhancedSocialMediaScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%" data-value="${enhancedSocialMediaScore}"></div>
+                                <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%; background-color: ${getProgressBarColor(enhancedSocialMediaScore)} !important;" data-value="${enhancedSocialMediaScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -391,7 +417,7 @@ export const generateCustomerHTML = ({
                                 <span>${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%" data-value="${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 70 : 20}"></div>
+                                <div class="progress-fill" style="width: ${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%; background-color: ${getProgressBarColor((realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25)} !important;" data-value="${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 70 : 20}"></div>
                             </div>
                         </div>
                     </div>
@@ -413,7 +439,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.reviews.google.rating ? Math.round(realData.reviews.google.rating * 20) : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%; background-color: ${getProgressBarColor(realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0)} !important;" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
                             </div>
                         </div>
                     </div>
@@ -426,7 +452,7 @@ export const generateCustomerHTML = ({
                                 <span>${Math.min(100, realData.reviews.google.count * 5)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%; background-color: ${getProgressBarColor(Math.min(100, realData.reviews.google.count * 5))} !important;" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
                             </div>
                         </div>
                     </div>
@@ -439,7 +465,7 @@ export const generateCustomerHTML = ({
                                 <span>${realData.reviews.google.rating ? Math.round(realData.reviews.google.rating * 20) : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%; background-color: ${getProgressBarColor(realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0)} !important;" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
                             </div>
                         </div>
                     </div>
@@ -452,7 +478,7 @@ export const generateCustomerHTML = ({
                                 <span>80%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 80%" data-value="80"></div>
+                                <div class="progress-fill" style="width: 80%; background-color: ${getProgressBarColor(80)} !important;" data-value="80"></div>
                             </div>
                         </div>
                     </div>
@@ -513,7 +539,7 @@ export const generateCustomerHTML = ({
                             <div class="metric-value">${hourlyRateData.ownRate} €</div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}%" data-value="${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}"></div>
+                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}%; background-color: ${getProgressBarColor(Math.min(100, (hourlyRateData.ownRate / 150) * 100))} !important;" data-value="${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}"></div>
                                 </div>
                             </div>
                         </div>
@@ -522,7 +548,7 @@ export const generateCustomerHTML = ({
                             <div class="metric-value">${hourlyRateData.regionAverage} €</div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}%" data-value="${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}"></div>
+                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}%; background-color: ${getProgressBarColor(Math.min(100, (hourlyRateData.regionAverage / 150) * 100))} !important;" data-value="${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}"></div>
                                 </div>
                             </div>
                         </div>
@@ -531,7 +557,7 @@ export const generateCustomerHTML = ({
                             <div class="metric-value ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'excellent' : 'warning'}">${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Premium-Segment' : 'Durchschnittsbereich'}</div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}%" data-value="${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}"></div>
+                                    <div class="progress-fill" style="width: ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}%; background-color: ${getProgressBarColor(hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60)} !important;" data-value="${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}"></div>
                                 </div>
                             </div>
                         </div>
@@ -540,7 +566,7 @@ export const generateCustomerHTML = ({
                             <div class="metric-value good">Potenzial vorhanden</div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 75%" data-value="75"></div>
+                                    <div class="progress-fill" style="width: 75%; background-color: ${getProgressBarColor(75)} !important;" data-value="75"></div>
                                 </div>
                             </div>
                         </div>
@@ -563,12 +589,12 @@ export const generateCustomerHTML = ({
                                 <span>95%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 95%" data-value="95"></div>
+                                <div class="progress-fill" style="width: 95%; background-color: ${getProgressBarColor(95)} !important;" data-value="95"></div>
                             </div>
                         </div>
                         <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
-                            ${impressumScore < 90 ? '• Impressum vervollständigen' : ''}
-                            ${realData.reviews.google.count < 10 ? '• Bewertungen sammeln' : ''}
+                            ${impressumScore < 90 ? '• Impressum vervollständigen<br>' : ''}
+                            ${realData.reviews.google.count < 10 ? '• Bewertungen sammeln<br>' : ''}
                             • Google My Business optimieren
                         </div>
                     </div>
@@ -581,12 +607,12 @@ export const generateCustomerHTML = ({
                                 <span>80%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 80%" data-value="80"></div>
+                                <div class="progress-fill" style="width: 80%; background-color: ${getProgressBarColor(80)} !important;" data-value="80"></div>
                             </div>
                         </div>
                         <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
-                            ${enhancedSocialMediaScore < 60 ? '• Social Media aufbauen' : ''}
-                            • Website-Performance verbessern
+                            ${enhancedSocialMediaScore < 60 ? '• Social Media aufbauen<br>' : ''}
+                            • Website-Performance verbessern<br>
                             • Content-Marketing starten
                         </div>
                     </div>
@@ -599,12 +625,12 @@ export const generateCustomerHTML = ({
                                 <span>70%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 70%" data-value="70"></div>
+                                <div class="progress-fill" style="width: 70%; background-color: ${getProgressBarColor(70)} !important;" data-value="70"></div>
                             </div>
                         </div>
                         <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
-                            • Digitale Marktführerschaft
-                            • Automatisierte Kundengewinnung
+                            • Digitale Marktführerschaft<br>
+                            • Automatisierte Kundengewinnung<br>
                             • Premium-Positionierung
                         </div>
                     </div>
@@ -617,12 +643,12 @@ export const generateCustomerHTML = ({
                                 <span>85%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%" data-value="85"></div>
+                                <div class="progress-fill" style="width: 85%; background-color: ${getProgressBarColor(85)} !important;" data-value="85"></div>
                             </div>
                         </div>
                         <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
-                            • 30-50% mehr Online-Anfragen
-                            • 15.000-25.000 € Mehrumsatz/Jahr
+                            • 30-50% mehr Online-Anfragen<br>
+                            • 15.000-25.000 € Mehrumsatz/Jahr<br>
                             • Nachhaltige Marktposition
                         </div>
                     </div>
@@ -646,10 +672,10 @@ export const generateCustomerHTML = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Ziel: +25%</span>
-                                <span>0%</span>
+                                <span>25%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 25%" data-value="25"></div>
+                                <div class="progress-fill" style="width: 25%; background-color: ${getProgressBarColor(25)} !important;" data-value="25"></div>
                             </div>
                         </div>
                     </div>
@@ -662,7 +688,7 @@ export const generateCustomerHTML = ({
                                 <span>60%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 60%" data-value="60"></div>
+                                <div class="progress-fill" style="width: 60%; background-color: ${getProgressBarColor(60)} !important;" data-value="60"></div>
                             </div>
                         </div>
                     </div>
@@ -677,7 +703,7 @@ export const generateCustomerHTML = ({
                                 <span>${Math.min(100, realData.reviews.google.count * 5)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%; background-color: ${getProgressBarColor(Math.min(100, realData.reviews.google.count * 5))} !important;" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
                             </div>
                         </div>
                     </div>
@@ -690,7 +716,7 @@ export const generateCustomerHTML = ({
                                 <span>33%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 33%" data-value="33"></div>
+                                <div class="progress-fill" style="width: 33%; background-color: ${getProgressBarColor(33)} !important;" data-value="33"></div>
                             </div>
                         </div>
                     </div>
