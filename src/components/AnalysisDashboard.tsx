@@ -92,36 +92,40 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       console.log('Loading analysis data, ID:', currentAnalysisId);
       
       if (currentAnalysisId) {
-        const savedAnalysis = loadAnalysis(currentAnalysisId);
-        if (savedAnalysis) {
-          console.log('Found saved analysis:', savedAnalysis);
-          
-          // Set business data
-          if (onBusinessDataChange) {
-            onBusinessDataChange(savedAnalysis.businessData);
+        try {
+          const savedAnalysis = loadAnalysis(currentAnalysisId);
+          if (savedAnalysis) {
+            console.log('Found saved analysis:', savedAnalysis);
+            
+            // Set business data
+            if (onBusinessDataChange) {
+              onBusinessDataChange(savedAnalysis.businessData);
+            }
+            
+            // Set real data
+            setRealData(savedAnalysis.realData);
+            
+            // Load manual data using utility function
+            loadSavedAnalysisData(
+              savedAnalysis,
+              updateImprintData,
+              updateSocialData,
+              updateWorkplaceData,
+              updateCompetitors,
+              updateCompetitorServices
+            );
+            
+            setIsLoading(false);
+            
+            toast({
+              title: "Analyse geladen",
+              description: `Gespeicherte Analyse "${savedAnalysis.name}" wurde erfolgreich geladen.`,
+            });
+            
+            return;
           }
-          
-          // Set real data
-          setRealData(savedAnalysis.realData);
-          
-          // Load manual data using utility function
-          loadSavedAnalysisData(
-            savedAnalysis,
-            updateImprintData,
-            updateSocialData,
-            updateWorkplaceData,
-            updateCompetitors,
-            updateCompetitorServices
-          );
-          
-          setIsLoading(false);
-          
-          toast({
-            title: "Analyse geladen",
-            description: `Gespeicherte Analyse "${savedAnalysis.name}" wurde erfolgreich geladen.`,
-          });
-          
-          return;
+        } catch (error) {
+          console.error('Error loading saved analysis:', error);
         }
       }
       
