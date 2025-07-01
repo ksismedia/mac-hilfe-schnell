@@ -364,27 +364,79 @@ export const generateCustomerHTML = ({
     return `
       <div class="metric-card good">
         <h3>👥 Konkurrenzanalyse</h3>
-        <div class="competitor-list">
-          ${manualCompetitors.map((competitor, index) => `
-            <div class="competitor-item">
-              <div class="competitor-rank">
-                <strong>Konkurrent ${String.fromCharCode(65 + index)}</strong>
-              </div>
-              <p><strong>Bewertung:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
-              <p><strong>Status:</strong> ${competitor.rating >= 4 ? 'Starker Konkurrent' : competitor.rating >= 3 ? 'Mittlerer Konkurrent' : 'Schwacher Konkurrent'}</p>
-              ${competitorServices && competitorServices[competitor.name] ? `
-                <p><strong>Services:</strong> ${competitorServices[competitor.name].join(', ')}</p>
-              ` : ''}
-            </div>
-          `).join('')}
+        <div style="margin-bottom: 20px;">
+          <p style="color: #d1d5db; margin-bottom: 15px;">
+            <strong>Anzahl analysierte Konkurrenten:</strong> ${manualCompetitors.length}
+          </p>
         </div>
+        
+        <!-- Konkurrenten-Vergleichstabelle -->
+        <div style="overflow-x: auto; margin-bottom: 20px;">
+          <table style="width: 100%; border-collapse: collapse; background: rgba(17, 24, 39, 0.6); border-radius: 8px; overflow: hidden;">
+            <thead>
+              <tr style="background: rgba(251, 191, 36, 0.2);">
+                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Konkurrent</th>
+                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Bewertung</th>
+                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Anzahl Bewertungen</th>
+                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Marktposition</th>
+                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Services</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${manualCompetitors.map((competitor, index) => `
+                <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
+                  <td style="padding: 12px; color: #d1d5db;">
+                    <strong>Konkurrent ${String.fromCharCode(65 + index)}</strong>
+                  </td>
+                  <td style="padding: 12px; text-align: center; color: #d1d5db;">
+                    <span style="font-weight: bold; color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'};">${competitor.rating}/5</span>
+                  </td>
+                  <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
+                  <td style="padding: 12px; text-align: center;">
+                    <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
+                      ${competitor.rating >= 4 ? 'Starker Konkurrent' : competitor.rating >= 3 ? 'Mittlerer Konkurrent' : 'Schwacher Konkurrent'}
+                    </span>
+                  </td>
+                  <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
+                    ${competitorServices && competitorServices[competitor.name] ? competitorServices[competitor.name].join(', ') : 'Nicht erfasst'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Marktpositions-Analyse -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">📊 Marktpositions-Vergleich</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div>
+              <p><strong>Stärkster Konkurrent:</strong> Konkurrent ${String.fromCharCode(65 + manualCompetitors.findIndex(c => c.rating === Math.max(...manualCompetitors.map(comp => comp.rating))))}</p>
+              <p style="font-size: 0.9em; color: #9ca3af;">Rating: ${Math.max(...manualCompetitors.map(c => c.rating))}/5</p>
+            </div>
+            <div>
+              <p><strong>Durchschnittsbewertung:</strong> ${(manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length).toFixed(1)}/5</p>
+              <p style="font-size: 0.9em; color: #9ca3af;">Marktstandard</p>
+            </div>
+            <div>
+              <p><strong>Bewertungsverteilung:</strong></p>
+              <p style="font-size: 0.9em; color: #9ca3af;">
+                Stark: ${manualCompetitors.filter(c => c.rating >= 4).length} | 
+                Mittel: ${manualCompetitors.filter(c => c.rating >= 3 && c.rating < 4).length} | 
+                Schwach: ${manualCompetitors.filter(c => c.rating < 3).length}
+              </p>
+            </div>
+          </div>
+        </div>
+        
         <div class="recommendations">
-          <h4>Handlungsempfehlungen:</h4>
+          <h4>Strategische Handlungsempfehlungen:</h4>
           <ul>
-            <li>Stärken der Konkurrenz analysieren</li>
-            <li>Eigene Alleinstellungsmerkmale entwickeln</li>
-            <li>Preispositionierung überprüfen</li>
-            <li>Service-Qualität kontinuierlich verbessern</li>
+            <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Konkurrenten durchführen</li>
+            <li>Eigene Alleinstellungsmerkmale gegenüber ${manualCompetitors.length} Mitbewerbern entwickeln</li>
+            <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Konkurrenten überprüfen</li>
+            <li>Service-Portfolio basierend auf Konkurrenzanalyse optimieren</li>
+            <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Konkurrenten</li>
           </ul>
         </div>
       </div>
