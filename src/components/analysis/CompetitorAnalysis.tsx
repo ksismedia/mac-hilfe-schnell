@@ -65,16 +65,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     const reviewScore = Math.min(100, (competitor.reviews / 50) * 100);
     
     // Service-Score: Berücksichtigt Anzahl und Qualität der Services
-    const serviceCount = competitor.services?.length || 0;
+    const services = Array.isArray(competitor.services) ? competitor.services : [];
+    const serviceCount = services.length;
     const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
     
     // Bonus für Services, die der eigene Betrieb nicht hat
-    const uniqueServices = competitor.services?.filter(service => 
-      !ownServices.some(ownService => 
+    const uniqueServices = services.filter((service: string) => 
+      typeof service === 'string' && !ownServices.some(ownService => 
         ownService.toLowerCase().includes(service.toLowerCase()) || 
         service.toLowerCase().includes(ownService.toLowerCase())
       )
-    ) || [];
+    );
     
     const uniqueServiceBonus = uniqueServices.length * 5; // 5 Punkte pro einzigartigen Service
     const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
@@ -90,8 +91,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const score = calculateCompetitorScore({...comp, services});
       
       // Service-Analyse
-      const uniqueServices = services.filter(service => 
-        !ownServices.some(ownService => 
+      const uniqueServices = services.filter((service: string) => 
+        typeof service === 'string' && !ownServices.some(ownService => 
           ownService.toLowerCase().includes(service.toLowerCase()) || 
           service.toLowerCase().includes(ownService.toLowerCase())
         )
@@ -109,10 +110,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     }),
     ...manualCompetitors.map(comp => {
       const score = calculateCompetitorScore(comp);
-      const services = comp.services || [];
+      const services = Array.isArray(comp.services) ? comp.services : [];
       
-      const uniqueServices = services.filter(service => 
-        !ownServices.some(ownService => 
+      const uniqueServices = services.filter((service: string) => 
+        typeof service === 'string' && !ownServices.some(ownService => 
           ownService.toLowerCase().includes(service.toLowerCase()) || 
           service.toLowerCase().includes(ownService.toLowerCase())
         )
@@ -170,12 +171,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     : 0;
 
   // Service-Gap Analyse
-  const allCompetitorServices = new Set();
+  const allCompetitorServices = new Set<string>();
   allCompetitors.forEach(comp => {
-    comp.services.forEach(service => allCompetitorServices.add(service));
+    comp.services.forEach((service: string) => {
+      if (typeof service === 'string') {
+        allCompetitorServices.add(service);
+      }
+    });
   });
 
-  const missingServices = Array.from(allCompetitorServices).filter(service => 
+  const missingServices = Array.from(allCompetitorServices).filter((service: string) => 
     !ownServices.some(ownService => 
       ownService.toLowerCase().includes(service.toLowerCase()) || 
       service.toLowerCase().includes(ownService.toLowerCase())
@@ -320,7 +325,6 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
               </CardContent>
             </Card>
 
-            {/* Performance-Vergleich */}
             <Card className="border-green-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg text-green-600">
@@ -488,7 +492,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {competitor.uniqueServices.map((service, i) => (
+                        {competitor.uniqueServices.map((service: string, i: number) => (
                           <Badge key={i} variant="outline" className="text-xs bg-white text-orange-700 border-orange-300">
                             {service}
                           </Badge>
@@ -511,7 +515,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     <div className="mt-3">
                       <span className="text-sm font-medium text-gray-700">Alle Leistungen:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {competitor.services.map((service, i) => (
+                        {competitor.services.map((service: string, i: number) => (
                           <Badge key={i} variant="outline" className="text-xs">
                             {service}
                           </Badge>
