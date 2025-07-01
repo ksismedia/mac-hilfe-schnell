@@ -6,7 +6,7 @@ import { ManualCompetitor } from '@/hooks/useManualData';
 import HTMLExport from './HTMLExport';
 import CustomerHTMLExport from './CustomerHTMLExport';
 import HourlyRateInput from './HourlyRateInput';
-import { FileText, Download, Users, Settings } from 'lucide-react';
+import { FileText, Download, Users, Settings, Zap } from 'lucide-react';
 
 interface PDFExportProps {
   businessData: {
@@ -42,16 +42,19 @@ const PDFExport: React.FC<PDFExportProps> = ({
   
   return (
     <div className="space-y-6">
-      {/* Konfiguration */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold text-gray-900">Report Export</h2>
+        <p className="text-gray-600">Generieren Sie professionelle Analyseberichte</p>
+      </div>
+
+      {/* Configuration */}
+      <Card className="border-2 border-blue-100">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Settings className="h-5 w-5 text-blue-600" />
             Konfiguration
           </CardTitle>
-          <CardDescription>
-            Ergänzen Sie zusätzliche Daten für eine vollständige Analyse
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <HourlyRateInput 
@@ -61,20 +64,35 @@ const PDFExport: React.FC<PDFExportProps> = ({
         </CardContent>
       </Card>
 
-      {/* Export-Optionen */}
+      {/* Export Options */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Kunden-Report */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Kunden-Report
-            </CardTitle>
-            <CardDescription>
+        {/* Customer Report */}
+        <Card className="border-2 border-green-100 hover:border-green-200 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg text-green-700">
+                <Users className="h-5 w-5" />
+                Kunden-Report
+              </CardTitle>
+              <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                Empfohlen
+              </div>
+            </div>
+            <CardDescription className="text-green-600">
               Professioneller Report für Kundenpräsentationen
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-green-600">
+                <Zap className="h-4 w-4" />
+                <span>Kundenoptimierte Darstellung</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-green-600">
+                <FileText className="h-4 w-4" />
+                <span>Detaillierte Impressum-Analyse</span>
+              </div>
+            </div>
             <CustomerHTMLExport 
               businessData={businessData}
               realData={realData}
@@ -87,18 +105,28 @@ const PDFExport: React.FC<PDFExportProps> = ({
           </CardContent>
         </Card>
 
-        {/* Technischer Report */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        {/* Technical Report */}
+        <Card className="border-2 border-gray-100 hover:border-gray-200 transition-colors">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg text-gray-700">
               <FileText className="h-5 w-5" />
               Technischer Report
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-gray-600">
               Detaillierte Analyse für interne Zwecke
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Download className="h-4 w-4" />
+                <span>Vollständige Rohdaten</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Settings className="h-4 w-4" />
+                <span>Technische Details</span>
+              </div>
+            </div>
             <HTMLExport 
               businessData={businessData}
               realData={realData}
