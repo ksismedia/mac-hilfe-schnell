@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Star, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { MapPin, Star, TrendingUp, TrendingDown, Minus, Award, Target } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualCompetitorInput from './ManualCompetitorInput';
 import CompetitorServicesInput from './CompetitorServicesInput';
@@ -43,59 +43,94 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const ownRating = realData.reviews.google.rating || 4.2;
   const ownReviewCount = realData.reviews.google.count || 0;
 
-  // Schätze eigene Services (falls verfügbar, sonst Durchschnitt für Branche)
-  const estimateOwnServicesCount = () => {
-    const industryServiceCounts = {
-      'shk': 8, // Heizung, Sanitär, Klima, Wartung, etc.
-      'maler': 6, // Innen-/Außenanstrich, Renovierung, etc.
-      'elektriker': 7, // Installation, Wartung, Smart Home, etc.
-      'dachdecker': 5, // Dachdeckung, Reparatur, Dämmung, etc.
-      'stukateur': 6, // Putz, Trockenbau, Sanierung, etc.
-      'planungsbuero': 10 // Verschiedene Planungsarten
+  // Schätze eigene Services basierend auf Branche
+  const getIndustryServices = (industry: string) => {
+    const services = {
+      'shk': ['Heizungsinstallation', 'Sanitärinstallation', 'Klimaanlagen', 'Wartung & Service', 'Notdienst', 'Badezimmer-Sanierung', 'Rohrreinigung', 'Heizungsoptimierung'],
+      'maler': ['Innenanstrich', 'Außenanstrich', 'Tapezieren', 'Renovierung', 'Fassadengestaltung', 'Lackierarbeiten'],
+      'elektriker': ['Elektroinstallation', 'Smart Home', 'Beleuchtung', 'Sicherheitstechnik', 'Wartung', 'Notdienst', 'PV-Anlagen'],
+      'dachdecker': ['Dachdeckung', 'Dachreparatur', 'Dämmung', 'Dachrinnen', 'Flachdach'],
+      'stukateur': ['Innenputz', 'Außenputz', 'Trockenbau', 'Sanierung', 'Wärmedämmung', 'Renovierung'],
+      'planungsbuero': ['Architektur', 'Bauplanung', 'Statik', 'Energieberatung', 'Baugenehmigung', 'Projektmanagement', 'Bauüberwachung', 'Sanierungsplanung', 'Brandschutz', 'Barrierefreiheit']
     };
-    return industryServiceCounts[industry] || 6;
+    return services[industry] || services['shk'];
   };
 
-  const ownServicesCount = estimateOwnServicesCount();
+  const ownServices = getIndustryServices(industry);
+  const ownServicesCount = ownServices.length;
 
-  // Berechne Services-Score für einen Konkurrenten
-  const calculateServicesScore = (servicesCount: number) => {
-    if (servicesCount === 0) return 0;
-    // Services-Score: 0-100 basierend auf Anzahl der Services
-    // Mehr Services = höherer Score, aber mit abnehmenden Erträgen
-    return Math.min(100, (servicesCount / 10) * 100);
-  };
-
-  // Berechne Gesamt-Performance-Score für einen Konkurrenten
+  // Erweiterte Scoring-Funktion mit Service-Bewertung
   const calculateCompetitorScore = (competitor: any) => {
-    const ratingScore = (competitor.rating / 5) * 100; // 0-100
-    const reviewScore = Math.min(100, (competitor.reviews / 50) * 100); // 0-100, max bei 50+ Reviews
-    const servicesScore = calculateServicesScore(competitor.services.length);
+    const ratingScore = (competitor.rating / 5) * 100;
+    const reviewScore = Math.min(100, (competitor.reviews / 50) * 100);
     
-    // Gewichtung: Rating 50%, Reviews 30%, Services 20%
-    return (ratingScore * 0.5) + (reviewScore * 0.3) + (servicesScore * 0.2);
+    // Service-Score: Berücksichtigt Anzahl und Qualität der Services
+    const serviceCount = competitor.services?.length || 0;
+    const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
+    
+    // Bonus für Services, die der eigene Betrieb nicht hat
+    const uniqueServices = competitor.services?.filter(service => 
+      !ownServices.some(ownService => 
+        ownService.toLowerCase().includes(service.toLowerCase()) || 
+        service.toLowerCase().includes(ownService.toLowerCase())
+      )
+    ) || [];
+    
+    const uniqueServiceBonus = uniqueServices.length * 5; // 5 Punkte pro einzigartigen Service
+    const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+    
+    // Gewichtung: Rating 40%, Reviews 25%, Services 35%
+    return (ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35);
   };
 
-  // Kombiniere echte und manuelle Konkurrenten mit erweiterten Scores
+  // Kombiniere alle Konkurrenten mit erweiterten Scores
   const allCompetitors = [
     ...realData.competitors.map(comp => {
       const services = competitorServices[comp.name] || [];
+      const score = calculateCompetitorScore({...comp, services});
+      
+      // Service-Analyse
+      const uniqueServices = services.filter(service => 
+        !ownServices.some(ownService => 
+          ownService.toLowerCase().includes(service.toLowerCase()) || 
+          service.toLowerCase().includes(ownService.toLowerCase())
+        )
+      );
+      
       return {
         ...comp,
         services,
         isManual: false,
-        performanceScore: calculateCompetitorScore({...comp, services})
+        performanceScore: score,
+        uniqueServices,
+        serviceAdvantage: services.length > ownServicesCount,
+        hasUniqueServices: uniqueServices.length > 0
       };
     }),
-    ...manualCompetitors.map(comp => ({
-      name: comp.name,
-      rating: comp.rating,
-      reviews: comp.reviews,
-      distance: comp.distance,
-      services: comp.services || [],
-      isManual: true,
-      performanceScore: calculateCompetitorScore(comp)
-    }))
+    ...manualCompetitors.map(comp => {
+      const score = calculateCompetitorScore(comp);
+      const services = comp.services || [];
+      
+      const uniqueServices = services.filter(service => 
+        !ownServices.some(ownService => 
+          ownService.toLowerCase().includes(service.toLowerCase()) || 
+          service.toLowerCase().includes(ownService.toLowerCase())
+        )
+      );
+      
+      return {
+        name: comp.name,
+        rating: comp.rating,
+        reviews: comp.reviews,
+        distance: comp.distance,
+        services,
+        isManual: true,
+        performanceScore: score,
+        uniqueServices,
+        serviceAdvantage: services.length > ownServicesCount,
+        hasUniqueServices: uniqueServices.length > 0
+      };
+    })
   ];
 
   const getComparisonIcon = (competitorValue: number, ownValue: number) => {
@@ -114,10 +149,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const ownPerformanceScore = calculateCompetitorScore({
     rating: ownRating,
     reviews: ownReviewCount,
-    services: { length: ownServicesCount }
+    services: ownServices
   });
 
-  // Berechne durchschnittliche Konkurrenz-Performance
+  // Statistiken
   const avgCompetitorRating = allCompetitors.length > 0 
     ? allCompetitors.reduce((sum, comp) => sum + comp.rating, 0) / allCompetitors.length 
     : 0;
@@ -134,6 +169,19 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     ? allCompetitors.reduce((sum, comp) => sum + comp.performanceScore, 0) / allCompetitors.length
     : 0;
 
+  // Service-Gap Analyse
+  const allCompetitorServices = new Set();
+  allCompetitors.forEach(comp => {
+    comp.services.forEach(service => allCompetitorServices.add(service));
+  });
+
+  const missingServices = Array.from(allCompetitorServices).filter(service => 
+    !ownServices.some(ownService => 
+      ownService.toLowerCase().includes(service.toLowerCase()) || 
+      service.toLowerCase().includes(ownService.toLowerCase())
+    )
+  );
+
   return (
     <div className="space-y-6">
       {/* Manuelle Eingabe */}
@@ -142,17 +190,62 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         onCompetitorsChange={onCompetitorsChange}
       />
 
+      {/* Service-Gap Analyse */}
+      {missingServices.length > 0 && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-800">
+              <Target className="h-5 w-5" />
+              Service-Lücken Analyse
+            </CardTitle>
+            <CardDescription className="text-amber-700">
+              Services, die Ihre Konkurrenten anbieten, Sie aber möglicherweise nicht
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <p className="text-sm text-amber-800">
+                <strong>{missingServices.length} potenzielle Service-Erweiterungen</strong> identifiziert:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {missingServices.slice(0, 8).map((service, index) => (
+                  <Badge key={index} variant="outline" className="bg-white text-amber-800 border-amber-300">
+                    {service}
+                  </Badge>
+                ))}
+                {missingServices.length > 8 && (
+                  <Badge variant="outline" className="bg-white text-amber-600">
+                    +{missingServices.length - 8} weitere
+                  </Badge>
+                )}
+              </div>
+              <div className="bg-white rounded-lg p-3 border border-amber-200">
+                <h4 className="font-medium text-amber-900 mb-2">💡 Empfehlung:</h4>
+                <p className="text-sm text-amber-800">
+                  Prüfen Sie, welche dieser Services zu Ihrem Geschäftsmodell passen könnten. 
+                  Jeder zusätzliche Service kann Ihren Wettbewerbsvorteil stärken.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Vergleichs-Übersicht */}
       <Card>
         <CardHeader>
-          <CardTitle>Ihr Unternehmen vs. lokale Konkurrenz</CardTitle>
+          <CardTitle>Leistungsvergleich: Ihr Unternehmen vs. Konkurrenz</CardTitle>
           <CardDescription>
-            Direkter Leistungsvergleich mit {allCompetitors.length} lokalen Konkurrenten in {city}
+            Umfassender Vergleich mit {allCompetitors.length} lokalen Konkurrenten in {city}
             {manualCompetitors.length > 0 && (
               <span className="ml-2">
                 (davon {manualCompetitors.length} manuell hinzugefügt)
               </span>
             )}
+            <br />
+            <small className="text-blue-600">
+              Bewertung: 40% Kundenbewertung • 25% Anzahl Reviews • 35% Service-Portfolio
+            </small>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -179,7 +272,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     <span className="font-bold">{ownReviewCount}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Services (geschätzt):</span>
+                    <span className="text-sm">Services:</span>
                     <span className="font-bold">{ownServicesCount}</span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -231,9 +324,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
             <Card className="border-green-200">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg text-green-600">
-                  Ihr Vorsprung
+                  Ihr Wettbewerbsposition
                 </CardTitle>
-                <Badge variant="outline">Vergleich</Badge>
+                <Badge variant="outline">Direktvergleich</Badge>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -283,13 +376,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       {/* Detaillierte Konkurrenzanalyse */}
       <Card>
         <CardHeader>
-          <CardTitle>Konkurrenzanalyse für {city}</CardTitle>
+          <CardTitle>Detaillierte Konkurrenzanalyse für {city}</CardTitle>
           <CardDescription>
-            Lokale Konkurrenten in der {industry.toUpperCase()}-Branche im Umkreis von {address}
-            <br />
-            <small className="text-blue-600">
-              Services fließen jetzt mit 20% Gewichtung in die Gesamtbewertung ein
-            </small>
+            Lokale Konkurrenten in der {industry.toUpperCase()}-Branche sortiert nach Gesamtleistung
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -332,12 +421,18 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                         )}
                         {competitor.performanceScore > ownPerformanceScore && (
                           <Badge variant="destructive" className="text-xs">
-                            Stärker
+                            Überlegen
                           </Badge>
                         )}
                         {competitor.performanceScore < ownPerformanceScore && (
                           <Badge variant="default" className="text-xs bg-green-600">
-                            Schwächer
+                            Unterlegen
+                          </Badge>
+                        )}
+                        {competitor.hasUniqueServices && (
+                          <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                            <Award className="h-3 w-3 mr-1" />
+                            Zusatz-Services
                           </Badge>
                         )}
                         <Badge variant="secondary" className="text-xs">
@@ -365,6 +460,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">Services:</span>
                       <span className="font-medium">{competitor.services.length}</span>
+                      {competitor.serviceAdvantage && (
+                        <Badge variant="outline" className="text-xs text-red-600 border-red-200">
+                          Mehr als Sie
+                        </Badge>
+                      )}
                     </div>
                     
                     <div className="flex items-center gap-2">
@@ -378,6 +478,25 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     <Progress value={competitor.performanceScore} className="w-full" />
                   </div>
 
+                  {/* Unique Services Highlight */}
+                  {competitor.uniqueServices.length > 0 && (
+                    <div className="mb-3 p-2 bg-orange-50 rounded border border-orange-200">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Award className="h-4 w-4 text-orange-600" />
+                        <span className="text-sm font-medium text-orange-800">
+                          Services, die Sie nicht anbieten:
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {competitor.uniqueServices.map((service, i) => (
+                          <Badge key={i} variant="outline" className="text-xs bg-white text-orange-700 border-orange-300">
+                            {service}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Services Input für automatisch gefundene Konkurrenten */}
                   {!competitor.isManual && (
                     <CompetitorServicesInput
@@ -390,7 +509,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                   {/* Services Display für manuelle Konkurrenten */}
                   {competitor.isManual && competitor.services.length > 0 && (
                     <div className="mt-3">
-                      <span className="text-sm font-medium text-gray-700">Leistungen:</span>
+                      <span className="text-sm font-medium text-gray-700">Alle Leistungen:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {competitor.services.map((service, i) => (
                           <Badge key={i} variant="outline" className="text-xs">
@@ -405,33 +524,42 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
             </div>
           )}
 
-          {/* Strategische Empfehlungen */}
+          {/* Strategische Empfehlungen basierend auf Service-Analyse */}
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-semibold text-blue-900 mb-2">
-              Strategische Empfehlungen basierend auf Konkurrenzanalyse
+              📊 Strategische Empfehlungen basierend auf Service-Vergleich
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
               <div>
-                <h4 className="font-medium mb-1">Sofort umsetzbar:</h4>
+                <h4 className="font-medium mb-1">Sofortige Maßnahmen:</h4>
                 <ul className="space-y-1">
                   {ownRating < avgCompetitorRating && <li>• Kundenbewertungen aktiv sammeln</li>}
                   {ownReviewCount < avgCompetitorReviews && <li>• Mehr Google-Rezensionen generieren</li>}
-                  {ownServicesCount < avgCompetitorServices && <li>• Service-Portfolio erweitern und bewerben</li>}
-                  <li>• Google My Business Profil optimieren</li>
-                  <li>• Lokale SEO-Keywords verwenden</li>
+                  {missingServices.length > 0 && <li>• Service-Portfolio um {missingServices.slice(0, 2).join(', ')} erweitern</li>}
+                  <li>• Alle bestehenden Services prominent auf Website darstellen</li>
+                  <li>• Google My Business Profil mit allen Services aktualisieren</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-1">Mittelfristig:</h4>
+                <h4 className="font-medium mb-1">Mittelfristige Strategie:</h4>
                 <ul className="space-y-1">
-                  <li>• Alle Services prominent auf Website darstellen</li>
-                  <li>• Social Media Präsenz aufbauen</li>
-                  <li>• Referenzprojekte dokumentieren</li>
-                  <li>• Website-Performance verbessern</li>
-                  <li>• Kundenservice-Qualität steigern</li>
+                  <li>• Service-Differenzierung: Spezialisierung entwickeln</li>
+                  <li>• Cross-Selling zwischen bestehenden Services</li>
+                  <li>• Konkurrenz-Services analysieren und übernehmen</li>
+                  <li>• Partnerschaften für fehlende Services prüfen</li>
+                  <li>• Preispositionierung basierend auf Service-Umfang</li>
                 </ul>
               </div>
             </div>
+            {allCompetitors.filter(c => c.hasUniqueServices).length > 0 && (
+              <div className="mt-3 p-3 bg-white rounded border border-blue-200">
+                <h4 className="font-medium text-blue-900 mb-1">⚠️ Konkurrenzvorteile schließen:</h4>
+                <p className="text-blue-800">
+                  {allCompetitors.filter(c => c.hasUniqueServices).length} Konkurrenten bieten Services an, die Sie nicht haben. 
+                  Prüfen Sie die Nachfrage nach diesen Services in Ihrer Region.
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
