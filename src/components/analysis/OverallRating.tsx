@@ -24,7 +24,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
   // Berechne Social Media Score mit manuellen Daten
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('Social Media Score calculated:', socialMediaScore);
+  console.log('OverallRating - Social Media Score calculated:', socialMediaScore);
 
   // Alle Metriken mit korrekten Scores - Social Media Score wird jetzt korrekt verwendet
   const metrics = [
@@ -41,14 +41,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Local SEO', score: 75, weight: 5, maxScore: 100 }
   ];
 
-  console.log('All metrics with scores:', metrics.map(m => ({ name: m.name, score: m.score })));
+  console.log('OverallRating - All metrics with scores:', metrics.map(m => ({ name: m.name, score: m.score })));
 
   // Gewichteter Gesamtscore
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   const overallScore = Math.round(weightedScore / totalWeight);
 
-  console.log('Overall score calculation:', { totalWeight, weightedScore, overallScore });
+  console.log('OverallRating - Overall score calculation:', { totalWeight, weightedScore, overallScore });
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
@@ -169,4 +169,3 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 };
 
 export default OverallRating;
-
