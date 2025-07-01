@@ -35,10 +35,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     defaultValues: {
       facebookUrl: manualData?.facebookUrl || '',
       instagramUrl: manualData?.instagramUrl || '',
+      linkedinUrl: manualData?.linkedinUrl || '',
+      twitterUrl: manualData?.twitterUrl || '',
+      youtubeUrl: manualData?.youtubeUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
       instagramFollowers: manualData?.instagramFollowers || '',
+      linkedinFollowers: manualData?.linkedinFollowers || '',
+      twitterFollowers: manualData?.twitterFollowers || '',
+      youtubeSubscribers: manualData?.youtubeSubscribers || '',
       facebookLastPost: manualData?.facebookLastPost || '',
-      instagramLastPost: manualData?.instagramLastPost || ''
+      instagramLastPost: manualData?.instagramLastPost || '',
+      linkedinLastPost: manualData?.linkedinLastPost || '',
+      twitterLastPost: manualData?.twitterLastPost || '',
+      youtubeLastPost: manualData?.youtubeLastPost || ''
     }
   });
 
@@ -47,10 +56,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     form.reset({
       facebookUrl: manualData?.facebookUrl || '',
       instagramUrl: manualData?.instagramUrl || '',
+      linkedinUrl: manualData?.linkedinUrl || '',
+      twitterUrl: manualData?.twitterUrl || '',
+      youtubeUrl: manualData?.youtubeUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
       instagramFollowers: manualData?.instagramFollowers || '',
+      linkedinFollowers: manualData?.linkedinFollowers || '',
+      twitterFollowers: manualData?.twitterFollowers || '',
+      youtubeSubscribers: manualData?.youtubeSubscribers || '',
       facebookLastPost: manualData?.facebookLastPost || '',
-      instagramLastPost: manualData?.instagramLastPost || ''
+      instagramLastPost: manualData?.instagramLastPost || '',
+      linkedinLastPost: manualData?.linkedinLastPost || '',
+      twitterLastPost: manualData?.twitterLastPost || '',
+      youtubeLastPost: manualData?.youtubeLastPost || ''
     });
     console.log('Form reset with manual data:', manualData);
   }, [manualData, form]);
@@ -69,12 +87,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
 
   const handleClearManual = () => {
     form.reset({
-      facebookUrl: '',
-      instagramUrl: '',
-      facebookFollowers: '',
-      instagramFollowers: '',
-      facebookLastPost: '',
-      instagramLastPost: ''
+      facebookUrl: '', instagramUrl: '', linkedinUrl: '', twitterUrl: '', youtubeUrl: '',
+      facebookFollowers: '', instagramFollowers: '', linkedinFollowers: '', twitterFollowers: '', youtubeSubscribers: '',
+      facebookLastPost: '', instagramLastPost: '', linkedinLastPost: '', twitterLastPost: '', youtubeLastPost: ''
     });
     if (onManualDataChange) {
       onManualDataChange(null);
@@ -88,7 +103,10 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
 
   // Verwende manuelle Daten falls vorhanden, sonst Fallback
   const socialData = realData.socialMedia;
-  const hasManualData = manualData && (manualData.facebookUrl || manualData.instagramUrl);
+  const hasManualData = manualData && (
+    manualData.facebookUrl || manualData.instagramUrl || manualData.linkedinUrl || 
+    manualData.twitterUrl || manualData.youtubeUrl
+  );
 
   console.log('Current manual data:', manualData);
   console.log('Has manual data:', hasManualData);
@@ -135,7 +153,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
           <CardDescription>
             {hasManualData 
               ? `Manuell eingegebene Social Media Daten für ${realData.company.name}`
-              : `Live-Suche nach Facebook & Instagram Präsenz für ${realData.company.name}`
+              : `Live-Suche nach Social Media Präsenz für ${realData.company.name}`
             }
           </CardDescription>
         </CardHeader>
@@ -211,6 +229,99 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                     </div>
                   </div>
                 </div>
+
+                {/* LinkedIn Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-blue-600">💼 LinkedIn</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+                      <Input
+                        id="linkedinUrl"
+                        placeholder="https://www.linkedin.com/company/ihr-unternehmen"
+                        {...form.register('linkedinUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="linkedinFollowers">Follower</Label>
+                      <Input
+                        id="linkedinFollowers"
+                        placeholder="z.B. 120"
+                        {...form.register('linkedinFollowers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="linkedinLastPost">Letzter Post</Label>
+                      <Input
+                        id="linkedinLastPost"
+                        placeholder="z.B. vor 5 Tagen"
+                        {...form.register('linkedinLastPost')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Twitter Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-blue-400">🐦 Twitter / X</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="twitterUrl">Twitter URL</Label>
+                      <Input
+                        id="twitterUrl"
+                        placeholder="https://twitter.com/ihr-unternehmen"
+                        {...form.register('twitterUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="twitterFollowers">Follower</Label>
+                      <Input
+                        id="twitterFollowers"
+                        placeholder="z.B. 85"
+                        {...form.register('twitterFollowers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="twitterLastPost">Letzter Post</Label>
+                      <Input
+                        id="twitterLastPost"
+                        placeholder="z.B. vor 2 Tagen"
+                        {...form.register('twitterLastPost')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* YouTube Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-red-600">🎥 YouTube</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="youtubeUrl">YouTube URL</Label>
+                      <Input
+                        id="youtubeUrl"
+                        placeholder="https://www.youtube.com/channel/ihr-kanal"
+                        {...form.register('youtubeUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="youtubeSubscribers">Abonnenten</Label>
+                      <Input
+                        id="youtubeSubscribers"
+                        placeholder="z.B. 45"
+                        {...form.register('youtubeSubscribers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="youtubeLastPost">Letztes Video</Label>
+                      <Input
+                        id="youtubeLastPost"
+                        placeholder="z.B. vor 2 Wochen"
+                        {...form.register('youtubeLastPost')}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div className="flex gap-3 pt-4">
@@ -243,7 +354,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
           ) : (
             <div className="space-y-6">
               {/* Platform Übersicht */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Facebook */}
                 <Card>
                   <CardHeader className="pb-3">
@@ -347,6 +458,126 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                     )}
                   </CardContent>
                 </Card>
+
+                {/* LinkedIn */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      💼 LinkedIn
+                      <Badge variant={(hasManualData && manualData?.linkedinUrl) ? "default" : "destructive"}>
+                        {(hasManualData && manualData?.linkedinUrl) ? "Gefunden" : "Nicht gefunden"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {hasManualData && manualData?.linkedinUrl ? (
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>URL:</strong> {manualData.linkedinUrl}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Follower:</span>
+                          <span className="font-medium">{manualData.linkedinFollowers || '0'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Letzter Post:</span>
+                          <span className="font-medium">{manualData.linkedinLastPost || 'Unbekannt'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Keine LinkedIn-Seite gefunden
+                        </p>
+                        <div className="bg-amber-50 rounded-lg p-3">
+                          <p className="text-xs text-amber-800">
+                            Nutzen Sie "Manuell eingeben" um Ihre LinkedIn-Daten hinzuzufügen
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Twitter */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      🐦 Twitter / X
+                      <Badge variant={(hasManualData && manualData?.twitterUrl) ? "default" : "destructive"}>
+                        {(hasManualData && manualData?.twitterUrl) ? "Gefunden" : "Nicht gefunden"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {hasManualData && manualData?.twitterUrl ? (
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>URL:</strong> {manualData.twitterUrl}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Follower:</span>
+                          <span className="font-medium">{manualData.twitterFollowers || '0'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Letzter Post:</span>
+                          <span className="font-medium">{manualData.twitterLastPost || 'Unbekannt'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Keine Twitter-Seite gefunden
+                        </p>
+                        <div className="bg-amber-50 rounded-lg p-3">
+                          <p className="text-xs text-amber-800">
+                            Nutzen Sie "Manuell eingeben" um Ihre Twitter-Daten hinzuzufügen
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* YouTube */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      🎥 YouTube
+                      <Badge variant={(hasManualData && manualData?.youtubeUrl) ? "default" : "destructive"}>
+                        {(hasManualData && manualData?.youtubeUrl) ? "Gefunden" : "Nicht gefunden"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {hasManualData && manualData?.youtubeUrl ? (
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>URL:</strong> {manualData.youtubeUrl}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Abonnenten:</span>
+                          <span className="font-medium">{manualData.youtubeSubscribers || '0'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Letztes Video:</span>
+                          <span className="font-medium">{manualData.youtubeLastPost || 'Unbekannt'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Kein YouTube-Kanal gefunden
+                        </p>
+                        <div className="bg-amber-50 rounded-lg p-3">
+                          <p className="text-xs text-amber-800">
+                            Nutzen Sie "Manuell eingeben" um Ihre YouTube-Daten hinzuzufügen
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Empfehlungen */}
@@ -361,6 +592,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                       <ul className="text-sm space-y-1">
                         {!(hasManualData && manualData?.facebookUrl) && !socialData.facebook.found && <li>• Facebook Business-Seite erstellen</li>}
                         {!(hasManualData && manualData?.instagramUrl) && !socialData.instagram.found && <li>• Instagram Business-Profil einrichten</li>}
+                        {!(hasManualData && manualData?.linkedinUrl) && <li>• LinkedIn Unternehmensseite anlegen</li>}
+                        {!(hasManualData && manualData?.twitterUrl) && <li>• Twitter/X Business-Account erstellen</li>}
+                        {!(hasManualData && manualData?.youtubeUrl) && <li>• YouTube-Kanal für Firmenpräsentation</li>}
                         <li>• Regelmäßig branchenrelevante Inhalte posten</li>
                         <li>• Kundenprojekte visuell dokumentieren</li>
                       </ul>
@@ -368,10 +602,12 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                     <div>
                       <h4 className="font-medium mb-2 text-green-600">Potenzial</h4>
                       <ul className="text-sm space-y-1">
-                        <li>• Social Media Marketing für Handwerk</li>
-                        <li>• Vorher/Nachher Bilder</li>
+                        <li>• Multi-Channel Social Media Marketing</li>
+                        <li>• Vorher/Nachher Bilder und Videos</li>
+                        <li>• B2B-Networking über LinkedIn</li>
                         <li>• Kundenbewertungen teilen</li>
                         <li>• Lokale Reichweite erhöhen</li>
+                        <li>• Fachkompetenz durch YouTube-Tutorials</li>
                       </ul>
                     </div>
                   </div>

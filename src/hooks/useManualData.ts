@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 export interface ManualImprintData {
@@ -9,10 +8,19 @@ export interface ManualImprintData {
 export interface ManualSocialData {
   facebookUrl: string;
   instagramUrl: string;
+  linkedinUrl: string;
+  twitterUrl: string;
+  youtubeUrl: string;
   facebookFollowers: string;
   instagramFollowers: string;
+  linkedinFollowers: string;
+  twitterFollowers: string;
+  youtubeSubscribers: string;
   facebookLastPost: string;
   instagramLastPost: string;
+  linkedinLastPost: string;
+  twitterLastPost: string;
+  youtubeLastPost: string;
 }
 
 export interface ManualWorkplaceData {
