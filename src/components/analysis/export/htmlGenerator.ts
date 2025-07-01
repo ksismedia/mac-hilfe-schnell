@@ -79,14 +79,12 @@ export const generateCustomerHTML = ({
                            hourlyRateData.regionAverage > 0;
 
   // Calculate legal compliance scores with CORRECT impressum evaluation
-  // If missingImprintElements exists and has items, score should be low
-  // If missingImprintElements is empty or undefined, impressum is complete
   const impressumScore = missingImprintElements && missingImprintElements.length > 0 ? 
     Math.max(0, 100 - (missingImprintElements.length * 8)) : 
     (realData.imprint.found ? Math.max(realData.imprint.score, 85) : 30);
   
-  const datenschutzScore = 85; // Assumed score
-  const agbScore = 60; // Assumed score
+  const datenschutzScore = 85;
+  const agbScore = 60;
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
   // Industry-specific insights
@@ -115,12 +113,19 @@ export const generateCustomerHTML = ({
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
+                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo">
+                    <rect width="50" height="50" rx="10" fill="#3373dc"/>
+                    <path d="M15 15h20v5h-20z" fill="white"/>
+                    <path d="M15 25h15v5h-15z" fill="white"/>
+                    <path d="M15 35h10v5h-10z" fill="white"/>
+                    <circle cx="40" cy="15" r="3" fill="#10b981"/>
+                    <path d="M38 15l1.5 1.5L42 14" stroke="white" stroke-width="1.5" fill="none"/>
+                </svg>
             </div>
             <h1>Social Listening und Monitoring Report</h1>
             <p class="subtitle">Professionelle Analyse für ${businessData.address}</p>
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
-                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Handwerk Stars Professional
+                Erstellt am ${new Date().toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })} | Handwerk Stars Professional
             </p>
         </div>
 
@@ -134,18 +139,38 @@ export const generateCustomerHTML = ({
             <div class="score-card">
                 <div class="score-big">${overallScore}</div>
                 <div class="score-label">Gesamtbewertung</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${overallScore}%" data-value="${overallScore}"></div>
+                    </div>
+                </div>
             </div>
             <div class="score-card">
                 <div class="score-big">${visibilityScore}</div>
                 <div class="score-label">Online-Sichtbarkeit</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${visibilityScore}%" data-value="${visibilityScore}"></div>
+                    </div>
+                </div>
             </div>
             <div class="score-card">
                 <div class="score-big">${performanceScore}</div>
                 <div class="score-label">Website-Performance</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${performanceScore}%" data-value="${performanceScore}"></div>
+                    </div>
+                </div>
             </div>
             <div class="score-card">
                 <div class="score-big">${enhancedSocialMediaScore}</div>
                 <div class="score-label">Social Media</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%" data-value="${enhancedSocialMediaScore}"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -168,7 +193,7 @@ export const generateCustomerHTML = ({
                                 <div class="progress-fill" style="width: ${impressumScore}%" data-value="${impressumScore}"></div>
                             </div>
                         </div>
-                        ${missingImprintElements && missingImprintElements.length > 0 ? `
+                        ${impressumScore < 100 && missingImprintElements && missingImprintElements.length > 0 ? `
                             <div style="margin-top: 15px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 0.9em;">
                                 <strong style="color: #dc2626; display: block; margin-bottom: 8px;">⚠️ Fehlende Pflichtangaben im Impressum:</strong>
                                 <ul style="margin: 0; padding-left: 20px; color: #991b1b; line-height: 1.6;">
@@ -181,11 +206,11 @@ export const generateCustomerHTML = ({
                                     • Wettbewerbsrechtliche Risiken durch Konkurrenten
                                 </div>
                             </div>
-                        ` : `
+                        ` : impressumScore === 100 ? `
                             <div style="margin-top: 10px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; color: #166534;">
                                 ✅ <strong>Impressum ist vollständig und rechtssicher</strong>
                             </div>
-                        `}
+                        ` : ''}
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Datenschutz</div>
@@ -228,7 +253,7 @@ export const generateCustomerHTML = ({
                     </div>
                 </div>
                 
-                ${missingImprintElements && missingImprintElements.length > 0 ? `
+                ${impressumScore < 100 && missingImprintElements && missingImprintElements.length > 0 ? `
                     <div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px;">
                         <h4 style="color: #92400e; margin-bottom: 10px;">📋 Sofortige Handlungsempfehlungen:</h4>
                         <ol style="margin: 0; padding-left: 20px; color: #78350f; line-height: 1.6;">
@@ -486,57 +511,120 @@ export const generateCustomerHTML = ({
                         <div class="metric-item">
                             <div class="metric-title">Ihr Stundensatz</div>
                             <div class="metric-value">${hourlyRateData.ownRate} €</div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}%" data-value="${Math.min(100, (hourlyRateData.ownRate / 150) * 100)}"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="metric-item">
                             <div class="metric-title">Regionaler Durchschnitt</div>
                             <div class="metric-value">${hourlyRateData.regionAverage} €</div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}%" data-value="${Math.min(100, (hourlyRateData.regionAverage / 150) * 100)}"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="metric-item">
                             <div class="metric-title">Marktposition</div>
                             <div class="metric-value ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'excellent' : 'warning'}">${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Premium-Segment' : 'Durchschnittsbereich'}</div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}%" data-value="${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 85 : 60}"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="metric-item">
                             <div class="metric-title">Preisoptimierung</div>
                             <div class="metric-value good">Potenzial vorhanden</div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%" data-value="75"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
         ` : ''}
 
-        <!-- Strategic Recommendations -->
+        <!-- Strategic Recommendations as Cards -->
         <section class="section">
             <div class="section-header">🚀 Strategische Empfehlungen</div>
             <div class="section-content">
-                <div class="recommendations">
-                    <div class="recommendation-timeframe">
-                        <h4>📈 Sofortmaßnahmen (0-4 Wochen)</h4>
-                        <ul>
-                            ${impressumScore < 90 ? '<li><strong>Impressum vervollständigen</strong> - Rechtliche Sicherheit gewährleisten</li>' : ''}
-                            ${realData.reviews.google.count < 10 ? '<li><strong>Bewertungen sammeln</strong> - Aktive Kundenansprache nach Auftragsabschluss</li>' : ''}
-                            ${realData.seo.score < 70 ? '<li><strong>SEO-Basics optimieren</strong> - Meta-Descriptions und Title-Tags überarbeiten</li>' : ''}
-                            <li><strong>Google My Business aktualisieren</strong> - Vollständige Unternehmensinformationen</li>
-                        </ul>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Sofortmaßnahmen</div>
+                        <div class="metric-value excellent">Priorität Hoch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Umsetzungsbereitschaft</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%" data-value="95"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
+                            ${impressumScore < 90 ? '• Impressum vervollständigen' : ''}
+                            ${realData.reviews.google.count < 10 ? '• Bewertungen sammeln' : ''}
+                            • Google My Business optimieren
+                        </div>
                     </div>
-
-                    <div class="recommendation-timeframe">
-                        <h4>🎯 Mittelfristige Ziele (1-3 Monate)</h4>
-                        <ul>
-                            ${enhancedSocialMediaScore < 60 ? '<li><strong>Social Media aufbauen</strong> - Regelmäßige Posts mit Projektbildern</li>' : ''}
-                            ${realData.performance.score < 70 ? '<li><strong>Website-Performance verbessern</strong> - Ladezeiten optimieren</li>' : ''}
-                            <li><strong>Content-Marketing starten</strong> - Blog oder Ratgeber-Sektion einrichten</li>
-                            <li><strong>Lokale Partnerschaften</strong> - Kooperationen mit anderen Handwerkern</li>
-                        </ul>
+                    <div class="metric-item">
+                        <div class="metric-title">Mittelfristige Ziele</div>
+                        <div class="metric-value good">Priorität Mittel</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Planungsstand</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%" data-value="80"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
+                            ${enhancedSocialMediaScore < 60 ? '• Social Media aufbauen' : ''}
+                            • Website-Performance verbessern
+                            • Content-Marketing starten
+                        </div>
                     </div>
-
-                    <div class="recommendation-timeframe">
-                        <h4>🏆 Langfristige Vision (3-12 Monate)</h4>
-                        <ul>
-                            <li><strong>Digitale Marktführerschaft</strong> - Branchenbeste Online-Präsenz anstreben</li>
-                            <li><strong>Automatisierte Kundengewinnung</strong> - Optimierte Conversion-Funnel</li>
-                            <li><strong>Reputation Management</strong> - Systematische Bewertungsoptimierung</li>
-                            <li><strong>Premium-Positionierung</strong> - Hochwertige Kundensegmente erschließen</li>
-                        </ul>
+                    <div class="metric-item">
+                        <div class="metric-title">Langfristige Vision</div>
+                        <div class="metric-value warning">Strategisch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Visionsentwicklung</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%" data-value="70"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
+                            • Digitale Marktführerschaft
+                            • Automatisierte Kundengewinnung
+                            • Premium-Positionierung
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">ROI-Potenzial</div>
+                        <div class="metric-value excellent">Hoch</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Erwarteter Erfolg</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%" data-value="85"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #374151;">
+                            • 30-50% mehr Online-Anfragen
+                            • 15.000-25.000 € Mehrumsatz/Jahr
+                            • Nachhaltige Marktposition
+                        </div>
                     </div>
                 </div>
 
@@ -544,38 +632,67 @@ export const generateCustomerHTML = ({
                     <h4>🔧 Branchenspezifische Empfehlung</h4>
                     <p>${getIndustryInsights()}</p>
                 </div>
-
-                <div class="roi-potential">
-                    <h4>📊 ROI-Potenzial</h4>
-                    <p>Bei konsequenter Umsetzung der Empfehlungen erwarten wir eine Steigerung der Online-Anfragen um <strong>30-50%</strong> innerhalb der nächsten 6 Monate. Dies entspricht einem geschätzten Mehrumsatz von <strong>15.000-25.000 €</strong> jährlich.</p>
-                </div>
             </div>
         </section>
 
-        <!-- Monitoring Dashboard -->
+        <!-- Monitoring Dashboard as Cards -->
         <section class="section">
             <div class="section-header">📈 Monitoring & Erfolgsmessung</div>
             <div class="section-content">
-                <div class="kpi-grid">
-                    <div class="kpi-item">
-                        <div class="kpi-title">Website-Besucher</div>
-                        <div class="kpi-value">Baseline etablieren</div>
-                        <div class="kpi-target">Ziel: +25% in 3 Monaten</div>
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Website-Besucher</div>
+                        <div class="metric-value warning">Baseline etablieren</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Ziel: +25%</span>
+                                <span>0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%" data-value="25"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="kpi-item">
-                        <div class="kpi-title">Anfragen</div>
-                        <div class="kpi-value">Aktueller Stand</div>
-                        <div class="kpi-target">Ziel: +40% in 6 Monaten</div>
+                    <div class="metric-item">
+                        <div class="metric-title">Anfragen</div>
+                        <div class="metric-value good">Aktueller Stand</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Ziel: +40%</span>
+                                <span>60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%" data-value="60"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="kpi-item">
-                        <div class="kpi-title">Bewertungen</div>
-                        <div class="kpi-value">${realData.reviews.google.count} Google</div>
-                        <div class="kpi-target">Ziel: 1-2 neue/Monat</div>
+                    <div class="metric-item">
+                        <div class="metric-title">Bewertungen</div>
+                        <div class="metric-value ${realData.reviews.google.count > 15 ? 'excellent' : realData.reviews.google.count > 8 ? 'good' : 'warning'}">
+                            ${realData.reviews.google.count} Google
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Ziel: 1-2 neue/Monat</span>
+                                <span>${Math.min(100, realData.reviews.google.count * 5)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="kpi-item">
-                        <div class="kpi-title">Ranking-Position</div>
-                        <div class="kpi-value">Tracking einrichten</div>
-                        <div class="kpi-target">Ziel: Top 3 lokal</div>
+                    <div class="metric-item">
+                        <div class="metric-title">Ranking-Position</div>
+                        <div class="metric-value warning">Tracking einrichten</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Ziel: Top 3 lokal</span>
+                                <span>33%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 33%" data-value="33"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -601,7 +718,7 @@ export const generateCustomerHTML = ({
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; ${new Date().getFullYear()} Handwerk Stars. Alle Rechte vorbehalten. | Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
+                <p>&copy; ${new Date().getFullYear()} Handwerk Stars. Alle Rechte vorbehalten. | Erstellt am ${new Date().toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}</p>
             </div>
         </footer>
     </div>
