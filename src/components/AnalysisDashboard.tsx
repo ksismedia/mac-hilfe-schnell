@@ -388,6 +388,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   realData={realData}
                   manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
+                  manualWorkplaceData={manualWorkplaceData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={transformedCompetitorServices}
                 />
