@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -101,15 +100,28 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     });
   };
 
-  // Verwende manuelle Daten falls vorhanden, sonst Fallback
-  const socialData = realData.socialMedia;
+  // KORRIGIERT: Bessere Erkennung der manuellen Daten
   const hasManualData = manualData && (
     manualData.facebookUrl || manualData.instagramUrl || manualData.linkedinUrl || 
     manualData.twitterUrl || manualData.youtubeUrl
   );
 
-  console.log('Current manual data:', manualData);
-  console.log('Has manual data:', hasManualData);
+  // KORRIGIERT: Separate Prüfung für jede Plattform
+  const hasFacebook = (manualData?.facebookUrl && manualData.facebookUrl.trim() !== '') || realData.socialMedia.facebook.found;
+  const hasInstagram = (manualData?.instagramUrl && manualData.instagramUrl.trim() !== '') || realData.socialMedia.instagram.found;
+  const hasLinkedIn = manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '';
+  const hasTwitter = manualData?.twitterUrl && manualData.twitterUrl.trim() !== '';
+  const hasYouTube = manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '';
+
+  console.log('Social Media Status:', {
+    hasManualData,
+    hasFacebook,
+    hasInstagram,
+    hasLinkedIn,
+    hasTwitter,
+    hasYouTube,
+    manualData
+  });
 
   const getEngagementBadge = (engagement: string) => {
     switch (engagement) {
@@ -353,22 +365,22 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
             </form>
           ) : (
             <div className="space-y-6">
-              {/* Platform Übersicht */}
+              {/* Platform Übersicht - KORRIGIERT */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Facebook */}
+                {/* Facebook - KORRIGIERT */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       📘 Facebook
-                      <Badge variant={(hasManualData && manualData?.facebookUrl) || socialData.facebook.found ? "default" : "destructive"}>
-                        {(hasManualData && manualData?.facebookUrl) || socialData.facebook.found ? "Gefunden" : "Nicht gefunden"}
+                      <Badge variant={hasFacebook ? "default" : "destructive"}>
+                        {hasFacebook ? "Gefunden" : "Nicht vorhanden"}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {(hasManualData && manualData?.facebookUrl) || socialData.facebook.found ? (
+                    {hasFacebook ? (
                       <div className="space-y-3">
-                        {hasManualData && manualData?.facebookUrl && (
+                        {manualData?.facebookUrl && (
                           <div className="text-sm">
                             <strong>URL:</strong> {manualData.facebookUrl}
                           </div>
@@ -376,19 +388,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
                           <span className="font-medium">
-                            {hasManualData && manualData?.facebookFollowers ? manualData.facebookFollowers : socialData.facebook.followers}
+                            {manualData?.facebookFollowers || realData.socialMedia.facebook.followers || '0'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
                           <span className="font-medium">
-                            {hasManualData && manualData?.facebookLastPost ? manualData.facebookLastPost : socialData.facebook.lastPost}
+                            {manualData?.facebookLastPost || realData.socialMedia.facebook.lastPost || 'Unbekannt'}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>
-                          <Badge variant={getEngagementBadge(socialData.facebook.engagement)}>
-                            {socialData.facebook.engagement}
+                          <Badge variant={getEngagementBadge(realData.socialMedia.facebook.engagement)}>
+                            {realData.socialMedia.facebook.engagement}
                           </Badge>
                         </div>
                       </div>
@@ -407,20 +419,20 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   </CardContent>
                 </Card>
 
-                {/* Instagram */}
+                {/* Instagram - KORRIGIERT */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       📷 Instagram
-                      <Badge variant={(hasManualData && manualData?.instagramUrl) || socialData.instagram.found ? "default" : "destructive"}>
-                        {(hasManualData && manualData?.instagramUrl) || socialData.instagram.found ? "Gefunden" : "Nicht gefunden"}
+                      <Badge variant={hasInstagram ? "default" : "destructive"}>
+                        {hasInstagram ? "Gefunden" : "Nicht vorhanden"}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {(hasManualData && manualData?.instagramUrl) || socialData.instagram.found ? (
+                    {hasInstagram ? (
                       <div className="space-y-3">
-                        {hasManualData && manualData?.instagramUrl && (
+                        {manualData?.instagramUrl && (
                           <div className="text-sm">
                             <strong>URL:</strong> {manualData.instagramUrl}
                           </div>
@@ -428,19 +440,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
                           <span className="font-medium">
-                            {hasManualData && manualData?.instagramFollowers ? manualData.instagramFollowers : socialData.instagram.followers}
+                            {manualData?.instagramFollowers || realData.socialMedia.instagram.followers || '0'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
                           <span className="font-medium">
-                            {hasManualData && manualData?.instagramLastPost ? manualData.instagramLastPost : socialData.instagram.lastPost}
+                            {manualData?.instagramLastPost || realData.socialMedia.instagram.lastPost || 'Unbekannt'}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Engagement:</span>
-                          <Badge variant={getEngagementBadge(socialData.instagram.engagement)}>
-                            {socialData.instagram.engagement}
+                          <Badge variant={getEngagementBadge(realData.socialMedia.instagram.engagement)}>
+                            {realData.socialMedia.instagram.engagement}
                           </Badge>
                         </div>
                       </div>
@@ -459,29 +471,29 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   </CardContent>
                 </Card>
 
-                {/* LinkedIn */}
+                {/* LinkedIn - KORRIGIERT */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       💼 LinkedIn
-                      <Badge variant={(hasManualData && manualData?.linkedinUrl) ? "default" : "destructive"}>
-                        {(hasManualData && manualData?.linkedinUrl) ? "Gefunden" : "Nicht gefunden"}
+                      <Badge variant={hasLinkedIn ? "default" : "destructive"}>
+                        {hasLinkedIn ? "Gefunden" : "Nicht vorhanden"}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {hasManualData && manualData?.linkedinUrl ? (
+                    {hasLinkedIn ? (
                       <div className="space-y-3">
                         <div className="text-sm">
-                          <strong>URL:</strong> {manualData.linkedinUrl}
+                          <strong>URL:</strong> {manualData?.linkedinUrl}
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
-                          <span className="font-medium">{manualData.linkedinFollowers || '0'}</span>
+                          <span className="font-medium">{manualData?.linkedinFollowers || '0'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{manualData.linkedinLastPost || 'Unbekannt'}</span>
+                          <span className="font-medium">{manualData?.linkedinLastPost || 'Unbekannt'}</span>
                         </div>
                       </div>
                     ) : (
@@ -499,29 +511,29 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   </CardContent>
                 </Card>
 
-                {/* Twitter */}
+                {/* Twitter - KORRIGIERT */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       🐦 Twitter / X
-                      <Badge variant={(hasManualData && manualData?.twitterUrl) ? "default" : "destructive"}>
-                        {(hasManualData && manualData?.twitterUrl) ? "Gefunden" : "Nicht gefunden"}
+                      <Badge variant={hasTwitter ? "default" : "destructive"}>
+                        {hasTwitter ? "Gefunden" : "Nicht vorhanden"}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {hasManualData && manualData?.twitterUrl ? (
+                    {hasTwitter ? (
                       <div className="space-y-3">
                         <div className="text-sm">
-                          <strong>URL:</strong> {manualData.twitterUrl}
+                          <strong>URL:</strong> {manualData?.twitterUrl}
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
-                          <span className="font-medium">{manualData.twitterFollowers || '0'}</span>
+                          <span className="font-medium">{manualData?.twitterFollowers || '0'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
-                          <span className="font-medium">{manualData.twitterLastPost || 'Unbekannt'}</span>
+                          <span className="font-medium">{manualData?.twitterLastPost || 'Unbekannt'}</span>
                         </div>
                       </div>
                     ) : (
@@ -539,29 +551,29 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   </CardContent>
                 </Card>
 
-                {/* YouTube */}
+                {/* YouTube - KORRIGIERT */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       🎥 YouTube
-                      <Badge variant={(hasManualData && manualData?.youtubeUrl) ? "default" : "destructive"}>
-                        {(hasManualData && manualData?.youtubeUrl) ? "Gefunden" : "Nicht gefunden"}
+                      <Badge variant={hasYouTube ? "default" : "destructive"}>
+                        {hasYouTube ? "Gefunden" : "Nicht vorhanden"}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {hasManualData && manualData?.youtubeUrl ? (
+                    {hasYouTube ? (
                       <div className="space-y-3">
                         <div className="text-sm">
-                          <strong>URL:</strong> {manualData.youtubeUrl}
+                          <strong>URL:</strong> {manualData?.youtubeUrl}
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Abonnenten:</span>
-                          <span className="font-medium">{manualData.youtubeSubscribers || '0'}</span>
+                          <span className="font-medium">{manualData?.youtubeSubscribers || '0'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letztes Video:</span>
-                          <span className="font-medium">{manualData.youtubeLastPost || 'Unbekannt'}</span>
+                          <span className="font-medium">{manualData?.youtubeLastPost || 'Unbekannt'}</span>
                         </div>
                       </div>
                     ) : (
@@ -590,11 +602,11 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                     <div>
                       <h4 className="font-medium mb-2 text-blue-600">Nächste Schritte</h4>
                       <ul className="text-sm space-y-1">
-                        {!(hasManualData && manualData?.facebookUrl) && !socialData.facebook.found && <li>• Facebook Business-Seite erstellen</li>}
-                        {!(hasManualData && manualData?.instagramUrl) && !socialData.instagram.found && <li>• Instagram Business-Profil einrichten</li>}
-                        {!(hasManualData && manualData?.linkedinUrl) && <li>• LinkedIn Unternehmensseite anlegen</li>}
-                        {!(hasManualData && manualData?.twitterUrl) && <li>• Twitter/X Business-Account erstellen</li>}
-                        {!(hasManualData && manualData?.youtubeUrl) && <li>• YouTube-Kanal für Firmenpräsentation</li>}
+                        {!hasFacebook && <li>• Facebook Business-Seite erstellen</li>}
+                        {!hasInstagram && <li>• Instagram Business-Profil einrichten</li>}
+                        {!hasLinkedIn && <li>• LinkedIn Unternehmensseite anlegen</li>}
+                        {!hasTwitter && <li>• Twitter/X Business-Account erstellen</li>}
+                        {!hasYouTube && <li>• YouTube-Kanal für Firmenpräsentation</li>}
                         <li>• Regelmäßig branchenrelevante Inhalte posten</li>
                         <li>• Kundenprojekte visuell dokumentieren</li>
                       </ul>
