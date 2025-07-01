@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +27,7 @@ import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
 import OverallRating from './analysis/OverallRating';
+import SocialMediaSimple from './analysis/SocialMediaSimple';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -315,15 +315,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               <MobileOptimization url={businessData.url} realData={realData} />
             </TabsContent>
 
-            <TabsContent value="social" className="space-y-6 mt-0">
-              <SocialMediaAnalysis 
-                businessData={businessData} 
+            <TabsContent value="social" className="space-y-6">
+              <SocialMediaSimple
+                businessData={businessData}
                 realData={realData}
                 manualData={manualSocialData}
                 onManualDataChange={updateSocialData}
               />
-              <SocialProof businessData={businessData} realData={realData} />
-              <ConversionOptimization url={businessData.url} industry={businessData.industry} />
             </TabsContent>
 
             <TabsContent value="reviews" className="space-y-6 mt-0">
