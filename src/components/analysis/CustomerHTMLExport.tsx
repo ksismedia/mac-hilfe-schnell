@@ -140,12 +140,13 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             <div className="space-y-2">
               <h4 className="font-semibold text-blue-700">✨ Kundenoptimiert:</h4>
               <ul className="text-sm space-y-1 text-blue-600">
-                <li>• Anonymisierte Konkurrenzanalyse</li>
+                <li>• Executive Summary mit Gesamt-Score</li>
+                <li>• Anonymisierte Konkurrenzanalyse (alle Konkurrenten)</li>
                 <li>• Realistische Social Media Bewertung</li>
-                <li>• Grafische Fortschrittsbalken (0-100%)</li>
-                <li>• Professionelles Design</li>
-                <li>• Verständliche Sprache</li>
-                <li>• Strategische Empfehlungen</li>
+                <li>• Nutzerfreundlichkeit & Verfügbarkeit</li>
+                <li>• Kununu/Glassdoor Arbeitsplatz-Bewertungen</li>
+                <li>• Korrekte Rechtssicherheit-Analyse</li>
+                <li>• Professionelles Design ohne Firmennamen</li>
               </ul>
             </div>
             <div className="space-y-2">

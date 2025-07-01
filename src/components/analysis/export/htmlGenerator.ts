@@ -340,7 +340,7 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Competitor Analysis
+  // Competitor Analysis - ANONYMISIERT für Kundenreport  
   const getCompetitorAnalysis = () => {
     if (!manualCompetitors || manualCompetitors.length === 0) {
       return `
@@ -365,13 +365,16 @@ export const generateCustomerHTML = ({
       <div class="metric-card good">
         <h3>👥 Konkurrenzanalyse</h3>
         <div class="competitor-list">
-          ${manualCompetitors.map(competitor => `
+          ${manualCompetitors.map((competitor, index) => `
             <div class="competitor-item">
               <div class="competitor-rank">
-                <strong>${competitor.name}</strong>
+                <strong>Konkurrent ${String.fromCharCode(65 + index)}</strong>
               </div>
               <p><strong>Bewertung:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
               <p><strong>Status:</strong> ${competitor.rating >= 4 ? 'Starker Konkurrent' : competitor.rating >= 3 ? 'Mittlerer Konkurrent' : 'Schwacher Konkurrent'}</p>
+              ${competitorServices && competitorServices[competitor.name] ? `
+                <p><strong>Services:</strong> ${competitorServices[competitor.name].join(', ')}</p>
+              ` : ''}
             </div>
           `).join('')}
         </div>
@@ -985,31 +988,33 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           
-          <!-- Arbeitsklima -->
+          <!-- Kununu & Glassdoor Bewertungen -->
           <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-            <h4>🌟 Arbeitsklima-Bewertung</h4>
+            <h4>🌟 Kununu & Glassdoor Bewertungen</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
-                <p><strong>Mitarbeiterzufriedenheit:</strong> ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating + '/5') : 'Nicht erfasst'}</p>
+                <p><strong>Kununu Rating:</strong> ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating + '/5') : 'Nicht erfasst'}</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 70%"></div>
+                    <div class="progress-fill" style="width: ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating * 20) : 30}%"></div>
                   </div>
                 </div>
+                <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Bewertungen: ${realData.workplace?.kununu?.reviews || 'Keine'}</p>
               </div>
               <div>
-                <p><strong>Work-Life-Balance:</strong> Gut</p>
+                <p><strong>Glassdoor Rating:</strong> ${realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating + '/5') : 'Nicht erfasst'}</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 75%"></div>
+                    <div class="progress-fill" style="width: ${realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating * 20) : 25}%"></div>
                   </div>
                 </div>
+                <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Bewertungen: ${realData.workplace?.glassdoor?.reviews || 'Keine'}</p>
               </div>
               <div>
-                <p><strong>Karrieremöglichkeiten:</strong> Ausbaufähig</p>
+                <p><strong>Arbeitsklima:</strong> ${realData.workplace?.kununu?.rating >= 4 ? 'Sehr gut' : realData.workplace?.kununu?.rating >= 3 ? 'Gut' : 'Ausbaufähig'}</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 60%"></div>
+                    <div class="progress-fill" style="width: ${realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50}%"></div>
                   </div>
                 </div>
               </div>
@@ -1050,7 +1055,7 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Arbeitsplatz-Empfehlungen:</h4>
             <ul>
-              <li>Mitarbeiterbewertungen auf kununu und glassdoor verbessern</li>
+              <li>Mitarbeiterbewertungen auf Kununu und Glassdoor aktiv verbessern</li>
               <li>Employer Branding durch authentische Einblicke stärken</li>
               <li>Ausbildungs- und Karrierewege transparent kommunizieren</li>
               <li>Moderne Benefits und flexible Arbeitszeiten anbieten</li>
@@ -1154,39 +1159,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Social Media Analyse -->
-    <div class="section">
-      <div class="section-header">🏢 Arbeitsplatz-Reputation</div>
-      <div class="section-content">
-        <div class="metric-card ${realData.workplace.overallScore >= 70 ? 'good' : 'warning'}">
-          <h3>Employer Branding</h3>
-          <div class="score-display">
-            <div class="score-circle ${realData.workplace.overallScore >= 70 ? 'green' : 'yellow'}">
-              ${realData.workplace.overallScore}%
-            </div>
-            <div class="score-details">
-              <p><strong>Kununu-Rating:</strong> ${realData.workplace.kununu.rating}/5</p>
-              <p><strong>Kununu-Bewertungen:</strong> ${realData.workplace.kununu.reviews}</p>
-              <p><strong>Glassdoor-Rating:</strong> ${realData.workplace.glassdoor.rating}/5</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${realData.workplace.overallScore}%"></div>
-            </div>
-          </div>
-          <div class="recommendations">
-            <h4>Handlungsempfehlungen:</h4>
-            <ul>
-              <li>Mitarbeiterzufriedenheit regelmäßig messen</li>
-              <li>Positive Arbeitgeber-Bewertungen fördern</li>
-              <li>Unternehmenskultur nach außen kommunizieren</li>
-              <li>Benefits und Entwicklungsmöglichkeiten hervorheben</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Social Media Präsenz -->
     <div class="section">
@@ -1293,8 +1265,10 @@ export const generateCustomerHTML = ({
               <div class="progress-fill" style="width: ${impressumScore}%"></div>
             </div>
           </div>
-          <h4>Impressum-Status:</h4>
-          ${getMissingImprintList()}
+          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+            <h4>📋 Fehlende Impressum-Angaben:</h4>
+            ${getMissingImprintList()}
+          </div>
         </div>
       </div>
     </div>
