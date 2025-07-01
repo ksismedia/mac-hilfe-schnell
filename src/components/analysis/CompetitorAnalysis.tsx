@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -104,7 +105,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         ...comp,
         score,
         uniqueServices,
-        source: 'manual' as const
+        source: 'manual' as const,
+        location: comp.distance // Bei manuellen Konkurrenten ist "distance" oft die Ortsangabe
       };
     })
   ];
@@ -290,6 +292,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                               <span className="text-lg font-semibold">
                                 #{index + 1} {competitor.name}
                               </span>
+                              {competitor.location && (
+                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-300">
+                                  {competitor.location}
+                                </Badge>
+                              )}
                               <Badge variant={competitor.source === 'google' ? 'default' : 'secondary'}>
                                 {competitor.source === 'google' ? 'Google' : 'Manuell'}
                               </Badge>
@@ -303,6 +310,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                                 <Users className="h-4 w-4" />
                                 <span>{competitor.reviews} Bewertungen</span>
                               </div>
+                              {competitor.distance && competitor.distance !== competitor.location && (
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{competitor.distance}</span>
+                                </div>
+                              )}
                               {'website' in competitor && competitor.website && (
                                 <div className="flex items-center gap-1">
                                   <MapPin className="h-4 w-4" />

@@ -135,8 +135,8 @@ export class BusinessAnalysisService {
     const pageSpeedData = await this.getRealPageSpeedData(url);
     console.log('PageSpeed data retrieved');
     
-    // Verbesserte Konkurrenten-Suche mit strengeren Filtern
-    const competitorsData = await this.getRealCompetitorsData(address, industry);
+    // Verbesserte Konkurrenten-Suche mit strengeren Filtern und Ausschluss der eigenen Firma
+    const competitorsData = await this.getRealCompetitorsData(address, industry, companyName);
     console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
     
     // Social Media Analyse - verbessert
@@ -208,24 +208,26 @@ export class BusinessAnalysisService {
     }
   }
 
-  // Stark verbesserte Konkurrenten-Suche
-  private static async getRealCompetitorsData(address: string, industry: string): Promise<any[]> {
+  // Stark verbesserte Konkurrenten-Suche mit Ausschluss der eigenen Firma
+  private static async getRealCompetitorsData(address: string, industry: string, ownCompanyName?: string): Promise<any[]> {
     console.log('=== STARTING COMPETITOR ANALYSIS ===');
     console.log('Address:', address);
     console.log('Industry:', industry);
+    console.log('Own Company:', ownCompanyName);
 
     try {
-      // Verwende die verbesserte Google API Suche
-      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, industry);
+      // Verwende die verbesserte Google API Suche mit Firmenname
+      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, industry, ownCompanyName);
       
       if (nearbyResult?.results && nearbyResult.results.length > 0) {
-        console.log(`SUCCESS: Found ${nearbyResult.results.length} real competitors`);
+        console.log(`SUCCESS: Found ${nearbyResult.results.length} real competitors (excluding own company)`);
         
         return nearbyResult.results.map((place: any) => ({
           name: place.name,
           distance: place.distance || this.calculateDistance(place.geometry?.location) || '< 10 km',
           rating: place.rating || 0,
-          reviews: place.user_ratings_total || 0
+          reviews: place.user_ratings_total || 0,
+          location: place.locationInfo?.display || ''
         }));
       }
       

@@ -115,8 +115,8 @@ export class GoogleAPIService {
     }
   }
 
-  // Verbesserte Konkurrenzsuche - nur echte Betriebe mit strengen Filtern
-  static async getNearbyCompetitors(location: string, businessType: string): Promise<any> {
+  // Verbesserte Konkurrenzsuche - nur echte Betriebe mit strengen Filtern und ohne eigene Firma
+  static async getNearbyCompetitors(location: string, businessType: string, ownCompanyName?: string): Promise<any> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
       console.warn('No API Key - returning empty competitors list');
@@ -127,6 +127,7 @@ export class GoogleAPIService {
       console.log('=== SEARCHING REAL COMPETITORS ===');
       console.log('Location:', location);
       console.log('Business Type:', businessType);
+      console.log('Own Company (to exclude):', ownCompanyName);
       
       // Erst Geocoding für exakte Koordinaten
       const coordinates = await this.getCoordinatesFromAddress(location);
@@ -183,7 +184,7 @@ export class GoogleAPIService {
 
       // Durchsuche mit verschiedenen Suchbegriffen
       for (const searchTerm of searchTerms) {
-        const competitors = await this.searchNearbyBusinesses(coordinates, searchTerm, location);
+        const competitors = await this.searchNearbyBusinesses(coordinates, searchTerm, location, ownCompanyName);
         if (competitors.length > 0) {
           allCompetitors.push(...competitors);
           console.log(`Found ${competitors.length} competitors with term: ${searchTerm}`);
@@ -191,7 +192,7 @@ export class GoogleAPIService {
       }
 
       // Duplikate entfernen und nach Qualität filtern
-      const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location);
+      const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location, ownCompanyName);
       
       console.log(`Final result: ${uniqueCompetitors.length} real competitors found`);
       return { results: uniqueCompetitors.slice(0, 5) }; // Maximal 5 beste
@@ -233,8 +234,8 @@ export class GoogleAPIService {
     }
   }
 
-  // Neue Methode: Bessere Nearby-Suche
-  private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string): Promise<any[]> {
+  // Neue Methode: Bessere Nearby-Suche mit Ausschluss der eigenen Firma
+  private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string): Promise<any[]> {
     const apiKey = this.getApiKey();
     const results: any[] = [];
 
@@ -256,13 +257,20 @@ export class GoogleAPIService {
             if (response.ok) {
               const data = await response.json();
               if (data?.results?.length > 0) {
-                // Nur echte Geschäfte mit strengen Kriterien
+                // Nur echte Geschäfte mit strengen Kriterien und ohne eigene Firma
                 const realBusinesses = data.results.filter((place: any) => 
-                  this.isRealBusiness(place, searchTerm, originalLocation)
+                  this.isRealBusiness(place, searchTerm, originalLocation) &&
+                  !this.isOwnCompany(place, ownCompanyName)
                 );
                 
-                results.push(...realBusinesses);
-                console.log(`Radius ${radius/1000}km: Found ${realBusinesses.length} real businesses`);
+                // PLZ und Ort zu jedem Geschäft hinzufügen
+                const businessesWithLocation = realBusinesses.map((place: any) => ({
+                  ...place,
+                  locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity)
+                }));
+                
+                results.push(...businessesWithLocation);
+                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} real businesses (excluding own company)`);
                 
                 if (results.length >= 5) break; // Genug gefunden
               }
@@ -280,6 +288,85 @@ export class GoogleAPIService {
     }
 
     return results;
+  }
+
+  // Neue Methode: Prüft ob es sich um die eigene Firma handelt
+  private static isOwnCompany(place: any, ownCompanyName?: string): boolean {
+    if (!ownCompanyName || !place.name) {
+      return false;
+    }
+
+    const placeName = place.name.toLowerCase().trim();
+    const ownName = ownCompanyName.toLowerCase().trim();
+
+    // Exakte Übereinstimmung
+    if (placeName === ownName) {
+      console.log(`Excluding own company: "${place.name}"`);
+      return true;
+    }
+
+    // Ähnlichkeitscheck (mehr als 80% ähnlich)
+    const similarity = this.calculateNameSimilarity(placeName, ownName);
+    if (similarity > 0.8) {
+      console.log(`Excluding similar company name: "${place.name}" (similarity: ${similarity.toFixed(2)})`);
+      return true;
+    }
+
+    return false;
+  }
+
+  // Neue Methode: Berechnet Namensähnlichkeit
+  private static calculateNameSimilarity(name1: string, name2: string): number {
+    const words1 = name1.split(/\s+/).filter(w => w.length > 2);
+    const words2 = name2.split(/\s+/).filter(w => w.length > 2);
+    
+    if (words1.length === 0 || words2.length === 0) return 0;
+    
+    const commonWords = words1.filter(word1 => 
+      words2.some(word2 => 
+        word1.includes(word2) || word2.includes(word1) || word1 === word2
+      )
+    );
+    
+    return commonWords.length / Math.max(words1.length, words2.length);
+  }
+
+  // Neue Methode: Extrahiert PLZ und Ort aus Adresse
+  private static extractLocationInfo(address: string): { postalCode: string; city: string; display: string } {
+    if (!address) {
+      return { postalCode: '', city: '', display: '' };
+    }
+
+    // Deutsche Adressmuster: "12345 Musterstadt" oder "Straße 1, 12345 Musterstadt"
+    const germanPattern = /(\d{5})\s+([^,]+)/;
+    const match = address.match(germanPattern);
+
+    if (match) {
+      const postalCode = match[1];
+      const city = match[2].trim();
+      return {
+        postalCode,
+        city,
+        display: `${postalCode} ${city}`
+      };
+    }
+
+    // Fallback: Versuche Stadt aus letztem Teil zu extrahieren
+    const parts = address.split(',');
+    const lastPart = parts[parts.length - 1]?.trim();
+    
+    if (lastPart) {
+      const cityMatch = lastPart.match(/\d+\s+(.+)/);
+      if (cityMatch) {
+        return {
+          postalCode: '',
+          city: cityMatch[1],
+          display: cityMatch[1]
+        };
+      }
+    }
+
+    return { postalCode: '', city: '', display: '' };
   }
 
   // Neue Methode: Strengere Validierung für echte Geschäfte
@@ -344,8 +431,8 @@ export class GoogleAPIService {
     return commonWords.length / Math.max(words1.length, words2.length);
   }
 
-  // Neue Methode: Konkurrenten filtern und deduplizieren
-  private static filterAndDeduplicateCompetitors(competitors: any[], originalLocation: string): any[] {
+  // Neue Methode: Konkurrenten filtern und deduplizieren mit Ausschluss der eigenen Firma
+  private static filterAndDeduplicateCompetitors(competitors: any[], originalLocation: string, ownCompanyName?: string): any[] {
     const seen = new Set<string>();
     const filtered: any[] = [];
 
@@ -357,6 +444,11 @@ export class GoogleAPIService {
     });
 
     for (const competitor of sorted) {
+      // Eigene Firma ausschließen
+      if (this.isOwnCompany(competitor, ownCompanyName)) {
+        continue;
+      }
+
       // Duplikate anhand des Namens vermeiden
       const nameKey = competitor.name.toLowerCase().trim();
       if (seen.has(nameKey)) {
