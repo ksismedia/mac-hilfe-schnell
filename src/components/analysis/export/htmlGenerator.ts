@@ -386,9 +386,31 @@ export const generateCustomerHTML = ({
             <div class="score-label">Performance</div>
           </div>
           <div class="score-card">
+            <div class="score-big">${realData.mobile.overallScore}%</div>
+            <div class="score-label">Mobile</div>
+          </div>
+          <div class="score-card">
             <div class="score-big">${impressumScore}%</div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
+          <div class="score-card">
+            <div class="score-big">${realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0}%</div>
+            <div class="score-label">Bewertungen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">🏢 Unternehmensdaten</div>
+      <div class="section-content">
+        <div class="company-info">
+          <h3>${realData.company.name}</h3>
+          <p><strong>Website:</strong> ${businessData.url}</p>
+          <p><strong>Adresse:</strong> ${businessData.address}</p>
+          <p><strong>Branche:</strong> ${businessData.industry.toUpperCase()}</p>
+          <p><strong>Telefon:</strong> ${realData.company.phone || 'Nicht verfügbar'}</p>
+          <p><strong>E-Mail:</strong> ${realData.company.email || 'Nicht verfügbar'}</p>
         </div>
       </div>
     </div>
@@ -415,6 +437,70 @@ export const generateCustomerHTML = ({
     </div>
 
     <div class="section">
+      <div class="section-header">⭐ Google Bewertungen</div>
+      <div class="section-content">
+        <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
+          <h3>Google My Business Bewertungen</h3>
+          <div class="score-display">
+            <div class="score-circle ${realData.reviews.google.rating >= 4 ? 'green' : realData.reviews.google.rating >= 3 ? 'yellow' : 'red'}">
+              ${realData.reviews.google.rating}/5
+            </div>
+            <div class="score-details">
+              <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
+              <p><strong>Durchschnitt:</strong> ${realData.reviews.google.rating}/5 Sternen</p>
+              <p><strong>Status:</strong> ${realData.reviews.google.rating >= 4 ? 'Sehr gut' : realData.reviews.google.rating >= 3 ? 'Gut' : 'Verbesserung nötig'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-value="${Math.round((realData.reviews.google.rating * 20)/10)*10}" style="width: ${realData.reviews.google.rating * 20}%"></div>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Handlungsempfehlungen:</h4>
+            <ul>
+              <li>Aktiv um Bewertungen bitten</li>
+              <li>Auf alle Bewertungen antworten</li>
+              <li>Service-Qualität kontinuierlich verbessern</li>
+              <li>Google My Business Profil pflegen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">🎯 Keywords</div>
+      <div class="section-content">
+        <div class="metric-card good">
+          <h3>Keyword-Analyse</h3>
+          <div class="score-display">
+            <div class="score-circle ${realData.keywords.filter(k => k.found).length / realData.keywords.length >= 0.7 ? 'green' : 'yellow'}">
+              ${realData.keywords.filter(k => k.found).length}/${realData.keywords.length}
+            </div>
+            <div class="score-details">
+              <p><strong>Gefunden:</strong> ${realData.keywords.filter(k => k.found).length} von ${realData.keywords.length} Keywords</p>
+              <p><strong>Erfolgsquote:</strong> ${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-value="${Math.round(((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)/10)*10}" style="width: ${(realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%"></div>
+            </div>
+          </div>
+          <div class="keyword-grid">
+            ${realData.keywords.map(keyword => `
+              <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
+                <span>${keyword.keyword}</span>
+                <span>${keyword.found ? '✅' : '❌'}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="section-header">📱 Social Media Analyse</div>
       <div class="section-content">
         ${getSocialMediaAnalysis()}
@@ -428,16 +514,62 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    ${hourlyRateData ? `
     <div class="section">
-      <div class="section-header">📜 Impressum</div>
+      <div class="section-header">💰 Stundensatz-Analyse</div>
       <div class="section-content">
-        <h3>Fehlende Angaben:</h3>
-        ${getMissingImprintList()}
+        <div class="metric-card good">
+          <h3>Preispositionierung</h3>
+          <div class="score-display">
+            <div class="score-circle ${hourlyRateData.ownRate >= hourlyRateData.regionAverage * 0.9 && hourlyRateData.ownRate <= hourlyRateData.regionAverage * 1.1 ? 'green' : 'yellow'}">
+              ${hourlyRateData.ownRate}€
+            </div>
+            <div class="score-details">
+              <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€</p>
+              <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€</p>
+              <p><strong>Position:</strong> ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Über Durchschnitt' : hourlyRateData.ownRate < hourlyRateData.regionAverage ? 'Unter Durchschnitt' : 'Marktdurchschnitt'}</p>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Handlungsempfehlungen:</h4>
+            <ul>
+              <li>Marktpreise regelmäßig überprüfen</li>
+              <li>Wertargumentation stärken</li>
+              <li>Zusatzleistungen anbieten</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="section">
+      <div class="section-header">📜 Impressum & Rechtssicherheit</div>
+      <div class="section-content">
+        <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
+          <h3>Impressum-Analyse</h3>
+          <div class="score-display">
+            <div class="score-circle ${impressumScore >= 70 ? 'green' : impressumScore >= 40 ? 'yellow' : 'red'}">${impressumScore}%</div>
+            <div class="score-details">
+              <p><strong>Vollständigkeit:</strong> ${impressumScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
+              <p><strong>Fehlende Angaben:</strong> ${missingImprintElements.length}</p>
+              <p><strong>Rechtsstatus:</strong> ${impressumScore >= 70 ? 'Konform' : 'Risiko'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-value="${Math.round(impressumScore/10)*10}" style="width: ${impressumScore}%"></div>
+            </div>
+          </div>
+          <h4>Fehlende Angaben:</h4>
+          ${getMissingImprintList()}
+        </div>
       </div>
     </div>
 
     <div style="text-align: center; margin-top: 40px; color: #9ca3af;">
-      <p>Erstellt am ${new Date().toLocaleDateString()}</p>
+      <p>Erstellt am ${new Date().toLocaleDateString()} | Social Listening & Monitoring Report</p>
+      <p style="font-size: 0.9em; margin-top: 10px;">Alle Angaben basieren auf automatischer Analyse und manueller Datenerfassung</p>
     </div>
   </div>
 </body>
