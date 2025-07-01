@@ -97,7 +97,7 @@ body {
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
 
-/* Progress-Balken mit korrekten Farbverläufen */
+/* Progress-Balken mit einheitlichem Farbverlauf */
 .progress-container { margin-top: 15px; }
 .progress-bar { 
   background: #374151; 
@@ -113,25 +113,22 @@ body {
   transition: width 0.8s ease;
   position: relative;
   overflow: hidden;
+  /* Einheitlicher Farbverlauf für alle Balken: rot → grün → gold */
+  background: linear-gradient(90deg, 
+    #dc2626 0%,     /* Rot (schlecht) */
+    #ea580c 15%, 
+    #f59e0b 25%, 
+    #eab308 35%, 
+    #84cc16 45%, 
+    #22c55e 55%,    /* Grün (gut) */
+    #10b981 65%, 
+    #14b8a6 75%, 
+    #fbbf24 85%,    /* Gold (exzellent) */
+    #f59e0b 100%
+  );
 }
 
-/* Farbverläufe von rot über grün nach gold */
-.progress-fill[data-value="0"] { background: #dc2626; }
-.progress-fill[data-value="10"] { background: #dc2626; }
-.progress-fill[data-value="20"] { background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%); }
-.progress-fill[data-value="30"] { background: linear-gradient(90deg, #dc2626 0%, #ea580c 50%, #f59e0b 100%); }
-.progress-fill[data-value="40"] { background: linear-gradient(90deg, #ea580c 0%, #f59e0b 100%); }
-.progress-fill[data-value="50"] { background: linear-gradient(90deg, #f59e0b 0%, #eab308 50%, #84cc16 100%); }
-.progress-fill[data-value="60"] { background: linear-gradient(90deg, #eab308 0%, #84cc16 100%); }
-.progress-fill[data-value="70"] { background: linear-gradient(90deg, #84cc16 0%, #22c55e 50%, #10b981 100%); }
-.progress-fill[data-value="80"] { background: linear-gradient(90deg, #22c55e 0%, #10b981 50%, #fbbf24 100%); }
-.progress-fill[data-value="90"] { background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #f59e0b 100%); }
-.progress-fill[data-value="100"] { background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #dc2626 100%); }
-
-/* Fallback für alle anderen Werte */
-.progress-fill:not([data-value]) { 
-  background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #fbbf24 80%, #f59e0b 100%);
-}
+/* Alle spezifischen data-value Regeln entfernt - einheitlicher Farbverlauf für alle */
 
 .company-info { 
   background: rgba(17, 24, 39, 0.6); 
