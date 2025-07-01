@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -88,7 +87,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         score,
         uniqueServices,
         source: 'google' as const,
-        location: comp.location || comp.distance // Verwende location falls vorhanden, sonst distance
+        location: (comp as any).location || comp.distance // Use type assertion to access location safely
       };
     }),
     ...manualCompetitors.map(comp => {
