@@ -1070,22 +1070,44 @@ export const generateCustomerHTML = ({
             <h4>🌟 Kununu & Glassdoor Bewertungen</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
-                <p><strong>Kununu Rating:</strong> ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating + '/5') : 'Nicht erfasst'}</p>
+                <p><strong>Kununu Rating:</strong> ${
+                  manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                    ? `${manualWorkplaceData.kununuRating}/5 ⭐ (${manualWorkplaceData.kununuReviews} Bewertungen)`
+                    : realData.workplace?.kununu?.rating 
+                      ? `${realData.workplace.kununu.rating}/5`
+                      : 'Nicht erfasst'
+                }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating * 20) : 30}%"></div>
+                    <div class="progress-fill" style="width: ${
+                      manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                        ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
+                        : realData.workplace?.kununu?.rating 
+                          ? (realData.workplace.kununu.rating * 20) 
+                          : 30
+                    }%"></div>
                   </div>
                 </div>
-                <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Bewertungen: ${realData.workplace?.kununu?.reviews || 'Keine'}</p>
               </div>
               <div>
-                <p><strong>Glassdoor Rating:</strong> ${realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating + '/5') : 'Nicht erfasst'}</p>
+                <p><strong>Glassdoor Rating:</strong> ${
+                  manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                    ? `${manualWorkplaceData.glassdoorRating}/5 ⭐ (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
+                    : realData.workplace?.glassdoor?.rating 
+                      ? `${realData.workplace.glassdoor.rating}/5`
+                      : 'Nicht erfasst'
+                }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating * 20) : 25}%"></div>
+                    <div class="progress-fill" style="width: ${
+                      manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                        ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
+                        : realData.workplace?.glassdoor?.rating 
+                          ? (realData.workplace.glassdoor.rating * 20) 
+                          : 25
+                    }%"></div>
                   </div>
                 </div>
-                <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Bewertungen: ${realData.workplace?.glassdoor?.reviews || 'Keine'}</p>
               </div>
               <div>
                 <p><strong>Arbeitsklima:</strong> ${realData.workplace?.kununu?.rating >= 4 ? 'Sehr gut' : realData.workplace?.kununu?.rating >= 3 ? 'Gut' : 'Ausbaufähig'}</p>
