@@ -236,8 +236,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         {/* Overall Rating */}
         <div className="mb-6">
           <OverallRating 
+            businessData={businessData}
             realData={realData}
-            manualCompetitors={manualCompetitors}
           />
         </div>
 
@@ -257,8 +257,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <TabsContent value="seo" className="space-y-6">
             <SEOAnalysis url={businessData.url} realData={realData} />
             <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
-            <LocalSEO address={businessData.address} />
-            <ContentAnalysis url={businessData.url} />
+            <LocalSEO address={businessData.address} url={businessData.url} industry={businessData.industry} />
+            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
             <BacklinkAnalysis url={businessData.url} />
           </TabsContent>
 
@@ -277,12 +277,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualData={manualSocialData}
               onManualDataChange={updateSocialData}
             />
-            <SocialProof realData={realData} />
-            <ConversionOptimization url={businessData.url} />
+            <SocialProof businessData={businessData} realData={realData} />
+            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-6">
-            <GoogleReviews address={businessData.address} />
+            <GoogleReviews address={businessData.address} realData={realData} />
           </TabsContent>
 
           <TabsContent value="competitors" className="space-y-6">
@@ -308,7 +308,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualData={manualImprintData}
               onManualDataChange={updateImprintData}
             />
-            <IndustryFeatures />
+            <IndustryFeatures businessData={businessData} />
           </TabsContent>
 
           <TabsContent value="workplace" className="space-y-6">
