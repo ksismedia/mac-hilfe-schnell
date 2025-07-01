@@ -198,7 +198,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             <div className="text-sm text-blue-700 space-y-1">
               <p>• <strong>Social Media:</strong> Realistische Bewertung statt automatisch 100%</p>
               <p>• <strong>Einzelplattform:</strong> Max. 70 Punkte pro Kanal</p>
-              <p>• <strong>Follower-Bewertung:</strong> Gestaffelt nach Anzahl</li>
+              <p>• <strong>Follower-Bewertung:</strong> Gestaffelt nach Anzahl</p>
               <p>• <strong>Aktivität:</strong> Post-Häufigkeit wird berücksichtigt</p>
               <p>• <strong>Multi-Platform:</strong> Kleiner Bonus für mehrere Kanäle</p>
             </div>
