@@ -207,33 +207,57 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Analysis Tabs - Fixed Layout */}
+        {/* Analysis Tabs */}
         <div className="space-y-6">
           <Tabs defaultValue="seo" className="w-full">
-            <div className="mb-6">
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-gray-800 border border-yellow-400/30 h-auto">
-                <TabsTrigger value="seo" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+            <div className="mb-6 overflow-x-auto">
+              <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-gray-800 border border-yellow-400/30 p-1 text-muted-foreground min-w-full">
+                <TabsTrigger 
+                  value="seo" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   SEO
                 </TabsTrigger>
-                <TabsTrigger value="performance" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="performance" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Performance
                 </TabsTrigger>
-                <TabsTrigger value="mobile" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="mobile" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Mobile
                 </TabsTrigger>
-                <TabsTrigger value="social" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="social" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Social
                 </TabsTrigger>
-                <TabsTrigger value="reviews" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="reviews" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Reviews
                 </TabsTrigger>
-                <TabsTrigger value="competitors" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="competitors" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Konkurrenz
                 </TabsTrigger>
-                <TabsTrigger value="legal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="legal" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Legal
                 </TabsTrigger>
-                <TabsTrigger value="workplace" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                <TabsTrigger 
+                  value="workplace" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
+                >
                   Arbeitgeber
                 </TabsTrigger>
               </TabsList>

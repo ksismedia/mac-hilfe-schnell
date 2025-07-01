@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,6 @@ import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
-import APIKeyManager from '@/components/APIKeyManager';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff } from 'lucide-react';
 
@@ -29,7 +29,7 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showApiKeyForm, setShowApiKeyForm] = useState(true); // Starte immer mit true
+  const [needsApiKey, setNeedsApiKey] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
@@ -39,18 +39,63 @@ const Index = () => {
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
-  // Check API key on mount
+  // Check for API key immediately when component mounts
   useEffect(() => {
-    const savedKey = GoogleAPIService.getApiKey();
-    console.log('Checking saved API key:', savedKey ? 'Found' : 'Not found');
+    console.log('=== API Key Check on Mount ===');
+    const existingKey = GoogleAPIService.getApiKey();
+    console.log('Existing API key:', existingKey ? 'EXISTS' : 'MISSING');
     
-    if (savedKey) {
-      setApiKey(savedKey);
-      setShowApiKeyForm(false); // Verstecke Form wenn Key vorhanden
+    if (!existingKey) {
+      console.log('No API key found - showing form');
+      setNeedsApiKey(true);
     } else {
-      setShowApiKeyForm(true); // Zeige Form wenn kein Key
+      console.log('API key found - hiding form');
+      setApiKey(existingKey);
+      setNeedsApiKey(false);
     }
   }, []);
+
+  const validateAndSaveApiKey = async (keyToValidate: string) => {
+    console.log('=== Validating API Key ===');
+    setIsValidatingApiKey(true);
+
+    try {
+      // Test the API key with a simple geocoding request
+      const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
+      console.log('Testing API key with URL:', testUrl);
+      
+      const response = await fetch(testUrl);
+      const data = await response.json();
+      
+      console.log('API Response:', data);
+
+      if (response.ok && data.status === 'OK') {
+        // Save the valid key
+        GoogleAPIService.setApiKey(keyToValidate);
+        setNeedsApiKey(false);
+        
+        toast({
+          title: "✅ API-Key erfolgreich",
+          description: "Der Google API-Key wurde erfolgreich validiert und gespeichert.",
+        });
+        
+        console.log('API key validated and saved successfully');
+        return true;
+      } else {
+        throw new Error(`API validation failed: ${data.status || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('API Key validation error:', error);
+      toast({
+        title: "❌ Ungültiger API-Key",
+        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe.",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsValidatingApiKey(false);
+    }
+  };
 
   const handleApiKeySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,39 +109,7 @@ const Index = () => {
       return;
     }
 
-    setIsValidatingApiKey(true);
-
-    try {
-      GoogleAPIService.setApiKey(apiKey);
-      
-      const testResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
-      );
-
-      if (testResponse.ok) {
-        const data = await testResponse.json();
-        if (data.status === 'OK') {
-          toast({
-            title: "API-Key erfolgreich",
-            description: "Der Google API-Key wurde erfolgreich validiert.",
-          });
-          setShowApiKeyForm(false);
-        } else {
-          throw new Error(`API-Key ungültig: ${data.status}`);
-        }
-      } else {
-        throw new Error('API-Key Validierung fehlgeschlagen');
-      }
-    } catch (error) {
-      console.error('API-Key Validierung fehlgeschlagen:', error);
-      toast({
-        title: "Ungültiger API-Key",
-        description: "Der eingegebene Google API-Key ist ungültig. Bitte überprüfen Sie Ihren Key.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsValidatingApiKey(false);
-    }
+    await validateAndSaveApiKey(apiKey.trim());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -169,13 +182,13 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Show API Key form first if needed
-  if (showApiKeyForm) {
+  // Show API Key form if needed
+  if (needsApiKey) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
         <div className="max-w-2xl mx-auto pt-8">
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
+            <h1 className="text-3xl font-bold text-yellow-400 mb-2">🔑 Google API-Schlüssel erforderlich</h1>
             <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
           </div>
           
@@ -201,11 +214,13 @@ const Index = () => {
                       onChange={(e) => setApiKey(e.target.value)}
                       placeholder="AIzaSy..."
                       className="pr-10 bg-gray-700 border-gray-600 text-white"
+                      disabled={isValidatingApiKey}
                     />
                     <button
                       type="button"
                       onClick={() => setShowApiKey(!showApiKey)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                      disabled={isValidatingApiKey}
                     >
                       {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -213,10 +228,10 @@ const Index = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  disabled={isValidatingApiKey} 
+                  disabled={isValidatingApiKey || !apiKey.trim()} 
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
                 >
-                  {isValidatingApiKey ? 'Validiere API-Key...' : 'API-Key validieren'}
+                  {isValidatingApiKey ? '🔄 Validiere API-Key...' : '✅ API-Key validieren'}
                 </Button>
               </form>
               
