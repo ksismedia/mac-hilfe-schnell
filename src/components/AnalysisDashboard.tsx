@@ -26,6 +26,7 @@ import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
+import OverallRating from './analysis/OverallRating';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -186,9 +187,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* Score Overview Tiles - Prominent at the top */}
+        {/* Overall Rating Component - Neue Integration */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-yellow-400 mb-4">Gesamtbewertung - {realData.company.name}</h2>
+          <OverallRating 
+            businessData={businessData}
+            realData={realData}
+            manualSocialData={manualSocialData}
+          />
+        </div>
+
+        {/* Score Overview Tiles - Keep existing */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             <div className={`p-4 rounded-lg border ${getScoreBg(realData.seo.score)}`}>
               <div className="text-center">
