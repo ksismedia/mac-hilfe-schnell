@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -142,15 +141,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     );
   }
 
-  // Calculate scores for the overview tiles - FIX: Use the same calculation as OverallRating
+  // KORRIGIERTE Score-Berechnungen - verwende IMMER die calculateSocialMediaScore Funktion
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
-  // FIX: Use the correct Social Media Score calculation
+  // WICHTIG: Verwende die korrekte Social Media Score Berechnung
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('Dashboard - Social Media Score calculated:', socialMediaScore);
+  console.log('Dashboard - KORRIGIERTER Social Media Score:', socialMediaScore);
 
+  // ... keep existing code (getScoreColor and getScoreBg functions)
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
     if (score >= 60) return 'text-yellow-400';
@@ -198,7 +198,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Score Overview Tiles - Now with correct Social Media Score */}
+        {/* Score Overview Tiles - KORRIGIERT mit richtigem Social Media Score */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
@@ -249,8 +249,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             
             <div className={`p-4 rounded-lg border ${getScoreBg(socialMediaScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(socialMediaScore)}`}>
+                <div className={`text-2xl font-bold ${getScoreColor(socialMediaScore)} relative`}>
                   {socialMediaScore}
+                  <span className="absolute -top-1 -right-1 text-xs bg-green-500 text-white px-1 rounded">✓</span>
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Social Media</div>
               </div>
