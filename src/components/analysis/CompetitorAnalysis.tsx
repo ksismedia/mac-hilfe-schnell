@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,26 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AlertCircle, TrendingUp, Star, Users, Award, Target, MapPin } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
 
 interface CompetitorAnalysisProps {
   address: string;
   industry: string;
   realData: RealBusinessData;
-  manualCompetitors: Array<{
-    name: string;
-    rating: number;
-    reviews: number;
-    services: string[];
-    website?: string;
-  }>;
-  competitorServices: Record<string, { services: string[]; source: 'auto' | 'manual' }>;
-  onCompetitorsChange: (competitors: Array<{
-    name: string;
-    rating: number;
-    reviews: number;
-    services: string[];
-    website?: string;
-  }>) => void;
+  manualCompetitors: ManualCompetitor[];
+  competitorServices: CompetitorServices;
+  onCompetitorsChange: (competitors: ManualCompetitor[]) => void;
   onCompetitorServicesChange: (name: string, services: string[]) => void;
 }
 
@@ -315,7 +303,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                                 <Users className="h-4 w-4" />
                                 <span>{competitor.reviews} Bewertungen</span>
                               </div>
-                              {competitor.website && (
+                              {'website' in competitor && competitor.website && (
                                 <div className="flex items-center gap-1">
                                   <MapPin className="h-4 w-4" />
                                   <span className="truncate max-w-xs">{competitor.website}</span>

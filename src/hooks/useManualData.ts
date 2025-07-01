@@ -29,11 +29,15 @@ export interface ManualCompetitor {
   rating: number;
   reviews: number;
   distance: string;
-  services?: string[];
+  services: string[];
+  website?: string;
 }
 
 export interface CompetitorServices {
-  [competitorName: string]: string[];
+  [competitorName: string]: {
+    services: string[];
+    source: 'auto' | 'manual';
+  };
 }
 
 export const useManualData = () => {
@@ -63,12 +67,15 @@ export const useManualData = () => {
     console.log('Manual Competitors Updated:', competitors);
   }, []);
 
-  const updateCompetitorServices = useCallback((competitorName: string, services: string[], source?: string) => {
+  const updateCompetitorServices = useCallback((competitorName: string, services: string[], source: 'auto' | 'manual' = 'manual') => {
     setCompetitorServices(prev => ({
       ...prev,
-      [competitorName]: services
+      [competitorName]: {
+        services,
+        source
+      }
     }));
-    console.log('Competitor Services Updated:', competitorName, services, source || 'default');
+    console.log('Competitor Services Updated:', competitorName, services, source);
   }, []);
 
   return {
