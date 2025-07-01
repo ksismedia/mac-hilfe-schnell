@@ -366,7 +366,7 @@ export const generateCustomerHTML = ({
   <div class="container">
     <div class="header">
       <div class="logo-container">
-        <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=150&h=100&fit=crop&crop=center" alt="Company Logo" class="logo" />
+        <img src="/lovable-uploads/1b7bf83e-0e07-4072-85cb-b162354578ea.png" alt="HANDWERK STARS Logo" class="logo" />
       </div>
       <h1>Social Listening und Monitoring Report</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
@@ -767,7 +767,7 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=120&h=80&fit=crop&crop=center" alt="Company Logo" class="logo" style="max-width: 120px;" />
+        <img src="/lovable-uploads/1b7bf83e-0e07-4072-85cb-b162354578ea.png" alt="HANDWERK STARS Logo" class="logo" style="max-width: 120px;" />
       </div>
       <h3 style="color: #fbbf24; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
       <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
