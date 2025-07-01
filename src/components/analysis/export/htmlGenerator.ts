@@ -291,80 +291,94 @@ export const generateCustomerHTML = ({
   };
 
   // Generate the HTML
-  return `
-    <!DOCTYPE html>
-    <html lang="de">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Social Listening Report - ${realData.company.name}</title>
-      ${getHTMLStyles()}
-    </head>
-    <body>
-      <div class="container">
-        <header>
-          <h1>Social Listening Report</h1>
-          <h2>${realData.company.name} - ${businessData.url}</h2>
-        </header>
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Listening Report - ${realData.company.name}</title>
+  <style>
+    ${getHTMLStyles()}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Social Listening Report</h1>
+      <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
+    </div>
 
-        <div class="section">
-          <h2>🎯 Executive Summary</h2>
-          <div class="summary-grid">
-            <div class="summary-item">
-              <div class="summary-score ${realData.seo.score >= 70 ? 'good' : 'warning'}">${realData.seo.score}%</div>
-              <div class="summary-label">SEO Optimierung</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-score ${socialMediaScore >= 60 ? 'good' : 'warning'}">${socialMediaScore}%</div>
-              <div class="summary-label">Social Media</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-score ${realData.performance.score >= 70 ? 'good' : 'warning'}">${realData.performance.score}%</div>
-              <div class="summary-label">Performance</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-score ${impressumScore >= 70 ? 'good' : 'warning'}">${impressumScore}%</div>
-              <div class="summary-label">Rechtssicherheit</div>
-            </div>
+    <div class="section">
+      <div class="section-header">🎯 Executive Summary</div>
+      <div class="section-content">
+        <div class="score-overview">
+          <div class="score-card">
+            <div class="score-big">${realData.seo.score}%</div>
+            <div class="score-label">SEO Optimierung</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big">${socialMediaScore}%</div>
+            <div class="score-label">Social Media</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big">${realData.performance.score}%</div>
+            <div class="score-label">Performance</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big">${impressumScore}%</div>
+            <div class="score-label">Rechtssicherheit</div>
           </div>
         </div>
-
-        <div class="section">
-          <h2>🔎 SEO Analyse</h2>
-          ${getSEOAnalysis()}
-        </div>
-
-        <div class="section">
-          <h2>🚀 Performance Analyse</h2>
-          ${getPerformanceAnalysis()}
-        </div>
-
-        <div class="section">
-          <h2>📱 Mobile Optimierung</h2>
-          ${getMobileOptimizationAnalysis()}
-        </div>
-
-        <div class="section">
-          <h2>📱 Social Media Analyse</h2>
-          ${getSocialMediaAnalysis()}
-        </div>
-
-        <div class="section">
-          <h2>👥 Konkurrenzanalyse</h2>
-          ${getCompetitorAnalysis()}
-        </div>
-
-        <div class="section">
-          <h2>📜 Impressum</h2>
-          <h3>Fehlende Angaben:</h3>
-          ${getMissingImprintList()}
-        </div>
-
-        <footer>
-          <p>Erstellt am ${new Date().toLocaleDateString()}</p>
-        </footer>
       </div>
-    </body>
-    </html>
-  `;
+    </div>
+
+    <div class="section">
+      <div class="section-header">🔎 SEO Analyse</div>
+      <div class="section-content">
+        ${getSEOAnalysis()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">🚀 Performance Analyse</div>
+      <div class="section-content">
+        ${getPerformanceAnalysis()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">📱 Mobile Optimierung</div>
+      <div class="section-content">
+        ${getMobileOptimizationAnalysis()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">📱 Social Media Analyse</div>
+      <div class="section-content">
+        ${getSocialMediaAnalysis()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">👥 Konkurrenzanalyse</div>
+      <div class="section-content">
+        ${getCompetitorAnalysis()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">📜 Impressum</div>
+      <div class="section-content">
+        <h3>Fehlende Angaben:</h3>
+        ${getMissingImprintList()}
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: #9ca3af;">
+      <p>Erstellt am ${new Date().toLocaleDateString()}</p>
+    </div>
+  </div>
+</body>
+</html>`;
 };
