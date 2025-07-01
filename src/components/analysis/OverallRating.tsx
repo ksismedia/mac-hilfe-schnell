@@ -22,12 +22,22 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
 
-  // Social Media Score mit korrekter Funktion berechnen - MIT DEBUG
-  console.log('=== OVERALL RATING DEBUG ===');
-  console.log('Manual Social Data received:', manualSocialData);
+  // Social Media Score mit korrekter Funktion berechnen - DETAILLIERTES DEBUG
+  console.log('=== OVERALL RATING DETAILLIERTES DEBUG ===');
+  console.log('Manual Social Data received:', JSON.stringify(manualSocialData, null, 2));
+  console.log('Manual Social Data Type:', typeof manualSocialData);
+  console.log('Manual Social Data ist null?', manualSocialData === null);
+  console.log('Manual Social Data ist undefined?', manualSocialData === undefined);
+  
+  if (manualSocialData) {
+    console.log('Facebook URL:', manualSocialData.facebookUrl);
+    console.log('Facebook Followers:', manualSocialData.facebookFollowers);
+    console.log('Facebook Last Post:', manualSocialData.facebookLastPost);
+  }
+  
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
   console.log('Social Media Score calculated:', socialMediaScore);
-  console.log('=== END DEBUG ===');
+  console.log('=== END DETAILLIERTES DEBUG ===');
 
   // Alle Metriken mit korrekten Scores
   const metrics = [
@@ -63,7 +73,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive';
   };
 
-  // Debug-Info für manuelle Social Media Daten
+  // ERWEITERTE Debug-Info für manuelle Social Media Daten
   const hasManualSocialData = Boolean(manualSocialData && (
     (manualSocialData.facebookUrl && manualSocialData.facebookUrl.trim() !== '') ||
     (manualSocialData.instagramUrl && manualSocialData.instagramUrl.trim() !== '') ||
@@ -72,6 +82,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     (manualSocialData.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '')
   ));
 
+  console.log('hasManualSocialData:', hasManualSocialData);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -79,6 +91,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
           <CardTitle>Gesamtbewertung - {realData.company.name}</CardTitle>
           <CardDescription>
             Vollständige Analyse für {realData.company.url}
+            {hasManualSocialData && (
+              <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                ✅ Manuelle Social Media Daten aktiv
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -107,11 +124,16 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                       {metric.name === 'Social Media' && (
                         <div className="flex gap-1">
                           <Badge variant="default" className="text-xs bg-green-600">
-                            LIVE: {metric.score}
+                            SCORE: {metric.score}
                           </Badge>
                           {hasManualSocialData && (
                             <Badge variant="default" className="text-xs bg-blue-600">
-                              MANUELL
+                              ✅ MANUELL EINGEGEBEN
+                            </Badge>
+                          )}
+                          {!hasManualSocialData && (
+                            <Badge variant="destructive" className="text-xs">
+                              ❌ KEINE DATEN
                             </Badge>
                           )}
                         </div>
@@ -170,7 +192,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
                     <li>• Google Bewertungen: {realData.reviews.google.count}</li>
                     <li>• Konkurrenten: {realData.competitors.length}</li>
-                    <li>• Social Media Score: {socialMediaScore}/100 {hasManualSocialData ? '✓ MANUELL' : '❌ KEINE DATEN'}</li>
+                    <li>• Social Media Score: {socialMediaScore}/100 {hasManualSocialData ? '✅ MANUELL AKTIV' : '❌ KEINE DATEN'}</li>
                     <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
                   </ul>
                 </div>
@@ -178,14 +200,33 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               
               {hasManualSocialData && (
                 <div className="mt-4 p-3 bg-green-100 rounded border border-green-300">
-                  <h4 className="font-medium text-green-800 mb-1">✅ Manuelle Social Media Daten erkannt:</h4>
-                  <div className="text-xs text-green-700 grid grid-cols-2 gap-2">
-                    {manualSocialData?.facebookUrl && <div>• Facebook: ✓</div>}
-                    {manualSocialData?.instagramUrl && <div>• Instagram: ✓</div>}
-                    {manualSocialData?.linkedinUrl && <div>• LinkedIn: ✓</div>}
-                    {manualSocialData?.twitterUrl && <div>• Twitter: ✓</div>}
-                    {manualSocialData?.youtubeUrl && <div>• YouTube: ✓</div>}
+                  <h4 className="font-medium text-green-800 mb-2">✅ Manuelle Social Media Daten erkannt:</h4>
+                  <div className="text-sm text-green-700 grid grid-cols-2 gap-2">
+                    {manualSocialData?.facebookUrl && manualSocialData.facebookUrl.trim() !== '' && (
+                      <div>• Facebook: ✓ ({manualSocialData.facebookFollowers || '0'} Follower)</div>
+                    )}
+                    {manualSocialData?.instagramUrl && manualSocialData.instagramUrl.trim() !== '' && (
+                      <div>• Instagram: ✓ ({manualSocialData.instagramFollowers || '0'} Follower)</div>
+                    )}
+                    {manualSocialData?.linkedinUrl && manualSocialData.linkedinUrl.trim() !== '' && (
+                      <div>• LinkedIn: ✓ ({manualSocialData.linkedinFollowers || '0'} Follower)</div>
+                    )}
+                    {manualSocialData?.twitterUrl && manualSocialData.twitterUrl.trim() !== '' && (
+                      <div>• Twitter: ✓ ({manualSocialData.twitterFollowers || '0'} Follower)</div>
+                    )}
+                    {manualSocialData?.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '' && (
+                      <div>• YouTube: ✓ ({manualSocialData.youtubeSubscribers || '0'} Abonnenten)</div>
+                    )}
                   </div>
+                </div>
+              )}
+
+              {!hasManualSocialData && (
+                <div className="mt-4 p-3 bg-amber-100 rounded border border-amber-300">
+                  <h4 className="font-medium text-amber-800 mb-1">⚠️ Keine Social Media Daten eingegeben</h4>
+                  <p className="text-sm text-amber-700">
+                    Gehen Sie zum "Social" Tab und klicken Sie "Manuell eingeben" um Ihre Social Media Daten hinzuzufügen.
+                  </p>
                 </div>
               )}
             </div>
