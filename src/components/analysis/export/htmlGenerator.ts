@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 
 interface CustomerReportData {
@@ -13,6 +13,7 @@ interface CustomerReportData {
   competitorServices: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements: string[];
+  manualSocialData?: ManualSocialData | null;
 }
 
 export const generateCustomerHTML = ({
@@ -21,7 +22,8 @@ export const generateCustomerHTML = ({
   manualCompetitors,
   competitorServices,
   hourlyRateData,
-  missingImprintElements = []
+  missingImprintElements = [],
+  manualSocialData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   
