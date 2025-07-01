@@ -198,7 +198,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Score Overview Tiles - mit korrektem Social Media Score */}
+        {/* Score Overview Tiles - FIXED: Use calculated socialMediaScore */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
