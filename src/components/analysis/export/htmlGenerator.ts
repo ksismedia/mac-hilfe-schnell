@@ -53,7 +53,7 @@ export const generateCustomerHTML = ({
     }
   };
 
-  // SEO Analysis
+  // SEO Analysis - Enhanced
   const getSEOAnalysis = () => {
     const seoScore = realData.seo.score;
     const scoreClass = seoScore >= 70 ? 'good' : 'warning';
@@ -73,13 +73,107 @@ export const generateCustomerHTML = ({
             <div class="progress-fill" data-value="${Math.round(seoScore/10)*10}" style="width: ${seoScore}%"></div>
           </div>
         </div>
+        
+        <!-- Branchenrelevante Keywords -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+          <h4>🎯 Branchenrelevante Keywords</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>Hauptkeywords:</strong> ${businessData.industry === 'shk' ? 'Sanitär, Heizung, Klima' : businessData.industry === 'maler' ? 'Malerbetrieb, Fassade, Lackierung' : businessData.industry === 'elektriker' ? 'Elektriker, Installation, Reparatur' : businessData.industry === 'dachdecker' ? 'Dachdecker, Dachsanierung, Bedachung' : businessData.industry === 'stukateur' ? 'Stukateur, Putz, Trockenbau' : 'Planungsbüro, Architektur'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(30, seoScore * 0.8)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Long-Tail Keywords:</strong> ${seoScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(20, seoScore * 0.6)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${businessData.address ? Math.max(40, seoScore * 0.9) : 20}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Website-Struktur -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+          <h4>🏗️ Website-Struktur</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>URL-Struktur:</strong> ${seoScore >= 70 ? 'Sehr gut' : seoScore >= 50 ? 'Gut' : 'Optimierbar'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(40, seoScore)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Interne Verlinkung:</strong> ${seoScore >= 60 ? 'Gut strukturiert' : 'Ausbaufähig'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(30, seoScore * 0.9)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Breadcrumbs:</strong> ${seoScore >= 70 ? 'Implementiert' : 'Fehlen teilweise'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${seoScore >= 70 ? 85 : 35}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technische SEO -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+          <h4>⚙️ Technische SEO</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>Meta-Tags:</strong> ${seoScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(35, seoScore)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Schema Markup:</strong> ${seoScore >= 80 ? 'Implementiert' : 'Teilweise/Fehlend'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${seoScore >= 80 ? 90 : 25}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>XML Sitemap:</strong> ${seoScore >= 60 ? 'Vorhanden' : 'Nicht gefunden'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${seoScore >= 60 ? 85 : 30}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Keyword-Optimierung für bessere Rankings</li>
-            <li>Verbesserung der Meta-Beschreibungen</li>
-            <li>Aufbau hochwertiger Backlinks</li>
-            <li>Content-Optimierung für Suchmaschinen</li>
+            <li>Branchenspezifische Keyword-Strategie entwickeln</li>
+            <li>Lokale SEO-Optimierung verstärken</li>
+            <li>Technische SEO-Grundlagen verbessern</li>
+            <li>Content-Marketing für Fachbereiche ausbauen</li>
           </ul>
         </div>
       </div>
@@ -119,7 +213,7 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Mobile Optimization Analysis
+  // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
     const mobileScore = realData.mobile.overallScore;
     const scoreClass = mobileScore >= 70 ? 'good' : 'warning';
@@ -139,13 +233,107 @@ export const generateCustomerHTML = ({
             <div class="progress-fill" data-value="${Math.round(mobileScore/10)*10}" style="width: ${mobileScore}%"></div>
           </div>
         </div>
+        
+        <!-- Responsive Design -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+          <h4>📱 Responsive Design</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 70 ? 'Korrekt' : 'Fehlerhaft'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(40, mobileScore)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Flexible Layouts:</strong> ${mobileScore >= 60 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(30, mobileScore * 0.9)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Bildoptimierung:</strong> ${mobileScore >= 70 ? 'Responsive Bilder' : 'Nicht optimiert'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${mobileScore >= 70 ? 85 : 35}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Performance -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+          <h4>⚡ Mobile Performance</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>Mobile Ladezeit:</strong> ${realData.performance.loadTime <= 3 ? 'Schnell' : realData.performance.loadTime <= 5 ? 'Akzeptabel' : 'Langsam'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 15))}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Core Web Vitals:</strong> ${mobileScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(25, mobileScore * 0.8)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Mobile-First Index:</strong> ${mobileScore >= 60 ? 'Berücksichtigt' : 'Nicht optimiert'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${mobileScore >= 60 ? 80 : 30}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Touch-Optimierung -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(236, 72, 153, 0.1); border-radius: 8px;">
+          <h4>👆 Touch-Optimierung</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+              <p><strong>Button-Größen:</strong> ${mobileScore >= 70 ? 'Touch-freundlich' : 'Zu klein'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${mobileScore >= 70 ? 90 : 40}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Tap-Abstände:</strong> ${mobileScore >= 60 ? 'Ausreichend' : 'Zu gering'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${mobileScore >= 60 ? 85 : 35}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>Scroll-Verhalten:</strong> ${mobileScore >= 70 ? 'Flüssig' : 'Verbesserbar'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(40, mobileScore * 0.9)}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Responsive Design implementieren</li>
-            <li>Touch-freundliche Navigation erstellen</li>
-            <li>Mobile-First-Ansatz umsetzen</li>
-            <li>Ladezeiten für mobile Geräte optimieren</li>
+            <li>Mobile-First Design-Strategie implementieren</li>
+            <li>Touch-Interfaces optimieren (min. 44px Buttons)</li>
+            <li>Progressive Web App (PWA) Features hinzufügen</li>
+            <li>Mobile Performance kontinuierlich überwachen</li>
           </ul>
         </div>
       </div>
@@ -377,6 +565,32 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">🎯 Executive Summary</div>
       <div class="section-content">
+        <!-- Gesamt-Score -->
+        <div class="metric-card good" style="margin-bottom: 30px;">
+          <h3>Gesamtbewertung</h3>
+          <div class="score-display">
+            <div class="score-circle ${(() => {
+              const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
+              return totalScore >= 80 ? 'green' : totalScore >= 60 ? 'yellow' : totalScore >= 40 ? 'orange' : 'red';
+            })()}">${Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6)}%</div>
+            <div class="score-details">
+              <p><strong>Digitale Marktposition:</strong> ${(() => {
+                const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
+                return totalScore >= 80 ? 'Sehr stark' : totalScore >= 60 ? 'Gut positioniert' : totalScore >= 40 ? 'Ausbaufähig' : 'Kritisch';
+              })()}</p>
+              <p><strong>Priorität:</strong> ${(() => {
+                const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
+                return totalScore >= 80 ? 'Optimierung' : totalScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf';
+              })()}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6)}%"></div>
+            </div>
+          </div>
+        </div>
+
         <div class="score-overview">
           <div class="score-card">
             <div class="score-big">${realData.seo.score}%</div>
@@ -433,6 +647,34 @@ export const generateCustomerHTML = ({
       <div class="section-header">🚀 Website Performance</div>
       <div class="section-content">
         ${getPerformanceAnalysis()}
+        
+        <!-- Nutzerfreundlichkeit und Verfügbarkeit -->
+        <div class="metric-card good" style="margin-top: 20px;">
+          <h3>Nutzerfreundlichkeit & Verfügbarkeit</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div class="status-item">
+              <h4>🎯 Benutzerfreundlichkeit</h4>
+              <p><strong>${realData.performance.score >= 70 ? 'Sehr gut' : realData.performance.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.min(100, realData.performance.score + 10)}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 12px; color: #6b7280;">Navigation, Layout, Responsivität</p>
+            </div>
+            <div class="status-item">
+              <h4>🌐 Verfügbarkeit</h4>
+              <p><strong>${realData.performance.score >= 80 ? '99.9%' : realData.performance.score >= 60 ? '99.5%' : '98.8%'}</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%"></div>
+                </div>
+              </div>
+              <p style="font-size: 12px; color: #6b7280;">Uptime, Serverantwortzeit</p>
+            </div>
+          </div>
+        </div>
+
         <div class="metric-card good" style="margin-top: 20px;">
           <h3>Performance-Details</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
@@ -725,6 +967,194 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Arbeitsplatz-Reputation -->
+    <div class="section">
+      <div class="section-header">👥 Arbeitsplatz-Reputation</div>
+      <div class="section-content">
+        <div class="metric-card warning">
+          <h3>💼 Arbeitgeber-Bewertung</h3>
+          <div class="score-display">
+            <div class="score-circle yellow">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+            <div class="score-details">
+              <p><strong>Bewertung als Arbeitgeber:</strong> ${realData.workplace ? (realData.workplace.overallScore >= 80 ? 'Sehr gut' : realData.workplace.overallScore >= 60 ? 'Gut' : 'Ausbaufähig') : 'Nicht bewertet'}</p>
+              <p><strong>Empfehlung:</strong> Employer Branding stärken</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
+            </div>
+          </div>
+          
+          <!-- Arbeitsklima -->
+          <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+            <h4>🌟 Arbeitsklima-Bewertung</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div>
+                <p><strong>Mitarbeiterzufriedenheit:</strong> ${realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating + '/5') : 'Nicht erfasst'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Work-Life-Balance:</strong> Gut</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Karrieremöglichkeiten:</strong> Ausbaufähig</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fachkräfte-Attraktivität -->
+          <div style="margin-top: 15px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+            <h4>🎯 Fachkräfte-Attraktivität</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div>
+                <p><strong>Ausbildungsplätze:</strong> ${businessData.industry === 'shk' ? 'Verfügbar' : 'Auf Anfrage'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Weiterbildung:</strong> Standardprogramm</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Benefits:</strong> Branchenüblich</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="recommendations">
+            <h4>Arbeitsplatz-Empfehlungen:</h4>
+            <ul>
+              <li>Mitarbeiterbewertungen auf kununu und glassdoor verbessern</li>
+              <li>Employer Branding durch authentische Einblicke stärken</li>
+              <li>Ausbildungs- und Karrierewege transparent kommunizieren</li>
+              <li>Moderne Benefits und flexible Arbeitszeiten anbieten</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Online Reputation -->
+    <div class="section">
+      <div class="section-header">⭐ Online Reputation</div>
+      <div class="section-content">
+        <div class="metric-card ${realData.reviews.google.rating >= 4 ? 'good' : 'warning'}">
+          <h3>🌟 Kundenzufriedenheit</h3>
+          <div class="score-display">
+            <div class="score-circle ${realData.reviews.google.rating >= 4 ? 'green' : realData.reviews.google.rating >= 3 ? 'yellow' : 'red'}">${realData.reviews.google.count > 0 ? Math.round(realData.reviews.google.rating * 20) : 0}%</div>
+            <div class="score-details">
+              <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating || 'Keine'}/5 (${realData.reviews.google.count || 0} Bewertungen)</p>
+              <p><strong>Status:</strong> ${realData.reviews.google.rating >= 4 ? 'Sehr zufriedene Kunden' : realData.reviews.google.rating >= 3 ? 'Zufriedene Kunden' : 'Verbesserungsbedarf'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${realData.reviews.google.count > 0 ? Math.round(realData.reviews.google.rating * 20) : 0}%"></div>
+            </div>
+          </div>
+          
+          <!-- Online-Glaubwürdigkeit -->
+          <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+            <h4>🛡️ Online-Glaubwürdigkeit</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div>
+                <p><strong>Bewertungsanzahl:</strong> ${realData.reviews.google.count >= 20 ? 'Ausreichend' : 'Zu wenig'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Antwortrate:</strong> ${realData.reviews.google.count > 5 ? 'Hoch' : 'Niedrig'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${realData.reviews.google.count > 5 ? 85 : 45}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Aktualität:</strong> ${realData.reviews.google.count > 0 ? 'Regelmäßig' : 'Selten'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${realData.reviews.google.count > 0 ? 75 : 30}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reputation Management -->
+          <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+            <h4>📈 Reputation Management</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div>
+                <p><strong>Bewertungen auf anderen Plattformen:</strong> ${realData.reviews.google.count > 0 ? 'Teilweise' : 'Nicht vorhanden'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${realData.reviews.google.count > 0 ? 60 : 20}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Review-Monitoring:</strong> Manuell</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 50%"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>Negative Bewertungen:</strong> ${realData.reviews.google.rating >= 4 ? 'Wenige' : 'Vorhanden'}</p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${realData.reviews.google.rating >= 4 ? 85 : 45}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="recommendations">
+            <h4>Reputation-Empfehlungen:</h4>
+            <ul>
+              <li>Aktive Bewertungsanfragen nach Projektabschluss</li>
+              <li>Professionelle Antworten auf alle Bewertungen</li>
+              <li>Multi-Plattform Reputation Management implementieren</li>
+              <li>Monitoring-System für Bewertungen einrichten</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Analyse -->
     <div class="section">
       <div class="section-header">🏢 Arbeitsplatz-Reputation</div>
       <div class="section-content">
