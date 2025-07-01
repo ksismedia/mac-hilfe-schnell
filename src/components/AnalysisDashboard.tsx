@@ -70,7 +70,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [currentAnalysisId, setCurrentAnalysisId] = useState<string | undefined>(loadedAnalysisId);
   const { toast } = useToast();
-  const { loadAnalysis } = useSavedAnalyses();
+  const { savedAnalyses } = useSavedAnalyses();
 
   // Manual data management
   const {
@@ -93,7 +93,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       
       if (currentAnalysisId) {
         try {
-          const savedAnalysis = loadAnalysis(currentAnalysisId);
+          const savedAnalysis = savedAnalyses.find(analysis => analysis.id === currentAnalysisId);
           if (savedAnalysis) {
             console.log('Found saved analysis:', savedAnalysis);
             
@@ -147,7 +147,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [currentAnalysisId, businessData, loadAnalysis, onBusinessDataChange, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices, toast]);
+  }, [currentAnalysisId, businessData, savedAnalyses, onBusinessDataChange, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices, toast]);
 
   if (isLoading) {
     return (
