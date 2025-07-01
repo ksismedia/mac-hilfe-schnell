@@ -135,7 +135,7 @@ export class BusinessAnalysisService {
     const pageSpeedData = await this.getRealPageSpeedData(url);
     console.log('PageSpeed data retrieved');
     
-    // Konkurrenten-Daten
+    // Verbesserte Konkurrenten-Suche mit strengeren Filtern
     const competitorsData = await this.getRealCompetitorsData(address, industry);
     console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
     
@@ -208,23 +208,33 @@ export class BusinessAnalysisService {
     }
   }
 
+  // Stark verbesserte Konkurrenten-Suche
   private static async getRealCompetitorsData(address: string, industry: string): Promise<any[]> {
+    console.log('=== STARTING COMPETITOR ANALYSIS ===');
+    console.log('Address:', address);
+    console.log('Industry:', industry);
+
     try {
-      const businessTypes = this.getIndustryTerms(industry);
-      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, businessTypes[0]);
+      // Verwende die verbesserte Google API Suche
+      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, industry);
       
       if (nearbyResult?.results && nearbyResult.results.length > 0) {
-        return nearbyResult.results.slice(0, 5).map((place: any) => ({
+        console.log(`SUCCESS: Found ${nearbyResult.results.length} real competitors`);
+        
+        return nearbyResult.results.map((place: any) => ({
           name: place.name,
-          distance: this.calculateDistance(place.geometry?.location) || '< 10 km',
+          distance: place.distance || this.calculateDistance(place.geometry?.location) || '< 10 km',
           rating: place.rating || 0,
           reviews: place.user_ratings_total || 0
         }));
       }
       
-      return this.generateRealisticCompetitors(address, industry);
+      console.log('No real competitors found via API - returning empty array instead of fake data');
+      return []; // Keine Phantasiefirmen mehr!
+      
     } catch (error) {
-      return this.generateRealisticCompetitors(address, industry);
+      console.error('Competitor search failed:', error);
+      return []; // Auch bei Fehlern keine Phantasiefirmen
     }
   }
 
@@ -696,31 +706,6 @@ export class BusinessAnalysisService {
     } else {
       return Math.floor(Math.random() * 200) + 50;
     }
-  }
-
-  private static generateRealisticCompetitors(address: string, industry: string) {
-    const city = this.extractCityFromAddress(address);
-    const competitorCount = Math.floor(Math.random() * 3) + 2; // 2-4 Konkurrenten
-    const competitors = [];
-    
-    const industryNames = this.getIndustryTerms(industry);
-    const surnames = ['Müller', 'Schmidt', 'Weber', 'Fischer', 'Wagner', 'Becker'];
-    
-    for (let i = 0; i < competitorCount; i++) {
-      const businessType = industryNames[i % industryNames.length];
-      const surname = surnames[i % surnames.length];
-      const rating = Math.round((3.9 + Math.random() * 1.0) * 10) / 10; // 3.9-4.9
-      const reviews = Math.floor(Math.random() * 35) + 12; // 12-47 Bewertungen
-      
-      competitors.push({
-        name: `${businessType} ${surname}`,
-        distance: `${(Math.random() * 8 + 1.5).toFixed(1)} km`,
-        rating,
-        reviews
-      });
-    }
-    
-    return competitors;
   }
 
   private static generateRealisticWorkplaceData(companyName: string) {
