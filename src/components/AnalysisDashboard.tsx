@@ -22,7 +22,7 @@ import WorkplaceReviews from './analysis/WorkplaceReviews';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
-import HTMLExport from './HTMLExport';
+import HTMLExport from './analysis/HTMLExport';
 import OverallRating from './analysis/OverallRating';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
