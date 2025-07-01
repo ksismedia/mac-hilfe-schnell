@@ -6,23 +6,23 @@ import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
   if (value <= 20) {
-    // 0-20%: Rot
-    return `linear-gradient(90deg, #dc2626 0%, #dc2626 100%)`;
+    // 0-20%: Reines Rot
+    return `#dc2626`;
   } else if (value <= 40) {
-    // 20-40%: Rot zu Orange
-    const progress = ((value - 20) / 20) * 100;
-    return `linear-gradient(90deg, #dc2626 0%, #ea580c ${progress}%)`;
+    // 20-40%: Rot zu Dunkelorange
+    const progress = (value - 20) / 20;
+    return `linear-gradient(90deg, #dc2626 0%, #dc2626 ${(1-progress)*100}%, #ea580c ${progress*100}%)`;
   } else if (value <= 60) {
-    // 40-60%: Orange zu Gelb
-    const progress = ((value - 40) / 20) * 100;
-    return `linear-gradient(90deg, #dc2626 0%, #ea580c 50%, #eab308 ${50 + progress/2}%)`;
+    // 40-60%: Orange zu Grün
+    const progress = (value - 40) / 20;
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b ${50 + (1-progress)*25}%, #22c55e ${75 + progress*25}%)`;
   } else if (value <= 80) {
-    // 60-80%: Gelb zu helles Gold
-    const progress = ((value - 60) / 20) * 100;
-    return `linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #eab308 66%, #fbbf24 ${66 + progress/3}%)`;
+    // 60-80%: Grün zu Gold
+    const progress = (value - 60) / 20;
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e ${60 + (1-progress)*20}%, #ffd700 ${80 + progress*20}%)`;
   } else {
-    // 80-100%: Knalliges Gold-Gradient mit leuchtenden Farben
-    return `linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%)`;
+    // 80-100%: Volles Gold-Spektrum
+    return `linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #22c55e 45%, #ffd700 60%, #ffed4a 80%, #fbbf24 100%)`;
   }
 };
 

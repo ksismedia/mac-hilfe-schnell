@@ -1,3 +1,4 @@
+
 export const getHTMLStyles = () => `
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -113,43 +114,41 @@ export const getHTMLStyles = () => `
             overflow: hidden;
         }
         
-        /* Verbesserte Progress-Gradienten mit knalligerem Gold */
-        .progress-fill[data-value="0"], .progress-fill[data-value="10"] { 
+        /* Neue Progress-Gradienten nach Spezifikation */
+        .progress-fill[data-value="0"], .progress-fill[data-value="10"], .progress-fill[data-value="20"] { 
             background: #dc2626; 
         }
-        .progress-fill[data-value="20"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #dc2626 80%, #ea580c 100%); 
-        }
         .progress-fill[data-value="30"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #dc2626 50%, #ea580c 100%); 
         }
         .progress-fill[data-value="40"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 60%, #f59e0b 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%); 
         }
         .progress-fill[data-value="50"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 40%, #f59e0b 80%, #eab308 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #22c55e 100%); 
         }
         .progress-fill[data-value="60"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 30%, #f59e0b 60%, #eab308 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #22c55e 100%); 
         }
         .progress-fill[data-value="70"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 75%, #fbbf24 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #ffd700 100%); 
         }
         .progress-fill[data-value="80"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 80%, #ffd700 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #ffd700 100%); 
         }
         .progress-fill[data-value="90"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 45%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #22c55e 45%, #ffd700 60%, #ffed4a 80%, #fbbf24 100%); 
         }
         .progress-fill[data-value="100"] { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #eab308 45%, #fbbf24 60%, #ffd700 80%, #ffed4a 100%); 
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #22c55e 45%, #ffd700 60%, #ffed4a 80%, #fbbf24 100%); 
         }
 
-        /* Fallback für Zwischenwerte mit knalligem Gold */
+        /* Fallback für Zwischenwerte */
         .progress-fill:not([data-value]) { 
-            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #eab308 60%, #fbbf24 75%, #ffd700 90%, #ffed4a 100%);
+            background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #ffd700 80%, #fbbf24 100%);
         }
 
+        /* ... keep existing code (rest of styles) the same ... */
         .excellent { color: #fbbf24; font-weight: bold; }
         .good { color: #60a5fa; font-weight: bold; }
         .warning { color: #f59e0b; font-weight: bold; }
