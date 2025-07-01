@@ -85,7 +85,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-600" />
-            Kundenfreundlicher HTML-Export
+            Social Listening und Monitoring Report
           </CardTitle>
           <CardDescription>
             Umfassende, professionelle Analyse für die Kundenpräsentation - mit detaillierter Impressum-Prüfung
@@ -134,7 +134,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
-              Erweiterten Kunden-Report generieren
+              Social Listening Report generieren
             </Button>
             <Button 
               variant="outline"

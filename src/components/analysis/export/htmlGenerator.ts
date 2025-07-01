@@ -29,10 +29,7 @@ interface GenerateHTMLParams {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
-  manualImprintData?: {
-    found: boolean;
-    missingElements: string[];
-  };
+  missingImprintElements?: string[];
 }
 
 export const generateCustomerHTML = (data: any) => {
@@ -77,9 +74,11 @@ export const generateCustomerHTML = (data: any) => {
                                  hourlyRateData.ownRate > 0 && 
                                  hourlyRateData.regionAverage > 0;
 
-  // Calculate legal compliance scores with real data
-  const impressumScore = (missingImprintElements && missingImprintElements.length === 0) ? 100 : 
-                        (missingImprintElements ? Math.max(0, 100 - (missingImprintElements.length * 10)) : 0);
+  // Calculate legal compliance scores with correct impressum evaluation
+  const impressumScore = missingImprintElements ? 
+    Math.max(0, 100 - (missingImprintElements.length * 8)) : 
+    (realData.imprint.found ? realData.imprint.score : 0);
+  
   const datenschutzScore = 85; // Assumed score
   const agbScore = 60; // Assumed score
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
@@ -129,7 +128,7 @@ export const generateCustomerHTML = (data: any) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handwerk Stars - Digitale Analyse für ${businessData.address}</title>
+    <title>Handwerk Stars - Social Listening und Monitoring für ${businessData.address}</title>
     <style>${getHTMLStyles()}</style>
 </head>
 <body>
@@ -138,7 +137,7 @@ export const generateCustomerHTML = (data: any) => {
             <div class="logo-container">
                 <img src="/lovable-uploads/5a2019ec-f8dd-42b4-bf03-3a7fdb9696b8.png" alt="Handwerk Stars Logo" class="logo" style="height: 60px; width: auto; margin-bottom: 20px;" />
             </div>
-            <h1>Digitale Analyse</h1>
+            <h1>Social Listening und Monitoring</h1>
             <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
                 Erstellt im ${currentDate} | Powered by Handwerk Stars
@@ -227,7 +226,7 @@ export const generateCustomerHTML = (data: any) => {
             </div>
         </div>
 
-        <!-- Impressum-Bewertung mit korrekten Daten und fehlenden Elementen -->
+        <!-- Impressum-Bewertung mit korrekter Bewertung und vollständiger Anzeige fehlender Elemente -->
         <div class="section">
             <div class="section-header">⚖️ Rechtliche Compliance</div>
             <div class="section-content">
@@ -235,7 +234,7 @@ export const generateCustomerHTML = (data: any) => {
                     <div class="metric-item">
                         <div class="metric-title">Impressum</div>
                         <div class="metric-value ${impressumScore >= 80 ? 'excellent' : impressumScore >= 60 ? 'good' : impressumScore >= 40 ? 'warning' : 'danger'}">
-                            ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vollständig' : 'Unvollständig'}
+                            ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vollständig' : impressumScore >= 40 ? 'Teilweise vollständig' : 'Unvollständig'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -247,19 +246,32 @@ export const generateCustomerHTML = (data: any) => {
                             </div>
                         </div>
                         ${missingImprintElements && missingImprintElements.length > 0 ? `
-                            <div style="margin-top: 10px; padding: 12px; background: #fef2f2; border-radius: 6px; font-size: 0.85em; border-left: 4px solid #f87171;">
-                                <strong style="color: #dc2626;">⚠️ Fehlende Pflichtangaben (${missingImprintElements.length}):</strong><br><br>
-                                ${missingImprintElements.map(element => `• ${element}`).join('<br>')}
-                                <br><br>
-                                <strong style="color: #dc2626;">Rechtliche Risiken:</strong><br>
-                                • Abmahnungen durch Konkurrenten oder Anwälte<br>
-                                • Bußgelder durch Aufsichtsbehörden<br>
-                                • Verlust von Kundenvertrauen<br>
-                                • Schwächung der Rechtsposition bei Streitigkeiten
-                                <br><br>
-                                <strong style="color: #059669;">Empfehlung:</strong> Impressum umgehend vervollständigen und von einem Anwalt prüfen lassen.
+                            <div style="margin-top: 15px; padding: 15px; background: #fef2f2; border-radius: 8px; font-size: 0.9em; border-left: 4px solid #f87171;">
+                                <strong style="color: #dc2626; font-size: 1.1em;">⚠️ Rechtliche Warnung: ${missingImprintElements.length} fehlende Pflichtangaben</strong>
+                                <div style="margin-top: 12px; background: white; padding: 12px; border-radius: 6px; border: 1px solid #fecaca;">
+                                    <strong style="color: #dc2626;">Fehlende Impressum-Inhalte:</strong><br><br>
+                                    ${missingImprintElements.map((element, index) => `<div style="margin: 6px 0; padding: 4px 0; border-bottom: 1px dotted #fca5a5;">${index + 1}. ${element}</div>`).join('')}
+                                </div>
+                                <div style="margin-top: 12px; background: #fff1f2; padding: 10px; border-radius: 6px;">
+                                    <strong style="color: #dc2626;">Rechtliche Risiken:</strong><br>
+                                    • Abmahnungen durch Konkurrenten oder Anwälte (€ 500 - 5.000)<br>
+                                    • Bußgelder durch Aufsichtsbehörden (bis € 50.000)<br>
+                                    • Verlust von Kundenvertrauen und Seriosität<br>
+                                    • Schwächung der Rechtsposition bei Streitigkeiten<br>
+                                    • Mögliche Sperrung von Online-Diensten
+                                </div>
+                                <div style="margin-top: 12px; background: #ecfdf5; padding: 10px; border-radius: 6px; border-left: 3px solid #059669;">
+                                    <strong style="color: #059669;">🎯 Sofort-Empfehlung:</strong><br>
+                                    Impressum umgehend vervollständigen und von einem Fachanwalt für IT-Recht prüfen lassen.<br>
+                                    <strong>Priorität: HOCH</strong> - Diese Mängel sollten innerhalb von 48 Stunden behoben werden.
+                                </div>
                             </div>
-                        ` : ''}
+                        ` : `
+                            <div style="margin-top: 10px; padding: 12px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; border-left: 4px solid #22c55e;">
+                                <strong style="color: #059669;">✅ Impressum vollständig</strong><br>
+                                Alle erforderlichen Angaben sind vorhanden. Rechtliche Compliance ist gewährleistet.
+                            </div>
+                        `}
                     </div>
 
                     <div class="metric-item">
