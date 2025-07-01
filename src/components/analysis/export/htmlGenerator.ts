@@ -36,7 +36,7 @@ interface GenerateHTMLParams {
 }
 
 export const generateCustomerHTML = (data: any) => {
-  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData, manualImprintData } = data;
+  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData, missingImprintElements } = data;
   
   // Calculate scores
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
@@ -52,9 +52,9 @@ export const generateCustomerHTML = (data: any) => {
     ...realData.competitors.map((comp, index) => ({
       ...comp,
       name: `Konkurrent ${String.fromCharCode(65 + index)}`,
-      services: competitorServices[comp.name] || []
+      services: competitorServices?.[comp.name] || []
     })),
-    ...manualCompetitors.map((comp, index) => ({
+    ...(manualCompetitors || []).map((comp, index) => ({
       ...comp,
       name: `Konkurrent ${String.fromCharCode(65 + realData.competitors.length + index)}`,
       services: comp.services || []
@@ -63,7 +63,12 @@ export const generateCustomerHTML = (data: any) => {
 
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
-  const currentDate = new Date().toLocaleDateString('de-DE');
+  
+  // Format date to show only month and year
+  const currentDate = new Date().toLocaleDateString('de-DE', { 
+    month: 'long', 
+    year: 'numeric' 
+  });
 
   // Check if hourly rate data is complete and valid
   const hasValidHourlyRateData = hourlyRateData && 
@@ -73,8 +78,8 @@ export const generateCustomerHTML = (data: any) => {
                                  hourlyRateData.regionAverage > 0;
 
   // Calculate legal compliance scores with real data
-  const impressumScore = manualImprintData?.found ? 100 : 0;
-  const impressumMissingElements = manualImprintData?.missingElements || [];
+  const impressumScore = (missingImprintElements && missingImprintElements.length === 0) ? 100 : 
+                        (missingImprintElements ? Math.max(0, 100 - (missingImprintElements.length * 10)) : 0);
   const datenschutzScore = 85; // Assumed score
   const agbScore = 60; // Assumed score
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
@@ -131,12 +136,12 @@ export const generateCustomerHTML = (data: any) => {
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NEgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
+                <img src="/lovable-uploads/5a2019ec-f8dd-42b4-bf03-3a7fdb9696b8.png" alt="Handwerk Stars Logo" class="logo" style="height: 60px; width: auto; margin-bottom: 20px;" />
             </div>
             <h1>Digitale Analyse</h1>
             <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
-                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Powered by Handwerk Stars
+                Erstellt im ${currentDate} | Powered by Handwerk Stars
             </p>
         </div>
 
@@ -222,7 +227,7 @@ export const generateCustomerHTML = (data: any) => {
             </div>
         </div>
 
-        <!-- Impressum-Bewertung mit korrekten Daten -->
+        <!-- Impressum-Bewertung mit korrekten Daten und fehlenden Elementen -->
         <div class="section">
             <div class="section-header">⚖️ Rechtliche Compliance</div>
             <div class="section-content">
@@ -230,7 +235,7 @@ export const generateCustomerHTML = (data: any) => {
                     <div class="metric-item">
                         <div class="metric-title">Impressum</div>
                         <div class="metric-value ${impressumScore >= 80 ? 'excellent' : impressumScore >= 60 ? 'good' : impressumScore >= 40 ? 'warning' : 'danger'}">
-                            ${manualImprintData?.found ? 'Vollständig' : 'Unvollständig'}
+                            ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vollständig' : 'Unvollständig'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
@@ -241,10 +246,18 @@ export const generateCustomerHTML = (data: any) => {
                                 <div class="progress-fill ${impressumScore < 60 ? 'warning' : ''}" style="width: ${impressumScore}%"></div>
                             </div>
                         </div>
-                        ${impressumMissingElements.length > 0 ? `
-                            <div style="margin-top: 10px; padding: 8px; background: #fef2f2; border-radius: 6px; font-size: 0.85em;">
-                                <strong>Fehlende Elemente:</strong><br>
-                                ${impressumMissingElements.map(element => `• ${element}`).join('<br>')}
+                        ${missingImprintElements && missingImprintElements.length > 0 ? `
+                            <div style="margin-top: 10px; padding: 12px; background: #fef2f2; border-radius: 6px; font-size: 0.85em; border-left: 4px solid #f87171;">
+                                <strong style="color: #dc2626;">⚠️ Fehlende Pflichtangaben (${missingImprintElements.length}):</strong><br><br>
+                                ${missingImprintElements.map(element => `• ${element}`).join('<br>')}
+                                <br><br>
+                                <strong style="color: #dc2626;">Rechtliche Risiken:</strong><br>
+                                • Abmahnungen durch Konkurrenten oder Anwälte<br>
+                                • Bußgelder durch Aufsichtsbehörden<br>
+                                • Verlust von Kundenvertrauen<br>
+                                • Schwächung der Rechtsposition bei Streitigkeiten
+                                <br><br>
+                                <strong style="color: #059669;">Empfehlung:</strong> Impressum umgehend vervollständigen und von einem Anwalt prüfen lassen.
                             </div>
                         ` : ''}
                     </div>
@@ -740,7 +753,7 @@ export const generateCustomerHTML = (data: any) => {
         <!-- Footer -->
         <div style="margin-top: 40px; padding: 30px; background: white; border-radius: 16px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
             <p style="color: #718096; margin-bottom: 10px;">
-                Diese professionelle Analyse wurde am ${currentDate} erstellt und basiert auf aktuellen Live-Daten Ihrer Website und Ihres Marktumfelds.
+                Diese professionelle Analyse wurde im ${currentDate} erstellt und basiert auf aktuellen Live-Daten Ihrer Website und Ihres Marktumfelds.
             </p>
             <p style="color: #4a5568; font-weight: 600; margin-bottom: 15px;">
                 Nutzen Sie diese Erkenntnisse strategisch, um Ihren Online-Erfolg systematisch auszubauen!
