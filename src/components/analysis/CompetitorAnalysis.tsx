@@ -87,7 +87,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         services,
         score,
         uniqueServices,
-        source: 'google' as const
+        source: 'google' as const,
+        location: comp.location || comp.distance // Verwende location falls vorhanden, sonst distance
       };
     }),
     ...manualCompetitors.map(comp => {
