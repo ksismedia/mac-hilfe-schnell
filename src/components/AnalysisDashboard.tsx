@@ -35,6 +35,9 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 
+// Utils
+import { loadSavedAnalysisData } from '@/utils/analysisLoader';
+
 interface BusinessData {
   address: string;
   url: string;
@@ -101,24 +104,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           // Set real data
           setRealData(savedAnalysis.realData);
           
-          // Load manual data
-          if (savedAnalysis.manualData.imprint) {
-            updateImprintData(savedAnalysis.manualData.imprint);
-          }
-          if (savedAnalysis.manualData.social) {
-            updateSocialData(savedAnalysis.manualData.social);
-          }
-          if (savedAnalysis.manualData.workplace) {
-            updateWorkplaceData(savedAnalysis.manualData.workplace);
-          }
-          if (savedAnalysis.manualData.competitors && savedAnalysis.manualData.competitors.length > 0) {
-            updateCompetitors(savedAnalysis.manualData.competitors);
-          }
-          if (savedAnalysis.manualData.competitorServices) {
-            Object.entries(savedAnalysis.manualData.competitorServices).forEach(([competitorName, services]) => {
-              updateCompetitorServices(competitorName, services, 'loaded');
-            });
-          }
+          // Load manual data using utility function
+          loadSavedAnalysisData(
+            savedAnalysis,
+            updateImprintData,
+            updateSocialData,
+            updateWorkplaceData,
+            updateCompetitors,
+            updateCompetitorServices
+          );
           
           setIsLoading(false);
           
