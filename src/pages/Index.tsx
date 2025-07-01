@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,6 +63,23 @@ const Index = () => {
     } else {
       setStep('api');
     }
+  };
+
+  const handleForceApiKeyInput = () => {
+    setStep('api');
+  };
+
+  const handleResetApiKey = () => {
+    // Clear stored API key
+    localStorage.removeItem('google_api_key');
+    GoogleAPIService.setApiKey('');
+    setApiKey('');
+    setStep('api');
+    
+    toast({
+      title: "API-Key zurückgesetzt",
+      description: "Bitte geben Sie einen neuen API-Key ein.",
+    });
   };
 
   const validateAndSaveApiKey = async (keyToValidate: string) => {
@@ -281,6 +297,30 @@ const Index = () => {
             </Badge>
           </div>
         </div>
+
+        {/* API-Key Management Buttons */}
+        {GoogleAPIService.hasApiKey() && (
+          <div className="mb-6 text-center">
+            <div className="flex justify-center gap-4 mb-4">
+              <Button
+                onClick={handleForceApiKeyInput}
+                variant="outline"
+                className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+              >
+                <Key className="h-4 w-4 mr-2" />
+                API-Key bearbeiten
+              </Button>
+              <Button
+                onClick={handleResetApiKey}
+                variant="outline"
+                className="border-red-400 text-red-400 hover:bg-red-400 hover:text-white"
+              >
+                API-Key zurücksetzen
+              </Button>
+            </div>
+            <p className="text-sm text-green-400">✅ API-Key bereits gespeichert</p>
+          </div>
+        )}
 
         {/* Gespeicherte Analysen Button */}
         <div className="mb-6 text-center">
