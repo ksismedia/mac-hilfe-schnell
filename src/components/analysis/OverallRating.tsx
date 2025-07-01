@@ -22,9 +22,12 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
 
-  // Social Media Score mit korrekter Funktion berechnen
+  // Social Media Score mit korrekter Funktion berechnen - MIT DEBUG
+  console.log('=== OVERALL RATING DEBUG ===');
+  console.log('Manual Social Data received:', manualSocialData);
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('OverallRating - Social Media Score berechnet:', socialMediaScore);
+  console.log('Social Media Score calculated:', socialMediaScore);
+  console.log('=== END DEBUG ===');
 
   // Alle Metriken mit korrekten Scores
   const metrics = [
@@ -60,6 +63,15 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive';
   };
 
+  // Debug-Info für manuelle Social Media Daten
+  const hasManualSocialData = Boolean(manualSocialData && (
+    (manualSocialData.facebookUrl && manualSocialData.facebookUrl.trim() !== '') ||
+    (manualSocialData.instagramUrl && manualSocialData.instagramUrl.trim() !== '') ||
+    (manualSocialData.linkedinUrl && manualSocialData.linkedinUrl.trim() !== '') ||
+    (manualSocialData.twitterUrl && manualSocialData.twitterUrl.trim() !== '') ||
+    (manualSocialData.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '')
+  ));
+
   return (
     <div className="space-y-6">
       <Card>
@@ -93,9 +105,16 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                         {metric.weight}% Gewichtung
                       </Badge>
                       {metric.name === 'Social Media' && (
-                        <Badge variant="default" className="text-xs bg-green-600">
-                          LIVE: {metric.score}
-                        </Badge>
+                        <div className="flex gap-1">
+                          <Badge variant="default" className="text-xs bg-green-600">
+                            LIVE: {metric.score}
+                          </Badge>
+                          {hasManualSocialData && (
+                            <Badge variant="default" className="text-xs bg-blue-600">
+                              MANUELL
+                            </Badge>
+                          )}
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
@@ -151,11 +170,24 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
                     <li>• Google Bewertungen: {realData.reviews.google.count}</li>
                     <li>• Konkurrenten: {realData.competitors.length}</li>
-                    <li>• Social Media Score: {socialMediaScore}/100 ✓</li>
+                    <li>• Social Media Score: {socialMediaScore}/100 {hasManualSocialData ? '✓ MANUELL' : '❌ KEINE DATEN'}</li>
                     <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
                   </ul>
                 </div>
               </div>
+              
+              {hasManualSocialData && (
+                <div className="mt-4 p-3 bg-green-100 rounded border border-green-300">
+                  <h4 className="font-medium text-green-800 mb-1">✅ Manuelle Social Media Daten erkannt:</h4>
+                  <div className="text-xs text-green-700 grid grid-cols-2 gap-2">
+                    {manualSocialData?.facebookUrl && <div>• Facebook: ✓</div>}
+                    {manualSocialData?.instagramUrl && <div>• Instagram: ✓</div>}
+                    {manualSocialData?.linkedinUrl && <div>• LinkedIn: ✓</div>}
+                    {manualSocialData?.twitterUrl && <div>• Twitter: ✓</div>}
+                    {manualSocialData?.youtubeUrl && <div>• YouTube: ✓</div>}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
