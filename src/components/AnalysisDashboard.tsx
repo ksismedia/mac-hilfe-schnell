@@ -68,7 +68,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(!GoogleAPIService.hasApiKey());
+  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
   const { toast } = useToast();
 
   // Manual data management
@@ -94,8 +94,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   // Load analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
-      if (showAPIKeyDialog) return; // Don't start analysis if API dialog is shown
-      
       console.log('Performing analysis for:', businessData);
       setIsLoading(true);
       
@@ -114,10 +112,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       }
     };
 
-    if (!showAPIKeyDialog) {
-      loadAnalysisData();
-    }
-  }, [businessData, toast, showAPIKeyDialog]);
+    loadAnalysisData();
+  }, [businessData, toast]);
 
   const handleApiKeySet = () => {
     setShowAPIKeyDialog(false);
@@ -126,49 +122,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
     });
   };
-
-  const handleContinueWithoutApiKey = () => {
-    setShowAPIKeyDialog(false);
-    toast({
-      title: "Ohne API-Schlüssel fortfahren",
-      description: "Die Analyse verwendet Beispieldaten.",
-      variant: "default",
-    });
-  };
-
-  // Show API Key dialog first if no key is set
-  if (showAPIKeyDialog) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
-        <div className="max-w-4xl mx-auto pt-8">
-          <div className="mb-6">
-            <Button onClick={onReset} variant="outline" size="sm" className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Zurück zur Eingabe
-            </Button>
-            <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
-            <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
-          </div>
-          
-          <APIKeyManager 
-            onApiKeySet={handleApiKeySet}
-            onLoadSavedAnalysis={(analysis) => {
-              console.log('Loading saved analysis:', analysis);
-            }}
-          />
-          
-          <div className="mt-6 text-center">
-            <Button 
-              onClick={handleContinueWithoutApiKey}
-              variant="outline"
-            >
-              Ohne API-Schlüssel fortfahren (mit Beispieldaten)
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -359,7 +312,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       </div>
 
       {/* API Key Dialog Overlay */}
-      {showAPIKeyDialog && GoogleAPIService.hasApiKey() && (
+      {showAPIKeyDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
             <APIKeyManager onApiKeySet={handleApiKeySet} />

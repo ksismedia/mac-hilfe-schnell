@@ -10,6 +10,8 @@ import { useExtensionData } from '@/hooks/useExtensionData';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
+import APIKeyManager from '@/components/APIKeyManager';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Search, Globe, MapPin, Building, Star, FolderOpen } from 'lucide-react';
 
 interface BusinessData {
@@ -27,6 +29,7 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const { toast } = useToast();
   
@@ -45,10 +48,16 @@ const Index = () => {
       return;
     }
 
+    // Check for API key before starting analysis
+    if (!GoogleAPIService.hasApiKey()) {
+      setShowAPIKeyDialog(true);
+      return;
+    }
+
     setIsAnalyzing(true);
     
     // Simuliere Analyseprozess
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     setIsAnalyzing(false);
     setShowResults(true);
@@ -59,12 +68,48 @@ const Index = () => {
     });
   };
 
+  const handleApiKeySet = () => {
+    setShowAPIKeyDialog(false);
+    setIsAnalyzing(true);
+    
+    // Start analysis after API key is set
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowResults(true);
+      toast({
+        title: "Analyse abgeschlossen",
+        description: "Die Auswertung des Online-Auftritts wurde erfolgreich durchgeführt.",
+      });
+    }, 1000);
+  };
+
+  const handleContinueWithoutApiKey = () => {
+    setShowAPIKeyDialog(false);
+    setIsAnalyzing(true);
+    
+    // Start analysis with example data
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowResults(true);
+      toast({
+        title: "Analyse abgeschlossen",
+        description: "Die Auswertung mit Beispieldaten wurde durchgeführt.",
+      });
+    }, 1000);
+  };
+
   const handleExtensionDataProcess = (processedData: BusinessData) => {
     console.log('Extension-Daten verarbeitet:', processedData);
     setBusinessData(processedData);
     setLoadedAnalysisId(undefined); // Clear any loaded analysis
-    setShowResults(true);
     
+    // Check for API key before starting analysis
+    if (!GoogleAPIService.hasApiKey()) {
+      setShowAPIKeyDialog(true);
+      return;
+    }
+    
+    setShowResults(true);
     toast({
       title: "Extension-Analyse gestartet",
       description: `Live-Daten von ${processedData.url} erfolgreich verarbeitet.`,
@@ -98,6 +143,7 @@ const Index = () => {
 
   const resetAnalysis = () => {
     setShowResults(false);
+    setShowAPIKeyDialog(false);
     setLoadedAnalysisId(undefined);
     setBusinessData({
       address: '',
@@ -106,6 +152,52 @@ const Index = () => {
     });
     clearExtensionData();
   };
+
+  // Show API Key dialog if needed
+  if (showAPIKeyDialog) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
+        <div className="max-w-4xl mx-auto pt-8">
+          <div className="mb-6">
+            <Button onClick={() => setShowAPIKeyDialog(false)} variant="outline" size="sm" className="mb-4">
+              ← Zurück zur Eingabe
+            </Button>
+            <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
+            <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
+          </div>
+          
+          <APIKeyManager 
+            onApiKeySet={handleApiKeySet}
+            onLoadSavedAnalysis={handleLoadSavedAnalysis}
+          />
+          
+          <div className="mt-6 text-center">
+            <Button 
+              onClick={handleContinueWithoutApiKey}
+              variant="outline"
+            >
+              Ohne API-Schlüssel fortfahren (mit Beispieldaten)
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading screen
+  if (isAnalyzing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-yellow-400 mb-2">Website wird analysiert...</h2>
+            <p className="text-gray-300">Dies kann einige Sekunden dauern</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Zeige Extension-Datenverarbeitung wenn verfügbar
   if (hasExtensionData && extensionData && !showResults) {
