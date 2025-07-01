@@ -243,7 +243,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
               onCompetitorsChange={updateCompetitors}
-              onCompetitorServicesChange={(competitorName, services) => updateCompetitorServices(competitorName, services, 'manual')}
+              onCompetitorServicesChange={updateCompetitorServices}
             />
             <ManualCompetitorInput 
               competitors={manualCompetitors}
