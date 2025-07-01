@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -125,6 +124,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
     loadAnalysisData();
   }, [businessData, toast]);
+
+  const handleApiKeySet = () => {
+    setShowAPIKeyDialog(false);
+    toast({
+      title: "API-Schlüssel gesetzt",
+      description: "Die Analyse verwendet jetzt echte Google-Daten.",
+    });
+  };
 
   if (isLoading) {
     return (
@@ -335,7 +342,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       {showAPIKeyDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
-            <APIKeyManager />
+            <APIKeyManager onApiKeySet={handleApiKeySet} />
             <div className="flex justify-end mt-4">
               <Button onClick={() => setShowAPIKeyDialog(false)} variant="outline">
                 Schließen
