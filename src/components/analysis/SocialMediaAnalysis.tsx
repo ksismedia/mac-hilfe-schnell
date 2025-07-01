@@ -100,20 +100,23 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     });
   };
 
-  // KORRIGIERT: Bessere Erkennung der manuellen Daten
+  // KORRIGIERT: Richtige Boolean-Prüfung für manuelle Daten
   const hasManualData = manualData && (
-    manualData.facebookUrl || manualData.instagramUrl || manualData.linkedinUrl || 
-    manualData.twitterUrl || manualData.youtubeUrl
+    (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') ||
+    (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') ||
+    (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') ||
+    (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') ||
+    (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '')
   );
 
-  // KORRIGIERT: Separate Prüfung für jede Plattform
+  // KORRIGIERT: Korrekte Prüfung für jede Plattform
   const hasFacebook = (manualData?.facebookUrl && manualData.facebookUrl.trim() !== '') || realData.socialMedia.facebook.found;
   const hasInstagram = (manualData?.instagramUrl && manualData.instagramUrl.trim() !== '') || realData.socialMedia.instagram.found;
   const hasLinkedIn = manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '';
   const hasTwitter = manualData?.twitterUrl && manualData.twitterUrl.trim() !== '';
   const hasYouTube = manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '';
 
-  console.log('Social Media Status:', {
+  console.log('Social Media Status KORRIGIERT:', {
     hasManualData,
     hasFacebook,
     hasInstagram,
