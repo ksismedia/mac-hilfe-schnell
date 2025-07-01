@@ -68,8 +68,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
-  const [hasApiKey, setHasApiKey] = useState(GoogleAPIService.hasApiKey());
+  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(!GoogleAPIService.hasApiKey());
   const { toast } = useToast();
 
   // Manual data management
@@ -92,17 +91,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     return acc;
   }, {} as { [competitorName: string]: string[] });
 
-  // Check for API key on component mount
-  useEffect(() => {
-    const apiKeyExists = GoogleAPIService.hasApiKey();
-    setHasApiKey(apiKeyExists);
-    
-    if (!apiKeyExists) {
-      setShowAPIKeyDialog(true);
-    }
-  }, []);
-
-  // Load analysis data when API key is available
+  // Load analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
       if (showAPIKeyDialog) return; // Don't start analysis if API dialog is shown
@@ -131,13 +120,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   }, [businessData, toast, showAPIKeyDialog]);
 
   const handleApiKeySet = () => {
-    setHasApiKey(true);
     setShowAPIKeyDialog(false);
     toast({
       title: "API-Schlüssel gesetzt",
       description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
     });
-    // Analysis will start automatically through useEffect
   };
 
   const handleContinueWithoutApiKey = () => {
@@ -147,7 +134,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       description: "Die Analyse verwendet Beispieldaten.",
       variant: "default",
     });
-    // Analysis will start automatically through useEffect
   };
 
   // Show API Key dialog first if no key is set
@@ -373,7 +359,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       </div>
 
       {/* API Key Dialog Overlay */}
-      {showAPIKeyDialog && hasApiKey && (
+      {showAPIKeyDialog && GoogleAPIService.hasApiKey() && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
             <APIKeyManager onApiKeySet={handleApiKeySet} />
