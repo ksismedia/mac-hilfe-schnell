@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -141,16 +142,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     );
   }
 
-  // KORRIGIERTE Score-Berechnungen - verwende IMMER die calculateSocialMediaScore Funktion
+  // Korrekte Score-Berechnungen
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
-  // WICHTIG: Verwende die korrekte Social Media Score Berechnung
+  // Social Media Score mit korrekter Funktion berechnen
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('Dashboard - KORRIGIERTER Social Media Score:', socialMediaScore);
+  console.log('Dashboard - Social Media Score berechnet:', socialMediaScore);
 
-  // ... keep existing code (getScoreColor and getScoreBg functions)
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
     if (score >= 60) return 'text-yellow-400';
@@ -198,7 +198,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Score Overview Tiles - KORRIGIERT mit richtigem Social Media Score */}
+        {/* Score Overview Tiles - mit korrektem Social Media Score */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">

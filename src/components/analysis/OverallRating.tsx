@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,9 +22,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
 
-  // KORRIGIERTE Social Media Score Berechnung - verwende IMMER die calculateSocialMediaScore Funktion
+  // Social Media Score mit korrekter Funktion berechnen
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('OverallRating - KORRIGIERTER Social Media Score:', socialMediaScore);
+  console.log('OverallRating - Social Media Score berechnet:', socialMediaScore);
 
   // Alle Metriken mit korrekten Scores
   const metrics = [
@@ -40,20 +41,10 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Local SEO', score: 75, weight: 5, maxScore: 100 }
   ];
 
-  console.log('OverallRating - Metrics mit Social Media Score:', socialMediaScore, metrics.find(m => m.name === 'Social Media'));
-
   // Gewichteter Gesamtscore
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   const overallScore = Math.round(weightedScore / totalWeight);
-
-  console.log('OverallRating - Final calculation:', { 
-    socialMediaScore, 
-    totalWeight, 
-    weightedScore, 
-    overallScore,
-    socialMediaContribution: socialMediaScore * 8
-  });
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
