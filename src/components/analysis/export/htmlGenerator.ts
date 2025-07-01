@@ -357,7 +357,7 @@ export const generateCustomerHTML = ({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vollständiger Business-Analyse Report - ${realData.company.name}</title>
+  <title>Social Listening und Monitoring Report - ${realData.company.name}</title>
   <style>
     ${getHTMLStyles()}
   </style>
@@ -365,7 +365,10 @@ export const generateCustomerHTML = ({
 <body>
   <div class="container">
     <div class="header">
-      <h1>Business-Analyse Report</h1>
+      <div class="logo-container">
+        <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=150&h=100&fit=crop&crop=center" alt="Company Logo" class="logo" />
+      </div>
+      <h1>Social Listening und Monitoring Report</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
       <p style="margin-top: 15px; color: #9ca3af;">Umfassende digitale Geschäftsanalyse & Marktpositionierung</p>
     </div>
@@ -763,7 +766,10 @@ export const generateCustomerHTML = ({
 
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
-      <h3 style="color: #fbbf24; margin-bottom: 15px;">Report-Details</h3>
+      <div class="logo-container" style="margin-bottom: 20px;">
+        <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=120&h=80&fit=crop&crop=center" alt="Company Logo" class="logo" style="max-width: 120px;" />
+      </div>
+      <h3 style="color: #fbbf24; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
       <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
       <p style="color: #9ca3af; font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
       <p style="color: #9ca3af; font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>

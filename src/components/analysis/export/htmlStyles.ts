@@ -27,6 +27,18 @@ body {
   font-weight: 700;
 }
 .header .subtitle { color: #d1d5db; font-size: 1.3em; font-weight: 300; }
+.logo-container { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  margin-bottom: 20px; 
+}
+.logo { 
+  max-width: 150px; 
+  height: auto; 
+  border-radius: 8px;
+  filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3)); 
+}
 .score-overview { 
   display: grid; 
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 

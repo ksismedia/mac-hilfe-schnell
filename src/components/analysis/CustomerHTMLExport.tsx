@@ -176,7 +176,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
-              Social Listening Report generieren
+              Social Listening und Monitoring Report generieren
             </Button>
             <Button 
               variant="outline"
