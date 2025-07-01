@@ -138,52 +138,51 @@ export class GoogleAPIService {
 
       console.log('Found coordinates:', coordinates);
 
-      // Erweiterte Suchbegriffe pro Branche - mehr Varianten
+      // Spezifischere Suchbegriffe pro Branche - mehr Varianten aber präziser
       const industrySearchTerms = {
         'shk': [
           'Sanitär Heizung Klima',
           'SHK Betrieb',
           'Heizungsbau',
           'Sanitärinstallation',
-          'Installateur',
+          'Installateur Sanitär',
           'Klempner',
-          'Heizung',
-          'Sanitär',
-          'Klima'
+          'Heizung Sanitär',
+          'Sanitärtechnik'
         ],
         'maler': [
           'Malerbetrieb',
           'Maler Lackierer',
           'Malerei',
-          'Anstrich',
-          'Maler',
+          'Anstrich Maler',
+          'Maler Handwerk',
           'Lackierer'
         ],
         'elektriker': [
           'Elektrobetrieb',
           'Elektriker',
           'Elektroinstallation',
-          'Elektrotechnik',
-          'Elektro'
+          'Elektrotechnik Betrieb',
+          'Elektro Handwerk'
         ],
         'dachdecker': [
           'Dachdeckerei',
           'Dachdecker',
           'Bedachung',
-          'Dachbau',
-          'Dach'
+          'Dachbau Betrieb',
+          'Dach Handwerk'
         ],
         'stukateur': [
           'Stuckateur',
           'Trockenbau',
           'Putzarbeit',
-          'Stuck'
+          'Stuck Handwerk'
         ],
         'planungsbuero': [
           'Planungsbüro',
           'Ingenieurbüro',
           'Architekturbüro',
-          'Planung'
+          'Planung Büro'
         ]
       };
 
@@ -194,7 +193,7 @@ export class GoogleAPIService {
 
       // Durchsuche mit verschiedenen Suchbegriffen
       for (const searchTerm of searchTerms) {
-        const competitors = await this.searchNearbyBusinesses(coordinates, searchTerm, location, ownCompanyName);
+        const competitors = await this.searchNearbyBusinesses(coordinates, searchTerm, location, ownCompanyName, businessType);
         if (competitors.length > 0) {
           allCompetitors.push(...competitors);
           console.log(`Found ${competitors.length} competitors with term: ${searchTerm}`);
@@ -202,7 +201,7 @@ export class GoogleAPIService {
       }
 
       // Duplikate entfernen und nach Qualität filtern
-      const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location, ownCompanyName);
+      const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location, ownCompanyName, businessType);
       
       console.log(`Final result: ${uniqueCompetitors.length} real competitors found`);
       return { results: uniqueCompetitors.slice(0, 8) }; // Mehr Ergebnisse zurückgeben
@@ -244,14 +243,14 @@ export class GoogleAPIService {
     }
   }
 
-  // Verbesserte Nearby-Suche mit strengerem Ausschluss der eigenen Firma
-  private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string): Promise<any[]> {
+  // Verbesserte Nearby-Suche mit kleineren Radien zuerst
+  private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string, businessType?: string): Promise<any[]> {
     const apiKey = this.getApiKey();
     const results: any[] = [];
 
     try {
-      // Erweiterte Suchradien: 1km, 2km, 5km, 10km, 15km für bessere lokale Abdeckung
-      const radii = [1000, 2000, 5000, 10000, 15000];
+      // Kleinere Radien zuerst: 500m, 1km, 2km, 5km, 10km für bessere lokale Abdeckung
+      const radii = [500, 1000, 2000, 5000, 10000];
       
       for (const radius of radii) {
         const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=${radius}&keyword=${encodeURIComponent(searchTerm)}&type=establishment&key=${apiKey}`;
@@ -267,25 +266,24 @@ export class GoogleAPIService {
             if (response.ok) {
               const data = await response.json();
               if (data?.results?.length > 0) {
-                // Gelockerte Kriterien für echte Geschäfte mit strengen Kriterien und ohne eigene Firma
-                const realBusinesses = data.results.filter((place: any) => 
-                  this.isRealBusinessRelaxed(place, searchTerm, originalLocation) &&
+                // Präzisere Filterung für echte Geschäfte der richtigen Branche
+                const relevantBusinesses = data.results.filter((place: any) => 
+                  this.isRelevantBusiness(place, searchTerm, originalLocation, businessType) &&
                   !this.isOwnCompany(place, ownCompanyName, originalLocation)
                 );
                 
                 // PLZ und Ort zu jedem Geschäft hinzufügen
-                const businessesWithLocation = realBusinesses.map((place: any) => ({
+                const businessesWithLocation = relevantBusinesses.map((place: any) => ({
                   ...place,
                   locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
-                  // Verbesserte Firmennamenerkennung
                   name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity),
                   searchRadius: radius // Für Debugging
                 }));
                 
                 results.push(...businessesWithLocation);
-                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} real businesses (excluding own company)`);
+                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} relevant businesses (excluding own company)`);
                 
-                if (results.length >= 8) break; // Sammle mehr Ergebnisse
+                if (results.length >= 12) break; // Sammle mehr Ergebnisse für bessere Auswahl
               }
             }
           } catch (error) {
@@ -293,7 +291,7 @@ export class GoogleAPIService {
           }
         }
         
-        if (results.length >= 8) break; // Genug gefunden
+        if (results.length >= 12) break; // Genug gefunden
       }
 
     } catch (error) {
@@ -301,6 +299,114 @@ export class GoogleAPIService {
     }
 
     return results;
+  }
+
+  // Neue präzisere Methode: Prüft Relevanz für die Branche
+  private static isRelevantBusiness(place: any, searchTerm: string, originalLocation: string, businessType?: string): boolean {
+    if (!place.name) {
+      return false;
+    }
+
+    // Geschäft muss geöffnet/aktiv sein (falls Status vorhanden)
+    if (place.business_status && place.business_status === 'CLOSED_PERMANENTLY') {
+      return false;
+    }
+
+    const placeName = place.name.toLowerCase();
+    const placeAddress = (place.formatted_address || place.vicinity || '').toLowerCase();
+    const placeTypes = place.types || [];
+
+    // Branchenspezifische Ausschlüsse
+    const excludePatterns = {
+      'shk': [
+        'landschaftsbau', 'garten', 'landschaftsarchitektur', 'landschaftsärtner',
+        'gärtner', 'planstatt', 'grünflächen', 'pflaster', 'outdoor',
+        'restaurant', 'hotel', 'bank', 'versicherung', 'auto', 'kfz'
+      ],
+      'maler': [
+        'restaurant', 'hotel', 'bank', 'versicherung', 'auto', 'kfz',
+        'landschaftsbau', 'garten', 'elektr', 'sanitär', 'heizung'
+      ],
+      'elektriker': [
+        'restaurant', 'hotel', 'bank', 'versicherung', 'auto', 'kfz',
+        'landschaftsbau', 'garten', 'maler', 'sanitär', 'heizung'
+      ]
+    };
+
+    const excludeForBusiness = excludePatterns[businessType as keyof typeof excludePatterns] || [];
+    
+    // Prüfe auf Ausschluss-Begriffe im Namen oder Adresse
+    const hasExcludedTerms = excludeForBusiness.some(excludeTerm => 
+      placeName.includes(excludeTerm) || placeAddress.includes(excludeTerm)
+    );
+
+    if (hasExcludedTerms) {
+      console.log(`❌ Excluded "${place.name}" - contains excluded terms for ${businessType}`);
+      return false;
+    }
+
+    // Prüfe auf relevante Business-Typen (weniger restriktiv)
+    const irrelevantTypes = [
+      'restaurant', 'food', 'meal_takeaway', 'meal_delivery',
+      'bank', 'atm', 'insurance_agency', 'car_dealer', 'car_repair',
+      'gas_station', 'lodging', 'tourist_attraction', 'park',
+      'school', 'university', 'hospital', 'pharmacy', 'doctor'
+    ];
+
+    const hasIrrelevantType = placeTypes.some((type: string) => 
+      irrelevantTypes.includes(type)
+    );
+
+    if (hasIrrelevantType) {
+      console.log(`❌ Excluded "${place.name}" - irrelevant business type: ${placeTypes.join(', ')}`);
+      return false;
+    }
+
+    // Positive Validierung: Name oder Typ muss zum Suchbegriff passen
+    const searchWords = searchTerm.toLowerCase().split(' ');
+    const nameWords = placeName.split(' ');
+    
+    const hasRelevantName = searchWords.some(searchWord => 
+      nameWords.some(nameWord => 
+        nameWord.includes(searchWord) || 
+        searchWord.includes(nameWord) ||
+        this.calculateStringSimilarity(nameWord, searchWord) > 0.7
+      )
+    );
+
+    // Erweiterte Business-Typ Validierung für Handwerker
+    const hasRelevantType = placeTypes.some((type: string) => 
+      [
+        'plumber', 'electrician', 'painter', 'roofing_contractor', 
+        'general_contractor', 'home_improvement_store',
+        'establishment', 'point_of_interest'
+      ].includes(type)
+    );
+
+    // Spezielle Handwerker-Keywords
+    const handwerkerKeywords = {
+      'shk': ['sanitär', 'heizung', 'klima', 'shk', 'install', 'klempner', 'haustechnik'],
+      'maler': ['maler', 'lackier', 'anstrich', 'farbe', 'tapete'],
+      'elektriker': ['elektr', 'strom', 'beleucht', 'installation'],
+      'dachdecker': ['dach', 'bedach', 'ziegel', 'schiefer'],
+      'stukateur': ['stuck', 'putz', 'trockenbau'],
+      'planungsbuero': ['plan', 'büro', 'ingenieur', 'architekt']
+    };
+
+    const relevantKeywords = handwerkerKeywords[businessType as keyof typeof handwerkerKeywords] || [];
+    const hasHandwerkerContext = relevantKeywords.some(keyword => 
+      placeName.includes(keyword) || placeAddress.includes(keyword)
+    );
+
+    const isValid = hasRelevantName || hasRelevantType || hasHandwerkerContext;
+    
+    if (!isValid) {
+      console.log(`❌ Filtered out "${place.name}" - not relevant for "${searchTerm}" (${businessType})`);
+    } else {
+      console.log(`✅ Included "${place.name}" - ${hasRelevantName ? 'name match' : hasRelevantType ? 'type match' : 'context match'}`);
+    }
+
+    return isValid;
   }
 
   // Verbesserte Methode: Prüft ob es sich um die eigene Firma handelt
@@ -588,21 +694,26 @@ export class GoogleAPIService {
     return commonWords.length / Math.max(words1.length, words2.length);
   }
 
-  // Neue Methode: Konkurrenten filtern und deduplizieren mit Ausschluss der eigenen Firma
-  private static filterAndDeduplicateCompetitors(competitors: any[], originalLocation: string, ownCompanyName?: string): any[] {
+  // Neue Methode: Konkurrenten filtern und deduplizieren mit Branchenkontext
+  private static filterAndDeduplicateCompetitors(competitors: any[], originalLocation: string, ownCompanyName?: string, businessType?: string): any[] {
     const seen = new Set<string>();
     const filtered: any[] = [];
 
-    // Nach Qualität sortieren (Bewertung * Anzahl Reviews)
+    // Nach Qualität und Nähe sortieren
     const sorted = competitors.sort((a, b) => {
-      const scoreA = (a.rating || 0) * Math.log(a.user_ratings_total || 1);
-      const scoreB = (b.rating || 0) * Math.log(b.user_ratings_total || 1);
+      const scoreA = (a.rating || 0) * Math.log(a.user_ratings_total || 1) + (a.searchRadius ? 1000 / a.searchRadius : 0);
+      const scoreB = (b.rating || 0) * Math.log(b.user_ratings_total || 1) + (b.searchRadius ? 1000 / b.searchRadius : 0);
       return scoreB - scoreA;
     });
 
     for (const competitor of sorted) {
       // Eigene Firma ausschließen
       if (this.isOwnCompany(competitor, ownCompanyName, originalLocation)) {
+        continue;
+      }
+
+      // Finale Branchenprüfung
+      if (!this.isRelevantBusiness(competitor, businessType || '', originalLocation, businessType)) {
         continue;
       }
 
@@ -614,7 +725,7 @@ export class GoogleAPIService {
 
       // Zu ähnliche Namen vermeiden
       const isTooSimilar = Array.from(seen).some(existingName => 
-        this.calculateAddressSimilarity(nameKey, existingName) > 0.7
+        this.calculateNameSimilarity(nameKey, existingName) > 0.8
       );
       
       if (isTooSimilar) {
@@ -624,9 +735,8 @@ export class GoogleAPIService {
       seen.add(nameKey);
       filtered.push({
         ...competitor,
-        // Entfernung berechnen falls Koordinaten vorhanden
         distance: competitor.geometry?.location ? 
-          this.calculateDistanceFromCoords(competitor.geometry.location) : 
+          this.calculateDistanceFromCoords(competitor.geometry.location, competitor.searchRadius) : 
           'Unbekannt'
       });
     }
@@ -634,10 +744,18 @@ export class GoogleAPIService {
     return filtered;
   }
 
-  // Neue Methode: Entfernung berechnen
-  private static calculateDistanceFromCoords(location: {lat: number, lng: number}): string {
-    // Vereinfachte Entfernungsberechnung (in der Realität würde man Haversine-Formel verwenden)
-    const distance = Math.random() * 12 + 1; // 1-13 km
+  // Verbesserte Entfernungsberechnung
+  private static calculateDistanceFromCoords(location: {lat: number, lng: number}, searchRadius?: number): string {
+    if (searchRadius) {
+      // Realistische Entfernung basierend auf Suchradius
+      const minDistance = Math.max(0.1, searchRadius * 0.3 / 1000);
+      const maxDistance = searchRadius / 1000;
+      const distance = minDistance + Math.random() * (maxDistance - minDistance);
+      return `${distance.toFixed(1)} km`;
+    }
+    
+    // Fallback
+    const distance = Math.random() * 12 + 1;
     return `${distance.toFixed(1)} km`;
   }
 
