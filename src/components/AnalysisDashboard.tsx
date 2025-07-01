@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, FileText, Globe, Building } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Globe, Building, Settings } from 'lucide-react';
 
 // Components
 import SEOAnalysis from './analysis/SEOAnalysis';
@@ -23,13 +24,16 @@ import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
 import HTMLExport from './analysis/HTMLExport';
+import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import OverallRating from './analysis/OverallRating';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
+import APIKeyManager from './APIKeyManager';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
@@ -64,6 +68,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
   const { toast } = useToast();
 
   // Manual data management
@@ -85,6 +90,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     acc[key] = competitorServices[key].services;
     return acc;
   }, {} as { [competitorName: string]: string[] });
+
+  // Check API key status on mount
+  useEffect(() => {
+    const hasApiKey = GoogleAPIService.hasApiKey();
+    if (!hasApiKey) {
+      toast({
+        title: "Google API-Schlüssel fehlt",
+        description: "Für echte Daten wird ein Google API-Schlüssel benötigt. Konfigurieren Sie ihn für bessere Ergebnisse.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
 
   // Load analysis data when component mounts
   useEffect(() => {
@@ -141,7 +158,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
           <div className="flex items-center gap-4">
             <Button onClick={onReset} variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -151,8 +168,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               <h1 className="text-2xl font-bold text-yellow-400">Analyse-Ergebnisse</h1>
               <div className="flex items-center gap-2 mt-1">
                 <Globe className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-300">{businessData.url}</span>
-                <Badge variant="secondary">
+                <span className="text-gray-300 break-all">{businessData.url}</span>
+                <Badge variant="secondary" className="shrink-0">
                   <Building className="h-3 w-3 mr-1" />
                   {industryNames[businessData.industry]}
                 </Badge>
@@ -160,7 +177,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button 
+              onClick={() => setShowAPIKeyDialog(true)}
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              API-Schlüssel
+            </Button>
             <SaveAnalysisDialog 
               businessData={businessData}
               realData={realData}
@@ -171,6 +197,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               competitorServices={competitorServices}
             />
             <HTMLExport 
+              businessData={businessData}
+              realData={realData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={transformedCompetitorServices}
+            />
+            <CustomerHTMLExport 
               businessData={businessData}
               realData={realData}
               manualImprintData={manualImprintData}
@@ -189,6 +223,23 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
+        {/* API Key Status */}
+        {!GoogleAPIService.hasApiKey() && (
+          <Card className="mb-6 border-yellow-400/50 bg-yellow-400/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-yellow-400 font-semibold mb-1">Google API-Schlüssel nicht konfiguriert</h3>
+                  <p className="text-gray-300 text-sm">Für echte Google Places und PageSpeed Daten wird ein API-Schlüssel benötigt.</p>
+                </div>
+                <Button onClick={() => setShowAPIKeyDialog(true)} variant="outline" size="sm">
+                  Konfigurieren
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Overall Rating */}
         <div className="mb-6">
           <OverallRating 
@@ -199,16 +250,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
         {/* Analysis Tabs */}
         <Tabs defaultValue="seo" className="space-y-6">
-          <TabsList className="grid grid-cols-8 w-full bg-gray-800 border-yellow-400/30">
-            <TabsTrigger value="seo" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">SEO</TabsTrigger>
-            <TabsTrigger value="performance" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Performance</TabsTrigger>
-            <TabsTrigger value="mobile" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Mobile</TabsTrigger>
-            <TabsTrigger value="social" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Social Media</TabsTrigger>
-            <TabsTrigger value="reviews" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Bewertungen</TabsTrigger>
-            <TabsTrigger value="competitors" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Konkurrenz</TabsTrigger>
-            <TabsTrigger value="legal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Rechtliches</TabsTrigger>
-            <TabsTrigger value="workplace" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Arbeitgeber</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto">
+            <TabsList className="grid grid-cols-8 w-full min-w-[800px] bg-gray-800 border-yellow-400/30">
+              <TabsTrigger value="seo" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">SEO</TabsTrigger>
+              <TabsTrigger value="performance" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Performance</TabsTrigger>
+              <TabsTrigger value="mobile" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Mobile</TabsTrigger>
+              <TabsTrigger value="social" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Social Media</TabsTrigger>
+              <TabsTrigger value="reviews" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Bewertungen</TabsTrigger>
+              <TabsTrigger value="competitors" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Konkurrenz</TabsTrigger>
+              <TabsTrigger value="legal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Rechtliches</TabsTrigger>
+              <TabsTrigger value="workplace" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Arbeitgeber</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="seo" className="space-y-6">
             <SEOAnalysis url={businessData.url} realData={realData} />
@@ -277,6 +330,20 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* API Key Dialog */}
+      {showAPIKeyDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
+            <APIKeyManager />
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => setShowAPIKeyDialog(false)} variant="outline">
+                Schließen
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
