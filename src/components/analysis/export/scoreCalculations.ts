@@ -1,5 +1,6 @@
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualSocialData } from '@/hooks/useManualData';
 
 export const calculateScore = (value: number, maxValue: number = 100) => {
   return Math.min(100, Math.max(0, value));
@@ -15,12 +16,34 @@ export const calculateHourlyRateScore = (hourlyRateData?: { ownRate: number; reg
   return 50; // Suboptimal
 };
 
-export const calculateSocialMediaScore = (realData: RealBusinessData) => {
+export const calculateSocialMediaScore = (realData: RealBusinessData, manualSocialData?: ManualSocialData | null) => {
   let score = 0;
-  if (realData.socialMedia.facebook.found) score += 30;
-  if (realData.socialMedia.instagram.found) score += 30;
-  if (realData.socialMedia.facebook.followers > 100) score += 20;
-  if (realData.socialMedia.instagram.followers > 100) score += 20;
+  
+  // Prüfe ob manuelle Daten vorhanden sind
+  const hasManualData = manualSocialData && (manualSocialData.facebookUrl || manualSocialData.instagramUrl);
+  
+  if (hasManualData) {
+    // Verwende manuelle Daten für die Bewertung
+    if (manualSocialData.facebookUrl) {
+      score += 30; // Facebook vorhanden
+      if (manualSocialData.facebookFollowers && parseInt(manualSocialData.facebookFollowers) > 100) {
+        score += 20; // Gute Follower-Zahl
+      }
+    }
+    if (manualSocialData.instagramUrl) {
+      score += 30; // Instagram vorhanden
+      if (manualSocialData.instagramFollowers && parseInt(manualSocialData.instagramFollowers) > 100) {
+        score += 20; // Gute Follower-Zahl
+      }
+    }
+  } else {
+    // Verwende automatisch erkannte Daten
+    if (realData.socialMedia.facebook.found) score += 30;
+    if (realData.socialMedia.instagram.found) score += 30;
+    if (realData.socialMedia.facebook.followers > 100) score += 20;
+    if (realData.socialMedia.instagram.followers > 100) score += 20;
+  }
+  
   return Math.min(100, score);
 };
 

@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { ManualSocialData } from '@/hooks/useManualData';
+import { calculateSocialMediaScore } from './export/scoreCalculations';
 
 interface OverallRatingProps {
   businessData: {
@@ -12,12 +14,16 @@ interface OverallRatingProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
+  manualSocialData?: ManualSocialData | null;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData }) => {
   // Berechne Keywords-Score basierend auf gefundenen Keywords
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+
+  // Berechne Social Media Score mit manuellen Daten
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
 
   // Alle Metriken mit korrekten Scores
   const metrics = [
@@ -27,7 +33,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData })
     { name: 'Keywords', score: keywordsScore, weight: 10, maxScore: 100 },
     { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 10, maxScore: 100 },
     { name: 'Mobile', score: realData.mobile.overallScore, weight: 10, maxScore: 100 },
-    { name: 'Social Media', score: realData.socialMedia.overallScore, weight: 8, maxScore: 100 },
+    { name: 'Social Media', score: socialMediaScore, weight: 8, maxScore: 100 },
     { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 7, maxScore: 100 },
     { name: 'Arbeitsplatz', score: realData.workplace.overallScore, weight: 5, maxScore: 100 },
     { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 5, maxScore: 100 },

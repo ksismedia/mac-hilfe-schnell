@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +32,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
+import { calculateSocialMediaScore } from './analysis/export/scoreCalculations';
 
 interface BusinessData {
   address: string;
@@ -144,6 +144,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  
+  // Berechne Social Media Score mit manuellen Daten
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
@@ -232,10 +235,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               </div>
             </div>
             
-            <div className={`p-4 rounded-lg border ${getScoreBg(realData.socialMedia.overallScore)}`}>
+            <div className={`p-4 rounded-lg border ${getScoreBg(socialMediaScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(realData.socialMedia.overallScore)}`}>
-                  {realData.socialMedia.overallScore}
+                <div className={`text-2xl font-bold ${getScoreColor(socialMediaScore)}`}>
+                  {socialMediaScore}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Social Media</div>
               </div>
