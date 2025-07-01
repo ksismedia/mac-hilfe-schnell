@@ -143,7 +143,7 @@ const Index = () => {
             />
           </div>
           <h1 className="text-4xl font-bold text-yellow-400 mb-4">
-            Online-Auftritt Analyse
+            Social Listening und Monitoring
           </h1>
           <p className="text-xl text-gray-300">
             Professionelle Bewertung von Webseite, Google-Bewertungen und Social-Media-Kanälen
