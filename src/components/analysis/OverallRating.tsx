@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData } from '@/hooks/useManualData';
-import { calculateSocialMediaScore } from './export/scoreCalculations';
+import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 
 interface OverallRatingProps {
   businessData: {
@@ -18,28 +18,14 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData }) => {
-  // Berechne Keywords-Score basierend auf gefundenen Keywords
+  // Keywords-Score
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
 
-  // Social Media Score mit korrekter Funktion berechnen - DETAILLIERTES DEBUG
-  console.log('=== OVERALL RATING DETAILLIERTES DEBUG ===');
-  console.log('Manual Social Data received:', JSON.stringify(manualSocialData, null, 2));
-  console.log('Manual Social Data Type:', typeof manualSocialData);
-  console.log('Manual Social Data ist null?', manualSocialData === null);
-  console.log('Manual Social Data ist undefined?', manualSocialData === undefined);
-  
-  if (manualSocialData) {
-    console.log('Facebook URL:', manualSocialData.facebookUrl);
-    console.log('Facebook Followers:', manualSocialData.facebookFollowers);
-    console.log('Facebook Last Post:', manualSocialData.facebookLastPost);
-  }
-  
-  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('Social Media Score calculated:', socialMediaScore);
-  console.log('=== END DETAILLIERTES DEBUG ===');
+  // Social Media Score - VEREINFACHT
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
 
-  // Alle Metriken mit korrekten Scores
+  // Alle Metriken
   const metrics = [
     { name: 'SEO', score: realData.seo.score, weight: 15, maxScore: 100 },
     { name: 'Performance', score: realData.performance.score, weight: 15, maxScore: 100 },
@@ -73,16 +59,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive';
   };
 
-  // ERWEITERTE Debug-Info für manuelle Social Media Daten
-  const hasManualSocialData = Boolean(manualSocialData && (
-    (manualSocialData.facebookUrl && manualSocialData.facebookUrl.trim() !== '') ||
-    (manualSocialData.instagramUrl && manualSocialData.instagramUrl.trim() !== '') ||
-    (manualSocialData.linkedinUrl && manualSocialData.linkedinUrl.trim() !== '') ||
-    (manualSocialData.twitterUrl && manualSocialData.twitterUrl.trim() !== '') ||
-    (manualSocialData.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '')
+  // Prüfung ob Social Media Daten vorhanden
+  const hasSocialData = Boolean(manualSocialData && (
+    manualSocialData.facebookUrl || manualSocialData.instagramUrl || 
+    manualSocialData.linkedinUrl || manualSocialData.twitterUrl || manualSocialData.youtubeUrl
   ));
-
-  console.log('hasManualSocialData:', hasManualSocialData);
 
   return (
     <div className="space-y-6">
@@ -91,9 +72,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
           <CardTitle>Gesamtbewertung - {realData.company.name}</CardTitle>
           <CardDescription>
             Vollständige Analyse für {realData.company.url}
-            {hasManualSocialData && (
+            {hasSocialData && (
               <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-                ✅ Manuelle Social Media Daten aktiv
+                ✅ Social Media aktiv
               </span>
             )}
           </CardDescription>
@@ -122,29 +103,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                         {metric.weight}% Gewichtung
                       </Badge>
                       {metric.name === 'Social Media' && (
-                        <div className="flex gap-1">
-                          <Badge variant="default" className="text-xs bg-green-600">
-                            SCORE: {metric.score}
-                          </Badge>
-                          {hasManualSocialData && (
-                            <Badge variant="default" className="text-xs bg-blue-600">
-                              ✅ MANUELL EINGEGEBEN
-                            </Badge>
-                          )}
-                          {!hasManualSocialData && (
-                            <Badge variant="destructive" className="text-xs">
-                              ❌ KEINE DATEN
-                            </Badge>
-                          )}
-                        </div>
+                        <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
+                          {hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten'}
+                        </Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
                         {Math.round(metric.score)}/100
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        ({Math.round(metric.score/20*10)/10}/5)
                       </span>
                     </div>
                   </div>
@@ -172,63 +138,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                 </div>
                 <div className="text-sm text-gray-600">Verbesserung nötig (&lt;60%)</div>
               </div>
-            </div>
-
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2">Live-Analyse Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
-                <div>
-                  <h4 className="font-medium mb-1">Technische Analyse:</h4>
-                  <ul className="space-y-1">
-                    <li>• Website: {realData.company.url}</li>
-                    <li>• SEO-Faktoren: {realData.seo.score}/100</li>
-                    <li>• Ladezeit: {realData.performance.loadTime}s</li>
-                    <li>• Mobile Score: {realData.mobile.overallScore}/100</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-1">Business-Analyse:</h4>
-                  <ul className="space-y-1">
-                    <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
-                    <li>• Google Bewertungen: {realData.reviews.google.count}</li>
-                    <li>• Konkurrenten: {realData.competitors.length}</li>
-                    <li>• Social Media Score: {socialMediaScore}/100 {hasManualSocialData ? '✅ MANUELL AKTIV' : '❌ KEINE DATEN'}</li>
-                    <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
-                  </ul>
-                </div>
-              </div>
-              
-              {hasManualSocialData && (
-                <div className="mt-4 p-3 bg-green-100 rounded border border-green-300">
-                  <h4 className="font-medium text-green-800 mb-2">✅ Manuelle Social Media Daten erkannt:</h4>
-                  <div className="text-sm text-green-700 grid grid-cols-2 gap-2">
-                    {manualSocialData?.facebookUrl && manualSocialData.facebookUrl.trim() !== '' && (
-                      <div>• Facebook: ✓ ({manualSocialData.facebookFollowers || '0'} Follower)</div>
-                    )}
-                    {manualSocialData?.instagramUrl && manualSocialData.instagramUrl.trim() !== '' && (
-                      <div>• Instagram: ✓ ({manualSocialData.instagramFollowers || '0'} Follower)</div>
-                    )}
-                    {manualSocialData?.linkedinUrl && manualSocialData.linkedinUrl.trim() !== '' && (
-                      <div>• LinkedIn: ✓ ({manualSocialData.linkedinFollowers || '0'} Follower)</div>
-                    )}
-                    {manualSocialData?.twitterUrl && manualSocialData.twitterUrl.trim() !== '' && (
-                      <div>• Twitter: ✓ ({manualSocialData.twitterFollowers || '0'} Follower)</div>
-                    )}
-                    {manualSocialData?.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '' && (
-                      <div>• YouTube: ✓ ({manualSocialData.youtubeSubscribers || '0'} Abonnenten)</div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {!hasManualSocialData && (
-                <div className="mt-4 p-3 bg-amber-100 rounded border border-amber-300">
-                  <h4 className="font-medium text-amber-800 mb-1">⚠️ Keine Social Media Daten eingegeben</h4>
-                  <p className="text-sm text-amber-700">
-                    Gehen Sie zum "Social" Tab und klicken Sie "Manuell eingeben" um Ihre Social Media Daten hinzuzufügen.
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </CardContent>
