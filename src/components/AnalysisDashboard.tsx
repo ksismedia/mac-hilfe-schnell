@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -66,8 +67,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   loadedAnalysisId 
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
+  const [hasInitialApiKeyCheck, setHasInitialApiKeyCheck] = useState(false);
   const { toast } = useToast();
 
   // Manual data management
@@ -90,27 +92,28 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     return acc;
   }, {} as { [competitorName: string]: string[] });
 
-  // Check API key status on mount
+  // Initial API key check - show dialog immediately if no key
   useEffect(() => {
-    const hasApiKey = GoogleAPIService.hasApiKey();
-    if (!hasApiKey) {
-      toast({
-        title: "Google API-Schlüssel fehlt",
-        description: "Für echte Daten wird ein Google API-Schlüssel benötigt. Konfigurieren Sie ihn für bessere Ergebnisse.",
-        variant: "destructive",
-      });
+    if (!hasInitialApiKeyCheck) {
+      const hasApiKey = GoogleAPIService.hasApiKey();
+      if (!hasApiKey) {
+        setShowAPIKeyDialog(true);
+      }
+      setHasInitialApiKeyCheck(true);
     }
-  }, [toast]);
+  }, [hasInitialApiKeyCheck]);
 
-  // Load analysis data when component mounts
+  // Load analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
-      console.log('Performing new analysis for:', businessData);
+      if (!hasInitialApiKeyCheck) return; // Wait for API key check
+      
+      console.log('Performing analysis for:', businessData);
+      setIsLoading(true);
       
       try {
         const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
         setRealData(analysisData);
-        setIsLoading(false);
       } catch (error) {
         console.error('Analysis error:', error);
         toast({
@@ -118,20 +121,65 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           description: "Die Website-Analyse konnte nicht durchgeführt werden.",
           variant: "destructive",
         });
+      } finally {
         setIsLoading(false);
       }
     };
 
     loadAnalysisData();
-  }, [businessData, toast]);
+  }, [businessData, toast, hasInitialApiKeyCheck]);
 
   const handleApiKeySet = () => {
     setShowAPIKeyDialog(false);
     toast({
       title: "API-Schlüssel gesetzt",
-      description: "Die Analyse verwendet jetzt echte Google-Daten.",
+      description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
     });
+    // Restart analysis with real data
+    window.location.reload();
   };
+
+  // Show API Key dialog first if no key is set
+  if (showAPIKeyDialog) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
+        <div className="max-w-4xl mx-auto pt-8">
+          <div className="mb-6">
+            <Button onClick={onReset} variant="outline" size="sm" className="mb-4">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Zurück zur Eingabe
+            </Button>
+            <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
+            <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
+          </div>
+          
+          <APIKeyManager 
+            onApiKeySet={handleApiKeySet}
+            onLoadSavedAnalysis={(analysis) => {
+              // Handle loading saved analysis
+              console.log('Loading saved analysis:', analysis);
+            }}
+          />
+          
+          <div className="mt-6 text-center">
+            <Button 
+              onClick={() => {
+                setShowAPIKeyDialog(false);
+                toast({
+                  title: "Ohne API-Schlüssel fortfahren",
+                  description: "Die Analyse verwendet Beispieldaten.",
+                  variant: "default",
+                });
+              }}
+              variant="outline"
+            >
+              Ohne API-Schlüssel fortfahren (mit Beispieldaten)
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -230,23 +278,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* API Key Status */}
-        {!GoogleAPIService.hasApiKey() && (
-          <Card className="mb-6 border-yellow-400/50 bg-yellow-400/10">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-yellow-400 font-semibold mb-1">Google API-Schlüssel nicht konfiguriert</h3>
-                  <p className="text-gray-300 text-sm">Für echte Google Places und PageSpeed Daten wird ein API-Schlüssel benötigt.</p>
-                </div>
-                <Button onClick={() => setShowAPIKeyDialog(true)} variant="outline" size="sm">
-                  Konfigurieren
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Overall Rating */}
         <div className="mb-6">
           <OverallRating 
@@ -338,8 +369,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         </Tabs>
       </div>
 
-      {/* API Key Dialog */}
-      {showAPIKeyDialog && (
+      {/* API Key Dialog Overlay */}
+      {showAPIKeyDialog && hasInitialApiKeyCheck && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
             <APIKeyManager onApiKeySet={handleApiKeySet} />
