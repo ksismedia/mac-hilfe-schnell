@@ -1,3 +1,4 @@
+
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -28,13 +29,15 @@ export const generateCustomerHTML = ({
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   
-  // Calculate social media score
+  // Calculate social media score - KORRIGIERT!
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   console.log('HTML Generator - Social Media Score:', socialMediaScore);
   console.log('HTML Generator - Manual Social Data:', manualSocialData);
 
   // Impressum Analysis
   const impressumScore = missingImprintElements.length === 0 ? 100 : Math.max(0, 100 - (missingImprintElements.length * 10));
+  console.log('Calculated impressumScore:', impressumScore);
+  console.log('missingImprintElements.length:', missingImprintElements.length);
 
   const getMissingImprintList = () => {
     if (missingImprintElements.length === 0) {
@@ -143,8 +146,11 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Social Media Analysis
+  // Social Media Analysis - KOMPLETT ÜBERARBEITET
   const getSocialMediaAnalysis = () => {
+    console.log('getSocialMediaAnalysis called with socialMediaScore:', socialMediaScore);
+    console.log('getSocialMediaAnalysis called with manualSocialData:', manualSocialData);
+    
     if (!manualSocialData) {
       return `
         <div class="metric-card warning">
