@@ -31,6 +31,7 @@ export const generateCustomerHTML = ({
   manualWorkplaceData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
+  console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   
   // Calculate social media score - KORRIGIERT!
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -423,7 +424,11 @@ export const generateCustomerHTML = ({
                     </span>
                   </td>
                   <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
-                    ${competitorServices && competitorServices[competitor.name] ? competitorServices[competitor.name].join(', ') : 'Nicht erfasst'}
+                    ${competitorServices && competitorServices[competitor.name] 
+                      ? competitorServices[competitor.name].join(', ') 
+                      : competitor.services && competitor.services.length > 0 
+                        ? competitor.services.join(', ')
+                        : 'Nicht erfasst'}
                   </td>
                 </tr>
               `).join('')}
