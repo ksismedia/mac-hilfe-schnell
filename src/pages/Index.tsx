@@ -29,7 +29,7 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+  const [showApiKeyForm, setShowApiKeyForm] = useState(true); // Starte immer mit true
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
@@ -42,10 +42,13 @@ const Index = () => {
   // Check API key on mount
   useEffect(() => {
     const savedKey = GoogleAPIService.getApiKey();
+    console.log('Checking saved API key:', savedKey ? 'Found' : 'Not found');
+    
     if (savedKey) {
       setApiKey(savedKey);
+      setShowApiKeyForm(false); // Verstecke Form wenn Key vorhanden
     } else {
-      setShowApiKeyForm(true);
+      setShowApiKeyForm(true); // Zeige Form wenn kein Key
     }
   }, []);
 
