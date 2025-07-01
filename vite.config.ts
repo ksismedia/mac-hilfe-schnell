@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => {
   const plugins = [react()];
   
   if (mode === 'development') {
-    plugins.push(...(Array.isArray(componentTagger()) ? componentTagger() : [componentTagger()]));
+    const taggerPlugins = componentTagger();
+    plugins.push(...(Array.isArray(taggerPlugins) ? taggerPlugins : [taggerPlugins]));
   }
 
   return {
