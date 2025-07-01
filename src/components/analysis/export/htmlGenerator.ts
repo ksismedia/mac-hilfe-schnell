@@ -1,4 +1,3 @@
-
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -74,10 +73,12 @@ export const generateCustomerHTML = (data: any) => {
                                  hourlyRateData.ownRate > 0 && 
                                  hourlyRateData.regionAverage > 0;
 
-  // Calculate legal compliance scores with correct impressum evaluation
-  const impressumScore = missingImprintElements ? 
+  // Calculate legal compliance scores with CORRECT impressum evaluation
+  // If missingImprintElements exists and has items, score should be low
+  // If missingImprintElements is empty or undefined, impressum is complete
+  const impressumScore = missingImprintElements && missingImprintElements.length > 0 ? 
     Math.max(0, 100 - (missingImprintElements.length * 8)) : 
-    (realData.imprint.found ? realData.imprint.score : 0);
+    (realData.imprint.found ? Math.max(realData.imprint.score, 85) : 30);
   
   const datenschutzScore = 85; // Assumed score
   const agbScore = 60; // Assumed score
@@ -234,7 +235,7 @@ export const generateCustomerHTML = (data: any) => {
                     <div class="metric-item">
                         <div class="metric-title">Impressum</div>
                         <div class="metric-value ${impressumScore >= 80 ? 'excellent' : impressumScore >= 60 ? 'good' : impressumScore >= 40 ? 'warning' : 'danger'}">
-                            ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vollständig' : impressumScore >= 40 ? 'Teilweise vollständig' : 'Unvollständig'}
+                            ${impressumScore >= 90 ? 'Vollständig' : impressumScore >= 70 ? 'Größtenteils vollständig' : impressumScore >= 50 ? 'Teilweise vollständig' : 'Unvollständig'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
