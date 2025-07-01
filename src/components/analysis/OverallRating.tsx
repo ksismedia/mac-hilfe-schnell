@@ -24,8 +24,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
   // Berechne Social Media Score mit manuellen Daten
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
+  console.log('Social Media Score calculated:', socialMediaScore);
 
-  // Alle Metriken mit korrekten Scores
+  // Alle Metriken mit korrekten Scores - Social Media Score wird jetzt korrekt verwendet
   const metrics = [
     { name: 'SEO', score: realData.seo.score, weight: 15, maxScore: 100 },
     { name: 'Performance', score: realData.performance.score, weight: 15, maxScore: 100 },
@@ -40,10 +41,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Local SEO', score: 75, weight: 5, maxScore: 100 }
   ];
 
+  console.log('All metrics with scores:', metrics.map(m => ({ name: m.name, score: m.score })));
+
   // Gewichteter Gesamtscore
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   const overallScore = Math.round(weightedScore / totalWeight);
+
+  console.log('Overall score calculation:', { totalWeight, weightedScore, overallScore });
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
@@ -91,6 +96,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                       <Badge variant="outline" className="text-xs">
                         {metric.weight}% Gewichtung
                       </Badge>
+                      {metric.name === 'Social Media' && (
+                        <Badge variant="secondary" className="text-xs">
+                          Score: {metric.score}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
@@ -145,6 +155,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     <li>• Keywords gefunden: {keywordsFoundCount}/{realData.keywords.length}</li>
                     <li>• Google Bewertungen: {realData.reviews.google.count}</li>
                     <li>• Konkurrenten: {realData.competitors.length}</li>
+                    <li>• Social Media Score: {socialMediaScore}/100</li>
                     <li>• Impressum: {realData.imprint.found ? 'Vorhanden' : 'Fehlt'}</li>
                   </ul>
                 </div>
@@ -158,3 +169,4 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 };
 
 export default OverallRating;
+
