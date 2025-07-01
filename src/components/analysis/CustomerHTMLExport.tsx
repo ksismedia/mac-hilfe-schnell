@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -149,19 +150,19 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             <div className="space-y-2">
               <h4 className="font-semibold text-green-700">📊 Social Media Status:</h4>
               <ul className="text-sm space-y-1 text-green-600">
-                <li>• Score: <strong>{socialMediaScore}/100</strong></li>
-                <li>• Status: {hasSocialData ? '✅ Aktiv' : '❌ Inaktiv'}</li>
-                <li>• Plattformen: {hasSocialData ? 'Konfiguriert' : 'Nicht erfasst'}</li>
+                <li>• Score: <strong>{calculateSimpleSocialScore(manualSocialData)}/100</strong></li>
+                <li>• Status: {Boolean(manualSocialData && (manualSocialData.facebookUrl || manualSocialData.instagramUrl || manualSocialData.linkedinUrl || manualSocialData.twitterUrl || manualSocialData.youtubeUrl)) ? '✅ Aktiv' : '❌ Inaktiv'}</li>
+                <li>• Plattformen: {Boolean(manualSocialData && (manualSocialData.facebookUrl || manualSocialData.instagramUrl || manualSocialData.linkedinUrl || manualSocialData.twitterUrl || manualSocialData.youtubeUrl)) ? 'Konfiguriert' : 'Nicht erfasst'}</li>
                 <li>• Bewertung: Realistisch angepasst</li>
               </ul>
             </div>
           </div>
 
-          {missingElements.length > 0 && (
+          {getMissingImprintElements().length > 0 && (
             <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">
               <h4 className="font-semibold text-red-800 mb-2">⚠️ Impressum-Warnung erkannt:</h4>
               <div className="text-sm text-red-700 space-y-1">
-                <p>• <strong>{missingElements.length} fehlende Pflichtangaben</strong> im Impressum identifiziert</p>
+                <p>• <strong>{getMissingImprintElements().length} fehlende Pflichtangaben</strong> im Impressum identifiziert</p>
                 <p>• <strong>Rechtliche Risiken:</strong> Abmahnungen und Bußgelder möglich</p>
                 <p>• <strong>Kundenreport:</strong> Enthält detaillierte Handlungsempfehlungen</p>
               </div>
