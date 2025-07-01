@@ -109,7 +109,7 @@ body {
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
 
-/* Progress-Balken mit einheitlichem Farbverlauf */
+/* Progress-Balken mit vereinfachtem Farbschema */
 .progress-container { margin-top: 15px; }
 .progress-bar { 
   background: #374151; 
@@ -125,22 +125,49 @@ body {
   transition: width 0.8s ease;
   position: relative;
   overflow: hidden;
-  /* Einheitlicher Farbverlauf für alle Balken: rot → grün → gold */
+  /* Vereinfachtes Farbschema: */
+  /* 0-50% = Rot */
+  /* 50-80% = Rot nach Grün Verlauf */
+  /* 80-100% = Grün nach Hellgelb Verlauf */
   background: linear-gradient(90deg, 
-    #dc2626 0%,     /* Rot (schlecht) */
-    #ea580c 15%, 
-    #f59e0b 25%, 
-    #eab308 35%, 
-    #84cc16 45%, 
-    #22c55e 55%,    /* Grün (gut) */
-    #10b981 65%, 
-    #14b8a6 75%, 
-    #fbbf24 85%,    /* Gold (exzellent) */
-    #f59e0b 100%
+    #dc2626 0%,     /* Rot (0%) */
+    #dc2626 50%,    /* Rot bis 50% */
+    #dc2626 50%,    /* Übergang bei 50% */
+    #22c55e 80%,    /* Grün bei 80% */
+    #22c55e 80%,    /* Grün ab 80% */
+    #fbbf24 100%    /* Hellgelb bei 100% */
   );
 }
 
-/* Alle spezifischen data-value Regeln entfernt - einheitlicher Farbverlauf für alle */
+/* Spezifische Progress-Fill Farben basierend auf Wert */
+.progress-fill[style*="width: 0%"],
+.progress-fill[style*="width: 1%"],
+.progress-fill[style*="width: 2%"],
+.progress-fill[style*="width: 3%"],
+.progress-fill[style*="width: 4%"] { background: #dc2626; }
+
+.progress-fill[style*="width: 5%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 10%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 15%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 20%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 25%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 30%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 35%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 40%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 45%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+.progress-fill[style*="width: 50%"] { background: linear-gradient(90deg, #dc2626 0%, #dc2626 100%); }
+
+.progress-fill[style*="width: 55%"] { background: linear-gradient(90deg, #dc2626 0%, #ef4444 50%, #f97316 100%); }
+.progress-fill[style*="width: 60%"] { background: linear-gradient(90deg, #dc2626 0%, #ef4444 33%, #f97316 66%, #eab308 100%); }
+.progress-fill[style*="width: 65%"] { background: linear-gradient(90deg, #dc2626 0%, #f97316 33%, #eab308 66%, #84cc16 100%); }
+.progress-fill[style*="width: 70%"] { background: linear-gradient(90deg, #dc2626 0%, #f97316 25%, #eab308 50%, #84cc16 75%, #22c55e 100%); }
+.progress-fill[style*="width: 75%"] { background: linear-gradient(90deg, #dc2626 0%, #eab308 33%, #84cc16 66%, #22c55e 100%); }
+.progress-fill[style*="width: 80%"] { background: linear-gradient(90deg, #dc2626 0%, #84cc16 50%, #22c55e 100%); }
+
+.progress-fill[style*="width: 85%"] { background: linear-gradient(90deg, #dc2626 0%, #84cc16 40%, #22c55e 80%, #10b981 90%, #fbbf24 100%); }
+.progress-fill[style*="width: 90%"] { background: linear-gradient(90deg, #dc2626 0%, #22c55e 70%, #10b981 85%, #fbbf24 100%); }
+.progress-fill[style*="width: 95%"] { background: linear-gradient(90deg, #dc2626 0%, #22c55e 60%, #10b981 80%, #fbbf24 100%); }
+.progress-fill[style*="width: 100%"] { background: linear-gradient(90deg, #dc2626 0%, #22c55e 50%, #10b981 75%, #fbbf24 100%); }
 
 .company-info { 
   background: rgba(17, 24, 39, 0.6); 
