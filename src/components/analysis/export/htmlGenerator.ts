@@ -4,6 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
+import { calculateSocialMediaScore } from './scoreCalculations';
 
 interface CustomerReportData {
   businessData: {
@@ -31,7 +32,7 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   
   // Calculate social media score - KORRIGIERT!
-  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
   console.log('HTML Generator - Social Media Score:', socialMediaScore);
   console.log('HTML Generator - Manual Social Data:', manualSocialData);
 
