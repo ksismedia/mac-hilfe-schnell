@@ -104,8 +104,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualCompetitors,
       competitorServices,
       hourlyRateData,
-      missingImprintElements,
-      socialMediaScore
+      missingImprintElements
     });
 
     const newWindow = window.open('', '_blank');
