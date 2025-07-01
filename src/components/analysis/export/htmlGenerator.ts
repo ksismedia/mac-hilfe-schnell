@@ -68,12 +68,18 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${seoScore >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
           </div>
         </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-value="${Math.round(seoScore/10)*10}" style="width: ${seoScore}%"></div>
+          </div>
+        </div>
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Keyword-Optimierung</li>
+            <li>Keyword-Optimierung für bessere Rankings</li>
             <li>Verbesserung der Meta-Beschreibungen</li>
             <li>Aufbau hochwertiger Backlinks</li>
+            <li>Content-Optimierung für Suchmaschinen</li>
           </ul>
         </div>
       </div>
@@ -95,12 +101,18 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'}</p>
           </div>
         </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-value="${Math.round(performanceScore/10)*10}" style="width: ${performanceScore}%"></div>
+          </div>
+        </div>
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Bilder optimieren</li>
-            <li>Caching aktivieren</li>
-            <li>Code minimieren</li>
+            <li>Bilder komprimieren und optimieren</li>
+            <li>Browser-Caching aktivieren</li>
+            <li>CSS und JavaScript minimieren</li>
+            <li>Content Delivery Network nutzen</li>
           </ul>
         </div>
       </div>
@@ -122,12 +134,18 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
           </div>
         </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-value="${Math.round(mobileScore/10)*10}" style="width: ${mobileScore}%"></div>
+          </div>
+        </div>
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Responsive Design verwenden</li>
-            <li>Touch-freundliche Navigation</li>
-            <li>Mobile-First-Ansatz</li>
+            <li>Responsive Design implementieren</li>
+            <li>Touch-freundliche Navigation erstellen</li>
+            <li>Mobile-First-Ansatz umsetzen</li>
+            <li>Ladezeiten für mobile Geräte optimieren</li>
           </ul>
         </div>
       </div>
@@ -137,13 +155,48 @@ export const generateCustomerHTML = ({
   // Competitor Analysis
   const getCompetitorAnalysis = () => {
     if (!manualCompetitors || manualCompetitors.length === 0) {
-      return '<p>Keine Konkurrenten zum Vergleich gefunden.</p>';
+      return `
+        <div class="metric-card warning">
+          <h3>👥 Konkurrenzanalyse</h3>
+          <p class="text-center" style="color: #d1d5db; font-style: italic; margin: 20px 0;">
+            Keine Konkurrenten zum Vergleich erfasst.
+          </p>
+          <div class="recommendations">
+            <h4>Empfohlene Maßnahmen:</h4>
+            <ul>
+              <li>Konkurrenzanalyse durchführen</li>
+              <li>Marktposition bestimmen</li>
+              <li>Differenzierungsmerkmale identifizieren</li>
+            </ul>
+          </div>
+        </div>
+      `;
     }
 
     return `
-      <ul>
-        ${manualCompetitors.map(competitor => `<li>${competitor.name} - Bewertung: ${competitor.rating}, Anzahl Bewertungen: ${competitor.reviews}</li>`).join('')}
-      </ul>
+      <div class="metric-card good">
+        <h3>👥 Konkurrenzanalyse</h3>
+        <div class="competitor-list">
+          ${manualCompetitors.map(competitor => `
+            <div class="competitor-item">
+              <div class="competitor-rank">
+                <strong>${competitor.name}</strong>
+              </div>
+              <p><strong>Bewertung:</strong> ${competitor.rating}/5 (${competitor.reviews} Bewertungen)</p>
+              <p><strong>Status:</strong> ${competitor.rating >= 4 ? 'Starker Konkurrent' : competitor.rating >= 3 ? 'Mittlerer Konkurrent' : 'Schwacher Konkurrent'}</p>
+            </div>
+          `).join('')}
+        </div>
+        <div class="recommendations">
+          <h4>Handlungsempfehlungen:</h4>
+          <ul>
+            <li>Stärken der Konkurrenz analysieren</li>
+            <li>Eigene Alleinstellungsmerkmale entwickeln</li>
+            <li>Preispositionierung überprüfen</li>
+            <li>Service-Qualität kontinuierlich verbessern</li>
+          </ul>
+        </div>
+      </div>
     `;
   };
 
@@ -259,6 +312,12 @@ export const generateCustomerHTML = ({
           </div>
         </div>
         
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-value="${Math.round(socialMediaScore/10)*10}" style="width: ${socialMediaScore}%"></div>
+          </div>
+        </div>
+        
         <div class="platform-details">
           <h4>Aktive Kanäle:</h4>
           <ul>
@@ -279,10 +338,12 @@ export const generateCustomerHTML = ({
               <li>Erhöhung der Posting-Frequenz</li>
               <li>Aufbau einer größeren Follower-Basis</li>
               <li>Diversifizierung auf weitere Plattformen</li>
+              <li>Content-Strategie entwickeln</li>
             ` : `
               <li>Kontinuierliche Content-Strategie beibehalten</li>
               <li>Engagement mit Followern verstärken</li>
               <li>Performance-Monitoring implementieren</li>
+              <li>Cross-Platform-Synergien nutzen</li>
             `}
           </ul>
         </div>

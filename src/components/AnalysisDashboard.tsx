@@ -35,6 +35,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
 import { calculateSocialMediaScore } from './analysis/export/scoreCalculations';
+import { calculateSimpleSocialScore } from './analysis/export/simpleSocialScore';
 
 interface BusinessData {
   address: string;
@@ -148,7 +149,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
   // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
-  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   console.log('Dashboard - LIVE Social Media Score:', socialMediaScore, 'Manual Data:', manualSocialData);
 
   const getScoreColor = (score: number) => {
