@@ -142,14 +142,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     );
   }
 
-  // Korrekte Score-Berechnungen
+  // KORRIGIERTE Score-Berechnungen - Social Media Score wird LIVE berechnet
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
-  // Social Media Score mit korrekter Funktion berechnen
+  // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  console.log('Dashboard - Social Media Score berechnet:', socialMediaScore);
+  console.log('Dashboard - LIVE Social Media Score:', socialMediaScore, 'Manual Data:', manualSocialData);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
@@ -198,7 +198,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Score Overview Tiles - FIXED: Use calculated socialMediaScore */}
+        {/* Score Overview Tiles - KORRIGIERT: Verwendet live berechneten socialMediaScore */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
@@ -247,11 +247,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               </div>
             </div>
             
+            {/* KORRIGIERT: Hier wird jetzt der live berechnete socialMediaScore verwendet */}
             <div className={`p-4 rounded-lg border ${getScoreBg(socialMediaScore)}`}>
               <div className="text-center">
                 <div className={`text-2xl font-bold ${getScoreColor(socialMediaScore)} relative`}>
                   {socialMediaScore}
-                  <span className="absolute -top-1 -right-1 text-xs bg-green-500 text-white px-1 rounded">✓</span>
+                  {socialMediaScore > 0 && (
+                    <span className="absolute -top-1 -right-1 text-xs bg-green-500 text-white px-1 rounded">✓</span>
+                  )}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Social Media</div>
               </div>
