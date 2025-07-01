@@ -95,6 +95,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     // Social Media Score für Customer Report berechnen
     const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
     console.log('Customer Report - Social Media Score:', socialMediaScore);
+    console.log('Customer Report - Manual Social Data being passed:', manualSocialData);
     
     console.log('Passing missingImprintElements to HTML generator:', missingImprintElements);
     
@@ -104,7 +105,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualCompetitors,
       competitorServices,
       hourlyRateData,
-      missingImprintElements
+      missingImprintElements,
+      manualSocialData // Pass the manual social data to the HTML generator
     });
 
     const newWindow = window.open('', '_blank');
