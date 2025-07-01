@@ -234,7 +234,7 @@ export class GoogleAPIService {
     }
   }
 
-  // Neue Methode: Bessere Nearby-Suche mit Ausschluss der eigenen Firma
+  // Verbesserte Nearby-Suche mit strengerem Ausschluss der eigenen Firma
   private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string): Promise<any[]> {
     const apiKey = this.getApiKey();
     const results: any[] = [];
@@ -260,13 +260,15 @@ export class GoogleAPIService {
                 // Nur echte Geschäfte mit strengen Kriterien und ohne eigene Firma
                 const realBusinesses = data.results.filter((place: any) => 
                   this.isRealBusiness(place, searchTerm, originalLocation) &&
-                  !this.isOwnCompany(place, ownCompanyName)
+                  !this.isOwnCompany(place, ownCompanyName, originalLocation)
                 );
                 
                 // PLZ und Ort zu jedem Geschäft hinzufügen
                 const businessesWithLocation = realBusinesses.map((place: any) => ({
                   ...place,
-                  locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity)
+                  locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
+                  // Verbesserte Firmennamenerkennung
+                  name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity)
                 }));
                 
                 results.push(...businessesWithLocation);
@@ -290,8 +292,8 @@ export class GoogleAPIService {
     return results;
   }
 
-  // Neue Methode: Prüft ob es sich um die eigene Firma handelt
-  private static isOwnCompany(place: any, ownCompanyName?: string): boolean {
+  // Verbesserte Methode: Prüft ob es sich um die eigene Firma handelt
+  private static isOwnCompany(place: any, ownCompanyName?: string, originalLocation?: string): boolean {
     if (!ownCompanyName || !place.name) {
       return false;
     }
@@ -301,34 +303,158 @@ export class GoogleAPIService {
 
     // Exakte Übereinstimmung
     if (placeName === ownName) {
-      console.log(`Excluding own company: "${place.name}"`);
+      console.log(`Excluding own company (exact match): "${place.name}"`);
       return true;
     }
 
-    // Ähnlichkeitscheck (mehr als 80% ähnlich)
+    // Erweiterte Ähnlichkeitscheck
     const similarity = this.calculateNameSimilarity(placeName, ownName);
-    if (similarity > 0.8) {
+    if (similarity > 0.6) { // Niedrigere Schwelle für bessere Erkennung
       console.log(`Excluding similar company name: "${place.name}" (similarity: ${similarity.toFixed(2)})`);
       return true;
+    }
+
+    // Prüfe auch Adressähnlichkeit für zusätzliche Sicherheit
+    if (originalLocation && place.formatted_address) {
+      const addressSimilarity = this.calculateAddressSimilarity(place.formatted_address, originalLocation);
+      if (addressSimilarity > 0.8) {
+        console.log(`Excluding company with similar address: "${place.name}"`);
+        return true;
+      }
+    }
+
+    // Prüfe auf Teilübereinstimmungen im Namen
+    const ownNameWords = ownName.split(/\s+/).filter(w => w.length > 2);
+    const placeNameWords = placeName.split(/\s+/).filter(w => w.length > 2);
+    
+    if (ownNameWords.length > 0 && placeNameWords.length > 0) {
+      const matchingWords = ownNameWords.filter(ownWord => 
+        placeNameWords.some(placeWord => 
+          ownWord.includes(placeWord) || placeWord.includes(ownWord) || 
+          this.calculateStringSimilarity(ownWord, placeWord) > 0.8
+        )
+      );
+      
+      if (matchingWords.length >= Math.min(2, ownNameWords.length)) {
+        console.log(`Excluding company with matching name parts: "${place.name}"`);
+        return true;
+      }
     }
 
     return false;
   }
 
-  // Neue Methode: Berechnet Namensähnlichkeit
+  // Neue Methode: String-Ähnlichkeit berechnen (Levenshtein-ähnlich)
+  private static calculateStringSimilarity(str1: string, str2: string): number {
+    if (str1 === str2) return 1;
+    if (str1.length === 0 || str2.length === 0) return 0;
+    
+    const longer = str1.length > str2.length ? str1 : str2;
+    const shorter = str1.length > str2.length ? str2 : str1;
+    
+    if (longer.length === 0) return 1;
+    
+    const editDistance = this.calculateEditDistance(longer, shorter);
+    return (longer.length - editDistance) / longer.length;
+  }
+
+  // Neue Methode: Edit Distance berechnen
+  private static calculateEditDistance(str1: string, str2: string): number {
+    const matrix = [];
+    
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[i] = [i];
+    }
+    
+    for (let j = 0; j <= str1.length; j++) {
+      matrix[0][j] = j;
+    }
+    
+    for (let i = 1; i <= str2.length; i++) {
+      for (let j = 1; j <= str1.length; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+    
+    return matrix[str2.length][str1.length];
+  }
+
+  // Neue Methode: Verbesserte Firmennamenerkennung
+  private static improveBusinessName(originalName: string, address?: string): string {
+    if (!originalName) return 'Unbekannter Betrieb';
+    
+    // Wenn nur ein Nachname, versuche Branchenkontext hinzuzufügen
+    const nameWords = originalName.trim().split(/\s+/);
+    
+    // Wenn nur ein Wort und es sieht wie ein Nachname aus
+    if (nameWords.length === 1 && nameWords[0].length > 2) {
+      const singleWord = nameWords[0];
+      
+      // Prüfe ob es ein typischer deutscher Nachname ist (beginnt mit Großbuchstaben)
+      if (singleWord.charAt(0) === singleWord.charAt(0).toUpperCase()) {
+        // Versuche Branchenkontext aus der Adresse zu extrahieren
+        if (address) {
+          const addressLower = address.toLowerCase();
+          if (addressLower.includes('sanitär') || addressLower.includes('heizung') || addressLower.includes('klima')) {
+            return `${singleWord} - Sanitär, Heizung, Klima`;
+          }
+          if (addressLower.includes('maler') || addressLower.includes('lackier')) {
+            return `${singleWord} - Malerbetrieb`;
+          }
+          if (addressLower.includes('elektr')) {
+            return `${singleWord} - Elektrobetrieb`;
+          }
+          if (addressLower.includes('dach')) {
+            return `${singleWord} - Dachdeckerei`;
+          }
+        }
+        
+        // Fallback: Füge "Handwerksbetrieb" hinzu
+        return `${singleWord} - Handwerksbetrieb`;
+      }
+    }
+    
+    return originalName;
+  }
+
+  // Verbesserte Namensähnlichkeit
   private static calculateNameSimilarity(name1: string, name2: string): number {
-    const words1 = name1.split(/\s+/).filter(w => w.length > 2);
-    const words2 = name2.split(/\s+/).filter(w => w.length > 2);
+    // Normalisiere die Namen
+    const normalize = (str: string) => str.toLowerCase().replace(/[^a-zäöüß]/g, '');
+    const norm1 = normalize(name1);
+    const norm2 = normalize(name2);
+    
+    // Exakte Übereinstimmung
+    if (norm1 === norm2) return 1;
+    
+    // Wort-basierte Ähnlichkeit
+    const words1 = name1.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const words2 = name2.toLowerCase().split(/\s+/).filter(w => w.length > 2);
     
     if (words1.length === 0 || words2.length === 0) return 0;
     
     const commonWords = words1.filter(word1 => 
       words2.some(word2 => 
-        word1.includes(word2) || word2.includes(word1) || word1 === word2
+        word1.includes(word2) || word2.includes(word1) || 
+        this.calculateStringSimilarity(word1, word2) > 0.8
       )
     );
     
-    return commonWords.length / Math.max(words1.length, words2.length);
+    const wordSimilarity = commonWords.length / Math.max(words1.length, words2.length);
+    
+    // String-basierte Ähnlichkeit
+    const stringSimilarity = this.calculateStringSimilarity(norm1, norm2);
+    
+    // Kombiniere beide Metriken
+    return Math.max(wordSimilarity, stringSimilarity);
   }
 
   // Neue Methode: Extrahiert PLZ und Ort aus Adresse
@@ -445,7 +571,7 @@ export class GoogleAPIService {
 
     for (const competitor of sorted) {
       // Eigene Firma ausschließen
-      if (this.isOwnCompany(competitor, ownCompanyName)) {
+      if (this.isOwnCompany(competitor, ownCompanyName, originalLocation)) {
         continue;
       }
 
