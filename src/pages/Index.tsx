@@ -12,7 +12,7 @@ import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
 import APIKeyManager from '@/components/APIKeyManager';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { Search, Globe, MapPin, Building, Star, FolderOpen } from 'lucide-react';
+import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff } from 'lucide-react';
 
 interface BusinessData {
   address: string;
@@ -29,7 +29,10 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [needsApiKey, setNeedsApiKey] = useState(false);
+  const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const { toast } = useToast();
   
@@ -38,10 +41,60 @@ const Index = () => {
 
   // Check API key on mount
   useEffect(() => {
-    if (!GoogleAPIService.hasApiKey()) {
-      setNeedsApiKey(true);
+    const savedKey = GoogleAPIService.getApiKey();
+    if (savedKey) {
+      setApiKey(savedKey);
+    } else {
+      setShowApiKeyForm(true);
     }
   }, []);
+
+  const handleApiKeySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!apiKey.trim()) {
+      toast({
+        title: "Fehler",
+        description: "Bitte geben Sie einen API-Key ein.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsValidatingApiKey(true);
+
+    try {
+      GoogleAPIService.setApiKey(apiKey);
+      
+      const testResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
+      );
+
+      if (testResponse.ok) {
+        const data = await testResponse.json();
+        if (data.status === 'OK') {
+          toast({
+            title: "API-Key erfolgreich",
+            description: "Der Google API-Key wurde erfolgreich validiert.",
+          });
+          setShowApiKeyForm(false);
+        } else {
+          throw new Error(`API-Key ungültig: ${data.status}`);
+        }
+      } else {
+        throw new Error('API-Key Validierung fehlgeschlagen');
+      }
+    } catch (error) {
+      console.error('API-Key Validierung fehlgeschlagen:', error);
+      toast({
+        title: "Ungültiger API-Key",
+        description: "Der eingegebene Google API-Key ist ungültig. Bitte überprüfen Sie Ihren Key.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsValidatingApiKey(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,33 +123,10 @@ const Index = () => {
     }, 1000);
   };
 
-  const handleApiKeySet = () => {
-    setNeedsApiKey(false);
-    toast({
-      title: "API-Schlüssel gesetzt",
-      description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
-    });
-  };
-
-  const handleContinueWithoutApiKey = () => {
-    setNeedsApiKey(false);
-    toast({
-      title: "Fortfahren ohne API-Schlüssel",
-      description: "Die Analyse wird mit Beispieldaten durchgeführt.",
-    });
-  };
-
   const handleExtensionDataProcess = (processedData: BusinessData) => {
     console.log('Extension-Daten verarbeitet:', processedData);
     setBusinessData(processedData);
-    setLoadedAnalysisId(undefined); // Clear any loaded analysis
-    
-    // Check for API key before starting analysis
-    if (!GoogleAPIService.hasApiKey()) {
-      setNeedsApiKey(true);
-      return;
-    }
-    
+    setLoadedAnalysisId(undefined);
     setShowResults(true);
     toast({
       title: "Extension-Analyse gestartet",
@@ -112,15 +142,11 @@ const Index = () => {
   const handleLoadSavedAnalysis = (analysis: any) => {
     console.log('Loading saved analysis on main page:', analysis);
     
-    // Setze die Business-Daten aus der gespeicherten Analyse
     if (analysis.businessData) {
       setBusinessData(analysis.businessData);
     }
     
-    // Setze die Analysis-ID für das Dashboard
     setLoadedAnalysisId(analysis.id);
-    
-    // Zeige das Dashboard an
     setShowResults(true);
     
     toast({
@@ -131,7 +157,6 @@ const Index = () => {
 
   const resetAnalysis = () => {
     setShowResults(false);
-    setNeedsApiKey(false);
     setLoadedAnalysisId(undefined);
     setBusinessData({
       address: '',
@@ -141,25 +166,70 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Show API Key dialog first if needed
-  if (needsApiKey) {
+  // Show API Key form first if needed
+  if (showApiKeyForm) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
-        <div className="max-w-4xl mx-auto pt-8">
-          <div className="mb-6">
+        <div className="max-w-2xl mx-auto pt-8">
+          <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
             <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
           </div>
           
-          <APIKeyManager onApiKeySet={handleApiKeySet} />
+          <Card className="bg-gray-800 border-yellow-400/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-yellow-400">
+                <Key className="h-5 w-5" />
+                Google API-Key eingeben
+              </CardTitle>
+              <CardDescription className="text-gray-300">
+                Dieser wird sicher in Ihrem Browser gespeichert.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleApiKeySubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="apiKey" className="text-gray-200">Google API-Key</Label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="apiKey"
+                      type={showApiKey ? "text" : "password"}
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      placeholder="AIzaSy..."
+                      className="pr-10 bg-gray-700 border-gray-600 text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    >
+                      {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button 
+                  type="submit" 
+                  disabled={isValidatingApiKey} 
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
+                >
+                  {isValidatingApiKey ? 'Validiere API-Key...' : 'API-Key validieren'}
+                </Button>
+              </form>
+              
+              <div className="mt-6 p-4 bg-blue-900/20 rounded-lg border border-blue-500/30">
+                <h4 className="font-medium text-blue-300 mb-2">Benötigte APIs:</h4>
+                <ul className="text-sm text-blue-200 space-y-1">
+                  <li>• Places API (für Unternehmensdaten und Bewertungen)</li>
+                  <li>• PageSpeed Insights API (für Performance-Analyse)</li>
+                  <li>• Geocoding API (für Standortdaten)</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
           
           <div className="mt-6 text-center">
-            <Button 
-              onClick={handleContinueWithoutApiKey}
-              variant="outline"
-            >
-              Ohne API-Schlüssel fortfahren (mit Beispieldaten)
-            </Button>
+            <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
           </div>
         </div>
       </div>

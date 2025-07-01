@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -206,87 +207,105 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Analysis Tabs */}
-        <Tabs defaultValue="seo" className="space-y-6">
-          <div className="overflow-x-auto">
-            <TabsList className="grid grid-cols-8 w-full min-w-[800px] bg-gray-800 border-yellow-400/30">
-              <TabsTrigger value="seo" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">SEO</TabsTrigger>
-              <TabsTrigger value="performance" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Performance</TabsTrigger>
-              <TabsTrigger value="mobile" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Mobile</TabsTrigger>
-              <TabsTrigger value="social" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Social Media</TabsTrigger>
-              <TabsTrigger value="reviews" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Bewertungen</TabsTrigger>
-              <TabsTrigger value="competitors" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Konkurrenz</TabsTrigger>
-              <TabsTrigger value="legal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Rechtliches</TabsTrigger>
-              <TabsTrigger value="workplace" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black">Arbeitgeber</TabsTrigger>
-            </TabsList>
-          </div>
+        {/* Analysis Tabs - Fixed Layout */}
+        <div className="space-y-6">
+          <Tabs defaultValue="seo" className="w-full">
+            <div className="mb-6">
+              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-gray-800 border border-yellow-400/30 h-auto">
+                <TabsTrigger value="seo" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  SEO
+                </TabsTrigger>
+                <TabsTrigger value="performance" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Performance
+                </TabsTrigger>
+                <TabsTrigger value="mobile" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Mobile
+                </TabsTrigger>
+                <TabsTrigger value="social" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Social
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Reviews
+                </TabsTrigger>
+                <TabsTrigger value="competitors" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Konkurrenz
+                </TabsTrigger>
+                <TabsTrigger value="legal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Legal
+                </TabsTrigger>
+                <TabsTrigger value="workplace" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-black text-xs lg:text-sm py-2">
+                  Arbeitgeber
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          <TabsContent value="seo" className="space-y-6">
-            <SEOAnalysis url={businessData.url} realData={realData} />
-            <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
-            <LocalSEO businessData={businessData} />
-            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
-            <BacklinkAnalysis url={businessData.url} />
-          </TabsContent>
+            <TabsContent value="seo" className="space-y-6 mt-0">
+              <SEOAnalysis url={businessData.url} realData={realData} />
+              <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
+              <LocalSEO businessData={businessData} />
+              <ContentAnalysis url={businessData.url} industry={businessData.industry} />
+              <BacklinkAnalysis url={businessData.url} />
+            </TabsContent>
 
-          <TabsContent value="performance" className="space-y-6">
-            <PerformanceAnalysis url={businessData.url} realData={realData} />
-          </TabsContent>
+            <TabsContent value="performance" className="space-y-6 mt-0">
+              <PerformanceAnalysis url={businessData.url} realData={realData} />
+            </TabsContent>
 
-          <TabsContent value="mobile" className="space-y-6">
-            <MobileOptimization url={businessData.url} realData={realData} />
-          </TabsContent>
+            <TabsContent value="mobile" className="space-y-6 mt-0">
+              <MobileOptimization url={businessData.url} realData={realData} />
+            </TabsContent>
 
-          <TabsContent value="social" className="space-y-6">
-            <SocialMediaAnalysis 
-              businessData={businessData} 
-              realData={realData}
-              manualData={manualSocialData}
-              onManualDataChange={updateSocialData}
-            />
-            <SocialProof businessData={businessData} realData={realData} />
-            <ConversionOptimization url={businessData.url} industry={businessData.industry} />
-          </TabsContent>
+            <TabsContent value="social" className="space-y-6 mt-0">
+              <SocialMediaAnalysis 
+                businessData={businessData} 
+                realData={realData}
+                manualData={manualSocialData}
+                onManualDataChange={updateSocialData}
+              />
+              <SocialProof businessData={businessData} realData={realData} />
+              <ConversionOptimization url={businessData.url} industry={businessData.industry} />
+            </TabsContent>
 
-          <TabsContent value="reviews" className="space-y-6">
-            <GoogleReviews address={businessData.address} realData={realData} />
-          </TabsContent>
+            <TabsContent value="reviews" className="space-y-6 mt-0">
+              <GoogleReviews address={businessData.address} realData={realData} />
+            </TabsContent>
 
-          <TabsContent value="competitors" className="space-y-6">
-            <CompetitorAnalysis 
-              address={businessData.address} 
-              industry={businessData.industry}
-              realData={realData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              onCompetitorsChange={updateCompetitors}
-              onCompetitorServicesChange={updateCompetitorServices}
-            />
-            <ManualCompetitorInput 
-              competitors={manualCompetitors}
-              onCompetitorsChange={updateCompetitors}
-            />
-          </TabsContent>
+            <TabsContent value="competitors" className="space-y-6 mt-0">
+              <CompetitorAnalysis 
+                address={businessData.address} 
+                industry={businessData.industry}
+                realData={realData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                onCompetitorsChange={updateCompetitors}
+                onCompetitorServicesChange={updateCompetitorServices}
+              />
+              <ManualCompetitorInput 
+                competitors={manualCompetitors}
+                onCompetitorsChange={updateCompetitors}
+              />
+            </TabsContent>
 
-          <TabsContent value="legal" className="space-y-6">
-            <ImprintCheck 
-              url={businessData.url} 
-              realData={realData}
-              manualData={manualImprintData}
-              onManualDataChange={updateImprintData}
-            />
-            <IndustryFeatures businessData={businessData} />
-          </TabsContent>
+            <TabsContent value="legal" className="space-y-6 mt-0">
+              <ImprintCheck 
+                url={businessData.url} 
+                realData={realData}
+                manualData={manualImprintData}
+                onManualDataChange={updateImprintData}
+              />
+              <IndustryFeatures businessData={businessData} />
+            </TabsContent>
 
-          <TabsContent value="workplace" className="space-y-6">
-            <WorkplaceReviews 
-              businessData={businessData} 
-              realData={realData}
-              manualData={manualWorkplaceData}
-              onManualDataChange={updateWorkplaceData}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="workplace" className="space-y-6 mt-0">
+              <WorkplaceReviews 
+                businessData={businessData} 
+                realData={realData}
+                manualData={manualWorkplaceData}
+                onManualDataChange={updateWorkplaceData}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
