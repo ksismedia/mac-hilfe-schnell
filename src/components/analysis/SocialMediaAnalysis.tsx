@@ -100,30 +100,31 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     });
   };
 
-  // KORRIGIERT: Richtige Boolean-Prüfung für manuelle Daten
-  const hasManualData = manualData && (
+  // KORRIGIERT: Vereinfachte und eindeutige Prüfung
+  const hasManualData = Boolean(manualData && (
     (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') ||
     (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') ||
     (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') ||
     (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') ||
     (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '')
-  );
+  ));
 
-  // KORRIGIERT: Korrekte Prüfung für jede Plattform
-  const hasFacebook = (manualData?.facebookUrl && manualData.facebookUrl.trim() !== '') || realData.socialMedia.facebook.found;
-  const hasInstagram = (manualData?.instagramUrl && manualData.instagramUrl.trim() !== '') || realData.socialMedia.instagram.found;
-  const hasLinkedIn = manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '';
-  const hasTwitter = manualData?.twitterUrl && manualData.twitterUrl.trim() !== '';
-  const hasYouTube = manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '';
+  // KORRIGIERT: Eindeutige Boolean-Werte für jede Plattform
+  const hasFacebook = Boolean((manualData?.facebookUrl && manualData.facebookUrl.trim() !== '') || realData.socialMedia.facebook.found);
+  const hasInstagram = Boolean((manualData?.instagramUrl && manualData.instagramUrl.trim() !== '') || realData.socialMedia.instagram.found);
+  const hasLinkedIn = Boolean(manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '');
+  const hasTwitter = Boolean(manualData?.twitterUrl && manualData.twitterUrl.trim() !== '');
+  const hasYouTube = Boolean(manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '');
 
-  console.log('Social Media Status KORRIGIERT:', {
+  console.log('FINAL Social Media Status:', {
     hasManualData,
     hasFacebook,
     hasInstagram,
     hasLinkedIn,
     hasTwitter,
     hasYouTube,
-    manualData
+    facebookUrl: manualData?.facebookUrl,
+    instagramUrl: manualData?.instagramUrl
   });
 
   const getEngagementBadge = (engagement: string) => {
@@ -368,9 +369,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
             </form>
           ) : (
             <div className="space-y-6">
-              {/* Platform Übersicht - KORRIGIERT */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Facebook - KORRIGIERT */}
+                {/* Facebook - KORRIGIERT mit expliziter Badge-Logik */}
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -383,7 +383,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   <CardContent>
                     {hasFacebook ? (
                       <div className="space-y-3">
-                        {manualData?.facebookUrl && (
+                        {manualData?.facebookUrl && manualData.facebookUrl.trim() !== '' && (
                           <div className="text-sm">
                             <strong>URL:</strong> {manualData.facebookUrl}
                           </div>
@@ -391,21 +391,27 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
                           <span className="font-medium">
-                            {manualData?.facebookFollowers || realData.socialMedia.facebook.followers || '0'}
+                            {(manualData?.facebookFollowers && manualData.facebookFollowers.trim() !== '') 
+                              ? manualData.facebookFollowers 
+                              : realData.socialMedia.facebook.followers || '0'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
                           <span className="font-medium">
-                            {manualData?.facebookLastPost || realData.socialMedia.facebook.lastPost || 'Unbekannt'}
+                            {(manualData?.facebookLastPost && manualData.facebookLastPost.trim() !== '') 
+                              ? manualData.facebookLastPost 
+                              : realData.socialMedia.facebook.lastPost || 'Unbekannt'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Engagement:</span>
-                          <Badge variant={getEngagementBadge(realData.socialMedia.facebook.engagement)}>
-                            {realData.socialMedia.facebook.engagement}
-                          </Badge>
-                        </div>
+                        {!manualData?.facebookUrl && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Engagement:</span>
+                            <Badge variant={getEngagementBadge(realData.socialMedia.facebook.engagement)}>
+                              {realData.socialMedia.facebook.engagement}
+                            </Badge>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-4">
@@ -435,7 +441,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                   <CardContent>
                     {hasInstagram ? (
                       <div className="space-y-3">
-                        {manualData?.instagramUrl && (
+                        {manualData?.instagramUrl && manualData.instagramUrl.trim() !== '' && (
                           <div className="text-sm">
                             <strong>URL:</strong> {manualData.instagramUrl}
                           </div>
@@ -443,21 +449,27 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Follower:</span>
                           <span className="font-medium">
-                            {manualData?.instagramFollowers || realData.socialMedia.instagram.followers || '0'}
+                            {(manualData?.instagramFollowers && manualData.instagramFollowers.trim() !== '') 
+                              ? manualData.instagramFollowers 
+                              : realData.socialMedia.instagram.followers || '0'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Letzter Post:</span>
                           <span className="font-medium">
-                            {manualData?.instagramLastPost || realData.socialMedia.instagram.lastPost || 'Unbekannt'}
+                            {(manualData?.instagramLastPost && manualData.instagramLastPost.trim() !== '') 
+                              ? manualData.instagramLastPost 
+                              : realData.socialMedia.instagram.lastPost || 'Unbekannt'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Engagement:</span>
-                          <Badge variant={getEngagementBadge(realData.socialMedia.instagram.engagement)}>
-                            {realData.socialMedia.instagram.engagement}
-                          </Badge>
-                        </div>
+                        {!manualData?.instagramUrl && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Engagement:</span>
+                            <Badge variant={getEngagementBadge(realData.socialMedia.instagram.engagement)}>
+                              {realData.socialMedia.instagram.engagement}
+                            </Badge>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-4">
