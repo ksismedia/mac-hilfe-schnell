@@ -80,6 +80,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     updateCompetitorServices
   } = useManualData();
 
+  // Transform competitorServices for export components
+  const transformedCompetitorServices = Object.keys(competitorServices).reduce((acc, key) => {
+    acc[key] = competitorServices[key].services;
+    return acc;
+  }, {} as { [competitorName: string]: string[] });
+
   // Load analysis data when component mounts
   useEffect(() => {
     const loadAnalysisData = async () => {
@@ -170,7 +176,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
               manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
+              competitorServices={transformedCompetitorServices}
             />
             <PDFExport 
               businessData={businessData} 
@@ -178,7 +184,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
               manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
+              competitorServices={transformedCompetitorServices}
             />
           </div>
         </div>
