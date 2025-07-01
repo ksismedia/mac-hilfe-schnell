@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -33,10 +34,6 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
-import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
-
-// Utils
-import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 
 interface BusinessData {
   address: string;
@@ -68,9 +65,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | undefined>(loadedAnalysisId);
   const { toast } = useToast();
-  const { savedAnalyses } = useSavedAnalyses();
 
   // Manual data management
   const {
@@ -86,52 +81,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     updateCompetitorServices
   } = useManualData();
 
-  // Load analysis data when component mounts or when loadedAnalysisId changes
+  // Load analysis data when component mounts
   useEffect(() => {
     const loadAnalysisData = async () => {
-      console.log('Loading analysis data, ID:', currentAnalysisId);
+      console.log('Performing new analysis for:', businessData);
       
-      if (currentAnalysisId) {
-        try {
-          const savedAnalysis = savedAnalyses.find(analysis => analysis.id === currentAnalysisId);
-          if (savedAnalysis) {
-            console.log('Found saved analysis:', savedAnalysis);
-            
-            // Set business data
-            if (onBusinessDataChange) {
-              onBusinessDataChange(savedAnalysis.businessData);
-            }
-            
-            // Set real data
-            setRealData(savedAnalysis.realData);
-            
-            // Load manual data using utility function
-            loadSavedAnalysisData(
-              savedAnalysis,
-              updateImprintData,
-              updateSocialData,
-              updateWorkplaceData,
-              updateCompetitors,
-              updateCompetitorServices
-            );
-            
-            setIsLoading(false);
-            
-            toast({
-              title: "Analyse geladen",
-              description: `Gespeicherte Analyse "${savedAnalysis.name}" wurde erfolgreich geladen.`,
-            });
-            
-            return;
-          }
-        } catch (error) {
-          console.error('Error loading saved analysis:', error);
-        }
-      }
-      
-      // If no saved analysis, perform new analysis
       try {
-        console.log('Performing new analysis for:', businessData);
         const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData);
         setRealData(analysisData);
         setIsLoading(false);
@@ -147,7 +102,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [currentAnalysisId, businessData, savedAnalyses, onBusinessDataChange, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices, toast]);
+  }, [businessData, toast]);
 
   if (isLoading) {
     return (
@@ -209,7 +164,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               manualWorkplaceData={manualWorkplaceData}
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
-              currentAnalysisId={currentAnalysisId}
             />
             <HTMLExport 
               businessData={businessData}
