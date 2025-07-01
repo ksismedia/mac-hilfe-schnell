@@ -87,9 +87,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     return acc;
   }, {} as { [competitorName: string]: string[] });
 
-  // Load analysis data
+  // Load analysis data only once
   useEffect(() => {
     const loadAnalysisData = async () => {
+      if (loadedAnalysisId || realData) return; // Skip if already loaded
+      
       console.log('Performing analysis for:', businessData);
       setIsLoading(true);
       
@@ -109,7 +111,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [businessData, toast]);
+  }, [businessData, toast, loadedAnalysisId, realData]);
 
   if (isLoading) {
     return (
@@ -161,46 +163,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               </div>
             </div>
           </div>
-          
-          <div className="flex flex-wrap items-center gap-2">
-            <SaveAnalysisDialog 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-            />
-            <HTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={transformedCompetitorServices}
-            />
-            <CustomerHTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={transformedCompetitorServices}
-            />
-            <PDFExport 
-              businessData={businessData} 
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={transformedCompetitorServices}
-            />
-          </div>
         </div>
 
-        {/* Overall Rating */}
-        <div className="mb-6">
+        {/* Overall Rating - Prominent at the top */}
+        <div className="mb-8">
           <OverallRating 
             businessData={businessData}
             realData={realData}
@@ -212,54 +178,15 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <Tabs defaultValue="seo" className="w-full">
             <div className="mb-6 overflow-x-auto">
               <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-gray-800 border border-yellow-400/30 p-1 text-muted-foreground min-w-full">
-                <TabsTrigger 
-                  value="seo" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  SEO
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="performance" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Performance
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="mobile" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Mobile
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="social" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Social
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="reviews" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Reviews
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="competitors" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Konkurrenz
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="legal" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Legal
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="workplace" 
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-yellow-400 data-[state=active]:text-black data-[state=active]:shadow"
-                >
-                  Arbeitgeber
-                </TabsTrigger>
+                <TabsTrigger value="seo">SEO</TabsTrigger>
+                <TabsTrigger value="performance">Performance</TabsTrigger>
+                <TabsTrigger value="mobile">Mobile</TabsTrigger>
+                <TabsTrigger value="social">Social</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
+                <TabsTrigger value="legal">Legal</TabsTrigger>
+                <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
+                <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
 
@@ -327,6 +254,44 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 manualData={manualWorkplaceData}
                 onManualDataChange={updateWorkplaceData}
               />
+            </TabsContent>
+
+            <TabsContent value="export" className="space-y-6 mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <SaveAnalysisDialog 
+                  businessData={businessData}
+                  realData={realData}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualWorkplaceData={manualWorkplaceData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={competitorServices}
+                />
+                <HTMLExport 
+                  businessData={businessData}
+                  realData={realData}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={transformedCompetitorServices}
+                />
+                <CustomerHTMLExport 
+                  businessData={businessData}
+                  realData={realData}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={transformedCompetitorServices}
+                />
+                <PDFExport 
+                  businessData={businessData} 
+                  realData={realData}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={transformedCompetitorServices}
+                />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
