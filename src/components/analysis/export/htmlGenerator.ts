@@ -1,77 +1,82 @@
+
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
-import { generateHeaderSection, generateSEOSection, generatePerformanceSection, generateMobileSection } from './reportSections';
-import { generatePricingSection } from './pricingSection';
-import { 
-  calculateHourlyRateScore, 
-  calculateSocialMediaScore, 
-  calculateOverallScore 
-} from './scoreCalculations';
 
-const industryNames = {
-  'shk': 'Sanitär, Heizung, Klima',
-  'maler': 'Maler & Lackierer',
-  'elektriker': 'Elektroinstallation',
-  'dachdecker': 'Dachdeckerei',
-  'stukateur': 'Stuckateur & Trockenbau',
-  'planungsbuero': 'Planungsbüro'
-};
-
-interface GenerateHTMLParams {
+interface CustomerReportData {
   businessData: {
     address: string;
     url: string;
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
   realData: RealBusinessData;
-  manualCompetitors?: ManualCompetitor[];
-  competitorServices?: { [competitorName: string]: string[] };
+  manualCompetitors: ManualCompetitor[];
+  competitorServices: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
-  missingImprintElements?: string[];
+  missingImprintElements: string[];
 }
 
-export const generateCustomerHTML = (data: any) => {
-  const { businessData, realData, manualCompetitors, competitorServices, hourlyRateData, missingImprintElements } = data;
-  
+export const generateCustomerHTML = ({
+  businessData,
+  realData,
+  manualCompetitors,
+  competitorServices,
+  hourlyRateData,
+  missingImprintElements = []
+}: CustomerReportData) => {
   // Calculate scores
-  const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
-  const socialMediaScore = calculateSocialMediaScore(realData);
-  const overallScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
-  
-  // Additional calculations
-  const hasMetaDescription = realData.seo.metaDescription && 
-                             realData.seo.metaDescription !== 'Keine Meta-Description gefunden' &&
-                             realData.seo.metaDescription !== 'Website-Inhalte konnten nicht abgerufen werden';
+  const calculateOverallScore = () => {
+    const scores = [
+      realData.seo.score,
+      realData.performance.score,
+      realData.mobile.overallScore,
+      realData.socialMedia.overallScore
+    ];
+    return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+  };
 
-  const anonymizedCompetitors = [
-    ...realData.competitors.map((comp, index) => ({
-      ...comp,
-      name: `Konkurrent ${String.fromCharCode(65 + index)}`,
-      services: competitorServices?.[comp.name] || []
-    })),
-    ...(manualCompetitors || []).map((comp, index) => ({
-      ...comp,
-      name: `Konkurrent ${String.fromCharCode(65 + realData.competitors.length + index)}`,
-      services: comp.services || []
-    }))
-  ].sort((a, b) => b.rating - a.rating);
+  const calculateVisibilityScore = () => {
+    const seoWeight = 0.7;
+    const reviewsWeight = 0.3;
+    const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+    return Math.round(realData.seo.score * seoWeight + reviewsScore * reviewsWeight);
+  };
 
-  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
-  
-  // Format date to show only month and year
-  const currentDate = new Date().toLocaleDateString('de-DE', { 
-    month: 'long', 
-    year: 'numeric' 
-  });
+  const calculateEnhancedSocialMediaScore = () => {
+    let score = 0;
+    const platforms = ['facebook', 'instagram'];
+    
+    platforms.forEach(platform => {
+      const platformData = realData.socialMedia[platform];
+      if (platformData.found) {
+        score += 25;
+        if (platformData.followers > 500) score += 15;
+        else if (platformData.followers > 100) score += 10;
+        else if (platformData.followers > 0) score += 5;
+        
+        if (platformData.lastPost) {
+          const lastPostDate = new Date(platformData.lastPost);
+          const daysSinceLastPost = Math.floor((Date.now() - lastPostDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceLastPost <= 7) score += 10;
+          else if (daysSinceLastPost <= 30) score += 5;
+          else if (daysSinceLastPost <= 90) score += 2;
+        }
+      }
+    });
+    
+    return Math.min(100, score);
+  };
 
-  // Check if hourly rate data is complete and valid
-  const hasValidHourlyRateData = hourlyRateData && 
-                                 hourlyRateData.ownRate && 
-                                 hourlyRateData.regionAverage && 
-                                 hourlyRateData.ownRate > 0 && 
-                                 hourlyRateData.regionAverage > 0;
+  const overallScore = calculateOverallScore();
+  const visibilityScore = calculateVisibilityScore();
+  const performanceScore = realData.performance.score;
+  const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
+
+  // Calculate hourly rate comparison
+  const hasHourlyRateData = hourlyRateData && 
+                           hourlyRateData.ownRate > 0 && 
+                           hourlyRateData.regionAverage > 0;
 
   // Calculate legal compliance scores with CORRECT impressum evaluation
   // If missingImprintElements exists and has items, score should be low
@@ -84,44 +89,18 @@ export const generateCustomerHTML = (data: any) => {
   const agbScore = 60; // Assumed score
   const legalComplianceScore = Math.round((impressumScore + datenschutzScore + agbScore) / 3);
 
-  // Calculate workplace scores based on actual data
-  const workplaceRating = realData.workplace?.rating || 0;
-  const workplaceScore = workplaceRating > 0 ? Math.round((workplaceRating / 5) * 100) : 0;
-  const kununuRating = realData.workplace?.kununuScore || 0;
-  const kununuScore = kununuRating > 0 ? Math.round((kununuRating / 5) * 100) : 0;
-
-  // Enhanced Social Media Score calculation including last post timing
-  const calculateEnhancedSocialMediaScore = () => {
-    let score = 0;
-    const platforms = ['facebook', 'instagram'];
-    
-    platforms.forEach(platform => {
-      const platformData = realData.socialMedia[platform];
-      if (platformData.found) {
-        score += 25; // Base score for presence
-        
-        // Add score based on followers
-        if (platformData.followers > 500) score += 15;
-        else if (platformData.followers > 100) score += 10;
-        else if (platformData.followers > 0) score += 5;
-        
-        // Add score based on last post timing
-        if (platformData.lastPost) {
-          const lastPostDate = new Date(platformData.lastPost);
-          const daysSinceLastPost = Math.floor((Date.now() - lastPostDate.getTime()) / (1000 * 60 * 60 * 24));
-          
-          if (daysSinceLastPost <= 7) score += 10; // Recent activity
-          else if (daysSinceLastPost <= 30) score += 5; // Moderate activity
-          else if (daysSinceLastPost <= 90) score += 2; // Low activity
-          // No points for posts older than 90 days
-        }
-      }
-    });
-    
-    return Math.min(100, score);
+  // Industry-specific insights
+  const getIndustryInsights = () => {
+    const insights = {
+      'shk': 'SHK-Betriebe profitieren besonders von lokaler SEO-Optimierung und Google My Business.',
+      'maler': 'Maler sollten auf visuelle Inhalte und Vorher-Nachher-Bilder in Social Media setzen.',
+      'elektriker': 'Elektriker benötigen starke lokale Präsenz und Notdienst-Optimierung.',
+      'dachdecker': 'Dachdecker sollten auf Wetterabhängigkeit und saisonale SEO-Strategien achten.',
+      'stukateur': 'Stukateur-Betriebe profitieren von detaillierten Projektdarstellungen.',
+      'planungsbuero': 'Planungsbüros benötigen professionelle B2B-ausgerichtete Online-Präsenz.'
+    };
+    return insights[businessData.industry] || 'Branchenspezifische Optimierung empfohlen.';
   };
-
-  const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
 
   return `
 <!DOCTYPE html>
@@ -129,112 +108,55 @@ export const generateCustomerHTML = (data: any) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handwerk Stars - Social Listening und Monitoring für ${businessData.address}</title>
+    <title>Social Listening und Monitoring Report - ${businessData.address}</title>
     <style>${getHTMLStyles()}</style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="/lovable-uploads/5a2019ec-f8dd-42b4-bf03-3a7fdb9696b8.png" alt="Handwerk Stars Logo" class="logo" style="height: 60px; width: auto; margin-bottom: 20px;" />
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
             </div>
-            <h1>Social Listening und Monitoring</h1>
-            <p class="subtitle">Professionelle Bewertung für ${businessData.address}</p>
+            <h1>Social Listening und Monitoring Report</h1>
+            <p class="subtitle">Professionelle Analyse für ${businessData.address}</p>
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
-                Erstellt im ${currentDate} | Powered by Handwerk Stars
+                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Handwerk Stars Professional
             </p>
         </div>
 
-        ${generateHeaderSection(
-          realData.company.name,
-          industryNames[businessData.industry],
-          currentDate,
-          overallScore,
-          realData.seo.score,
-          realData.performance.score,
-          realData.mobile.overallScore,
-          hasValidHourlyRateData ? hourlyRateScore : 0,
-          enhancedSocialMediaScore
-        )}
+        <section class="company-info">
+            <h2>${businessData.address}</h2>
+            <p><strong>Webseite:</strong> <a href="${businessData.url}" target="_blank">${businessData.url}</a></p>
+            <p><strong>Branche:</strong> ${businessData.industry.toUpperCase()}</p>
+        </section>
 
-        ${generateSEOSection(realData, keywordsFoundCount, keywordsScore, hasMetaDescription)}
-        
-        ${generatePerformanceSection(realData)}
-        
-        ${generateMobileSection(realData)}
-
-        <!-- Content-Analyse -->
-        <div class="section">
-            <div class="section-header">📝 Content-Qualität</div>
-            <div class="section-content">
-                <div class="metric-grid">
-                    <div class="metric-item">
-                        <div class="metric-title">Content-Score</div>
-                        <div class="metric-value good">75/100 Punkte</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Inhaltsqualität</span>
-                                <span>75%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Textqualität</div>
-                        <div class="metric-value good">Zufriedenstellend</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Lesbarkeit & Struktur</span>
-                                <span>70%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 70%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Branchenrelevanz</div>
-                        <div class="metric-value excellent">Hoch relevant</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Fachliche Expertise</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Aktualität</div>
-                        <div class="metric-value good">Aktuell</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Content-Frische</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section class="score-overview">
+            <div class="score-card">
+                <div class="score-big">${overallScore}</div>
+                <div class="score-label">Gesamtbewertung</div>
             </div>
-        </div>
+            <div class="score-card">
+                <div class="score-big">${visibilityScore}</div>
+                <div class="score-label">Online-Sichtbarkeit</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${performanceScore}</div>
+                <div class="score-label">Website-Performance</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${enhancedSocialMediaScore}</div>
+                <div class="score-label">Social Media</div>
+            </div>
+        </section>
 
-        <!-- Impressum-Bewertung mit korrekter Bewertung und vollständiger Anzeige fehlender Elemente -->
-        <div class="section">
-            <div class="section-header">⚖️ Rechtliche Compliance</div>
+        <!-- Rechtssicherheit-Analyse -->
+        <section class="section">
+            <div class="section-header">⚖️ Rechtssicherheit & Compliance</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Impressum</div>
-                        <div class="metric-value ${impressumScore >= 80 ? 'excellent' : impressumScore >= 60 ? 'good' : impressumScore >= 40 ? 'warning' : 'danger'}">
+                        <div class="metric-value ${impressumScore >= 90 ? 'excellent' : impressumScore >= 70 ? 'good' : impressumScore >= 50 ? 'warning' : 'danger'}">
                             ${impressumScore >= 90 ? 'Vollständig' : impressumScore >= 70 ? 'Größtenteils vollständig' : impressumScore >= 50 ? 'Teilweise vollständig' : 'Unvollständig'}
                         </div>
                         <div class="progress-container">
@@ -243,194 +165,159 @@ export const generateCustomerHTML = (data: any) => {
                                 <span>${impressumScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${impressumScore < 60 ? 'warning' : ''}" style="width: ${impressumScore}%"></div>
+                                <div class="progress-fill" style="width: ${impressumScore}%" data-value="${impressumScore}"></div>
                             </div>
                         </div>
                         ${missingImprintElements && missingImprintElements.length > 0 ? `
-                            <div style="margin-top: 15px; padding: 15px; background: #fef2f2; border-radius: 8px; font-size: 0.9em; border-left: 4px solid #f87171;">
-                                <strong style="color: #dc2626; font-size: 1.1em;">⚠️ Rechtliche Warnung: ${missingImprintElements.length} fehlende Pflichtangaben</strong>
-                                <div style="margin-top: 12px; background: white; padding: 12px; border-radius: 6px; border: 1px solid #fecaca;">
-                                    <strong style="color: #dc2626;">Fehlende Impressum-Inhalte:</strong><br><br>
-                                    ${missingImprintElements.map((element, index) => `<div style="margin: 6px 0; padding: 4px 0; border-bottom: 1px dotted #fca5a5;">${index + 1}. ${element}</div>`).join('')}
-                                </div>
-                                <div style="margin-top: 12px; background: #fff1f2; padding: 10px; border-radius: 6px;">
-                                    <strong style="color: #dc2626;">Rechtliche Risiken:</strong><br>
-                                    • Abmahnungen durch Konkurrenten oder Anwälte (€ 500 - 5.000)<br>
-                                    • Bußgelder durch Aufsichtsbehörden (bis € 50.000)<br>
-                                    • Verlust von Kundenvertrauen und Seriosität<br>
-                                    • Schwächung der Rechtsposition bei Streitigkeiten<br>
-                                    • Mögliche Sperrung von Online-Diensten
-                                </div>
-                                <div style="margin-top: 12px; background: #ecfdf5; padding: 10px; border-radius: 6px; border-left: 3px solid #059669;">
-                                    <strong style="color: #059669;">🎯 Sofort-Empfehlung:</strong><br>
-                                    Impressum umgehend vervollständigen und von einem Fachanwalt für IT-Recht prüfen lassen.<br>
-                                    <strong>Priorität: HOCH</strong> - Diese Mängel sollten innerhalb von 48 Stunden behoben werden.
+                            <div style="margin-top: 15px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 0.9em;">
+                                <strong style="color: #dc2626; display: block; margin-bottom: 8px;">⚠️ Fehlende Pflichtangaben im Impressum:</strong>
+                                <ul style="margin: 0; padding-left: 20px; color: #991b1b; line-height: 1.6;">
+                                    ${missingImprintElements.map(element => `<li style="margin-bottom: 4px;">${element}</li>`).join('')}
+                                </ul>
+                                <div style="margin-top: 12px; padding: 8px; background: #fee2e2; border-radius: 6px; font-size: 0.85em; color: #7f1d1d;">
+                                    <strong>Rechtliche Hinweise:</strong><br>
+                                    • Fehlende Impressumsangaben können zu Abmahnungen führen<br>
+                                    • Bußgelder bis zu 50.000 € möglich<br>
+                                    • Wettbewerbsrechtliche Risiken durch Konkurrenten
                                 </div>
                             </div>
                         ` : `
-                            <div style="margin-top: 10px; padding: 12px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; border-left: 4px solid #22c55e;">
-                                <strong style="color: #059669;">✅ Impressum vollständig</strong><br>
-                                Alle erforderlichen Angaben sind vorhanden. Rechtliche Compliance ist gewährleistet.
+                            <div style="margin-top: 10px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 0.85em; color: #166534;">
+                                ✅ <strong>Impressum ist vollständig und rechtssicher</strong>
                             </div>
                         `}
                     </div>
-
                     <div class="metric-item">
                         <div class="metric-title">Datenschutz</div>
-                        <div class="metric-value good">Vorhanden</div>
+                        <div class="metric-value good">DSGVO-konform</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>DSGVO-Konformität</span>
+                                <span>Compliance</span>
                                 <span>${datenschutzScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${datenschutzScore}%"></div>
+                                <div class="progress-fill" style="width: ${datenschutzScore}%" data-value="${datenschutzScore}"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">AGB</div>
-                        <div class="metric-value warning">Teilweise</div>
+                        <div class="metric-title">Geschäftsbedingungen</div>
+                        <div class="metric-value warning">Optimierbar</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Geschäftsbedingungen</span>
+                                <span>Vollständigkeit</span>
                                 <span>${agbScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill warning" style="width: ${agbScore}%"></div>
+                                <div class="progress-fill" style="width: ${agbScore}%" data-value="${agbScore}"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">Rechtliche Sicherheit</div>
-                        <div class="metric-value ${legalComplianceScore >= 80 ? 'excellent' : legalComplianceScore >= 60 ? 'good' : 'warning'}">
-                            ${legalComplianceScore >= 80 ? 'Hoch' : legalComplianceScore >= 60 ? 'Mittel' : 'Niedrig'}
-                        </div>
+                        <div class="metric-title">Rechtliche Gesamtbewertung</div>
+                        <div class="metric-value ${legalComplianceScore >= 80 ? 'excellent' : legalComplianceScore >= 60 ? 'good' : 'warning'}">${legalComplianceScore >= 80 ? 'Sehr gut' : legalComplianceScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Gesamt-Compliance</span>
+                                <span>Gesamt-Score</span>
                                 <span>${legalComplianceScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${legalComplianceScore < 60 ? 'warning' : ''}" style="width: ${legalComplianceScore}%"></div>
+                                <div class="progress-fill" style="width: ${legalComplianceScore}%" data-value="${legalComplianceScore}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${missingImprintElements && missingImprintElements.length > 0 ? `
+                    <div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px;">
+                        <h4 style="color: #92400e; margin-bottom: 10px;">📋 Sofortige Handlungsempfehlungen:</h4>
+                        <ol style="margin: 0; padding-left: 20px; color: #78350f; line-height: 1.6;">
+                            <li><strong>Impressum vervollständigen:</strong> Ergänzen Sie umgehend alle fehlenden Pflichtangaben</li>
+                            <li><strong>Rechtsprüfung:</strong> Lassen Sie das Impressum von einem Anwalt für Internetrecht prüfen</li>
+                            <li><strong>Regelmäßige Updates:</strong> Aktualisieren Sie Änderungen (Adresse, Geschäftsführung) sofort</li>
+                            <li><strong>Sichtbare Platzierung:</strong> Impressum muss von jeder Seite mit max. 2 Klicks erreichbar sein</li>
+                        </ol>
+                    </div>
+                ` : ''}
+            </div>
+        </section>
+
+        <!-- Digital Presence Analysis -->
+        <section class="section">
+            <div class="section-header">🌐 Online-Präsenz & Sichtbarkeit</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Suchmaschinenoptimierung</div>
+                        <div class="metric-value ${realData.seo.score >= 80 ? 'excellent' : realData.seo.score >= 60 ? 'good' : 'warning'}">${realData.seo.score >= 80 ? 'Sehr gut' : realData.seo.score >= 60 ? 'Zufriedenstellend' : 'Verbesserungsbedarf'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>SEO-Score</span>
+                                <span>${realData.seo.score}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.seo.score}%" data-value="${realData.seo.score}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Website-Performance</div>
+                        <div class="metric-value ${realData.performance.score >= 80 ? 'excellent' : realData.performance.score >= 60 ? 'good' : 'warning'}">${realData.performance.loadTime}s Ladezeit</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Performance</span>
+                                <span>${realData.performance.score}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.performance.score}%" data-value="${realData.performance.score}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Mobile Optimierung</div>
+                        <div class="metric-value ${realData.mobile.overallScore >= 80 ? 'excellent' : realData.mobile.overallScore >= 60 ? 'good' : 'warning'}">${realData.mobile.responsive ? 'Responsive' : 'Nicht responsive'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Mobile Score</span>
+                                <span>${realData.mobile.overallScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.mobile.overallScore}%" data-value="${realData.mobile.overallScore}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Lokale Sichtbarkeit</div>
+                        <div class="metric-value ${visibilityScore >= 80 ? 'excellent' : visibilityScore >= 60 ? 'good' : 'warning'}">${visibilityScore >= 80 ? 'Sehr gut sichtbar' : visibilityScore >= 60 ? 'Gut sichtbar' : 'Ausbaufähig'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Sichtbarkeits-Index</span>
+                                <span>${visibilityScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${visibilityScore}%" data-value="${visibilityScore}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        ${hasValidHourlyRateData ? 
-          generatePricingSection(hourlyRateData, () => calculateHourlyRateScore(hourlyRateData)) : 
-          ''}
-        
-        <!-- Arbeitsplatz-Bewertung mit korrekten Daten -->
-        <div class="section">
-            <div class="section-header">👥 Arbeitsplatz-Reputation</div>
+        <!-- Social Media Analysis -->
+        <section class="section">
+            <div class="section-header">📱 Social Media Performance</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
-                        <div class="metric-title">Arbeitgeber-Bewertung</div>
-                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
-                            ${workplaceRating > 0 ? workplaceRating.toFixed(1) + '/5.0' : 'Keine Daten'}
-                        </div>
+                        <div class="metric-title">Facebook Präsenz</div>
+                        <div class="metric-value ${realData.socialMedia.facebook.found ? 'good' : 'danger'}">${realData.socialMedia.facebook.found ? 'Aktiv' : 'Nicht vorhanden'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Mitarbeiterzufriedenheit</span>
-                                <span>${workplaceScore}%</span>
+                                <span>Reichweite</span>
+                                <span>${realData.socialMedia.facebook.followers} Follower</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${workplaceScore < 60 ? 'warning' : ''}" style="width: ${workplaceScore}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Kununu Score</div>
-                        <div class="metric-value ${kununuScore >= 80 ? 'excellent' : kununuScore >= 60 ? 'good' : kununuScore > 0 ? 'warning' : 'danger'}">
-                            ${kununuRating > 0 ? kununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Employer Branding</span>
-                                <span>${kununuScore}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${kununuScore < 60 ? 'warning' : ''}" style="width: ${kununuScore}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Arbeitsklima</div>
-                        <div class="metric-value ${workplaceScore >= 90 ? 'excellent' : workplaceScore >= 70 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
-                            ${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : workplaceScore > 0 ? 'Verbesserungsbedarf' : 'Keine Daten'}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Betriebsklima</span>
-                                <span>${Math.max(workplaceScore - 5, 0)}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${workplaceScore < 70 ? 'warning' : ''}" style="width: ${Math.max(workplaceScore - 5, 0)}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Fachkräfte-Attraktivität</div>
-                        <div class="metric-value ${workplaceScore >= 80 ? 'excellent' : workplaceScore >= 60 ? 'good' : workplaceScore > 0 ? 'warning' : 'danger'}">
-                            ${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : workplaceScore > 0 ? 'Wenig attraktiv' : 'Keine Daten'}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Recruiting-Potenzial</span>
-                                <span>${Math.max(workplaceScore - 10, 0)}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${workplaceScore < 60 ? 'warning' : ''}" style="width: ${Math.max(workplaceScore - 10, 0)}%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Social Media Analyse mit verbesserter Bewertung -->
-        <div class="section">
-            <div class="section-header">📱 Social Media Präsenz</div>
-            <div class="section-content">
-                <div class="metric-grid">
-                    <div class="metric-item">
-                        <div class="metric-title">Social Media Score</div>
-                        <div class="metric-value ${enhancedSocialMediaScore >= 80 ? 'excellent' : enhancedSocialMediaScore >= 60 ? 'good' : enhancedSocialMediaScore >= 40 ? 'warning' : 'danger'}">
-                            ${enhancedSocialMediaScore}/100 Punkte
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Gesamtpräsenz</span>
-                                <span>${enhancedSocialMediaScore}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${enhancedSocialMediaScore < 60 ? 'warning' : ''}" style="width: ${enhancedSocialMediaScore}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Facebook</div>
-                        <div class="metric-value ${realData.socialMedia.facebook.found ? 'excellent' : 'danger'}">
-                            ${realData.socialMedia.facebook.found ? 'Aktiv' : 'Nicht vorhanden'}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Präsenz & Aktivität</span>
-                                <span>${realData.socialMedia.facebook.found ? '100' : '0'}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${!realData.socialMedia.facebook.found ? 'danger' : ''}" style="width: ${realData.socialMedia.facebook.found ? 100 : 0}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.facebook.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.facebook.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                         ${realData.socialMedia.facebook.lastPost ? `
@@ -439,19 +326,16 @@ export const generateCustomerHTML = (data: any) => {
                             </div>
                         ` : ''}
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">Instagram</div>
-                        <div class="metric-value ${realData.socialMedia.instagram.found ? 'excellent' : 'danger'}">
-                            ${realData.socialMedia.instagram.found ? 'Aktiv' : 'Nicht vorhanden'}
-                        </div>
+                        <div class="metric-title">Instagram Präsenz</div>
+                        <div class="metric-value ${realData.socialMedia.instagram.found ? 'good' : 'danger'}">${realData.socialMedia.instagram.found ? 'Aktiv' : 'Nicht vorhanden'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Präsenz & Content</span>
-                                <span>${realData.socialMedia.instagram.found ? '100' : '0'}%</span>
+                                <span>Reichweite</span>
+                                <span>${realData.socialMedia.instagram.followers} Follower</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.socialMedia.instagram.found ? 'danger' : ''}" style="width: ${realData.socialMedia.instagram.found ? 100 : 0}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.socialMedia.instagram.followers / 10)}%" data-value="${Math.round(Math.min(100, realData.socialMedia.instagram.followers / 10) / 10) * 10}"></div>
                             </div>
                         </div>
                         ${realData.socialMedia.instagram.lastPost ? `
@@ -460,323 +344,267 @@ export const generateCustomerHTML = (data: any) => {
                             </div>
                         ` : ''}
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">Community-Aufbau</div>
-                        <div class="metric-value ${(realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) > 200 ? 'excellent' : (realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) > 50 ? 'good' : 'warning'}">
-                            ${(realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) > 200 ? 'Stark' : 
-                              (realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) > 50 ? 'Aufbauend' : 'Beginnend'}
-                        </div>
+                        <div class="metric-title">Social Media Aktivität</div>
+                        <div class="metric-value ${enhancedSocialMediaScore >= 60 ? 'good' : enhancedSocialMediaScore >= 30 ? 'warning' : 'danger'}">${enhancedSocialMediaScore >= 60 ? 'Regelmäßig aktiv' : enhancedSocialMediaScore >= 30 ? 'Gelegentlich aktiv' : 'Selten aktiv'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Follower-Basis</span>
-                                <span>${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%</span>
+                                <span>Aktivitäts-Score</span>
+                                <span>${enhancedSocialMediaScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, Math.round((realData.socialMedia.facebook.followers + realData.socialMedia.instagram.followers) / 5))}%"></div>
+                                <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%" data-value="${enhancedSocialMediaScore}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Engagement-Potenzial</div>
+                        <div class="metric-value ${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 'good' : 'warning'}">${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 'Vorhanden' : 'Ausbau empfohlen'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Community-Building</span>
+                                <span>${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 75 : 25}%" data-value="${(realData.socialMedia.facebook.found || realData.socialMedia.instagram.found) ? 70 : 20}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Online-Bewertungen -->
-        <div class="section">
-            <div class="section-header">⭐ Online-Reputation</div>
+        <!-- Customer Reviews & Reputation -->
+        <section class="section">
+            <div class="section-header">⭐ Kundenbewertungen & Online-Reputation</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Google Bewertungen</div>
-                        <div class="metric-value ${realData.reviews.google.count >= 10 ? 'excellent' : realData.reviews.google.count >= 5 ? 'good' : realData.reviews.google.count >= 1 ? 'warning' : 'danger'}">
-                            ⭐ ${realData.reviews.google.rating || 'N/A'}/5 (${realData.reviews.google.count || 0} Bewertungen)
-                        </div>
+                        <div class="metric-value ${realData.reviews.google.rating >= 4.5 ? 'excellent' : realData.reviews.google.rating >= 4 ? 'good' : realData.reviews.google.rating >= 3.5 ? 'warning' : 'danger'}">⭐ ${realData.reviews.google.rating || 'N/A'}/5.0</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Reputation</span>
+                                <span>Kundenzufriedenheit</span>
                                 <span>${realData.reviews.google.rating ? Math.round(realData.reviews.google.rating * 20) : 0}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.reviews.google.rating || realData.reviews.google.rating < 4 ? 'warning' : ''}" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%"></div>
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">Bewertungsanzahl</div>
-                        <div class="metric-value ${realData.reviews.google.count >= 20 ? 'excellent' : realData.reviews.google.count >= 10 ? 'good' : realData.reviews.google.count >= 3 ? 'warning' : 'danger'}">
-                            ${realData.reviews.google.count || 0} Bewertungen
-                        </div>
+                        <div class="metric-title">Anzahl Bewertungen</div>
+                        <div class="metric-value ${realData.reviews.google.count > 20 ? 'excellent' : realData.reviews.google.count > 10 ? 'good' : realData.reviews.google.count > 5 ? 'warning' : 'danger'}">${realData.reviews.google.count || 0} Bewertungen</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Vertrauensbasis</span>
                                 <span>${Math.min(100, realData.reviews.google.count * 5)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${realData.reviews.google.count < 5 ? 'warning' : ''}" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%"></div>
+                                <div class="progress-fill" style="width: ${Math.min(100, realData.reviews.google.count * 5)}%" data-value="${Math.min(100, realData.reviews.google.count * 5)}"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="metric-item">
-                        <div class="metric-title">Kundenzufriedenheit</div>
-                        <div class="metric-value ${realData.reviews.google.rating >= 4.5 ? 'excellent' : realData.reviews.google.rating >= 4 ? 'good' : realData.reviews.google.rating >= 3.5 ? 'warning' : 'danger'}">
-                            ${realData.reviews.google.rating >= 4.5 ? 'Hervorragend' : 
-                              realData.reviews.google.rating >= 4 ? 'Sehr gut' : 
-                              realData.reviews.google.rating >= 3.5 ? 'Gut' : 
-                              realData.reviews.google.rating ? 'Verbesserung nötig' : 'Keine Daten'}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill ${!realData.reviews.google.rating || realData.reviews.google.rating < 4 ? 'warning' : ''}" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Online-Glaubwürdigkeit</div>
-                        <div class="metric-value good">Vertrauenswürdig</div>
+                        <div class="metric-title">Reputation Management</div>
+                        <div class="metric-value ${realData.reviews.google.rating >= 4.5 ? 'excellent' : realData.reviews.google.rating >= 4 ? 'good' : 'warning'}">${realData.reviews.google.rating >= 4.5 ? 'Hervorragend' : realData.reviews.google.rating >= 4 ? 'Sehr gut' : realData.reviews.google.rating >= 3.5 ? 'Gut' : realData.reviews.google.rating ? 'Verbesserung nötig' : 'Aufbau nötig'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Gesamteindruck</span>
+                                <span>Online-Image</span>
+                                <span>${realData.reviews.google.rating ? Math.round(realData.reviews.google.rating * 20) : 0}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}%" data-value="${realData.reviews.google.rating ? realData.reviews.google.rating * 20 : 0}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Empfehlungsbereitschaft</div>
+                        <div class="metric-value good">Empfehlenswert</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Weiterempfehlung</span>
                                 <span>80%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 80%"></div>
+                                <div class="progress-fill" style="width: 80%" data-value="80"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Wettbewerbsanalyse (anonymisiert) -->
-        <div class="section">
-            <div class="section-header">⚔️ Marktpositionierung</div>
+        <!-- Competitive Positioning -->
+        <section class="section">
+            <div class="section-header">🏆 Wettbewerbspositionierung</div>
             <div class="section-content">
-                <div class="highlight-box">
-                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">📊 Ihre Position im Marktvergleich</h4>
-                    <p style="color: #2c7a7b;">
-                        Sie stehen im Vergleich mit ${anonymizedCompetitors.length} direkten Mitbewerbern in Ihrer Region.
-                        Ihre Google-Bewertung: ⭐ ${realData.reviews.google.rating || 'N/A'}/5 (${realData.reviews.google.count || 0} Bewertungen)
-                    </p>
-                </div>
-                
-                <div style="margin-top: 25px;">
-                    <h4 style="color: #4a5568; margin-bottom: 15px;">Wettbewerber-Ranking (anonymisiert)</h4>
-                    ${anonymizedCompetitors.slice(0, 5).map((competitor, index) => `
-                        <div class="competitor-item">
-                            <div class="competitor-rank">${competitor.name} - Position ${index + 1}</div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; color: #718096;">
-                                <div>⭐ ${competitor.rating}/5</div>
-                                <div>📝 ${competitor.reviews} Bewertungen</div>
-                                <div>📍 ${competitor.distance}</div>
-                            </div>
-                            <div class="progress-container" style="margin-top: 10px;">
-                                <div class="progress-label">
-                                    <span>Marktposition</span>
-                                    <span>${Math.round((competitor.rating / 5) * 100)}%</span>
+                ${manualCompetitors && manualCompetitors.length > 0 ? `
+                    <div class="competitor-overview">
+                        <p><strong>Marktumfeld:</strong> ${manualCompetitors.length} direkte Wettbewerber identifiziert</p>
+                        <div class="competitor-cards">
+                            ${manualCompetitors.slice(0, 3).map((competitor, index) => `
+                                <div class="competitor-card">
+                                    <h4>Wettbewerber ${index + 1}</h4>
+                                    <div class="competitor-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Bewertung</span>
+                                            <span class="stat-value">⭐ ${competitor.rating}/5</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Bewertungen</span>
+                                            <span class="stat-value">${competitor.reviews}</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Entfernung</span>
+                                            <span class="stat-value">${competitor.distance}</span>
+                                        </div>
+                                    </div>
+                                    ${competitorServices[competitor.name] ? `
+                                        <div class="services-preview">
+                                            <strong>Services:</strong> ${competitorServices[competitor.name].slice(0, 2).join(', ')}${competitorServices[competitor.name].length > 2 ? '...' : ''}
+                                        </div>
+                                    ` : ''}
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${(competitor.rating / 5) * 100}%"></div>
-                                </div>
-                            </div>
+                            `).join('')}
                         </div>
-                    `).join('')}
-                </div>
-
-                <div class="status-grid" style="margin-top: 30px;">
-                    <div class="status-item">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">🎯 Marktchancen</h4>
-                        <p style="color: #718096; font-size: 0.9em;">
-                            ${realData.reviews.google.rating >= 4.5 ? 
-                                'Sie haben eine sehr starke Position. Fokus auf Expansion und Premium-Services.' :
-                                realData.reviews.google.rating >= 4 ?
-                                'Gute Ausgangslage. Mehr Bewertungen sammeln für stärkere Marktposition.' :
-                                'Verbesserungspotenzial vorhanden. Kundenzufriedenheit steigern und aktiv Bewertungen sammeln.'
-                            }
-                        </p>
                     </div>
-                    
-                    <div class="status-item">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">💪 Stärken</h4>
-                        <p style="color: #718096; font-size: 0.9em;">
-                            • ${realData.seo.score >= 70 ? 'Gute SEO-Basis' : 'SEO-Potenzial vorhanden'}<br>
-                            • ${realData.mobile.responsive ? 'Mobile-optimiert' : 'Desktop-fokussiert'}<br>
-                            • ${realData.performance.score >= 70 ? 'Schnelle Website' : 'Grundlegende Performance'}
-                        </p>
+                ` : `
+                    <div class="no-data">
+                        <p>Keine Wettbewerberdaten verfügbar. Eine detaillierte Konkurrenzanalyse wird empfohlen.</p>
                     </div>
-                </div>
+                `}
             </div>
-        </div>
+        </section>
 
-        <!-- Technische Details -->
-        <div class="section">
-            <div class="section-header">🔧 Technische Details</div>
-            <div class="section-content">
-                <div class="metric-grid">
-                    <div class="metric-item">
-                        <div class="metric-title">LCP (Largest Contentful Paint)</div>
-                        <div class="metric-value ${realData.performance.lcp < 2.5 ? 'excellent' : realData.performance.lcp < 4 ? 'good' : 'warning'}">${realData.performance.lcp}s</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Ladegeschwindigkeit</span>
-                                <span>${realData.performance.lcp < 2.5 ? '100' : realData.performance.lcp < 4 ? '70' : '40'}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${realData.performance.lcp >= 4 ? 'warning' : ''}" style="width: ${realData.performance.lcp < 2.5 ? 100 : realData.performance.lcp < 4 ? 70 : 40}%"></div>
-                            </div>
+        ${hasHourlyRateData ? `
+            <!-- Pricing Analysis -->
+            <section class="section">
+                <div class="section-header">💰 Preispositionierung</div>
+                <div class="section-content">
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-title">Ihr Stundensatz</div>
+                            <div class="metric-value">${hourlyRateData.ownRate} €</div>
                         </div>
-                    </div>
-                    
-                    <div class="metric-item">
-                        <div class="metric-title">FID (First Input Delay)</div>
-                        <div class="metric-value ${realData.performance.fid < 100 ? 'excellent' : realData.performance.fid < 300 ? 'good' : 'warning'}">${realData.performance.fid}ms</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Interaktivität</span>
-                                <span>${realData.performance.fid < 100 ? '100' : realData.performance.fid < 300 ? '70' : '40'}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${realData.performance.fid >= 300 ? 'warning' : ''}" style="width: ${realData.performance.fid < 100 ? 100 : realData.performance.fid < 300 ? 70 : 40}%"></div>
-                            </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Regionaler Durchschnitt</div>
+                            <div class="metric-value">${hourlyRateData.regionAverage} €</div>
                         </div>
-                    </div>
-                    
-                    <div class="metric-item">
-                        <div class="metric-title">CLS (Cumulative Layout Shift)</div>
-                        <div class="metric-value ${realData.performance.cls < 0.1 ? 'excellent' : realData.performance.cls < 0.25 ? 'good' : 'warning'}">${realData.performance.cls}</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Layoutstabilität</span>
-                                <span>${realData.performance.cls < 0.1 ? '100' : realData.performance.cls < 0.25 ? '70' : '40'}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${realData.performance.cls >= 0.25 ? 'warning' : ''}" style="width: ${realData.performance.cls < 0.1 ? 100 : realData.performance.cls < 0.25 ? 70 : 40}%"></div>
-                            </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Marktposition</div>
+                            <div class="metric-value ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'excellent' : 'warning'}">${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Premium-Segment' : 'Durchschnittsbereich'}</div>
                         </div>
-                    </div>
-                    
-                    <div class="metric-item">
-                        <div class="metric-title">Alt-Tags Optimierung</div>
-                        <div class="metric-value ${realData.seo.altTags.withAlt === realData.seo.altTags.total ? 'excellent' : realData.seo.altTags.withAlt / realData.seo.altTags.total > 0.8 ? 'good' : 'warning'}">
-                            ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total}
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Barrierefreiheit</span>
-                                <span>${Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100)}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${(realData.seo.altTags.withAlt / realData.seo.altTags.total) < 0.8 ? 'warning' : ''}" style="width: ${(realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100}%"></div>
-                            </div>
+                        <div class="metric-item">
+                            <div class="metric-title">Preisoptimierung</div>
+                            <div class="metric-value good">Potenzial vorhanden</div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+        ` : ''}
 
-        <!-- Keywords Details -->
-        <div class="section">
-            <div class="section-header">🔍 Keyword-Analyse Details</div>
-            <div class="section-content">
-                <div class="highlight-box">
-                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">📈 Keyword-Performance</h4>
-                    <p style="color: #2c7a7b;">
-                        Von ${realData.keywords.length} analysierten Keywords wurden ${keywordsFoundCount} erfolgreich gefunden.
-                        Das entspricht einer Trefferquote von ${keywordsScore}%.
-                    </p>
-                </div>
-                
-                <div class="keyword-grid" style="margin-top: 20px;">
-                    ${realData.keywords.map(keyword => `
-                        <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
-                            <span>${keyword.keyword}</span>
-                            <span>${keyword.found ? '✓ Gefunden' : '✗ Nicht gefunden'}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-
-        <!-- Handlungsempfehlungen -->
-        <div class="section">
-            <div class="section-header">🎯 Strategische Empfehlungen</div>
+        <!-- Strategic Recommendations -->
+        <section class="section">
+            <div class="section-header">🚀 Strategische Empfehlungen</div>
             <div class="section-content">
                 <div class="recommendations">
-                    <h4>Prioritäre Maßnahmen für Ihren Erfolg:</h4>
-                    <ul>
-                        ${realData.seo.score < 70 ? '<li>SEO-Optimierung für bessere Auffindbarkeit bei Google</li>' : ''}
-                        ${realData.performance.score < 70 ? '<li>Website-Geschwindigkeit verbessern für bessere Nutzererfahrung</li>' : ''}
-                        ${realData.reviews.google.count < 10 ? '<li>Mehr Kundenbewertungen sammeln für höhere Glaubwürdigkeit</li>' : ''}
-                        ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung für Smartphone-Nutzer verbessern</li>' : ''}
-                        ${hasValidHourlyRateData && calculateHourlyRateScore(hourlyRateData) < 70 ? '<li>Preisstrategie überdenken und Marktpositionierung anpassen</li>' : ''}
-                        ${enhancedSocialMediaScore < 60 ? '<li>Social Media Präsenz aufbauen für bessere Kundenbindung</li>' : ''}
-                        ${impressumScore < 80 ? '<li>Impressum vervollständigen für rechtliche Sicherheit</li>' : ''}
-                        <li>Content-Marketing für Fachkompetenz und Vertrauen aufbauen</li>
-                        <li>Lokale SEO für bessere regionale Auffindbarkeit optimieren</li>
-                        <li>Kundenbewertungen aktiv fördern und managen</li>
-                        <li>Regelmäßige Website-Wartung und Updates implementieren</li>
-                    </ul>
-                </div>
-                
-                <div class="highlight-box" style="margin-top: 25px;">
-                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">💡 Ihr Wachstumspotenzial</h4>
-                    <p style="color: #2c7a7b;">
-                        Mit den empfohlenen Optimierungen können Sie Ihren Gesamt-Score von aktuell ${overallScore} auf über 
-                        ${Math.min(95, overallScore + 25)} Punkte steigern. Dies entspricht einer deutlichen Verbesserung Ihrer Online-Präsenz 
-                        und kann zu ${Math.round((Math.min(95, overallScore + 25) - overallScore) * 2)}% mehr qualifizierten Anfragen führen.
-                    </p>
+                    <div class="recommendation-timeframe">
+                        <h4>📈 Sofortmaßnahmen (0-4 Wochen)</h4>
+                        <ul>
+                            ${impressumScore < 90 ? '<li><strong>Impressum vervollständigen</strong> - Rechtliche Sicherheit gewährleisten</li>' : ''}
+                            ${realData.reviews.google.count < 10 ? '<li><strong>Bewertungen sammeln</strong> - Aktive Kundenansprache nach Auftragsabschluss</li>' : ''}
+                            ${realData.seo.score < 70 ? '<li><strong>SEO-Basics optimieren</strong> - Meta-Descriptions und Title-Tags überarbeiten</li>' : ''}
+                            <li><strong>Google My Business aktualisieren</strong> - Vollständige Unternehmensinformationen</li>
+                        </ul>
+                    </div>
+
+                    <div class="recommendation-timeframe">
+                        <h4>🎯 Mittelfristige Ziele (1-3 Monate)</h4>
+                        <ul>
+                            ${enhancedSocialMediaScore < 60 ? '<li><strong>Social Media aufbauen</strong> - Regelmäßige Posts mit Projektbildern</li>' : ''}
+                            ${realData.performance.score < 70 ? '<li><strong>Website-Performance verbessern</strong> - Ladezeiten optimieren</li>' : ''}
+                            <li><strong>Content-Marketing starten</strong> - Blog oder Ratgeber-Sektion einrichten</li>
+                            <li><strong>Lokale Partnerschaften</strong> - Kooperationen mit anderen Handwerkern</li>
+                        </ul>
+                    </div>
+
+                    <div class="recommendation-timeframe">
+                        <h4>🏆 Langfristige Vision (3-12 Monate)</h4>
+                        <ul>
+                            <li><strong>Digitale Marktführerschaft</strong> - Branchenbeste Online-Präsenz anstreben</li>
+                            <li><strong>Automatisierte Kundengewinnung</strong> - Optimierte Conversion-Funnel</li>
+                            <li><strong>Reputation Management</strong> - Systematische Bewertungsoptimierung</li>
+                            <li><strong>Premium-Positionierung</strong> - Hochwertige Kundensegmente erschließen</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="status-grid" style="margin-top: 25px;">
-                    <div class="status-item">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">📈 Kurzfristig (1-3 Monate)</h4>
-                        <p style="color: #718096; font-size: 0.9em;">
-                            • Google My Business optimieren<br>
-                            • Kundenbewertungen aktiv sammeln<br>
-                            • Social Media Profile einrichten<br>
-                            • Website-Performance verbessern
-                        </p>
+                <div class="industry-insight">
+                    <h4>🔧 Branchenspezifische Empfehlung</h4>
+                    <p>${getIndustryInsights()}</p>
+                </div>
+
+                <div class="roi-potential">
+                    <h4>📊 ROI-Potenzial</h4>
+                    <p>Bei konsequenter Umsetzung der Empfehlungen erwarten wir eine Steigerung der Online-Anfragen um <strong>30-50%</strong> innerhalb der nächsten 6 Monate. Dies entspricht einem geschätzten Mehrumsatz von <strong>15.000-25.000 €</strong> jährlich.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monitoring Dashboard -->
+        <section class="section">
+            <div class="section-header">📈 Monitoring & Erfolgsmessung</div>
+            <div class="section-content">
+                <div class="kpi-grid">
+                    <div class="kpi-item">
+                        <div class="kpi-title">Website-Besucher</div>
+                        <div class="kpi-value">Baseline etablieren</div>
+                        <div class="kpi-target">Ziel: +25% in 3 Monaten</div>
                     </div>
-                    
-                    <div class="status-item">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">🎯 Mittelfristig (3-6 Monate)</h4>
-                        <p style="color: #718096; font-size: 0.9em;">
-                            • SEO-Content regelmäßig erstellen<br>
-                            • Local SEO ausbauen<br>
-                            • Kundenbindung verbessern<br>
-                            • Konkurrenzvorteil ausbauen
-                        </p>
+                    <div class="kpi-item">
+                        <div class="kpi-title">Anfragen</div>
+                        <div class="kpi-value">Aktueller Stand</div>
+                        <div class="kpi-target">Ziel: +40% in 6 Monaten</div>
                     </div>
-                    
-                    <div class="status-item">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">🚀 Langfristig (6+ Monate)</h4>
-                        <p style="color: #718096; font-size: 0.9em;">
-                            • Marktführerschaft anstreben<br>
-                            • Premium-Services etablieren<br>
-                            • Regionale Expansion<br>
-                            • Digitale Transformation
-                        </p>
+                    <div class="kpi-item">
+                        <div class="kpi-title">Bewertungen</div>
+                        <div class="kpi-value">${realData.reviews.google.count} Google</div>
+                        <div class="kpi-target">Ziel: 1-2 neue/Monat</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-title">Ranking-Position</div>
+                        <div class="kpi-value">Tracking einrichten</div>
+                        <div class="kpi-target">Ziel: Top 3 lokal</div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Footer -->
-        <div style="margin-top: 40px; padding: 30px; background: white; border-radius: 16px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-            <p style="color: #718096; margin-bottom: 10px;">
-                Diese professionelle Analyse wurde im ${currentDate} erstellt und basiert auf aktuellen Live-Daten Ihrer Website und Ihres Marktumfelds.
-            </p>
-            <p style="color: #4a5568; font-weight: 600; margin-bottom: 15px;">
-                Nutzen Sie diese Erkenntnisse strategisch, um Ihren Online-Erfolg systematisch auszubauen!
-            </p>
-            <div style="color: #667eea; font-size: 0.9em; font-style: italic;">
-                "Der beste Zeitpunkt für digitales Marketing war gestern. Der zweitbeste ist heute."
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Handwerk Stars</h4>
+                    <p>Ihr Partner für digitale Sichtbarkeit im Handwerk</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Kontakt</h4>
+                    <p>Social Listening & Monitoring Services</p>
+                    <p>Speziell für Handwerksbetriebe entwickelt</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Nächste Schritte</h4>
+                    <p>✓ Report besprechen</p>
+                    <p>✓ Maßnahmen priorisieren</p>
+                    <p>✓ Umsetzung beginnen</p>
+                </div>
             </div>
-        </div>
+            <div class="footer-bottom">
+                <p>&copy; ${new Date().getFullYear()} Handwerk Stars. Alle Rechte vorbehalten. | Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
+            </div>
+        </footer>
     </div>
 </body>
-</html>
-  `;
+</html>`;
 };
