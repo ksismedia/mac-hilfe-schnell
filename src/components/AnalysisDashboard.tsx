@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, FileText, Globe, Building, Settings } from 'lucide-react';
+import { ArrowLeft, Globe, Building } from 'lucide-react';
 
 // Components
 import SEOAnalysis from './analysis/SEOAnalysis';
@@ -29,11 +27,9 @@ import OverallRating from './analysis/OverallRating';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
-import APIKeyManager from './APIKeyManager';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
-import { GoogleAPIService } from '@/services/GoogleAPIService';
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
@@ -68,7 +64,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
   const { toast } = useToast();
 
   // Manual data management
@@ -114,14 +109,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
     loadAnalysisData();
   }, [businessData, toast]);
-
-  const handleApiKeySet = () => {
-    setShowAPIKeyDialog(false);
-    toast({
-      title: "API-Schlüssel gesetzt",
-      description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
-    });
-  };
 
   if (isLoading) {
     return (
@@ -175,15 +162,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
           
           <div className="flex flex-wrap items-center gap-2">
-            <Button 
-              onClick={() => setShowAPIKeyDialog(true)}
-              variant="outline" 
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Settings className="h-4 w-4" />
-              API-Schlüssel
-            </Button>
             <SaveAnalysisDialog 
               businessData={businessData}
               realData={realData}
@@ -310,20 +288,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* API Key Dialog Overlay */}
-      {showAPIKeyDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
-            <APIKeyManager onApiKeySet={handleApiKeySet} />
-            <div className="flex justify-end mt-4">
-              <Button onClick={() => setShowAPIKeyDialog(false)} variant="outline">
-                Schließen
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

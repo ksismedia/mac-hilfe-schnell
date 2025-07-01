@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,12 +29,19 @@ const Index = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showAPIKeyDialog, setShowAPIKeyDialog] = useState(false);
+  const [needsApiKey, setNeedsApiKey] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const { toast } = useToast();
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
+
+  // Check API key on mount
+  useEffect(() => {
+    if (!GoogleAPIService.hasApiKey()) {
+      setNeedsApiKey(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,31 +55,11 @@ const Index = () => {
       return;
     }
 
-    // Check for API key before starting analysis
-    if (!GoogleAPIService.hasApiKey()) {
-      setShowAPIKeyDialog(true);
-      return;
-    }
-
-    setIsAnalyzing(true);
-    
-    // Simuliere Analyseprozess
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsAnalyzing(false);
-    setShowResults(true);
-    
-    toast({
-      title: "Analyse abgeschlossen",
-      description: "Die Auswertung des Online-Auftritts wurde erfolgreich durchgeführt.",
-    });
+    startAnalysis();
   };
 
-  const handleApiKeySet = () => {
-    setShowAPIKeyDialog(false);
+  const startAnalysis = () => {
     setIsAnalyzing(true);
-    
-    // Start analysis after API key is set
     setTimeout(() => {
       setIsAnalyzing(false);
       setShowResults(true);
@@ -83,19 +70,20 @@ const Index = () => {
     }, 1000);
   };
 
+  const handleApiKeySet = () => {
+    setNeedsApiKey(false);
+    toast({
+      title: "API-Schlüssel gesetzt",
+      description: "Die Analyse wird mit echten Google-Daten durchgeführt.",
+    });
+  };
+
   const handleContinueWithoutApiKey = () => {
-    setShowAPIKeyDialog(false);
-    setIsAnalyzing(true);
-    
-    // Start analysis with example data
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setShowResults(true);
-      toast({
-        title: "Analyse abgeschlossen",
-        description: "Die Auswertung mit Beispieldaten wurde durchgeführt.",
-      });
-    }, 1000);
+    setNeedsApiKey(false);
+    toast({
+      title: "Fortfahren ohne API-Schlüssel",
+      description: "Die Analyse wird mit Beispieldaten durchgeführt.",
+    });
   };
 
   const handleExtensionDataProcess = (processedData: BusinessData) => {
@@ -105,7 +93,7 @@ const Index = () => {
     
     // Check for API key before starting analysis
     if (!GoogleAPIService.hasApiKey()) {
-      setShowAPIKeyDialog(true);
+      setNeedsApiKey(true);
       return;
     }
     
@@ -143,7 +131,7 @@ const Index = () => {
 
   const resetAnalysis = () => {
     setShowResults(false);
-    setShowAPIKeyDialog(false);
+    setNeedsApiKey(false);
     setLoadedAnalysisId(undefined);
     setBusinessData({
       address: '',
@@ -153,23 +141,17 @@ const Index = () => {
     clearExtensionData();
   };
 
-  // Show API Key dialog if needed
-  if (showAPIKeyDialog) {
+  // Show API Key dialog first if needed
+  if (needsApiKey) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
         <div className="max-w-4xl mx-auto pt-8">
           <div className="mb-6">
-            <Button onClick={() => setShowAPIKeyDialog(false)} variant="outline" size="sm" className="mb-4">
-              ← Zurück zur Eingabe
-            </Button>
             <h1 className="text-3xl font-bold text-yellow-400 mb-2">Google API-Schlüssel erforderlich</h1>
             <p className="text-gray-300">Für die vollständige Analyse mit echten Daten wird ein Google API-Schlüssel benötigt.</p>
           </div>
           
-          <APIKeyManager 
-            onApiKeySet={handleApiKeySet}
-            onLoadSavedAnalysis={handleLoadSavedAnalysis}
-          />
+          <APIKeyManager onApiKeySet={handleApiKeySet} />
           
           <div className="mt-6 text-center">
             <Button 
@@ -258,12 +240,6 @@ const Index = () => {
             <CardTitle className="flex items-center gap-2 text-yellow-400">
               <Search className="h-6 w-6" />
               Betriebsdaten eingeben
-              {isFromExtension && (
-                <Badge variant="default" className="bg-yellow-400 text-black ml-2">
-                  <Star className="h-3 w-3 mr-1" />
-                  Mit Extension-Unterstützung
-                </Badge>
-              )}
             </CardTitle>
             <CardDescription className="text-gray-300">
               Geben Sie die Daten des zu analysierenden Handwerksbetriebs ein
@@ -342,6 +318,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
+        {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {[
             { title: "SEO-Auswertung", icon: "🔍", desc: "Title-Tags, Meta Description, Überschriften" },
