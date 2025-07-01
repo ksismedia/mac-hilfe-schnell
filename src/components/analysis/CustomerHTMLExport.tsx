@@ -17,6 +17,7 @@ interface CustomerHTMLExportProps {
   realData: RealBusinessData;
   manualImprintData?: any;
   manualSocialData?: ManualSocialData | null;
+  manualWorkplaceData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
@@ -27,6 +28,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   realData, 
   manualImprintData, 
   manualSocialData,
+  manualWorkplaceData,
   manualCompetitors = [],
   competitorServices = {},
   hourlyRateData
@@ -106,7 +108,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       competitorServices,
       hourlyRateData,
       missingImprintElements,
-      manualSocialData // Pass the manual social data to the HTML generator
+      manualSocialData, // Pass the manual social data to the HTML generator
+      manualWorkplaceData // Pass workplace data for Kununu/Glassdoor integration
     });
 
     const newWindow = window.open('', '_blank');

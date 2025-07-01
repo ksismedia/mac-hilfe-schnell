@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 
@@ -17,6 +17,7 @@ interface CustomerReportData {
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
+  manualWorkplaceData?: ManualWorkplaceData | null;
 }
 
 export const generateCustomerHTML = ({
@@ -26,7 +27,8 @@ export const generateCustomerHTML = ({
   competitorServices,
   hourlyRateData,
   missingImprintElements = [],
-  manualSocialData
+  manualSocialData,
+  manualWorkplaceData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   
@@ -342,7 +344,30 @@ export const generateCustomerHTML = ({
 
   // Competitor Analysis - ANONYMISIERT für Kundenreport  
   const getCompetitorAnalysis = () => {
-    if (!manualCompetitors || manualCompetitors.length === 0) {
+    // Kombiniere manuelle und automatische Konkurrenten
+    const allCompetitors = [...(manualCompetitors || [])];
+    
+    // Füge automatisch ermittelte Konkurrenten aus realData hinzu falls vorhanden
+    if (realData?.competitors) {
+      realData.competitors.forEach(autoCompetitor => {
+        // Prüfe ob dieser Konkurrent nicht bereits manuell erfasst wurde
+        const exists = manualCompetitors?.some(manual => 
+          manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()
+        );
+        if (!exists) {
+          allCompetitors.push({
+            name: autoCompetitor.name,
+            rating: autoCompetitor.rating || 0,
+            reviews: autoCompetitor.reviews || 0,
+            distance: autoCompetitor.distance || 'Unbekannt',
+            services: (autoCompetitor as any).services || [],
+            website: (autoCompetitor as any).website
+          });
+        }
+      });
+    }
+    
+    if (allCompetitors.length === 0) {
       return `
         <div class="metric-card warning">
           <h3>👥 Konkurrenzanalyse</h3>
@@ -366,7 +391,7 @@ export const generateCustomerHTML = ({
         <h3>👥 Konkurrenzanalyse</h3>
         <div style="margin-bottom: 20px;">
           <p style="color: #d1d5db; margin-bottom: 15px;">
-            <strong>Anzahl analysierte Konkurrenten:</strong> ${manualCompetitors.length}
+            <strong>Anzahl analysierte Konkurrenten:</strong> ${allCompetitors.length}
           </p>
         </div>
         
@@ -383,7 +408,7 @@ export const generateCustomerHTML = ({
               </tr>
             </thead>
             <tbody>
-              ${manualCompetitors.map((competitor, index) => `
+              ${allCompetitors.map((competitor, index) => `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
                   <td style="padding: 12px; color: #d1d5db;">
                     <strong>Konkurrent ${String.fromCharCode(65 + index)}</strong>
@@ -541,7 +566,7 @@ export const generateCustomerHTML = ({
       });
     }
 
-    const scoreClass = socialMediaScore >= 80 ? 'green' : socialMediaScore >= 60 ? 'yellow' : socialMediaScore >= 40 ? 'orange' : 'red';
+    const scoreClass = socialMediaScore >= 80 ? 'green' : socialMediaScore >= 50 ? 'yellow' : 'red';
     const cardClass = socialMediaScore >= 60 ? 'good' : 'warning';
     
     return `
@@ -1308,7 +1333,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${impressumScore >= 70 ? 'green' : impressumScore >= 40 ? 'yellow' : 'red'}">${impressumScore}%</div>
             <div class="score-details">
               <p><strong>Impressum-Vollständigkeit:</strong> ${impressumScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
-              <p><strong>Fehlende Angaben:</strong> ${missingImprintElements.length}</p>
+              <p><strong>Fehlende Angaben:</strong> ${missingImprintElements ? missingImprintElements.length : 0}</p>
               <p><strong>Rechtsstatus:</strong> ${impressumScore >= 70 ? 'Konform' : 'Risiko vorhanden'}</p>
             </div>
           </div>
@@ -1317,10 +1342,22 @@ export const generateCustomerHTML = ({
               <div class="progress-fill" style="width: ${impressumScore}%"></div>
             </div>
           </div>
-          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-            <h4>📋 Fehlende Impressum-Angaben:</h4>
-            ${getMissingImprintList()}
-          </div>
+          ${missingImprintElements && missingImprintElements.length > 0 ? `
+            <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+              <h4>📋 Fehlende Impressum-Angaben:</h4>
+              <ul style="margin: 10px 0; color: #ef4444;">
+                ${missingImprintElements.map(element => `<li>${element}</li>`).join('')}
+              </ul>
+              <p style="font-size: 0.9em; color: #dc2626; margin-top: 10px;">
+                <strong>Risiko:</strong> Fehlende Impressum-Angaben können zu Abmahnungen und Bußgeldern führen.
+              </p>
+            </div>
+          ` : `
+            <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+              <h4>✅ Impressum-Status:</h4>
+              <p style="color: #22c55e; font-weight: bold;">Alle erforderlichen Angaben sind vorhanden.</p>
+            </div>
+          `}
         </div>
       </div>
     </div>
