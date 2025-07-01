@@ -1,4 +1,5 @@
 
+
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
@@ -146,7 +147,7 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Social Media Analysis - KOMPLETT ÜBERARBEITET
+  // Social Media Analysis - KOMPLETT NEU
   const getSocialMediaAnalysis = () => {
     console.log('getSocialMediaAnalysis called with socialMediaScore:', socialMediaScore);
     console.log('getSocialMediaAnalysis called with manualSocialData:', manualSocialData);
@@ -154,7 +155,7 @@ export const generateCustomerHTML = ({
     if (!manualSocialData) {
       return `
         <div class="metric-card warning">
-          <h3>🔍 Social Media Präsenz</h3>
+          <h3>📱 Social Media Präsenz</h3>
           <div class="score-display">
             <div class="score-circle red">0%</div>
             <div class="score-details">
@@ -175,41 +176,101 @@ export const generateCustomerHTML = ({
       `;
     }
 
-    const platforms = [
-      { name: 'Facebook', data: { url: manualSocialData.facebookUrl, followers: manualSocialData.facebookFollowers, lastPost: manualSocialData.facebookLastPost } },
-      { name: 'Instagram', data: { url: manualSocialData.instagramUrl, followers: manualSocialData.instagramFollowers, lastPost: manualSocialData.instagramLastPost } },
-      { name: 'LinkedIn', data: { url: manualSocialData.linkedinUrl, followers: manualSocialData.linkedinFollowers, lastPost: manualSocialData.linkedinLastPost } },
-      { name: 'Twitter', data: { url: manualSocialData.twitterUrl, followers: manualSocialData.twitterFollowers, lastPost: manualSocialData.twitterLastPost } },
-      { name: 'YouTube', data: { url: manualSocialData.youtubeUrl, followers: manualSocialData.youtubeSubscribers, lastPost: manualSocialData.youtubeLastPost } }
-    ].filter(platform => platform.data.url && platform.data.url.trim() !== '');
+    const hasAnyPlatform = Boolean(
+      manualSocialData.facebookUrl || 
+      manualSocialData.instagramUrl || 
+      manualSocialData.linkedinUrl || 
+      manualSocialData.twitterUrl || 
+      manualSocialData.youtubeUrl
+    );
+
+    if (!hasAnyPlatform) {
+      return `
+        <div class="metric-card warning">
+          <h3>📱 Social Media Präsenz</h3>
+          <div class="score-display">
+            <div class="score-circle red">0%</div>
+            <div class="score-details">
+              <p><strong>Status:</strong> Keine aktiven Social Media Kanäle</p>
+              <p><strong>Empfehlung:</strong> Social Media Präsenz aufbauen</p>
+            </div>
+          </div>
+          <div class="recommendations">
+            <h4>Handlungsempfehlungen:</h4>
+            <ul>
+              <li>Mindestens 2-3 Plattformen aktivieren</li>
+              <li>Regelmäßigen Content-Plan erstellen</li>
+              <li>Zielgruppe definieren und ansprechen</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    // Aktive Plattformen sammeln
+    const activePlatforms = [];
+    if (manualSocialData.facebookUrl) {
+      activePlatforms.push({
+        name: 'Facebook',
+        followers: manualSocialData.facebookFollowers || '0',
+        lastPost: manualSocialData.facebookLastPost || 'Unbekannt'
+      });
+    }
+    if (manualSocialData.instagramUrl) {
+      activePlatforms.push({
+        name: 'Instagram',
+        followers: manualSocialData.instagramFollowers || '0',
+        lastPost: manualSocialData.instagramLastPost || 'Unbekannt'
+      });
+    }
+    if (manualSocialData.linkedinUrl) {
+      activePlatforms.push({
+        name: 'LinkedIn',
+        followers: manualSocialData.linkedinFollowers || '0',
+        lastPost: manualSocialData.linkedinLastPost || 'Unbekannt'
+      });
+    }
+    if (manualSocialData.twitterUrl) {
+      activePlatforms.push({
+        name: 'Twitter',
+        followers: manualSocialData.twitterFollowers || '0',
+        lastPost: manualSocialData.twitterLastPost || 'Unbekannt'
+      });
+    }
+    if (manualSocialData.youtubeUrl) {
+      activePlatforms.push({
+        name: 'YouTube',
+        followers: manualSocialData.youtubeSubscribers || '0',
+        lastPost: manualSocialData.youtubeLastPost || 'Unbekannt'
+      });
+    }
 
     const scoreClass = socialMediaScore >= 80 ? 'green' : socialMediaScore >= 60 ? 'yellow' : socialMediaScore >= 40 ? 'orange' : 'red';
+    const cardClass = socialMediaScore >= 60 ? 'good' : 'warning';
     
     return `
-      <div class="metric-card ${socialMediaScore >= 60 ? 'good' : 'warning'}">
+      <div class="metric-card ${cardClass}">
         <h3>📱 Social Media Präsenz</h3>
         <div class="score-display">
           <div class="score-circle ${scoreClass}">${socialMediaScore}%</div>
           <div class="score-details">
-            <p><strong>Aktive Plattformen:</strong> ${platforms.length}</p>
+            <p><strong>Aktive Plattformen:</strong> ${activePlatforms.length}</p>
             <p><strong>Status:</strong> ${socialMediaScore >= 80 ? 'Sehr gut' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
           </div>
         </div>
         
-        ${platforms.length > 0 ? `
-          <div class="platform-details">
-            <h4>Aktive Kanäle:</h4>
-            <ul>
-              ${platforms.map(platform => `
-                <li>
-                  <strong>${platform.name}:</strong> 
-                  ${platform.data.followers || '0'} Follower
-                  ${platform.data.lastPost ? ` • Letzter Post: ${platform.data.lastPost}` : ''}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        ` : ''}
+        <div class="platform-details">
+          <h4>Aktive Kanäle:</h4>
+          <ul>
+            ${activePlatforms.map(platform => `
+              <li>
+                <strong>${platform.name}:</strong> 
+                ${platform.followers} Follower
+                • Letzter Post: ${platform.lastPost}
+              </li>
+            `).join('')}
+          </ul>
+        </div>
         
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
@@ -283,7 +344,6 @@ export const generateCustomerHTML = ({
           ${getMobileOptimizationAnalysis()}
         </div>
 
-        <!-- Social Media Analysis Section -->
         <div class="section">
           <h2>📱 Social Media Analyse</h2>
           ${getSocialMediaAnalysis()}
