@@ -345,13 +345,13 @@ export const generateCustomerHTML = ({
 
   // Competitor Analysis - ANONYMISIERT für Kundenreport  
   const getCompetitorAnalysis = () => {
-    // Kombiniere manuelle und automatische Konkurrenten
+    // Kombiniere manuelle und automatische Wettbewerber
     const allCompetitors = [...(manualCompetitors || [])];
     
-    // Füge automatisch ermittelte Konkurrenten aus realData hinzu falls vorhanden
+    // Füge automatisch ermittelte Wettbewerber aus realData hinzu falls vorhanden
     if (realData?.competitors) {
       realData.competitors.forEach(autoCompetitor => {
-        // Prüfe ob dieser Konkurrent nicht bereits manuell erfasst wurde
+        // Prüfe ob dieser Wettbewerber nicht bereits manuell erfasst wurde
         const exists = manualCompetitors?.some(manual => 
           manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()
         );
@@ -371,14 +371,14 @@ export const generateCustomerHTML = ({
     if (allCompetitors.length === 0) {
       return `
         <div class="metric-card warning">
-          <h3>👥 Konkurrenzanalyse</h3>
+          <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
           <p class="text-center" style="color: #d1d5db; font-style: italic; margin: 20px 0;">
-            Keine Konkurrenten zum Vergleich erfasst.
+            Keine Wettbewerber zum Vergleich erfasst.
           </p>
           <div class="recommendations">
             <h4>Empfohlene Maßnahmen:</h4>
             <ul>
-              <li>Konkurrenzanalyse durchführen</li>
+              <li>Wettbewerbsanalyse durchführen</li>
               <li>Marktposition bestimmen</li>
               <li>Differenzierungsmerkmale identifizieren</li>
             </ul>
@@ -389,19 +389,22 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card good">
-        <h3>👥 Konkurrenzanalyse</h3>
+        <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
         <div style="margin-bottom: 20px;">
           <p style="color: #d1d5db; margin-bottom: 15px;">
-            <strong>Anzahl analysierte Konkurrenten:</strong> ${allCompetitors.length}
+            <strong>Anzahl analysierte Wettbewerber:</strong> ${allCompetitors.length}
+          </p>
+          <p style="color: #d1d5db; margin-bottom: 15px;">
+            <strong>Maximaler Umgebungsradius der Suche:</strong> 25 km
           </p>
         </div>
         
-        <!-- Konkurrenten-Vergleichstabelle -->
+        <!-- Wettbewerber-Vergleichstabelle -->
         <div style="overflow-x: auto; margin-bottom: 20px;">
           <table style="width: 100%; border-collapse: collapse; background: rgba(17, 24, 39, 0.6); border-radius: 8px; overflow: hidden;">
             <thead>
               <tr style="background: rgba(251, 191, 36, 0.2);">
-                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Konkurrent</th>
+                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Wettbewerber</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Bewertung</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Anzahl Bewertungen</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Marktposition</th>
@@ -412,7 +415,7 @@ export const generateCustomerHTML = ({
               ${allCompetitors.map((competitor, index) => `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
                   <td style="padding: 12px; color: #d1d5db;">
-                    <strong>Konkurrent ${String.fromCharCode(65 + index)}</strong>
+                    <strong>Wettbewerber ${String.fromCharCode(65 + index)}</strong>
                   </td>
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">
                     <span style="font-weight: bold; color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'};">${competitor.rating}/5</span>
@@ -420,7 +423,7 @@ export const generateCustomerHTML = ({
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
                   <td style="padding: 12px; text-align: center;">
                     <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
-                      ${competitor.rating >= 4 ? 'Starker Konkurrent' : competitor.rating >= 3 ? 'Mittlerer Konkurrent' : 'Schwacher Konkurrent'}
+                      ${competitor.rating >= 4 ? 'Starker Wettbewerber' : competitor.rating >= 3 ? 'Mittlerer Wettbewerber' : 'Schwacher Wettbewerber'}
                     </span>
                   </td>
                   <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
@@ -462,11 +465,11 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Strategische Handlungsempfehlungen:</h4>
           <ul>
-            <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Konkurrenten durchführen</li>
+            <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Wettbewerber durchführen</li>
             <li>Eigene Alleinstellungsmerkmale gegenüber ${manualCompetitors.length} Mitbewerbern entwickeln</li>
-            <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Konkurrenten überprüfen</li>
-            <li>Service-Portfolio basierend auf Konkurrenzanalyse optimieren</li>
-            <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Konkurrenten</li>
+            <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Wettbewerbern überprüfen</li>
+            <li>Service-Portfolio basierend auf Wettbewerbsanalyse optimieren</li>
+            <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Wettbewerber</li>
           </ul>
         </div>
       </div>
@@ -1306,9 +1309,9 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Konkurrenzanalyse -->
+    <!-- Wettbewerbsanalyse -->
     <div class="section">
-      <div class="section-header">👥 Konkurrenzanalyse</div>
+      <div class="section-header">👥 Wettbewerbsanalyse & Marktumfeld</div>
       <div class="section-content">
         ${getCompetitorAnalysis()}
       </div>
@@ -1417,7 +1420,7 @@ export const generateCustomerHTML = ({
               <ul>
                 <li>Backlink-Strategie implementieren</li>
                 <li>Employer Branding stärken</li>
-                <li>Konkurrenzmonitoring etablieren</li>
+                <li>Wettbewerbsmonitoring etablieren</li>
               </ul>
             </div>
           </div>

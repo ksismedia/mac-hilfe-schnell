@@ -178,14 +178,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
           <CardTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2">
               <Target className="h-6 w-6" />
-              Konkurrenzanalyse
+              Wettbewerbsanalyse & Marktumfeld
             </span>
             <Badge variant={allCompetitors.length > 0 ? "default" : "destructive"}>
-              {allCompetitors.length} Konkurrenten gefunden
+              {allCompetitors.length} Wettbewerber gefunden
             </Badge>
           </CardTitle>
           <CardDescription>
-            Automatische Analyse der lokalen Konkurrenz in {address} für {industry}
+            Automatische Analyse des lokalen Wettbewerbs in {address} für {industry}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -193,16 +193,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
             <div className="text-center py-8">
               <AlertCircle className="h-12 w-12 mx-auto text-amber-500 mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                Keine Konkurrenten gefunden
+                Keine Wettbewerber gefunden
               </h3>
               <p className="text-gray-500 mb-4">
-                Automatische Suche konnte keine direkten Konkurrenten in der Nähe finden.
+                Automatische Suche konnte keine direkten Wettbewerber in der Nähe finden.
               </p>
               <div className="bg-blue-50 rounded-lg p-4">
                 <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen:</h4>
                 <ul className="text-sm text-blue-800 text-left space-y-1">
                   <li>• Erweitern Sie Ihren Suchradius</li>
-                  <li>• Nutzen Sie die manuelle Konkurrenzeingabe</li>
+                  <li>• Nutzen Sie die manuelle Wettbewerbereingabe</li>
                   <li>• Überprüfen Sie Ihre Brancheneinstellung</li>
                   <li>• Führen Sie eine lokale Marktanalyse durch</li>
                 </ul>
@@ -215,7 +215,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 <Card className="border-blue-200">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-blue-600">{allCompetitors.length}</div>
-                    <div className="text-sm text-gray-600">Konkurrenten</div>
+                    <div className="text-sm text-gray-600">Wettbewerber</div>
                   </CardContent>
                 </Card>
                 <Card className="border-yellow-200">
@@ -247,7 +247,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                       Fehlende Serviceleistungen
                     </CardTitle>
                     <CardDescription>
-                      Services, die Konkurrenten anbieten, Sie aber nicht
+                      Services, die Wettbewerber anbieten, Sie aber nicht
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -276,7 +276,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Konkurrenten-Ranking
+                    Wettbewerber-Ranking
                   </CardTitle>
                   <CardDescription>
                     Sortiert nach Gesamtperformance (Bewertungen + Services)
