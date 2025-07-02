@@ -643,7 +643,7 @@ export const generateCustomerHTML = ({
       </div>
       <h1>Social Listening und Monitoring Report</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
-      <p style="margin-top: 15px; color: #9ca3af;">Umfassende digitale Geschäftsanalyse & Marktpositionierung</p>
+      <p style="margin-top: 15px; color: #9ca3af;">Digitale Analyse von Website, Google-Bewertung, Social-Media-Kanälen & Wettbewerbssituation</p>
     </div>
 
     <!-- Executive Summary -->
