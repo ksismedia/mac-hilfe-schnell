@@ -9,53 +9,69 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // Facebook
   if (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') {
-    let platformScore = 30; // Reduzierte Basis für Präsenz
+    let platformScore = 40; // Erhöhte Basis für Präsenz
     const followers = parseInt(manualData.facebookFollowers || '0');
     
-    // Realistische Follower-Bewertung
-    if (followers >= 5000) platformScore += 20;
-    else if (followers >= 2000) platformScore += 15;
-    else if (followers >= 1000) platformScore += 12;
-    else if (followers >= 500) platformScore += 10;
-    else if (followers >= 100) platformScore += 8;
-    else if (followers >= 50) platformScore += 5;
-    else if (followers >= 10) platformScore += 3;
+    // Verbesserte Follower-Bewertung
+    if (followers >= 5000) platformScore += 25;
+    else if (followers >= 2000) platformScore += 20;
+    else if (followers >= 1000) platformScore += 15;
+    else if (followers >= 500) platformScore += 12;
+    else if (followers >= 100) platformScore += 10;
+    else if (followers >= 50) platformScore += 7;
+    else if (followers >= 10) platformScore += 5;
     
-    // Post-Aktivität Bewertung
+    // Verbesserte Post-Aktivität Bewertung
+    let activityBonus = 0;
     if (manualData.facebookLastPost) {
       const post = manualData.facebookLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
+      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20; // Sehr aktuell
+      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
+      else if (post.includes('woche')) activityBonus = 10;
+      else if (post.includes('monat')) activityBonus = 5;
+    }
+    platformScore += activityBonus;
+    
+    // Bonus für Kombination: Gute Follower + sehr aktuelle Posts
+    if (followers >= 500 && activityBonus >= 15) {
+      platformScore += 10; // Exzellenz-Bonus
     }
     
-    totalScore += Math.min(70, platformScore); // Max 70 pro Plattform
+    totalScore += Math.min(85, platformScore); // Erhöhtes Maximum
     activePlatforms++;
   }
   
   // Instagram
   if (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') {
-    let platformScore = 30;
+    let platformScore = 40; // Erhöhte Basis für Präsenz
     const followers = parseInt(manualData.instagramFollowers || '0');
     
-    if (followers >= 10000) platformScore += 20;
-    else if (followers >= 5000) platformScore += 15;
-    else if (followers >= 2000) platformScore += 12;
-    else if (followers >= 1000) platformScore += 10;
-    else if (followers >= 500) platformScore += 8;
-    else if (followers >= 100) platformScore += 5;
-    else if (followers >= 50) platformScore += 3;
+    // Verbesserte Follower-Bewertung für Instagram
+    if (followers >= 10000) platformScore += 25;
+    else if (followers >= 5000) platformScore += 20;
+    else if (followers >= 2000) platformScore += 15;
+    else if (followers >= 1000) platformScore += 12;
+    else if (followers >= 500) platformScore += 10;
+    else if (followers >= 100) platformScore += 7;
+    else if (followers >= 50) platformScore += 5;
     
+    // Verbesserte Post-Aktivität Bewertung
+    let activityBonus = 0;
     if (manualData.instagramLastPost) {
       const post = manualData.instagramLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
+      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20; // Sehr aktuell
+      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
+      else if (post.includes('woche')) activityBonus = 10;
+      else if (post.includes('monat')) activityBonus = 5;
+    }
+    platformScore += activityBonus;
+    
+    // Bonus für Kombination: Gute Follower + sehr aktuelle Posts
+    if (followers >= 500 && activityBonus >= 15) {
+      platformScore += 10; // Exzellenz-Bonus
     }
     
-    totalScore += Math.min(70, platformScore);
+    totalScore += Math.min(85, platformScore); // Erhöhtes Maximum
     activePlatforms++;
   }
   
