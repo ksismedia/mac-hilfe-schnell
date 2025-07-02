@@ -395,7 +395,7 @@ export const generateCustomerHTML = ({
             <strong>Anzahl analysierte Wettbewerber:</strong> ${allCompetitors.length}
           </p>
           <p style="color: #d1d5db; margin-bottom: 15px;">
-            <strong>Maximaler Umgebungsradius der Suche:</strong> 25 km
+            <strong>Maximaler Umgebungsradius der Suche:</strong> ${maxRadius}
           </p>
         </div>
         
