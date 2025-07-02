@@ -387,6 +387,27 @@ export const generateCustomerHTML = ({
       `;
     }
 
+    // Berechne maximalen Umgebungsradius anhand der Entfernungen
+    const getMaxRadius = () => {
+      if (allCompetitors.length === 0) return '25 km';
+      
+      const distances = allCompetitors
+        .map(competitor => {
+          const distance = competitor.distance || '';
+          // Extrahiere Zahlen aus der Entfernungsangabe (z.B. "5.2 km" -> 5.2)
+          const match = distance.toString().match(/(\d+[\.,]?\d*)/);
+          return match ? parseFloat(match[1].replace(',', '.')) : 0;
+        })
+        .filter(d => d > 0);
+      
+      if (distances.length === 0) return '25 km';
+      
+      const maxDistance = Math.max(...distances);
+      return `${Math.ceil(maxDistance)} km`;
+    };
+
+    const maxRadius = getMaxRadius();
+
     return `
       <div class="metric-card good">
         <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
