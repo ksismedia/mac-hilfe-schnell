@@ -623,6 +623,7 @@ export const generateCustomerHTML = ({
                 <strong>${platform.name}:</strong> 
                 ${platform.followers} Follower
                 • Letzter Post: ${platform.lastPost}
+                ${platform.name === 'Instagram' ? '<br><small style="color: #666; font-size: 0.85em;">* Bewertung basiert auf Posts und Reels. Stories sind zu kurz sichtbar für eine Bewertung.</small>' : ''}
               </li>
             `).join('')}
           </ul>
