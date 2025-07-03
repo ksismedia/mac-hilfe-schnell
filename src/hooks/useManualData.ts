@@ -48,12 +48,18 @@ export interface CompetitorServices {
   };
 }
 
+export interface ManualCompetitorData {
+  competitors: ManualCompetitor[];
+  removedMissingServices: string[];
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
   const [manualWorkplaceData, setManualWorkplaceData] = useState<ManualWorkplaceData | null>(null);
   const [manualCompetitors, setManualCompetitors] = useState<ManualCompetitor[]>([]);
   const [competitorServices, setCompetitorServices] = useState<CompetitorServices>({});
+  const [removedMissingServices, setRemovedMissingServices] = useState<string[]>([]);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -86,16 +92,33 @@ export const useManualData = () => {
     console.log('Competitor Services Updated:', competitorName, services, source);
   }, []);
 
+  const updateRemovedMissingServices = useCallback((services: string[]) => {
+    setRemovedMissingServices(services);
+    console.log('Removed Missing Services Updated:', services);
+  }, []);
+
+  const addRemovedMissingService = useCallback((service: string) => {
+    setRemovedMissingServices(prev => {
+      if (!prev.includes(service)) {
+        return [...prev, service];
+      }
+      return prev;
+    });
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
     manualWorkplaceData,
     manualCompetitors,
     competitorServices,
+    removedMissingServices,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
     updateCompetitors,
-    updateCompetitorServices
+    updateCompetitorServices,
+    updateRemovedMissingServices,
+    addRemovedMissingService
   };
 };

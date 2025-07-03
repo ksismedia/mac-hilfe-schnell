@@ -19,6 +19,7 @@ export interface SavedAnalysis {
     workplace?: ManualWorkplaceData;
     competitors: ManualCompetitor[];
     competitorServices: CompetitorServices;
+    removedMissingServices: string[];
   };
 }
 

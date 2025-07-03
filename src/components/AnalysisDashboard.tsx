@@ -76,11 +76,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     manualWorkplaceData,
     manualCompetitors,
     competitorServices,
+    removedMissingServices,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
     updateCompetitors,
-    updateCompetitorServices
+    updateCompetitorServices,
+    addRemovedMissingService
   } = useManualData();
 
   // Transform competitorServices for export components
@@ -336,8 +338,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 realData={realData}
                 manualCompetitors={manualCompetitors}
                 competitorServices={competitorServices}
+                removedMissingServices={removedMissingServices}
                 onCompetitorsChange={updateCompetitors}
                 onCompetitorServicesChange={updateCompetitorServices}
+                onRemovedMissingServicesChange={addRemovedMissingService}
               />
               <ManualCompetitorInput 
                 competitors={manualCompetitors}
@@ -374,6 +378,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualWorkplaceData={manualWorkplaceData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
+                  removedMissingServices={removedMissingServices}
                 />
                 <HTMLExport 
                   businessData={businessData}

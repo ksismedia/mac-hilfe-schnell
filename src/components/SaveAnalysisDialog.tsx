@@ -22,6 +22,7 @@ interface SaveAnalysisDialogProps {
   manualWorkplaceData?: ManualWorkplaceData | null;
   manualCompetitors: ManualCompetitor[];
   competitorServices: CompetitorServices;
+  removedMissingServices?: string[];
   currentAnalysisId?: string;
 }
 
@@ -33,6 +34,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualWorkplaceData,
   manualCompetitors,
   competitorServices,
+  removedMissingServices = [],
   currentAnalysisId
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +67,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         social: manualSocialData || undefined,
         workplace: manualWorkplaceData || undefined,
         competitors: manualCompetitors,
-        competitorServices
+        competitorServices,
+        removedMissingServices: removedMissingServices || []
       };
 
       if (currentAnalysisId) {

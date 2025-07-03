@@ -15,8 +15,10 @@ interface CompetitorAnalysisProps {
   realData: RealBusinessData;
   manualCompetitors: ManualCompetitor[];
   competitorServices: CompetitorServices;
+  removedMissingServices: string[];
   onCompetitorsChange: (competitors: ManualCompetitor[]) => void;
   onCompetitorServicesChange: (name: string, services: string[]) => void;
+  onRemovedMissingServicesChange: (service: string) => void;
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
@@ -25,13 +27,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   realData,
   manualCompetitors,
   competitorServices,
+  removedMissingServices,
   onCompetitorsChange,
-  onCompetitorServicesChange
+  onCompetitorServicesChange,
+  onRemovedMissingServicesChange
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
   const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
-  const [removedMissingServices, setRemovedMissingServices] = useState<Set<string>>(new Set());
 
   // Basis-Services für die Branche
   const getIndustryServices = (industry: string): string[] => {
@@ -168,12 +171,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     !ownServices.some(ownService => 
       ownService.toLowerCase().includes(service.toLowerCase()) || 
       service.toLowerCase().includes(ownService.toLowerCase())
-    ) && !removedMissingServices.has(service)
+    ) && !removedMissingServices.includes(service)
   );
 
   // Funktion zum Entfernen fehlender Services
   const handleRemoveMissingService = (service: string) => {
-    setRemovedMissingServices(prev => new Set([...prev, service]));
+    onRemovedMissingServicesChange(service);
   };
 
   const handleServiceEdit = (competitorName: string) => {
