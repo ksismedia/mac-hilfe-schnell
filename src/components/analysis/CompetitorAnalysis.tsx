@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, TrendingUp, Star, Users, Award, Target, MapPin } from 'lucide-react';
+import { AlertCircle, TrendingUp, Star, Users, Award, Target, MapPin, X } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
 
@@ -30,6 +30,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
+  const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
 
   // Basis-Services für die Branche
   const getIndustryServices = (industry: string): string[] => {
@@ -68,51 +69,78 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     return Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35));
   };
 
+  // Lösch-Funktionen
+  const handleDeleteCompetitor = (competitorName: string, source: 'google' | 'manual') => {
+    setDeletedCompetitors(prev => new Set([...prev, competitorName]));
+    
+    // Bei manuellen Konkurrenten auch aus der Liste entfernen
+    if (source === 'manual') {
+      const updatedManualCompetitors = manualCompetitors.filter(comp => comp.name !== competitorName);
+      onCompetitorsChange(updatedManualCompetitors);
+    }
+  };
+
+  const handleRestoreCompetitor = (competitorName: string) => {
+    setDeletedCompetitors(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(competitorName);
+      return newSet;
+    });
+  };
+
   // Alle Konkurrenten zusammenführen
   const allCompetitors = [
-    ...realData.competitors.map(comp => {
-      const services = competitorServices[comp.name]?.services || [];
-      const score = calculateCompetitorScore({...comp, services});
-      
-      const uniqueServices = services.filter((service: string) => 
-        typeof service === 'string' && !ownServices.some(ownService => 
-          ownService.toLowerCase().includes(service.toLowerCase()) || 
-          service.toLowerCase().includes(ownService.toLowerCase())
-        )
-      );
-      
-      return {
-        ...comp,
-        services,
-        score,
-        uniqueServices,
-        source: 'google' as const,
-        location: (comp as any).location || comp.distance // Use type assertion to access location safely
-      };
-    }),
-    ...manualCompetitors.map(comp => {
-      const score = calculateCompetitorScore(comp);
-      const services = Array.isArray(comp.services) ? comp.services : [];
-      
-      const uniqueServices = services.filter((service: string) => 
-        typeof service === 'string' && !ownServices.some(ownService => 
-          ownService.toLowerCase().includes(service.toLowerCase()) || 
-          service.toLowerCase().includes(ownService.toLowerCase())
-        )
-      );
-      
-      return {
-        ...comp,
-        score,
-        uniqueServices,
-        source: 'manual' as const,
-        location: comp.distance // Bei manuellen Konkurrenten ist "distance" oft die Ortsangabe
-      };
-    })
+    ...realData.competitors
+      .filter(comp => !deletedCompetitors.has(comp.name))
+      .map(comp => {
+        const services = competitorServices[comp.name]?.services || [];
+        const score = calculateCompetitorScore({...comp, services});
+        
+        const uniqueServices = services.filter((service: string) => 
+          typeof service === 'string' && !ownServices.some(ownService => 
+            ownService.toLowerCase().includes(service.toLowerCase()) || 
+            service.toLowerCase().includes(ownService.toLowerCase())
+          )
+        );
+        
+        return {
+          ...comp,
+          services,
+          score,
+          uniqueServices,
+          source: 'google' as const,
+          location: (comp as any).location || comp.distance
+        };
+      }),
+    ...manualCompetitors
+      .filter(comp => !deletedCompetitors.has(comp.name))
+      .map(comp => {
+        const score = calculateCompetitorScore(comp);
+        const services = Array.isArray(comp.services) ? comp.services : [];
+        
+        const uniqueServices = services.filter((service: string) => 
+          typeof service === 'string' && !ownServices.some(ownService => 
+            ownService.toLowerCase().includes(service.toLowerCase()) || 
+            service.toLowerCase().includes(ownService.toLowerCase())
+          )
+        );
+        
+        return {
+          ...comp,
+          score,
+          uniqueServices,
+          source: 'manual' as const,
+          location: comp.distance
+        };
+      })
   ];
 
-  // Sortiert nach Score
+  // Sortiert nach Score  
   const sortedCompetitors = [...allCompetitors].sort((a, b) => b.score - a.score);
+
+  // Gelöschte Konkurrenten für Wiederherstellung
+  const deletedGoogleCompetitors = realData.competitors.filter(comp => deletedCompetitors.has(comp.name));
+  const deletedManualCompetitors = manualCompetitors.filter(comp => deletedCompetitors.has(comp.name));
 
   // Durchschnittswerte
   const avgRating = allCompetitors.length > 0 
@@ -271,6 +299,43 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 </Card>
               )}
 
+              {/* Gelöschte Konkurrenten */}
+              {(deletedGoogleCompetitors.length > 0 || deletedManualCompetitors.length > 0) && (
+                <Card className="border-red-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg text-red-600">
+                      <X className="h-5 w-5 inline mr-2" />
+                      Gelöschte Wettbewerber ({deletedGoogleCompetitors.length + deletedManualCompetitors.length})
+                    </CardTitle>
+                    <CardDescription>
+                      Wettbewerber, die manuell aus der Analyse entfernt wurden
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {[...deletedGoogleCompetitors, ...deletedManualCompetitors].map((competitor, index) => (
+                        <div key={`deleted-${competitor.name}-${index}`} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-red-900">{competitor.name}</span>
+                            <Badge variant="outline" className="text-xs bg-red-100 text-red-700 border-red-300">
+                              {deletedGoogleCompetitors.includes(competitor as any) ? 'Google' : 'Manuell'}
+                            </Badge>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRestoreCompetitor(competitor.name)}
+                            className="text-green-600 border-green-300 hover:bg-green-50"
+                          >
+                            Wiederherstellen
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Konkurrenten-Ranking */}
               <Card>
                 <CardHeader>
@@ -324,13 +389,24 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                               )}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className={`text-2xl font-bold ${getScoreColor(competitor.score)} mb-1`}>
-                              {competitor.score}
+                          <div className="flex items-center gap-2">
+                            <div className="text-right">
+                              <div className={`text-2xl font-bold ${getScoreColor(competitor.score)} mb-1`}>
+                                {competitor.score}
+                              </div>
+                              <Badge variant={getScoreBadge(competitor.score)} className="text-xs">
+                                Gesamtscore
+                              </Badge>
                             </div>
-                            <Badge variant={getScoreBadge(competitor.score)} className="text-xs">
-                              Gesamtscore
-                            </Badge>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteCompetitor(competitor.name, competitor.source)}
+                              className="flex items-center gap-1"
+                            >
+                              <X className="h-4 w-4" />
+                              Entfernen
+                            </Button>
                           </div>
                         </div>
 
