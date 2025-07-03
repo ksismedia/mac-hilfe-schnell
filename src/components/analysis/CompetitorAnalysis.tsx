@@ -31,6 +31,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
   const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
+  const [removedMissingServices, setRemovedMissingServices] = useState<Set<string>>(new Set());
 
   // Basis-Services für die Branche
   const getIndustryServices = (industry: string): string[] => {
@@ -167,8 +168,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     !ownServices.some(ownService => 
       ownService.toLowerCase().includes(service.toLowerCase()) || 
       service.toLowerCase().includes(ownService.toLowerCase())
-    )
+    ) && !removedMissingServices.has(service)
   );
+
+  // Funktion zum Entfernen fehlender Services
+  const handleRemoveMissingService = (service: string) => {
+    setRemovedMissingServices(prev => new Set([...prev, service]));
+  };
 
   const handleServiceEdit = (competitorName: string) => {
     const currentServices = competitorServices[competitorName]?.services || [];
@@ -281,8 +287,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {missingServices.map((service: string, i: number) => (
-                        <Badge key={i} variant="outline" className="justify-center bg-orange-50 text-orange-700 border-orange-300">
+                        <Badge key={i} variant="outline" className="justify-center bg-orange-50 text-orange-700 border-orange-300 flex items-center gap-1">
                           {service}
+                          <X 
+                            className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                            onClick={() => handleRemoveMissingService(service)}
+                          />
                         </Badge>
                       ))}
                     </div>
