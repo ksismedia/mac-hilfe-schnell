@@ -1,309 +1,147 @@
-
 import { ManualSocialData } from '@/hooks/useManualData';
 
 export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null): number => {
   if (!manualData) return 0;
   
   let totalScore = 0;
-  let activePlatforms = 0;
   
-  // Facebook
+  // Facebook (max 30 Punkte)
   if (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') {
-    let platformScore = 40; // Erhöhte Basis für Präsenz
+    let platformScore = 10; // Basis für Präsenz
     const followers = parseInt(manualData.facebookFollowers || '0');
     
-    // Verbesserte Follower-Bewertung
-    if (followers >= 5000) platformScore += 25;
-    else if (followers >= 2000) platformScore += 20;
-    else if (followers >= 1000) platformScore += 15;
-    else if (followers >= 500) platformScore += 12;
-    else if (followers >= 100) platformScore += 10;
-    else if (followers >= 50) platformScore += 7;
-    else if (followers >= 10) platformScore += 5;
+    // Follower-Bewertung (max 15 Punkte)
+    if (followers >= 10000) platformScore += 15;
+    else if (followers >= 5000) platformScore += 12;
+    else if (followers >= 2000) platformScore += 10;
+    else if (followers >= 1000) platformScore += 8;
+    else if (followers >= 500) platformScore += 6;
+    else if (followers >= 100) platformScore += 4;
+    else if (followers >= 50) platformScore += 2;
+    else if (followers >= 10) platformScore += 1;
     
-    // Verbesserte Post-Aktivität Bewertung
-    let activityBonus = 0;
+    // Post-Aktivität (max 5 Punkte)
     if (manualData.facebookLastPost) {
       const post = manualData.facebookLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20; // Sehr aktuell
-      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
-      else if (post.includes('woche')) activityBonus = 10;
-      else if (post.includes('monat')) activityBonus = 5;
-    }
-    platformScore += activityBonus;
-    
-    // Bonus für Kombination: Gute Follower + sehr aktuelle Posts
-    if (followers >= 500 && activityBonus >= 15) {
-      platformScore += 10; // Exzellenz-Bonus
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 5;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 4;
+      else if (post.includes('woche')) platformScore += 3;
+      else if (post.includes('monat')) platformScore += 1;
     }
     
-    totalScore += Math.min(85, platformScore); // Erhöhtes Maximum
-    activePlatforms++;
+    totalScore += Math.min(30, platformScore);
   }
   
-  // Instagram
+  // Instagram (max 30 Punkte)
   if (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') {
-    let platformScore = 40; // Erhöhte Basis für Präsenz
+    let platformScore = 10; // Basis für Präsenz
     const followers = parseInt(manualData.instagramFollowers || '0');
     
-    // Verbesserte Follower-Bewertung für Instagram
-    if (followers >= 10000) platformScore += 25;
-    else if (followers >= 5000) platformScore += 20;
-    else if (followers >= 2000) platformScore += 15;
-    else if (followers >= 1000) platformScore += 12;
-    else if (followers >= 500) platformScore += 10;
-    else if (followers >= 100) platformScore += 7;
-    else if (followers >= 50) platformScore += 5;
+    // Follower-Bewertung (max 15 Punkte)
+    if (followers >= 10000) platformScore += 15;
+    else if (followers >= 5000) platformScore += 12;
+    else if (followers >= 2000) platformScore += 10;
+    else if (followers >= 1000) platformScore += 8;
+    else if (followers >= 500) platformScore += 6;
+    else if (followers >= 100) platformScore += 4;
+    else if (followers >= 50) platformScore += 2;
+    else if (followers >= 10) platformScore += 1;
     
-    // Verbesserte Post-Aktivität Bewertung
-    let activityBonus = 0;
+    // Post-Aktivität (max 5 Punkte)
     if (manualData.instagramLastPost) {
       const post = manualData.instagramLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20; // Sehr aktuell
-      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
-      else if (post.includes('woche')) activityBonus = 10;
-      else if (post.includes('monat')) activityBonus = 5;
-    }
-    platformScore += activityBonus;
-    
-    // Bonus für Kombination: Gute Follower + sehr aktuelle Posts
-    if (followers >= 500 && activityBonus >= 15) {
-      platformScore += 10; // Exzellenz-Bonus
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 5;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 4;
+      else if (post.includes('woche')) platformScore += 3;
+      else if (post.includes('monat')) platformScore += 1;
     }
     
-    totalScore += Math.min(85, platformScore); // Erhöhtes Maximum
-    activePlatforms++;
+    totalScore += Math.min(30, platformScore);
   }
   
-  // LinkedIn
+  // LinkedIn (max 30 Punkte)
   if (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') {
-    let platformScore = 30;
+    let platformScore = 10; // Basis für Präsenz
     const followers = parseInt(manualData.linkedinFollowers || '0');
     
-    if (followers >= 2000) platformScore += 20;
-    else if (followers >= 1000) platformScore += 15;
-    else if (followers >= 500) platformScore += 12;
-    else if (followers >= 200) platformScore += 10;
-    else if (followers >= 100) platformScore += 8;
-    else if (followers >= 50) platformScore += 5;
-    else if (followers >= 10) platformScore += 3;
+    // Follower-Bewertung (max 15 Punkte)
+    if (followers >= 5000) platformScore += 15;
+    else if (followers >= 2000) platformScore += 12;
+    else if (followers >= 1000) platformScore += 10;
+    else if (followers >= 500) platformScore += 8;
+    else if (followers >= 200) platformScore += 6;
+    else if (followers >= 100) platformScore += 4;
+    else if (followers >= 50) platformScore += 2;
+    else if (followers >= 10) platformScore += 1;
     
+    // Post-Aktivität (max 5 Punkte)
     if (manualData.linkedinLastPost) {
       const post = manualData.linkedinLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 5;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 4;
+      else if (post.includes('woche')) platformScore += 3;
+      else if (post.includes('monat')) platformScore += 1;
     }
     
-    totalScore += Math.min(70, platformScore);
-    activePlatforms++;
+    totalScore += Math.min(30, platformScore);
   }
   
-  // Twitter
+  // Twitter (max 20 Punkte)
   if (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') {
-    let platformScore = 30;
+    let platformScore = 5; // Basis für Präsenz
     const followers = parseInt(manualData.twitterFollowers || '0');
     
-    if (followers >= 5000) platformScore += 20;
-    else if (followers >= 2000) platformScore += 15;
-    else if (followers >= 1000) platformScore += 12;
-    else if (followers >= 500) platformScore += 10;
-    else if (followers >= 200) platformScore += 8;
-    else if (followers >= 50) platformScore += 5;
-    else if (followers >= 10) platformScore += 3;
+    // Follower-Bewertung (max 12 Punkte)
+    if (followers >= 10000) platformScore += 12;
+    else if (followers >= 5000) platformScore += 10;
+    else if (followers >= 2000) platformScore += 8;
+    else if (followers >= 1000) platformScore += 6;
+    else if (followers >= 500) platformScore += 4;
+    else if (followers >= 100) platformScore += 3;
+    else if (followers >= 50) platformScore += 2;
+    else if (followers >= 10) platformScore += 1;
     
+    // Post-Aktivität (max 3 Punkte)
     if (manualData.twitterLastPost) {
       const post = manualData.twitterLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 2;
+      else if (post.includes('woche')) platformScore += 1;
     }
     
-    totalScore += Math.min(70, platformScore);
-    activePlatforms++;
+    totalScore += Math.min(20, platformScore);
   }
   
-  // YouTube
+  // YouTube (max 20 Punkte)
   if (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '') {
-    let platformScore = 30;
+    let platformScore = 5; // Basis für Präsenz
     const subscribers = parseInt(manualData.youtubeSubscribers || '0');
     
-    if (subscribers >= 1000) platformScore += 20;
-    else if (subscribers >= 500) platformScore += 15;
-    else if (subscribers >= 200) platformScore += 12;
-    else if (subscribers >= 100) platformScore += 10;
-    else if (subscribers >= 50) platformScore += 8;
-    else if (subscribers >= 25) platformScore += 5;
-    else if (subscribers >= 5) platformScore += 3;
+    // Abonnenten-Bewertung (max 12 Punkte)
+    if (subscribers >= 5000) platformScore += 12;
+    else if (subscribers >= 2000) platformScore += 10;
+    else if (subscribers >= 1000) platformScore += 8;
+    else if (subscribers >= 500) platformScore += 6;
+    else if (subscribers >= 200) platformScore += 4;
+    else if (subscribers >= 100) platformScore += 3;
+    else if (subscribers >= 50) platformScore += 2;
+    else if (subscribers >= 10) platformScore += 1;
     
+    // Video-Aktivität (max 3 Punkte)
     if (manualData.youtubeLastPost) {
       const post = manualData.youtubeLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 2;
+      else if (post.includes('woche')) platformScore += 1;
     }
     
-    totalScore += Math.min(70, platformScore);
-    activePlatforms++;
+    totalScore += Math.min(20, platformScore);
   }
   
-  if (activePlatforms === 0) return 0;
+  // Normalisierung auf 100 Punkte (Gesamtmaximum: 130 Punkte)
+  const normalizedScore = Math.round((totalScore / 130) * 100);
   
-  // Bewerte nur die besten Plattformen stärker
-  const platformScores = [];
+  console.log(`Social Media Score: ${normalizedScore}/100 (${totalScore}/130 Rohpunkte)`);
   
-  // Sammle alle Plattform-Scores
-  if (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') {
-    let platformScore = 40;
-    const followers = parseInt(manualData.facebookFollowers || '0');
-    if (followers >= 5000) platformScore += 25;
-    else if (followers >= 2000) platformScore += 20;
-    else if (followers >= 1000) platformScore += 15;
-    else if (followers >= 500) platformScore += 12;
-    else if (followers >= 100) platformScore += 10;
-    else if (followers >= 50) platformScore += 7;
-    else if (followers >= 10) platformScore += 5;
-    
-    let activityBonus = 0;
-    if (manualData.facebookLastPost) {
-      const post = manualData.facebookLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20;
-      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
-      else if (post.includes('woche')) activityBonus = 10;
-      else if (post.includes('monat')) activityBonus = 5;
-    }
-    platformScore += activityBonus;
-    
-    if (followers >= 500 && activityBonus >= 15) {
-      platformScore += 10;
-    }
-    
-    platformScores.push(Math.min(85, platformScore));
-  }
-  
-  if (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') {
-    let platformScore = 40;
-    const followers = parseInt(manualData.instagramFollowers || '0');
-    if (followers >= 10000) platformScore += 25;
-    else if (followers >= 5000) platformScore += 20;
-    else if (followers >= 2000) platformScore += 15;
-    else if (followers >= 1000) platformScore += 12;
-    else if (followers >= 500) platformScore += 10;
-    else if (followers >= 100) platformScore += 7;
-    else if (followers >= 50) platformScore += 5;
-    
-    let activityBonus = 0;
-    if (manualData.instagramLastPost) {
-      const post = manualData.instagramLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) activityBonus = 20;
-      else if (post.includes('2 tag') || post.includes('3 tag')) activityBonus = 15;
-      else if (post.includes('woche')) activityBonus = 10;
-      else if (post.includes('monat')) activityBonus = 5;
-    }
-    platformScore += activityBonus;
-    
-    if (followers >= 500 && activityBonus >= 15) {
-      platformScore += 10;
-    }
-    
-    platformScores.push(Math.min(85, platformScore));
-  }
-  
-  // LinkedIn, Twitter, YouTube mit niedrigeren Scores
-  if (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') {
-    let platformScore = 30;
-    const followers = parseInt(manualData.linkedinFollowers || '0');
-    if (followers >= 2000) platformScore += 20;
-    else if (followers >= 1000) platformScore += 15;
-    else if (followers >= 500) platformScore += 12;
-    else if (followers >= 200) platformScore += 10;
-    else if (followers >= 100) platformScore += 8;
-    else if (followers >= 50) platformScore += 5;
-    else if (followers >= 10) platformScore += 3;
-    
-    if (manualData.linkedinLastPost) {
-      const post = manualData.linkedinLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
-    }
-    
-    platformScores.push(Math.min(70, platformScore));
-  }
-  
-  if (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') {
-    let platformScore = 30;
-    const followers = parseInt(manualData.twitterFollowers || '0');
-    if (followers >= 5000) platformScore += 20;
-    else if (followers >= 2000) platformScore += 15;
-    else if (followers >= 1000) platformScore += 12;
-    else if (followers >= 500) platformScore += 10;
-    else if (followers >= 200) platformScore += 8;
-    else if (followers >= 50) platformScore += 5;
-    else if (followers >= 10) platformScore += 3;
-    
-    if (manualData.twitterLastPost) {
-      const post = manualData.twitterLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
-    }
-    
-    platformScores.push(Math.min(70, platformScore));
-  }
-  
-  if (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '') {
-    let platformScore = 30;
-    const subscribers = parseInt(manualData.youtubeSubscribers || '0');
-    if (subscribers >= 1000) platformScore += 20;
-    else if (subscribers >= 500) platformScore += 15;
-    else if (subscribers >= 200) platformScore += 12;
-    else if (subscribers >= 100) platformScore += 10;
-    else if (subscribers >= 50) platformScore += 8;
-    else if (subscribers >= 25) platformScore += 5;
-    else if (subscribers >= 5) platformScore += 3;
-    
-    if (manualData.youtubeLastPost) {
-      const post = manualData.youtubeLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 15;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 12;
-      else if (post.includes('woche')) platformScore += 8;
-      else if (post.includes('monat')) platformScore += 4;
-    }
-    
-    platformScores.push(Math.min(70, platformScore));
-  }
-  
-  // Sortiere Scores und gewichte die besseren Plattformen stärker
-  platformScores.sort((a, b) => b - a);
-  
-  let weightedScore = 0;
-  let totalWeight = 0;
-  
-  // Gewichtung: Beste Plattformen bekommen höheres Gewicht
-  for (let i = 0; i < platformScores.length; i++) {
-    const weight = platformScores.length - i; // Beste = höchstes Gewicht
-    weightedScore += platformScores[i] * weight;
-    totalWeight += weight;
-  }
-  
-  const averageScore = weightedScore / totalWeight;
-  
-  // Verbesserter Diversitäts-Bonus
-  let diversityBonus = 0;
-  if (activePlatforms >= 5) diversityBonus = 20; // Alle Plattformen
-  else if (activePlatforms >= 4) diversityBonus = 15; // 4 Plattformen
-  else if (activePlatforms >= 3) diversityBonus = 10; // 3 Plattformen
-  else if (activePlatforms >= 2) diversityBonus = 6;  // 2 Plattformen
-  
-  const finalScore = Math.min(100, Math.round(averageScore + diversityBonus));
-  
-  console.log(`Social Media Score: ${finalScore} (${activePlatforms} Plattformen, Durchschnitt: ${averageScore.toFixed(1)}, Bonus: ${diversityBonus})`);
-  
-  return finalScore;
+  return Math.min(100, normalizedScore);
 };
