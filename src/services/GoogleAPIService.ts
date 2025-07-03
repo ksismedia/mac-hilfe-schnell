@@ -420,45 +420,79 @@ export class GoogleAPIService {
 
     // Exakte Übereinstimmung
     if (placeName === ownName) {
-      console.log(`Excluding own company (exact match): "${place.name}"`);
+      console.log(`🚫 Excluding own company (exact match): "${place.name}"`);
       return true;
     }
 
-    // Erweiterte Ähnlichkeitscheck
+    // Erweiterte Ähnlichkeitscheck mit höherer Schwelle
     const similarity = this.calculateNameSimilarity(placeName, ownName);
-    if (similarity > 0.6) { // Niedrigere Schwelle für bessere Erkennung
-      console.log(`Excluding similar company name: "${place.name}" (similarity: ${similarity.toFixed(2)})`);
+    if (similarity > 0.8) { // Höhere Schwelle für präzisere Erkennung
+      console.log(`🚫 Excluding similar company name: "${place.name}" (similarity: ${similarity.toFixed(2)})`);
       return true;
     }
 
     // Prüfe auch Adressähnlichkeit für zusätzliche Sicherheit
     if (originalLocation && place.formatted_address) {
       const addressSimilarity = this.calculateAddressSimilarity(place.formatted_address, originalLocation);
-      if (addressSimilarity > 0.8) {
-        console.log(`Excluding company with similar address: "${place.name}"`);
+      if (addressSimilarity > 0.7) { // Niedrigere Schwelle für Adresse
+        console.log(`🚫 Excluding company with similar address: "${place.name}"`);
         return true;
       }
     }
 
-    // Prüfe auf Teilübereinstimmungen im Namen
+    // Prüfe auf Teilübereinstimmungen im Namen (strengere Regeln)
     const ownNameWords = ownName.split(/\s+/).filter(w => w.length > 2);
     const placeNameWords = placeName.split(/\s+/).filter(w => w.length > 2);
     
     if (ownNameWords.length > 0 && placeNameWords.length > 0) {
-      const matchingWords = ownNameWords.filter(ownWord => 
-        placeNameWords.some(placeWord => 
-          ownWord.includes(placeWord) || placeWord.includes(ownWord) || 
-          this.calculateStringSimilarity(ownWord, placeWord) > 0.8
-        )
-      );
+      // Prüfe ob Hauptwörter übereinstimmen (ohne Rechtsformen)
+      const legalForms = ['gmbh', 'ag', 'kg', 'ohg', 'gbr', 'ug', 'co', '&', 'und'];
+      const ownMainWords = ownNameWords.filter(w => !legalForms.includes(w));
+      const placeMainWords = placeNameWords.filter(w => !legalForms.includes(w));
       
-      if (matchingWords.length >= Math.min(2, ownNameWords.length)) {
-        console.log(`Excluding company with matching name parts: "${place.name}"`);
-        return true;
+      if (ownMainWords.length > 0 && placeMainWords.length > 0) {
+        const matchingMainWords = ownMainWords.filter(ownWord => 
+          placeMainWords.some(placeWord => 
+            ownWord.includes(placeWord) || placeWord.includes(ownWord) || 
+            this.calculateStringSimilarity(ownWord, placeWord) > 0.85
+          )
+        );
+        
+        // Wenn alle Hauptwörter übereinstimmen, ist es wahrscheinlich dieselbe Firma
+        if (matchingMainWords.length >= Math.min(ownMainWords.length, placeMainWords.length)) {
+          console.log(`🚫 Excluding company with matching main name parts: "${place.name}"`);
+          return true;
+        }
+      }
+    }
+
+    // Zusätzliche Prüfung: Website-Domain Übereinstimmung
+    if (place.website && originalLocation) {
+      try {
+        const placeDomain = new URL(place.website).hostname.replace('www.', '');
+        const ownDomain = this.extractDomainFromLocation(originalLocation);
+        if (placeDomain === ownDomain) {
+          console.log(`🚫 Excluding company with same website domain: "${place.name}"`);
+          return true;
+        }
+      } catch (error) {
+        // Ignore URL parsing errors
       }
     }
 
     return false;
+  }
+
+  // Hilfsmethode: Domain aus Location/URL extrahieren
+  private static extractDomainFromLocation(location: string): string {
+    try {
+      if (location.includes('http')) {
+        return new URL(location).hostname.replace('www.', '');
+      }
+    } catch (error) {
+      // Ignore
+    }
+    return '';
   }
 
   // Neue Methode: String-Ähnlichkeit berechnen (Levenshtein-ähnlich)
