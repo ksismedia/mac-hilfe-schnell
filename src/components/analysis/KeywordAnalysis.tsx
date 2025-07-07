@@ -41,7 +41,23 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     
     if (manualKeywords.length > 0) {
       const foundKeywords = manualKeywords.filter(k => k.found).length;
-      const newScore = Math.round((foundKeywords / manualKeywords.length) * 100);
+      
+      // Anspruchsvollere Bewertung: 
+      // - Mindestens 5 Keywords für 100%
+      // - Bonus für mehr Keywords
+      let newScore = 0;
+      if (foundKeywords === 0) {
+        newScore = 0;
+      } else if (manualKeywords.length < 5) {
+        // Bei weniger als 5 Keywords: max 80%
+        newScore = Math.round((foundKeywords / manualKeywords.length) * 80);
+      } else {
+        // Bei 5+ Keywords: volle Bewertung möglich
+        const baseScore = (foundKeywords / manualKeywords.length) * 100;
+        // Bonus für viele Keywords
+        const keywordBonus = Math.min(10, manualKeywords.length - 5);
+        newScore = Math.min(100, Math.round(baseScore + keywordBonus));
+      }
       
       console.log('Found Keywords:', foundKeywords, 'Total:', manualKeywords.length, 'New Score:', newScore);
       

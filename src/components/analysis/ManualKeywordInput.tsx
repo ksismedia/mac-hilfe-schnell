@@ -176,6 +176,8 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
         {manualKeywords.length > 0 && (
           <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
             💡 Tipp: Klicken Sie auf die Status-Badges, um zu markieren, ob ein Keyword auf der Website gefunden wurde. Anschließend auf "Daten übernehmen" klicken.
+            <br />
+            <strong>Bewertung:</strong> Bei weniger als 5 Keywords max. 80% möglich. Für 100% mindestens 5 Keywords benötigt.
           </div>
         )}
       </CardContent>
