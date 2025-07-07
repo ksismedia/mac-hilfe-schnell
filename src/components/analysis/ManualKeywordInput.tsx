@@ -57,12 +57,12 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
 
   const getIndustryKeywords = (industry: string) => {
     const suggestions = {
-      'shk': ['sanitär', 'heizung', 'klima', 'bad', 'installation', 'wartung', 'notdienst'],
-      'maler': ['maler', 'lackierung', 'fassade', 'anstrich', 'renovierung'],
-      'elektriker': ['elektriker', 'elektro', 'installation', 'beleuchtung', 'smart home'],
-      'dachdecker': ['dachdecker', 'dach', 'ziegel', 'abdichtung', 'flachdach'],
-      'stukateur': ['stuckateur', 'putz', 'fassade', 'innenausbau'],
-      'planungsbuero': ['planung', 'beratung', 'versorgungstechnik', 'haustechnik']
+      'shk': ['sanitär', 'heizung', 'klima', 'bad', 'installation', 'wartung', 'notdienst', 'rohrreinigung', 'badezimmer', 'wärmepumpe'],
+      'maler': ['maler', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren', 'malerbetrieb', 'wärmedämmung', 'innenausbau', 'bodenbelag'],
+      'elektriker': ['elektriker', 'elektro', 'installation', 'beleuchtung', 'smart home', 'elektroinstallation', 'photovoltaik', 'sicherheitstechnik', 'brandschutz', 'stromausfall'],
+      'dachdecker': ['dachdecker', 'dach', 'ziegel', 'abdichtung', 'flachdach', 'dachsanierung', 'dachrinne', 'photovoltaik', 'dachdeckerei', 'sturmsicherung'],
+      'stukateur': ['stuckateur', 'putz', 'fassade', 'innenausbau', 'trockenbau', 'wärmedämmung', 'fassadensanierung', 'verputz', 'stuck', 'wandgestaltung'],
+      'planungsbuero': ['planung', 'beratung', 'versorgungstechnik', 'haustechnik', 'energieberatung', 'bauplanung', 'gebäudetechnik', 'anlagentechnik', 'projektplanung', 'ingenieur']
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];
   };
