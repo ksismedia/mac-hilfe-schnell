@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Check } from 'lucide-react';
 
 interface ManualKeywordInputProps {
   onKeywordsUpdate: (keywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => void;
@@ -27,7 +27,6 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
       
       const updatedKeywords = [...manualKeywords, keyword];
       setManualKeywords(updatedKeywords);
-      onKeywordsUpdate(updatedKeywords);
       setNewKeyword('');
     }
   };
@@ -35,7 +34,6 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
   const removeKeyword = (index: number) => {
     const updatedKeywords = manualKeywords.filter((_, i) => i !== index);
     setManualKeywords(updatedKeywords);
-    onKeywordsUpdate(updatedKeywords);
   };
 
   const toggleKeywordFound = (index: number) => {
@@ -49,7 +47,12 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
         : kw
     );
     setManualKeywords(updatedKeywords);
-    onKeywordsUpdate(updatedKeywords);
+  };
+
+  const applyData = () => {
+    console.log('=== APPLY DATA BUTTON CLICKED ===');
+    console.log('Applying manual keywords:', manualKeywords);
+    onKeywordsUpdate(manualKeywords);
   };
 
   const getIndustryKeywords = (industry: string) => {
@@ -75,7 +78,6 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
       
       const updatedKeywords = [...manualKeywords, newKw];
       setManualKeywords(updatedKeywords);
-      onKeywordsUpdate(updatedKeywords);
     }
   };
 
@@ -155,12 +157,24 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
                 </div>
               ))}
             </div>
+            
+            {/* Daten übernehmen Button */}
+            <div className="flex justify-center pt-4">
+              <Button 
+                onClick={applyData}
+                className="bg-green-600 hover:bg-green-700 text-white"
+                size="lg"
+              >
+                <Check className="h-4 w-4 mr-2" />
+                Daten übernehmen
+              </Button>
+            </div>
           </div>
         )}
 
         {manualKeywords.length > 0 && (
           <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
-            💡 Tipp: Klicken Sie auf die Status-Badges, um zu markieren, ob ein Keyword auf der Website gefunden wurde.
+            💡 Tipp: Klicken Sie auf die Status-Badges, um zu markieren, ob ein Keyword auf der Website gefunden wurde. Anschließend auf "Daten übernehmen" klicken.
           </div>
         )}
       </CardContent>
