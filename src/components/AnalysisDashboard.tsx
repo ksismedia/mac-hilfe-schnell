@@ -68,6 +68,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
+  
+  const handleKeywordsScoreChange = (score: number | null) => {
+    console.log('=== KEYWORDS SCORE CHANGE IN DASHBOARD ===');
+    console.log('New score received:', score);
+    setKeywordsScore(score);
+  };
   const { toast } = useToast();
 
   // Manual data management
@@ -153,6 +159,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   
   // Use manual keywords score if set (including 0), otherwise use default
   const currentKeywordsScore = keywordsScore !== null ? keywordsScore : defaultKeywordsScore;
+  
+  console.log('=== DASHBOARD KEYWORDS SCORE CALCULATION ===');
+  console.log('keywordsScore state:', keywordsScore);
+  console.log('defaultKeywordsScore:', defaultKeywordsScore);
+  console.log('currentKeywordsScore (final):', currentKeywordsScore);
   
   // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -313,7 +324,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 url={businessData.url} 
                 industry={businessData.industry} 
                 realData={realData}
-                onScoreChange={setKeywordsScore}
+                onScoreChange={handleKeywordsScoreChange}
               />
               <LocalSEO businessData={businessData} />
               <ContentAnalysis url={businessData.url} industry={businessData.industry} />

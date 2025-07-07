@@ -36,9 +36,14 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
   }, [keywordData.foundKeywords]);
 
   const handleManualKeywordsUpdate = (manualKeywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => {
+    console.log('=== MANUAL KEYWORDS UPDATE ===');
+    console.log('Manual Keywords:', manualKeywords);
+    
     if (manualKeywords.length > 0) {
       const foundKeywords = manualKeywords.filter(k => k.found).length;
       const newScore = Math.round((foundKeywords / manualKeywords.length) * 100);
+      
+      console.log('Found Keywords:', foundKeywords, 'Total:', manualKeywords.length, 'New Score:', newScore);
       
       setKeywordData({
         totalKeywords: manualKeywords.length,
@@ -48,6 +53,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
         keywords: manualKeywords
       });
       
+      console.log('Calling onScoreChange with:', newScore);
       // Notify parent about score change
       onScoreChange?.(newScore);
     } else {
@@ -63,6 +69,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
         keywords: realData.keywords
       });
       
+      console.log('Resetting to original data, calling onScoreChange with null');
       // Notify parent about score change
       onScoreChange?.(null); // Reset to let parent use default
     }
