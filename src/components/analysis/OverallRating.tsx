@@ -15,12 +15,14 @@ interface OverallRatingProps {
   };
   realData: RealBusinessData;
   manualSocialData?: ManualSocialData | null;
+  keywordsScore?: number;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData }) => {
-  // Keywords-Score
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore }) => {
+  // Keywords-Score - use provided score or calculate default
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
 
   // Social Media Score - VEREINFACHT
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -30,7 +32,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'SEO', score: realData.seo.score, weight: 15, maxScore: 100 },
     { name: 'Performance', score: realData.performance.score, weight: 15, maxScore: 100 },
     { name: 'Impressum', score: realData.imprint.score, weight: 10, maxScore: 100 },
-    { name: 'Keywords', score: keywordsScore, weight: 10, maxScore: 100 },
+    { name: 'Keywords', score: currentKeywordsScore, weight: 10, maxScore: 100 },
     { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 10, maxScore: 100 },
     { name: 'Mobile', score: realData.mobile.overallScore, weight: 10, maxScore: 100 },
     { name: 'Social Media', score: socialMediaScore, weight: 8, maxScore: 100 },

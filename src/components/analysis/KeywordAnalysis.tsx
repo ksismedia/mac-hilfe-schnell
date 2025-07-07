@@ -11,9 +11,10 @@ interface KeywordAnalysisProps {
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   realData: RealBusinessData;
+  onScoreChange?: (score: number) => void;
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData }) => {
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange }) => {
   const [keywordData, setKeywordData] = useState(() => {
     const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
     return {
@@ -37,23 +38,33 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
   const handleManualKeywordsUpdate = (manualKeywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => {
     if (manualKeywords.length > 0) {
       const foundKeywords = manualKeywords.filter(k => k.found).length;
+      const newScore = Math.round((foundKeywords / manualKeywords.length) * 100);
+      
       setKeywordData({
         totalKeywords: manualKeywords.length,
         foundKeywords,
         overallDensity: foundKeywords > 0 ? 2.8 : 0,
-        overallScore: Math.round((foundKeywords / manualKeywords.length) * 100),
+        overallScore: newScore,
         keywords: manualKeywords
       });
+      
+      // Notify parent about score change
+      onScoreChange?.(newScore);
     } else {
       // Fallback zu ursprünglichen Daten
       const originalFoundKeywords = realData.keywords.filter(k => k.found).length;
+      const originalScore = Math.round((originalFoundKeywords / realData.keywords.length) * 100);
+      
       setKeywordData({
         totalKeywords: realData.keywords.length,
         foundKeywords: originalFoundKeywords,
         overallDensity: 2.8,
-        overallScore: Math.round((originalFoundKeywords / realData.keywords.length) * 100),
+        overallScore: originalScore,
         keywords: realData.keywords
       });
+      
+      // Notify parent about score change
+      onScoreChange?.(0); // Reset to let parent use default
     }
   };
 

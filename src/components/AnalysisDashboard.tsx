@@ -67,6 +67,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [keywordsScore, setKeywordsScore] = useState(0);
   const { toast } = useToast();
 
   // Manual data management
@@ -147,8 +148,11 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
   // KORRIGIERTE Score-Berechnungen - Social Media Score wird LIVE berechnet
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const keywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  
+  // Use manual keywords score if available, otherwise use default
+  const currentKeywordsScore = keywordsScore > 0 ? keywordsScore : defaultKeywordsScore;
   
   // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -198,6 +202,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             businessData={businessData}
             realData={realData}
             manualSocialData={manualSocialData}
+            keywordsScore={currentKeywordsScore}
           />
         </div>
 
@@ -232,10 +237,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               </div>
             </div>
             
-            <div className={`p-4 rounded-lg border ${getScoreBg(keywordsScore)}`}>
+            <div className={`p-4 rounded-lg border ${getScoreBg(currentKeywordsScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(keywordsScore)}`}>
-                  {keywordsScore}
+                <div className={`text-2xl font-bold ${getScoreColor(currentKeywordsScore)}`}>
+                  {currentKeywordsScore}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Keywords</div>
               </div>
@@ -304,7 +309,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
             <TabsContent value="seo" className="space-y-6 mt-0">
               <SEOAnalysis url={businessData.url} realData={realData} />
-              <KeywordAnalysis url={businessData.url} industry={businessData.industry} realData={realData} />
+              <KeywordAnalysis 
+                url={businessData.url} 
+                industry={businessData.industry} 
+                realData={realData}
+                onScoreChange={setKeywordsScore}
+              />
               <LocalSEO businessData={businessData} />
               <ContentAnalysis url={businessData.url} industry={businessData.industry} />
               <BacklinkAnalysis url={businessData.url} />
