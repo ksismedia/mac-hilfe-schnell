@@ -664,7 +664,7 @@ export const generateCustomerHTML = ({
   <div class="container">
     <div class="header">
       <div class="logo-container">
-        <img src="/lovable-uploads/aeb26c85-ce44-409f-8ebd-54ddbaf462ef.png" alt="KSIS Media Logo" class="logo" />
+        <img src="/lovable-uploads/1b7bf83e-0e07-4072-85cb-b162354578ea.png" alt="HANDWERK STARS Logo" class="logo" />
       </div>
       <h1>Social Listening und Monitoring Report</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
@@ -1357,11 +1357,11 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Footer -->
-    <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(220, 38, 38, 0.3);">
+    <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <img src="/lovable-uploads/aeb26c85-ce44-409f-8ebd-54ddbaf462ef.png" alt="KSIS Media Logo" class="logo" style="max-width: 120px;" />
+        <img src="/lovable-uploads/1b7bf83e-0e07-4072-85cb-b162354578ea.png" alt="HANDWERK STARS Logo" class="logo" style="max-width: 120px;" />
       </div>
-      <h3 style="color: #dc2626; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
+      <h3 style="color: #fbbf24; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
       <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
       <p style="color: #9ca3af; font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
       <p style="color: #9ca3af; font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
