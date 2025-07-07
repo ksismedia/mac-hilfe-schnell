@@ -137,10 +137,11 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
                     <span className="font-medium">{keyword.keyword}</span>
                     <Badge 
                       variant={keyword.found ? "default" : "destructive"}
-                      className="cursor-pointer"
+                      className="cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => toggleKeywordFound(index)}
+                      title="Klicken um Status zu ändern"
                     >
-                      {keyword.found ? 'Gefunden' : 'Nicht gefunden'}
+                      {keyword.found ? '✅ Gefunden' : '❌ Nicht gefunden'}
                     </Badge>
                     {keyword.found && (
                       <span className="text-xs text-gray-500">Pos. {keyword.position}</span>
