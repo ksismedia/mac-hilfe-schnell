@@ -11,7 +11,7 @@ interface KeywordAnalysisProps {
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   realData: RealBusinessData;
-  onScoreChange?: (score: number) => void;
+  onScoreChange?: (score: number | null) => void;
 }
 
 const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange }) => {
@@ -64,7 +64,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       });
       
       // Notify parent about score change
-      onScoreChange?.(0); // Reset to let parent use default
+      onScoreChange?.(null); // Reset to let parent use default
     }
   };
 

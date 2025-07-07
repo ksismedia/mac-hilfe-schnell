@@ -15,7 +15,7 @@ interface OverallRatingProps {
   };
   realData: RealBusinessData;
   manualSocialData?: ManualSocialData | null;
-  keywordsScore?: number;
+  keywordsScore?: number | null;
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore }) => {

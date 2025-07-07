@@ -67,7 +67,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [keywordsScore, setKeywordsScore] = useState(0);
+  const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const { toast } = useToast();
 
   // Manual data management
@@ -151,8 +151,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
-  // Use manual keywords score if available, otherwise use default
-  const currentKeywordsScore = keywordsScore > 0 ? keywordsScore : defaultKeywordsScore;
+  // Use manual keywords score if set (including 0), otherwise use default
+  const currentKeywordsScore = keywordsScore !== null ? keywordsScore : defaultKeywordsScore;
   
   // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
