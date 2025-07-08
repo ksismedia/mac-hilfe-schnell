@@ -48,20 +48,6 @@ export const generateCustomerHTML = ({
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
-  console.log('=== EIGENE FIRMA SCORE DEBUG ===');
-  console.log('socialMediaScore:', socialMediaScore);
-  console.log('hourlyRateScore:', hourlyRateScore);
-  console.log('realData.seo.score:', realData.seo.score);
-  console.log('realData.performance.score:', realData.performance.score);
-  console.log('realData.mobile.overallScore:', realData.mobile.overallScore);
-  console.log('realData.reviews.google.count:', realData.reviews.google.count);
-  console.log('realData.reviews.google.rating:', realData.reviews.google.rating);
-  
-  const ownCompanyScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
-  console.log('=== BERECHNETER SCORE EIGENE FIRMA ===');
-  console.log('Calculated Own Company Score:', ownCompanyScore);
-  console.log('Expected Score: 83, Actual Score:', ownCompanyScore);
-  
   // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
     'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
@@ -79,14 +65,18 @@ export const generateCustomerHTML = ({
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
-  // Verwende die konsistente calculateOverallScore Funktion
-  const ownOverallScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
+  // Verwende die GLEICHE Score-Berechnung wie für Konkurrenten
+  const ownRatingScore = (realData.reviews.google.rating / 5) * 100;
+  const ownReviewScore = Math.min(100, (realData.reviews.google.count / 50) * 100);
+  const ownBaseServiceScore = Math.min(100, (expectedServices.length / 12) * 100);
+  const ownFinalServiceScore = Math.min(100, ownBaseServiceScore); // Keine unique service bonus für eigene Firma
+  const ownCompanyScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
   
-  console.log('HTML Generator - Own Business Scores:', {
-    social: socialMediaScore,
-    hourlyRate: hourlyRateScore, 
-    services: ownServiceScore,
-    overall: ownOverallScore
+  console.log('HTML Generator - Own Business Scores (Competitor Method):', {
+    rating: ownRatingScore,
+    reviews: ownReviewScore,
+    services: ownFinalServiceScore,
+    overall: ownCompanyScore
   });
 
   // Impressum Analysis
@@ -726,7 +716,7 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownOverallScore} Punkte</span></p>
+              <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownCompanyScore} Punkte</span></p>
               <p style="font-size: 0.9em; color: ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '#22c55e' : '#ef4444'};">
                 ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
               </p>
@@ -981,15 +971,15 @@ export const generateCustomerHTML = ({
         <div class="metric-card good" style="margin-bottom: 30px;">
           <h3>Gesamtbewertung</h3>
           <div class="score-display">
-            <div class="score-circle ${ownOverallScore >= 80 ? 'green' : ownOverallScore >= 60 ? 'yellow' : ownOverallScore >= 40 ? 'orange' : 'red'}">${ownOverallScore}%</div>
+            <div class="score-circle ${ownCompanyScore >= 80 ? 'green' : ownCompanyScore >= 60 ? 'yellow' : ownCompanyScore >= 40 ? 'orange' : 'red'}">${ownCompanyScore}%</div>
             <div class="score-details">
-              <p><strong>Digitale Marktposition:</strong> ${ownOverallScore >= 80 ? 'Sehr stark' : ownOverallScore >= 60 ? 'Gut positioniert' : ownOverallScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
-              <p><strong>Priorität:</strong> ${ownOverallScore >= 80 ? 'Optimierung' : ownOverallScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
+              <p><strong>Digitale Marktposition:</strong> ${ownCompanyScore >= 80 ? 'Sehr stark' : ownCompanyScore >= 60 ? 'Gut positioniert' : ownCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+              <p><strong>Priorität:</strong> ${ownCompanyScore >= 80 ? 'Optimierung' : ownCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${ownOverallScore}%"></div>
+              <div class="progress-fill" style="width: ${ownCompanyScore}%"></div>
             </div>
           </div>
         </div>
