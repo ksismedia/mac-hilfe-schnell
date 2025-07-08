@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 
 interface SaveAnalysisDialogProps {
@@ -26,6 +26,7 @@ interface SaveAnalysisDialogProps {
   currentAnalysisId?: string;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   keywordScore?: number | null;
+  companyServices?: CompanyServices;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -39,7 +40,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   removedMissingServices = [],
   currentAnalysisId,
   manualKeywordData,
-  keywordScore
+  keywordScore,
+  companyServices
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [analysisName, setAnalysisName] = useState('');
@@ -74,7 +76,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         competitorServices,
         removedMissingServices: removedMissingServices || [],
         keywordData: manualKeywordData || undefined,
-        keywordScore: keywordScore || undefined
+        keywordScore: keywordScore || undefined,
+        companyServices: companyServices || undefined
       };
 
       if (currentAnalysisId) {

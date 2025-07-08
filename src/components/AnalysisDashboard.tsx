@@ -148,7 +148,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               updateSocialData,
               updateWorkplaceData,
               updateCompetitors,
-              updateCompetitorServices
+              updateCompetitorServices,
+              updateCompanyServices
             );
             
             console.log('Saved analysis loaded successfully');
@@ -488,6 +489,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   currentAnalysisId={loadedAnalysisId}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
+                  companyServices={companyServices}
                 />
                 <HTMLExport
                   businessData={businessData}

@@ -17,7 +17,8 @@ export const loadSavedAnalysisData = (
   updateSocialData: (data: ManualSocialData | null) => void,
   updateWorkplaceData: (data: ManualWorkplaceData | null) => void,
   updateCompetitors: (competitors: ManualCompetitor[]) => void,
-  updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void
+  updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void,
+  updateCompanyServices?: (services: string[]) => void
 ) => {
   // Load manual data
   if (savedAnalysis.manualData.imprint) {
@@ -34,5 +35,10 @@ export const loadSavedAnalysisData = (
   }
   if (savedAnalysis.manualData.competitorServices) {
     loadCompetitorServices(savedAnalysis.manualData.competitorServices, updateCompetitorServices);
+  }
+  
+  // Load company services if available
+  if (savedAnalysis.manualData.companyServices && updateCompanyServices) {
+    updateCompanyServices(savedAnalysis.manualData.companyServices.services || []);
   }
 };
