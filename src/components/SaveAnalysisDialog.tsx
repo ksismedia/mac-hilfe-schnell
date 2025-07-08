@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -117,6 +117,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
           <DialogTitle>
             {currentAnalysisId ? 'Analyse aktualisieren' : 'Analyse speichern'}
           </DialogTitle>
+          <DialogDescription>
+            Geben Sie einen Namen für Ihre Analyse ein und speichern Sie diese für spätere Verwendung.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
