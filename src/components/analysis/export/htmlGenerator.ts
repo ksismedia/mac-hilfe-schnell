@@ -63,12 +63,8 @@ export const generateCustomerHTML = ({
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
-  const ownOverallScore = Math.round(
-    (realData.seo.score * 0.2 + realData.performance.score * 0.15 + 
-     (realData.reviews.google.count > 0 ? 80 : 40) * 0.25 + 
-     realData.mobile.overallScore * 0.15 + hourlyRateScore * 0.1 + 
-     socialMediaScore * 0.1 + ownServiceScore * 0.05)
-  );
+  // Verwende die konsistente calculateOverallScore Funktion
+  const ownOverallScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
   
   console.log('HTML Generator - Own Business Scores:', {
     social: socialMediaScore,
