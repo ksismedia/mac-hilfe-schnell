@@ -501,6 +501,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualWorkplaceData={manualWorkplaceData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={transformedCompetitorServices}
+                  manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
                 />
                 <PDFExport 
                   businessData={businessData} 
