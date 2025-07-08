@@ -546,24 +546,24 @@ export const generateCustomerHTML = ({
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
               <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownOverallScore} Punkte</span></p>
-              <p style="font-size: 0.9em; color: ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '#22c55e' : '#ef4444'};">
-                ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
+              <p style="font-size: 0.9em; color: ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '#22c55e' : '#ef4444'};">
+                ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
               </p>
             </div>
             <div>
-              <p><strong>Stärkster Konkurrent:</strong> Konkurrent ${String.fromCharCode(65 + manualCompetitors.findIndex(c => c.rating === Math.max(...manualCompetitors.map(comp => comp.rating))))}</p>
-              <p style="font-size: 0.9em; color: #9ca3af;">Rating: ${Math.max(...manualCompetitors.map(c => c.rating))}/5</p>
+              <p><strong>Stärkster Konkurrent:</strong> ${allCompetitors.length > 0 ? `Konkurrent ${String.fromCharCode(65 + allCompetitors.findIndex(c => c.rating === Math.max(...allCompetitors.map(comp => comp.rating))))}` : 'Keine Daten'}</p>
+              <p style="font-size: 0.9em; color: #9ca3af;">Rating: ${allCompetitors.length > 0 ? `${Math.max(...allCompetitors.map(c => c.rating))}/5` : 'N/A'}</p>
             </div>
             <div>
-              <p><strong>Markt-Durchschnitt:</strong> ${(manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length).toFixed(1)}/5</p>
+              <p><strong>Markt-Durchschnitt:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length).toFixed(1) : '0'}/5</p>
               <p style="font-size: 0.9em; color: #9ca3af;">Ohne Ihr Unternehmen</p>
             </div>
             <div>
               <p><strong>Bewertungsverteilung:</strong></p>
               <p style="font-size: 0.9em; color: #9ca3af;">
-                Stark: ${manualCompetitors.filter(c => c.rating >= 4).length} | 
-                Mittel: ${manualCompetitors.filter(c => c.rating >= 3 && c.rating < 4).length} | 
-                Schwach: ${manualCompetitors.filter(c => c.rating < 3).length}
+                Stark: ${allCompetitors.filter(c => c.rating >= 4).length} | 
+                Mittel: ${allCompetitors.filter(c => c.rating >= 3 && c.rating < 4).length} | 
+                Schwach: ${allCompetitors.filter(c => c.rating < 3).length}
               </p>
             </div>
           </div>
@@ -578,10 +578,10 @@ export const generateCustomerHTML = ({
               <p style="font-size: 0.9em; color: #22c55e;">${expectedServices.slice(0, 3).join(', ')}${expectedServices.length > 3 ? '...' : ''}</p>
             </div>
             <div>
-              <p><strong>Durchschnitt Wettbewerber:</strong> ${manualCompetitors.length > 0 ? (manualCompetitors.reduce((acc, comp) => {
+              <p><strong>Durchschnitt Wettbewerber:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => {
                 const services = competitorServices && competitorServices[comp.name] ? competitorServices[comp.name] : comp.services || [];
                 return acc + services.length;
-              }, 0) / manualCompetitors.length).toFixed(1) : '0'} Services</p>
+              }, 0) / allCompetitors.length).toFixed(1) : '0'} Services</p>
               <p style="font-size: 0.9em; color: #9ca3af;">Pro Anbieter</p>
             </div>
             <div>
