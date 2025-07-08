@@ -95,13 +95,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     competitorServices,
     removedMissingServices,
     companyServices,
+    deletedCompetitors,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
     updateCompetitors,
     updateCompetitorServices,
     addRemovedMissingService,
-    updateCompanyServices
+    updateCompanyServices,
+    addDeletedCompetitor,
+    removeDeletedCompetitor
   } = useManualData();
 
   // Access saved analyses hook
@@ -443,10 +446,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 competitorServices={competitorServices}
                 removedMissingServices={removedMissingServices}
                 companyServices={companyServices}
+                deletedCompetitors={deletedCompetitors}
                 onCompetitorsChange={updateCompetitors}
                 onCompetitorServicesChange={updateCompetitorServices}
                 onRemovedMissingServicesChange={addRemovedMissingService}
                 onCompanyServicesChange={updateCompanyServices}
+                onDeletedCompetitorChange={addDeletedCompetitor}
+                onRestoreCompetitorChange={removeDeletedCompetitor}
               />
               <ManualCompetitorInput 
                 competitors={manualCompetitors}
@@ -491,6 +497,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   removedMissingServices={removedMissingServices}
+                  deletedCompetitors={deletedCompetitors}
                   currentAnalysisId={loadedAnalysisId}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
@@ -504,6 +511,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   companyServices={companyServices}
+                  deletedCompetitors={deletedCompetitors}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                 />
@@ -516,6 +524,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   companyServices={companyServices}
+                  deletedCompetitors={deletedCompetitors}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                 />
@@ -527,6 +536,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   companyServices={companyServices}
+                  deletedCompetitors={deletedCompetitors}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                 />

@@ -23,6 +23,7 @@ interface SaveAnalysisDialogProps {
   manualCompetitors: ManualCompetitor[];
   competitorServices: CompetitorServices;
   removedMissingServices?: string[];
+  deletedCompetitors?: Set<string>;
   currentAnalysisId?: string;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   keywordScore?: number | null;
@@ -38,6 +39,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualCompetitors,
   competitorServices,
   removedMissingServices = [],
+  deletedCompetitors = new Set(),
   currentAnalysisId,
   manualKeywordData,
   keywordScore,
@@ -75,6 +77,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         competitors: manualCompetitors,
         competitorServices,
         removedMissingServices: removedMissingServices || [],
+        deletedCompetitors: Array.from(deletedCompetitors),
         keywordData: manualKeywordData || undefined,
         keywordScore: keywordScore || undefined,
         companyServices: companyServices || undefined

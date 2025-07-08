@@ -16,6 +16,7 @@ interface CustomerReportData {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: { services: string[]; source: 'auto' | 'manual' } };
   companyServices?: { services: string[] };
+  deletedCompetitors?: Set<string>;
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
@@ -30,6 +31,7 @@ export const generateCustomerHTML = ({
   manualCompetitors,
   competitorServices,
   companyServices,
+  deletedCompetitors = new Set(),
   hourlyRateData,
   missingImprintElements = [],
   manualSocialData,
@@ -398,22 +400,29 @@ export const generateCustomerHTML = ({
     console.log('manualCompetitors:', manualCompetitors);
     console.log('competitorServices:', competitorServices);
     
-    // Kombiniere manuelle und automatische Wettbewerber
-    const allCompetitors = [...(manualCompetitors || [])].map(competitor => {
-      // Verwende Services aus competitorServices wenn vorhanden, sonst aus competitor
-      const services = (competitorServices && competitorServices[competitor.name]) 
-        ? competitorServices[competitor.name].services 
-        : competitor.services || [];
-      
-      return {
-        ...competitor,
-        services: services
-      };
-    });
+    // Kombiniere manuelle und automatische Wettbewerber, filtere gelöschte aus
+    const allCompetitors = [...(manualCompetitors || [])]
+      .filter(competitor => !deletedCompetitors.has(competitor.name))
+      .map(competitor => {
+        // Verwende Services aus competitorServices wenn vorhanden, sonst aus competitor
+        const services = (competitorServices && competitorServices[competitor.name]) 
+          ? competitorServices[competitor.name].services 
+          : competitor.services || [];
+        
+        return {
+          ...competitor,
+          services: services
+        };
+      });
     
     // Füge automatisch ermittelte Wettbewerber aus realData hinzu falls vorhanden
     if (realData?.competitors) {
       realData.competitors.forEach(autoCompetitor => {
+        // Überspringe gelöschte Konkurrenten
+        if (deletedCompetitors.has(autoCompetitor.name)) {
+          return;
+        }
+        
         // Prüfe ob dieser Wettbewerber nicht bereits manuell erfasst wurde
         const exists = manualCompetitors?.some(manual => 
           manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()

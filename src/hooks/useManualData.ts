@@ -67,6 +67,7 @@ export const useManualData = () => {
   const [competitorServices, setCompetitorServices] = useState<CompetitorServices>({});
   const [removedMissingServices, setRemovedMissingServices] = useState<string[]>([]);
   const [companyServices, setCompanyServices] = useState<CompanyServices>({ services: [] });
+  const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -121,6 +122,18 @@ export const useManualData = () => {
     console.log('Company Services Updated:', services);
   }, []);
 
+  const addDeletedCompetitor = useCallback((competitorName: string) => {
+    setDeletedCompetitors(prev => new Set([...prev, competitorName]));
+  }, []);
+
+  const removeDeletedCompetitor = useCallback((competitorName: string) => {
+    setDeletedCompetitors(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(competitorName);
+      return newSet;
+    });
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -129,6 +142,7 @@ export const useManualData = () => {
     competitorServices,
     removedMissingServices,
     companyServices,
+    deletedCompetitors,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -136,6 +150,8 @@ export const useManualData = () => {
     updateCompetitorServices,
     updateRemovedMissingServices,
     addRemovedMissingService,
-    updateCompanyServices
+    updateCompanyServices,
+    addDeletedCompetitor,
+    removeDeletedCompetitor
   };
 };

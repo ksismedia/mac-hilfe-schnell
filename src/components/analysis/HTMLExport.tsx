@@ -18,6 +18,7 @@ interface HTMLExportProps {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: CompetitorServices;
   companyServices?: { services: string[] };
+  deletedCompetitors?: Set<string>;
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
@@ -30,6 +31,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   manualSocialData,
   manualCompetitors = [],
   competitorServices = {},
+  deletedCompetitors = new Set(),
   hourlyRateData,
   manualKeywordData,
   keywordScore

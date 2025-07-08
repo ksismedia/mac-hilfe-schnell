@@ -19,6 +19,7 @@ interface PDFExportProps {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
+  deletedCompetitors?: Set<string>;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
 }
@@ -36,6 +37,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
   manualCompetitors = [],
   competitorServices = {},
   companyServices,
+  deletedCompetitors = new Set(),
   manualKeywordData,
   keywordScore
 }) => {
@@ -81,6 +83,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
             manualCompetitors={manualCompetitors}
             competitorServices={competitorServices}
             companyServices={companyServices}
+            deletedCompetitors={deletedCompetitors}
             hourlyRateData={hourlyRateData}
             manualKeywordData={manualKeywordData}
             keywordScore={keywordScore}
@@ -108,7 +111,10 @@ const PDFExport: React.FC<PDFExportProps> = ({
             manualCompetitors={manualCompetitors}
             competitorServices={competitorServices}
             companyServices={companyServices}
+            deletedCompetitors={deletedCompetitors}
             hourlyRateData={hourlyRateData}
+            manualKeywordData={manualKeywordData}
+            keywordScore={keywordScore}
           />
         </CardContent>
       </Card>

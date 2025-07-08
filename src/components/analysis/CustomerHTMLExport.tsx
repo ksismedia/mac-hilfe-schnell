@@ -20,6 +20,7 @@ interface CustomerHTMLExportProps {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
+  deletedCompetitors?: Set<string>;
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
@@ -34,6 +35,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualCompetitors = [],
   competitorServices = {},
   companyServices,
+  deletedCompetitors = new Set(),
   hourlyRateData,
   manualKeywordData,
   keywordScore
@@ -114,6 +116,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualCompetitors,
       competitorServices: competitorServices || {},
       companyServices,
+      deletedCompetitors,
       hourlyRateData,
       missingImprintElements,
       manualSocialData, // Pass the manual social data to the HTML generator

@@ -20,6 +20,7 @@ export interface SavedAnalysis {
     competitors: ManualCompetitor[];
     competitorServices: CompetitorServices;
     removedMissingServices: string[];
+    deletedCompetitors?: string[];
     keywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
     keywordScore?: number;
     companyServices?: CompanyServices;

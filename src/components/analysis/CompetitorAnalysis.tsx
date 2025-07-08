@@ -18,10 +18,13 @@ interface CompetitorAnalysisProps {
   competitorServices: CompetitorServices;
   removedMissingServices: string[];
   companyServices: CompanyServices;
+  deletedCompetitors: Set<string>;
   onCompetitorsChange: (competitors: ManualCompetitor[]) => void;
   onCompetitorServicesChange: (name: string, services: string[]) => void;
   onRemovedMissingServicesChange: (service: string) => void;
   onCompanyServicesChange: (services: string[]) => void;
+  onDeletedCompetitorChange: (competitorName: string) => void;
+  onRestoreCompetitorChange: (competitorName: string) => void;
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
@@ -32,14 +35,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   competitorServices,
   removedMissingServices,
   companyServices,
+  deletedCompetitors,
   onCompetitorsChange,
   onCompetitorServicesChange,
   onRemovedMissingServicesChange,
-  onCompanyServicesChange
+  onCompanyServicesChange,
+  onDeletedCompetitorChange,
+  onRestoreCompetitorChange
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
-  const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
 
   // Basis-Services für die Branche
   const getIndustryServices = (industry: string): string[] => {
@@ -81,7 +86,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   // Lösch-Funktionen
   const handleDeleteCompetitor = (competitorName: string, source: 'google' | 'manual') => {
-    setDeletedCompetitors(prev => new Set([...prev, competitorName]));
+    onDeletedCompetitorChange(competitorName);
     
     // Bei manuellen Konkurrenten auch aus der Liste entfernen
     if (source === 'manual') {
@@ -91,11 +96,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   };
 
   const handleRestoreCompetitor = (competitorName: string) => {
-    setDeletedCompetitors(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(competitorName);
-      return newSet;
-    });
+    onRestoreCompetitorChange(competitorName);
   };
 
   // Alle Konkurrenten zusammenführen
