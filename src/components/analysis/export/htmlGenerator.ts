@@ -38,14 +38,33 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   
-  // Calculate scores for own business
+  // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
-  const ownOverallScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
+  
+  // Estimate own service portfolio score based on industry
+  const industryServiceMap = {
+    'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
+    'maler': ['Innenanstrich', 'Außenanstrich', 'Tapezieren', 'Fassade', 'Renovierung'],
+    'elektriker': ['Installation', 'Reparatur', 'Smart Home', 'Notdienst', 'Wartung'],
+    'dachdecker': ['Dachsanierung', 'Reparatur', 'Neubau', 'Dämmung', 'Notdienst'],
+    'stukateur': ['Putz', 'Dämmung', 'Trockenbau', 'Sanierung', 'Renovierung'],
+    'planungsbuero': ['Planung', 'Beratung', 'Baubegleitung', 'Gutachten', 'Konzepte']
+  };
+  const expectedServices = industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
+  const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10)); // Assume standard service portfolio
+  
+  const ownOverallScore = Math.round(
+    (realData.seo.score * 0.2 + realData.performance.score * 0.15 + 
+     (realData.reviews.google.count > 0 ? 80 : 40) * 0.25 + 
+     realData.mobile.overallScore * 0.15 + hourlyRateScore * 0.1 + 
+     socialMediaScore * 0.1 + ownServiceScore * 0.05)
+  );
   
   console.log('HTML Generator - Own Business Scores:', {
     social: socialMediaScore,
     hourlyRate: hourlyRateScore, 
+    services: ownServiceScore,
     overall: ownOverallScore
   });
 
@@ -470,17 +489,27 @@ export const generateCustomerHTML = ({
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
                   <span style="font-weight: bold; font-size: 1.2em;">${ownOverallScore}</span>
+                  <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                 </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
                 </td>
-                <td style="padding: 12px; color: #fbbf24; font-size: 0.9em;">Ihr Service-Portfolio</td>
+                <td style="padding: 12px; color: #fbbf24; font-size: 0.9em;">${expectedServices.join(', ')}</td>
               </tr>
               ${allCompetitors.map((competitor, index) => {
-                // Calculate estimated competitor score based on rating and review count
+                // Calculate estimated competitor score based on rating, review count and services
                 const reviewScore = competitor.reviews > 0 ? Math.min(80, 40 + (competitor.reviews / 10)) : 40;
                 const ratingScore = (competitor.rating / 5) * 100;
-                const estimatedScore = Math.round((ratingScore + reviewScore) / 2);
+                
+                // Service score calculation
+                const competitorServiceList = competitorServices && competitorServices[competitor.name] 
+                  ? competitorServices[competitor.name] 
+                  : competitor.services || [];
+                const serviceCount = competitorServiceList.length;
+                const serviceScore = Math.min(100, 30 + (serviceCount * 8)); // Base 30 + 8 per service, max 100
+                
+                // Combined score with services weighted
+                const estimatedScore = Math.round((ratingScore * 0.4 + reviewScore * 0.4 + serviceScore * 0.2));
                 
                 return `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
@@ -493,6 +522,7 @@ export const generateCustomerHTML = ({
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">
                     <span style="font-weight: bold; color: ${estimatedScore >= 70 ? '#22c55e' : estimatedScore >= 50 ? '#eab308' : '#ef4444'};">${estimatedScore}</span>
+                    <br><small style="color: #9ca3af;">${serviceCount} Services</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
                     <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
@@ -500,11 +530,7 @@ export const generateCustomerHTML = ({
                     </span>
                   </td>
                   <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
-                    ${competitorServices && competitorServices[competitor.name] 
-                      ? competitorServices[competitor.name].join(', ') 
-                      : competitor.services && competitor.services.length > 0 
-                        ? competitor.services.join(', ')
-                        : 'Nicht erfasst'}
+                    ${competitorServiceList.length > 0 ? competitorServiceList.join(', ') : 'Nicht erfasst'}
                   </td>
                 </tr>
                 `;
@@ -542,6 +568,42 @@ export const generateCustomerHTML = ({
             </div>
           </div>
         </div>
+
+        <!-- Service-Portfolio Vergleich -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">🛠️ Service-Portfolio Analyse</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div>
+              <p><strong>Ihre Services:</strong> ${expectedServices.length} Kernleistungen</p>
+              <p style="font-size: 0.9em; color: #22c55e;">${expectedServices.slice(0, 3).join(', ')}${expectedServices.length > 3 ? '...' : ''}</p>
+            </div>
+            <div>
+              <p><strong>Durchschnitt Wettbewerber:</strong> ${manualCompetitors.length > 0 ? (manualCompetitors.reduce((acc, comp) => {
+                const services = competitorServices && competitorServices[comp.name] ? competitorServices[comp.name] : comp.services || [];
+                return acc + services.length;
+              }, 0) / manualCompetitors.length).toFixed(1) : '0'} Services</p>
+              <p style="font-size: 0.9em; color: #9ca3af;">Pro Anbieter</p>
+            </div>
+            <div>
+              <p><strong>Service-Score:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownServiceScore} Punkte</span></p>
+              <p style="font-size: 0.9em; color: ${ownServiceScore >= 70 ? '#22c55e' : '#eab308'};">
+                ${ownServiceScore >= 70 ? '✅ Breites Portfolio' : '⚠️ Portfolio erweitern'}
+              </p>
+            </div>
+            <div>
+              <p><strong>Spezialisierung:</strong></p>
+              <p style="font-size: 0.9em; color: #9ca3af;">
+                ${businessData.industry === 'shk' ? 'SHK-Vollservice' : 
+                  businessData.industry === 'maler' ? 'Maler & Lackierer' :
+                  businessData.industry === 'elektriker' ? 'Elektrotechnik' :
+                  businessData.industry === 'dachdecker' ? 'Dacharbeiten' :
+                  businessData.industry === 'stukateur' ? 'Putz & Trockenbau' :
+                  'Planungsdienstleistungen'}
+              </p>
+            </div>
+          </div>
+        </div>
+        
         
         <div class="recommendations">
           <h4>Strategische Handlungsempfehlungen:</h4>
