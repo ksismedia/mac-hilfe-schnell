@@ -850,24 +850,15 @@ export const generateCustomerHTML = ({
         <div class="metric-card good" style="margin-bottom: 30px;">
           <h3>Gesamtbewertung</h3>
           <div class="score-display">
-            <div class="score-circle ${(() => {
-              const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
-              return totalScore >= 80 ? 'green' : totalScore >= 60 ? 'yellow' : totalScore >= 40 ? 'orange' : 'red';
-            })()}">${Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6)}%</div>
+            <div class="score-circle ${ownOverallScore >= 80 ? 'green' : ownOverallScore >= 60 ? 'yellow' : ownOverallScore >= 40 ? 'orange' : 'red'}">${ownOverallScore}%</div>
             <div class="score-details">
-              <p><strong>Digitale Marktposition:</strong> ${(() => {
-                const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
-                return totalScore >= 80 ? 'Sehr stark' : totalScore >= 60 ? 'Gut positioniert' : totalScore >= 40 ? 'Ausbaufähig' : 'Kritisch';
-              })()}</p>
-              <p><strong>Priorität:</strong> ${(() => {
-                const totalScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6);
-                return totalScore >= 80 ? 'Optimierung' : totalScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf';
-              })()}</p>
+              <p><strong>Digitale Marktposition:</strong> ${ownOverallScore >= 80 ? 'Sehr stark' : ownOverallScore >= 60 ? 'Gut positioniert' : ownOverallScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+              <p><strong>Priorität:</strong> ${ownOverallScore >= 80 ? 'Optimierung' : ownOverallScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) + impressumScore) / 6)}%"></div>
+              <div class="progress-fill" style="width: ${ownOverallScore}%"></div>
             </div>
           </div>
         </div>
