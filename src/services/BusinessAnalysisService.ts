@@ -680,12 +680,7 @@ export class BusinessAnalysisService {
     const keywords = {
       'shk': [
         'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 
-        'rohrreinigung', 'badezimmer', 'bad', 'dusche', 'wc', 'toilette',
-        'heizungsbau', 'klimaanlage', 'lüftung', 'installateur', 'handwerker',
-        // Erweiterte Bad-Keywords
-        'badsanierung', 'badplanung', 'badumbau', 'badmodernisierung',
-        'badausstattung', 'badrenovierung', 'badeinrichtung', 'badfliesen',
-        'badkeramik', 'badmöbel', 'badewanne', 'badgarnitur', 'badezimmersanierung'
+        'rohrreinigung', 'badezimmer', 'bad', 'installateur'
       ],
       'maler': ['malerei', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren'],
       'elektriker': ['elektro', 'installation', 'beleuchtung', 'smart home', 'strom'],
