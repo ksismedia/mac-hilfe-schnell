@@ -52,6 +52,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         'Steuernummer/USt-ID',
         'Aufsichtsbehörde',
         'Kammerzugehörigkeit',
+        'Berufsbezeichnung',
         'Haftpflichtversicherung',
         'Vertretungsberechtigte'
       ];
@@ -66,6 +67,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       'Steuernummer/USt-ID',
       'Aufsichtsbehörde',
       'Kammerzugehörigkeit',
+      'Berufsbezeichnung',
       'Haftpflichtversicherung',
       'Vertretungsberechtigte'
     ];
@@ -88,6 +90,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
                foundKey.includes('rechtsform') && elementKey === 'rechtsform' ||
                foundKey.includes('aufsicht') && elementKey === 'aufsichtsbehörde' ||
                foundKey.includes('kammer') && elementKey === 'kammerzugehörigkeit' ||
+               foundKey.includes('beruf') && elementKey === 'berufsbezeichnung' ||
                foundKey.includes('haftpflicht') && elementKey === 'haftpflichtversicherung';
       });
       return !isFound;
