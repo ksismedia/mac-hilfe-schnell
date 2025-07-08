@@ -717,9 +717,21 @@ export const generateCustomerHTML = ({
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
               <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownCompanyScore} Punkte</span></p>
-              <p style="font-size: 0.9em; color: ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '#22c55e' : '#ef4444'};">
-                ${allCompetitors.length > 0 && realData.reviews.google.rating >= (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
-              </p>
+              ${(() => {
+                const avgCompetitorScore = allCompetitors.length > 0 
+                  ? allCompetitors.reduce((acc, comp) => {
+                      const ratingScore = (comp.rating / 5) * 100;
+                      const reviewScore = Math.min(100, (comp.reviews / 50) * 100);
+                      const serviceScore = Math.min(100, (comp.services.length / 12) * 100);
+                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (serviceScore * 0.35));
+                      return acc + totalScore;
+                    }, 0) / allCompetitors.length 
+                  : 0;
+                const isAboveAverage = ownCompanyScore >= avgCompetitorScore;
+                return `<p style="font-size: 0.9em; color: ${isAboveAverage ? '#22c55e' : '#ef4444'};">
+                  ${isAboveAverage ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'} (Ø ${avgCompetitorScore.toFixed(0)} Punkte)
+                </p>`;
+              })()}
             </div>
             <div>
               <p><strong>Stärkster Konkurrent:</strong> ${allCompetitors.length > 0 ? `Konkurrent ${String.fromCharCode(65 + allCompetitors.findIndex(c => c.rating === Math.max(...allCompetitors.map(comp => comp.rating))))}` : 'Keine Daten'}</p>
