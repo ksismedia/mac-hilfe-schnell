@@ -44,7 +44,7 @@ export const generateCustomerHTML = ({
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
-  // Estimate own service portfolio score based on industry
+  // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
     'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
     'maler': ['Innenanstrich', 'Außenanstrich', 'Tapezieren', 'Fassade', 'Renovierung'],
@@ -53,8 +53,13 @@ export const generateCustomerHTML = ({
     'stukateur': ['Putz', 'Dämmung', 'Trockenbau', 'Sanierung', 'Renovierung'],
     'planungsbuero': ['Planung', 'Beratung', 'Baubegleitung', 'Gutachten', 'Konzepte']
   };
-  const expectedServices = industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
-  const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10)); // Assume standard service portfolio
+  
+  // Use company services if entered by user, otherwise default to industry services
+  const expectedServices = (companyServices && companyServices.services && companyServices.services.length > 0) 
+    ? companyServices.services 
+    : industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
+  
+  const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
   const ownOverallScore = Math.round(
     (realData.seo.score * 0.2 + realData.performance.score * 0.15 + 
