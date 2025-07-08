@@ -45,7 +45,7 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received manualCompetitors:', manualCompetitors);
   
   // Calculate scores for own business including services
-  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
   // Use actual company services if available, otherwise fall back to industry defaults
