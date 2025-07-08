@@ -4,6 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
+import { calculateOverallScore, calculateHourlyRateScore, calculateSocialMediaScore } from './scoreCalculations';
 
 interface CustomerReportData {
   businessData: {
@@ -37,10 +38,16 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   
-  // Calculate social media score - KORRIGIERT!
+  // Calculate scores for own business
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
-  console.log('HTML Generator - Social Media Score:', socialMediaScore);
-  console.log('HTML Generator - Manual Social Data:', manualSocialData);
+  const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  const ownOverallScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
+  
+  console.log('HTML Generator - Own Business Scores:', {
+    social: socialMediaScore,
+    hourlyRate: hourlyRateScore, 
+    overall: ownOverallScore
+  });
 
   // Impressum Analysis
   const impressumScore = missingImprintElements.length === 0 ? 100 : Math.max(0, 100 - (missingImprintElements.length * 10));
@@ -446,6 +453,7 @@ export const generateCustomerHTML = ({
                 <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Wettbewerber</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Bewertung</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Anzahl Bewertungen</th>
+                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Gesamtscore</th>
                 <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Marktposition</th>
                 <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Services</th>
               </tr>
@@ -460,12 +468,21 @@ export const generateCustomerHTML = ({
                   <span style="font-weight: bold;">${realData.reviews.google.rating}/5</span>
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
+                <td style="padding: 12px; text-align: center; color: #fbbf24;">
+                  <span style="font-weight: bold; font-size: 1.2em;">${ownOverallScore}</span>
+                </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
                 </td>
                 <td style="padding: 12px; color: #fbbf24; font-size: 0.9em;">Ihr Service-Portfolio</td>
               </tr>
-              ${allCompetitors.map((competitor, index) => `
+              ${allCompetitors.map((competitor, index) => {
+                // Calculate estimated competitor score based on rating and review count
+                const reviewScore = competitor.reviews > 0 ? Math.min(80, 40 + (competitor.reviews / 10)) : 40;
+                const ratingScore = (competitor.rating / 5) * 100;
+                const estimatedScore = Math.round((ratingScore + reviewScore) / 2);
+                
+                return `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
                   <td style="padding: 12px; color: #d1d5db;">
                     <strong>Wettbewerber ${String.fromCharCode(65 + index)}</strong>
@@ -474,6 +491,9 @@ export const generateCustomerHTML = ({
                     <span style="font-weight: bold; color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'};">${competitor.rating}/5</span>
                   </td>
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
+                  <td style="padding: 12px; text-align: center; color: #d1d5db;">
+                    <span style="font-weight: bold; color: ${estimatedScore >= 70 ? '#22c55e' : estimatedScore >= 50 ? '#eab308' : '#ef4444'};">${estimatedScore}</span>
+                  </td>
                   <td style="padding: 12px; text-align: center;">
                     <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
                       ${competitor.rating >= 4 ? 'Starker Wettbewerber' : competitor.rating >= 3 ? 'Mittlerer Wettbewerber' : 'Schwacher Wettbewerber'}
@@ -487,7 +507,8 @@ export const generateCustomerHTML = ({
                         : 'Nicht erfasst'}
                   </td>
                 </tr>
-              `).join('')}
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -498,6 +519,7 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
+              <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownOverallScore} Punkte</span></p>
               <p style="font-size: 0.9em; color: ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '#22c55e' : '#ef4444'};">
                 ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
               </p>
