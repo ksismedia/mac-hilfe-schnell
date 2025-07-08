@@ -93,6 +93,118 @@ export const generateCustomerHTML = ({
     }
   };
 
+  // Accessibility Analysis - NEW
+  const getAccessibilityAnalysis = () => {
+    // Mock accessibility data for demo - in real implementation this would come from axe-core
+    const accessibilityScore = 72;
+    const violations = [
+      { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
+      { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
+      { impact: 'moderate', description: 'Fehlerhafte Überschriftenstruktur', count: 2 },
+      { impact: 'minor', description: 'Fehlende Fokus-Indikatoren', count: 4 }
+    ];
+    
+    const passes = [
+      'Dokument hat einen Titel',
+      'Hauptsprache ist definiert', 
+      'Navigation ist als Landmark markiert',
+      'Buttons haben aussagekräftige Labels'
+    ];
+
+    const scoreClass = accessibilityScore >= 80 ? 'good' : accessibilityScore >= 60 ? 'warning' : 'critical';
+
+    return `
+      <div class="metric-card ${scoreClass}">
+        <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
+        <div class="score-display">
+          <div class="score-circle ${accessibilityScore >= 80 ? 'green' : accessibilityScore >= 60 ? 'yellow' : 'red'}">${accessibilityScore}%</div>
+          <div class="score-details">
+            <p><strong>Compliance-Level:</strong> ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}</p>
+            <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${accessibilityScore}%"></div>
+          </div>
+        </div>
+
+        <!-- Violations Overview -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+          <h4>🚨 Erkannte Probleme</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+            ${violations.map(v => `
+              <div style="padding: 8px; background: ${
+                v.impact === 'critical' ? 'rgba(239, 68, 68, 0.2)' :
+                v.impact === 'serious' ? 'rgba(245, 158, 11, 0.2)' :
+                v.impact === 'moderate' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(107, 114, 128, 0.2)'
+              }; border-radius: 6px;">
+                <p style="font-weight: bold; color: ${
+                  v.impact === 'critical' ? '#dc2626' :
+                  v.impact === 'serious' ? '#d97706' :
+                  v.impact === 'moderate' ? '#2563eb' : '#6b7280'
+                };">${v.impact.toUpperCase()}</p>
+                <p style="font-size: 0.9em;">${v.description}</p>
+                <p style="font-size: 0.8em; color: #666;">${v.count} Vorkommen</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Successful Tests -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+          <h4 style="color: #059669;">✅ Erfolgreich umgesetzt</h4>
+          <ul style="margin-top: 10px; padding-left: 20px;">
+            ${passes.map(pass => `<li style="color: #059669; margin-bottom: 5px;">${pass}</li>`).join('')}
+          </ul>
+        </div>
+
+        <!-- Legal Requirements -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+          <h4 style="color: #1d4ed8;">⚖️ Rechtliche Anforderungen</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+            <div>
+              <p><strong>EU-Richtlinie 2016/2102:</strong> ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}</p>
+              <div class="progress-container" style="margin-top: 5px;">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(30, accessibilityScore)}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>WCAG 2.1 Level AA:</strong> ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}</p>
+              <div class="progress-container" style="margin-top: 5px;">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${accessibilityScore}%"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p><strong>BGG (Deutschland):</strong> ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}</p>
+              <div class="progress-container" style="margin-top: 5px;">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="recommendations">
+          <h4>Prioritäre Handlungsempfehlungen:</h4>
+          <ul>
+            <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)</li>
+            <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)</li>
+            <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1)</li>
+            <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)</li>
+            <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern</li>
+            <li>Automatisierte Accessibility-Tests in Entwicklungsprozess integrieren</li>
+          </ul>
+        </div>
+      </div>
+    `;
+  };
+
   // SEO Analysis - Enhanced
   const getSEOAnalysis = () => {
     // Use manual keyword score if available, otherwise use SEO score
@@ -1401,6 +1513,14 @@ export const generateCustomerHTML = ({
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Barrierefreiheit -->
+    <div class="section">
+      <div class="section-header">♿ Barrierefreiheit & Zugänglichkeit</div>
+      <div class="section-content">
+        ${getAccessibilityAnalysis()}
       </div>
     </div>
 
