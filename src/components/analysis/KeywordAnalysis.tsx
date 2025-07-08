@@ -102,6 +102,43 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     return found ? 'default' : 'destructive';
   };
 
+  const toggleKeywordStatus = (index: number) => {
+    const updatedKeywords = keywordData.keywords.map((kw, i) => 
+      i === index 
+        ? { 
+            ...kw, 
+            found: !kw.found,
+            position: !kw.found ? Math.floor(Math.random() * 20) + 1 : 0
+          }
+        : kw
+    );
+    
+    const foundKeywords = updatedKeywords.filter(k => k.found).length;
+    
+    // Berechne neuen Score basierend auf aktualisierten Keywords
+    let newScore = 0;
+    if (foundKeywords === 0) {
+      newScore = 0;
+    } else if (updatedKeywords.length < 5) {
+      newScore = Math.round((foundKeywords / updatedKeywords.length) * 80);
+    } else {
+      const baseScore = (foundKeywords / updatedKeywords.length) * 100;
+      const keywordBonus = Math.min(10, updatedKeywords.length - 5);
+      newScore = Math.min(100, Math.round(baseScore + keywordBonus));
+    }
+    
+    setKeywordData({
+      ...keywordData,
+      foundKeywords,
+      overallScore: newScore,
+      keywords: updatedKeywords
+    });
+    
+    // Benachrichtige Parent über Änderungen
+    onScoreChange?.(newScore);
+    onKeywordDataChange?.(updatedKeywords);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -162,6 +199,9 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Keyword-Analyse von {url}</CardTitle>
+                <CardDescription>
+                  Klicken Sie auf die Status-Badges, um Keywords manuell zu bearbeiten
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -170,7 +210,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                       <TableHead>Keyword</TableHead>
                       <TableHead className="text-center">Auf Website gefunden</TableHead>
                       <TableHead className="text-center">Suchvolumen (geschätzt)</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
+                      <TableHead className="text-center">Status (klickbar)</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -188,7 +228,12 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                           {item.volume}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant={getVisibilityBadge(item.found)}>
+                          <Badge 
+                            variant={getVisibilityBadge(item.found)}
+                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => toggleKeywordStatus(index)}
+                            title="Klicken um Status zu ändern"
+                          >
                             {item.found ? 'Gefunden' : 'Fehlt'}
                           </Badge>
                         </TableCell>
