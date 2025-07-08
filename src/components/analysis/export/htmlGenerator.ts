@@ -39,6 +39,8 @@ export const generateCustomerHTML = ({
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
+  console.log('HTML Generator received competitorServices:', competitorServices);
+  console.log('HTML Generator received manualCompetitors:', manualCompetitors);
   
   // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -396,8 +398,22 @@ export const generateCustomerHTML = ({
 
   // Competitor Analysis - ANONYMISIERT für Kundenreport  
   const getCompetitorAnalysis = () => {
+    console.log('getCompetitorAnalysis called');
+    console.log('manualCompetitors:', manualCompetitors);
+    console.log('competitorServices:', competitorServices);
+    
     // Kombiniere manuelle und automatische Wettbewerber
-    const allCompetitors = [...(manualCompetitors || [])];
+    const allCompetitors = [...(manualCompetitors || [])].map(competitor => {
+      // Verwende Services aus competitorServices wenn vorhanden, sonst aus competitor
+      const services = (competitorServices && competitorServices[competitor.name]) 
+        ? competitorServices[competitor.name].services 
+        : competitor.services || [];
+      
+      return {
+        ...competitor,
+        services: services
+      };
+    });
     
     // Füge automatisch ermittelte Wettbewerber aus realData hinzu falls vorhanden
     if (realData?.competitors) {
@@ -407,17 +423,24 @@ export const generateCustomerHTML = ({
           manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()
         );
         if (!exists) {
+          // Verwende Services aus competitorServices wenn vorhanden, sonst aus autoCompetitor
+          const services = (competitorServices && competitorServices[autoCompetitor.name]) 
+            ? competitorServices[autoCompetitor.name].services 
+            : ((autoCompetitor as any).services || []);
+          
           allCompetitors.push({
             name: autoCompetitor.name,
             rating: autoCompetitor.rating || 0,
             reviews: autoCompetitor.reviews || 0,
             distance: autoCompetitor.distance || 'Unbekannt',
-            services: (autoCompetitor as any).services || [],
+            services: services,
             website: (autoCompetitor as any).website
           });
         }
       });
     }
+    
+    console.log('allCompetitors after processing:', allCompetitors);
     
     if (allCompetitors.length === 0) {
       return `
