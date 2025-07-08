@@ -29,6 +29,18 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
 
   const [showManualInput, setShowManualInput] = useState(false);
 
+  // Update keywords wenn sich realData ändert (Parameter-Wechsel)
+  useEffect(() => {
+    const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
+    setKeywordData({
+      totalKeywords: realData.keywords.length,
+      foundKeywords: initialFoundKeywords,
+      overallDensity: 2.8,
+      overallScore: Math.round((initialFoundKeywords / realData.keywords.length) * 100),
+      keywords: realData.keywords
+    });
+  }, [realData, industry]);
+
   // Zeige manuelle Eingabe automatisch, wenn keine Keywords gefunden wurden
   useEffect(() => {
     if (keywordData.foundKeywords === 0) {
