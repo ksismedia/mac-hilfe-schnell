@@ -483,7 +483,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                 />
-                <HTMLExport 
+                <HTMLExport
                   businessData={businessData}
                   realData={realData}
                   manualImprintData={manualImprintData}
