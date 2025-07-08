@@ -644,11 +644,7 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                   <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                    ${(() => {
-                      const finalScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
-                      console.log('EIGENE FIRMA - Final Overall Score:', finalScore);
-                      return `<span style="font-weight: bold; font-size: 1.2em;">${finalScore}</span>`;
-                    })()}
+                    <span style="font-weight: bold; font-size: 1.2em;">${calculateOverallScore(realData, hourlyRateScore, socialMediaScore)}</span>
                     <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
