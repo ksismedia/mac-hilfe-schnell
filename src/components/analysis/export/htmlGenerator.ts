@@ -451,6 +451,20 @@ export const generateCustomerHTML = ({
               </tr>
             </thead>
             <tbody>
+              <!-- Eigenes Unternehmen -->
+              <tr style="border-bottom: 2px solid rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.1);">
+                <td style="padding: 12px; color: #fbbf24;">
+                  <strong>🏆 Ihr Unternehmen</strong>
+                </td>
+                <td style="padding: 12px; text-align: center; color: #fbbf24;">
+                  <span style="font-weight: bold;">${realData.reviews.google.rating}/5</span>
+                </td>
+                <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
+                <td style="padding: 12px; text-align: center;">
+                  <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
+                </td>
+                <td style="padding: 12px; color: #fbbf24; font-size: 0.9em;">Ihr Service-Portfolio</td>
+              </tr>
               ${allCompetitors.map((competitor, index) => `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
                   <td style="padding: 12px; color: #d1d5db;">
@@ -483,12 +497,18 @@ export const generateCustomerHTML = ({
           <h4 style="color: #fbbf24; margin-bottom: 15px;">📊 Marktpositions-Vergleich</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
+              <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
+              <p style="font-size: 0.9em; color: ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '#22c55e' : '#ef4444'};">
+                ${realData.reviews.google.rating >= (manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length) ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'}
+              </p>
+            </div>
+            <div>
               <p><strong>Stärkster Konkurrent:</strong> Konkurrent ${String.fromCharCode(65 + manualCompetitors.findIndex(c => c.rating === Math.max(...manualCompetitors.map(comp => comp.rating))))}</p>
               <p style="font-size: 0.9em; color: #9ca3af;">Rating: ${Math.max(...manualCompetitors.map(c => c.rating))}/5</p>
             </div>
             <div>
-              <p><strong>Durchschnittsbewertung:</strong> ${(manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length).toFixed(1)}/5</p>
-              <p style="font-size: 0.9em; color: #9ca3af;">Marktstandard</p>
+              <p><strong>Markt-Durchschnitt:</strong> ${(manualCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / manualCompetitors.length).toFixed(1)}/5</p>
+              <p style="font-size: 0.9em; color: #9ca3af;">Ohne Ihr Unternehmen</p>
             </div>
             <div>
               <p><strong>Bewertungsverteilung:</strong></p>
