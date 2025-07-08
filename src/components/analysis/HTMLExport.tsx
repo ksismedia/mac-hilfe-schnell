@@ -17,6 +17,7 @@ interface HTMLExportProps {
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  companyServices?: { services: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;

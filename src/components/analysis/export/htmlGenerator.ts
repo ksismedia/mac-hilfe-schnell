@@ -15,6 +15,7 @@ interface CustomerReportData {
   realData: RealBusinessData;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  companyServices?: { services: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
@@ -28,6 +29,7 @@ export const generateCustomerHTML = ({
   realData,
   manualCompetitors,
   competitorServices,
+  companyServices,
   hourlyRateData,
   missingImprintElements = [],
   manualSocialData,
