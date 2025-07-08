@@ -18,6 +18,8 @@ interface HTMLExportProps {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
+  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  keywordScore?: number;
 }
 
 const HTMLExport: React.FC<HTMLExportProps> = ({ 
@@ -27,7 +29,9 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   manualSocialData,
   manualCompetitors = [],
   competitorServices = {},
-  hourlyRateData
+  hourlyRateData,
+  manualKeywordData,
+  keywordScore
 }) => {
   // Calculate scores based on available data
   const calculateOverallScore = () => {
@@ -404,19 +408,19 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                             </div>
                         </div>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-title">Keywords gefunden</div>
-                        <div class="metric-value">${realData.keywords.filter(k => k.found).length}/${realData.keywords.length}</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Fortschritt</span>
-                                <span>${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${(realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%" data-value="${Math.round(((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100) / 10) * 10}"></div>
-                            </div>
-                        </div>
-                    </div>
+                     <div class="metric-item">
+                         <div class="metric-title">Keywords gefunden</div>
+                         <div class="metric-value">${(manualKeywordData || realData.keywords).filter(k => k.found).length}/${(manualKeywordData || realData.keywords).length}</div>
+                         <div class="progress-container">
+                             <div class="progress-label">
+                                 <span>Fortschritt</span>
+                                 <span>${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</span>
+                             </div>
+                             <div class="progress-bar">
+                                 <div class="progress-fill" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%" data-value="${Math.round((((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100) / 10) * 10}"></div>
+                             </div>
+                         </div>
+                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Meta Description</div>
                         <div class="metric-value">${realData.seo.metaDescription ? 'Vorhanden' : 'Fehlt'}</div>

@@ -991,22 +991,22 @@ export const generateCustomerHTML = ({
         <div class="metric-card good" style="margin-bottom: 30px;">
           <h3>🎯 Keyword-Analyse</h3>
           <div class="score-display">
-            <div class="score-circle ${realData.keywords.filter(k => k.found).length / realData.keywords.length >= 0.7 ? 'green' : 'yellow'}">
-              ${realData.keywords.filter(k => k.found).length}/${realData.keywords.length}
+            <div class="score-circle ${(manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length >= 0.7 ? 'green' : 'yellow'}">
+              ${(manualKeywordData || realData.keywords).filter(k => k.found).length}/${(manualKeywordData || realData.keywords).length}
             </div>
             <div class="score-details">
-              <p><strong>Gefundene Keywords:</strong> ${realData.keywords.filter(k => k.found).length} von ${realData.keywords.length}</p>
-              <p><strong>Optimierungsgrad:</strong> ${Math.round((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100)}%</p>
-              <p><strong>Keyword-Dichte:</strong> ${((realData.keywords.filter(k => k.found).length / realData.keywords.length) * 3).toFixed(1)}%</p>
+              <p><strong>Gefundene Keywords:</strong> ${(manualKeywordData || realData.keywords).filter(k => k.found).length} von ${(manualKeywordData || realData.keywords).length}</p>
+              <p><strong>Optimierungsgrad:</strong> ${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</p>
+              <p><strong>Keyword-Dichte:</strong> ${(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 3).toFixed(1)}%</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${(realData.keywords.filter(k => k.found).length / realData.keywords.length) * 100}%"></div>
+              <div class="progress-fill" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%"></div>
             </div>
           </div>
           <div class="keyword-grid">
-            ${realData.keywords.map(keyword => `
+            ${(manualKeywordData || realData.keywords).map(keyword => `
               <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
                 <span>${keyword.keyword}</span>
                 <span>${keyword.found ? '✅ Gefunden' : '❌ Fehlend'}</span>
@@ -1069,18 +1069,18 @@ export const generateCustomerHTML = ({
               <h4>Fachvokabular</h4>
               <p><strong>${businessData.industry === 'shk' ? 'SHK-spezifisch' : businessData.industry === 'elektriker' ? 'Elektro-spezifisch' : 'Handwerk-spezifisch'}</strong></p>
               <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.keywords.filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
-                </div>
-              </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
-            </div>
-            <div class="status-item">
-              <h4>Dienstleistungen</h4>
-              <p><strong>${realData.keywords.filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.keywords.filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                 <div class="progress-bar">
+                   <div class="progress-fill" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
+                 </div>
+               </div>
+               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
+             </div>
+             <div class="status-item">
+               <h4>Dienstleistungen</h4>
+               <p><strong>${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
+               <div class="progress-container">
+                 <div class="progress-bar">
+                   <div class="progress-fill" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
