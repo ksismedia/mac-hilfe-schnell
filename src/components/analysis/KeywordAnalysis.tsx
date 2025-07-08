@@ -244,18 +244,16 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </CardContent>
             </Card>
 
-            {/* Manuelle Keyword-Eingabe - Nur anzeigen wenn automatische Analyse nicht funktioniert hat */}
-            {keywordData.foundKeywords === 0 && (
-              <ManualKeywordInput 
-                onKeywordsUpdate={handleManualKeywordsUpdate}
-                industry={industry}
-                currentKeywords={[]} // Leere Liste für neue manuelle Eingabe
-                onSaveRequested={() => {
-                  // Trigger parent save functionality
-                  console.log('Save requested from KeywordAnalysis');
-                }}
-              />
-            )}
+            {/* Manuelle Keyword-Eingabe */}
+            <ManualKeywordInput 
+              onKeywordsUpdate={handleManualKeywordsUpdate}
+              industry={industry}
+              currentKeywords={keywordData.keywords}
+              onSaveRequested={() => {
+                // Trigger parent save functionality
+                console.log('Save requested from KeywordAnalysis');
+              }}
+            />
 
             {/* Empfehlungen */}
             <Card>

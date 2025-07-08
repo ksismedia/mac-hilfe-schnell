@@ -21,7 +21,7 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
   onSaveRequested 
 }) => {
   const [newKeyword, setNewKeyword] = useState('');
-  const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>([]);
+  const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>(currentKeywords || []);
 
   const addKeyword = () => {
     if (newKeyword.trim()) {
