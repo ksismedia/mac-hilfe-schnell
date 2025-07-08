@@ -120,31 +120,51 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       // If we have a saved analysis to load
       if (loadedAnalysisId && !realData) {
         console.log('Loading saved analysis with ID:', loadedAnalysisId);
-        const savedAnalysis = loadAnalysis(loadedAnalysisId);
-        
-        if (savedAnalysis) {
-          console.log('Found saved analysis:', savedAnalysis);
+        try {
+          const savedAnalysis = loadAnalysis(loadedAnalysisId);
           
-          // Set the real data from saved analysis
-          setRealData(savedAnalysis.realData);
-          
-          // Load manual data using the loader utility  
-          loadSavedAnalysisData(
-            savedAnalysis,
-            updateImprintData,
-            updateSocialData,
-            updateWorkplaceData,
-            updateCompetitors,
-            updateCompetitorServices
-          );
-          
-          console.log('Saved analysis loaded successfully');
-          return;
-        } else {
-          console.error('Saved analysis not found for ID:', loadedAnalysisId);
+          if (savedAnalysis) {
+            console.log('Found saved analysis:', savedAnalysis);
+            
+            // Set the real data from saved analysis
+            setRealData(savedAnalysis.realData);
+            
+            // Load keyword data if available
+            if (savedAnalysis.manualData?.keywordData) {
+              console.log('Loading saved keyword data:', savedAnalysis.manualData.keywordData);
+              setManualKeywordData(savedAnalysis.manualData.keywordData);
+            }
+            if (savedAnalysis.manualData?.keywordScore !== undefined) {
+              console.log('Loading saved keyword score:', savedAnalysis.manualData.keywordScore);
+              setKeywordsScore(savedAnalysis.manualData.keywordScore);
+            }
+            
+            // Load manual data using the loader utility  
+            loadSavedAnalysisData(
+              savedAnalysis,
+              updateImprintData,
+              updateSocialData,
+              updateWorkplaceData,
+              updateCompetitors,
+              updateCompetitorServices
+            );
+            
+            console.log('Saved analysis loaded successfully');
+            return;
+          } else {
+            console.error('Saved analysis not found for ID:', loadedAnalysisId);
+            toast({
+              title: "Fehler beim Laden",
+              description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
+              variant: "destructive",
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error loading saved analysis:', error);
           toast({
-            title: "Fehler beim Laden",
-            description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
+            title: "Fehler beim Laden", 
+            description: "Beim Laden der Analyse ist ein Fehler aufgetreten.",
             variant: "destructive",
           });
           return;
@@ -459,6 +479,9 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   removedMissingServices={removedMissingServices}
+                  currentAnalysisId={loadedAnalysisId}
+                  manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
                 />
                 <HTMLExport 
                   businessData={businessData}
