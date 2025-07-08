@@ -108,7 +108,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
   // No transformation needed - use competitorServices directly
 
-  // Load analysis data or load saved analysis
+  // Load analysis data or load saved analysis - FIXED: Don't reload on businessData changes
   useEffect(() => {
     const loadAnalysisData = async () => {
       console.log('=== LOAD ANALYSIS EFFECT ===');
@@ -199,7 +199,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [businessData, toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
+  }, [toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
 
   if (isLoading) {
     return (
