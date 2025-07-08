@@ -13,9 +13,11 @@ interface KeywordAnalysisProps {
   realData: RealBusinessData;
   onScoreChange?: (score: number | null) => void;
   onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;
+  loadedKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
+  loadedKeywordScore?: number | null;
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange }) => {
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore }) => {
   const [keywordData, setKeywordData] = useState(() => {
     const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
     return {
@@ -40,6 +42,30 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       keywords: realData.keywords
     });
   }, [realData, industry]);
+
+  // Load saved keyword data when available
+  useEffect(() => {
+    if (loadedKeywordData && loadedKeywordData.length > 0) {
+      console.log('=== LOADING SAVED KEYWORD DATA ===');
+      console.log('Loaded data:', loadedKeywordData);
+      console.log('Loaded score:', loadedKeywordScore);
+      
+      const foundKeywords = loadedKeywordData.filter(k => k.found).length;
+      const score = loadedKeywordScore || Math.round((foundKeywords / loadedKeywordData.length) * 100);
+      
+      setKeywordData({
+        totalKeywords: loadedKeywordData.length,
+        foundKeywords,
+        overallDensity: foundKeywords > 0 ? 2.8 : 0,
+        overallScore: score,
+        keywords: loadedKeywordData
+      });
+      
+      // Notify parent about loaded state
+      onScoreChange?.(score);
+      onKeywordDataChange?.(loadedKeywordData);
+    }
+  }, [loadedKeywordData, loadedKeywordScore, onScoreChange, onKeywordDataChange]);
 
   // Zeige manuelle Eingabe automatisch, wenn keine Keywords gefunden wurden
   useEffect(() => {

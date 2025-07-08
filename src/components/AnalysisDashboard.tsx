@@ -404,6 +404,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 realData={realData}
                 onScoreChange={handleKeywordsScoreChange}
                 onKeywordDataChange={handleKeywordDataChange}
+                loadedKeywordData={manualKeywordData}
+                loadedKeywordScore={keywordsScore}
               />
               <LocalSEO businessData={businessData} />
               <ContentAnalysis url={businessData.url} industry={businessData.industry} />
