@@ -48,6 +48,15 @@ export const generateCustomerHTML = ({
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
+  console.log('=== EIGENE FIRMA SCORE DEBUG ===');
+  console.log('socialMediaScore:', socialMediaScore);
+  console.log('hourlyRateScore:', hourlyRateScore);
+  console.log('realData.seo.score:', realData.seo.score);
+  console.log('realData.performance.score:', realData.performance.score);
+  console.log('realData.mobile.overallScore:', realData.mobile.overallScore);
+  console.log('realData.reviews.google.count:', realData.reviews.google.count);
+  console.log('realData.reviews.google.rating:', realData.reviews.google.rating);
+  
   // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
     'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
@@ -634,10 +643,14 @@ export const generateCustomerHTML = ({
                   <span style="font-weight: bold;">${realData.reviews.google.rating}/5</span>
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
-                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                   <span style="font-weight: bold; font-size: 1.2em;">${calculateOverallScore(realData, hourlyRateScore, socialMediaScore)}</span>
-                   <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
-                 </td>
+                  <td style="padding: 12px; text-align: center; color: #fbbf24;">
+                    ${(() => {
+                      const finalScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
+                      console.log('EIGENE FIRMA - Final Overall Score:', finalScore);
+                      return `<span style="font-weight: bold; font-size: 1.2em;">${finalScore}</span>`;
+                    })()}
+                    <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
+                  </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
                 </td>
