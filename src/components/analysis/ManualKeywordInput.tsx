@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,13 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
 }) => {
   const [newKeyword, setNewKeyword] = useState('');
   const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>(currentKeywords || []);
+
+  // Update wenn sich currentKeywords ändern
+  useEffect(() => {
+    if (currentKeywords && currentKeywords.length > 0) {
+      setManualKeywords(currentKeywords);
+    }
+  }, [currentKeywords]);
 
   const addKeyword = () => {
     if (newKeyword.trim()) {
