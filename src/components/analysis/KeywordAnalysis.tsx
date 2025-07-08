@@ -248,6 +248,11 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             <ManualKeywordInput 
               onKeywordsUpdate={handleManualKeywordsUpdate}
               industry={industry}
+              currentKeywords={keywordData.keywords}
+              onSaveRequested={() => {
+                // Trigger parent save functionality
+                console.log('Save requested from KeywordAnalysis');
+              }}
             />
 
             {/* Empfehlungen */}

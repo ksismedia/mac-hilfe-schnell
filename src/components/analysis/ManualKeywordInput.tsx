@@ -10,11 +10,18 @@ import { Plus, X, Check } from 'lucide-react';
 interface ManualKeywordInputProps {
   onKeywordsUpdate: (keywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => void;
   industry: string;
+  currentKeywords?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  onSaveRequested?: () => void;
 }
 
-const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdate, industry }) => {
+const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ 
+  onKeywordsUpdate, 
+  industry, 
+  currentKeywords,
+  onSaveRequested 
+}) => {
   const [newKeyword, setNewKeyword] = useState('');
-  const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>([]);
+  const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>(currentKeywords || []);
 
   const addKeyword = () => {
     if (newKeyword.trim()) {
@@ -159,8 +166,8 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
               ))}
             </div>
             
-            {/* Daten übernehmen Button */}
-            <div className="flex justify-center pt-4">
+            {/* Daten übernehmen und Speichern Buttons */}
+            <div className="flex justify-center gap-3 pt-4">
               <Button 
                 onClick={applyData}
                 className="bg-green-600 hover:bg-green-700 text-white"
@@ -169,6 +176,18 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ onKeywordsUpdat
                 <Check className="h-4 w-4 mr-2" />
                 Daten übernehmen
               </Button>
+              {onSaveRequested && (
+                <Button 
+                  onClick={() => {
+                    applyData();
+                    setTimeout(() => onSaveRequested(), 100);
+                  }}
+                  variant="outline"
+                  size="lg"
+                >
+                  💾 Speichern
+                </Button>
+              )}
             </div>
           </div>
         )}
