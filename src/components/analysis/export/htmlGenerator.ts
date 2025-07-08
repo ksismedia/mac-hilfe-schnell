@@ -57,6 +57,11 @@ export const generateCustomerHTML = ({
   console.log('realData.reviews.google.count:', realData.reviews.google.count);
   console.log('realData.reviews.google.rating:', realData.reviews.google.rating);
   
+  const ownCompanyScore = calculateOverallScore(realData, hourlyRateScore, socialMediaScore);
+  console.log('=== BERECHNETER SCORE EIGENE FIRMA ===');
+  console.log('Calculated Own Company Score:', ownCompanyScore);
+  console.log('Expected Score: 83, Actual Score:', ownCompanyScore);
+  
   // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
     'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
@@ -644,7 +649,7 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                   <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                    <span style="font-weight: bold; font-size: 1.2em;">${calculateOverallScore(realData, hourlyRateScore, socialMediaScore)}</span>
+                    <span style="font-weight: bold; font-size: 1.2em;">${ownCompanyScore}</span>
                     <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
