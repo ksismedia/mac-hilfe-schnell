@@ -625,7 +625,7 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Ihre Services:</strong> ${expectedServices.length} Kernleistungen</p>
-              <p style="font-size: 0.9em; color: #22c55e;">${expectedServices.slice(0, 3).join(', ')}${expectedServices.length > 3 ? '...' : ''}</p>
+              <p style="font-size: 0.9em; color: #22c55e; word-wrap: break-word; line-height: 1.4;">${expectedServices.join(', ')}</p>
             </div>
             <div>
               <p><strong>Durchschnitt Wettbewerber:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => {
