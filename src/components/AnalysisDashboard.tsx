@@ -34,6 +34,8 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
+import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
+import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 import { calculateSocialMediaScore } from './analysis/export/scoreCalculations';
 import { calculateSimpleSocialScore } from './analysis/export/simpleSocialScore';
 
@@ -99,37 +101,86 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     addRemovedMissingService
   } = useManualData();
 
+  // Access saved analyses hook
+  const { loadAnalysis } = useSavedAnalyses();
+
   // Transform competitorServices for export components
   const transformedCompetitorServices = Object.keys(competitorServices).reduce((acc, key) => {
     acc[key] = competitorServices[key].services;
     return acc;
   }, {} as { [competitorName: string]: string[] });
 
-  // Load analysis data only once
+  // Load analysis data or load saved analysis
   useEffect(() => {
     const loadAnalysisData = async () => {
-      if (loadedAnalysisId || realData) return; // Skip if already loaded
+      console.log('=== LOAD ANALYSIS EFFECT ===');
+      console.log('loadedAnalysisId:', loadedAnalysisId);
+      console.log('realData exists:', !!realData);
       
-      console.log('Performing analysis for:', businessData);
-      setIsLoading(true);
+      // If we have a saved analysis to load
+      if (loadedAnalysisId && !realData) {
+        console.log('Loading saved analysis with ID:', loadedAnalysisId);
+        const savedAnalysis = loadAnalysis(loadedAnalysisId);
+        
+        if (savedAnalysis) {
+          console.log('Found saved analysis:', savedAnalysis);
+          
+          // Set the real data from saved analysis
+          setRealData(savedAnalysis.realData);
+          
+          // Load manual data using the loader utility  
+          loadSavedAnalysisData(
+            savedAnalysis,
+            updateImprintData,
+            updateSocialData,
+            updateWorkplaceData,
+            updateCompetitors,
+            updateCompetitorServices
+          );
+          
+          console.log('Saved analysis loaded successfully');
+          return;
+        } else {
+          console.error('Saved analysis not found for ID:', loadedAnalysisId);
+          toast({
+            title: "Fehler beim Laden",
+            description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
       
-      try {
-        const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-        setRealData(analysisData);
-      } catch (error) {
-        console.error('Analysis error:', error);
-        toast({
-          title: "Analysefehler",
-          description: "Die Website-Analyse konnte nicht durchgeführt werden.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
+      // If we already have data, skip
+      if (realData) {
+        console.log('Analysis data already loaded, skipping');
+        return;
+      }
+      
+      // If no saved analysis ID, perform new analysis
+      if (!loadedAnalysisId) {
+        console.log('Performing new analysis for:', businessData);
+        setIsLoading(true);
+        
+        try {
+          const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+          setRealData(analysisData);
+          console.log('New analysis completed successfully');
+        } catch (error) {
+          console.error('Analysis error:', error);
+          toast({
+            title: "Analysefehler",
+            description: "Die Website-Analyse konnte nicht durchgeführt werden.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
 
     loadAnalysisData();
-  }, [businessData, toast, loadedAnalysisId, realData]);
+  }, [businessData, toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
 
   if (isLoading) {
     return (

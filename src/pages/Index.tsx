@@ -146,11 +146,17 @@ const Index = () => {
   };
 
   const handleLoadSavedAnalysis = (analysis: any) => {
+    console.log('handleLoadSavedAnalysis called with:', analysis);
+    
     if (analysis.businessData) {
+      console.log('Setting business data:', analysis.businessData);
       setBusinessData(analysis.businessData);
     }
     
+    console.log('Setting loaded analysis ID:', analysis.id);
     setLoadedAnalysisId(analysis.id);
+    
+    console.log('Setting step to results');
     setStep('results');
     
     toast({
