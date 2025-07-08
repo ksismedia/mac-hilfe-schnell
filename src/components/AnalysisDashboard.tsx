@@ -28,6 +28,7 @@ import KeywordAnalysis from './analysis/KeywordAnalysis';
 import ManualCompetitorInput from './analysis/ManualCompetitorInput';
 import OverallRating from './analysis/OverallRating';
 import SocialMediaSimple from './analysis/SocialMediaSimple';
+import AccessibilityAnalysis from './analysis/AccessibilityAnalysis';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -390,6 +391,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
                 <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
                 <TabsTrigger value="legal">Legal</TabsTrigger>
+                <TabsTrigger value="accessibility">Barrierefreiheit</TabsTrigger>
                 <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
@@ -460,6 +462,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 onManualDataChange={updateImprintData}
               />
               <IndustryFeatures businessData={businessData} />
+            </TabsContent>
+
+            <TabsContent value="accessibility" className="space-y-6 mt-0">
+              <AccessibilityAnalysis 
+                businessData={businessData}
+                realData={realData}
+              />
             </TabsContent>
 
             <TabsContent value="workplace" className="space-y-6 mt-0">
