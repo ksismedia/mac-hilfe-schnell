@@ -635,7 +635,7 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                  <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                   <span style="font-weight: bold; font-size: 1.2em;">${calculateOverallScore(realData, hourlyRateScore, socialMediaScore)}</span>
+                   <span style="font-weight: bold; font-size: 1.2em;">${Math.round((realData.seo.score + realData.performance.score + (realData.reviews.google.count > 0 ? 80 : 40) + realData.mobile.overallScore + hourlyRateScore + socialMediaScore) / 6)}</span>
                    <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                  </td>
                 <td style="padding: 12px; text-align: center;">
