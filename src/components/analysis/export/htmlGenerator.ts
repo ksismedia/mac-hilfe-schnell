@@ -14,7 +14,7 @@ interface CustomerReportData {
   };
   realData: RealBusinessData;
   manualCompetitors?: ManualCompetitor[];
-  competitorServices?: { [competitorName: string]: string[] };
+  competitorServices?: { [competitorName: string]: { services: string[]; source: 'auto' | 'manual' } };
   companyServices?: { services: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements?: string[];
@@ -510,7 +510,7 @@ export const generateCustomerHTML = ({
                 
                 // Service score calculation
                 const competitorServiceList = competitorServices && competitorServices[competitor.name] 
-                  ? competitorServices[competitor.name] 
+                  ? competitorServices[competitor.name].services 
                   : competitor.services || [];
                 const serviceCount = competitorServiceList.length;
                 const serviceScore = Math.min(100, 30 + (serviceCount * 8)); // Base 30 + 8 per service, max 100
@@ -586,7 +586,7 @@ export const generateCustomerHTML = ({
             </div>
             <div>
               <p><strong>Durchschnitt Wettbewerber:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => {
-                const services = competitorServices && competitorServices[comp.name] ? competitorServices[comp.name] : comp.services || [];
+                const services = competitorServices && competitorServices[comp.name] ? competitorServices[comp.name].services : comp.services || [];
                 return acc + services.length;
               }, 0) / allCompetitors.length).toFixed(1) : '0'} Services</p>
               <p style="font-size: 0.9em; color: #9ca3af;">Pro Anbieter</p>

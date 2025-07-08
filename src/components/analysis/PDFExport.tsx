@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, CompanyServices } from '@/hooks/useManualData';
+import { ManualCompetitor, CompanyServices, CompetitorServices } from '@/hooks/useManualData';
 import HTMLExport from './HTMLExport';
 import CustomerHTMLExport from './CustomerHTMLExport';
 import HourlyRateInput from './HourlyRateInput';
@@ -17,7 +17,7 @@ interface PDFExportProps {
   manualImprintData?: any;
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
-  competitorServices?: { [competitorName: string]: string[] };
+  competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;

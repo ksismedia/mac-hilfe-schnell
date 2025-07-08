@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -18,7 +18,7 @@ interface CustomerHTMLExportProps {
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: any;
   manualCompetitors?: ManualCompetitor[];
-  competitorServices?: { [competitorName: string]: string[] };
+  competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
@@ -115,7 +115,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       businessData,
       realData,
       manualCompetitors,
-      competitorServices,
+      competitorServices: competitorServices || {},
       companyServices,
       hourlyRateData,
       missingImprintElements,

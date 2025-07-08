@@ -106,11 +106,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   // Access saved analyses hook
   const { loadAnalysis } = useSavedAnalyses();
 
-  // Transform competitorServices for export components
-  const transformedCompetitorServices = Object.keys(competitorServices).reduce((acc, key) => {
-    acc[key] = competitorServices[key].services;
-    return acc;
-  }, {} as { [competitorName: string]: string[] });
+  // No transformation needed - use competitorServices directly
 
   // Load analysis data or load saved analysis
   useEffect(() => {
@@ -497,7 +493,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
                   manualCompetitors={manualCompetitors}
-                  competitorServices={transformedCompetitorServices}
+                  competitorServices={competitorServices}
                   companyServices={companyServices}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
@@ -509,7 +505,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualSocialData={manualSocialData}
                   manualWorkplaceData={manualWorkplaceData}
                   manualCompetitors={manualCompetitors}
-                  competitorServices={transformedCompetitorServices}
+                  competitorServices={competitorServices}
                   companyServices={companyServices}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
@@ -520,7 +516,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
                   manualCompetitors={manualCompetitors}
-                  competitorServices={transformedCompetitorServices}
+                  competitorServices={competitorServices}
                   companyServices={companyServices}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}

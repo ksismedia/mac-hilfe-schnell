@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor } from '@/hooks/useManualData';
+import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
 import { FileText, Download, Printer } from 'lucide-react';
 import { getHTMLStyles } from './export/htmlStyles';
 
@@ -16,7 +16,7 @@ interface HTMLExportProps {
   manualImprintData?: any;
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
-  competitorServices?: { [competitorName: string]: string[] };
+  competitorServices?: CompetitorServices;
   companyServices?: { services: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
@@ -599,7 +599,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                                 ${competitorServices[competitor.name] ? `
                                     <p><strong>Services:</strong></p>
                                     <ul class="services-list">
-                                        ${competitorServices[competitor.name].map(service => `<li>${service}</li>`).join('')}
+                                        ${competitorServices[competitor.name].services.map(service => `<li>${service}</li>`).join('')}
                                     </ul>
                                 ` : ''}
                             </div>
