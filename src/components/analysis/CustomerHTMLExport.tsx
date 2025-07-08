@@ -21,6 +21,8 @@ interface CustomerHTMLExportProps {
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
   hourlyRateData?: { ownRate: number; regionAverage: number };
+  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  keywordScore?: number;
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -31,7 +33,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualWorkplaceData,
   manualCompetitors = [],
   competitorServices = {},
-  hourlyRateData
+  hourlyRateData,
+  manualKeywordData,
+  keywordScore
 }) => {
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -111,7 +115,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       hourlyRateData,
       missingImprintElements,
       manualSocialData, // Pass the manual social data to the HTML generator
-      manualWorkplaceData // Pass workplace data for Kununu/Glassdoor integration
+      manualWorkplaceData, // Pass workplace data for Kununu/Glassdoor integration
+      manualKeywordData, // Pass manual keyword data
+      keywordScore // Pass keyword score
     });
 
     const newWindow = window.open('', '_blank');

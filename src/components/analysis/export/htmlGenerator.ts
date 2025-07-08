@@ -18,6 +18,8 @@ interface CustomerReportData {
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
+  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  keywordScore?: number;
 }
 
 export const generateCustomerHTML = ({
@@ -28,7 +30,9 @@ export const generateCustomerHTML = ({
   hourlyRateData,
   missingImprintElements = [],
   manualSocialData,
-  manualWorkplaceData
+  manualWorkplaceData,
+  manualKeywordData,
+  keywordScore
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
@@ -58,6 +62,11 @@ export const generateCustomerHTML = ({
 
   // SEO Analysis - Enhanced
   const getSEOAnalysis = () => {
+    // Use manual keyword score if available, otherwise use SEO score
+    const effectiveKeywordScore = keywordScore !== undefined ? keywordScore : realData.seo.score;
+    const keywordData = manualKeywordData || realData.keywords;
+    const foundKeywords = keywordData.filter(k => k.found).length;
+    
     const seoScore = realData.seo.score;
     const scoreClass = seoScore >= 70 ? 'good' : 'warning';
 
@@ -82,18 +91,19 @@ export const generateCustomerHTML = ({
           <h4>🎯 Branchenrelevante Keywords</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
-              <p><strong>Hauptkeywords:</strong> ${businessData.industry === 'shk' ? 'Sanitär, Heizung, Klima' : businessData.industry === 'maler' ? 'Malerbetrieb, Fassade, Lackierung' : businessData.industry === 'elektriker' ? 'Elektriker, Installation, Reparatur' : businessData.industry === 'dachdecker' ? 'Dachdecker, Dachsanierung, Bedachung' : businessData.industry === 'stukateur' ? 'Stukateur, Putz, Trockenbau' : 'Planungsbüro, Architektur'}</p>
+              <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(30, seoScore * 0.8)}%"></div>
+                  <div class="progress-fill" style="width: ${effectiveKeywordScore}%"></div>
                 </div>
               </div>
+              <small style="color: #666;">Score: ${effectiveKeywordScore}%</small>
             </div>
             <div>
-              <p><strong>Long-Tail Keywords:</strong> ${seoScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(20, seoScore * 0.6)}%"></div>
+                  <div class="progress-fill" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%"></div>
                 </div>
               </div>
             </div>
@@ -101,11 +111,19 @@ export const generateCustomerHTML = ({
               <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${businessData.address ? Math.max(40, seoScore * 0.9) : 20}%"></div>
+                  <div class="progress-fill" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%"></div>
                 </div>
               </div>
             </div>
           </div>
+          ${manualKeywordData ? `
+          <div style="margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px;">
+            <h5 style="margin: 0 0 10px 0; color: #059669;">✅ Analysierte Keywords:</h5>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${keywordData.map(kw => `<span style="background: ${kw.found ? '#dcfce7' : '#fef2f2'}; color: ${kw.found ? '#059669' : '#dc2626'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${kw.keyword}${kw.found ? ' ✓' : ' ✗'}</span>`).join('')}
+            </div>
+          </div>
+          ` : ''}
         </div>
 
         <!-- Website-Struktur -->

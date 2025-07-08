@@ -68,11 +68,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
+  const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   
   const handleKeywordsScoreChange = (score: number | null) => {
     console.log('=== KEYWORDS SCORE CHANGE IN DASHBOARD ===');
     console.log('New score received:', score);
     setKeywordsScore(score);
+  };
+
+  const handleKeywordDataChange = (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
+    console.log('=== KEYWORD DATA CHANGE IN DASHBOARD ===');
+    console.log('New keyword data received:', keywordData);
+    setManualKeywordData(keywordData);
   };
   const { toast } = useToast();
 
@@ -325,6 +332,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 industry={businessData.industry} 
                 realData={realData}
                 onScoreChange={handleKeywordsScoreChange}
+                onKeywordDataChange={handleKeywordDataChange}
               />
               <LocalSEO businessData={businessData} />
               <ContentAnalysis url={businessData.url} industry={businessData.industry} />
@@ -425,6 +433,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualSocialData={manualSocialData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={transformedCompetitorServices}
+                  manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
                 />
               </div>
             </TabsContent>

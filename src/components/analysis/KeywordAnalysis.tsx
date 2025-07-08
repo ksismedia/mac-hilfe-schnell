@@ -12,9 +12,10 @@ interface KeywordAnalysisProps {
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   realData: RealBusinessData;
   onScoreChange?: (score: number | null) => void;
+  onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange }) => {
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange }) => {
   const [keywordData, setKeywordData] = useState(() => {
     const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
     return {
@@ -72,6 +73,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       console.log('Calling onScoreChange with:', newScore);
       // Notify parent about score change
       onScoreChange?.(newScore);
+      onKeywordDataChange?.(manualKeywords);
     } else {
       // Fallback zu ursprünglichen Daten
       const originalFoundKeywords = realData.keywords.filter(k => k.found).length;
@@ -88,6 +90,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       console.log('Resetting to original data, calling onScoreChange with null');
       // Notify parent about score change
       onScoreChange?.(null); // Reset to let parent use default
+      onKeywordDataChange?.(null); // Reset keyword data
     }
   };
 

@@ -19,6 +19,8 @@ interface PDFExportProps {
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  keywordScore?: number;
 }
 
 interface HourlyRateData {
@@ -32,7 +34,9 @@ const PDFExport: React.FC<PDFExportProps> = ({
   manualImprintData, 
   manualSocialData,
   manualCompetitors = [],
-  competitorServices = {}
+  competitorServices = {},
+  manualKeywordData,
+  keywordScore
 }) => {
   const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData>();
 
@@ -76,6 +80,8 @@ const PDFExport: React.FC<PDFExportProps> = ({
             manualCompetitors={manualCompetitors}
             competitorServices={competitorServices}
             hourlyRateData={hourlyRateData}
+            manualKeywordData={manualKeywordData}
+            keywordScore={keywordScore}
           />
         </CardContent>
       </Card>
