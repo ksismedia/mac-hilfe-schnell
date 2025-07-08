@@ -527,19 +527,38 @@ export const generateCustomerHTML = ({
                 <td style="padding: 12px; color: #fbbf24; font-size: 0.9em;">${expectedServices.join(', ')}</td>
               </tr>
               ${allCompetitors.map((competitor, index) => {
-                // Calculate estimated competitor score based on rating, review count and services
-                const reviewScore = competitor.reviews > 0 ? Math.min(80, 40 + (competitor.reviews / 10)) : 40;
+                console.log('Processing competitor:', competitor.name, 'services:', competitor.services);
+                
+                // Verwende die KORREKTE Score-Berechnung aus CompetitorAnalysis.tsx
                 const ratingScore = (competitor.rating / 5) * 100;
+                const reviewScore = Math.min(100, (competitor.reviews / 50) * 100);
                 
-                // Service score calculation
-                const competitorServiceList = competitorServices && competitorServices[competitor.name] 
-                  ? competitorServices[competitor.name].services 
-                  : competitor.services || [];
-                const serviceCount = competitorServiceList.length;
-                const serviceScore = Math.min(100, 30 + (serviceCount * 8)); // Base 30 + 8 per service, max 100
+                const services = Array.isArray(competitor.services) ? competitor.services : [];
+                const serviceCount = services.length;
+                const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
                 
-                // Combined score with services weighted
-                const estimatedScore = Math.round((ratingScore * 0.4 + reviewScore * 0.4 + serviceScore * 0.2));
+                const uniqueServices = services.filter((service: string) => 
+                  typeof service === 'string' && !expectedServices.some(ownService => 
+                    ownService.toLowerCase().includes(service.toLowerCase()) || 
+                    service.toLowerCase().includes(ownService.toLowerCase())
+                  )
+                );
+                
+                const uniqueServiceBonus = uniqueServices.length * 5;
+                const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+                
+                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35));
+                
+                console.log('Competitor score breakdown:', {
+                  name: competitor.name,
+                  rating: competitor.rating,
+                  reviews: competitor.reviews,
+                  services: services.length,
+                  ratingScore,
+                  reviewScore,
+                  finalServiceScore,
+                  estimatedScore
+                });
                 
                 return `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
@@ -553,6 +572,7 @@ export const generateCustomerHTML = ({
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">
                     <span style="font-weight: bold; color: ${estimatedScore >= 70 ? '#22c55e' : estimatedScore >= 50 ? '#eab308' : '#ef4444'};">${estimatedScore}</span>
                     <br><small style="color: #9ca3af;">${serviceCount} Services</small>
+                    <br><small style="color: #9ca3af;">${uniqueServices.length} Unique</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
                     <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
@@ -560,7 +580,7 @@ export const generateCustomerHTML = ({
                     </span>
                   </td>
                   <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
-                    ${competitorServiceList.length > 0 ? competitorServiceList.join(', ') : 'Nicht erfasst'}
+                    ${services.length > 0 ? services.join(', ') : 'Nicht erfasst'}
                   </td>
                 </tr>
                 `;
@@ -609,8 +629,7 @@ export const generateCustomerHTML = ({
             </div>
             <div>
               <p><strong>Durchschnitt Wettbewerber:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => {
-                const services = competitorServices && competitorServices[comp.name] ? competitorServices[comp.name].services : comp.services || [];
-                return acc + services.length;
+                return acc + comp.services.length;
               }, 0) / allCompetitors.length).toFixed(1) : '0'} Services</p>
               <p style="font-size: 0.9em; color: #9ca3af;">Pro Anbieter</p>
             </div>
