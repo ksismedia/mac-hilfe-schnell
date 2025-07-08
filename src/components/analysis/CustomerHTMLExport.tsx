@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -20,6 +19,7 @@ interface CustomerHTMLExportProps {
   manualWorkplaceData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  companyServices?: CompanyServices;
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
@@ -33,6 +33,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualWorkplaceData,
   manualCompetitors = [],
   competitorServices = {},
+  companyServices,
   hourlyRateData,
   manualKeywordData,
   keywordScore
@@ -115,6 +116,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       realData,
       manualCompetitors,
       competitorServices,
+      companyServices,
       hourlyRateData,
       missingImprintElements,
       manualSocialData, // Pass the manual social data to the HTML generator
@@ -173,6 +175,17 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               </ul>
             </div>
           </div>
+
+          {companyServices && companyServices.services.length > 0 && (
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-green-800 mb-2">✅ Unternehmensleistungen erfasst:</h4>
+              <div className="text-sm text-green-700 space-y-1">
+                <p>• <strong>{companyServices.services.length} Leistungen</strong> für die Konkurrenzanalyse berücksichtigt</p>
+                <p>• <strong>Präzise Bewertung:</strong> Vergleich basiert auf Ihren tatsächlichen Services</p>
+                <p>• <strong>Gap-Analyse:</strong> Identifikation fehlender Leistungen im Marktvergleich</p>
+              </div>
+            </div>
+          )}
 
           {getMissingImprintElements().length > 0 && (
             <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">

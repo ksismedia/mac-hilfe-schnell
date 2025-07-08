@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor } from '@/hooks/useManualData';
+import { ManualCompetitor, CompanyServices } from '@/hooks/useManualData';
 import HTMLExport from './HTMLExport';
 import CustomerHTMLExport from './CustomerHTMLExport';
 import HourlyRateInput from './HourlyRateInput';
@@ -19,6 +18,7 @@ interface PDFExportProps {
   manualSocialData?: any;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: { [competitorName: string]: string[] };
+  companyServices?: CompanyServices;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
 }
@@ -35,6 +35,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
   manualSocialData,
   manualCompetitors = [],
   competitorServices = {},
+  companyServices,
   manualKeywordData,
   keywordScore
 }) => {
@@ -79,6 +80,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
             manualSocialData={manualSocialData}
             manualCompetitors={manualCompetitors}
             competitorServices={competitorServices}
+            companyServices={companyServices}
             hourlyRateData={hourlyRateData}
             manualKeywordData={manualKeywordData}
             keywordScore={keywordScore}
@@ -105,6 +107,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
             manualSocialData={manualSocialData}
             manualCompetitors={manualCompetitors}
             competitorServices={competitorServices}
+            companyServices={companyServices}
             hourlyRateData={hourlyRateData}
           />
         </CardContent>

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AlertCircle, TrendingUp, Star, Users, Award, Target, MapPin, X } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
+import { ManualCompetitor, CompetitorServices, CompanyServices } from '@/hooks/useManualData';
+import CompanyServicesInput from './CompanyServicesInput';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -16,9 +17,11 @@ interface CompetitorAnalysisProps {
   manualCompetitors: ManualCompetitor[];
   competitorServices: CompetitorServices;
   removedMissingServices: string[];
+  companyServices: CompanyServices;
   onCompetitorsChange: (competitors: ManualCompetitor[]) => void;
   onCompetitorServicesChange: (name: string, services: string[]) => void;
   onRemovedMissingServicesChange: (service: string) => void;
+  onCompanyServicesChange: (services: string[]) => void;
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
@@ -28,9 +31,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   manualCompetitors,
   competitorServices,
   removedMissingServices,
+  companyServices,
   onCompetitorsChange,
   onCompetitorServicesChange,
-  onRemovedMissingServicesChange
+  onRemovedMissingServicesChange,
+  onCompanyServicesChange
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
@@ -49,7 +54,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     return industryServices[industry as keyof typeof industryServices] || [];
   };
 
-  const ownServices = getIndustryServices(industry);
+  // Verwende eigene Services statt Standard-Services
+  const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServices(industry);
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { rating: number; reviews: number; services: string[] }) => {
@@ -210,6 +216,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Eigene Unternehmensleistungen */}
+      <CompanyServicesInput
+        companyServices={companyServices}
+        onServicesChange={onCompanyServicesChange}
+        industry={industry}
+      />
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -223,6 +236,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
           </CardTitle>
           <CardDescription>
             Automatische Analyse des lokalen Wettbewerbs in {address} für {industry}
+            {companyServices.services.length > 0 && (
+              <span className="block mt-1 text-green-600">
+                ✅ {companyServices.services.length} eigene Leistungen erfasst
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

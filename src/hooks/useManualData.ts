@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 
 export interface ManualImprintData {
@@ -53,6 +54,11 @@ export interface ManualCompetitorData {
   removedMissingServices: string[];
 }
 
+export interface CompanyServices {
+  services: string[];
+  lastUpdated?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -60,6 +66,7 @@ export const useManualData = () => {
   const [manualCompetitors, setManualCompetitors] = useState<ManualCompetitor[]>([]);
   const [competitorServices, setCompetitorServices] = useState<CompetitorServices>({});
   const [removedMissingServices, setRemovedMissingServices] = useState<string[]>([]);
+  const [companyServices, setCompanyServices] = useState<CompanyServices>({ services: [] });
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -106,6 +113,14 @@ export const useManualData = () => {
     });
   }, []);
 
+  const updateCompanyServices = useCallback((services: string[]) => {
+    setCompanyServices({
+      services,
+      lastUpdated: new Date().toISOString()
+    });
+    console.log('Company Services Updated:', services);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -113,12 +128,14 @@ export const useManualData = () => {
     manualCompetitors,
     competitorServices,
     removedMissingServices,
+    companyServices,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
     updateCompetitors,
     updateCompetitorServices,
     updateRemovedMissingServices,
-    addRemovedMissingService
+    addRemovedMissingService,
+    updateCompanyServices
   };
 };
