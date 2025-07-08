@@ -69,8 +69,9 @@ body {
   margin-bottom: 30px; 
   border-radius: 16px; 
   box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(251, 191, 36, 0.3);
+  page-break-inside: avoid;
 }
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
@@ -258,10 +259,118 @@ body {
   font-weight: bold;
 }
 
+/* Safari PDF-Optimierungen */
+.score-overview {
+  page-break-inside: avoid;
+}
+
+.metric-card {
+  page-break-inside: avoid;
+  overflow: visible;
+}
+
+.competitor-item {
+  page-break-inside: avoid;
+}
+
+table {
+  page-break-inside: auto;
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+table tr {
+  page-break-inside: avoid;
+}
+
+.header {
+  page-break-after: avoid;
+}
+
+/* Print-spezifische Styles für bessere PDF-Darstellung */
 @media print {
-  body { background: #1a1a1a; color: #f5f5f5; }
-  .container { max-width: none; }
-  .section { box-shadow: none; border: 1px solid rgba(251, 191, 36, 0.5); }
-  .score-card { box-shadow: none; border: 1px solid rgba(251, 191, 36, 0.5); }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body { 
+    background: #1a1a1a !important; 
+    color: #f5f5f5 !important;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .container { 
+    max-width: none !important; 
+    margin: 0 !important;
+    padding: 10px !important;
+    width: 100% !important;
+  }
+  
+  .section { 
+    box-shadow: none !important; 
+    border: 1px solid rgba(251, 191, 36, 0.8) !important;
+    margin-bottom: 15px !important;
+    page-break-inside: avoid !important;
+    overflow: visible !important;
+  }
+  
+  .score-card { 
+    box-shadow: none !important; 
+    border: 1px solid rgba(251, 191, 36, 0.8) !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .section-header {
+    background: #fbbf24 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+  
+  .header h1 {
+    -webkit-text-fill-color: #fbbf24 !important;
+    background: none !important;
+    color: #fbbf24 !important;
+  }
+  
+  .score-big {
+    -webkit-text-fill-color: #fbbf24 !important;
+    background: none !important;
+    color: #fbbf24 !important;
+  }
+  
+  table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+  
+  table td, table th {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    padding: 8px 6px !important;
+    font-size: 10pt !important;
+    line-height: 1.2 !important;
+  }
+  
+  .progress-fill {
+    background: #22c55e !important;
+  }
+  
+  .recommendations {
+    page-break-inside: avoid !important;
+  }
+  
+  .score-display {
+    display: block !important;
+  }
+  
+  .score-circle {
+    display: inline-block !important;
+    margin-bottom: 10px !important;
+  }
 }
 `;
