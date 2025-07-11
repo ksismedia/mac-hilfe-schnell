@@ -122,7 +122,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualSocialData, // Pass the manual social data to the HTML generator
       manualWorkplaceData, // Pass workplace data for Kununu/Glassdoor integration
       manualKeywordData, // Pass manual keyword data
-      keywordScore // Pass keyword score
+      keywordScore, // Pass keyword score
+      manualImprintData, // Pass manual imprint data
+      dataPrivacyScore: 75 // Pass data privacy score
     });
 
     const newWindow = window.open('', '_blank');

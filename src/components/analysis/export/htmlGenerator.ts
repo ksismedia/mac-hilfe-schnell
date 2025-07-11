@@ -23,6 +23,8 @@ interface CustomerReportData {
   manualWorkplaceData?: ManualWorkplaceData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
+  manualImprintData?: { elements: string[] } | null;
+  dataPrivacyScore?: number;
 }
 
 export const generateCustomerHTML = ({
@@ -37,7 +39,9 @@ export const generateCustomerHTML = ({
   manualSocialData,
   manualWorkplaceData,
   manualKeywordData,
-  keywordScore
+  keywordScore,
+  manualImprintData,
+  dataPrivacyScore = 75
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
@@ -79,20 +83,49 @@ export const generateCustomerHTML = ({
     overall: ownCompanyScore
   });
 
-  // Impressum Analysis
-  const impressumScore = missingImprintElements.length === 0 ? 100 : Math.max(0, 100 - (missingImprintElements.length * 10));
+  // Impressum Analysis - berücksichtigt manuelle Eingaben
+  const requiredElements = [
+    'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
+    'Telefonnummer', 'E-Mail-Adresse', 'Handelsregisternummer', 'Steuernummer', 
+    'USt-IdNr.', 'Kammerzugehörigkeit', 'Berufsbezeichnung', 'Aufsichtsbehörde'
+  ];
+  
+  const finalMissingImprintElements = manualImprintData 
+    ? requiredElements.filter(e => !manualImprintData.elements.includes(e))
+    : missingImprintElements;
+    
+  const foundImprintElements = manualImprintData 
+    ? manualImprintData.elements
+    : requiredElements.filter(e => !missingImprintElements.includes(e));
+    
+  const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
+  
   console.log('Calculated impressumScore:', impressumScore);
-  console.log('missingImprintElements.length:', missingImprintElements.length);
+  console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
+  console.log('manualImprintData:', manualImprintData);
 
   const getMissingImprintList = () => {
-    if (missingImprintElements.length === 0) {
+    if (finalMissingImprintElements.length === 0) {
       return '<p>✅ Alle notwendigen Angaben im Impressum gefunden.</p>';
     } else {
       return `
         <ul>
-          ${missingImprintElements.map(element => `<li>❌ ${element}</li>`).join('')}
+          ${finalMissingImprintElements.map(element => `<li>❌ ${element}</li>`).join('')}
         </ul>
         <p>Es fehlen wichtige Angaben. Dies kann zu rechtlichen Problemen führen.</p>
+      `;
+    }
+  };
+  
+  const getFoundImprintList = () => {
+    if (foundImprintElements.length === 0) {
+      return '<p>❌ Keine Impressum-Angaben gefunden.</p>';
+    } else {
+      return `
+        <ul>
+          ${foundImprintElements.map(element => `<li>✅ ${element}</li>`).join('')}
+        </ul>
+        ${manualImprintData ? '<p><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
       `;
     }
   };
@@ -1594,7 +1627,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${impressumScore >= 70 ? 'green' : impressumScore >= 40 ? 'yellow' : 'red'}">${impressumScore}%</div>
             <div class="score-details">
               <p><strong>Impressum-Vollständigkeit:</strong> ${impressumScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
-              <p><strong>Fehlende Angaben:</strong> ${missingImprintElements ? missingImprintElements.length : 0}</p>
+              <p><strong>Fehlende Angaben:</strong> ${finalMissingImprintElements.length}</p>
               <p><strong>Rechtsstatus:</strong> ${impressumScore >= 70 ? 'Konform' : 'Risiko vorhanden'}</p>
             </div>
           </div>
@@ -1603,22 +1636,19 @@ export const generateCustomerHTML = ({
               <div class="progress-fill" style="width: ${impressumScore}%"></div>
             </div>
           </div>
-          ${missingImprintElements && missingImprintElements.length > 0 ? `
-            <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-              <h4>📋 Fehlende Impressum-Angaben:</h4>
-              <ul style="margin: 10px 0; color: #ef4444;">
-                ${missingImprintElements.map(element => `<li>${element}</li>`).join('')}
-              </ul>
+          <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+            <h4>✅ Gefundene Impressum-Angaben:</h4>
+            ${getFoundImprintList()}
+          </div>
+          ${finalMissingImprintElements.length > 0 ? `
+            <div style="margin-top: 15px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+              <h4>❌ Fehlende Impressum-Angaben:</h4>
+              ${getMissingImprintList()}
               <p style="font-size: 0.9em; color: #dc2626; margin-top: 10px;">
                 <strong>Risiko:</strong> Fehlende Impressum-Angaben können zu Abmahnungen und Bußgeldern führen.
               </p>
             </div>
-          ` : `
-            <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-              <h4>✅ Impressum-Status:</h4>
-              <p style="color: #22c55e; font-weight: bold;">Alle erforderlichen Angaben sind vorhanden.</p>
-            </div>
-          `}
+          ` : ''}
         </div>
       </div>
     </div>

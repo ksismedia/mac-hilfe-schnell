@@ -178,22 +178,25 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
 };
 
 export const calculateOverallScore = (
-  realData: RealBusinessData,
+  seoScore: number,
+  performanceScore: number,
+  mobileScore: number,
+  socialMediaScore: number,
+  impressumScore: number,
   hourlyRateScore: number,
-  socialMediaScore: number
+  dataPrivacyScore: number = 75
 ) => {
   const overallScore = Math.round(
-    (realData.seo.score + realData.performance.score + 
-     (realData.reviews.google.count > 0 ? 80 : 40) + 
-     realData.mobile.overallScore + hourlyRateScore + socialMediaScore) / 6
+    (seoScore + performanceScore + mobileScore + socialMediaScore + impressumScore + hourlyRateScore + dataPrivacyScore) / 7
   );
   console.log('Overall score calculation:', {
-    seo: realData.seo.score,
-    performance: realData.performance.score,
-    reviews: realData.reviews.google.count > 0 ? 80 : 40,
-    mobile: realData.mobile.overallScore,
-    hourlyRate: hourlyRateScore,
+    seo: seoScore,
+    performance: performanceScore,
+    mobile: mobileScore,
     socialMedia: socialMediaScore,
+    impressum: impressumScore,
+    hourlyRate: hourlyRateScore,
+    dataPrivacy: dataPrivacyScore,
     overall: overallScore
   });
   return overallScore;
