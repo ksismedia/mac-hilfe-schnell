@@ -11,7 +11,8 @@ export const generateHeaderSection = (
   performanceScore: number,
   mobileScore: number,
   hourlyRateScore: number,
-  socialMediaScore: number
+  socialMediaScore: number,
+  dataPrivacyScore: number = 75
 ) => `
         <!-- Header -->
         <div class="header">
@@ -47,6 +48,10 @@ export const generateHeaderSection = (
             <div class="score-card">
                 <div class="score-big">${socialMediaScore}</div>
                 <div class="score-label">Social Media</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${dataPrivacyScore}</div>
+                <div class="score-label">Datenschutz</div>
             </div>
         </div>
 `;
@@ -259,6 +264,89 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+`;
+
+export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
+        <!-- Datenschutz-Analyse -->
+        <div class="section">
+            <div class="section-header">🔒 Datenschutz & DSGVO-Compliance</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">DSGVO-Compliance</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">${dataPrivacyScore}/100 Punkte</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Datenschutz-Konformität</span>
+                                <span>${dataPrivacyScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${dataPrivacyScore < 60 ? 'warning' : ''}" style="width: ${dataPrivacyScore}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-title">Cookie-Compliance</div>
+                        <div class="metric-value ${dataPrivacyScore >= 70 ? 'good' : 'warning'}">
+                            ${dataPrivacyScore >= 70 ? 'Konform' : 'Nachbesserung nötig'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Cookie-Banner & Einstellungen</span>
+                                <span>${Math.min(100, dataPrivacyScore + 10)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">SSL/HTTPS</div>
+                        <div class="metric-value excellent">Vollständig verschlüsselt</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Datensicherheit</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Abmahn-Risiko</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">
+                            ${dataPrivacyScore >= 80 ? 'Sehr niedrig' : dataPrivacyScore >= 60 ? 'Niedrig' : dataPrivacyScore >= 40 ? 'Mittel' : 'Hoch'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Rechtssicherheit</span>
+                                <span>${dataPrivacyScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${dataPrivacyScore < 60 ? 'warning' : ''}" style="width: ${dataPrivacyScore}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${dataPrivacyScore < 70 ? `
+                <div class="recommendations">
+                    <h4>Empfehlungen zur Datenschutz-Verbesserung:</h4>
+                    <ul>
+                        <li>Überprüfung und Anpassung der Datenschutzerklärung</li>
+                        <li>Implementierung eines DSGVO-konformen Cookie-Banners</li>
+                        <li>Prüfung der Datenverarbeitungsverträge mit Dienstleistern</li>
+                        <li>Dokumentation der Verarbeitungstätigkeiten</li>
+                        <li>Sicherstellung der Betroffenenrechte</li>
+                    </ul>
+                </div>
+                ` : ''}
             </div>
         </div>
 `;
