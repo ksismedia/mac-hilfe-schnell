@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface AccessibilityAnalysisProps {
@@ -161,6 +161,54 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ businessD
     }
   };
 
+  // Abmahnungsrisiko bewerten
+  const getAbmahnungsrisiko = (score: number, violations: any[]) => {
+    const criticalViolations = violations.filter(v => v.impact === 'critical').length;
+    const seriousViolations = violations.filter(v => v.impact === 'serious').length;
+    
+    if (score < 50 || criticalViolations >= 3) {
+      return {
+        risk: 'hoch',
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-300',
+        message: 'Hohes Abmahnungsrisiko',
+        description: 'Mehrere schwerwiegende Verstöße gegen Barrierefreiheitsstandards vorhanden.',
+        recommendation: 'Sofortige Behebung der kritischen Probleme empfohlen.'
+      };
+    } else if (score < 70 || criticalViolations >= 1 || seriousViolations >= 3) {
+      return {
+        risk: 'mittel',
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-50',
+        borderColor: 'border-orange-300',
+        message: 'Mittleres Abmahnungsrisiko',
+        description: 'Einige Verstöße vorhanden, die zu rechtlichen Problemen führen könnten.',
+        recommendation: 'Behebung der Probleme innerhalb von 4-6 Wochen empfohlen.'
+      };
+    } else if (score < 90) {
+      return {
+        risk: 'niedrig',
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-300',
+        message: 'Niedriges Abmahnungsrisiko',
+        description: 'Grundlegende Standards erfüllt, aber Verbesserungen möglich.',
+        recommendation: 'Kontinuierliche Verbesserung zur Risikominimierung.'
+      };
+    } else {
+      return {
+        risk: 'sehr niedrig',
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+        borderColor: 'border-green-300',
+        message: 'Sehr niedriges Abmahnungsrisiko',
+        description: 'Hohe Barrierefreiheitsstandards erfüllt.',
+        recommendation: 'Regelmäßige Überprüfung zur Aufrechterhaltung des Standards.'
+      };
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -264,7 +312,61 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ businessD
                     <div className="text-xs text-yellow-500 mt-1">manuelle Kontrolle</div>
                   </CardContent>
                 </Card>
-              </div>
+               </div>
+
+              {/* Abmahnungsrisiko */}
+              {(() => {
+                const risikoAnalyse = getAbmahnungsrisiko(accessibilityData.score, accessibilityData.violations);
+                return (
+                  <Card className={`${risikoAnalyse.borderColor} ${risikoAnalyse.bgColor}`}>
+                    <CardHeader className="pb-4">
+                      <CardTitle className={`text-lg ${risikoAnalyse.color} flex items-center gap-2`}>
+                        <Scale className="h-5 w-5" />
+                        Rechtliche Bewertung - {risikoAnalyse.message}
+                      </CardTitle>
+                      <CardDescription>
+                        Einschätzung des Abmahnungsrisikos basierend auf aktuellen Barrierefreiheitsstandards
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Shield className={`h-5 w-5 ${risikoAnalyse.color} mt-0.5`} />
+                          <div>
+                            <p className="text-sm text-gray-700 mb-2">
+                              <strong>Bewertung:</strong> {risikoAnalyse.description}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-3">
+                              <strong>Empfehlung:</strong> {risikoAnalyse.recommendation}
+                            </p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                              <div className="space-y-2">
+                                <h5 className="font-semibold text-gray-800 text-sm">Rechtliche Grundlagen:</h5>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                  <li>• BGG (Behindertengleichstellungsgesetz)</li>
+                                  <li>• WCAG 2.1 Level AA Standard</li>
+                                  <li>• EU-Richtlinie 2016/2102</li>
+                                  <li>• Barrierefreie-Informationstechnik-Verordnung (BITV 2.0)</li>
+                                </ul>
+                              </div>
+                              <div className="space-y-2">
+                                <h5 className="font-semibold text-gray-800 text-sm">Mögliche Konsequenzen:</h5>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                  <li>• Abmahnungen durch Anwaltskanzleien</li>
+                                  <li>• Klagen von Betroffenen</li>
+                                  <li>• Bußgelder bei öffentlichen Stellen</li>
+                                  <li>• Reputationsschäden</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()}
 
               {/* Progress Bar */}
               <div>
