@@ -99,6 +99,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     onRestoreCompetitorChange(competitorName);
   };
 
+  // Eigenes Unternehmen für Vergleich
+  const ownCompany = {
+    name: realData.company.name,
+    rating: realData.reviews.google.rating,
+    reviews: realData.reviews.google.count,
+    services: ownServices,
+    source: 'own' as const,
+    location: 'Ihr Unternehmen'
+  };
+  const ownCompanyScore = calculateCompetitorScore(ownCompany);
+
   // Alle Konkurrenten zusammenführen
   const allCompetitors = [
     ...realData.competitors
@@ -266,33 +277,84 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Marktübersicht */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="border-blue-200">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-600">{allCompetitors.length}</div>
-                    <div className="text-sm text-gray-600">Wettbewerber</div>
-                  </CardContent>
-                </Card>
-                <Card className="border-yellow-200">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-yellow-600">{avgRating.toFixed(1)}</div>
-                    <div className="text-sm text-gray-600">Ø Bewertung</div>
-                  </CardContent>
-                </Card>
-                <Card className="border-purple-200">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-600">{Math.round(avgReviews)}</div>
-                    <div className="text-sm text-gray-600">Ø Rezensionen</div>
-                  </CardContent>
-                </Card>
-                <Card className="border-green-200">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-green-600">{Math.round(avgScore)}</div>
-                    <div className="text-sm text-gray-600">Ø Gesamtscore</div>
-                  </CardContent>
-                </Card>
-              </div>
+               {/* Eigenes Unternehmen */}
+               <Card className="border-yellow-400 bg-yellow-50">
+                 <CardHeader className="pb-3">
+                   <CardTitle className="text-lg text-yellow-700">
+                     <Award className="h-5 w-5 inline mr-2" />
+                     Ihr Unternehmen - {realData.company.name}
+                   </CardTitle>
+                   <CardDescription>
+                     Ihre aktuelle Marktposition im Wettbewerbsvergleich
+                   </CardDescription>
+                 </CardHeader>
+                 <CardContent>
+                   <div className="flex justify-between items-center">
+                     <div>
+                       <div className="flex items-center gap-4 text-sm">
+                         <div className="flex items-center gap-1">
+                           <Star className="h-4 w-4 fill-current text-yellow-500" />
+                           <span>{realData.reviews.google.rating.toFixed(1)}</span>
+                         </div>
+                         <div className="flex items-center gap-1">
+                           <Users className="h-4 w-4" />
+                           <span>{realData.reviews.google.count} Bewertungen</span>
+                         </div>
+                         <div className="flex items-center gap-1">
+                           <span>{ownServices.length} Services</span>
+                         </div>
+                       </div>
+                     </div>
+                     <div className="text-right">
+                       <div className={`text-2xl font-bold ${getScoreColor(ownCompanyScore)} mb-1`}>
+                         {ownCompanyScore}
+                       </div>
+                       <Badge variant={getScoreBadge(ownCompanyScore)} className="text-xs">
+                         Ihr Score
+                       </Badge>
+                     </div>
+                   </div>
+                   <div className="mt-3">
+                     <div className="flex justify-between text-sm mb-1">
+                       <span>Ihre Performance</span>
+                       <span className={getScoreColor(ownCompanyScore)}>{ownCompanyScore}/100</span>
+                     </div>
+                     <Progress value={ownCompanyScore} className="h-2" />
+                   </div>
+                   <div className="mt-3 text-sm text-gray-600">
+                     Position: {ownCompanyScore >= avgScore ? '✅ Über dem Durchschnitt' : '⚠️ Unter dem Durchschnitt'} 
+                     (Markt-Ø: {Math.round(avgScore)} Punkte)
+                   </div>
+                 </CardContent>
+               </Card>
+
+               {/* Marktübersicht */}
+               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                 <Card className="border-blue-200">
+                   <CardContent className="p-4 text-center">
+                     <div className="text-2xl font-bold text-blue-600">{allCompetitors.length}</div>
+                     <div className="text-sm text-gray-600">Wettbewerber</div>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-yellow-200">
+                   <CardContent className="p-4 text-center">
+                     <div className="text-2xl font-bold text-yellow-600">{avgRating.toFixed(1)}</div>
+                     <div className="text-sm text-gray-600">Ø Bewertung</div>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-purple-200">
+                   <CardContent className="p-4 text-center">
+                     <div className="text-2xl font-bold text-purple-600">{Math.round(avgReviews)}</div>
+                     <div className="text-sm text-gray-600">Ø Rezensionen</div>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-green-200">
+                   <CardContent className="p-4 text-center">
+                     <div className="text-2xl font-bold text-green-600">{Math.round(avgScore)}</div>
+                     <div className="text-sm text-gray-600">Ø Gesamtscore</div>
+                   </CardContent>
+                 </Card>
+               </div>
 
               {/* Service-Gap Analyse */}
               {missingServices.length > 0 && (
