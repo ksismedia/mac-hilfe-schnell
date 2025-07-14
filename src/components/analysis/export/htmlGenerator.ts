@@ -4,7 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateSocialMediaScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
@@ -50,7 +50,7 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received manualCompetitors:', manualCompetitors);
   
   // Calculate scores for own business including services
-  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
   // Use actual company services if available, otherwise fall back to industry defaults
