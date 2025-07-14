@@ -1674,7 +1674,7 @@ export const generateCustomerHTML = ({
             <div class="recommendations">
               <h4>🚀 Mittel (30 Tage)</h4>
               <ul>
-                ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen</li>' : ''}
+                ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (aktueller Score: ' + socialMediaScore + '%)</li>' : ''}
                 ${realData.seo.score < 70 ? '<li>SEO-Optimierung vorantreiben</li>' : ''}
                 <li>Content-Marketing-Strategie entwickeln</li>
               </ul>
