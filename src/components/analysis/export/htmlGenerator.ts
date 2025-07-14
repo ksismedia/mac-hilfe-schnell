@@ -5,6 +5,7 @@ import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateSocialMediaScore } from './scoreCalculations';
+import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
   businessData: {
@@ -1652,6 +1653,8 @@ export const generateCustomerHTML = ({
         </div>
       </div>
     </div>
+
+    ${generateDataPrivacySection(dataPrivacyScore)}
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
