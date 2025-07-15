@@ -808,6 +808,218 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     }
   };
 
+  const downloadHTMLReport = () => {
+    const overallScore = calculateOverallScore();
+    const visibilityScore = calculateVisibilityScore();
+    const performanceScore = realData.performance.score;
+    const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
+    const missingImprintElements = getMissingImprintElements();
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwerk Stars - Interne Analyse ${businessData.address}</title>
+    <style>${getHTMLStyles()}</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMTIgMTJoMTZ2NGgtMTZ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBoMTJ2NGgtMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhoOHY0aC04eiIgZmlsbD0id2hpdGUiLz4KPHN2Zz4K" alt="Handwerk Stars Logo" class="logo" />
+            </div>
+            <h1>Interne Digitale Analyse</h1>
+            <p class="subtitle">Technischer Report für ${businessData.address}</p>
+            <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
+                Erstellt am ${new Date().toLocaleDateString('de-DE')} | Handwerk Stars Internal
+            </p>
+        </div>
+
+        <section class="company-info">
+            <h2>${businessData.address}</h2>
+            <p><strong>URL:</strong> <a href="${businessData.url}" target="_blank">${businessData.url}</a></p>
+            <p><strong>Branche:</strong> ${businessData.industry}</p>
+        </section>
+
+        <section class="score-overview">
+            <div class="score-card">
+                <div class="score-big">${overallScore}</div>
+                <div class="score-label">Gesamtbewertung</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${visibilityScore}</div>
+                <div class="score-label">Sichtbarkeit</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${performanceScore}</div>
+                <div class="score-label">Performance</div>
+            </div>
+            <div class="score-card">
+                <div class="score-big">${enhancedSocialMediaScore}</div>
+                <div class="score-label">Social Media</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">📝 Content-Analyse</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Content-Score</div>
+                        <div class="metric-value">75</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Inhaltsqualität</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%" data-value="70"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">⚖️ Rechtliche Compliance</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Impressum-Status</div>
+                        <div class="metric-value">${manualImprintData?.found ? 'Vollständig' : 'Unvollständig'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Rechtssicherheit</span>
+                                <span>${impressumScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${impressumScore}%" data-value="${impressumScore}"></div>
+                            </div>
+                        </div>
+                        ${missingImprintElements.length > 0 ? `
+                            <div style="margin-top: 15px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
+                                <strong style="color: #dc2626;">⚠️ Fehlende Impressumsangaben:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px; color: #991b1b;">
+                                    ${missingImprintElements.map(element => `<li>${element}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">👥 Arbeitsplatz-Bewertung</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Arbeitgeber-Bewertung</div>
+                        <div class="metric-value">${workplaceKununuRating > 0 ? workplaceKununuRating.toFixed(1) + '/5.0' : 'Keine Daten'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Mitarbeiterzufriedenheit</span>
+                                <span>${workplaceScore}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${workplaceScore}%" data-value="${workplaceScore}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">📱 Social Media Präsenz</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Facebook</div>
+                        <div class="metric-value">${realData.socialMedia.facebook.found ? 'Aktiv' : 'Nicht gefunden'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Follower: ${realData.socialMedia.facebook.followers || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Instagram</div>
+                        <div class="metric-value">${realData.socialMedia.instagram.found ? 'Aktiv' : 'Nicht gefunden'}</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Follower: ${realData.socialMedia.instagram.followers || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">🔍 SEO & Performance</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">SEO Score</div>
+                        <div class="metric-value">${realData.seo.score}%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.seo.score}%" data-value="${realData.seo.score}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Performance</div>
+                        <div class="metric-value">${realData.performance.score}%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${realData.performance.score}%" data-value="${realData.performance.score}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">⭐ Bewertungen</div>
+            <div class="section-content">
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-title">Google Bewertungen</div>
+                        <div class="metric-value">${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(realData.reviews.google.rating / 5) * 100}%" data-value="${(realData.reviews.google.rating / 5) * 100}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; margin-top: 40px; color: #9ca3af; font-size: 0.9em;">
+            <p>© ${new Date().getFullYear()} Handwerk Stars - Interne Analyse | Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
+        </footer>
+    </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `handwerk-stars-analyse-${businessData.address?.replace(/\s+/g, '-').toLowerCase() || 'report'}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -820,10 +1032,16 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button onClick={generateInternalReport} className="bg-gray-800 hover:bg-gray-700 text-white">
-          <Download className="h-4 w-4 mr-2" />
-          Report generieren
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={generateInternalReport} className="bg-gray-800 hover:bg-gray-700 text-white">
+            <Printer className="h-4 w-4 mr-2" />
+            Im Browser öffnen
+          </Button>
+          <Button onClick={downloadHTMLReport} className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Download className="h-4 w-4 mr-2" />
+            Als HTML-Datei herunterladen
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
