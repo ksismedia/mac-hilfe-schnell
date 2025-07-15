@@ -236,7 +236,7 @@ export const generateCustomerHTML = ({
     const legalScore = impressumScore;
     return `
       <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
-        <h3>Impressum & Datenschutz</h3>
+        <h3>⚖️ Impressum & Rechtssicherheit</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
           <div class="score-details">
@@ -248,6 +248,48 @@ export const generateCustomerHTML = ({
           <div class="progress-bar">
             <div class="progress-fill" data-score="${getScoreRange(legalScore)}" style="width: ${legalScore}%"></div>
           </div>
+        </div>
+
+        <!-- Impressum-Details -->
+        <div style="margin-top: 20px;">
+          <h4 style="color: #1d4ed8; margin-bottom: 10px;">📋 Impressum-Analyse</h4>
+          
+          ${foundImprintElements.length > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <h5 style="color: #16a34a; margin-bottom: 8px;">✅ Vorhandene Angaben:</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+              ${foundImprintElements.map(element => `<li style="color: #16a34a; margin-bottom: 3px;">✅ ${element}</li>`).join('')}
+            </ul>
+            ${manualImprintData ? '<p style="font-size: 0.9em; color: #666; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
+          </div>
+          ` : ''}
+
+          ${finalMissingImprintElements.length > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <h5 style="color: #dc2626; margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+              ${finalMissingImprintElements.map(element => `<li style="color: #dc2626; margin-bottom: 3px;">❌ ${element}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+
+          ${legalScore < 80 ? `
+          <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+            <h5 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahngefahr bei unvollständigem Impressum</h5>
+            <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+              <strong>Rechtliche Risiken:</strong> Fehlende Impressum-Angaben können zu Abmahnungen führen.
+            </p>
+            <ul style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px; padding-left: 20px;">
+              <li>Bußgelder bis zu 50.000 Euro möglich</li>
+              <li>Abmahnungen durch Mitbewerber</li>
+              <li>Unterlassungsklagen</li>
+              <li>Schadensersatzforderungen</li>
+            </ul>
+            <p style="color: #dc2626; margin: 0; font-size: 14px;">
+              <strong>Empfehlung:</strong> Sofortige Vervollständigung des Impressums erforderlich.
+            </p>
+          </div>
+          ` : ''}
         </div>
       </div>
     `;
