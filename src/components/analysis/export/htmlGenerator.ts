@@ -1969,7 +1969,6 @@ export const generateCustomerHTML = ({
         
         <div id="reputation-details" style="display: none;">
           ${getReputationAnalysis()}
-          </div>
         </div>
       </div>
     </div>
