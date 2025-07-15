@@ -73,7 +73,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Optimierung</span>
-                                <button class="percentage-btn">${realData.seo.score}%</button>
+                                <button class="percentage-btn" data-score="${realData.seo.score <= 20 ? '0-20' : realData.seo.score <= 40 ? '20-40' : realData.seo.score <= 60 ? '40-60' : realData.seo.score <= 80 ? '60-80' : '80-100'}">${realData.seo.score}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%"></div>
@@ -87,7 +87,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Keyword-Abdeckung</span>
-                                <button class="percentage-btn">${keywordsScore}%</button>
+                                <button class="percentage-btn" data-score="${keywordsScore <= 20 ? '0-20' : keywordsScore <= 40 ? '20-40' : keywordsScore <= 60 ? '40-60' : keywordsScore <= 80 ? '60-80' : '80-100'}">${keywordsScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" style="width: ${keywordsScore}%"></div>
