@@ -52,7 +52,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ businessD
       // In einer echten Implementierung würde hier axe-core über einen Service laufen
       // Für die Demo erstelle ich realistische Test-Daten
       const mockResult: AccessibilityResult = {
-        score: 72,
+        score: 35, // Deutlich niedrigerer Score für strengere Bewertung
         violations: [
           {
             id: 'color-contrast',

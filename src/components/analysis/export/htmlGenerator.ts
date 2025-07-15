@@ -335,30 +335,58 @@ export const generateCustomerHTML = ({
             <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
-                <p><strong>EU-Richtlinie 2016/2102:</strong> ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}</p>
+                <p><strong>EU-Richtlinie 2016/2102:</strong> 
+                  <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  </span>
+                </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(Math.max(30, accessibilityScore))}" style="width: ${Math.max(30, accessibilityScore)}%"></div>
+                    <div class="progress-fill" data-score="${accessibilityScore >= 80 ? getScoreRange(accessibilityScore) : '0-20'}" style="width: ${Math.max(30, accessibilityScore)}%"></div>
                   </div>
                 </div>
               </div>
               <div>
-                <p><strong>WCAG 2.1 Level AA:</strong> ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}</p>
+                <p><strong>WCAG 2.1 Level AA:</strong> 
+                  <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
+                  </span>
+                </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(accessibilityScore)}" style="width: ${accessibilityScore}%"></div>
+                    <div class="progress-fill" data-score="${accessibilityScore >= 80 ? getScoreRange(accessibilityScore) : '0-20'}" style="width: ${accessibilityScore}%"></div>
                   </div>
                 </div>
               </div>
               <div>
-                <p><strong>BGG (Deutschland):</strong> ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}</p>
+                <p><strong>BGG (Deutschland):</strong> 
+                  <span style="color: ${accessibilityScore >= 70 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
+                  </span>
+                </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(Math.max(25, accessibilityScore * 0.9))}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
+                    <div class="progress-fill" data-score="${accessibilityScore >= 70 ? getScoreRange(Math.max(25, accessibilityScore * 0.9)) : '0-20'}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
                   </div>
                 </div>
               </div>
             </div>
+            
+            ${accessibilityScore < 70 ? `
+            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
+              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+                Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+              </p>
+              <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
+                Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
+              </p>
+              <p style="color: #dc2626; margin: 0; font-size: 14px;">
+                <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
+              </p>
+            </div>
+            ` : ''}
           </div>
         </div>
 
@@ -2082,22 +2110,46 @@ export const generateCustomerHTML = ({
             <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
-                <p><strong>EU-Richtlinie 2016/2102:</strong> Nicht erfüllt</p>
+                <p><strong>EU-Richtlinie 2016/2102:</strong> 
+                  <span style="color: ${calculateAccessibilityScore(realData) >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${calculateAccessibilityScore(realData) >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  </span>
+                </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(72)}" style="width: 72%"></div>
+                    <div class="progress-fill" data-score="${calculateAccessibilityScore(realData) >= 80 ? getScoreRange(calculateAccessibilityScore(realData)) : '0-20'}" style="width: ${calculateAccessibilityScore(realData)}%"></div>
                   </div>
                 </div>
               </div>
               <div>
-                <p><strong>WCAG 2.1 Level AA:</strong> Nicht konform</p>
+                <p><strong>WCAG 2.1 Level AA:</strong> 
+                  <span style="color: ${calculateAccessibilityScore(realData) >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${calculateAccessibilityScore(realData) >= 80 ? 'Konform' : 'Nicht konform'}
+                  </span>
+                </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(72)}" style="width: 72%"></div>
+                    <div class="progress-fill" data-score="${calculateAccessibilityScore(realData) >= 80 ? getScoreRange(calculateAccessibilityScore(realData)) : '0-20'}" style="width: ${calculateAccessibilityScore(realData)}%"></div>
                   </div>
                 </div>
               </div>
             </div>
+            
+            ${calculateAccessibilityScore(realData) < 70 ? `
+            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
+              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+                Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+              </p>
+              <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
+                Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
+              </p>
+              <p style="color: #dc2626; margin: 0; font-size: 14px;">
+                <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
+              </p>
+            </div>
+            ` : ''}
           </div>
         </div>
 

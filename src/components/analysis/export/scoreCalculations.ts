@@ -225,57 +225,51 @@ export const calculateBacklinksScore = (realData: RealBusinessData) => {
   return Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
 };
 
-// Berechnung für Accessibility Score - STRENGE BEWERTUNG
+// Berechnung für Accessibility Score - SEHR STRENGE BEWERTUNG
 export const calculateAccessibilityScore = (realData: RealBusinessData) => {
-  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET ===');
+  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET (SEHR STRENG) ===');
   
-  // Basis-Score aus vorhandenen Daten ableiten
-  let baseScore = 72; // Standardwert für Demo
-  
-  // Kritische Faktoren für rechtliche Compliance
-  const criticalViolations = [
-    'color-contrast',
-    'image-alt', 
-    'heading-order',
-    'label',
-    'keyboard-focus'
-  ];
+  // VIEL STRENGERE BEWERTUNG - Rechtliche Compliance hat Priorität
+  let complianceScore = 45; // Deutlich niedrigerer Startwert
   
   // Simuliere Violation-Detektion basierend auf SEO-Qualität
   const hasImageAltIssues = !realData.seo.metaDescription || realData.seo.metaDescription.length < 50;
   const hasHeadingIssues = realData.seo.headings.h1.length === 0 || realData.seo.headings.h2.length === 0;
   const hasContrastIssues = realData.seo.score < 60; // Indikator für schlechte Webqualität
   
-  // STRENGE BEWERTUNG - Rechtliche Compliance
-  let complianceScore = 100;
-  
-  // Kritische Verstöße führen zu drastischen Abzügen
+  // SEHR STRENGE BEWERTUNG - Jeder Verstoß führt zu drastischen Abzügen
   if (hasImageAltIssues) {
-    complianceScore -= 40; // Fehlende Alt-Texte = kritischer Verstoß
-    console.log('Kritischer Verstoß: Fehlende/schlechte Alt-Texte -> -40');
+    complianceScore -= 25; // Fehlende Alt-Texte = kritischer Verstoß
+    console.log('Kritischer Verstoß: Fehlende/schlechte Alt-Texte -> -25');
   }
   
   if (hasHeadingIssues) {
-    complianceScore -= 30; // Schlechte Heading-Struktur
-    console.log('Kritischer Verstoß: Schlechte Heading-Struktur -> -30');
+    complianceScore -= 20; // Schlechte Heading-Struktur
+    console.log('Kritischer Verstoß: Schlechte Heading-Struktur -> -20');
   }
   
   if (hasContrastIssues) {
-    complianceScore -= 35; // Kontrast-Probleme
-    console.log('Kritischer Verstoß: Potentielle Kontrast-Probleme -> -35');
+    complianceScore -= 25; // Kontrast-Probleme
+    console.log('Kritischer Verstoß: Potentielle Kontrast-Probleme -> -25');
   }
   
   // Zusätzliche Abzüge für schlechte allgemeine Webqualität
   if (realData.seo.score < 40) {
-    complianceScore -= 20; // Sehr schlechte Webqualität
-    console.log('Zusätzlicher Abzug: Sehr schlechte Webqualität -> -20');
+    complianceScore -= 15; // Sehr schlechte Webqualität
+    console.log('Zusätzlicher Abzug: Sehr schlechte Webqualität -> -15');
+  }
+  
+  // Weitere Abzüge für fehlende SEO-Grundlagen
+  if (!realData.seo.titleTag || realData.seo.titleTag.length < 30) {
+    complianceScore -= 10; // Schlechter Titel deutet auf schlechte Barrierefreiheit hin
+    console.log('Zusätzlicher Abzug: Schlechter/fehlender Titel -> -10');
   }
   
   // Finaler Score - minimum 0, maximum 100
   const finalScore = Math.max(0, Math.min(100, complianceScore));
   
-  console.log('=== ACCESSIBILITY SCORE ERGEBNIS ===');
-  console.log(`Basis-Score: ${baseScore}`);
+  console.log('=== ACCESSIBILITY SCORE ERGEBNIS (SEHR STRENG) ===');
+  console.log(`Startwert: 45`);
   console.log(`Compliance-Score: ${complianceScore}`);
   console.log(`Finaler Score: ${finalScore}`);
   console.log(`Rechtliche Compliance: ${finalScore >= 80 ? 'ERFÜLLT' : finalScore >= 60 ? 'TEILWEISE' : 'NICHT ERFÜLLT'}`);
