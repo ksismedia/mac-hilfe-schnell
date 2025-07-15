@@ -1691,10 +1691,10 @@ export const generateCustomerHTML = ({
       <div class="section-header">🎯 Strategische Empfehlungen</div>
       <div class="section-content">
         <div class="metric-card good">
-          <h3>Prioritäten für die nächsten 90 Tage</h3>
+          <h3>Prioritäten für die Umsetzung</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
             <div class="recommendations">
-              <h4>🔥 Hoch (Sofort)</h4>
+              <h4>🔥 Kurzfristig</h4>
               <ul>
                 ${impressumScore < 70 ? '<li>Impressum vervollständigen</li>' : ''}
                 ${realData.performance.score < 60 ? '<li>Website-Performance optimieren</li>' : ''}
@@ -1702,7 +1702,7 @@ export const generateCustomerHTML = ({
               </ul>
             </div>
             <div class="recommendations">
-              <h4>🚀 Mittel (30 Tage)</h4>
+              <h4>🚀 Mittelfristig</h4>
               <ul>
                 ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (aktueller Score: ' + socialMediaScore + '%)</li>' : ''}
                 ${realData.seo.score < 70 ? '<li>SEO-Optimierung vorantreiben</li>' : ''}
@@ -1710,7 +1710,7 @@ export const generateCustomerHTML = ({
               </ul>
             </div>
             <div class="recommendations">
-              <h4>📈 Niedrig (90 Tage)</h4>
+              <h4>📈 Langfristig</h4>
               <ul>
                 <li>Backlink-Strategie implementieren</li>
                 <li>Employer Branding stärken</li>
