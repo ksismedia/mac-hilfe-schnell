@@ -1402,7 +1402,7 @@ export const generateCustomerHTML = ({
 
     <!-- Content-Qualität -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">▶ 📝 Content-Qualität</div>
+      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">▶ Content-Qualität</div>
       <div id="content-content" class="section-content" style="display: none;">
         
         <!-- Keywords Analyse -->
@@ -1576,7 +1576,7 @@ export const generateCustomerHTML = ({
 
     <!-- Backlinks Übersicht -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">▶ 🔗 Backlinks Übersicht</div>
+      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">▶ Backlinks Übersicht</div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
           <h3>Backlink-Profil</h3>
@@ -2145,7 +2145,7 @@ export const generateCustomerHTML = ({
 
     <!-- Wettbewerbsanalyse -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('competitor-content')" style="cursor: pointer;">▶ 👥 Wettbewerbsanalyse & Marktumfeld</div>
+      <div class="section-header collapsible" onclick="toggleSection('competitor-content')" style="cursor: pointer;">▶ Wettbewerbsanalyse & Marktumfeld</div>
       <div id="competitor-content" class="section-content" style="display: none;">
         ${getCompetitorAnalysis()}
       </div>
