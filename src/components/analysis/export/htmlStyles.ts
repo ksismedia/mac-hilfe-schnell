@@ -103,11 +103,11 @@ body {
   font-weight: bold; 
   flex-shrink: 0;
 }
-.score-circle.green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
-.score-circle.yellow { background: linear-gradient(135deg, #FFD700, #DAA520); color: black; }
-.score-circle.orange { background: linear-gradient(135deg, #FF4500, #FF6347); color: white; }
-.score-circle.red { background: linear-gradient(135deg, #FF0000, #CD0000); color: white; }
-.score-circle.dark-red { background: linear-gradient(135deg, #CD0000, #8B0000); color: white; }
+.score-circle.green { background: #22c55e; color: white; }
+.score-circle.yellow { background: #FFD700; color: black; }
+.score-circle.orange { background: #FF4500; color: white; }
+.score-circle.red { background: #FF0000; color: white; }
+.score-circle.dark-red { background: #CD0000; color: white; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
@@ -323,9 +323,11 @@ table tr {
     line-height: 1.2 !important;
   }
   
-  .progress-fill {
-    background: #22c55e !important;
-  }
+  .progress-fill[data-score="0-20"] { background: #CD0000 !important; }
+  .progress-fill[data-score="20-40"] { background: #FF0000 !important; }
+  .progress-fill[data-score="40-60"] { background: #FF4500 !important; }
+  .progress-fill[data-score="60-80"] { background: #22c55e !important; }
+  .progress-fill[data-score="80-100"] { background: #FFD700 !important; }
   
   .recommendations {
     page-break-inside: avoid !important;
