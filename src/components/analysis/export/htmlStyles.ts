@@ -1,6 +1,6 @@
 
 export const getHTMLStyles = () => `
-* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; overflow-x: hidden; }
 .collapsible { 
   transition: all 0.3s ease; 
   user-select: none;
@@ -17,17 +17,17 @@ body {
   color: #f5f5f5; 
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   width: 100vw;
-  max-width: 100%;
+  max-width: 100vw;
 }
 .container { 
   max-width: 1200px; 
   margin: 0 auto; 
   padding: 20px; 
   box-sizing: border-box; 
-  width: 100%; 
-  overflow-x: hidden;
+  width: calc(100% - 40px);
+  overflow-x: hidden !important;
 }
 .header { 
   text-align: center; 
@@ -37,6 +37,8 @@ body {
   border-radius: 20px; 
   box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
   border: 1px solid rgba(251, 191, 36, 0.3);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .header h1 { 
   color: #fbbf24; 
@@ -65,6 +67,8 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
   gap: 25px; 
   margin-bottom: 40px; 
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
@@ -74,6 +78,8 @@ body {
   text-align: center;
   transition: transform 0.3s ease;
   border: 1px solid rgba(251, 191, 36, 0.3);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
@@ -90,13 +96,13 @@ body {
   margin-bottom: 30px; 
   border-radius: 16px; 
   box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-  overflow: hidden;
+  overflow: hidden !important;
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  contain: layout style;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  contain: layout style !important;
   position: relative;
 }
 .section-header { 
@@ -105,6 +111,8 @@ body {
   padding: 25px 30px; 
   font-size: 1.5em; 
   font-weight: 700;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .header-score-circle {
   display: inline-flex;
@@ -127,11 +135,11 @@ body {
 .header-score-circle.dark-red { background: #dc2626; }
 .section-content { 
   padding: 30px; 
-  max-width: 100%;
-  overflow-x: hidden;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
   word-wrap: break-word;
-  box-sizing: border-box;
-  contain: layout style;
+  box-sizing: border-box !important;
+  contain: layout style !important;
   position: relative;
 }
 .metric-card { 
@@ -141,9 +149,9 @@ body {
   border-left: 5px solid #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.2);
   margin-bottom: 20px;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
   word-wrap: break-word;
   position: relative;
 }
