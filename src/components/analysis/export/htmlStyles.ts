@@ -1,5 +1,7 @@
 
-export const getHTMLStyles = () => `
+export const getHTMLStyles = () => {
+  console.log('CSS Styles being applied');
+  return `
 html, body, * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; overflow-x: hidden; }
 .collapsible { 
   transition: all 0.3s ease; 
@@ -28,6 +30,7 @@ body {
   box-sizing: border-box; 
   width: calc(100% - 40px);
   overflow-x: hidden !important;
+  position: relative;
 }
 .header { 
   text-align: center; 
@@ -100,7 +103,6 @@ body {
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
   max-width: 100% !important;
-  width: 100% !important;
   box-sizing: border-box !important;
   contain: layout style !important;
   position: relative;
@@ -418,3 +420,4 @@ table tr {
   }
 }
 `;
+};

@@ -1124,6 +1124,7 @@ export const generateCustomerHTML = ({
   };
 
   // Generate the comprehensive HTML report
+  console.log('Generating HTML report with container structure');
   return `<!DOCTYPE html>
 <html lang="de">
 <head>
