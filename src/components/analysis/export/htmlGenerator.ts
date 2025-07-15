@@ -1114,7 +1114,10 @@ export const generateCustomerHTML = ({
 
     <!-- Website Performance -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('performance-content')" style="cursor: pointer;">▼ 🚀 Website Performance</div>
+      <div class="section-header collapsible" onclick="toggleSection('performance-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 🚀 Website Performance</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+      </div>
       <div id="performance-content" class="section-content">
         ${getPerformanceAnalysis()}
         
@@ -1182,7 +1185,10 @@ export const generateCustomerHTML = ({
 
     <!-- SEO Optimierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('seo-content')" style="cursor: pointer;">▼ 🔎 SEO Optimierung</div>
+      <div class="section-header collapsible" onclick="toggleSection('seo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 🔎 SEO Optimierung</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+      </div>
       <div id="seo-content" class="section-content">
         ${getSEOAnalysis()}
         <div class="metric-card good" style="margin-top: 20px;">
@@ -1430,7 +1436,10 @@ export const generateCustomerHTML = ({
 
     <!-- Mobile Optimierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('mobile-content')" style="cursor: pointer;">▼ 📱 Mobile Optimierung</div>
+      <div class="section-header collapsible" onclick="toggleSection('mobile-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 📱 Mobile Optimierung</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
+      </div>
       <div id="mobile-content" class="section-content">
         ${getMobileOptimizationAnalysis()}
       </div>
@@ -1438,7 +1447,10 @@ export const generateCustomerHTML = ({
 
     <!-- Arbeitsplatz-Reputation -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('workplace-content')" style="cursor: pointer;">▼ 👥 Arbeitsplatz-Reputation</div>
+      <div class="section-header collapsible" onclick="toggleSection('workplace-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 👥 Arbeitsplatz-Reputation</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+      </div>
       <div id="workplace-content" class="section-content">
         <div class="metric-card warning">
           <h3>💼 Arbeitgeber-Bewertung</h3>
@@ -1569,7 +1581,10 @@ export const generateCustomerHTML = ({
 
     <!-- Social Media Präsenz -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('social-content')" style="cursor: pointer;">▼ 📱 Social Media Präsenz</div>
+      <div class="section-header collapsible" onclick="toggleSection('social-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 📱 Social Media Präsenz</span>
+        <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+      </div>
       <div id="social-content" class="section-content">
         ${getSocialMediaAnalysis()}
       </div>
@@ -1577,7 +1592,10 @@ export const generateCustomerHTML = ({
 
     <!-- Online Reputation -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('reputation-content')" style="cursor: pointer;">▼ ⭐ Online Reputation</div>
+      <div class="section-header collapsible" onclick="toggleSection('reputation-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ ⭐ Online Reputation</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
+      </div>
       <div id="reputation-content" class="section-content">
         <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
           <h3>Google Bewertungen</h3>
@@ -1611,7 +1629,10 @@ export const generateCustomerHTML = ({
 
     <!-- Barrierefreiheit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('accessibility-content')" style="cursor: pointer;">▼ ♿ Barrierefreiheit & Zugänglichkeit</div>
+      <div class="section-header collapsible" onclick="toggleSection('accessibility-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ ♿ Barrierefreiheit & Zugänglichkeit</span>
+        <div class="header-score-circle ${getScoreColorClass(70)}">70%</div>
+      </div>
       <div id="accessibility-content" class="section-content">
         ${getAccessibilityAnalysis()}
       </div>
@@ -1628,7 +1649,10 @@ export const generateCustomerHTML = ({
     ${hourlyRateData ? `
     <!-- Preispositionierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('pricing-content')" style="cursor: pointer;">▼ 💰 Preispositionierung</div>
+      <div class="section-header collapsible" onclick="toggleSection('pricing-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 💰 Preispositionierung</span>
+        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
+      </div>
       <div id="pricing-content" class="section-content">
         <div class="metric-card good">
           <h3>Stundensatz-Analyse</h3>
@@ -1663,7 +1687,10 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('legal-content')" style="cursor: pointer;">▼ 📜 Rechtssicherheit</div>
+      <div class="section-header collapsible" onclick="toggleSection('legal-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▼ 📜 Rechtssicherheit</span>
+        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+      </div>
       <div id="legal-content" class="section-content">
         <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
           <h3>Impressum & Datenschutz</h3>

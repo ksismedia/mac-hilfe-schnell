@@ -91,6 +91,25 @@ body {
   font-size: 1.5em; 
   font-weight: 700;
 }
+.header-score-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 0.9em;
+  font-weight: 700;
+  color: #000000;
+  margin-left: auto;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.header-score-circle.yellow { background: #fbbf24; }
+.header-score-circle.green { background: #22c55e; }
+.header-score-circle.orange { background: #f59e0b; }
+.header-score-circle.red { background: #ef4444; }
+.header-score-circle.dark-red { background: #dc2626; }
 .section-content { padding: 30px; }
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
