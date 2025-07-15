@@ -17,6 +17,7 @@ body {
   color: #f5f5f5; 
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 .container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 .header { 
@@ -286,6 +287,8 @@ table {
   page-break-inside: auto;
   width: 100% !important;
   table-layout: fixed;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 table tr {
