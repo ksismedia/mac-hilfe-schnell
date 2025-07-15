@@ -1992,6 +1992,60 @@ export const generateCustomerHTML = ({
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
         ${getSocialMediaAnalysis()}
+        
+        <!-- Social Media Detailanalyse -->
+        <div class="collapsible" onclick="toggleSection('social-platforms-details')" style="cursor: pointer; margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          <h4 style="color: #8b5cf6; margin: 0;">▶ Platform-spezifische Analyse</h4>
+        </div>
+        
+        <div id="social-platforms-details" style="display: none;">
+          <div style="margin-top: 15px;">
+            ${manualSocialData && manualSocialData.facebookUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>📘 Facebook</h3>
+                <p><strong>Follower:</strong> ${manualSocialData.facebookFollowers || 'Nicht verfügbar'}</p>
+                <p><strong>Letzter Post:</strong> ${manualSocialData.facebookLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+            
+            ${manualSocialData && manualSocialData.instagramUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>📷 Instagram</h3>
+                <p><strong>Follower:</strong> ${manualSocialData.instagramFollowers || 'Nicht verfügbar'}</p>
+                <p><strong>Letzter Post:</strong> ${manualSocialData.instagramLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+            
+            ${manualSocialData && manualSocialData.linkedinUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>💼 LinkedIn</h3>
+                <p><strong>Follower:</strong> ${manualSocialData.linkedinFollowers || 'Nicht verfügbar'}</p>
+                <p><strong>Letzter Post:</strong> ${manualSocialData.linkedinLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+            
+            ${manualSocialData && manualSocialData.twitterUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>🐦 Twitter</h3>
+                <p><strong>Follower:</strong> ${manualSocialData.twitterFollowers || 'Nicht verfügbar'}</p>
+                <p><strong>Letzter Post:</strong> ${manualSocialData.twitterLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+            
+            ${manualSocialData && manualSocialData.youtubeUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>📺 YouTube</h3>
+                <p><strong>Abonnenten:</strong> ${manualSocialData.youtubeSubscribers || 'Nicht verfügbar'}</p>
+                <p><strong>Letztes Video:</strong> ${manualSocialData.youtubeLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
       </div>
     </div>
 

@@ -18,7 +18,7 @@ body {
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
   min-height: 100vh;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 .header { 
   text-align: center; 
   margin-bottom: 40px; 
@@ -85,6 +85,7 @@ body {
   page-break-inside: avoid;
   max-width: 100%;
   width: 100%;
+  box-sizing: border-box;
 }
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
@@ -115,9 +116,10 @@ body {
 .section-content { 
   padding: 30px; 
   max-width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   word-wrap: break-word;
   box-sizing: border-box;
+  contain: layout;
 }
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
@@ -126,6 +128,9 @@ body {
   border-left: 5px solid #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.2);
   margin-bottom: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
