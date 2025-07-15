@@ -316,7 +316,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
+        <h3>♿ Barrierefreiheit & Zugänglichkeit ${accessibilityScore}%</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
@@ -335,8 +335,8 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- WCAG-Analyse -->
-        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
+        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: #FF8C00; border-radius: 8px; border: 1px solid #FF8C00;">
+          <h4 style="color: white; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
         </div>
         
         <div id="wcag-details" style="display: none;">
