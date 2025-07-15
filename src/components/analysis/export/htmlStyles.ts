@@ -59,10 +59,10 @@ body {
 .score-big { 
   font-size: 3.5em; 
   font-weight: bold; 
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   margin-bottom: 10px;
+}
+.score-big span { 
+  /* Inline-Farben haben Vorrang */
 }
 .score-label { color: #d1d5db; font-weight: 600; font-size: 1.1em; }
 .section { 
@@ -303,9 +303,11 @@ table tr {
   }
   
   .score-big {
-    -webkit-text-fill-color: #fbbf24 !important;
     background: none !important;
-    color: #fbbf24 !important;
+  }
+  
+  .score-big span {
+    /* Inline-Farben bleiben bestehen */
   }
   
   table {
