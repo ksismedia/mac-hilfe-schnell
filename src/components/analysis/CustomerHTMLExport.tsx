@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices } from '@/hooks/useManualData';
-import { FileText, Users, ChartBar } from 'lucide-react';
+import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 
@@ -134,6 +134,45 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     }
   };
 
+  const downloadCustomerReport = () => {
+    const missingImprintElements = getMissingImprintElements();
+    
+    // Social Media Score für Customer Report berechnen
+    const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+    console.log('Customer Report Download - Social Media Score:', socialMediaScore);
+    console.log('Customer Report Download - Manual Social Data being passed:', manualSocialData);
+    
+    console.log('Passing missingImprintElements to HTML generator for download:', missingImprintElements);
+    
+    const htmlContent = generateCustomerHTML({
+      businessData,
+      realData,
+      manualCompetitors,
+      competitorServices: competitorServices || {},
+      companyServices,
+      deletedCompetitors,
+      hourlyRateData,
+      missingImprintElements,
+      manualSocialData, // Pass the manual social data to the HTML generator
+      manualWorkplaceData, // Pass workplace data for Kununu/Glassdoor integration
+      manualKeywordData, // Pass manual keyword data
+      keywordScore, // Pass keyword score
+      manualImprintData, // Pass manual imprint data
+      dataPrivacyScore: 75 // Pass data privacy score
+    });
+
+    // Create and download the HTML file
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Social-Listening-Report-${businessData.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const missingElements = getMissingImprintElements();
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const hasSocialData = Boolean(manualSocialData && (
@@ -206,7 +245,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
-              Social Listening und Monitoring Report generieren
+              Social Listening Report im Browser öffnen
+            </Button>
+            <Button 
+              onClick={downloadCustomerReport}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            >
+              <Download className="h-4 w-4" />
+              Als HTML-Datei herunterladen
             </Button>
             <Button 
               variant="outline"
