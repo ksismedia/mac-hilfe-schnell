@@ -1123,8 +1123,16 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Base64 encoded Handwerkstars logo for standalone HTML files
-  const handwerkstarsLogoBase64 = "data:image/png;base64,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";
+  // CSS-based logo for standalone HTML files
+  const createCSSLogo = () => `
+    <div style="display: inline-block; padding: 15px 20px; background: #1f2937; border-radius: 8px; text-align: center; border: 2px solid #fbbf24;">
+      <div style="color: #fbbf24; font-size: 24px; font-weight: bold; margin-bottom: 5px;">★</div>
+      <div style="color: #fbbf24; font-size: 16px; font-weight: bold; line-height: 1.2;">
+        <div>HANDWERK</div>
+        <div>STARS</div>
+      </div>
+    </div>
+  `;
 
   // Generate the comprehensive HTML report
   console.log('Generating HTML report with container structure');
@@ -2253,7 +2261,7 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <img src="${handwerkstarsLogoBase64}" alt="HANDWERK STARS Logo" class="logo" style="max-width: 120px;" />
+        ${createCSSLogo()}
       </div>
       <h3 style="color: #fbbf24; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
       <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
