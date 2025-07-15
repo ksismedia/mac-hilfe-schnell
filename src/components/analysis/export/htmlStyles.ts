@@ -80,9 +80,11 @@ body {
   margin-bottom: 30px; 
   border-radius: 16px; 
   box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-  overflow: visible;
+  overflow: hidden;
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
+  max-width: 100%;
+  width: 100%;
 }
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
@@ -110,7 +112,13 @@ body {
 .header-score-circle.orange { background: #f59e0b; }
 .header-score-circle.red { background: #ef4444; }
 .header-score-circle.dark-red { background: #dc2626; }
-.section-content { padding: 30px; }
+.section-content { 
+  padding: 30px; 
+  max-width: 100%;
+  overflow-x: auto;
+  word-wrap: break-word;
+  box-sizing: border-box;
+}
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
   padding: 25px; 
