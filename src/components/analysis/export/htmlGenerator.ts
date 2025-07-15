@@ -408,7 +408,7 @@ export const generateCustomerHTML = ({
         
         <!-- Branchenrelevante Keywords -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-          <h4>🎯 Branchenrelevante Keywords</h4>
+          <h4>Branchenrelevante Keywords</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
@@ -577,7 +577,7 @@ export const generateCustomerHTML = ({
         
         <!-- Responsive Design -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
-          <h4>📱 Responsive Design</h4>
+          <h4>Responsive Design</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 70 ? 'Korrekt' : 'Fehlerhaft'}</p>
@@ -608,7 +608,7 @@ export const generateCustomerHTML = ({
 
         <!-- Mobile Performance -->
         <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-          <h4>⚡ Mobile Performance</h4>
+          <h4>Mobile Performance</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Mobile Ladezeit:</strong> ${realData.performance.loadTime <= 3 ? 'Schnell' : realData.performance.loadTime <= 5 ? 'Akzeptabel' : 'Langsam'}</p>
@@ -803,7 +803,7 @@ export const generateCustomerHTML = ({
               <!-- Eigenes Unternehmen -->
               <tr style="border-bottom: 2px solid rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.1);">
                 <td style="padding: 12px; color: #fbbf24;">
-                  <strong>🏆 Ihr Unternehmen</strong>
+                  <strong>Ihr Unternehmen</strong>
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
                   <span style="font-weight: bold;">${realData.reviews.google.rating}/5</span>
@@ -883,7 +883,7 @@ export const generateCustomerHTML = ({
 
         <!-- Marktpositions-Analyse -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-          <h4 style="color: #fbbf24; margin-bottom: 15px;">📊 Marktpositions-Vergleich</h4>
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">Marktpositions-Vergleich</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
@@ -1172,7 +1172,7 @@ export const generateCustomerHTML = ({
 
     <!-- Executive Summary -->
     <div class="section">
-      <div class="section-header">🎯 Executive Summary</div>
+      <div class="section-header">Executive Summary</div>
       <div class="section-content">
         <!-- Gesamt-Score -->
         <div class="metric-card good" style="margin-bottom: 30px;">
@@ -1245,7 +1245,7 @@ export const generateCustomerHTML = ({
     <!-- Website Performance -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🚀 Website Performance</span>
+        <span>Website Performance</span>
         <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
       </div>
       <div class="section-content">
@@ -1278,7 +1278,7 @@ export const generateCustomerHTML = ({
           <h3>Nutzerfreundlichkeit & Verfügbarkeit</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div class="status-item">
-              <h4>🎯 Benutzerfreundlichkeit</h4>
+              <h4>Benutzerfreundlichkeit</h4>
               <p><strong>${realData.performance.score >= 70 ? 'Sehr gut' : realData.performance.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
@@ -1288,7 +1288,7 @@ export const generateCustomerHTML = ({
               <p style="font-size: 12px; color: #6b7280;">Navigation, Layout, Responsivität</p>
             </div>
             <div class="status-item">
-              <h4>🌐 Verfügbarkeit</h4>
+              <h4>Verfügbarkeit</h4>
               <p><strong>${realData.performance.score >= 80 ? '99.9%' : realData.performance.score >= 60 ? '99.5%' : '98.8%'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
@@ -1407,7 +1407,7 @@ export const generateCustomerHTML = ({
         
         <!-- Keywords Analyse -->
         <div class="metric-card good" style="margin-bottom: 30px;">
-          <h3>🎯 Keyword-Analyse</h3>
+          <h3>Keyword-Analyse</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}">
               ${(manualKeywordData || realData.keywords).filter(k => k.found).length}/${(manualKeywordData || realData.keywords).length}
@@ -1481,7 +1481,7 @@ export const generateCustomerHTML = ({
 
         <!-- Branchenrelevanz -->
         <div class="metric-card good" style="margin-bottom: 30px;">
-          <h3>🔧 Branchenrelevanz</h3>
+          <h3>Branchenrelevanz</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="status-item">
               <h4>Fachvokabular</h4>
@@ -1611,7 +1611,7 @@ export const generateCustomerHTML = ({
     <!-- Mobile Optimierung -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>📱 Mobile Optimierung</span>
+        <span>Mobile Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
       </div>
       <div class="section-content">
@@ -1680,12 +1680,12 @@ export const generateCustomerHTML = ({
           
           <!-- Kununu & Glassdoor Bewertungen -->
           <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-            <h4>🌟 Kununu & Glassdoor Bewertungen</h4>
+            <h4>Kununu & Glassdoor Bewertungen</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
                 <p><strong>Kununu Rating:</strong> ${
                   manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
-                    ? `${manualWorkplaceData.kununuRating}/5 ⭐ (${manualWorkplaceData.kununuReviews} Bewertungen)`
+                    ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
                     : realData.workplace?.kununu?.rating 
                       ? `${realData.workplace.kununu.rating}/5`
                       : 'Nicht erfasst'
@@ -1711,7 +1711,7 @@ export const generateCustomerHTML = ({
               <div>
                 <p><strong>Glassdoor Rating:</strong> ${
                   manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
-                    ? `${manualWorkplaceData.glassdoorRating}/5 ⭐ (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
+                    ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
                     : realData.workplace?.glassdoor?.rating 
                       ? `${realData.workplace.glassdoor.rating}/5`
                       : 'Nicht erfasst'
@@ -1747,7 +1747,7 @@ export const generateCustomerHTML = ({
 
           <!-- Fachkräfte-Attraktivität -->
           <div style="margin-top: 15px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
-            <h4>🎯 Fachkräfte-Attraktivität</h4>
+            <h4>Fachkräfte-Attraktivität</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
                 <p><strong>Ausbildungsplätze:</strong> ${businessData.industry === 'shk' ? 'Verfügbar' : 'Auf Anfrage'}</p>
@@ -1793,7 +1793,7 @@ export const generateCustomerHTML = ({
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>📱 Social Media Listening & Monitoring</span>
+        <span>Social Media Listening & Monitoring</span>
         <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
       </div>
       <div class="section-content">
@@ -1954,7 +1954,7 @@ export const generateCustomerHTML = ({
     <!-- Online Reputation -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>⭐ Online Reputation</span>
+        <span>Online Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
       </div>
       <div class="section-content">
@@ -2224,13 +2224,13 @@ export const generateCustomerHTML = ({
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;">▶ 🎯 Strategische Empfehlungen</div>
+      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;">▶ Strategische Empfehlungen</div>
       <div id="recommendations-content" class="section-content" style="display: none;">
         <div class="metric-card good">
           <h3>Prioritäten für die Umsetzung</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
             <div class="recommendations">
-              <h4>🔥 Kurzfristig</h4>
+              <h4>Kurzfristig</h4>
               <ul>
                 ${impressumScore < 70 ? '<li>Impressum vervollständigen</li>' : ''}
                 ${realData.performance.score < 60 ? '<li>Website-Performance optimieren</li>' : ''}
@@ -2238,7 +2238,7 @@ export const generateCustomerHTML = ({
               </ul>
             </div>
             <div class="recommendations">
-              <h4>🚀 Mittelfristig</h4>
+              <h4>Mittelfristig</h4>
               <ul>
                 ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (aktueller Score: ' + socialMediaScore + '%)</li>' : ''}
                 ${realData.seo.score < 70 ? '<li>SEO-Optimierung vorantreiben</li>' : ''}
@@ -2246,7 +2246,7 @@ export const generateCustomerHTML = ({
               </ul>
             </div>
             <div class="recommendations">
-              <h4>📈 Langfristig</h4>
+              <h4>Langfristig</h4>
               <ul>
                 <li>Backlink-Strategie implementieren</li>
                 <li>Employer Branding stärken</li>
