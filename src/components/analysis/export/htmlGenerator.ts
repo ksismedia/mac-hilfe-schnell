@@ -1222,7 +1222,7 @@ export const generateCustomerHTML = ({
 
     <!-- Unternehmensdaten -->
     <div class="section">
-      <div class="section-header">🏢 Unternehmensdaten</div>
+      <div class="section-header">Unternehmensdaten</div>
       <div class="section-content">
         <div class="company-info">
           <h3>${realData.company.name}</h3>
@@ -1338,7 +1338,7 @@ export const generateCustomerHTML = ({
     <!-- SEO Optimierung -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🔎 SEO Optimierung</span>
+        <span>SEO Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
       </div>
       <div class="section-content">
@@ -1646,7 +1646,7 @@ export const generateCustomerHTML = ({
     <!-- Arbeitsplatz-Reputation -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>👥 Arbeitsplatz-Reputation</span>
+        <span>Arbeitsplatz-Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
       </div>
       <div class="section-content">
@@ -1987,7 +1987,7 @@ export const generateCustomerHTML = ({
     <!-- Barrierefreiheit -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>♿ Barrierefreiheit & Zugänglichkeit</span>
+        <span>Barrierefreiheit & Zugänglichkeit</span>
         <div class="header-score-circle ${getScoreColorClass(70)}">70%</div>
       </div>
       <div class="section-content">
@@ -2190,7 +2190,7 @@ export const generateCustomerHTML = ({
     <!-- Rechtssicherheit -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>📜 Rechtssicherheit</span>
+        <span>Rechtssicherheit</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
       <div class="section-content">
