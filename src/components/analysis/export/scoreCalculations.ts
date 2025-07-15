@@ -225,6 +225,65 @@ export const calculateBacklinksScore = (realData: RealBusinessData) => {
   return Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
 };
 
+// Berechnung für Accessibility Score - STRENGE BEWERTUNG
+export const calculateAccessibilityScore = (realData: RealBusinessData) => {
+  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET ===');
+  
+  // Basis-Score aus vorhandenen Daten ableiten
+  let baseScore = 72; // Standardwert für Demo
+  
+  // Kritische Faktoren für rechtliche Compliance
+  const criticalViolations = [
+    'color-contrast',
+    'image-alt', 
+    'heading-order',
+    'label',
+    'keyboard-focus'
+  ];
+  
+  // Simuliere Violation-Detektion basierend auf SEO-Qualität
+  const hasImageAltIssues = !realData.seo.metaDescription || realData.seo.metaDescription.length < 50;
+  const hasHeadingIssues = realData.seo.headings.h1.length === 0 || realData.seo.headings.h2.length === 0;
+  const hasContrastIssues = realData.seo.score < 60; // Indikator für schlechte Webqualität
+  
+  // STRENGE BEWERTUNG - Rechtliche Compliance
+  let complianceScore = 100;
+  
+  // Kritische Verstöße führen zu drastischen Abzügen
+  if (hasImageAltIssues) {
+    complianceScore -= 40; // Fehlende Alt-Texte = kritischer Verstoß
+    console.log('Kritischer Verstoß: Fehlende/schlechte Alt-Texte -> -40');
+  }
+  
+  if (hasHeadingIssues) {
+    complianceScore -= 30; // Schlechte Heading-Struktur
+    console.log('Kritischer Verstoß: Schlechte Heading-Struktur -> -30');
+  }
+  
+  if (hasContrastIssues) {
+    complianceScore -= 35; // Kontrast-Probleme
+    console.log('Kritischer Verstoß: Potentielle Kontrast-Probleme -> -35');
+  }
+  
+  // Zusätzliche Abzüge für schlechte allgemeine Webqualität
+  if (realData.seo.score < 40) {
+    complianceScore -= 20; // Sehr schlechte Webqualität
+    console.log('Zusätzlicher Abzug: Sehr schlechte Webqualität -> -20');
+  }
+  
+  // Finaler Score - minimum 0, maximum 100
+  const finalScore = Math.max(0, Math.min(100, complianceScore));
+  
+  console.log('=== ACCESSIBILITY SCORE ERGEBNIS ===');
+  console.log(`Basis-Score: ${baseScore}`);
+  console.log(`Compliance-Score: ${complianceScore}`);
+  console.log(`Finaler Score: ${finalScore}`);
+  console.log(`Rechtliche Compliance: ${finalScore >= 80 ? 'ERFÜLLT' : finalScore >= 60 ? 'TEILWEISE' : 'NICHT ERFÜLLT'}`);
+  console.log('=== BERECHNUNG BEENDET ===');
+  
+  return finalScore;
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,

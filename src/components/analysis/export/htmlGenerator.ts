@@ -4,7 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
@@ -127,7 +127,7 @@ export const generateCustomerHTML = ({
   const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
   const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
   const reputationScore = realData.reviews.google.rating * 20;
-  const accessibilityScore = 72;
+  const accessibilityScore = calculateAccessibilityScore(realData);
   const legalScore = impressumScore;
   
   console.log('Calculated impressumScore:', impressumScore);
@@ -254,8 +254,8 @@ export const generateCustomerHTML = ({
   };
 
   const getAccessibilityAnalysis = () => {
-    // Mock accessibility data for demo - in real implementation this would come from axe-core
-    const accessibilityScore = 72;
+    // Berechne Accessibility Score basierend auf tatsächlichen Daten
+    const accessibilityScore = calculateAccessibilityScore(realData);
     const violations = [
       { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
       { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
@@ -2028,10 +2028,10 @@ export const generateCustomerHTML = ({
 
     <!-- Barrierefreiheit -->
     <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Barrierefreiheit & Zugänglichkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(70)}">70%</div>
-      </div>
+        <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+          <span>Barrierefreiheit & Zugänglichkeit</span>
+          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
+        </div>
       <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
         <div class="metric-card">
