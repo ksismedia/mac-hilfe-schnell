@@ -1035,7 +1035,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card good" style="margin-bottom: 30px;">
           <h3>Gesamtbewertung</h3>
           <div class="score-display">
-            <div class="score-circle ${ownCompanyScore >= 80 ? 'green' : ownCompanyScore >= 60 ? 'yellow' : ownCompanyScore >= 40 ? 'orange' : 'red'}">${ownCompanyScore}%</div>
+            <div class="score-circle ${getScoreColorClass(ownCompanyScore)}">${ownCompanyScore}%</div>
             <div class="score-details">
               <p><strong>Digitale Marktposition:</strong> ${ownCompanyScore >= 80 ? 'Sehr stark' : ownCompanyScore >= 60 ? 'Gut positioniert' : ownCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
               <p><strong>Priorität:</strong> ${ownCompanyScore >= 80 ? 'Optimierung' : ownCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
@@ -1043,7 +1043,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${ownCompanyScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(ownCompanyScore)}" style="width: ${ownCompanyScore}%"></div>
             </div>
           </div>
         </div>
@@ -1216,7 +1216,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card good" style="margin-bottom: 30px;">
           <h3>🎯 Keyword-Analyse</h3>
           <div class="score-display">
-            <div class="score-circle ${(manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length >= 0.7 ? 'green' : 'yellow'}">
+            <div class="score-circle ${getScoreColorClass(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}">
               ${(manualKeywordData || realData.keywords).filter(k => k.found).length}/${(manualKeywordData || realData.keywords).length}
             </div>
             <div class="score-details">
@@ -1227,7 +1227,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%"></div>
             </div>
           </div>
           <div class="keyword-grid">
@@ -1557,7 +1557,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
           <h3>Google Bewertungen</h3>
           <div class="score-display">
-            <div class="score-circle ${realData.reviews.google.rating >= 4 ? 'green' : realData.reviews.google.rating >= 3 ? 'yellow' : 'red'}">
+            <div class="score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">
               ${realData.reviews.google.rating}/5
             </div>
             <div class="score-details">
@@ -1568,7 +1568,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${realData.reviews.google.rating * 20}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(realData.reviews.google.rating * 20)}" style="width: ${realData.reviews.google.rating * 20}%"></div>
             </div>
           </div>
           <div class="recommendations">
