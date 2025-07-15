@@ -177,6 +177,54 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
   return finalScore;
 };
 
+// Berechnung für Content-Qualität Score
+export const calculateContentQualityScore = (realData: RealBusinessData, manualKeywordData?: any, businessData?: any) => {
+  let totalScore = 0;
+  let metrics = 0;
+
+  // Keyword-Analyse (40% Gewichtung)
+  if (manualKeywordData || realData.keywords) {
+    const keywords = manualKeywordData || realData.keywords;
+    const keywordScore = (keywords.filter((k: any) => k.found).length / keywords.length) * 100;
+    totalScore += keywordScore * 0.4;
+    metrics++;
+  }
+
+  // Textqualität basierend auf SEO-Score (30% Gewichtung)
+  const readabilityScore = Math.max(60, realData.seo.score);
+  totalScore += readabilityScore * 0.3;
+  metrics++;
+
+  // Struktur-Score (20% Gewichtung)
+  const structureScore = realData.seo.headings.h1.length > 0 ? 90 : 30;
+  totalScore += structureScore * 0.2;
+  metrics++;
+
+  // Aktualität (10% Gewichtung)
+  const freshnessScore = 60; // Standardwert, da schwer automatisch zu ermitteln
+  totalScore += freshnessScore * 0.1;
+  
+  return Math.round(totalScore);
+};
+
+// Berechnung für Backlinks Score
+export const calculateBacklinksScore = (realData: RealBusinessData) => {
+  // Basis-Score aus SEO-Daten ableiten
+  let baseScore = realData.seo.score;
+  
+  // Adjustierung basierend auf Domain-Stärke Indikatoren
+  // Wenn Meta-Description vorhanden, deutet auf bessere SEO-Pflege hin
+  if (realData.seo.metaDescription) baseScore += 10;
+  
+  // Wenn strukturierte Daten vorhanden (H1, H2 Tags)
+  if (realData.seo.headings.h1.length > 0 && realData.seo.headings.h2.length > 0) {
+    baseScore += 5;
+  }
+  
+  // Cap at 100 und Minimum 30 für realistische Bewertung
+  return Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,

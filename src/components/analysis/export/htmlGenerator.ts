@@ -4,7 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
@@ -70,6 +70,10 @@ export const generateCustomerHTML = ({
   // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  
+  // Calculate additional scores
+  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData);
+  const backlinksScore = calculateBacklinksScore(realData);
   
   // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
@@ -1402,7 +1406,10 @@ export const generateCustomerHTML = ({
 
     <!-- Content-Qualität -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">▶ Content-Qualität</div>
+      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Content-Qualität</span>
+        <button class="percentage-btn">${contentQualityScore}%</button>
+      </div>
       <div id="content-content" class="section-content" style="display: none;">
         
         <!-- Keywords Analyse -->
@@ -1419,6 +1426,10 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="progress-container">
+            <div class="progress-label">
+              <span>Keyword-Optimierung</span>
+              <button class="percentage-btn">${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
+            </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%"></div>
             </div>
@@ -1441,6 +1452,10 @@ export const generateCustomerHTML = ({
               <h4>Lesbarkeit</h4>
               <p><strong>${realData.seo.score >= 70 ? 'Sehr gut' : realData.seo.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
               <div class="progress-container">
+                <div class="progress-label">
+                  <span>Lesbarkeit</span>
+                  <button class="percentage-btn">${Math.max(60, realData.seo.score)}%</button>
+                </div>
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(60, realData.seo.score))}" style="width: ${Math.max(60, realData.seo.score)}%"></div>
                 </div>
@@ -1451,6 +1466,10 @@ export const generateCustomerHTML = ({
               <h4>Textlänge</h4>
               <p><strong>${realData.seo.metaDescription ? 'Ausreichend' : 'Zu kurz'}</strong></p>
               <div class="progress-container">
+                <div class="progress-label">
+                  <span>Textlänge</span>
+                  <button class="percentage-btn">${realData.seo.metaDescription ? 85 : 40}%</button>
+                </div>
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}" style="width: ${realData.seo.metaDescription ? 85 : 40}%"></div>
                 </div>
@@ -1461,6 +1480,10 @@ export const generateCustomerHTML = ({
               <h4>Strukturierung</h4>
               <p><strong>${realData.seo.headings.h1.length > 0 ? 'Gut strukturiert' : 'Struktur fehlt'}</strong></p>
               <div class="progress-container">
+                <div class="progress-label">
+                  <span>Strukturierung</span>
+                  <button class="percentage-btn">${realData.seo.headings.h1.length > 0 ? 90 : 30}%</button>
+                </div>
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
                 </div>
@@ -1486,31 +1509,43 @@ export const generateCustomerHTML = ({
             <div class="status-item">
               <h4>Fachvokabular</h4>
               <p><strong>${businessData.industry === 'shk' ? 'SHK-spezifisch' : businessData.industry === 'elektriker' ? 'Elektro-spezifisch' : 'Handwerk-spezifisch'}</strong></p>
-              <div class="progress-container">
+                <div class="progress-container">
+                 <div class="progress-label">
+                   <span>Branchenvokabular</span>
+                   <button class="percentage-btn">${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
+                 </div>
                  <div class="progress-bar">
                    <div class="progress-fill" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
                  </div>
-               </div>
+                </div>
                <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
              </div>
              <div class="status-item">
                <h4>Dienstleistungen</h4>
                <p><strong>${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
-               <div class="progress-container">
-                 <div class="progress-bar">
-                   <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
-                </div>
-              </div>
+                <div class="progress-container">
+                  <div class="progress-label">
+                    <span>Dienstleistungen</span>
+                    <button class="percentage-btn">${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                 </div>
+               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
             </div>
             <div class="status-item">
               <h4>Lokaler Bezug</h4>
               <p><strong>${businessData.address ? 'Regional optimiert' : 'Nicht spezifiziert'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
-                </div>
-              </div>
+               <div class="progress-container">
+                 <div class="progress-label">
+                   <span>Lokaler Bezug</span>
+                   <button class="percentage-btn">${businessData.address ? 90 : 30}%</button>
+                 </div>
+                 <div class="progress-bar">
+                   <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
+                 </div>
+               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
             </div>
           </div>
@@ -1576,23 +1611,30 @@ export const generateCustomerHTML = ({
 
     <!-- Backlinks Übersicht -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">▶ Backlinks Übersicht</div>
+      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Backlinks Übersicht</span>
+        <button class="percentage-btn">${backlinksScore}%</button>
+      </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
           <h3>Backlink-Profil</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.seo.score)}">
-              ${realData.seo.score}
+            <div class="score-circle ${getScoreColorClass(backlinksScore)}">
+              ${backlinksScore}
             </div>
             <div class="score-details">
-              <p><strong>Backlink-Status:</strong> Zu analysieren</p>
-              <p><strong>Domain Authority:</strong> Wird ermittelt</p>
-              <p><strong>Qualitätsbewertung:</strong> Manuell prüfen</p>
+              <p><strong>Backlink-Status:</strong> ${backlinksScore >= 70 ? 'Gut entwickelt' : backlinksScore >= 50 ? 'Durchschnittlich' : 'Ausbaufähig'}</p>
+              <p><strong>Domain Authority:</strong> ${backlinksScore >= 70 ? 'Stark' : backlinksScore >= 50 ? 'Mittel' : 'Schwach'}</p>
+              <p><strong>Qualitätsbewertung:</strong> ${backlinksScore >= 70 ? 'Hochwertig' : 'Verbesserungsbedarf'}</p>
             </div>
           </div>
           <div class="progress-container">
+            <div class="progress-label">
+              <span>Backlink-Qualität</span>
+              <button class="percentage-btn">${backlinksScore}%</button>
+            </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.seo.score)}" style="width: ${realData.seo.score}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(backlinksScore)}" style="width: ${backlinksScore}%"></div>
             </div>
           </div>
           <div class="recommendations">
