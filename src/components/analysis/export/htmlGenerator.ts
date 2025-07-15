@@ -1015,6 +1015,19 @@ export const generateCustomerHTML = ({
   <style>
     ${getHTMLStyles()}
   </style>
+  <script>
+    function toggleSection(id) {
+      const content = document.getElementById(id);
+      const trigger = content.previousElementSibling;
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        trigger.innerHTML = trigger.innerHTML.replace('▶', '▼');
+      } else {
+        content.style.display = 'none';
+        trigger.innerHTML = trigger.innerHTML.replace('▼', '▶');
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -1101,8 +1114,8 @@ export const generateCustomerHTML = ({
 
     <!-- Website Performance -->
     <div class="section">
-      <div class="section-header">🚀 Website Performance</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('performance-content')" style="cursor: pointer;">▼ 🚀 Website Performance</div>
+      <div id="performance-content" class="section-content">
         ${getPerformanceAnalysis()}
         
         <!-- Nutzerfreundlichkeit und Verfügbarkeit -->
@@ -1169,8 +1182,8 @@ export const generateCustomerHTML = ({
 
     <!-- SEO Optimierung -->
     <div class="section">
-      <div class="section-header">🔎 SEO Optimierung</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('seo-content')" style="cursor: pointer;">▼ 🔎 SEO Optimierung</div>
+      <div id="seo-content" class="section-content">
         ${getSEOAnalysis()}
         <div class="metric-card good" style="margin-top: 20px;">
           <h3>SEO-Details</h3>
@@ -1209,8 +1222,8 @@ export const generateCustomerHTML = ({
 
     <!-- Content-Qualität -->
     <div class="section">
-      <div class="section-header">📝 Content-Qualität</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">▼ 📝 Content-Qualität</div>
+      <div id="content-content" class="section-content">
         
         <!-- Keywords Analyse -->
         <div class="metric-card good" style="margin-bottom: 30px;">
@@ -1383,8 +1396,8 @@ export const generateCustomerHTML = ({
 
     <!-- Backlinks Übersicht -->
     <div class="section">
-      <div class="section-header">🔗 Backlinks Übersicht</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">▼ 🔗 Backlinks Übersicht</div>
+      <div id="backlinks-content" class="section-content">
         <div class="metric-card warning">
           <h3>Backlink-Profil</h3>
           <div class="score-display">
@@ -1417,16 +1430,16 @@ export const generateCustomerHTML = ({
 
     <!-- Mobile Optimierung -->
     <div class="section">
-      <div class="section-header">📱 Mobile Optimierung</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('mobile-content')" style="cursor: pointer;">▼ 📱 Mobile Optimierung</div>
+      <div id="mobile-content" class="section-content">
         ${getMobileOptimizationAnalysis()}
       </div>
     </div>
 
     <!-- Arbeitsplatz-Reputation -->
     <div class="section">
-      <div class="section-header">👥 Arbeitsplatz-Reputation</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('workplace-content')" style="cursor: pointer;">▼ 👥 Arbeitsplatz-Reputation</div>
+      <div id="workplace-content" class="section-content">
         <div class="metric-card warning">
           <h3>💼 Arbeitgeber-Bewertung</h3>
           <div class="score-display">
@@ -1556,16 +1569,16 @@ export const generateCustomerHTML = ({
 
     <!-- Social Media Präsenz -->
     <div class="section">
-      <div class="section-header">📱 Social Media Präsenz</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('social-content')" style="cursor: pointer;">▼ 📱 Social Media Präsenz</div>
+      <div id="social-content" class="section-content">
         ${getSocialMediaAnalysis()}
       </div>
     </div>
 
     <!-- Online Reputation -->
     <div class="section">
-      <div class="section-header">⭐ Online Reputation</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('reputation-content')" style="cursor: pointer;">▼ ⭐ Online Reputation</div>
+      <div id="reputation-content" class="section-content">
         <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
           <h3>Google Bewertungen</h3>
           <div class="score-display">
@@ -1598,16 +1611,16 @@ export const generateCustomerHTML = ({
 
     <!-- Barrierefreiheit -->
     <div class="section">
-      <div class="section-header">♿ Barrierefreiheit & Zugänglichkeit</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('accessibility-content')" style="cursor: pointer;">▼ ♿ Barrierefreiheit & Zugänglichkeit</div>
+      <div id="accessibility-content" class="section-content">
         ${getAccessibilityAnalysis()}
       </div>
     </div>
 
     <!-- Wettbewerbsanalyse -->
     <div class="section">
-      <div class="section-header">👥 Wettbewerbsanalyse & Marktumfeld</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('competitor-content')" style="cursor: pointer;">▼ 👥 Wettbewerbsanalyse & Marktumfeld</div>
+      <div id="competitor-content" class="section-content">
         ${getCompetitorAnalysis()}
       </div>
     </div>
@@ -1615,8 +1628,8 @@ export const generateCustomerHTML = ({
     ${hourlyRateData ? `
     <!-- Preispositionierung -->
     <div class="section">
-      <div class="section-header">💰 Preispositionierung</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('pricing-content')" style="cursor: pointer;">▼ 💰 Preispositionierung</div>
+      <div id="pricing-content" class="section-content">
         <div class="metric-card good">
           <h3>Stundensatz-Analyse</h3>
           <div class="score-display">
@@ -1650,8 +1663,8 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit -->
     <div class="section">
-      <div class="section-header">📜 Rechtssicherheit</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('legal-content')" style="cursor: pointer;">▼ 📜 Rechtssicherheit</div>
+      <div id="legal-content" class="section-content">
         <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
           <h3>Impressum & Datenschutz</h3>
           <div class="score-display">
@@ -1688,8 +1701,8 @@ export const generateCustomerHTML = ({
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
-      <div class="section-header">🎯 Strategische Empfehlungen</div>
-      <div class="section-content">
+      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;">▼ 🎯 Strategische Empfehlungen</div>
+      <div id="recommendations-content" class="section-content">
         <div class="metric-card good">
           <h3>Prioritäten für die Umsetzung</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">

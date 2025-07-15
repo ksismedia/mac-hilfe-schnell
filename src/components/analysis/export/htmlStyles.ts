@@ -1,6 +1,16 @@
 
 export const getHTMLStyles = () => `
 * { margin: 0; padding: 0; box-sizing: border-box; }
+.collapsible { 
+  transition: all 0.3s ease; 
+  user-select: none;
+  border-radius: 8px;
+  padding: 15px 20px !important;
+}
+.collapsible:hover { 
+  background: rgba(251, 191, 36, 0.1) !important; 
+  transform: translateY(-1px);
+}
 body { 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
   line-height: 1.6; 
