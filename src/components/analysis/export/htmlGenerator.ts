@@ -351,10 +351,10 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3 style="background: #FFD700; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
-          <span style="background: white; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
+          <span style="background: white; color: ${getScoreColor(accessibilityScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" style="background-color: white; color: ${getScoreColor(accessibilityScore)}; border: 3px solid ${getScoreColor(accessibilityScore)}; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${accessibilityScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(accessibilityScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
               <span style="color: ${getScoreColor(accessibilityScore)}; font-weight: bold;">
