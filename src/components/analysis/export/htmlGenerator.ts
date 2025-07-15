@@ -349,12 +349,15 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3>♿ Barrierefreiheit & Zugänglichkeit ${accessibilityScore}%</h3>
+        <h3 style="background: #FFD700; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+          <span>♿ Barrierefreiheit & Zugänglichkeit</span>
+          <span style="background: white; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
+        </h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(accessibilityScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
-              <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : accessibilityScore >= 60 ? '#FF4500' : '#CD0000'}; font-weight: bold;">
+              <span style="color: ${getScoreColor(accessibilityScore)}; font-weight: bold;">
                 ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}
               </span>
             </p>
@@ -363,13 +366,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${
-              accessibilityScore < 20 ? '#CD0000' :
-              accessibilityScore < 40 ? '#FF0000' :
-              accessibilityScore < 60 ? '#FF4500' :
-              accessibilityScore < 80 ? '#22c55e' :
-              '#FFD700'
-            };"></div>
+            <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
           </div>
         </div>
 
