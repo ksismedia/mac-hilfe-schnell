@@ -2211,7 +2211,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${calculateAccessibilityScore(realData) >= 80 ? getScoreRange(calculateAccessibilityScore(realData)) : '0-20'}" style="width: ${calculateAccessibilityScore(realData)}%"></div>
+                     <div class="progress-fill" style="width: ${calculateAccessibilityScore(realData)}%; background-color: ${getScoreColor(calculateAccessibilityScore(realData))};"></div>
                   </div>
                 </div>
               </div>
@@ -2223,7 +2223,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${calculateAccessibilityScore(realData) >= 80 ? getScoreRange(calculateAccessibilityScore(realData)) : '0-20'}" style="width: ${calculateAccessibilityScore(realData)}%"></div>
+                    <div class="progress-fill" style="width: ${calculateAccessibilityScore(realData)}%; background-color: ${getScoreColor(calculateAccessibilityScore(realData))};"></div>
                   </div>
                 </div>
               </div>
