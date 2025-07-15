@@ -18,8 +18,17 @@ body {
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
   min-height: 100vh;
   overflow-x: hidden;
+  width: 100vw;
+  max-width: 100%;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; width: 100%; }
+.container { 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 20px; 
+  box-sizing: border-box; 
+  width: 100%; 
+  overflow-x: hidden;
+}
 .header { 
   text-align: center; 
   margin-bottom: 40px; 
@@ -88,6 +97,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   contain: layout style;
+  position: relative;
 }
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
@@ -121,7 +131,8 @@ body {
   overflow-x: hidden;
   word-wrap: break-word;
   box-sizing: border-box;
-  contain: layout;
+  contain: layout style;
+  position: relative;
 }
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
@@ -133,6 +144,8 @@ body {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  word-wrap: break-word;
+  position: relative;
 }
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
@@ -290,6 +303,8 @@ table {
   table-layout: fixed;
   max-width: 100%;
   overflow-x: auto;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
 
 table tr {
@@ -313,6 +328,9 @@ table tr {
     color: #f5f5f5 !important;
     font-size: 12pt;
     line-height: 1.4;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   
   .container { 
@@ -320,6 +338,7 @@ table tr {
     margin: 0 !important;
     padding: 10px !important;
     width: 100% !important;
+    overflow-x: hidden !important;
   }
   
   .section { 
