@@ -1050,27 +1050,27 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big">${realData.seo.score}%</div>
+            <div class="score-big"><span style="color: ${realData.seo.score <= 20 ? '#991b1b' : realData.seo.score <= 40 ? '#dc2626' : realData.seo.score <= 60 ? '#ea580c' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'};">${realData.seo.score}%</span></div>
             <div class="score-label">SEO Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big">${realData.performance.score}%</div>
+            <div class="score-big"><span style="color: ${realData.performance.score <= 20 ? '#991b1b' : realData.performance.score <= 40 ? '#dc2626' : realData.performance.score <= 60 ? '#ea580c' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'};">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big">${realData.mobile.overallScore}%</div>
+            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 20 ? '#991b1b' : realData.mobile.overallScore <= 40 ? '#dc2626' : realData.mobile.overallScore <= 60 ? '#ea580c' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'};">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big">${socialMediaScore}%</div>
+            <div class="score-big"><span style="color: ${socialMediaScore <= 20 ? '#991b1b' : socialMediaScore <= 40 ? '#dc2626' : socialMediaScore <= 60 ? '#ea580c' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'};">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big">${realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0}%</div>
+            <div class="score-big"><span style="color: ${(realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 20 ? '#991b1b' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 40 ? '#dc2626' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 60 ? '#ea580c' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 80 ? '#16a34a' : '#eab308'};">${realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big">${impressumScore}%</div>
+            <div class="score-big"><span style="color: ${impressumScore <= 20 ? '#991b1b' : impressumScore <= 40 ? '#dc2626' : impressumScore <= 60 ? '#ea580c' : impressumScore <= 80 ? '#16a34a' : '#eab308'};">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
         </div>

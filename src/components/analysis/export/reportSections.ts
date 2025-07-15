@@ -283,7 +283,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <span>${dataPrivacyScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${dataPrivacyScore < 60 ? 'warning' : ''}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -299,7 +299,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <span>${Math.min(100, dataPrivacyScore + 10)}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
+                                <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) <= 20 ? '0-20' : Math.min(100, dataPrivacyScore + 10) <= 40 ? '20-40' : Math.min(100, dataPrivacyScore + 10) <= 60 ? '40-60' : Math.min(100, dataPrivacyScore + 10) <= 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -313,7 +313,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <span>100%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
+                                <div class="progress-fill" data-score="80-100" style="width: 100%"></div>
                             </div>
                         </div>
                     </div>
@@ -329,7 +329,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <span>${dataPrivacyScore}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${dataPrivacyScore < 60 ? 'warning' : ''}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
                             </div>
                         </div>
                     </div>
