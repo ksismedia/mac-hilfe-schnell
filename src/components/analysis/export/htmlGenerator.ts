@@ -1608,7 +1608,7 @@ export const generateCustomerHTML = ({
         
         <div id="mobile-details" style="display: none;">
           ${getMobileOptimizationAnalysis()}
-        ${getMobileOptimizationAnalysis()}
+        </div>
       </div>
     </div>
 
@@ -1627,9 +1627,7 @@ export const generateCustomerHTML = ({
               <p><strong>Arbeitgeber-Bewertung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Sehr gut' : realData.workplace?.overallScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
             </div>
-        </div>
-      </div>
-    </div>
+          </div>
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
@@ -1643,17 +1641,6 @@ export const generateCustomerHTML = ({
         
         <div id="workplace-details" style="display: none;">
           ${getWorkplaceAnalysis()}
-        <div class="metric-card warning">
-          <h3>💼 Arbeitgeber-Bewertung</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
-            <div class="score-details">
-              <p><strong>Bewertung als Arbeitgeber:</strong> ${realData.workplace ? (realData.workplace.overallScore >= 80 ? 'Sehr gut' : realData.workplace.overallScore >= 60 ? 'Gut' : 'Ausbaufähig') : 'Nicht bewertet'}</p>
-              <p><strong>Empfehlung:</strong> Employer Branding stärken</p>
-            </div>
-        </div>
-      </div>
-    </div>
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
@@ -1689,9 +1676,7 @@ export const generateCustomerHTML = ({
                     }%"></div>
                   </div>
                 </div>
-        </div>
-      </div>
-    </div>
+              </div>
               <div>
                 <p><strong>Glassdoor Rating:</strong> ${
                   manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
@@ -1753,10 +1738,8 @@ export const generateCustomerHTML = ({
                 <p><strong>Benefits:</strong> Branchenüblich</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(70)}" style="width: 70%"></div>
-        </div>
-      </div>
-    </div>
+                     <div class="progress-fill" data-score="${getScoreRange(70)}" style="width: 70%"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1805,7 +1788,7 @@ export const generateCustomerHTML = ({
         
         <div id="social-details" style="display: none;">
           ${getSocialMediaAnalysis()}
-        ${getSocialMediaAnalysis()}
+        </div>
       </div>
     </div>
 
@@ -1828,9 +1811,7 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(realData.reviews.google.rating * 20)}" style="width: ${realData.reviews.google.rating * 20}%"></div>
-        </div>
-      </div>
-    </div>
+            </div>
           </div>
         </div>
         
@@ -1840,31 +1821,6 @@ export const generateCustomerHTML = ({
         
         <div id="reputation-details" style="display: none;">
           ${getReputationAnalysis()}
-        <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
-          <h3>Google Bewertungen</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">
-              ${realData.reviews.google.rating}/5
-            </div>
-            <div class="score-details">
-              <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5 Sterne</p>
-              <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
-              <p><strong>Reputation-Score:</strong> ${Math.min(100, realData.reviews.google.rating * 20)}%</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.reviews.google.rating * 20)}" style="width: ${realData.reviews.google.rating * 20}%"></div>
-            </div>
-          </div>
-          <div class="recommendations">
-            <h4>Reputation-Management:</h4>
-            <ul>
-              <li>Aktiv um Kundenbewertungen bitten</li>
-              <li>Schnell und professionell auf Bewertungen antworten</li>
-              <li>Negative Bewertungen konstruktiv bearbeiten</li>
-              <li>Service-Qualität kontinuierlich verbessern</li>
-            </ul>
           </div>
         </div>
       </div>
@@ -1895,9 +1851,7 @@ export const generateCustomerHTML = ({
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>💰 Preispositionierung</span>
         <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
-        </div>
       </div>
-    </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Preispositionierung</h3>
@@ -1922,32 +1876,6 @@ export const generateCustomerHTML = ({
         
         <div id="pricing-details" style="display: none;">
           ${getPricingAnalysis()}
-        <div class="metric-card good">
-          <h3>Stundensatz-Analyse</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">
-              ${hourlyRateData.ownRate}€
-            </div>
-            <div class="score-details">
-              <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€</p>
-              <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€</p>
-              <p><strong>Marktposition:</strong> ${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Premium' : hourlyRateData.ownRate < hourlyRateData.regionAverage ? 'Günstig' : 'Marktdurchschnitt'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}" style="width: ${Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100)}%"></div>
-            </div>
-          </div>
-          <div class="recommendations">
-            <h4>Preisstrategie:</h4>
-            <ul>
-              <li>Marktpreise regelmäßig analysieren</li>
-              <li>Wertargumentation stärken</li>
-              <li>Premium-Services entwickeln</li>
-              <li>Kostentransparenz schaffen</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>
@@ -1982,34 +1910,6 @@ export const generateCustomerHTML = ({
         
         <div id="legal-details" style="display: none;">
           ${getLegalAnalysis()}
-        <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
-          <h3>Impressum & Datenschutz</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
-            <div class="score-details">
-              <p><strong>Impressum-Vollständigkeit:</strong> ${impressumScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
-              <p><strong>Fehlende Angaben:</strong> ${finalMissingImprintElements.length}</p>
-              <p><strong>Rechtsstatus:</strong> ${impressumScore >= 70 ? 'Konform' : 'Risiko vorhanden'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%"></div>
-            </div>
-          </div>
-          <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-            <h4>✅ Gefundene Impressum-Angaben:</h4>
-            ${getFoundImprintList()}
-          </div>
-          ${finalMissingImprintElements.length > 0 ? `
-            <div style="margin-top: 15px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-              <h4>❌ Fehlende Impressum-Angaben:</h4>
-              ${getMissingImprintList()}
-              <p style="font-size: 0.9em; color: #dc2626; margin-top: 10px;">
-                <strong>Risiko:</strong> Fehlende Impressum-Angaben können zu Abmahnungen und Bußgeldern führen.
-              </p>
-            </div>
-          ` : ''}
         </div>
       </div>
     </div>
