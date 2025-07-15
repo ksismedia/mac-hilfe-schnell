@@ -30,10 +30,10 @@ interface CustomerReportData {
 
 // Function to get score range for data attribute
 const getScoreRange = (score: number) => {
-  if (score <= 20) return "0-20";
-  if (score <= 40) return "20-40";
-  if (score <= 60) return "40-60";
-  if (score <= 80) return "60-80";
+  if (score < 20) return "0-20";
+  if (score < 40) return "20-40";
+  if (score < 60) return "40-60";
+  if (score < 80) return "60-80";
   return "80-100";
 };
 
