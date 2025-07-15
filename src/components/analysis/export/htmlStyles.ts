@@ -130,11 +130,11 @@ body {
 }
 
 /* Einfarbige Progress-Fill Farben basierend auf Wert-Bereichen */
-.progress-fill[data-score="0-20"] { background: #dc2626; } /* Dunkelrot 0-20% */
-.progress-fill[data-score="20-40"] { background: #ef4444; } /* Hellrot 20-40% */
-.progress-fill[data-score="40-60"] { background: #ea580c; } /* Dunkelorange 40-60% */
+.progress-fill[data-score="0-20"] { background: #CD0000; } /* Dunkelrot 0-20% */
+.progress-fill[data-score="20-40"] { background: #FF0000; } /* Rot 20-40% */
+.progress-fill[data-score="40-60"] { background: #FF4500; } /* Orange 40-60% */
 .progress-fill[data-score="60-80"] { background: #22c55e; } /* Grün 60-80% */
-.progress-fill[data-score="80-100"] { background: #fbbf24; } /* Hellgelb 80-100% */
+.progress-fill[data-score="80-100"] { background: #FFD700; } /* Gelb 80-100% */
 
 .company-info { 
   background: rgba(17, 24, 39, 0.6); 

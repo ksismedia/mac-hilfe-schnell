@@ -7,19 +7,19 @@ import { cn } from "@/lib/utils"
 const getProgressColor = (value: number) => {
   if (value <= 20) {
     // 0-20%: Dunkelrot
-    return '#dc2626';
+    return '#CD0000';
   } else if (value <= 40) {
-    // 20-40%: Hellrot
-    return '#ef4444';
+    // 20-40%: Rot
+    return '#FF0000';
   } else if (value <= 60) {
-    // 40-60%: Dunkelorange
-    return '#ea580c';
+    // 40-60%: Orange
+    return '#FF4500';
   } else if (value <= 80) {
     // 60-80%: Grün
     return '#22c55e';
   } else {
-    // 80-100%: Hellgelb
-    return '#fbbf24';
+    // 80-100%: Gelb
+    return '#FFD700';
   }
 };
 
