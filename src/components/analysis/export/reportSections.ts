@@ -26,31 +26,31 @@ export const generateHeaderSection = (
         <!-- Gesamtbewertung -->
         <div class="score-overview">
             <div class="score-card">
-                <div class="score-big">${overallScore}</div>
+                <button class="percentage-btn score-big" data-score="${overallScore <= 20 ? '0-20' : overallScore <= 40 ? '20-40' : overallScore <= 60 ? '40-60' : overallScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${overallScore}%</button>
                 <div class="score-label">Gesamt-Score</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${seoScore}</div>
+                <button class="percentage-btn score-big" data-score="${seoScore <= 20 ? '0-20' : seoScore <= 40 ? '20-40' : seoScore <= 60 ? '40-60' : seoScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${seoScore}%</button>
                 <div class="score-label">SEO-Optimierung</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${performanceScore}</div>
+                <button class="percentage-btn score-big" data-score="${performanceScore <= 20 ? '0-20' : performanceScore <= 40 ? '20-40' : performanceScore <= 60 ? '40-60' : performanceScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${performanceScore}%</button>
                 <div class="score-label">Website-Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${mobileScore}</div>
+                <button class="percentage-btn score-big" data-score="${mobileScore <= 20 ? '0-20' : mobileScore <= 40 ? '20-40' : mobileScore <= 60 ? '40-60' : mobileScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${mobileScore}%</button>
                 <div class="score-label">Mobile Optimierung</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${hourlyRateScore}</div>
+                <button class="percentage-btn score-big" data-score="${hourlyRateScore <= 20 ? '0-20' : hourlyRateScore <= 40 ? '20-40' : hourlyRateScore <= 60 ? '40-60' : hourlyRateScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${hourlyRateScore}%</button>
                 <div class="score-label">Preisstrategie</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${socialMediaScore}</div>
+                <button class="percentage-btn score-big" data-score="${socialMediaScore <= 20 ? '0-20' : socialMediaScore <= 40 ? '20-40' : socialMediaScore <= 60 ? '40-60' : socialMediaScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${socialMediaScore}%</button>
                 <div class="score-label">Social Media</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${dataPrivacyScore}</div>
+                <button class="percentage-btn score-big" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${dataPrivacyScore}%</button>
                 <div class="score-label">Datenschutz</div>
             </div>
         </div>
