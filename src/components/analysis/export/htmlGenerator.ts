@@ -1530,7 +1530,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Content-Qualität</span>
-        <button class="percentage-btn">${contentQualityScore}%</button>
+        <button class="percentage-btn" style="background: white; color: ${getScoreColor(contentQualityScore)}; border: 2px solid ${getScoreColor(contentQualityScore)};">${contentQualityScore}%</button>
       </div>
       <div id="content-content" class="section-content" style="display: none;">
         
@@ -1735,7 +1735,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Backlinks Übersicht</span>
-        <button class="percentage-btn" style="background-color: ${getScoreColor(backlinksScore)}; color: white;">${backlinksScore}%</button>
+        <button class="percentage-btn" style="background: white; color: ${getScoreColor(backlinksScore)}; border: 2px solid ${getScoreColor(backlinksScore)};">${backlinksScore}%</button>
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
