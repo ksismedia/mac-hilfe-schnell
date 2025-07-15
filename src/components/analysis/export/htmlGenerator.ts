@@ -2167,7 +2167,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(72)}" style="width: 72%"></div>
+              <div class="progress-fill" style="width: 72%; background-color: ${getScoreColor(72)};"></div>
             </div>
           </div>
         </div>
