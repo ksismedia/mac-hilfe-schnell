@@ -119,6 +119,13 @@ export const generateCustomerHTML = ({
     
   const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
   
+  // Calculate additional scores
+  const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
+  const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
+  const reputationScore = realData.reviews.google.rating * 20;
+  const accessibilityScore = 72;
+  const legalScore = impressumScore;
+  
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
   console.log('manualImprintData:', manualImprintData);
@@ -150,6 +157,98 @@ export const generateCustomerHTML = ({
   };
 
   // Accessibility Analysis - NEW
+  // Workplace Analysis
+  const getWorkplaceAnalysis = () => {
+    const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
+    return `
+      <div class="metric-card warning">
+        <h3>💼 Arbeitgeber-Bewertung</h3>
+        <div class="score-display">
+          <div class="score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
+          <div class="score-details">
+            <p><strong>Gesamtbewertung:</strong> ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+            <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  // Reputation Analysis
+  const getReputationAnalysis = () => {
+    const reputationScore = realData.reviews.google.rating * 20;
+    return `
+      <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
+        <h3>Google Bewertungen</h3>
+        <div class="score-display">
+          <div class="score-circle ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
+          <div class="score-details">
+            <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5</p>
+            <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
+            <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-score="${getScoreRange(reputationScore)}" style="width: ${reputationScore}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  // Pricing Analysis
+  const getPricingAnalysis = () => {
+    if (!hourlyRateData) return '<p>Keine Preisdaten verfügbar</p>';
+    
+    const pricingScore = Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100);
+    return `
+      <div class="metric-card good">
+        <h3>Stundensatz-Analyse</h3>
+        <div class="score-display">
+          <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
+          <div class="score-details">
+            <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
+            <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
+            <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-score="${getScoreRange(pricingScore)}" style="width: ${pricingScore}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  // Legal Analysis
+  const getLegalAnalysis = () => {
+    const legalScore = impressumScore;
+    return `
+      <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
+        <h3>Impressum & Datenschutz</h3>
+        <div class="score-display">
+          <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
+          <div class="score-details">
+            <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
+            <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-score="${getScoreRange(legalScore)}" style="width: ${legalScore}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   const getAccessibilityAnalysis = () => {
     // Mock accessibility data for demo - in real implementation this would come from axe-core
     const accessibilityScore = 72;
@@ -1114,11 +1213,33 @@ export const generateCustomerHTML = ({
 
     <!-- Website Performance -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('performance-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 🚀 Website Performance</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>🚀 Website Performance</span>
         <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
       </div>
-      <div id="performance-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Performance Analyse</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+            <div class="score-details">
+              <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
+              <p><strong>Empfehlung:</strong> ${realData.performance.score >= 80 ? 'Sehr gute Performance' : 'Performance optimieren'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('performance-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Performance-Details anzeigen</h4>
+        </div>
+        
+        <div id="performance-details" style="display: none;">
+          ${getPerformanceAnalysis()}
         ${getPerformanceAnalysis()}
         
         <!-- Nutzerfreundlichkeit und Verfügbarkeit -->
@@ -1185,11 +1306,33 @@ export const generateCustomerHTML = ({
 
     <!-- SEO Optimierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('seo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 🔎 SEO Optimierung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>🔎 SEO Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
       </div>
-      <div id="seo-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>SEO Optimierung</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+            <div class="score-details">
+              <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 70 ? 'Hoch' : realData.seo.score >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.seo.score)}" style="width: ${realData.seo.score}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('seo-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ SEO-Details anzeigen</h4>
+        </div>
+        
+        <div id="seo-details" style="display: none;">
+          ${getSEOAnalysis()}
         ${getSEOAnalysis()}
         <div class="metric-card good" style="margin-top: 20px;">
           <h3>SEO-Details</h3>
@@ -1436,22 +1579,70 @@ export const generateCustomerHTML = ({
 
     <!-- Mobile Optimierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('mobile-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 📱 Mobile Optimierung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>📱 Mobile Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
       </div>
-      <div id="mobile-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Mobile Optimierung</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
+            <div class="score-details">
+              <p><strong>Mobile-Friendly:</strong> ${realData.mobile.overallScore >= 80 ? 'Sehr gut' : realData.mobile.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.mobile.overallScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.mobile.overallScore)}" style="width: ${realData.mobile.overallScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('mobile-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Mobile-Details anzeigen</h4>
+        </div>
+      </div>
+    </div>
+        
+        <div id="mobile-details" style="display: none;">
+          ${getMobileOptimizationAnalysis()}
         ${getMobileOptimizationAnalysis()}
       </div>
     </div>
 
     <!-- Arbeitsplatz-Reputation -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('workplace-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 👥 Arbeitsplatz-Reputation</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>👥 Arbeitsplatz-Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
       </div>
-      <div id="workplace-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Arbeitsplatz-Reputation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+            <div class="score-details">
+              <p><strong>Arbeitgeber-Bewertung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Sehr gut' : realData.workplace?.overallScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+            </div>
+        </div>
+      </div>
+    </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('workplace-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Arbeitsplatz-Details anzeigen</h4>
+        </div>
+        
+        <div id="workplace-details" style="display: none;">
+          ${getWorkplaceAnalysis()}
         <div class="metric-card warning">
           <h3>💼 Arbeitgeber-Bewertung</h3>
           <div class="score-display">
@@ -1460,7 +1651,9 @@ export const generateCustomerHTML = ({
               <p><strong>Bewertung als Arbeitgeber:</strong> ${realData.workplace ? (realData.workplace.overallScore >= 80 ? 'Sehr gut' : realData.workplace.overallScore >= 60 ? 'Gut' : 'Ausbaufähig') : 'Nicht bewertet'}</p>
               <p><strong>Empfehlung:</strong> Employer Branding stärken</p>
             </div>
-          </div>
+        </div>
+      </div>
+    </div>
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
@@ -1496,7 +1689,9 @@ export const generateCustomerHTML = ({
                     }%"></div>
                   </div>
                 </div>
-              </div>
+        </div>
+      </div>
+    </div>
               <div>
                 <p><strong>Glassdoor Rating:</strong> ${
                   manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
@@ -1559,7 +1754,9 @@ export const generateCustomerHTML = ({
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(70)}" style="width: 70%"></div>
-                  </div>
+        </div>
+      </div>
+    </div>
                 </div>
               </div>
             </div>
@@ -1581,22 +1778,68 @@ export const generateCustomerHTML = ({
 
     <!-- Social Media Präsenz -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('social-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 📱 Social Media Präsenz</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>📱 Social Media Präsenz</span>
         <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
       </div>
-      <div id="social-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Social Media Präsenz</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+            <div class="score-details">
+              <p><strong>Social Media:</strong> ${socialMediaScore >= 70 ? 'Sehr gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Nicht vorhanden'}</p>
+              <p><strong>Empfehlung:</strong> ${socialMediaScore >= 70 ? 'Starke Online-Präsenz' : 'Social Media Aktivitäten ausbauen'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(socialMediaScore)}" style="width: ${socialMediaScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('social-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Social Media-Details anzeigen</h4>
+        </div>
+        
+        <div id="social-details" style="display: none;">
+          ${getSocialMediaAnalysis()}
         ${getSocialMediaAnalysis()}
       </div>
     </div>
 
     <!-- Online Reputation -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('reputation-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ ⭐ Online Reputation</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>⭐ Online Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
       </div>
-      <div id="reputation-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Online Reputation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
+            <div class="score-details">
+              <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
+              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.reviews.google.rating * 20)}" style="width: ${realData.reviews.google.rating * 20}%"></div>
+        </div>
+      </div>
+    </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('reputation-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Reputation-Details anzeigen</h4>
+        </div>
+        
+        <div id="reputation-details" style="display: none;">
+          ${getReputationAnalysis()}
         <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
           <h3>Google Bewertungen</h3>
           <div class="score-display">
@@ -1649,11 +1892,36 @@ export const generateCustomerHTML = ({
     ${hourlyRateData ? `
     <!-- Preispositionierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('pricing-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 💰 Preispositionierung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>💰 Preispositionierung</span>
         <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
+        </div>
       </div>
-      <div id="pricing-content" class="section-content" style="display: none;">
+    </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Preispositionierung</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
+            <div class="score-details">
+              <p><strong>Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
+              <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
+              <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(pricingScore)}" style="width: ${pricingScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('pricing-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Preis-Details anzeigen</h4>
+        </div>
+        
+        <div id="pricing-details" style="display: none;">
+          ${getPricingAnalysis()}
         <div class="metric-card good">
           <h3>Stundensatz-Analyse</h3>
           <div class="score-display">
@@ -1687,11 +1955,33 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('legal-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 📜 Rechtssicherheit</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>📜 Rechtssicherheit</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
-      <div id="legal-content" class="section-content" style="display: none;">
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Rechtssicherheit</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+            <div class="score-details">
+              <p><strong>Impressum:</strong> ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
+              <p><strong>Empfehlung:</strong> ${impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('legal-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Rechts-Details anzeigen</h4>
+        </div>
+        
+        <div id="legal-details" style="display: none;">
+          ${getLegalAnalysis()}
         <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
           <h3>Impressum & Datenschutz</h3>
           <div class="score-display">
