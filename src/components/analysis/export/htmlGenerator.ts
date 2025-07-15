@@ -46,6 +46,15 @@ const getScoreColorClass = (score: number) => {
   return "yellow";
 };
 
+// Function to get score color (hex value for inline styles)
+const getScoreColor = (score: number) => {
+  if (score < 20) return '#CD0000';   // dark red
+  if (score < 40) return '#FF0000';   // red
+  if (score < 60) return '#FF4500';   // orange
+  if (score < 80) return '#22c55e';   // green
+  return '#FFD700';                   // yellow/gold
+};
+
 export const generateCustomerHTML = ({
   businessData,
   realData,
@@ -174,11 +183,17 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workplaceScore}%; background-color: ${
+                workplaceScore < 20 ? '#CD0000' :
+                workplaceScore < 40 ? '#FF0000' :
+                workplaceScore < 60 ? '#FF4500' :
+                workplaceScore < 80 ? '#22c55e' :
+                '#FFD700'
+              };"></div>
+            </div>
           </div>
-        </div>
       </div>
     `;
   };
@@ -197,11 +212,17 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(reputationScore)}" style="width: ${reputationScore}%"></div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${reputationScore}%; background-color: ${
+                reputationScore < 20 ? '#CD0000' :
+                reputationScore < 40 ? '#FF0000' :
+                reputationScore < 60 ? '#FF4500' :
+                reputationScore < 80 ? '#22c55e' :
+                '#FFD700'
+              };"></div>
+            </div>
           </div>
-        </div>
       </div>
     `;
   };
@@ -222,11 +243,17 @@ export const generateCustomerHTML = ({
             <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(pricingScore)}" style="width: ${pricingScore}%"></div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${pricingScore}%; background-color: ${
+                pricingScore < 20 ? '#CD0000' :
+                pricingScore < 40 ? '#FF0000' :
+                pricingScore < 60 ? '#FF4500' :
+                pricingScore < 80 ? '#22c55e' :
+                '#FFD700'
+              };"></div>
+            </div>
           </div>
-        </div>
       </div>
     `;
   };
@@ -244,11 +271,17 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(legalScore)}" style="width: ${legalScore}%"></div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${legalScore}%; background-color: ${
+                legalScore < 20 ? '#CD0000' :
+                legalScore < 40 ? '#FF0000' :
+                legalScore < 60 ? '#FF4500' :
+                legalScore < 80 ? '#22c55e' :
+                '#FFD700'
+              };"></div>
+            </div>
           </div>
-        </div>
 
         <!-- Impressum-Details -->
         <div style="margin-top: 20px;">
@@ -498,7 +531,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(seoScore)}" style="width: ${seoScore}%"></div>
+            <div class="progress-fill" style="width: ${seoScore}%; background-color: ${getScoreColor(seoScore)};"></div>
           </div>
         </div>
         
@@ -634,7 +667,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(performanceScore)}" style="width: ${performanceScore}%"></div>
+            <div class="progress-fill" style="width: ${performanceScore}%; background-color: ${getScoreColor(performanceScore)};"></div>
           </div>
         </div>
         <div class="recommendations">
@@ -667,7 +700,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(mobileScore)}" style="width: ${mobileScore}%"></div>
+            <div class="progress-fill" style="width: ${mobileScore}%; background-color: ${getScoreColor(mobileScore)};"></div>
           </div>
         </div>
         
@@ -1181,7 +1214,7 @@ export const generateCustomerHTML = ({
         
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(socialMediaScore)}" style="width: ${socialMediaScore}%"></div>
+            <div class="progress-fill" style="width: ${socialMediaScore}%; background-color: ${getScoreColor(socialMediaScore)};"></div>
           </div>
         </div>
         
@@ -1705,7 +1738,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Backlinks Übersicht</span>
-        <button class="percentage-btn">${backlinksScore}%</button>
+        <button class="percentage-btn" style="background-color: ${getScoreColor(backlinksScore)}; color: white;">${backlinksScore}%</button>
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
@@ -1726,7 +1759,7 @@ export const generateCustomerHTML = ({
               <button class="percentage-btn">${backlinksScore}%</button>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(backlinksScore)}" style="width: ${backlinksScore}%"></div>
+              <div class="progress-fill" style="width: ${backlinksScore}%; background-color: ${getScoreColor(backlinksScore)};"></div>
             </div>
           </div>
           <div class="recommendations">
