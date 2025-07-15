@@ -1163,7 +1163,7 @@ export const generateCustomerHTML = ({
   <div class="container">
     <div class="header">
       <div class="logo-container">
-        <img src="/lovable-uploads/1b7bf83e-0e07-4072-85cb-b162354578ea.png" alt="HANDWERK STARS Logo" class="logo" />
+        ${createCSSLogo()}
       </div>
       <h1>Social Listening und Monitoring Report</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
