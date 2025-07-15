@@ -436,7 +436,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${accessibilityScore >= 80 ? getScoreRange(accessibilityScore) : '0-20'}" style="width: ${Math.max(30, accessibilityScore)}%"></div>
+                    <div class="progress-fill" style="width: ${Math.max(30, accessibilityScore)}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
                   </div>
                 </div>
               </div>
@@ -448,7 +448,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${accessibilityScore >= 80 ? getScoreRange(accessibilityScore) : '0-20'}" style="width: ${accessibilityScore}%"></div>
+                    <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
                   </div>
                 </div>
               </div>
@@ -460,7 +460,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${accessibilityScore >= 70 ? getScoreRange(Math.max(25, accessibilityScore * 0.9)) : '0-20'}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
+                    <div class="progress-fill" style="width: ${Math.max(25, accessibilityScore * 0.9)}%; background-color: ${getScoreColor(Math.max(25, accessibilityScore * 0.9))};"></div>
                   </div>
                 </div>
               </div>
