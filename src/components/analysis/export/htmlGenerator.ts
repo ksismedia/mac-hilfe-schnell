@@ -335,7 +335,19 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- WCAG-Analyse -->
-        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: #FF8C00; border-radius: 8px; border: 1px solid #FF8C00;">
+        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: ${
+          accessibilityScore < 20 ? '#CD0000' :
+          accessibilityScore < 40 ? '#FF0000' :
+          accessibilityScore < 60 ? '#FF4500' :
+          accessibilityScore < 80 ? '#22c55e' :
+          '#FFD700'
+        }; border-radius: 8px; border: 1px solid ${
+          accessibilityScore < 20 ? '#CD0000' :
+          accessibilityScore < 40 ? '#FF0000' :
+          accessibilityScore < 60 ? '#FF4500' :
+          accessibilityScore < 80 ? '#22c55e' :
+          '#FFD700'
+        };">
           <h4 style="color: white; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
         </div>
         
