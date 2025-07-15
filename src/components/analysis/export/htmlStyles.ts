@@ -197,12 +197,7 @@ body {
   overflow: hidden;
 }
 
-/* Einfarbige Progress-Fill Farben basierend auf Wert-Bereichen */
-.progress-fill[data-score="0-20"] { background: #CD0000; } /* Dunkelrot 0-20% */
-.progress-fill[data-score="20-40"] { background: #FF0000; } /* Rot 20-40% */
-.progress-fill[data-score="40-60"] { background: #FF4500; } /* Orange 40-60% */
-.progress-fill[data-score="60-80"] { background: #22c55e; } /* Grün 60-80% */
-.progress-fill[data-score="80-100"] { background: #FFD700; } /* Gelb 80-100% */
+/* Progress-Fill Farben werden jetzt über Inline-Styles gesetzt */
 
 .percentage-btn {
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
@@ -419,11 +414,7 @@ table tr {
     line-height: 1.2 !important;
   }
   
-  .progress-fill[data-score="0-20"] { background: #CD0000 !important; }
-  .progress-fill[data-score="20-40"] { background: #FF0000 !important; }
-  .progress-fill[data-score="40-60"] { background: #FF4500 !important; }
-  .progress-fill[data-score="60-80"] { background: #22c55e !important; }
-  .progress-fill[data-score="80-100"] { background: #FFD700 !important; }
+  /* Progress-Fill Farben werden jetzt über Inline-Styles gesetzt */
   
   .recommendations {
     page-break-inside: avoid !important;
