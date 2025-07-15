@@ -119,23 +119,23 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-/* Neue Progress Bar Gradienten */
-.progress-gradient-0-20 {
-  background: #dc2626;
+/* Neue einfarbige Progress Bar Klassen */
+.progress-score-0-20 {
+  background: #dc2626; /* Dunkelrot */
 }
 
-.progress-gradient-20-40 {
-  background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%);
+.progress-score-20-40 {
+  background: #ef4444; /* Hellrot */
 }
 
-.progress-gradient-40-60 {
-  background: linear-gradient(90deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #22c55e 100%);
+.progress-score-40-60 {
+  background: #ea580c; /* Dunkelorange */
 }
 
-.progress-gradient-60-80 {
-  background: linear-gradient(90deg, #dc2626 0%, #ea580c 20%, #f59e0b 40%, #22c55e 60%, #ffd700 100%);
+.progress-score-60-80 {
+  background: #22c55e; /* Grün */
 }
 
-.progress-gradient-80-100 {
-  background: linear-gradient(90deg, #dc2626 0%, #ea580c 15%, #f59e0b 30%, #22c55e 45%, #ffd700 60%, #ffed4a 80%, #fbbf24 100%);
+.progress-score-80-100 {
+  background: #fbbf24; /* Hellgelb */
 }
