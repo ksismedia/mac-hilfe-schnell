@@ -271,8 +271,8 @@ export const generateMobileSection = (realData: RealBusinessData) => `
 export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
         <!-- Datenschutz-Analyse -->
         <div class="section">
-            <div class="section-header">🔒 Datenschutz & DSGVO-Compliance</div>
-            <div class="section-content">
+            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
+            <div id="datenschutz-content" class="section-content" style="display: none;">
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">DSGVO-Compliance</div>
