@@ -2123,7 +2123,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card">
           <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(72)}">72%</div>
+            <div class="score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
             <div class="score-details">
               <p><strong>Compliance-Level:</strong> Teilweise konform</p>
               <p><strong>Empfehlung:</strong> Barrierefreiheit verbessern</p>
