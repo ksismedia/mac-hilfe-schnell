@@ -863,7 +863,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>📱 Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-circle red">0%</div>
+            <div class="score-circle ${getScoreColorClass(0)}">0%</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine Social Media Aktivität erkannt</p>
               <p><strong>Empfehlung:</strong> Aufbau einer professionellen Social Media Präsenz</p>
@@ -895,7 +895,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>📱 Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-circle red">0%</div>
+            <div class="score-circle ${getScoreColorClass(0)}">0%</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine aktiven Social Media Kanäle</p>
               <p><strong>Empfehlung:</strong> Social Media Präsenz aufbauen</p>
@@ -1388,7 +1388,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>Backlink-Profil</h3>
           <div class="score-display">
-            <div class="score-circle yellow">
+            <div class="score-circle ${getScoreColorClass(realData.seo.score)}">
               ${realData.seo.score}
             </div>
             <div class="score-details">
@@ -1399,7 +1399,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${realData.seo.score}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(realData.seo.score)}" style="width: ${realData.seo.score}%"></div>
             </div>
           </div>
           <div class="recommendations">
@@ -1430,7 +1430,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>💼 Arbeitgeber-Bewertung</h3>
           <div class="score-display">
-            <div class="score-circle yellow">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+            <div class="score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
             <div class="score-details">
               <p><strong>Bewertung als Arbeitgeber:</strong> ${realData.workplace ? (realData.workplace.overallScore >= 80 ? 'Sehr gut' : realData.workplace.overallScore >= 60 ? 'Gut' : 'Ausbaufähig') : 'Nicht bewertet'}</p>
               <p><strong>Empfehlung:</strong> Employer Branding stärken</p>
@@ -1438,7 +1438,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
             </div>
           </div>
           
@@ -1456,7 +1456,13 @@ export const generateCustomerHTML = ({
                 }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${
+                    <div class="progress-fill" data-score="${getScoreRange(
+                      manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                        ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
+                        : realData.workplace?.kununu?.rating 
+                          ? (realData.workplace.kununu.rating * 20) 
+                          : 30
+                    )}" style="width: ${
                       manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
                         ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
                         : realData.workplace?.kununu?.rating 
@@ -1476,7 +1482,13 @@ export const generateCustomerHTML = ({
                 }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${
+                    <div class="progress-fill" data-score="${getScoreRange(
+                      manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                        ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
+                        : realData.workplace?.glassdoor?.rating 
+                          ? (realData.workplace.glassdoor.rating * 20) 
+                          : 25
+                    )}" style="width: ${
                       manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
                         ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
                         : realData.workplace?.glassdoor?.rating 
@@ -1490,7 +1502,7 @@ export const generateCustomerHTML = ({
                 <p><strong>Arbeitsklima:</strong> ${realData.workplace?.kununu?.rating >= 4 ? 'Sehr gut' : realData.workplace?.kununu?.rating >= 3 ? 'Gut' : 'Ausbaufähig'}</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50}%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50)}" style="width: ${realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50}%"></div>
                   </div>
                 </div>
               </div>
@@ -1505,7 +1517,7 @@ export const generateCustomerHTML = ({
                 <p><strong>Ausbildungsplätze:</strong> ${businessData.industry === 'shk' ? 'Verfügbar' : 'Auf Anfrage'}</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 80%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(80)}" style="width: 80%"></div>
                   </div>
                 </div>
               </div>
@@ -1513,7 +1525,7 @@ export const generateCustomerHTML = ({
                 <p><strong>Weiterbildung:</strong> Standardprogramm</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 65%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(65)}" style="width: 65%"></div>
                   </div>
                 </div>
               </div>
@@ -1521,7 +1533,7 @@ export const generateCustomerHTML = ({
                 <p><strong>Benefits:</strong> Branchenüblich</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: 70%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(70)}" style="width: 70%"></div>
                   </div>
                 </div>
               </div>
@@ -1608,7 +1620,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card good">
           <h3>Stundensatz-Analyse</h3>
           <div class="score-display">
-            <div class="score-circle ${hourlyRateData.ownRate >= hourlyRateData.regionAverage * 0.9 && hourlyRateData.ownRate <= hourlyRateData.regionAverage * 1.1 ? 'green' : 'yellow'}">
+            <div class="score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">
               ${hourlyRateData.ownRate}€
             </div>
             <div class="score-details">
@@ -1619,7 +1631,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100)}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}" style="width: ${Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100)}%"></div>
             </div>
           </div>
           <div class="recommendations">
@@ -1643,7 +1655,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card ${impressumScore >= 70 ? 'good' : 'warning'}">
           <h3>Impressum & Datenschutz</h3>
           <div class="score-display">
-            <div class="score-circle ${impressumScore >= 70 ? 'green' : impressumScore >= 40 ? 'yellow' : 'red'}">${impressumScore}%</div>
+            <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
             <div class="score-details">
               <p><strong>Impressum-Vollständigkeit:</strong> ${impressumScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
               <p><strong>Fehlende Angaben:</strong> ${finalMissingImprintElements.length}</p>
@@ -1652,7 +1664,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${impressumScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%"></div>
             </div>
           </div>
           <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
