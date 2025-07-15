@@ -330,7 +330,13 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(accessibilityScore)}" style="width: ${accessibilityScore}%"></div>
+            <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${
+              accessibilityScore < 20 ? '#CD0000' :
+              accessibilityScore < 40 ? '#FF0000' :
+              accessibilityScore < 60 ? '#FF4500' :
+              accessibilityScore < 80 ? '#22c55e' :
+              '#FFD700'
+            };"></div>
           </div>
         </div>
 
