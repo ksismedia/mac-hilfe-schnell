@@ -204,6 +204,25 @@ body {
 .progress-fill[data-score="60-80"] { background: #22c55e; } /* Grün 60-80% */
 .progress-fill[data-score="80-100"] { background: #FFD700; } /* Gelb 80-100% */
 
+.percentage-btn {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #000000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 50px;
+}
+
+.percentage-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 .company-info { 
   background: rgba(17, 24, 39, 0.6); 
   padding: 25px; 

@@ -73,7 +73,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Optimierung</span>
-                                <span>${realData.seo.score}%</span>
+                                <button class="percentage-btn">${realData.seo.score}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%"></div>
@@ -87,7 +87,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Keyword-Abdeckung</span>
-                                <span>${keywordsScore}%</span>
+                                <button class="percentage-btn">${keywordsScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" style="width: ${keywordsScore}%"></div>
@@ -103,7 +103,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Meta-Tags & Struktur</span>
-                                <span>${hasMetaDescription ? '100' : '60'}%</span>
+                                <button class="percentage-btn">${hasMetaDescription ? '100' : '60'}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${!hasMetaDescription ? 'warning' : ''}" style="width: ${hasMetaDescription ? 100 : 60}%"></div>
@@ -117,7 +117,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Technische Umsetzung</span>
-                                <span>75%</span>
+                                <button class="percentage-btn">75%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 75%"></div>
@@ -154,7 +154,7 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Geschwindigkeit</span>
-                                <span>${realData.performance.score}%</span>
+                                <button class="percentage-btn">${realData.performance.score}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.performance.score < 60 ? 'warning' : ''}" style="width: ${realData.performance.score}%"></div>
@@ -182,7 +182,7 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>User Experience</span>
-                                <span>85%</span>
+                                <button class="percentage-btn">85%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 85%"></div>
@@ -196,7 +196,7 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Uptime & Erreichbarkeit</span>
-                                <span>100%</span>
+                                <button class="percentage-btn">100%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 100%"></div>
@@ -220,7 +220,7 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mobile Nutzerfreundlichkeit</span>
-                                <span>${realData.mobile.overallScore}%</span>
+                                <button class="percentage-btn">${realData.mobile.overallScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.mobile.overallScore < 60 ? 'warning' : ''}" style="width: ${realData.mobile.overallScore}%"></div>
@@ -256,7 +256,7 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mobile Ladezeit</span>
-                                <span>75%</span>
+                                <button class="percentage-btn">75%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 75%"></div>
@@ -280,7 +280,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Datenschutz-Konformität</span>
-                                <span>${dataPrivacyScore}%</span>
+                                <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
@@ -296,7 +296,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Cookie-Banner & Einstellungen</span>
-                                <span>${Math.min(100, dataPrivacyScore + 10)}%</span>
+                                <button class="percentage-btn">${Math.min(100, dataPrivacyScore + 10)}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) <= 20 ? '0-20' : Math.min(100, dataPrivacyScore + 10) <= 40 ? '20-40' : Math.min(100, dataPrivacyScore + 10) <= 60 ? '40-60' : Math.min(100, dataPrivacyScore + 10) <= 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
@@ -310,7 +310,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Datensicherheit</span>
-                                <span>100%</span>
+                                <button class="percentage-btn">100%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="80-100" style="width: 100%"></div>
@@ -326,7 +326,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Rechtssicherheit</span>
-                                <span>${dataPrivacyScore}%</span>
+                                <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
