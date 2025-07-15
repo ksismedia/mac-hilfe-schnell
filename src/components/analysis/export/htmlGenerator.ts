@@ -28,6 +28,24 @@ interface CustomerReportData {
   dataPrivacyScore?: number;
 }
 
+// Function to get score range for data attribute
+const getScoreRange = (score: number) => {
+  if (score <= 20) return "0-20";
+  if (score <= 40) return "20-40";
+  if (score <= 60) return "40-60";
+  if (score <= 80) return "60-80";
+  return "80-100";
+};
+
+// Function to get score color class
+const getScoreColorClass = (score: number) => {
+  if (score <= 20) return "dark-red";
+  if (score <= 40) return "red";
+  if (score <= 60) return "orange";
+  if (score <= 80) return "green";
+  return "yellow";
+};
+
 export const generateCustomerHTML = ({
   businessData,
   realData,
@@ -155,7 +173,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
         <div class="score-display">
-          <div class="score-circle ${accessibilityScore >= 80 ? 'green' : accessibilityScore >= 60 ? 'yellow' : 'red'}">${accessibilityScore}%</div>
+          <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}</p>
             <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
@@ -163,7 +181,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${accessibilityScore}%"></div>
+            <div class="progress-fill" data-score="${getScoreRange(accessibilityScore)}" style="width: ${accessibilityScore}%"></div>
           </div>
         </div>
 
@@ -257,7 +275,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>SEO Optimierung</h3>
         <div class="score-display">
-          <div class="score-circle ${seoScore >= 70 ? 'green' : seoScore >= 40 ? 'yellow' : 'red'}">${seoScore}%</div>
+          <div class="score-circle ${getScoreColorClass(seoScore)}">${seoScore}%</div>
           <div class="score-details">
             <p><strong>Sichtbarkeit:</strong> ${seoScore >= 70 ? 'Hoch' : seoScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${seoScore >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
@@ -265,7 +283,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-value="${Math.round(seoScore/10)*10}" style="width: ${seoScore}%"></div>
+            <div class="progress-fill" data-score="${getScoreRange(seoScore)}" style="width: ${seoScore}%"></div>
           </div>
         </div>
         
@@ -275,11 +293,11 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${effectiveKeywordScore}%"></div>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%"></div>
+                  </div>
                 </div>
-              </div>
               <small style="color: #666;">Score: ${effectiveKeywordScore}%</small>
             </div>
             <div>
@@ -393,7 +411,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>Performance Analyse</h3>
         <div class="score-display">
-          <div class="score-circle ${performanceScore >= 70 ? 'green' : performanceScore >= 40 ? 'yellow' : 'red'}">${performanceScore}%</div>
+          <div class="score-circle ${getScoreColorClass(performanceScore)}">${performanceScore}%</div>
           <div class="score-details">
             <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
             <p><strong>Empfehlung:</strong> ${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'}</p>
@@ -401,7 +419,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-value="${Math.round(performanceScore/10)*10}" style="width: ${performanceScore}%"></div>
+            <div class="progress-fill" data-score="${getScoreRange(performanceScore)}" style="width: ${performanceScore}%"></div>
           </div>
         </div>
         <div class="recommendations">
@@ -426,7 +444,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>Mobile Optimierung</h3>
         <div class="score-display">
-          <div class="score-circle ${mobileScore >= 70 ? 'green' : mobileScore >= 40 ? 'yellow' : 'red'}">${mobileScore}%</div>
+          <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 70 ? 'Hoch' : mobileScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
@@ -434,7 +452,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-value="${Math.round(mobileScore/10)*10}" style="width: ${mobileScore}%"></div>
+            <div class="progress-fill" data-score="${getScoreRange(mobileScore)}" style="width: ${mobileScore}%"></div>
           </div>
         </div>
         
@@ -940,7 +958,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${cardClass}">
         <h3>📱 Social Media Präsenz</h3>
         <div class="score-display">
-          <div class="score-circle ${scoreClass}">${socialMediaScore}%</div>
+          <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
           <div class="score-details">
             <p><strong>Aktive Plattformen:</strong> ${activePlatforms.length}</p>
             <p><strong>Status:</strong> ${socialMediaScore >= 80 ? 'Sehr gut' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
@@ -949,7 +967,7 @@ export const generateCustomerHTML = ({
         
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" data-value="${Math.round(socialMediaScore/10)*10}" style="width: ${socialMediaScore}%"></div>
+            <div class="progress-fill" data-score="${getScoreRange(socialMediaScore)}" style="width: ${socialMediaScore}%"></div>
           </div>
         </div>
         
