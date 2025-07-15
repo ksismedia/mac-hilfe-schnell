@@ -278,7 +278,11 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
-            <p><strong>Compliance-Level:</strong> ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}</p>
+            <p><strong>Compliance-Level:</strong> 
+              <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : accessibilityScore >= 60 ? '#FF4500' : '#CD0000'}; font-weight: bold;">
+                ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}
+              </span>
+            </p>
             <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
           </div>
         </div>
