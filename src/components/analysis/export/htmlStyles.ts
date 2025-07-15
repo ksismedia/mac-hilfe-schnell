@@ -104,9 +104,10 @@ body {
   flex-shrink: 0;
 }
 .score-circle.green { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
-.score-circle.yellow { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; }
-.score-circle.orange { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
-.score-circle.red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+.score-circle.yellow { background: linear-gradient(135deg, #FFD700, #DAA520); color: black; }
+.score-circle.orange { background: linear-gradient(135deg, #FF4500, #FF6347); color: white; }
+.score-circle.red { background: linear-gradient(135deg, #FF0000, #CD0000); color: white; }
+.score-circle.dark-red { background: linear-gradient(135deg, #CD0000, #8B0000); color: white; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
