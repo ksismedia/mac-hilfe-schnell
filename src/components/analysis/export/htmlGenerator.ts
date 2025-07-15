@@ -223,7 +223,7 @@ export const generateCustomerHTML = ({
               <p><strong>EU-Richtlinie 2016/2102:</strong> ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}</p>
               <div class="progress-container" style="margin-top: 5px;">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(30, accessibilityScore)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, accessibilityScore))}" style="width: ${Math.max(30, accessibilityScore)}%"></div>
                 </div>
               </div>
             </div>
@@ -231,7 +231,7 @@ export const generateCustomerHTML = ({
               <p><strong>WCAG 2.1 Level AA:</strong> ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}</p>
               <div class="progress-container" style="margin-top: 5px;">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${accessibilityScore}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(accessibilityScore)}" style="width: ${accessibilityScore}%"></div>
                 </div>
               </div>
             </div>
@@ -239,7 +239,7 @@ export const generateCustomerHTML = ({
               <p><strong>BGG (Deutschland):</strong> ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}</p>
               <div class="progress-container" style="margin-top: 5px;">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(25, accessibilityScore * 0.9))}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%"></div>
                 </div>
               </div>
             </div>
@@ -304,7 +304,7 @@ export const generateCustomerHTML = ({
               <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%"></div>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export const generateCustomerHTML = ({
               <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%"></div>
                 </div>
               </div>
             </div>
@@ -335,7 +335,7 @@ export const generateCustomerHTML = ({
               <p><strong>URL-Struktur:</strong> ${seoScore >= 70 ? 'Sehr gut' : seoScore >= 50 ? 'Gut' : 'Optimierbar'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(40, seoScore)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, seoScore))}" style="width: ${Math.max(40, seoScore)}%"></div>
                 </div>
               </div>
             </div>
@@ -343,7 +343,7 @@ export const generateCustomerHTML = ({
               <p><strong>Interne Verlinkung:</strong> ${seoScore >= 60 ? 'Gut strukturiert' : 'Ausbaufähig'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(30, seoScore * 0.9)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, seoScore * 0.9))}" style="width: ${Math.max(30, seoScore * 0.9)}%"></div>
                 </div>
               </div>
             </div>
@@ -351,7 +351,7 @@ export const generateCustomerHTML = ({
               <p><strong>Breadcrumbs:</strong> ${seoScore >= 70 ? 'Implementiert' : 'Fehlen teilweise'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${seoScore >= 70 ? 85 : 35}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 70 ? 85 : 35)}" style="width: ${seoScore >= 70 ? 85 : 35}%"></div>
                 </div>
               </div>
             </div>
@@ -366,7 +366,7 @@ export const generateCustomerHTML = ({
               <p><strong>Meta-Tags:</strong> ${seoScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(35, seoScore)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(35, seoScore))}" style="width: ${Math.max(35, seoScore)}%"></div>
                 </div>
               </div>
             </div>
@@ -374,7 +374,7 @@ export const generateCustomerHTML = ({
               <p><strong>Schema Markup:</strong> ${seoScore >= 80 ? 'Implementiert' : 'Teilweise/Fehlend'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${seoScore >= 80 ? 90 : 25}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 80 ? 90 : 25)}" style="width: ${seoScore >= 80 ? 90 : 25}%"></div>
                 </div>
               </div>
             </div>
@@ -382,7 +382,7 @@ export const generateCustomerHTML = ({
               <p><strong>XML Sitemap:</strong> ${seoScore >= 60 ? 'Vorhanden' : 'Nicht gefunden'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${seoScore >= 60 ? 85 : 30}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 60 ? 85 : 30)}" style="width: ${seoScore >= 60 ? 85 : 30}%"></div>
                 </div>
               </div>
             </div>
@@ -464,7 +464,7 @@ export const generateCustomerHTML = ({
               <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 70 ? 'Korrekt' : 'Fehlerhaft'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(40, mobileScore)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore))}" style="width: ${Math.max(40, mobileScore)}%"></div>
                 </div>
               </div>
             </div>
@@ -472,7 +472,7 @@ export const generateCustomerHTML = ({
               <p><strong>Flexible Layouts:</strong> ${mobileScore >= 60 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(30, mobileScore * 0.9)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, mobileScore * 0.9))}" style="width: ${Math.max(30, mobileScore * 0.9)}%"></div>
                 </div>
               </div>
             </div>
@@ -480,7 +480,7 @@ export const generateCustomerHTML = ({
               <p><strong>Bildoptimierung:</strong> ${mobileScore >= 70 ? 'Responsive Bilder' : 'Nicht optimiert'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${mobileScore >= 70 ? 85 : 35}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 85 : 35)}" style="width: ${mobileScore >= 70 ? 85 : 35}%"></div>
                 </div>
               </div>
             </div>
@@ -495,7 +495,7 @@ export const generateCustomerHTML = ({
               <p><strong>Mobile Ladezeit:</strong> ${realData.performance.loadTime <= 3 ? 'Schnell' : realData.performance.loadTime <= 5 ? 'Akzeptabel' : 'Langsam'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 15))}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, 100 - (realData.performance.loadTime * 15)))}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 15))}%"></div>
                 </div>
               </div>
             </div>
@@ -503,7 +503,7 @@ export const generateCustomerHTML = ({
               <p><strong>Core Web Vitals:</strong> ${mobileScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(25, mobileScore * 0.8)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(25, mobileScore * 0.8))}" style="width: ${Math.max(25, mobileScore * 0.8)}%"></div>
                 </div>
               </div>
             </div>
@@ -511,7 +511,7 @@ export const generateCustomerHTML = ({
               <p><strong>Mobile-First Index:</strong> ${mobileScore >= 60 ? 'Berücksichtigt' : 'Nicht optimiert'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${mobileScore >= 60 ? 80 : 30}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 80 : 30)}" style="width: ${mobileScore >= 60 ? 80 : 30}%"></div>
                 </div>
               </div>
             </div>
@@ -526,7 +526,7 @@ export const generateCustomerHTML = ({
               <p><strong>Button-Größen:</strong> ${mobileScore >= 70 ? 'Touch-freundlich' : 'Zu klein'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${mobileScore >= 70 ? 90 : 40}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 90 : 40)}" style="width: ${mobileScore >= 70 ? 90 : 40}%"></div>
                 </div>
               </div>
             </div>
@@ -534,7 +534,7 @@ export const generateCustomerHTML = ({
               <p><strong>Tap-Abstände:</strong> ${mobileScore >= 60 ? 'Ausreichend' : 'Zu gering'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${mobileScore >= 60 ? 85 : 35}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 85 : 35)}" style="width: ${mobileScore >= 60 ? 85 : 35}%"></div>
                 </div>
               </div>
             </div>
@@ -542,7 +542,7 @@ export const generateCustomerHTML = ({
               <p><strong>Scroll-Verhalten:</strong> ${mobileScore >= 70 ? 'Flüssig' : 'Verbesserbar'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(40, mobileScore * 0.9)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore * 0.9))}" style="width: ${Math.max(40, mobileScore * 0.9)}%"></div>
                 </div>
               </div>
             </div>
@@ -1114,7 +1114,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.performance.score >= 70 ? 'Sehr gut' : realData.performance.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.min(100, realData.performance.score + 10)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.min(100, realData.performance.score + 10))}" style="width: ${Math.min(100, realData.performance.score + 10)}%"></div>
                 </div>
               </div>
               <p style="font-size: 12px; color: #6b7280;">Navigation, Layout, Responsivität</p>
@@ -1124,7 +1124,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.performance.score >= 80 ? '99.9%' : realData.performance.score >= 60 ? '99.5%' : '98.8%'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%"></div>
                 </div>
               </div>
               <p style="font-size: 12px; color: #6b7280;">Uptime, Serverantwortzeit</p>
@@ -1140,7 +1140,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.performance.loadTime}s</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(0, 100 - (realData.performance.loadTime * 20))}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, 100 - (realData.performance.loadTime * 20)))}" style="width: ${Math.max(0, 100 - (realData.performance.loadTime * 20))}%"></div>
                 </div>
               </div>
             </div>
@@ -1149,7 +1149,7 @@ export const generateCustomerHTML = ({
               <p><strong>${(realData.performance.loadTime * 0.6).toFixed(1)}s</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.performance.score}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
                 </div>
               </div>
             </div>
@@ -1158,7 +1158,7 @@ export const generateCustomerHTML = ({
               <p><strong>${(realData.performance.loadTime * 1.2).toFixed(1)}s</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(0, realData.performance.score - 10)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%"></div>
                 </div>
               </div>
             </div>
@@ -1180,7 +1180,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.seo.titleTag ? 'Vorhanden' : 'Fehlend'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.seo.titleTag ? 100 : 0}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.titleTag ? 100 : 0)}" style="width: ${realData.seo.titleTag ? 100 : 0}%"></div>
                 </div>
               </div>
             </div>
@@ -1189,7 +1189,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.seo.metaDescription ? 'Optimiert' : 'Verbesserungsbedarf'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 85 : 30}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 30)}" style="width: ${realData.seo.metaDescription ? 85 : 30}%"></div>
                 </div>
               </div>
             </div>
@@ -1198,7 +1198,7 @@ export const generateCustomerHTML = ({
               <p><strong>Zu analysieren</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 50%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(50)}" style="width: 50%"></div>
                 </div>
               </div>
             </div>
@@ -1249,7 +1249,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.seo.score >= 70 ? 'Sehr gut' : realData.seo.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.max(60, realData.seo.score)}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(60, realData.seo.score))}" style="width: ${Math.max(60, realData.seo.score)}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Flesch-Reading-Ease: ${Math.max(45, realData.seo.score - 10)}</p>
@@ -1259,7 +1259,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.seo.metaDescription ? 'Ausreichend' : 'Zu kurz'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 85 : 40}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}" style="width: ${realData.seo.metaDescription ? 85 : 40}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Wörter: ${realData.seo.metaDescription ? '450-800' : '< 300'}</p>
@@ -1269,7 +1269,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.seo.headings.h1.length > 0 ? 'Gut strukturiert' : 'Struktur fehlt'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
@@ -1305,7 +1305,7 @@ export const generateCustomerHTML = ({
                <p><strong>${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
                <div class="progress-container">
                  <div class="progress-bar">
-                   <div class="progress-fill" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                   <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
@@ -1315,7 +1315,7 @@ export const generateCustomerHTML = ({
               <p><strong>${businessData.address ? 'Regional optimiert' : 'Nicht spezifiziert'}</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${businessData.address ? 90 : 30}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
@@ -1341,7 +1341,7 @@ export const generateCustomerHTML = ({
               <p><strong>Zu prüfen</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 60%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(60)}" style="width: 60%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Empfehlung: Quartalweise</p>
@@ -1351,7 +1351,7 @@ export const generateCustomerHTML = ({
               <p><strong>Nicht vorhanden</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 25%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(25)}" style="width: 25%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Blog/News-Bereich fehlt</p>
@@ -1361,7 +1361,7 @@ export const generateCustomerHTML = ({
               <p><strong>Nicht erkannt</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 35%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(35)}" style="width: 35%"></div>
                 </div>
               </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Winterdienst, Klimaanlagen etc.</p>
