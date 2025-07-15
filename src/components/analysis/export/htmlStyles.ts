@@ -19,7 +19,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; width: 100%; }
 .header { 
   text-align: center; 
   margin-bottom: 40px; 
@@ -87,6 +87,7 @@ body {
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
+  contain: layout style;
 }
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);

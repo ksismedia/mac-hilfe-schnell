@@ -980,7 +980,7 @@ export const generateCustomerHTML = ({
     if (!manualSocialData) {
       return `
         <div class="metric-card warning">
-          <h3>📱 Social Media Präsenz</h3>
+          <h3>Social Media Präsenz</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(0)}">0%</div>
             <div class="score-details">
@@ -1012,7 +1012,7 @@ export const generateCustomerHTML = ({
     if (!hasAnyPlatform) {
       return `
         <div class="metric-card warning">
-          <h3>📱 Social Media Präsenz</h3>
+          <h3>Social Media Präsenz</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(0)}">0%</div>
             <div class="score-details">
@@ -1074,7 +1074,7 @@ export const generateCustomerHTML = ({
     
     return `
       <div class="metric-card ${cardClass}">
-        <h3>📱 Social Media Präsenz</h3>
+        <h3>Social Media Präsenz</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
           <div class="score-details">
@@ -2070,7 +2070,7 @@ export const generateCustomerHTML = ({
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 📱 Social Media Listening & Monitoring</span>
+        <span>▶ Social Media Listening & Monitoring</span>
         <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
@@ -2085,7 +2085,7 @@ export const generateCustomerHTML = ({
           <div style="margin-top: 15px;">
             ${manualSocialData && manualSocialData.facebookUrl ? `
               <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>📘 Facebook</h3>
+                <h3>Facebook</h3>
                 <p><strong>Follower:</strong> ${manualSocialData.facebookFollowers || 'Nicht verfügbar'}</p>
                 <p><strong>Letzter Post:</strong> ${manualSocialData.facebookLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
@@ -2094,7 +2094,7 @@ export const generateCustomerHTML = ({
             
             ${manualSocialData && manualSocialData.instagramUrl ? `
               <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>📷 Instagram</h3>
+                <h3>Instagram</h3>
                 <p><strong>Follower:</strong> ${manualSocialData.instagramFollowers || 'Nicht verfügbar'}</p>
                 <p><strong>Letzter Post:</strong> ${manualSocialData.instagramLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
@@ -2103,7 +2103,7 @@ export const generateCustomerHTML = ({
             
             ${manualSocialData && manualSocialData.linkedinUrl ? `
               <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>💼 LinkedIn</h3>
+                <h3>LinkedIn</h3>
                 <p><strong>Follower:</strong> ${manualSocialData.linkedinFollowers || 'Nicht verfügbar'}</p>
                 <p><strong>Letzter Post:</strong> ${manualSocialData.linkedinLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
@@ -2112,7 +2112,7 @@ export const generateCustomerHTML = ({
             
             ${manualSocialData && manualSocialData.twitterUrl ? `
               <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>🐦 Twitter</h3>
+                <h3>Twitter</h3>
                 <p><strong>Follower:</strong> ${manualSocialData.twitterFollowers || 'Nicht verfügbar'}</p>
                 <p><strong>Letzter Post:</strong> ${manualSocialData.twitterLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
@@ -2121,7 +2121,7 @@ export const generateCustomerHTML = ({
             
             ${manualSocialData && manualSocialData.youtubeUrl ? `
               <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>📺 YouTube</h3>
+                <h3>YouTube</h3>
                 <p><strong>Abonnenten:</strong> ${manualSocialData.youtubeSubscribers || 'Nicht verfügbar'}</p>
                 <p><strong>Letztes Video:</strong> ${manualSocialData.youtubeLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
