@@ -1397,7 +1397,6 @@ export const generateCustomerHTML = ({
         
         <div id="performance-details" style="display: none;">
           ${getPerformanceAnalysis()}
-        ${getPerformanceAnalysis()}
         
         <!-- Nutzerfreundlichkeit und Verfügbarkeit -->
         <div class="metric-card good" style="margin-top: 20px;">
@@ -1490,7 +1489,6 @@ export const generateCustomerHTML = ({
         
         <div id="seo-details" style="display: none;">
           ${getSEOAnalysis()}
-        ${getSEOAnalysis()}
         <div class="metric-card good" style="margin-top: 20px;">
           <h3>SEO-Details</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
