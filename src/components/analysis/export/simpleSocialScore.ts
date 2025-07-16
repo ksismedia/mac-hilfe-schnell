@@ -138,10 +138,36 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(20, platformScore);
   }
   
-  // Normalisierung auf 100 Punkte (Gesamtmaximum: 130 Punkte)
-  const normalizedScore = Math.round((totalScore / 130) * 100);
+  // TikTok (max 20 Punkte)
+  if (manualData.tiktokUrl && manualData.tiktokUrl.trim() !== '') {
+    let platformScore = 5; // Basis für Präsenz
+    const followers = parseInt(manualData.tiktokFollowers || '0');
+    
+    // Follower-Bewertung (max 12 Punkte)
+    if (followers >= 10000) platformScore += 12;
+    else if (followers >= 5000) platformScore += 10;
+    else if (followers >= 2000) platformScore += 8;
+    else if (followers >= 1000) platformScore += 6;
+    else if (followers >= 500) platformScore += 4;
+    else if (followers >= 100) platformScore += 3;
+    else if (followers >= 50) platformScore += 2;
+    else if (followers >= 10) platformScore += 1;
+    
+    // Video-Aktivität (max 3 Punkte)
+    if (manualData.tiktokLastPost) {
+      const post = manualData.tiktokLastPost.toLowerCase();
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 2;
+      else if (post.includes('woche')) platformScore += 1;
+    }
+    
+    totalScore += Math.min(20, platformScore);
+  }
   
-  console.log(`Social Media Score: ${normalizedScore}/100 (${totalScore}/130 Rohpunkte)`);
+  // Normalisierung auf 100 Punkte (Gesamtmaximum: 150 Punkte)
+  const normalizedScore = Math.round((totalScore / 150) * 100);
+  
+  console.log(`Social Media Score: ${normalizedScore}/100 (${totalScore}/150 Rohpunkte)`);
   
   return Math.min(100, normalizedScore);
 };

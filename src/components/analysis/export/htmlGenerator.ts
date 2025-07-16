@@ -1120,6 +1120,7 @@ export const generateCustomerHTML = ({
               <li>Facebook Business-Seite erstellen</li>
               <li>Instagram für visuelle Inhalte nutzen</li>
               <li>LinkedIn für B2B-Networking</li>
+              <li>TikTok für junge Zielgruppe</li>
               <li>Regelmäßige Content-Strategie entwickeln</li>
             </ul>
           </div>
@@ -1132,7 +1133,8 @@ export const generateCustomerHTML = ({
       manualSocialData.instagramUrl || 
       manualSocialData.linkedinUrl || 
       manualSocialData.twitterUrl || 
-      manualSocialData.youtubeUrl
+      manualSocialData.youtubeUrl ||
+      manualSocialData.tiktokUrl
     );
 
     if (!hasAnyPlatform) {
@@ -1193,6 +1195,13 @@ export const generateCustomerHTML = ({
         name: 'YouTube',
         followers: manualSocialData.youtubeSubscribers || '0',
         lastPost: manualSocialData.youtubeLastPost || 'Unbekannt'
+      });
+    }
+    if (manualSocialData.tiktokUrl) {
+      activePlatforms.push({
+        name: 'TikTok',
+        followers: manualSocialData.tiktokFollowers || '0',
+        lastPost: manualSocialData.tiktokLastPost || 'Unbekannt'
       });
     }
 
@@ -1976,7 +1985,7 @@ export const generateCustomerHTML = ({
         </div>
         
         <!-- Plattform-spezifische Analysen -->
-        ${['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube'].map(platform => {
+        ${['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube', 'TikTok'].map(platform => {
           const platformKey = platform.toLowerCase();
           const platformUrl = manualSocialData?.[platformKey + 'Url'];
           const platformFollowers = manualSocialData?.[platformKey + (platform === 'YouTube' ? 'Subscribers' : 'Followers')] || '0';
@@ -2071,6 +2080,11 @@ export const generateCustomerHTML = ({
                     <li>Tutorial-Videos für Fachexpertise erstellen</li>
                     <li>Vorher-Nachher-Videos von Projekten zeigen</li>
                     <li>SEO-optimierte Video-Beschreibungen verwenden</li>
+                  ` : ''}
+                  ${platform === 'TikTok' ? `
+                    <li>Kurze, authentische Videos produzieren</li>
+                    <li>Trending Hashtags und Challenges nutzen</li>
+                    <li>Behind-the-scenes Einblicke geben</li>
                   ` : ''}
                 </ul>
               </div>
@@ -2321,6 +2335,15 @@ export const generateCustomerHTML = ({
                 <h3>YouTube</h3>
                 <p><strong>Abonnenten:</strong> ${manualSocialData.youtubeSubscribers || 'Nicht verfügbar'}</p>
                 <p><strong>Letztes Video:</strong> ${manualSocialData.youtubeLastPost || 'Unbekannt'}</p>
+                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+              </div>
+            ` : ''}
+            
+            ${manualSocialData && manualSocialData.tiktokUrl ? `
+              <div class="metric-card" style="margin-bottom: 20px;">
+                <h3>TikTok</h3>
+                <p><strong>Follower:</strong> ${manualSocialData.tiktokFollowers || 'Nicht verfügbar'}</p>
+                <p><strong>Letztes Video:</strong> ${manualSocialData.tiktokLastPost || 'Unbekannt'}</p>
                 <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
               </div>
             ` : ''}
