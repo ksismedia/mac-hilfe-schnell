@@ -12,16 +12,19 @@ export interface ManualSocialData {
   linkedinUrl: string;
   twitterUrl: string;
   youtubeUrl: string;
+  tiktokUrl: string;
   facebookFollowers: string;
   instagramFollowers: string;
   linkedinFollowers: string;
   twitterFollowers: string;
   youtubeSubscribers: string;
+  tiktokFollowers: string;
   facebookLastPost: string;
   instagramLastPost: string;
   linkedinLastPost: string;
   twitterLastPost: string;
   youtubeLastPost: string;
+  tiktokLastPost: string;
 }
 
 export interface ManualWorkplaceData {

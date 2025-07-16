@@ -37,16 +37,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
       linkedinUrl: manualData?.linkedinUrl || '',
       twitterUrl: manualData?.twitterUrl || '',
       youtubeUrl: manualData?.youtubeUrl || '',
+      tiktokUrl: manualData?.tiktokUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
       instagramFollowers: manualData?.instagramFollowers || '',
       linkedinFollowers: manualData?.linkedinFollowers || '',
       twitterFollowers: manualData?.twitterFollowers || '',
       youtubeSubscribers: manualData?.youtubeSubscribers || '',
+      tiktokFollowers: manualData?.tiktokFollowers || '',
       facebookLastPost: manualData?.facebookLastPost || '',
       instagramLastPost: manualData?.instagramLastPost || '',
       linkedinLastPost: manualData?.linkedinLastPost || '',
       twitterLastPost: manualData?.twitterLastPost || '',
-      youtubeLastPost: manualData?.youtubeLastPost || ''
+      youtubeLastPost: manualData?.youtubeLastPost || '',
+      tiktokLastPost: manualData?.tiktokLastPost || ''
     }
   });
 
@@ -58,16 +61,19 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
       linkedinUrl: manualData?.linkedinUrl || '',
       twitterUrl: manualData?.twitterUrl || '',
       youtubeUrl: manualData?.youtubeUrl || '',
+      tiktokUrl: manualData?.tiktokUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
       instagramFollowers: manualData?.instagramFollowers || '',
       linkedinFollowers: manualData?.linkedinFollowers || '',
       twitterFollowers: manualData?.twitterFollowers || '',
       youtubeSubscribers: manualData?.youtubeSubscribers || '',
+      tiktokFollowers: manualData?.tiktokFollowers || '',
       facebookLastPost: manualData?.facebookLastPost || '',
       instagramLastPost: manualData?.instagramLastPost || '',
       linkedinLastPost: manualData?.linkedinLastPost || '',
       twitterLastPost: manualData?.twitterLastPost || '',
-      youtubeLastPost: manualData?.youtubeLastPost || ''
+      youtubeLastPost: manualData?.youtubeLastPost || '',
+      tiktokLastPost: manualData?.tiktokLastPost || ''
     });
     console.log('Form reset with manual data:', manualData);
   }, [manualData, form]);
@@ -86,9 +92,9 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
 
   const handleClearManual = () => {
     form.reset({
-      facebookUrl: '', instagramUrl: '', linkedinUrl: '', twitterUrl: '', youtubeUrl: '',
-      facebookFollowers: '', instagramFollowers: '', linkedinFollowers: '', twitterFollowers: '', youtubeSubscribers: '',
-      facebookLastPost: '', instagramLastPost: '', linkedinLastPost: '', twitterLastPost: '', youtubeLastPost: ''
+      facebookUrl: '', instagramUrl: '', linkedinUrl: '', twitterUrl: '', youtubeUrl: '', tiktokUrl: '',
+      facebookFollowers: '', instagramFollowers: '', linkedinFollowers: '', twitterFollowers: '', youtubeSubscribers: '', tiktokFollowers: '',
+      facebookLastPost: '', instagramLastPost: '', linkedinLastPost: '', twitterLastPost: '', youtubeLastPost: '', tiktokLastPost: ''
     });
     if (onManualDataChange) {
       onManualDataChange(null);
@@ -106,7 +112,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') ||
     (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') ||
     (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') ||
-    (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '')
+    (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '') ||
+    (manualData.tiktokUrl && manualData.tiktokUrl.trim() !== '')
   ));
 
   // NUR MANUELLE URL-EINGABEN ZÄHLEN - AUTOMATISCHE ERKENNUNG IGNORIERT
@@ -115,6 +122,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
   const hasLinkedIn = Boolean(manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '');
   const hasTwitter = Boolean(manualData?.twitterUrl && manualData.twitterUrl.trim() !== '');
   const hasYouTube = Boolean(manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '');
+  const hasTikTok = Boolean(manualData?.tiktokUrl && manualData.tiktokUrl.trim() !== '');
 
   console.log('SOCIAL MEDIA STATUS (NUR MANUELL):', {
     hasManualData,
@@ -122,7 +130,8 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
     hasInstagram,
     hasLinkedIn,
     hasTwitter,
-    hasYouTube
+    hasYouTube,
+    hasTikTok
   });
 
   const getEngagementBadge = (engagement: string) => {
@@ -332,6 +341,37 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         id="youtubeLastPost"
                         placeholder="z.B. vor 2 Wochen"
                         {...form.register('youtubeLastPost')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* TikTok Section */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h5 className="font-medium mb-3 text-pink-600">🎵 TikTok</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tiktokUrl">TikTok URL</Label>
+                      <Input
+                        id="tiktokUrl"
+                        placeholder="https://www.tiktok.com/@ihr-unternehmen"
+                        {...form.register('tiktokUrl')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tiktokFollowers">Follower</Label>
+                      <Input
+                        id="tiktokFollowers"
+                        placeholder="z.B. 350"
+                        {...form.register('tiktokFollowers')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tiktokLastPost">Letztes Video</Label>
+                      <Input
+                        id="tiktokLastPost"
+                        placeholder="z.B. vor 4 Tagen"
+                        {...form.register('tiktokLastPost')}
                       />
                     </div>
                   </div>
@@ -567,6 +607,46 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                     )}
                   </CardContent>
                 </Card>
+
+                {/* TikTok */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      🎵 TikTok
+                      <Badge variant={hasTikTok ? "default" : "destructive"}>
+                        {hasTikTok ? "Eingegeben" : "Nicht eingegeben"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {hasTikTok ? (
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>URL:</strong> {manualData?.tiktokUrl}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Follower:</span>
+                          <span className="font-medium">{manualData?.tiktokFollowers || '0'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Letztes Video:</span>
+                          <span className="font-medium">{manualData?.tiktokLastPost || 'Nicht angegeben'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Keine TikTok-Daten eingegeben
+                        </p>
+                        <div className="bg-amber-50 rounded-lg p-3">
+                          <p className="text-xs text-amber-800">
+                            Nutzen Sie "Manuell eingeben" um Ihre TikTok-Daten hinzuzufügen
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Empfehlungen */}
@@ -584,6 +664,7 @@ const SocialMediaAnalysis: React.FC<SocialMediaAnalysisProps> = ({
                         {!hasLinkedIn && <li>• LinkedIn Unternehmensseite anlegen</li>}
                         {!hasTwitter && <li>• Twitter/X Business-Account erstellen</li>}
                         {!hasYouTube && <li>• YouTube-Kanal für Firmenpräsentation</li>}
+                        {!hasTikTok && <li>• TikTok Business-Account für junge Zielgruppe</li>}
                         <li>• Regelmäßig branchenrelevante Inhalte posten</li>
                         <li>• Kundenprojekte visuell dokumentieren</li>
                       </ul>

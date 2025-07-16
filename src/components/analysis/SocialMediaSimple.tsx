@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData } from '@/hooks/useManualData';
-import { Edit, Plus, Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+import { Edit, Plus, Facebook, Instagram, Linkedin, Twitter, Youtube, Video } from 'lucide-react';
 
 interface SocialMediaSimpleProps {
   businessData: {
@@ -38,16 +38,19 @@ const SocialMediaSimple: React.FC<SocialMediaSimpleProps> = ({
       linkedinUrl: manualData?.linkedinUrl || '',
       twitterUrl: manualData?.twitterUrl || '',
       youtubeUrl: manualData?.youtubeUrl || '',
+      tiktokUrl: manualData?.tiktokUrl || '',
       facebookFollowers: manualData?.facebookFollowers || '',
       instagramFollowers: manualData?.instagramFollowers || '',
       linkedinFollowers: manualData?.linkedinFollowers || '',
       twitterFollowers: manualData?.twitterFollowers || '',
       youtubeSubscribers: manualData?.youtubeSubscribers || '',
+      tiktokFollowers: manualData?.tiktokFollowers || '',
       facebookLastPost: manualData?.facebookLastPost || '',
       instagramLastPost: manualData?.instagramLastPost || '',
       linkedinLastPost: manualData?.linkedinLastPost || '',
       twitterLastPost: manualData?.twitterLastPost || '',
-      youtubeLastPost: manualData?.youtubeLastPost || ''
+      youtubeLastPost: manualData?.youtubeLastPost || '',
+      tiktokLastPost: manualData?.tiktokLastPost || ''
     }
   });
 
@@ -64,9 +67,9 @@ const SocialMediaSimple: React.FC<SocialMediaSimpleProps> = ({
 
   const handleClear = () => {
     form.reset({
-      facebookUrl: '', instagramUrl: '', linkedinUrl: '', twitterUrl: '', youtubeUrl: '',
-      facebookFollowers: '', instagramFollowers: '', linkedinFollowers: '', twitterFollowers: '', youtubeSubscribers: '',
-      facebookLastPost: '', instagramLastPost: '', linkedinLastPost: '', twitterLastPost: '', youtubeLastPost: ''
+      facebookUrl: '', instagramUrl: '', linkedinUrl: '', twitterUrl: '', youtubeUrl: '', tiktokUrl: '',
+      facebookFollowers: '', instagramFollowers: '', linkedinFollowers: '', twitterFollowers: '', youtubeSubscribers: '', tiktokFollowers: '',
+      facebookLastPost: '', instagramLastPost: '', linkedinLastPost: '', twitterLastPost: '', youtubeLastPost: '', tiktokLastPost: ''
     });
     if (onManualDataChange) {
       onManualDataChange(null);
@@ -81,7 +84,7 @@ const SocialMediaSimple: React.FC<SocialMediaSimpleProps> = ({
   // Einfache Prüfung ob Daten vorhanden sind
   const hasData = Boolean(manualData && (
     manualData.facebookUrl || manualData.instagramUrl || manualData.linkedinUrl || 
-    manualData.twitterUrl || manualData.youtubeUrl
+    manualData.twitterUrl || manualData.youtubeUrl || manualData.tiktokUrl
   ));
 
   const platforms = [
@@ -124,6 +127,14 @@ const SocialMediaSimple: React.FC<SocialMediaSimpleProps> = ({
       url: manualData?.youtubeUrl,
       followers: manualData?.youtubeSubscribers,
       lastPost: manualData?.youtubeLastPost
+    },
+    {
+      name: 'TikTok',
+      icon: Video,
+      color: 'text-pink-500',
+      url: manualData?.tiktokUrl,
+      followers: manualData?.tiktokFollowers,
+      lastPost: manualData?.tiktokLastPost
     }
   ];
 
@@ -179,20 +190,22 @@ const SocialMediaSimple: React.FC<SocialMediaSimpleProps> = ({
                           {...form.register(`${platform.name.toLowerCase()}Url` as keyof ManualSocialData)}
                         />
                       </div>
-                      <div>
-                        <Label htmlFor={`${platform.name.toLowerCase()}Followers`}>
-                          {platform.name === 'YouTube' ? 'Abonnenten' : 'Follower'}
-                        </Label>
-                        <Input
-                          id={`${platform.name.toLowerCase()}Followers`}
-                          placeholder="Anzahl"
-                          {...form.register(
-                            platform.name === 'YouTube' 
-                              ? 'youtubeSubscribers' 
-                              : `${platform.name.toLowerCase()}Followers` as keyof ManualSocialData
-                          )}
-                        />
-                      </div>
+                       <div>
+                         <Label htmlFor={`${platform.name.toLowerCase()}Followers`}>
+                           {platform.name === 'YouTube' ? 'Abonnenten' : 'Follower'}
+                         </Label>
+                         <Input
+                           id={`${platform.name.toLowerCase()}Followers`}
+                           placeholder="Anzahl"
+                           {...form.register(
+                             platform.name === 'YouTube' 
+                               ? 'youtubeSubscribers' 
+                               : platform.name === 'TikTok'
+                               ? 'tiktokFollowers'
+                               : `${platform.name.toLowerCase()}Followers` as keyof ManualSocialData
+                           )}
+                         />
+                       </div>
                       <div>
                         <Label htmlFor={`${platform.name.toLowerCase()}LastPost`}>Letzter Post</Label>
                         <Input
