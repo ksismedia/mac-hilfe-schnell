@@ -106,14 +106,15 @@ export const generateCustomerHTML = ({
   const ownReviewScore = Math.min(100, (realData.reviews.google.count / 50) * 100);
   const ownBaseServiceScore = Math.min(100, (expectedServices.length / 12) * 100);
   const ownFinalServiceScore = Math.min(100, ownBaseServiceScore); // Keine unique service bonus für eigene Firma
-  const ownCompanyScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
+  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
   
   console.log('HTML Generator - Own Business Scores (Competitor Method):', {
     rating: ownRatingScore,
     reviews: ownReviewScore,
     services: ownFinalServiceScore,
-    overall: ownCompanyScore
+    overall: competitorComparisonScore
   });
+  
 
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
@@ -1269,6 +1270,24 @@ export const generateCustomerHTML = ({
     </div>
   `;
 
+  // Calculate individual scores for overall assessment
+  const googleReviewScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  
+  // Collect all available scores for proper average calculation
+  const allScores = [
+    realData.seo.score,
+    realData.performance.score,
+    realData.mobile.overallScore,
+    socialMediaScore,
+    googleReviewScore,
+    impressumScore,
+    accessibilityScore,
+    dataPrivacyScore
+  ].filter(score => score !== undefined && score !== null);
+  
+  // Calculate overall score as true average of all sections
+  const ownCompanyScore = Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
+
   // Generate the comprehensive HTML report
   console.log('Generating HTML report with container structure');
   return `<!DOCTYPE html>
@@ -1310,10 +1329,10 @@ export const generateCustomerHTML = ({
       <div class="section-header">Executive Summary</div>
       <div class="section-content">
         <!-- Gesamt-Score -->
-        <div class="metric-card good" style="margin-bottom: 30px;">
-          <h3>Gesamtbewertung</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(ownCompanyScore)}">${ownCompanyScore}%</div>
+         <div class="metric-card ${ownCompanyScore >= 80 ? 'excellent' : ownCompanyScore >= 60 ? 'good' : ownCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
+           <h3>Gesamtbewertung</h3>
+           <div class="score-display">
+             <div class="score-circle ${getScoreColorClass(ownCompanyScore)}">${ownCompanyScore}%</div>
             <div class="score-details">
               <p><strong>Digitale Marktposition:</strong> ${ownCompanyScore >= 80 ? 'Sehr stark' : ownCompanyScore >= 60 ? 'Gut positioniert' : ownCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
               <p><strong>Priorität:</strong> ${ownCompanyScore >= 80 ? 'Optimierung' : ownCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
@@ -1328,28 +1347,36 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.seo.score <= 20 ? '#991b1b' : realData.seo.score <= 40 ? '#dc2626' : realData.seo.score <= 60 ? '#ea580c' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'};">${realData.seo.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.seo.score <= 20 ? '#dc2626' : realData.seo.score <= 40 ? '#ea580c' : realData.seo.score <= 60 ? '#eab308' : realData.seo.score <= 80 ? '#16a34a' : '#22c55e'};">${realData.seo.score}%</span></div>
             <div class="score-label">SEO Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.performance.score <= 20 ? '#991b1b' : realData.performance.score <= 40 ? '#dc2626' : realData.performance.score <= 60 ? '#ea580c' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'};">${realData.performance.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.performance.score <= 20 ? '#dc2626' : realData.performance.score <= 40 ? '#ea580c' : realData.performance.score <= 60 ? '#eab308' : realData.performance.score <= 80 ? '#16a34a' : '#22c55e'};">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 20 ? '#991b1b' : realData.mobile.overallScore <= 40 ? '#dc2626' : realData.mobile.overallScore <= 60 ? '#ea580c' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'};">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 20 ? '#dc2626' : realData.mobile.overallScore <= 40 ? '#ea580c' : realData.mobile.overallScore <= 60 ? '#eab308' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#22c55e'};">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${socialMediaScore <= 20 ? '#991b1b' : socialMediaScore <= 40 ? '#dc2626' : socialMediaScore <= 60 ? '#ea580c' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'};">${socialMediaScore}%</span></div>
+            <div class="score-big"><span style="color: ${socialMediaScore <= 20 ? '#dc2626' : socialMediaScore <= 40 ? '#ea580c' : socialMediaScore <= 60 ? '#eab308' : socialMediaScore <= 80 ? '#16a34a' : '#22c55e'};">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${(realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 20 ? '#991b1b' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 40 ? '#dc2626' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 60 ? '#ea580c' : (realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0) <= 80 ? '#16a34a' : '#eab308'};">${realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0}%</span></div>
+            <div class="score-big"><span style="color: ${googleReviewScore <= 20 ? '#dc2626' : googleReviewScore <= 40 ? '#ea580c' : googleReviewScore <= 60 ? '#eab308' : googleReviewScore <= 80 ? '#16a34a' : '#22c55e'};">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${impressumScore <= 20 ? '#991b1b' : impressumScore <= 40 ? '#dc2626' : impressumScore <= 60 ? '#ea580c' : impressumScore <= 80 ? '#16a34a' : '#eab308'};">${impressumScore}%</span></div>
+            <div class="score-big"><span style="color: ${impressumScore <= 20 ? '#dc2626' : impressumScore <= 40 ? '#ea580c' : impressumScore <= 60 ? '#eab308' : impressumScore <= 80 ? '#16a34a' : '#22c55e'};">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big"><span style="color: ${accessibilityScore <= 20 ? '#dc2626' : accessibilityScore <= 40 ? '#ea580c' : accessibilityScore <= 60 ? '#eab308' : accessibilityScore <= 80 ? '#16a34a' : '#22c55e'};">${accessibilityScore}%</span></div>
+            <div class="score-label">Barrierefreiheit</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big"><span style="color: ${dataPrivacyScore <= 20 ? '#dc2626' : dataPrivacyScore <= 40 ? '#ea580c' : dataPrivacyScore <= 60 ? '#eab308' : dataPrivacyScore <= 80 ? '#16a34a' : '#22c55e'};">${dataPrivacyScore}%</span></div>
+            <div class="score-label">Datenschutz</div>
           </div>
         </div>
       </div>
