@@ -37,10 +37,11 @@ const Progress = React.forwardRef<
       }}
     />
     <div 
-      className="absolute top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white border border-gray-400 rounded-full shadow-sm"
+      className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-800 rounded-full shadow-lg"
       style={{ 
         left: `${value || 0}%`,
-        transform: 'translateX(-50%) translateY(-50%)'
+        transform: 'translateX(-50%) translateY(-50%)',
+        zIndex: 10
       }}
     />
   </ProgressPrimitive.Root>
