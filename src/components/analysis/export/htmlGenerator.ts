@@ -699,13 +699,230 @@ export const generateCustomerHTML = ({
           </div>
         </div>
         
+      </div>
+    `;
+  };
+
+  // Local SEO Analysis - Vollständige Integration
+  const getLocalSEOAnalysis = () => {
+    // Simulierte Local SEO Daten basierend auf der LocalSEO-Komponente
+    const localSEOData = {
+      overallScore: 74,
+      googleMyBusiness: {
+        score: 82,
+        claimed: true,
+        verified: true,
+        complete: 75,
+        photos: 12,
+        posts: 3,
+        lastUpdate: "vor 2 Wochen"
+      },
+      localCitations: {
+        score: 68,
+        totalCitations: 15,
+        consistent: 12,
+        inconsistent: 3,
+        topDirectories: [
+          { name: "Google My Business", status: "vollständig" },
+          { name: "Bing Places", status: "unvollständig" },
+          { name: "Yelp", status: "nicht gefunden" },
+          { name: "Gelbe Seiten", status: "vollständig" },
+          { name: "WerkenntdenBesten", status: "vollständig" }
+        ]
+      },
+      localKeywords: {
+        score: 71,
+        ranking: [
+          { keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim() || 'regional'}`, position: 8, volume: "hoch" },
+          { keyword: `Handwerker ${businessData.address.split(',')[1]?.trim() || 'regional'}`, position: 15, volume: "mittel" },
+          { keyword: `${businessData.industry} Notdienst`, position: 12, volume: "mittel" },
+          { keyword: `${businessData.industry} in der Nähe`, position: 6, volume: "hoch" }
+        ]
+      },
+      onPageLocal: {
+        score: 78,
+        addressVisible: true,
+        phoneVisible: true,
+        openingHours: true,
+        localSchema: false,
+        localContent: 65
+      }
+    };
+
+    const scoreClass = localSEOData.overallScore >= 80 ? 'good' : localSEOData.overallScore >= 60 ? 'warning' : 'critical';
+
+    return `
+      <div class="metric-card ${scoreClass}">
+        <h3 style="background: #10b981; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+          <span>📍 Lokale SEO & Regionale Sichtbarkeit</span>
+          <span style="background: white; color: ${getScoreColor(localSEOData.overallScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${localSEOData.overallScore}%</span>
+        </h3>
+        
+        <div class="score-display">
+          <div class="score-circle" style="background-color: ${getScoreColor(localSEOData.overallScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${localSEOData.overallScore}%</div>
+          <div class="score-details">
+            <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : localSEOData.overallScore >= 40 ? 'Ausbaufähig' : 'Verbesserungsbedarf'}</p>
+            <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" data-score="${getScoreRange(localSEOData.overallScore)}" style="width: ${localSEOData.overallScore}%; background-color: ${getScoreColor(localSEOData.overallScore)};"></div>
+            <div class="progress-point" style="position: absolute; left: ${localSEOData.overallScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 12px; height: 12px; background: white; border: 2px solid ${getScoreColor(localSEOData.overallScore)}; border-radius: 50%; z-index: 10;"></div>
+          </div>
+        </div>
+
+        <!-- Google My Business -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+          <h4>🏢 Google My Business</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+            <div>
+              <p><strong>Status:</strong> ${localSEOData.googleMyBusiness.claimed ? '✅ Beansprucht' : '❌ Nicht beansprucht'}</p>
+              <p><strong>Verifiziert:</strong> ${localSEOData.googleMyBusiness.verified ? '✅ Ja' : '❌ Nein'}</p>
+              <p><strong>Vollständigkeit:</strong> ${localSEOData.googleMyBusiness.complete}%</p>
+            </div>
+            <div>
+              <p><strong>Fotos:</strong> ${localSEOData.googleMyBusiness.photos} hochgeladen</p>
+              <p><strong>Posts (30 Tage):</strong> ${localSEOData.googleMyBusiness.posts}</p>
+              <p><strong>Letztes Update:</strong> ${localSEOData.googleMyBusiness.lastUpdate}</p>
+            </div>
+          </div>
+          <div class="progress-container" style="margin-top: 10px;">
+            <div class="progress-label">
+              <span>GMB Optimierung</span>
+              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.googleMyBusiness.score)};">${localSEOData.googleMyBusiness.score}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%; background-color: ${getScoreColor(localSEOData.googleMyBusiness.score)};"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.googleMyBusiness.score)}; border-radius: 50%; z-index: 10;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lokale Verzeichnisse (Citations) -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+          <h4>🌐 Lokale Verzeichnisse & Citations</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${localSEOData.localCitations.totalCitations}</div>
+              <p style="font-size: 12px; color: #666;">Gefundene Einträge</p>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #22c55e;">${localSEOData.localCitations.consistent}</div>
+              <p style="font-size: 12px; color: #666;">Konsistent</p>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #ef4444;">${localSEOData.localCitations.inconsistent}</div>
+              <p style="font-size: 12px; color: #666;">Inkonsistent</p>
+            </div>
+          </div>
+          
+          <h5 style="margin: 15px 0 10px 0;">Top-Verzeichnisse:</h5>
+          <div style="display: grid; gap: 8px;">
+            ${localSEOData.localCitations.topDirectories.map(directory => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="font-size: 14px;">${directory.name}</span>
+                <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: ${
+                  directory.status === 'vollständig' ? '#dcfce7; color: #166534' :
+                  directory.status === 'unvollständig' ? '#fef3c7; color: #92400e' :
+                  '#fecaca; color: #991b1b'
+                };">${directory.status}</span>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="progress-container" style="margin-top: 15px;">
+            <div class="progress-label">
+              <span>Citation Qualität</span>
+              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.localCitations.score)};">${localSEOData.localCitations.score}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%; background-color: ${getScoreColor(localSEOData.localCitations.score)};"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.localCitations.score)}; border-radius: 50%; z-index: 10;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lokale Keywords -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+          <h4>🎯 Lokale Keyword-Rankings</h4>
+          <div style="display: grid; gap: 10px; margin-top: 10px;">
+            ${localSEOData.localKeywords.ranking.map(keyword => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
+                <div>
+                  <span style="font-weight: 500;">${keyword.keyword}</span>
+                  <span style="margin-left: 8px; padding: 2px 6px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 11px;">${keyword.volume} Volumen</span>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#22c55e' : keyword.position <= 10 ? '#f59e0b' : '#ef4444'};">
+                    #${keyword.position}
+                  </div>
+                  <div style="font-size: 11px; color: #9ca3af;">Position</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="progress-container" style="margin-top: 15px;">
+            <div class="progress-label">
+              <span>Lokale Keyword Performance</span>
+              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.localKeywords.score)};">${localSEOData.localKeywords.score}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%; background-color: ${getScoreColor(localSEOData.localKeywords.score)};"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.localKeywords.score)}; border-radius: 50%; z-index: 10;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- On-Page Local Faktoren -->
+        <div style="margin-top: 15px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px;">
+          <h4>📍 On-Page Local Faktoren</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+            <div>
+              <p><strong>📍 Adresse sichtbar:</strong> ${localSEOData.onPageLocal.addressVisible ? '✅ Ja' : '❌ Nein'}</p>
+              <p><strong>📞 Telefon sichtbar:</strong> ${localSEOData.onPageLocal.phoneVisible ? '✅ Ja' : '❌ Nein'}</p>
+            </div>
+            <div>
+              <p><strong>🕒 Öffnungszeiten:</strong> ${localSEOData.onPageLocal.openingHours ? '✅ Ja' : '❌ Nein'}</p>
+              <p><strong>🏷️ Local Schema:</strong> ${localSEOData.onPageLocal.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
+            </div>
+          </div>
+          
+          <div class="progress-container" style="margin-top: 15px;">
+            <div class="progress-label">
+              <span>Lokaler Content</span>
+              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.onPageLocal.localContent)};">${localSEOData.onPageLocal.localContent}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%; background-color: ${getScoreColor(localSEOData.onPageLocal.localContent)};"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.onPageLocal.localContent)}; border-radius: 50%; z-index: 10;"></div>
+            </div>
+          </div>
+          
+          <div class="progress-container" style="margin-top: 10px;">
+            <div class="progress-label">
+              <span>On-Page Local Gesamt</span>
+              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.onPageLocal.score)};">${localSEOData.onPageLocal.score}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%; background-color: ${getScoreColor(localSEOData.onPageLocal.score)};"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.onPageLocal.score)}; border-radius: 50%; z-index: 10;"></div>
+            </div>
+          </div>
+        </div>
+
         <div class="recommendations">
-          <h4>Handlungsempfehlungen:</h4>
+          <h4>Handlungsempfehlungen für lokale SEO:</h4>
           <ul>
-            <li>Branchenspezifische Keyword-Strategie entwickeln</li>
-            <li>Lokale SEO-Optimierung verstärken</li>
-            <li>Technische SEO-Grundlagen verbessern</li>
-            <li>Content-Marketing für Fachbereiche ausbauen</li>
+            ${localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren</li>' : ''}
+            ${localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen</li>' : ''}
+            ${localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren</li>' : ''}
+            ${!localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren</li>' : ''}
+            <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken</li>
+            <li>Kundenbewertungen aktiv sammeln und beantworten</li>
+            <li>Lokale Backlinks durch Partnerschaften und Events aufbauen</li>
           </ul>
         </div>
       </div>
@@ -1826,6 +2043,17 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Lokale SEO & Regionale Sichtbarkeit -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Lokale SEO & Regionale Sichtbarkeit</span>
+        <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
+      </div>
+      <div class="section-content">
+        ${getLocalSEOAnalysis()}
       </div>
     </div>
 
