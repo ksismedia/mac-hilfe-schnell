@@ -505,29 +505,94 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // SEO Analysis - Enhanced
+  // SEO Analysis - Enhanced - basierend auf tatsächlichen Werten der SEOAnalysis Komponente
   const getSEOAnalysis = () => {
-    // Use manual keyword score if available, otherwise use SEO score
+    // Kritischere Bewertung basierend auf realen SEO-Daten
     const effectiveKeywordScore = keywordScore !== undefined ? keywordScore : realData.seo.score;
     const keywordData = manualKeywordData || realData.keywords;
     const foundKeywords = keywordData.filter(k => k.found).length;
     
+    // SEO-Score kritischer bewerten
     const seoScore = realData.seo.score;
-    const scoreClass = seoScore >= 70 ? 'good' : 'warning';
+    
+    // Detaillierte Bewertung basierend auf SEOAnalysis Komponente
+    const titleTagScore = realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? 
+      (realData.seo.titleTag.length <= 70 ? 85 : 65) : 25;
+    const metaDescriptionScore = realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? 
+      (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25;
+    const headingScore = realData.seo.headings.h1.length === 1 ? 80 : 
+      realData.seo.headings.h1.length > 1 ? 60 : 30;
+    const altTagsScore = realData.seo.altTags.total > 0 ? 
+      Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 0;
+    
+    // Kritischere Gesamtbewertung
+    const criticalSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
+    const scoreClass = criticalSeoScore >= 80 ? 'good' : criticalSeoScore >= 60 ? 'warning' : 'critical';
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3>SEO Optimierung</h3>
+        <h3 style="background: #22c55e; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+          <span>🔍 SEO-Bestandsanalyse</span>
+          <span style="background: white; color: ${getScoreColor(criticalSeoScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${criticalSeoScore}%</span>
+        </h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(seoScore)}">${seoScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(criticalSeoScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${criticalSeoScore}%</div>
           <div class="score-details">
-            <p><strong>Sichtbarkeit:</strong> ${seoScore >= 70 ? 'Hoch' : seoScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-            <p><strong>Empfehlung:</strong> ${seoScore >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : criticalSeoScore >= 40 ? 'Niedrig' : 'Sehr niedrig'}</p>
+            <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'SEO-Grundlagen vorhanden, Optimierung empfohlen' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
           </div>
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${seoScore}%; background-color: ${getScoreColor(seoScore)};"></div>
+            <div class="progress-fill" data-score="${getScoreRange(criticalSeoScore)}" style="width: ${criticalSeoScore}%; background-color: ${getScoreColor(criticalSeoScore)};"></div>
+            <div class="progress-point" style="position: absolute; left: ${criticalSeoScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 12px; height: 12px; background: white; border: 2px solid ${getScoreColor(criticalSeoScore)}; border-radius: 50%; z-index: 10;"></div>
+          </div>
+        </div>
+        
+        <!-- Detaillierte SEO-Analyse basierend auf tatsächlichen Werten -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+          <h4>📋 Technische SEO-Details</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div>
+              <p><strong>Title-Tag:</strong> ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(titleTagScore)}" style="width: ${titleTagScore}%; background-color: ${getScoreColor(titleTagScore)};"></div>
+                  <div class="progress-point" style="position: absolute; left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(titleTagScore)}; border-radius: 50%; z-index: 10;"></div>
+                </div>
+              </div>
+              <small style="color: #666;">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
+            </div>
+            <div>
+              <p><strong>Meta Description:</strong> ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(metaDescriptionScore)}" style="width: ${metaDescriptionScore}%; background-color: ${getScoreColor(metaDescriptionScore)};"></div>
+                  <div class="progress-point" style="position: absolute; left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(metaDescriptionScore)}; border-radius: 50%; z-index: 10;"></div>
+                </div>
+              </div>
+              <small style="color: #666;">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
+            </div>
+            <div>
+              <p><strong>Überschriftenstruktur:</strong> ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(headingScore)}" style="width: ${headingScore}%; background-color: ${getScoreColor(headingScore)};"></div>
+                  <div class="progress-point" style="position: absolute; left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(headingScore)}; border-radius: 50%; z-index: 10;"></div>
+                </div>
+              </div>
+              <small style="color: #666;">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
+            </div>
+            <div>
+              <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total} Bilder</p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(altTagsScore)}" style="width: ${altTagsScore}%; background-color: ${getScoreColor(altTagsScore)};"></div>
+                  <div class="progress-point" style="position: absolute; left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(altTagsScore)}; border-radius: 50%; z-index: 10;"></div>
+                </div>
+              </div>
+              <small style="color: #666;">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
+            </div>
           </div>
         </div>
         
@@ -539,7 +604,8 @@ export const generateCustomerHTML = ({
               <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%; background-color: ${getScoreColor(effectiveKeywordScore)};"></div>
+                    <div class="progress-point" style="position: absolute; left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(effectiveKeywordScore)}; border-radius: 50%; z-index: 10;"></div>
                   </div>
                 </div>
               <small style="color: #666;">Score: ${effectiveKeywordScore}%</small>
@@ -2475,7 +2541,7 @@ export const generateCustomerHTML = ({
               <h4>Mittelfristig</h4>
               <ul>
                 ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (aktueller Score: ' + socialMediaScore + '%)</li>' : ''}
-                ${realData.seo.score < 70 ? '<li>SEO-Optimierung vorantreiben</li>' : ''}
+                ${realData.seo.score < 70 ? '<li>SEO-Bestandsanalyse durchführen und optimieren</li>' : ''}
                 <li>Content-Marketing-Strategie entwickeln</li>
               </ul>
             </div>

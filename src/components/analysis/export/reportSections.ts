@@ -31,7 +31,7 @@ export const generateHeaderSection = (
             </div>
             <div class="score-card">
                 <button class="percentage-btn score-big" data-score="${seoScore <= 20 ? '0-20' : seoScore <= 40 ? '20-40' : seoScore <= 60 ? '40-60' : seoScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${seoScore}%</button>
-                <div class="score-label">SEO-Optimierung</div>
+                <div class="score-label">SEO-Bestandsanalyse</div>
             </div>
             <div class="score-card">
                 <button class="percentage-btn score-big" data-score="${performanceScore <= 20 ? '0-20' : performanceScore <= 40 ? '20-40' : performanceScore <= 60 ? '40-60' : performanceScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${performanceScore}%</button>
