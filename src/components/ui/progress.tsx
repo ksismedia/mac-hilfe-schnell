@@ -5,17 +5,11 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
-  if (value <= 20) {
-    // 0-20%: Dunkelrot
-    return '#CD0000';
-  } else if (value <= 40) {
-    // 20-40%: Rot
+  if (value < 50) {
+    // 0-50%: Rot
     return '#FF0000';
-  } else if (value <= 60) {
-    // 40-60%: Orange
-    return '#FF4500';
-  } else if (value <= 80) {
-    // 60-80%: Grün
+  } else if (value < 80) {
+    // 50-80%: Grün
     return '#22c55e';
   } else {
     // 80-100%: Gelb
@@ -36,10 +30,17 @@ const Progress = React.forwardRef<
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 transition-all rounded-full"
+      className="h-full w-full flex-1 transition-all rounded-full relative"
       style={{ 
         transform: `translateX(-${100 - (value || 0)}%)`,
         background: getProgressColor(value || 0)
+      }}
+    />
+    <div 
+      className="absolute top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white border border-gray-400 rounded-full shadow-sm"
+      style={{ 
+        left: `${value || 0}%`,
+        transform: 'translateX(-50%) translateY(-50%)'
       }}
     />
   </ProgressPrimitive.Root>

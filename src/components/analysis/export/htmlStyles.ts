@@ -198,15 +198,26 @@ body {
 }
 
 /* Progress-Fill Farben basierend auf korrekten Wert-Bereichen */
-.progress-fill[data-score="0-20"] { background: #CD0000 !important; } /* Dunkelrot 0-20% */
-.progress-fill[data-score="20-40"] { background: #FF0000 !important; } /* Rot 20-40% */
-.progress-fill[data-score="40-60"] { background: #FF4500 !important; } /* Orange 40-60% */
-.progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün 60-80% */
+.progress-fill[data-score="0-50"] { background: #FF0000 !important; } /* Rot 0-50% */
+.progress-fill[data-score="50-80"] { background: #22c55e !important; } /* Grün 50-80% */
 .progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb 80-100% */
 
+/* Progress-Fill Punkt Indikator */
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -3px;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border: 1px solid #666;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
 .percentage-btn {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: #000000;
   border: none;
   padding: 6px 12px;
   border-radius: 20px;
@@ -216,7 +227,12 @@ body {
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   min-width: 50px;
+  color: white;
 }
+
+.percentage-btn[data-score="0-50"] { background: #FF0000; }
+.percentage-btn[data-score="50-80"] { background: #22c55e; }
+.percentage-btn[data-score="80-100"] { background: #FFD700; color: #000; }
 
 .percentage-btn:hover {
   transform: translateY(-1px);
