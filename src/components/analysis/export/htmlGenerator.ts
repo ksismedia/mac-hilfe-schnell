@@ -874,10 +874,10 @@ export const generateCustomerHTML = ({
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
                 <div>
                   <span style="font-weight: 500;">${keyword.keyword}</span>
-                  <span style="margin-left: 8px; padding: 2px 6px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 11px;">${keyword.volume} Volumen</span>
+                  <span style="margin-left: 8px; padding: 2px 6px; border-radius: 4px; font-size: 11px; background: ${keyword.volume === 'hoch' ? '#fbbf24; color: #000000' : keyword.volume === 'mittel' ? '#22c55e; color: #ffffff' : '#ef4444; color: #ffffff'};">${keyword.volume} Volumen</span>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#eab308' : keyword.position <= 10 ? '#16a34a' : '#dc2626'};">
+                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#22c55e' : keyword.position <= 10 ? '#fbbf24' : '#dc2626'};">
                     #${keyword.position}
                   </div>
                   <div style="font-size: 11px; color: #9ca3af;">Position</div>
