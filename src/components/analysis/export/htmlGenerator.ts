@@ -369,7 +369,7 @@ export const generateCustomerHTML = ({
           <span style="background: white; color: ${getScoreColor(accessibilityScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(accessibilityScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${accessibilityScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(accessibilityScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
               <span style="color: ${getScoreColor(accessibilityScore)}; font-weight: bold;">
@@ -552,7 +552,7 @@ export const generateCustomerHTML = ({
           <span style="background: white; color: ${getScoreColor(criticalSeoScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${criticalSeoScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(criticalSeoScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${criticalSeoScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(criticalSeoScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${criticalSeoScore}%</div>
           <div class="score-details">
             <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'SEO-Grundlagen vorhanden, Optimierung empfohlen' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
@@ -779,7 +779,7 @@ export const generateCustomerHTML = ({
         </h3>
         
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(localSEOData.overallScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${localSEOData.overallScore}%</div>
+          <div class="score-circle" style="background-color: ${getScoreColor(localSEOData.overallScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${localSEOData.overallScore}%</div>
           <div class="score-details">
             <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
             <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>

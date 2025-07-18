@@ -86,9 +86,9 @@ body {
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
-  font-size: 3.5em; 
+  font-size: 4.5em; 
   font-weight: bold; 
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 .score-big span { 
   /* Inline-Farben haben Vorrang */
@@ -120,10 +120,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  font-size: 0.9em;
+  font-size: 1.2em;
   font-weight: 700;
   background: white !important;
   margin-left: auto;
@@ -160,13 +160,13 @@ body {
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
 .score-circle { 
-  width: 80px; 
-  height: 80px; 
+  width: 100px; 
+  height: 100px; 
   border-radius: 50%; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 1.2em; 
+  font-size: 1.6em; 
   font-weight: bold; 
   flex-shrink: 0;
 }

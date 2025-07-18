@@ -275,7 +275,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="border-blue-200">
                   <CardContent className="p-6 text-center">
-                    <div className={`text-3xl font-bold ${getScoreColor(accessibilityData.score)} mb-2`}>
+                    <div className={`text-5xl font-bold ${getScoreColor(accessibilityData.score)} mb-2`}>
                       {accessibilityData.score}
                     </div>
                     <div className="text-sm text-gray-600">Gesamt-Score</div>
@@ -289,7 +289,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 
                 <Card className="border-red-200">
                   <CardContent className="p-6 text-center">
-                    <div className="text-3xl font-bold text-red-600 mb-2">
+                    <div className="text-5xl font-bold text-red-600 mb-2">
                       {accessibilityData.violations.length}
                     </div>
                     <div className="text-sm text-gray-600">Probleme</div>
@@ -301,7 +301,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
 
                 <Card className="border-green-200">
                   <CardContent className="p-6 text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-2">
+                    <div className="text-5xl font-bold text-green-600 mb-2">
                       {accessibilityData.passes.length}
                     </div>
                     <div className="text-sm text-gray-600">Erfolgreich</div>
@@ -311,7 +311,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
 
                 <Card className="border-yellow-200">
                   <CardContent className="p-6 text-center">
-                    <div className="text-3xl font-bold text-yellow-600 mb-2">
+                    <div className="text-5xl font-bold text-yellow-600 mb-2">
                       {accessibilityData.incomplete.length}
                     </div>
                     <div className="text-sm text-gray-600">Zu prüfen</div>

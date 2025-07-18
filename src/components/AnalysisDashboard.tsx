@@ -315,7 +315,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             <div className={`p-4 rounded-lg border ${getScoreBg(realData.seo.score)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(realData.seo.score)}`}>
+                <div className={`text-4xl font-bold ${getScoreColor(realData.seo.score)}`}>
                   {realData.seo.score}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">SEO</div>
@@ -324,7 +324,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             
             <div className={`p-4 rounded-lg border ${getScoreBg(realData.performance.score)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(realData.performance.score)}`}>
+                <div className={`text-4xl font-bold ${getScoreColor(realData.performance.score)}`}>
                   {realData.performance.score}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Performance</div>
@@ -333,7 +333,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             
             <div className={`p-4 rounded-lg border ${getScoreBg(realData.mobile.overallScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(realData.mobile.overallScore)}`}>
+                <div className={`text-4xl font-bold ${getScoreColor(realData.mobile.overallScore)}`}>
                   {realData.mobile.overallScore}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Mobile</div>
@@ -342,7 +342,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             
             <div className={`p-4 rounded-lg border ${getScoreBg(currentKeywordsScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(currentKeywordsScore)}`}>
+                <div className={`text-4xl font-bold ${getScoreColor(currentKeywordsScore)}`}>
                   {currentKeywordsScore}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Keywords</div>
@@ -351,7 +351,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             
             <div className={`p-4 rounded-lg border ${getScoreBg(reviewsScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(reviewsScore)}`}>
+                <div className={`text-4xl font-bold ${getScoreColor(reviewsScore)}`}>
                   {reviewsScore}
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Bewertungen</div>
@@ -361,7 +361,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             {/* KORRIGIERT: Hier wird jetzt der live berechnete socialMediaScore verwendet */}
             <div className={`p-4 rounded-lg border ${getScoreBg(socialMediaScore)}`}>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreColor(socialMediaScore)} relative`}>
+                <div className={`text-4xl font-bold ${getScoreColor(socialMediaScore)} relative`}>
                   {socialMediaScore}
                   {socialMediaScore > 0 && (
                     <span className="absolute -top-1 -right-1 text-xs bg-green-500 text-white px-1 rounded">✓</span>
