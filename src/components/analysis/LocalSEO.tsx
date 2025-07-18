@@ -98,19 +98,28 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
   };
 
   const getStatusBadge = (status: string) => {
+    // Direkte Inline-Styles verwenden, um sicherzustellen, dass die Farben korrekt sind
     switch (status) {
-      case "vollständig": return "secondary";      // gelb (vollständig = gelb)
-      case "unvollständig": return "destructive";  // rot (unvollständig = rot)
-      default: return "destructive";               // rot (nicht gefunden = rot)
+      case "vollständig": 
+        return { backgroundColor: '#fbbf24', color: '#000000' }; // gelb
+      case "unvollständig": 
+        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
+      default: 
+        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot (nicht gefunden)
     }
   };
 
   const getVolumeBadge = (volume: string) => {
+    // Direkte Inline-Styles verwenden
     switch (volume) {
-      case "hoch": return "secondary";             // gelb (hoch Volumen = gelb)
-      case "mittel": return "default";             // grün (mittel Volumen = grün)  
-      case "niedrig": return "destructive";        // rot (niedrig Volumen = rot)
-      default: return "destructive";               // rot (gering/niedrig Volumen = rot)
+      case "hoch": 
+        return { backgroundColor: '#fbbf24', color: '#000000' }; // gelb
+      case "mittel": 
+        return { backgroundColor: '#22c55e', color: '#ffffff' }; // grün  
+      case "niedrig": 
+        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
+      default: 
+        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
     }
   };
 
@@ -223,9 +232,12 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                 {localSEOData.localCitations.topDirectories.map((directory, index) => (
                   <div key={index} className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">{directory.name}</span>
-                    <Badge variant={getStatusBadge(directory.status)}>
-                      {directory.status}
-                    </Badge>
+                     <span 
+                       className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                       style={getStatusBadge(directory.status)}
+                     >
+                       {directory.status}
+                     </span>
                   </div>
                 ))}
               </div>
@@ -243,9 +255,12 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <span className="font-medium">{keyword.keyword}</span>
-                       <Badge variant={getVolumeBadge(keyword.volume)} className="ml-2 text-xs">
-                         {keyword.volume} Volumen
-                       </Badge>
+                        <span 
+                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2"
+                          style={getVolumeBadge(keyword.volume)}
+                        >
+                          {keyword.volume} Volumen
+                        </span>
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${getPositionColor(keyword.position)}`}>
