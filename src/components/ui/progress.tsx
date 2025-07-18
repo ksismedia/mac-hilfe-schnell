@@ -1,24 +1,39 @@
 
 import * as React from "react"
 import * as ProgressPrimitive from "@radix-ui/react-progress"
-
 import { cn } from "@/lib/utils"
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
 >(({ className, value, ...props }, ref) => {
-  // Bestimme CSS-Klasse basierend auf Wert - nutzt die in index.css definierten Klassen
-  const getColorClass = (val: number) => {
-    if (val === 0 || val <= 20) return 'progress-score-0-20'; // 0-20% dunkelrot
-    if (val <= 40) return 'progress-score-20-40'; // 21-40% rot
-    if (val <= 60) return 'progress-score-40-60'; // 41-60% orange
-    if (val <= 80) return 'progress-score-60-80'; // 61-80% grün  
-    return 'progress-score-80-100'; // 81-100% gelb
+  // Force a unique key to prevent caching
+  const [uniqueKey] = React.useState(() => Math.random().toString(36));
+  
+  // Simple color logic for 0-60% red
+  const getProgressStyle = (val: number): React.CSSProperties => {
+    const numVal = Number(val) || 0;
+    
+    let backgroundColor: string;
+    if (numVal <= 60) {
+      backgroundColor = '#ef4444'; // Red for 0-60%
+    } else if (numVal <= 80) {
+      backgroundColor = '#22c55e'; // Green for 61-80%
+    } else {
+      backgroundColor = '#fbbf24'; // Yellow for 81-100%
+    }
+    
+    // Force style with key
+    console.log(`[${uniqueKey}] Progress: ${numVal}% = ${backgroundColor}`);
+    
+    return {
+      width: `${numVal}%`,
+      backgroundColor,
+      height: '100%',
+      borderRadius: 'inherit',
+      transition: 'all 0.3s ease'
+    };
   };
-
-  const numValue = Number(value) || 0;
-  console.log('Progress value:', numValue, 'Color class:', getColorClass(numValue));
 
   return (
     <ProgressPrimitive.Root
@@ -29,18 +44,10 @@ const Progress = React.forwardRef<
       )}
       {...props}
     >
-      <ProgressPrimitive.Indicator
-        className={cn(
-          "h-full transition-all rounded-full",
-          getColorClass(numValue)
-        )}
-        style={{ 
-          width: `${numValue}%`
-        }}
-      />
+      <div style={getProgressStyle(value ?? 0)} />
     </ProgressPrimitive.Root>
   )
 })
-Progress.displayName = ProgressPrimitive.Root.displayName
 
+Progress.displayName = ProgressPrimitive.Root.displayName
 export { Progress }
