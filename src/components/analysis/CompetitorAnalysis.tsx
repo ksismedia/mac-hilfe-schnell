@@ -101,7 +101,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   };
 
   // Lösch-Funktionen
-  const handleDeleteCompetitor = (competitorName: string, source: 'google' | 'manual') => {
+  const handleDeleteCompetitor = (competitorName: string, source: 'google' | 'manual' | 'own') => {
+    if (source === 'own') return; // Eigenes Unternehmen kann nicht gelöscht werden
+    
     onDeletedCompetitorChange(competitorName);
     
     // Bei manuellen Konkurrenten auch aus der Liste entfernen
@@ -173,8 +175,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       })
   ];
 
-  // Sortiert nach Score  
-  const sortedCompetitors = [...allCompetitors].sort((a, b) => b.score - a.score);
+  // Sortiert nach Score - INKLUSIVE eigenem Unternehmen für Ranking
+  const sortedCompetitors = [
+    {
+      ...ownCompany,
+      score: ownCompanyScore,
+      uniqueServices: [],
+      services: ownServices,
+      source: 'own' as const
+    },
+    ...allCompetitors
+  ].sort((a, b) => b.score - a.score);
 
   // Gelöschte Konkurrenten für Wiederherstellung - SICHER
   const deletedGoogleCompetitors = realData?.competitors?.filter(comp => 
@@ -505,7 +516,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                                 <Users className="h-4 w-4" />
                                 <span>{competitor.reviews} Bewertungen</span>
                               </div>
-                              {competitor.distance && competitor.distance !== competitor.location && (
+                              {(competitor.source !== 'own' && 'distance' in competitor && competitor.distance && competitor.distance !== competitor.location) && (
                                 <div className="flex items-center gap-1">
                                   <MapPin className="h-4 w-4" />
                                   <span>{competitor.distance}</span>
