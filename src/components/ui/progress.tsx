@@ -5,12 +5,13 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
-  // WICHTIG: 0-60% = ROT, 61-80% = GRÜN, 81-100% = GELB
+  // Explizite Logik: 0-60% = ROT, 61-80% = GRÜN, 81-100% = GELB
   const numValue = Number(value) || 0;
+  console.log('PROGRESS DEBUG:', numValue, numValue <= 60 ? 'RED' : numValue <= 80 ? 'GREEN' : 'YELLOW');
   
-  if (numValue <= 60) {
+  if (numValue === 0 || numValue <= 60) {
     return '#ef4444'; // ROT für 0-60%
-  } else if (numValue >= 61 && numValue <= 80) {
+  } else if (numValue <= 80) {
     return '#22c55e'; // GRÜN für 61-80%  
   } else {
     return '#fbbf24'; // GELB für 81-100%
@@ -40,7 +41,8 @@ const Progress = React.forwardRef<
         className="h-full transition-all rounded-full"
         style={{ 
           width: `${value ?? 0}%`,
-          backgroundColor: getProgressColor(value ?? 0)
+          backgroundColor: `${getProgressColor(value ?? 0)} !important`,
+          background: `${getProgressColor(value ?? 0)} !important`
         }}
       />
     </ProgressPrimitive.Root>
