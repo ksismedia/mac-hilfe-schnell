@@ -545,7 +545,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
           {/* SEO-Optimierung */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-lg">Content-SEO Optimierung</CardTitle>
+              <CardTitle className="text-lg">Content-SEO Bestandsanalyse</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

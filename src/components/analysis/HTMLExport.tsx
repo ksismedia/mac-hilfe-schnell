@@ -785,7 +785,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             <div class="section-content">
                 <h4>Technische Optimierungen:</h4>
                 <ul>
-                    ${realData.seo.score < 70 ? '<li>SEO-Optimierung durchführen</li>' : ''}
+                    ${realData.seo.score < 70 ? '<li>SEO-Bestandsanalyse durchführen</li>' : ''}
                     ${realData.performance.score < 70 ? '<li>Website-Performance verbessern</li>' : ''}
                     ${realData.mobile.overallScore < 70 ? '<li>Mobile Optimierung durchführen</li>' : ''}
                     ${realData.reviews.google.count < 10 ? '<li>Mehr Kundenbewertungen sammeln</li>' : ''}
