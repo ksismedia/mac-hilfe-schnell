@@ -75,9 +75,9 @@ body {
 }
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
-  padding: 30px 25px; 
-  border-radius: 16px; 
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+  padding: 20px 15px; 
+  border-radius: 12px; 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
   text-align: center;
   transition: transform 0.3s ease;
   border: 1px solid rgba(251, 191, 36, 0.3);
@@ -86,14 +86,14 @@ body {
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
-  font-size: 4.5em; 
+  font-size: 3.2em; 
   font-weight: bold; 
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .score-big span { 
   /* Inline-Farben haben Vorrang */
 }
-.score-label { color: #d1d5db; font-weight: 600; font-size: 1.1em; }
+.score-label { color: #d1d5db; font-weight: 600; font-size: 1.0em; }
 .section { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
   margin-bottom: 30px; 
