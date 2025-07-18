@@ -28,41 +28,55 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
   const [servicesInput, setServicesInput] = useState('');
 
   const addCompetitor = () => {
+    console.log('DEBUG: addCompetitor called', { newCompetitor, servicesInput });
+    
     try {
-      if (newCompetitor.name && newCompetitor.rating && newCompetitor.distance) {
-        const rating = typeof newCompetitor.rating === 'number' ? newCompetitor.rating : parseFloat(String(newCompetitor.rating));
-        const reviews = typeof newCompetitor.reviews === 'number' ? newCompetitor.reviews : parseInt(String(newCompetitor.reviews)) || 0;
-        
-        if (isNaN(rating) || rating < 1 || rating > 5) {
-          console.error('Invalid rating value:', newCompetitor.rating);
-          return;
-        }
-        
-        if (isNaN(reviews) || reviews < 0) {
-          console.error('Invalid reviews value:', newCompetitor.reviews);
-          return;
-        }
-        
-        const competitor: ManualCompetitor = {
-          name: newCompetitor.name,
-          rating: rating,
-          reviews: reviews,
-          distance: newCompetitor.distance,
-          services: servicesInput ? servicesInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : []
-        };
-        
-        onCompetitorsChange([...competitors, competitor]);
-        
-        // Reset form
-        setNewCompetitor({
-          name: '',
-          rating: 4.0,
-          reviews: 0,
-          distance: '',
-          services: []
-        });
-        setServicesInput('');
+      if (!newCompetitor.name || !newCompetitor.distance) {
+        console.log('DEBUG: Missing required fields');
+        return;
       }
+
+      const rating = typeof newCompetitor.rating === 'number' ? newCompetitor.rating : parseFloat(String(newCompetitor.rating)) || 4.0;
+      const reviews = typeof newCompetitor.reviews === 'number' ? newCompetitor.reviews : parseInt(String(newCompetitor.reviews)) || 0;
+      
+      console.log('DEBUG: Parsed values', { rating, reviews });
+      
+      if (isNaN(rating) || rating < 1 || rating > 5) {
+        console.error('Invalid rating value:', rating, 'from:', newCompetitor.rating);
+        return;
+      }
+      
+      if (isNaN(reviews) || reviews < 0) {
+        console.error('Invalid reviews value:', reviews, 'from:', newCompetitor.reviews);
+        return;
+      }
+      
+      const competitor: ManualCompetitor = {
+        name: String(newCompetitor.name).trim(),
+        rating: rating,
+        reviews: reviews,
+        distance: String(newCompetitor.distance).trim(),
+        services: servicesInput ? servicesInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : []
+      };
+      
+      console.log('DEBUG: Created competitor object', competitor);
+      console.log('DEBUG: Current competitors before update', competitors);
+      
+      const newCompetitors = [...competitors, competitor];
+      console.log('DEBUG: New competitors array', newCompetitors);
+      
+      onCompetitorsChange(newCompetitors);
+      
+      // Reset form
+      setNewCompetitor({
+        name: '',
+        rating: 4.0,
+        reviews: 0,
+        distance: '',
+        services: []
+      });
+      setServicesInput('');
+      
     } catch (error) {
       console.error('Error adding competitor:', error);
     }
