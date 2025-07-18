@@ -4,9 +4,17 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
-const getProgressColor = () => {
-  // Durchgängige Farbe für alle Balken
-  return '#fbbf24'; // Gelb
+const getProgressColor = (value: number) => {
+  if (value >= 81) {
+    // 81-100%: Gelb
+    return '#fbbf24';
+  } else if (value >= 61) {
+    // 61-80%: Grün
+    return '#22c55e';
+  } else {
+    // 0-60%: Rot
+    return '#ef4444';
+  }
 };
 
 const Progress = React.forwardRef<
@@ -25,7 +33,7 @@ const Progress = React.forwardRef<
       className="h-full w-full flex-1 transition-all rounded-full"
       style={{ 
         transform: `translateX(-${100 - (value || 0)}%)`,
-        background: getProgressColor()
+        background: getProgressColor(value || 0)
       }}
     />
   </ProgressPrimitive.Root>
