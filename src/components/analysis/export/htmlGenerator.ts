@@ -1648,23 +1648,23 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span style="color: ${overallScore <= 20 ? '#dc2626' : overallScore <= 40 ? '#ea580c' : overallScore <= 60 ? '#eab308' : overallScore <= 80 ? '#16a34a' : '#22c55e'};">${overallScore}%</span></div>
+            <div class="score-big"><span style="color: ${overallScore <= 60 ? '#dc2626' : overallScore <= 80 ? '#16a34a' : '#eab308'};">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.seo.score <= 20 ? '#dc2626' : realData.seo.score <= 40 ? '#ea580c' : realData.seo.score <= 60 ? '#eab308' : realData.seo.score <= 80 ? '#16a34a' : '#22c55e'};">${realData.seo.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.seo.score <= 60 ? '#dc2626' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'};">${realData.seo.score}%</span></div>
             <div class="score-label">SEO Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.performance.score <= 20 ? '#dc2626' : realData.performance.score <= 40 ? '#ea580c' : realData.performance.score <= 60 ? '#eab308' : realData.performance.score <= 80 ? '#16a34a' : '#22c55e'};">${realData.performance.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.performance.score <= 60 ? '#dc2626' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'};">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 20 ? '#dc2626' : realData.mobile.overallScore <= 40 ? '#ea580c' : realData.mobile.overallScore <= 60 ? '#eab308' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#22c55e'};">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 60 ? '#dc2626' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'};">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${74 <= 20 ? '#dc2626' : 74 <= 40 ? '#ea580c' : 74 <= 60 ? '#eab308' : 74 <= 80 ? '#16a34a' : '#22c55e'};">74%</span></div>
+            <div class="score-big"><span style="color: ${74 <= 60 ? '#dc2626' : 74 <= 80 ? '#16a34a' : '#eab308'};">74%</span></div>
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
