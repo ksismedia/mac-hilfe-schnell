@@ -34,14 +34,22 @@ export const useSavedAnalyses = () => {
 
   // Lade gespeicherte Analysen beim Start
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
         const analyses = JSON.parse(stored);
-        setSavedAnalyses(analyses);
-      } catch (error) {
-        console.error('Fehler beim Laden der gespeicherten Analysen:', error);
+        if (Array.isArray(analyses)) {
+          setSavedAnalyses(analyses);
+        } else {
+          console.error('Gespeicherte Analysen sind kein Array:', analyses);
+          setSavedAnalyses([]);
+        }
       }
+    } catch (error) {
+      console.error('Fehler beim Laden der gespeicherten Analysen:', error);
+      // Clear corrupt data
+      localStorage.removeItem(STORAGE_KEY);
+      setSavedAnalyses([]);
     }
   }, []);
 

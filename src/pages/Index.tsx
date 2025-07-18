@@ -148,21 +148,36 @@ const Index = () => {
   const handleLoadSavedAnalysis = (analysis: any) => {
     console.log('handleLoadSavedAnalysis called with:', analysis);
     
-    if (analysis.businessData) {
+    try {
+      if (!analysis || !analysis.id) {
+        throw new Error('Ungültige Analyse-Daten: ID fehlt');
+      }
+      
+      if (!analysis.businessData) {
+        throw new Error('Ungültige Analyse-Daten: businessData fehlt');
+      }
+      
       console.log('Setting business data:', analysis.businessData);
       setBusinessData(analysis.businessData);
+      
+      console.log('Setting loaded analysis ID:', analysis.id);
+      setLoadedAnalysisId(analysis.id);
+      
+      console.log('Setting step to results');
+      setStep('results');
+      
+      toast({
+        title: "Analyse geladen",
+        description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
+      });
+    } catch (error) {
+      console.error('Fehler beim Laden der Analyse:', error);
+      toast({
+        title: "Fehler beim Laden",
+        description: error instanceof Error ? error.message : "Ein unbekannter Fehler ist aufgetreten.",
+        variant: "destructive",
+      });
     }
-    
-    console.log('Setting loaded analysis ID:', analysis.id);
-    setLoadedAnalysisId(analysis.id);
-    
-    console.log('Setting step to results');
-    setStep('results');
-    
-    toast({
-      title: "Analyse geladen",
-      description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
-    });
   };
 
   const resetToStart = () => {
