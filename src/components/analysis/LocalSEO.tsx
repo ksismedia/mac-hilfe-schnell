@@ -86,9 +86,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return "default";
-    if (score >= 60) return "secondary";
-    return "destructive";
+    if (score >= 80) return "secondary";        // gelb (80-100%)
+    if (score >= 60) return "default";          // grün (60-80%)
+    return "destructive";                       // rot (0-60%)
   };
 
   const getPositionColor = (position: number) => {

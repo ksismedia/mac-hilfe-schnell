@@ -198,10 +198,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 85) return 'default';
-    if (score >= 70) return 'secondary';
-    if (score >= 50) return 'outline';
-    return 'destructive';
+    if (score >= 80) return 'secondary';        // gelb (80-100%)
+    if (score >= 60) return 'default';          // grün (60-80%)
+    return 'destructive';                       // rot (0-60%)
   };
 
   const getViolationIcon = (type: string) => {

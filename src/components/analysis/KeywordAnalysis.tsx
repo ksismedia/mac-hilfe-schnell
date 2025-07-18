@@ -187,7 +187,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               {keywordData.foundKeywords === 0 && (
                 <Badge variant="destructive">Keine Keywords gefunden</Badge>
               )}
-              <Badge variant={keywordData.overallScore >= 80 ? "default" : keywordData.overallScore >= 60 ? "secondary" : "destructive"}>
+              <Badge variant={keywordData.overallScore >= 80 ? "secondary" : keywordData.overallScore >= 60 ? "default" : "destructive"}>
                 {keywordData.overallScore}/100 Punkte
               </Badge>
             </div>

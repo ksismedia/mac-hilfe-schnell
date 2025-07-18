@@ -206,7 +206,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Branchenspezifische Merkmale
-            <Badge variant={overallScore >= 80 ? "default" : overallScore >= 60 ? "secondary" : "destructive"}>
+            <Badge variant={overallScore >= 80 ? "secondary" : overallScore >= 60 ? "default" : "destructive"}>
               {overallScore}/100 Punkte
             </Badge>
           </CardTitle>

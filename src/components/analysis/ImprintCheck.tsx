@@ -101,7 +101,7 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
               <Badge variant={manualData ? "default" : "secondary"}>
                 {manualData ? "✓ Manuell geprüft" : "Automatisch erkannt"}
               </Badge>
-              <Badge variant={imprintData.score >= 80 ? "default" : imprintData.score >= 60 ? "secondary" : "destructive"}>
+              <Badge variant={imprintData.score >= 80 ? "secondary" : imprintData.score >= 60 ? "default" : "destructive"}>
                 {imprintData.score}/100 Punkte
               </Badge>
               <Button

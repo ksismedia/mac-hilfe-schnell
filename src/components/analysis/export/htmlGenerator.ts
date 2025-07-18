@@ -360,7 +360,7 @@ export const generateCustomerHTML = ({
       'Buttons haben aussagekräftige Labels'
     ];
 
-    const scoreClass = accessibilityScore >= 80 ? 'good' : accessibilityScore >= 60 ? 'warning' : 'critical';
+    const scoreClass = accessibilityScore >= 80 ? 'yellow' : accessibilityScore >= 60 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -543,7 +543,7 @@ export const generateCustomerHTML = ({
     
     // Kritischere Gesamtbewertung
     const criticalSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
-    const scoreClass = criticalSeoScore >= 80 ? 'good' : criticalSeoScore >= 60 ? 'warning' : 'critical';
+    const scoreClass = criticalSeoScore >= 80 ? 'yellow' : criticalSeoScore >= 60 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -554,7 +554,7 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle" style="background-color: ${getScoreColor(criticalSeoScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${criticalSeoScore}%</div>
           <div class="score-details">
-            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : criticalSeoScore >= 40 ? 'Niedrig' : 'Sehr niedrig'}</p>
+            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'SEO-Grundlagen vorhanden, Optimierung empfohlen' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
           </div>
         </div>
@@ -769,7 +769,7 @@ export const generateCustomerHTML = ({
       }
     };
 
-    const scoreClass = localSEOData.overallScore >= 80 ? 'good' : localSEOData.overallScore >= 60 ? 'warning' : 'critical';
+    const scoreClass = localSEOData.overallScore >= 80 ? 'yellow' : localSEOData.overallScore >= 60 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -781,7 +781,7 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle" style="background-color: ${getScoreColor(localSEOData.overallScore)}; color: white; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${localSEOData.overallScore}%</div>
           <div class="score-details">
-            <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : localSEOData.overallScore >= 40 ? 'Ausbaufähig' : 'Verbesserungsbedarf'}</p>
+            <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
             <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
           </div>
         </div>
@@ -952,7 +952,7 @@ export const generateCustomerHTML = ({
   // Performance Analysis
   const getPerformanceAnalysis = () => {
     const performanceScore = realData.performance.score;
-    const scoreClass = performanceScore >= 70 ? 'good' : 'warning';
+    const scoreClass = performanceScore >= 80 ? 'yellow' : performanceScore >= 60 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -985,7 +985,7 @@ export const generateCustomerHTML = ({
   // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
     const mobileScore = realData.mobile.overallScore;
-    const scoreClass = mobileScore >= 70 ? 'good' : 'warning';
+    const scoreClass = mobileScore >= 80 ? 'yellow' : mobileScore >= 60 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
