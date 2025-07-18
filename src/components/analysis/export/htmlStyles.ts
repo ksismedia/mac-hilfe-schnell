@@ -226,7 +226,10 @@ body {
 .violation-serious { background: rgba(245, 158, 11, 0.2) !important; }
 .violation-moderate { background: rgba(59, 130, 246, 0.2) !important; }
 .violation-minor { background: rgba(107, 114, 128, 0.2) !important; }
-
+/* Status-Badges für Verzeichnisse */
+.status-vollständig { background: #FFD700 !important; color: black !important; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+.status-unvollständig { background: #FF0000 !important; color: white !important; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+.status-nicht-gefunden { background: #FF0000 !important; color: white !important; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
 /* Ranking Position Farben */
 .ranking-position { font-size: 18px; font-weight: bold; }
 .ranking-position.red { color: #FF0000 !important; }

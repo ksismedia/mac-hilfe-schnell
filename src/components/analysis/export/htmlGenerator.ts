@@ -826,11 +826,11 @@ export const generateCustomerHTML = ({
             ${localSEOData.localCitations.topDirectories.map(directory => `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
                 <span style="font-size: 14px;">${directory.name}</span>
-                 <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: ${
-                   directory.status === 'vollständig' ? 'directory-complete' :        
-                   directory.status === 'unvollständig' ? 'directory-incomplete' :      
-                   'directory-missing'
-                 };">${directory.status}</span>
+                 <span class="${
+                   directory.status === 'vollständig' ? 'status-vollständig' :        
+                   directory.status === 'unvollständig' ? 'status-unvollständig' :      
+                   'status-nicht-gefunden'
+                 }">${directory.status}</span>
               </div>
             `).join('')}
           </div>
