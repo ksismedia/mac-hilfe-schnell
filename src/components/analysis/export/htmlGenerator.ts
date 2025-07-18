@@ -305,40 +305,40 @@ export const generateCustomerHTML = ({
 
         <!-- Impressum-Details -->
         <div style="margin-top: 20px;">
-          <h4 style="color: #1d4ed8; margin-bottom: 10px;">📋 Impressum-Analyse</h4>
+          <h4 class="section-text" style="margin-bottom: 10px;">📋 Impressum-Analyse</h4>
           
           ${foundImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
-            <h5 style="color: #16a34a; margin-bottom: 8px;">✅ Vorhandene Angaben:</h5>
+            <h5 class="success-text" style="margin-bottom: 8px;">✅ Vorhandene Angaben:</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${foundImprintElements.map(element => `<li style="color: #16a34a; margin-bottom: 3px;">✅ ${element}</li>`).join('')}
+              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">✅ ${element}</li>`).join('')}
             </ul>
-            ${manualImprintData ? '<p style="font-size: 0.9em; color: #666; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
+            ${manualImprintData ? '<p style="font-size: 0.9em; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
           </div>
           ` : ''}
 
           ${finalMissingImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
-            <h5 style="color: #dc2626; margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
+            <h5 class="error-text" style="margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${finalMissingImprintElements.map(element => `<li style="color: #dc2626; margin-bottom: 3px;">❌ ${element}</li>`).join('')}
+              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">❌ ${element}</li>`).join('')}
             </ul>
           </div>
           ` : ''}
 
           ${legalScore < 80 ? `
-          <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-            <h5 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahngefahr bei unvollständigem Impressum</h5>
-            <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+          <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
+            <h5 class="error-text" style="margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahngefahr bei unvollständigem Impressum</h5>
+            <p class="error-text" style="margin: 0 0 10px 0; font-size: 14px;">
               <strong>Rechtliche Risiken:</strong> Fehlende Impressum-Angaben können zu Abmahnungen führen.
             </p>
-            <ul style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px; padding-left: 20px;">
+            <ul class="error-text" style="margin: 0 0 10px 0; font-size: 14px; padding-left: 20px;">
               <li>Bußgelder bis zu 50.000 Euro möglich</li>
               <li>Abmahnungen durch Mitbewerber</li>
               <li>Unterlassungsklagen</li>
               <li>Schadensersatzforderungen</li>
             </ul>
-            <p style="color: #dc2626; margin: 0; font-size: 14px;">
+            <p class="error-text" style="margin: 0; font-size: 14px;">
               <strong>Empfehlung:</strong> Sofortige Vervollständigung des Impressums erforderlich.
             </p>
           </div>
@@ -406,7 +406,7 @@ export const generateCustomerHTML = ({
         
         <div id="wcag-details" style="display: none;">
           <!-- Violations Overview -->
-          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+          <div class="violations-box" style="margin-top: 20px; padding: 15px; border-radius: 8px;">
             <h4>🚨 Erkannte Probleme</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               ${violations.map(v => `
@@ -415,35 +415,35 @@ export const generateCustomerHTML = ({
                   v.impact === 'serious' ? 'rgba(245, 158, 11, 0.2)' :
                   v.impact === 'moderate' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(107, 114, 128, 0.2)'
                 }; border-radius: 6px;">
-                  <p style="font-weight: bold; color: ${
-                    v.impact === 'critical' ? '#dc2626' :
-                    v.impact === 'serious' ? '#d97706' :
-                    v.impact === 'moderate' ? '#2563eb' : '#6b7280'
-                  };">${v.impact.toUpperCase()}</p>
+                  <p class="${
+                    v.impact === 'critical' ? 'error-text' :
+                    v.impact === 'serious' ? 'error-text' :
+                    v.impact === 'moderate' ? 'section-text' : ''
+                  }" style="font-weight: bold;">${v.impact.toUpperCase()}</p>
                   <p style="font-size: 0.9em;">${v.description}</p>
-                  <p style="font-size: 0.8em; color: #666;">${v.count} Vorkommen</p>
+                  <p style="font-size: 0.8em;">${v.count} Vorkommen</p>
                 </div>
               `).join('')}
             </div>
           </div>
 
           <!-- Successful Tests -->
-          <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-            <h4 style="color: #059669;">✅ Erfolgreich umgesetzt</h4>
+          <div class="success-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4 class="success-text">✅ Erfolgreich umgesetzt</h4>
             <ul style="margin-top: 10px; padding-left: 20px;">
-              ${passes.map(pass => `<li style="color: #059669; margin-bottom: 5px;">${pass}</li>`).join('')}
+              ${passes.map(pass => `<li class="success-text" style="margin-bottom: 5px;">${pass}</li>`).join('')}
             </ul>
           </div>
         </div>
 
         <!-- Rechtliche Anforderungen -->
-        <div class="collapsible" onclick="toggleSection('legal-requirements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
-          <h4 style="color: #3b82f6; margin: 0;">▶ Rechtliche Anforderungen</h4>
+        <div class="collapsible info-box" onclick="toggleSection('legal-requirements')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
+          <h4 class="section-text" style="margin: 0;">▶ Rechtliche Anforderungen</h4>
         </div>
         
         <div id="legal-requirements" style="display: none;">
-          <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-            <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
+          <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4 class="section-text">⚖️ Rechtliche Compliance</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
@@ -484,16 +484,16 @@ export const generateCustomerHTML = ({
             </div>
             
             ${accessibilityScore < 70 ? `
-            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
+              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
+              <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
                 Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
               </p>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+              <p class="error-text" style="margin: 0 0 10px 0; font-size: 14px;">
                 <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
                 Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
               </p>
-              <p style="color: #dc2626; margin: 0; font-size: 14px;">
+              <p class="error-text" style="margin: 0; font-size: 14px;">
                 <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
               </p>
             </div>
@@ -502,8 +502,8 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- Verbesserungsvorschläge -->
-        <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="color: #16a34a; margin: 0;">▶ Verbesserungsvorschläge</h4>
+        <div class="collapsible success-box" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
+          <h4 class="success-text" style="margin: 0;">▶ Verbesserungsvorschläge</h4>
         </div>
         
         <div id="accessibility-improvements" style="display: none;">
@@ -579,7 +579,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-point" style="position: absolute; left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
+              <small class="secondary-text">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
             </div>
             <div>
               <p><strong>Meta Description:</strong> ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
@@ -589,7 +589,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-point" style="position: absolute; left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
+              <small class="secondary-text">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
             </div>
             <div>
               <p><strong>Überschriftenstruktur:</strong> ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
@@ -599,7 +599,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-point" style="position: absolute; left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
+              <small class="secondary-text">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
             </div>
             <div>
               <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total} Bilder</p>
@@ -609,7 +609,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-point" style="position: absolute; left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
+              <small class="secondary-text">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
             </div>
           </div>
         </div>

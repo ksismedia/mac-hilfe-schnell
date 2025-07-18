@@ -471,6 +471,40 @@ table tr {
     background-color: #eab308 !important;
     color: #000000 !important;
   }
+  
+  .error-text {
+    color: #dc2626 !important;
+  }
+  
+  .success-text {
+    color: #16a34a !important;
+  }
+  
+  .section-text {
+    color: #1d4ed8 !important;
+  }
+  
+  .warning-box {
+    background: #fef2f2 !important;
+    border: 2px solid #dc2626 !important;
+  }
+  
+  .info-box {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  }
+  
+  .success-box {
+    background: rgba(34, 197, 94, 0.1) !important;
+  }
+  
+  .violations-box {
+    background: rgba(239, 68, 68, 0.1) !important;
+  }
+  
+  .secondary-text {
+    color: #666666 !important;
+  }
 }
 `;
 };
