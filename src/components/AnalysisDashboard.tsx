@@ -266,14 +266,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
     if (score >= 60) return 'text-yellow-400';
-    if (score >= 40) return 'text-orange-400';
     return 'text-red-400';
   };
 
   const getScoreBg = (score: number) => {
     if (score >= 80) return 'bg-green-900/20 border-green-400/30';
     if (score >= 60) return 'bg-yellow-900/20 border-yellow-400/30';
-    if (score >= 40) return 'bg-orange-900/20 border-orange-400/30';
     return 'bg-red-900/20 border-red-400/30';
   };
 

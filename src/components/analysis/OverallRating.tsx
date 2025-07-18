@@ -54,15 +54,13 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    return 'text-red-600'; // Changed: Now everything below 60% is red
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 80) return 'default';
     if (score >= 60) return 'secondary';
-    if (score >= 40) return 'outline';
-    return 'destructive';
+    return 'destructive'; // Changed: Now everything below 60% is destructive (red)
   };
 
   // Prüfung ob Social Media Daten vorhanden
