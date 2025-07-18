@@ -171,7 +171,7 @@ body {
   flex-shrink: 0;
 }
 .score-circle.green { background: #22c55e; color: white; }
-.score-circle.yellow { background: #FFD700; color: white; }
+.score-circle.yellow { background: #FFD700; color: white !important; }
 .score-circle.orange { background: #FF4500; color: white; }
 .score-circle.red { background: #FF0000; color: white; }
 .score-circle.dark-red { background: #CD0000; color: white; }
