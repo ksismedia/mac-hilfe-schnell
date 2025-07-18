@@ -26,31 +26,31 @@ export const generateHeaderSection = (
         <!-- Gesamtbewertung -->
         <div class="score-overview">
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${overallScore <= 20 ? '0-20' : overallScore <= 40 ? '20-40' : overallScore <= 60 ? '40-60' : overallScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${overallScore}%</button>
+                <button class="percentage-btn score-big" data-score="${overallScore < 60 ? '0-60' : overallScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${overallScore}%</button>
                 <div class="score-label">Gesamt-Score</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${seoScore <= 20 ? '0-20' : seoScore <= 40 ? '20-40' : seoScore <= 60 ? '40-60' : seoScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${seoScore}%</button>
+                <button class="percentage-btn score-big" data-score="${seoScore < 60 ? '0-60' : seoScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${seoScore}%</button>
                 <div class="score-label">SEO-Bestandsanalyse</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${performanceScore <= 20 ? '0-20' : performanceScore <= 40 ? '20-40' : performanceScore <= 60 ? '40-60' : performanceScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${performanceScore}%</button>
+                <button class="percentage-btn score-big" data-score="${performanceScore < 60 ? '0-60' : performanceScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${performanceScore}%</button>
                 <div class="score-label">Website-Performance</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${mobileScore <= 20 ? '0-20' : mobileScore <= 40 ? '20-40' : mobileScore <= 60 ? '40-60' : mobileScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${mobileScore}%</button>
+                <button class="percentage-btn score-big" data-score="${mobileScore < 60 ? '0-60' : mobileScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${mobileScore}%</button>
                 <div class="score-label">Mobile Optimierung</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${hourlyRateScore <= 20 ? '0-20' : hourlyRateScore <= 40 ? '20-40' : hourlyRateScore <= 60 ? '40-60' : hourlyRateScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${hourlyRateScore}%</button>
+                <button class="percentage-btn score-big" data-score="${hourlyRateScore < 60 ? '0-60' : hourlyRateScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${hourlyRateScore}%</button>
                 <div class="score-label">Preisstrategie</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${socialMediaScore <= 20 ? '0-20' : socialMediaScore <= 40 ? '20-40' : socialMediaScore <= 60 ? '40-60' : socialMediaScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${socialMediaScore}%</button>
+                <button class="percentage-btn score-big" data-score="${socialMediaScore < 60 ? '0-60' : socialMediaScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${socialMediaScore}%</button>
                 <div class="score-label">Social Media</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${dataPrivacyScore}%</button>
+                <button class="percentage-btn score-big" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${dataPrivacyScore}%</button>
                 <div class="score-label">Datenschutz</div>
             </div>
         </div>
@@ -73,7 +73,7 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Optimierung</span>
-                                <button class="percentage-btn" data-score="${realData.seo.score <= 20 ? '0-20' : realData.seo.score <= 40 ? '20-40' : realData.seo.score <= 60 ? '40-60' : realData.seo.score <= 80 ? '60-80' : '80-100'}">${realData.seo.score}%</button>
+                                <button class="percentage-btn" data-score="${realData.seo.score < 60 ? '0-60' : realData.seo.score < 80 ? '60-80' : '80-100'}">${realData.seo.score}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%"></div>
@@ -87,10 +87,10 @@ export const generateSEOSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Keyword-Abdeckung</span>
-                                <button class="percentage-btn" data-score="${keywordsScore <= 20 ? '0-20' : keywordsScore <= 40 ? '20-40' : keywordsScore <= 60 ? '40-60' : keywordsScore <= 80 ? '60-80' : '80-100'}">${keywordsScore}%</button>
+                                <button class="percentage-btn" data-score="${keywordsScore < 60 ? '0-60' : keywordsScore < 80 ? '60-80' : '80-100'}">${keywordsScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" data-score="${keywordsScore <= 20 ? '0-20' : keywordsScore <= 40 ? '20-40' : keywordsScore <= 60 ? '40-60' : keywordsScore <= 80 ? '60-80' : '80-100'}" style="width: ${keywordsScore}%"></div>
+                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" data-score="${keywordsScore < 60 ? '0-60' : keywordsScore < 80 ? '60-80' : '80-100'}" style="width: ${keywordsScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -283,7 +283,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
                             </div>
                         </div>
                     </div>
@@ -299,7 +299,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <button class="percentage-btn">${Math.min(100, dataPrivacyScore + 10)}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) <= 20 ? '0-20' : Math.min(100, dataPrivacyScore + 10) <= 40 ? '20-40' : Math.min(100, dataPrivacyScore + 10) <= 60 ? '40-60' : Math.min(100, dataPrivacyScore + 10) <= 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
+                                <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) < 60 ? '0-60' : Math.min(100, dataPrivacyScore + 10) < 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -329,7 +329,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore <= 20 ? '0-20' : dataPrivacyScore <= 40 ? '20-40' : dataPrivacyScore <= 60 ? '40-60' : dataPrivacyScore <= 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
                             </div>
                         </div>
                     </div>
