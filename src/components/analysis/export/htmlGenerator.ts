@@ -1307,8 +1307,8 @@ export const generateCustomerHTML = ({
                     <br><small style="color: #9ca3af;">${uniqueServices.length} Unique</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
-                    <span style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'}; font-weight: bold;">
-                      ${competitor.rating >= 4 ? 'Starker Wettbewerber' : competitor.rating >= 3 ? 'Mittlerer Wettbewerber' : 'Schwacher Wettbewerber'}
+                    <span style="color: ${estimatedScore >= (competitorComparisonScore - 10) ? '#22c55e' : estimatedScore >= (competitorComparisonScore - 20) ? '#eab308' : '#ef4444'}; font-weight: bold;">
+                      ${estimatedScore >= (competitorComparisonScore - 10) ? 'Starker Wettbewerber' : 'Wettbewerber'}
                     </span>
                   </td>
                   <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
