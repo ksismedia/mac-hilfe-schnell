@@ -131,7 +131,7 @@ body {
 }
 .header-score-circle.dark-red { background: #FF0000; color: white; }
 .header-score-circle.red { background: #FF0000; color: white; }
-.header-score-circle.orange { background: #FF4500; color: white; }
+.header-score-circle.orange { background: #FF0000; color: white; }
 .header-score-circle.green { background: #22c55e; color: white; }
 .header-score-circle.yellow { background: #FFD700; color: black; }
 .section-content { 
@@ -171,9 +171,9 @@ body {
 }
 .score-circle.green { background: #22c55e; color: white; }
 .score-circle.yellow { background: #FFD700; color: black !important; }
-.score-circle.orange { background: #FF4500; color: white; }
+.score-circle.orange { background: #FF0000; color: white; }
 .score-circle.red { background: #FF0000; color: white; }
-.score-circle.dark-red { background: #CD0000; color: white; }
+.score-circle.dark-red { background: #FF0000; color: white; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
