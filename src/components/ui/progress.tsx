@@ -8,11 +8,13 @@ const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
 >(({ className, value, ...props }, ref) => {
-  // Bestimme Farbe basierend auf Wert
+  // Bestimme CSS-Klasse basierend auf Wert - nutzt die in index.css definierten Klassen
   const getColorClass = (val: number) => {
-    if (val <= 60) return 'bg-red-500'; // 0-60% rot
-    if (val <= 80) return 'bg-green-500'; // 61-80% grün  
-    return 'bg-yellow-500'; // 81-100% gelb
+    if (val === 0 || val <= 20) return 'progress-score-0-20'; // 0-20% dunkelrot
+    if (val <= 40) return 'progress-score-20-40'; // 21-40% rot
+    if (val <= 60) return 'progress-score-40-60'; // 41-60% orange
+    if (val <= 80) return 'progress-score-60-80'; // 61-80% grün  
+    return 'progress-score-80-100'; // 81-100% gelb
   };
 
   const numValue = Number(value) || 0;
