@@ -96,15 +96,23 @@ export const generateCustomerHTML = ({
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
   // Berechnung für eigenes Unternehmen - EXAKT wie in CompetitorAnalysis.tsx
-  const ownRatingScore = (realData.reviews.google.rating / 5) * 100;
-  const ownReviewScore = Math.min(100, (realData.reviews.google.count / 50) * 100);
-  const ownBaseServiceScore = Math.min(100, (expectedServices.length / 12) * 100);
+  const ownRating = typeof realData.reviews.google.rating === 'number' && !isNaN(realData.reviews.google.rating) ? realData.reviews.google.rating : 0;
+  const ownReviews = typeof realData.reviews.google.count === 'number' && !isNaN(realData.reviews.google.count) ? realData.reviews.google.count : 0;
+  
+  // Rating-Score: 4.4/5 = 88%
+  const ownRatingScore = (ownRating / 5) * 100;
+  
+  // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt (EXAKT wie in CompetitorAnalysis)
+  const ownReviewScore = ownReviews <= 100 ? ownReviews : Math.min(100, 100 + Math.log10(ownReviews / 100) * 20);
+  
+  // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
+  const ownBaseServiceScore = Math.min(100, (expectedServices.length / 20) * 100);
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
-  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis
-  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
+  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 50%, Reviews 20%, Services 30%
+  const competitorComparisonScore = Math.round((ownRatingScore * 0.5) + (ownReviewScore * 0.2) + (ownFinalServiceScore * 0.3));
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -117,7 +125,8 @@ export const generateCustomerHTML = ({
     overall: competitorComparisonScore
   });
   
-
+  // Verwende den gleichen Score für den Marktpositions-Vergleich
+  const marketComparisonScore = competitorComparisonScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
@@ -1318,7 +1327,7 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Ihre Position:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownCompanyScore} Punkte</span></p>
+              <p><strong>Ihr Gesamtscore:</strong> <span style="color: #fbbf24; font-weight: bold;">${marketComparisonScore} Punkte</span></p>
               ${(() => {
                 const avgCompetitorScore = allCompetitors.length > 0 
                   ? allCompetitors.reduce((acc, comp) => {
@@ -1344,7 +1353,7 @@ export const generateCustomerHTML = ({
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
-                const isAboveAverage = ownCompanyScore >= avgCompetitorScore;
+                const isAboveAverage = marketComparisonScore >= avgCompetitorScore;
                 return `<p style="font-size: 0.9em; color: ${isAboveAverage ? '#22c55e' : '#ef4444'};">
                   ${isAboveAverage ? '✅ Über dem Marktdurchschnitt' : '⚠️ Unter dem Marktdurchschnitt'} (Ø ${avgCompetitorScore.toFixed(0)} Punkte)
                 </p>`;
@@ -1605,7 +1614,7 @@ export const generateCustomerHTML = ({
   ].filter(score => score !== undefined && score !== null);
   
   // Calculate overall score as true average of all sections
-  const ownCompanyScore = Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
+  const overallCompanyScore = Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
 
   // Generate the comprehensive HTML report
   console.log('Generating HTML report with container structure');
@@ -1648,18 +1657,18 @@ export const generateCustomerHTML = ({
       <div class="section-header">Executive Summary</div>
       <div class="section-content">
         <!-- Gesamt-Score -->
-         <div class="metric-card ${ownCompanyScore >= 80 ? 'excellent' : ownCompanyScore >= 60 ? 'good' : ownCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
+         <div class="metric-card ${overallCompanyScore >= 80 ? 'excellent' : overallCompanyScore >= 60 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
            <h3>Gesamtbewertung</h3>
            <div class="score-display">
-             <div class="score-circle ${getScoreColorClass(ownCompanyScore)}">${ownCompanyScore}%</div>
+             <div class="score-circle ${getScoreColorClass(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-              <p><strong>Digitale Marktposition:</strong> ${ownCompanyScore >= 80 ? 'Sehr stark' : ownCompanyScore >= 60 ? 'Gut positioniert' : ownCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
-              <p><strong>Priorität:</strong> ${ownCompanyScore >= 80 ? 'Optimierung' : ownCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
+               <p><strong>Digitale Marktposition:</strong> ${overallCompanyScore >= 80 ? 'Sehr stark' : overallCompanyScore >= 60 ? 'Gut positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Priorität:</strong> ${overallCompanyScore >= 80 ? 'Optimierung' : overallCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(ownCompanyScore)}" style="width: ${ownCompanyScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(overallCompanyScore)}" style="width: ${overallCompanyScore}%"></div>
             </div>
           </div>
         </div>
