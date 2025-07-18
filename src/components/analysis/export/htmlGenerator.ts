@@ -1242,25 +1242,35 @@ export const generateCustomerHTML = ({
               ${allCompetitors.map((competitor, index) => {
                 console.log('Processing competitor:', competitor.name, 'services:', competitor.services);
                 
-                // Verwende die KORREKTE Score-Berechnung aus CompetitorAnalysis.tsx
-                const ratingScore = (competitor.rating / 5) * 100;
-                const reviewScore = Math.min(100, (competitor.reviews / 50) * 100);
+                // Verwende die EXAKTE Score-Berechnung aus CompetitorAnalysis.tsx
+                const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
+                const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
+                
+                // Rating-Score: 4.4/5 = 88%
+                const ratingScore = (rating / 5) * 100;
+                
+                // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt
+                const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
                 
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
                 const serviceCount = services.length;
-                const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
+                // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
+                const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
                 
                 const uniqueServices = services.filter((service: string) => 
-                  typeof service === 'string' && !expectedServices.some(ownService => 
-                    ownService.toLowerCase().includes(service.toLowerCase()) || 
-                    service.toLowerCase().includes(ownService.toLowerCase())
+                  typeof service === 'string' && service.trim().length > 0 && !expectedServices.some(ownService => 
+                    typeof ownService === 'string' && ownService.trim().length > 0 && (
+                      ownService.toLowerCase().includes(service.toLowerCase()) || 
+                      service.toLowerCase().includes(ownService.toLowerCase())
+                    )
                   )
                 );
                 
-                const uniqueServiceBonus = uniqueServices.length * 5;
+                const uniqueServiceBonus = uniqueServices.length * 2;
                 const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
                 
-                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35));
+                // Gewichtung: Rating 50%, Reviews 20%, Services 30%
+                const estimatedScore = Math.round((ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3));
                 
                 console.log('Competitor score breakdown:', {
                   name: competitor.name,
@@ -1312,10 +1322,25 @@ export const generateCustomerHTML = ({
               ${(() => {
                 const avgCompetitorScore = allCompetitors.length > 0 
                   ? allCompetitors.reduce((acc, comp) => {
-                      const ratingScore = (comp.rating / 5) * 100;
-                      const reviewScore = Math.min(100, (comp.reviews / 50) * 100);
-                      const serviceScore = Math.min(100, (comp.services.length / 12) * 100);
-                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (serviceScore * 0.35));
+                      const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
+                      const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
+                      
+                      const ratingScore = (rating / 5) * 100;
+                      const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
+                      const services = Array.isArray(comp.services) ? comp.services : [];
+                      const serviceCount = services.length;
+                      const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
+                      const uniqueServices = services.filter((service: string) => 
+                        typeof service === 'string' && service.trim().length > 0 && !expectedServices.some(ownService => 
+                          typeof ownService === 'string' && ownService.trim().length > 0 && (
+                            ownService.toLowerCase().includes(service.toLowerCase()) || 
+                            service.toLowerCase().includes(ownService.toLowerCase())
+                          )
+                        )
+                      );
+                      const uniqueServiceBonus = uniqueServices.length * 2;
+                      const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+                      const totalScore = Math.round((ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3));
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
