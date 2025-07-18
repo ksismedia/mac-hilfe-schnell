@@ -1680,7 +1680,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="score-card">
             <div class="score-big"><span style="color: ${realData.seo.score <= 60 ? '#ffffff' : realData.seo.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.seo.score <= 60 ? '#dc2626' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.seo.score}%</span></div>
-            <div class="score-label">SEO Optimierung</div>
+            <div class="score-label">SEO-Bestandsanalyse</div>
           </div>
           <div class="score-card">
             <div class="score-big"><span style="color: ${realData.performance.score <= 60 ? '#ffffff' : realData.performance.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.performance.score <= 60 ? '#dc2626' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.performance.score}%</span></div>
