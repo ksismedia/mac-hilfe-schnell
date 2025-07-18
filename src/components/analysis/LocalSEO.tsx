@@ -255,12 +255,11 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                      <span 
                        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
                        style={{
-                         backgroundColor: directory.status === "vollständig" ? "#FFFF00 !important" : "#FF0000 !important",
-                         color: directory.status === "vollständig" ? "#000000 !important" : "#FFFFFF !important",
-                         border: "2px solid #000000 !important"
+                         backgroundColor: directory.status === "vollständig" ? "#fbbf24" : "#ef4444",
+                         color: directory.status === "vollständig" ? "#000000" : "#ffffff"
                        }}
                      >
-                       {directory.status} [DEBUG: {directory.status === "vollständig" ? "GELB" : "ROT"}]
+                       {directory.status}
                      </span>
                   </div>
                 ))}
