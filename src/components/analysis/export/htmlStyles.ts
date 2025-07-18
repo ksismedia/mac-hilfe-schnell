@@ -169,11 +169,11 @@ body {
   font-weight: bold; 
   flex-shrink: 0;
 }
-.score-circle.green { background: #22c55e; color: white !important; }
-.score-circle.yellow { background: #FFD700; color: black !important; }
-.score-circle.orange { background: #FF0000; color: white !important; }
-.score-circle.red { background: #FF0000; color: white !important; }
-.score-circle.dark-red { background: #FF0000; color: white !important; }
+.score-circle.green { background: #22c55e !important; color: white !important; }
+.score-circle.yellow { background: #FFD700 !important; color: black !important; }
+.score-circle.orange { background: #FF0000 !important; color: white !important; }
+.score-circle.red { background: #FF0000 !important; color: white !important; }
+.score-circle.dark-red { background: #FF0000 !important; color: white !important; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
