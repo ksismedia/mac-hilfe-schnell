@@ -877,7 +877,7 @@ export const generateCustomerHTML = ({
                   <span style="margin-left: 8px; padding: 2px 6px; border-radius: 4px; font-size: 11px; background: ${keyword.volume === 'hoch' ? '#fbbf24; color: #000000' : keyword.volume === 'mittel' ? '#22c55e; color: #ffffff' : '#ef4444; color: #ffffff'};">${keyword.volume} Volumen</span>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#22c55e' : keyword.position <= 10 ? '#fbbf24' : '#dc2626'};">
+                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.volume === 'hoch' ? '#fbbf24' : keyword.volume === 'mittel' ? '#22c55e' : '#ef4444'};">#${keyword.position}
                     #${keyword.position}
                   </div>
                   <div style="font-size: 11px; color: #9ca3af;">Position</div>
