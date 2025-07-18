@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, Clock, Phone, Globe } from 'lucide-react';
+import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { calculateLocalSEOScore } from './export/scoreCalculations';
 
 interface LocalSEOProps {
   businessData: {
@@ -10,50 +12,70 @@ interface LocalSEOProps {
     url: string;
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
   };
+  realData: RealBusinessData;
 }
 
-const LocalSEO: React.FC<LocalSEOProps> = ({ businessData }) => {
-  // Simulierte Local SEO Daten
+const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
+  // Berechne den strengen Local SEO Score
+  const overallScore = calculateLocalSEOScore(businessData, realData);
+  
+  // Simulierte Local SEO Daten - jetzt basierend auf realData und strengerer Bewertung
   const localSEOData = {
-    overallScore: 74,
+    overallScore: overallScore, // Verwendung des berechneten strengen Scores
     googleMyBusiness: {
-      score: 82,
-      claimed: true,
-      verified: true,
-      complete: 75,
-      photos: 12,
-      posts: 3,
-      lastUpdate: "vor 2 Wochen"
+      score: Math.max(0, Math.min(100, overallScore + (realData.seo.score >= 70 ? 15 : -10))), // Strenger an SEO-Qualität gekoppelt
+      claimed: realData.seo.score >= 60,
+      verified: realData.seo.score >= 70,
+      complete: Math.max(30, Math.min(95, realData.seo.score + 10)),
+      photos: realData.seo.score >= 60 ? Math.floor(realData.seo.score / 8) : 2,
+      posts: realData.seo.score >= 70 ? 3 : realData.seo.score >= 50 ? 1 : 0,
+      lastUpdate: realData.seo.score >= 60 ? "vor 2 Wochen" : "vor 3 Monaten"
     },
     localCitations: {
-      score: 68,
-      totalCitations: 15,
-      consistent: 12,
-      inconsistent: 3,
+      score: Math.max(20, Math.min(85, overallScore - 5)), // Strenger bewertet
+      totalCitations: realData.seo.score >= 60 ? 15 : realData.seo.score >= 40 ? 8 : 3,
+      consistent: realData.seo.score >= 70 ? 12 : realData.seo.score >= 50 ? 6 : 2,
+      inconsistent: realData.seo.score >= 70 ? 3 : realData.seo.score >= 50 ? 5 : 8,
       topDirectories: [
-        { name: "Google My Business", status: "vollständig" },
-        { name: "Bing Places", status: "unvollständig" },
-        { name: "Yelp", status: "nicht gefunden" },
-        { name: "Gelbe Seiten", status: "vollständig" },
-        { name: "WerkenntdenBesten", status: "vollständig" }
+        { name: "Google My Business", status: realData.seo.score >= 60 ? "vollständig" : "unvollständig" },
+        { name: "Bing Places", status: realData.seo.score >= 50 ? "unvollständig" : "nicht gefunden" },
+        { name: "Yelp", status: realData.seo.score >= 70 ? "vollständig" : "nicht gefunden" },
+        { name: "Gelbe Seiten", status: realData.seo.score >= 40 ? "vollständig" : "unvollständig" },
+        { name: "WerkenntdenBesten", status: realData.seo.score >= 60 ? "vollständig" : "nicht gefunden" }
       ]
     },
     localKeywords: {
-      score: 71,
+      score: Math.max(15, Math.min(80, overallScore - 10)), // Sehr streng bei lokalen Keywords
       ranking: [
-        { keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim()}`, position: 8, volume: "hoch" },
-        { keyword: `Handwerker ${businessData.address.split(',')[1]?.trim()}`, position: 15, volume: "mittel" },
-        { keyword: `${businessData.industry} Notdienst`, position: 12, volume: "mittel" },
-        { keyword: `${businessData.industry} in der Nähe`, position: 6, volume: "hoch" }
+        { 
+          keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim()}`, 
+          position: realData.seo.score >= 70 ? 8 : realData.seo.score >= 50 ? 15 : 25, 
+          volume: realData.seo.score >= 60 ? "hoch" : "niedrig" 
+        },
+        { 
+          keyword: `Handwerker ${businessData.address.split(',')[1]?.trim()}`, 
+          position: realData.seo.score >= 60 ? 12 : 20, 
+          volume: realData.seo.score >= 50 ? "mittel" : "niedrig" 
+        },
+        { 
+          keyword: `${businessData.industry} Notdienst`, 
+          position: realData.seo.score >= 70 ? 6 : 18, 
+          volume: realData.seo.score >= 60 ? "mittel" : "niedrig" 
+        },
+        { 
+          keyword: `${businessData.industry} in der Nähe`, 
+          position: realData.seo.score >= 80 ? 3 : realData.seo.score >= 60 ? 8 : 15, 
+          volume: realData.seo.score >= 70 ? "hoch" : "mittel" 
+        }
       ]
     },
     onPageLocal: {
-      score: 78,
-      addressVisible: true,
-      phoneVisible: true,
-      openingHours: true,
-      localSchema: false,
-      localContent: 65
+      score: Math.max(25, Math.min(90, overallScore)),
+      addressVisible: realData.seo.metaDescription ? realData.seo.metaDescription.includes(businessData.address.split(',')[1]?.trim() || '') : false,
+      phoneVisible: realData.seo.score >= 50,
+      openingHours: realData.seo.score >= 60,
+      localSchema: realData.seo.score >= 80 && realData.seo.headings.h1.length > 0,
+      localContent: Math.max(20, Math.min(85, realData.seo.score - 15)) // Strenger lokaler Content-Score
     }
   };
 

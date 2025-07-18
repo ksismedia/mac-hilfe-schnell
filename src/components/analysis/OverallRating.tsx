@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
+import { calculateLocalSEOScore } from './export/scoreCalculations';
 
 interface OverallRatingProps {
   businessData: {
@@ -26,20 +27,23 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
   // Social Media Score - VEREINFACHT
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  
+  // Local SEO Score - STRENGE BEWERTUNG MIT HÖCHSTER GEWICHTUNG
+  const localSEOScore = calculateLocalSEOScore(businessData, realData);
 
-  // Alle Metriken
+  // Alle Metriken - LOCAL SEO JETZT MIT HÖCHSTER GEWICHTUNG (25%)
   const metrics = [
+    { name: 'Local SEO', score: localSEOScore, weight: 25, maxScore: 100 }, // HÖCHSTE GEWICHTUNG für Handwerk
     { name: 'SEO', score: realData.seo.score, weight: 15, maxScore: 100 },
-    { name: 'Performance', score: realData.performance.score, weight: 15, maxScore: 100 },
+    { name: 'Performance', score: realData.performance.score, weight: 12, maxScore: 100 },
     { name: 'Impressum', score: realData.imprint.score, weight: 10, maxScore: 100 },
-    { name: 'Keywords', score: currentKeywordsScore, weight: 10, maxScore: 100 },
-    { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 10, maxScore: 100 },
-    { name: 'Mobile', score: realData.mobile.overallScore, weight: 10, maxScore: 100 },
-    { name: 'Social Media', score: socialMediaScore, weight: 8, maxScore: 100 },
-    { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 7, maxScore: 100 },
-    { name: 'Arbeitsplatz', score: realData.workplace.overallScore, weight: 5, maxScore: 100 },
-    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 5, maxScore: 100 },
-    { name: 'Local SEO', score: 75, weight: 5, maxScore: 100 }
+    { name: 'Keywords', score: currentKeywordsScore, weight: 8, maxScore: 100 },
+    { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 8, maxScore: 100 },
+    { name: 'Mobile', score: realData.mobile.overallScore, weight: 7, maxScore: 100 },
+    { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
+    { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 5, maxScore: 100 },
+    { name: 'Arbeitsplatz', score: realData.workplace.overallScore, weight: 2, maxScore: 100 },
+    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 2, maxScore: 100 }
   ];
 
   // Gewichteter Gesamtscore

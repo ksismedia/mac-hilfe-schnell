@@ -302,3 +302,97 @@ export const calculateOverallScore = (
   });
   return overallScore;
 };
+
+// Berechnung für Local SEO Score - SEHR STRENGE BEWERTUNG für Handwerk
+export const calculateLocalSEOScore = (businessData: any, realData: RealBusinessData) => {
+  console.log('=== LOCAL SEO SCORE BERECHNUNG GESTARTET (SEHR STRENG) ===');
+  
+  let localScore = 20; // Sehr niedriger Startwert, da lokales SEO für Handwerk KRITISCH ist
+  
+  // Google My Business Simulation (40% Gewichtung - HÖCHSTE PRIORITÄT)
+  const hasGoodSEO = realData.seo.score >= 70;
+  const hasMetaDescription = realData.seo.metaDescription && realData.seo.metaDescription.length >= 100;
+  const hasGoodHeadings = realData.seo.headings.h1.length > 0 && realData.seo.headings.h2.length >= 2;
+  
+  // Google My Business Score (40 Punkte möglich)
+  let gmbScore = 0;
+  if (hasGoodSEO) gmbScore += 15; // Grundlegende Web-Präsenz
+  if (hasMetaDescription) gmbScore += 10; // Gute Meta-Beschreibungen deuten auf GMB-Pflege hin
+  if (hasGoodHeadings) gmbScore += 8; // Strukturierte Inhalte
+  if (realData.seo.titleTag && realData.seo.titleTag.includes(businessData.address?.split(',')[1]?.trim() || '')) {
+    gmbScore += 7; // Lokale Keywords im Title
+  }
+  
+  // NAP (Name, Address, Phone) Konsistenz (25% Gewichtung)
+  let napScore = 0;
+  if (businessData.address && businessData.address.length > 10) napScore += 8; // Vollständige Adresse vorhanden
+  if (realData.seo.metaDescription && realData.seo.metaDescription.includes(businessData.address?.split(',')[1]?.trim() || '')) {
+    napScore += 7; // Lokale Ortschaft in Meta-Description
+  }
+  if (realData.seo.score >= 80) napScore += 5; // Hohe SEO-Qualität deutet auf NAP-Konsistenz hin
+  if (hasGoodHeadings) napScore += 5; // Strukturierte Daten wahrscheinlich
+  
+  // Lokale Citations und Verzeichnisse (20% Gewichtung)
+  let citationScore = 0;
+  if (realData.seo.score >= 60) citationScore += 6; // Basis-Verzeichnisse wahrscheinlich
+  if (hasGoodSEO) citationScore += 6; // Bessere Verzeichnis-Präsenz bei guter SEO
+  if (realData.performance.score >= 70) citationScore += 4; // Schnelle Website = professionellere Präsenz
+  if (realData.reviews.google.count > 0) citationScore += 4; // Google Reviews vorhanden
+  
+  // Lokale Keywords und Content (15% Gewichtung)
+  let localContentScore = 0;
+  const industryKeywords = realData.keywords.filter(k => k.found).length;
+  if (industryKeywords >= 3) localContentScore += 5; // Branchenkeywords gefunden
+  if (industryKeywords >= 5) localContentScore += 3; // Viele Branchenkeywords
+  if (realData.seo.metaDescription && realData.seo.metaDescription.length >= 120) {
+    localContentScore += 4; // Ausführliche lokale Beschreibungen
+  }
+  if (realData.seo.headings.h2.length >= 3) localContentScore += 3; // Strukturierter lokaler Content
+  
+  // SEHR STRENGE BEWERTUNG - Jeder fehlende Aspekt führt zu drastischen Abzügen
+  let penalties = 0;
+  
+  // Kritische Penalties für Handwerksbetriebe
+  if (!hasGoodSEO) {
+    penalties += 25; // Schlechte SEO = schlechte lokale Sichtbarkeit
+    console.log('KRITISCHER ABZUG: Schlechte SEO-Grundlage -> -25');
+  }
+  
+  if (realData.reviews.google.count === 0) {
+    penalties += 20; // Keine Google Reviews = sehr schlecht für lokales SEO
+    console.log('KRITISCHER ABZUG: Keine Google Reviews -> -20');
+  }
+  
+  if (!hasMetaDescription) {
+    penalties += 15; // Schlechte Meta-Descriptions = schlechte lokale Snippets
+    console.log('KRITISCHER ABZUG: Schlechte/fehlende Meta-Description -> -15');
+  }
+  
+  if (!hasGoodHeadings) {
+    penalties += 15; // Schlechte Struktur = schlechte lokale Inhalte
+    console.log('KRITISCHER ABZUG: Schlechte Heading-Struktur -> -15');
+  }
+  
+  if (realData.performance.score < 50) {
+    penalties += 10; // Schlechte Performance schadet lokaler Sichtbarkeit
+    console.log('KRITISCHER ABZUG: Schlechte Performance -> -10');
+  }
+  
+  // Finale Berechnung
+  const rawScore = localScore + gmbScore + napScore + citationScore + localContentScore - penalties;
+  const finalScore = Math.max(0, Math.min(100, rawScore));
+  
+  console.log('=== LOCAL SEO SCORE ERGEBNIS (SEHR STRENG) ===');
+  console.log(`Startwert: ${localScore}`);
+  console.log(`Google My Business: +${gmbScore} (von 40 möglich)`);
+  console.log(`NAP Konsistenz: +${napScore} (von 25 möglich)`);
+  console.log(`Citations: +${citationScore} (von 20 möglich)`);
+  console.log(`Lokaler Content: +${localContentScore} (von 15 möglich)`);
+  console.log(`Penalties: -${penalties}`);
+  console.log(`Raw Score: ${rawScore}`);
+  console.log(`FINALER LOCAL SEO SCORE: ${finalScore}`);
+  console.log(`Lokale Sichtbarkeit: ${finalScore >= 80 ? 'EXZELLENT' : finalScore >= 60 ? 'GUT' : finalScore >= 40 ? 'AUSBAUFÄHIG' : 'KRITISCH'}`);
+  console.log('=== BERECHNUNG BEENDET ===');
+  
+  return finalScore;
+}

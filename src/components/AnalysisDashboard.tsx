@@ -425,7 +425,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 loadedKeywordData={manualKeywordData}
                 loadedKeywordScore={keywordsScore}
               />
-              <LocalSEO businessData={businessData} />
+              <LocalSEO businessData={businessData} realData={realData} />
               <ContentAnalysis url={businessData.url} industry={businessData.industry} />
               <BacklinkAnalysis url={businessData.url} />
             </TabsContent>
