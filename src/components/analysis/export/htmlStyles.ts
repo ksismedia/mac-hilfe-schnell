@@ -218,11 +218,23 @@ body {
 
 /* Header score-circle overrides - Kreise in Headern behalten ihre eigene Farbe */
 .header-yellow .score-circle.yellow { color: black !important; }
+.header-yellow .score-circle.green { color: white !important; }
+.header-yellow .score-circle.red { color: white !important; }
 .header-green .score-circle.green { color: white !important; }
+.header-green .score-circle.yellow { color: black !important; }
+.header-green .score-circle.red { color: white !important; }
 .header-red .score-circle.red { color: white !important; }
+.header-red .score-circle.green { color: white !important; }
+.header-red .score-circle.yellow { color: black !important; }
 .header-yellow .header-score-circle.yellow { color: black !important; }
+.header-yellow .header-score-circle.green { color: white !important; }
+.header-yellow .header-score-circle.red { color: white !important; }
 .header-green .header-score-circle.green { color: white !important; }
+.header-green .header-score-circle.yellow { color: black !important; }
+.header-green .header-score-circle.red { color: white !important; }
 .header-red .header-score-circle.red { color: white !important; }
+.header-red .header-score-circle.green { color: white !important; }
+.header-red .header-score-circle.yellow { color: black !important; }
 
 /* Spezielle Violations Klassen */
 .violation-critical { background: rgba(239, 68, 68, 0.2) !important; }
