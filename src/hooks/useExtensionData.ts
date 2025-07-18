@@ -108,6 +108,7 @@ export const useExtensionData = () => {
     // 3. Polling für localStorage (falls die Daten erst später ankommen)
     let pollCount = 0;
     const maxPolls = 10; // Max 10 Sekunden warten
+    let pollTimeout: NodeJS.Timeout;
     
     const pollForData = () => {
       if (pollCount >= maxPolls) {
@@ -115,13 +116,13 @@ export const useExtensionData = () => {
         return;
       }
       
-      if (!extensionData && checkLocalStorage()) {
+      if (checkLocalStorage()) {
         console.log('Extension-Daten via Polling gefunden');
         return;
       }
       
       pollCount++;
-      setTimeout(pollForData, 1000);
+      pollTimeout = setTimeout(pollForData, 1000);
     };
 
     // Starte sofortigen Check
@@ -133,14 +134,17 @@ export const useExtensionData = () => {
     // Starte Polling nur wenn keine Daten sofort gefunden wurden
     if (!immediateSuccess) {
       console.log('Starte Polling für Extension-Daten...');
-      setTimeout(pollForData, 1000);
+      pollTimeout = setTimeout(pollForData, 1000);
     }
 
     // Cleanup
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
+      if (pollTimeout) {
+        clearTimeout(pollTimeout);
+      }
     };
-  }, [extensionData]);
+  }, []); // Keine Dependencies! Läuft nur einmal beim Mount
 
   const clearExtensionData = () => {
     setExtensionData(null);
