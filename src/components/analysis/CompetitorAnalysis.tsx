@@ -171,19 +171,23 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   // Sortiert nach Score  
   const sortedCompetitors = [...allCompetitors].sort((a, b) => b.score - a.score);
 
-  // Gelöschte Konkurrenten für Wiederherstellung
-  const deletedGoogleCompetitors = realData.competitors.filter(comp => deletedCompetitors.has(comp.name));
-  const deletedManualCompetitors = manualCompetitors.filter(comp => deletedCompetitors.has(comp.name));
+  // Gelöschte Konkurrenten für Wiederherstellung - SICHER
+  const deletedGoogleCompetitors = realData?.competitors?.filter(comp => 
+    comp && comp.name && deletedCompetitors.has(comp.name)
+  ) || [];
+  const deletedManualCompetitors = manualCompetitors?.filter(comp => 
+    comp && comp.name && deletedCompetitors.has(comp.name)
+  ) || [];
 
-  // Durchschnittswerte
+  // Durchschnittswerte - SICHER
   const avgRating = allCompetitors.length > 0 
-    ? allCompetitors.reduce((sum, comp) => sum + comp.rating, 0) / allCompetitors.length 
+    ? allCompetitors.reduce((sum, comp) => sum + (comp?.rating || 0), 0) / allCompetitors.length 
     : 0;
   const avgReviews = allCompetitors.length > 0 
-    ? allCompetitors.reduce((sum, comp) => sum + comp.reviews, 0) / allCompetitors.length 
+    ? allCompetitors.reduce((sum, comp) => sum + (comp?.reviews || 0), 0) / allCompetitors.length 
     : 0;
   const avgScore = allCompetitors.length > 0 
-    ? allCompetitors.reduce((sum, comp) => sum + comp.score, 0) / allCompetitors.length 
+    ? allCompetitors.reduce((sum, comp) => sum + (comp?.score || 0), 0) / allCompetitors.length 
     : 0;
 
   // Service-Gap Analyse
@@ -404,7 +408,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 </Card>
               )}
 
-              {/* Gelöschte Konkurrenten */}
+              {/* Gelöschte Konkurrenten - FIXED */}
               {(deletedGoogleCompetitors.length > 0 || deletedManualCompetitors.length > 0) && (
                 <Card className="border-red-200">
                   <CardHeader className="pb-3">
@@ -418,12 +422,30 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      {[...deletedGoogleCompetitors, ...deletedManualCompetitors].map((competitor, index) => (
-                        <div key={`deleted-${competitor.name}-${index}`} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                      {deletedGoogleCompetitors.map((competitor, index) => (
+                        <div key={`deleted-google-${competitor.name}-${index}`} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-red-900">{competitor.name}</span>
                             <Badge variant="outline" className="text-xs bg-red-100 text-red-700 border-red-300">
-                              {deletedGoogleCompetitors.includes(competitor as any) ? 'Google' : 'Manuell'}
+                              Google
+                            </Badge>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRestoreCompetitor(competitor.name)}
+                            className="text-green-600 border-green-300 hover:bg-green-50"
+                          >
+                            Wiederherstellen
+                          </Button>
+                        </div>
+                      ))}
+                      {deletedManualCompetitors.map((competitor, index) => (
+                        <div key={`deleted-manual-${competitor.name}-${index}`} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-red-900">{competitor.name}</span>
+                            <Badge variant="outline" className="text-xs bg-red-100 text-red-700 border-red-300">
+                              Manuell
                             </Badge>
                           </div>
                           <Button
