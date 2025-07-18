@@ -110,6 +110,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     console.log('Passing missingImprintElements to HTML generator:', missingImprintElements);
     
+    // DEBUG: Log all competitor data
+    console.log('DEBUG CustomerHTMLExport - manualCompetitors:', manualCompetitors);
+    console.log('DEBUG CustomerHTMLExport - competitorServices:', competitorServices);
+    console.log('DEBUG CustomerHTMLExport - companyServices:', companyServices);
+    console.log('DEBUG CustomerHTMLExport - deletedCompetitors:', deletedCompetitors);
+    
     const htmlContent = generateCustomerHTML({
       businessData,
       realData,
