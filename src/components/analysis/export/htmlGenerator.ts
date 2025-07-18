@@ -2175,15 +2175,15 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Arbeitsplatz-Reputation -->
+    <!-- Arbeitsplatz & Arbeitgeber-Bewertung -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Arbeitsplatz-Reputation</span>
+        <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Arbeitsplatz-Reputation</h3>
+          <h3>Arbeitsplatz & Arbeitgeber-Bewertung</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
             <div class="score-details">
