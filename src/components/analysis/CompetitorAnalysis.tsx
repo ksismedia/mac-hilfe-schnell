@@ -128,7 +128,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   };
   const ownCompanyScore = calculateCompetitorScore(ownCompany);
 
-  // Alle Konkurrenten zusammenführen
+  // Alle Konkurrenten zusammenführen - manuelle Konkurrenten direkt verwenden
   const allCompetitors = [
     ...realData.competitors
       .filter(comp => !deletedCompetitors.has(comp.name))
@@ -155,8 +155,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     ...manualCompetitors
       .filter(comp => !deletedCompetitors.has(comp.name))
       .map(comp => {
-        const score = calculateCompetitorScore(comp);
+        // Verwende die Services direkt aus dem manuellen Konkurrenten
         const services = Array.isArray(comp.services) ? comp.services : [];
+        const score = calculateCompetitorScore({
+          rating: comp.rating,
+          reviews: comp.reviews,
+          services: services
+        });
         
         const uniqueServices = services.filter((service: string) => 
           typeof service === 'string' && !ownServices.some(ownService => 
@@ -166,7 +171,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         );
         
         return {
-          ...comp,
+          name: comp.name,
+          rating: comp.rating,
+          reviews: comp.reviews,
+          distance: comp.distance,
+          services,
           score,
           uniqueServices,
           source: 'manual' as const,
@@ -546,12 +555,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                                   <span>{competitor.distance}</span>
                                 </div>
                               )}
-                              {'website' in competitor && competitor.website && (
-                                <div className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4" />
-                                  <span className="truncate max-w-xs">{competitor.website}</span>
-                                </div>
-                              )}
+                               {'website' in competitor && competitor.website && (
+                                 <div className="flex items-center gap-1">
+                                   <MapPin className="h-4 w-4" />
+                                   <span className="truncate max-w-xs">{String(competitor.website)}</span>
+                                 </div>
+                               )}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
