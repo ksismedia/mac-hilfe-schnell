@@ -1576,7 +1576,7 @@ export const generateCustomerHTML = ({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Listening und Monitoring Report - ${realData.company.name}</title>
+  <title>Unna - die Unternehmensanalyse fürs Handwerk - ${realData.company.name}</title>
   <style>
     ${getHTMLStyles()}
   </style>
@@ -1600,9 +1600,9 @@ export const generateCustomerHTML = ({
       <div class="logo-container">
         ${createCSSLogo()}
       </div>
-      <h1>Social Listening und Monitoring Report</h1>
+      <h1>Unna - die Unternehmensanalyse fürs Handwerk</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
-      <p style="margin-top: 15px; color: #9ca3af;">Digitale Analyse von Website, Google-Bewertung, Social-Media-Kanälen & Wettbewerbssituation</p>
+      <p style="margin-top: 15px; color: #9ca3af;">Potenziale und Chancen erkennen, Risiken minimieren!</p>
     </div>
 
     <!-- Executive Summary -->
@@ -2791,7 +2791,7 @@ export const generateCustomerHTML = ({
       <div class="logo-container" style="margin-bottom: 20px;">
         ${createCSSLogo()}
       </div>
-      <h3 style="color: #fbbf24; margin-bottom: 15px;">Social Listening und Monitoring Report</h3>
+      <h3 style="color: #fbbf24; margin-bottom: 15px;">Unna - die Unternehmensanalyse fürs Handwerk</h3>
       <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
       <p style="color: #9ca3af; font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
       <p style="color: #9ca3af; font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>

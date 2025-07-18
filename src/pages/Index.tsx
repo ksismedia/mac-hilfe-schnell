@@ -291,10 +291,10 @@ const Index = () => {
             />
           </div>
           <h1 className="text-4xl font-bold text-yellow-400 mb-4">
-            Social Listening und Monitoring
+            Unna - die Unternehmensanalyse fürs Handwerk
           </h1>
           <p className="text-xl text-gray-300">
-            Professionelle Bewertung von Webseite, Google-Bewertungen und Social-Media-Kanälen
+            Potenziale und Chancen erkennen, Risiken minimieren!
           </p>
           <div className="mt-4">
             <Badge variant="secondary" className="bg-yellow-400 text-black font-semibold">
