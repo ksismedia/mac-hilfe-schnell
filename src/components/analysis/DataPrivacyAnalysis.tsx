@@ -24,6 +24,8 @@ interface DataPrivacyAnalysisProps {
     url: string;
   };
   realData?: RealBusinessData;
+  savedData?: any;
+  onDataChange?: (data: any) => void;
 }
 
 interface CookieInfo {
@@ -63,8 +65,13 @@ interface DataPrivacyResult {
   }>;
 }
 
-const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({ businessData, realData }) => {
-  const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(null);
+const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({ 
+  businessData, 
+  realData, 
+  savedData, 
+  onDataChange 
+}) => {
+  const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -176,6 +183,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({ businessData,
       // Simuliere API-Aufruf
       await new Promise(resolve => setTimeout(resolve, 3000));
       setPrivacyData(mockResult);
+      onDataChange?.(mockResult);
     } catch (err) {
       setError('Fehler bei der Datenschutz-Analyse: ' + (err as Error).message);
     } finally {

@@ -24,6 +24,8 @@ export interface SavedAnalysis {
     keywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
     keywordScore?: number;
     companyServices?: CompanyServices;
+    privacyData?: any; // Datenschutz-Analysedaten
+    accessibilityData?: any; // Barrierefreiheits-Analysedaten
   };
 }
 

@@ -11,6 +11,8 @@ interface AccessibilityAnalysisProps {
     url: string;
   };
   realData?: RealBusinessData;
+  savedData?: any;
+  onDataChange?: (data: any) => void;
 }
 
 interface AccessibilityResult {
@@ -37,8 +39,13 @@ interface AccessibilityResult {
   }>;
 }
 
-const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ businessData, realData }) => {
-  const [accessibilityData, setAccessibilityData] = useState<AccessibilityResult | null>(null);
+const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ 
+  businessData, 
+  realData, 
+  savedData, 
+  onDataChange 
+}) => {
+  const [accessibilityData, setAccessibilityData] = useState<AccessibilityResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,6 +127,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ businessD
       // Simuliere API-Aufruf
       await new Promise(resolve => setTimeout(resolve, 2000));
       setAccessibilityData(mockResult);
+      onDataChange?.(mockResult);
     } catch (err) {
       setError('Fehler bei der Barrierefreiheitsprüfung: ' + (err as Error).message);
     } finally {

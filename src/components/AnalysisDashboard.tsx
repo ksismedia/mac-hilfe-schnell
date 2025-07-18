@@ -73,6 +73,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
+  const [privacyData, setPrivacyData] = useState<any>(null);
+  const [accessibilityData, setAccessibilityData] = useState<any>(null);
   
   const handleKeywordsScoreChange = (score: number | null) => {
     console.log('=== KEYWORDS SCORE CHANGE IN DASHBOARD ===');
@@ -140,6 +142,16 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             if (savedAnalysis.manualData?.keywordScore !== undefined) {
               console.log('Loading saved keyword score:', savedAnalysis.manualData.keywordScore);
               setKeywordsScore(savedAnalysis.manualData.keywordScore);
+            }
+            
+            // Load privacy and accessibility data if available
+            if (savedAnalysis.manualData?.privacyData) {
+              console.log('Loading saved privacy data:', savedAnalysis.manualData.privacyData);
+              setPrivacyData(savedAnalysis.manualData.privacyData);
+            }
+            if (savedAnalysis.manualData?.accessibilityData) {
+              console.log('Loading saved accessibility data:', savedAnalysis.manualData.accessibilityData);
+              setAccessibilityData(savedAnalysis.manualData.accessibilityData);
             }
             
             // Load manual data using the loader utility  
@@ -476,6 +488,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               <AccessibilityAnalysis 
                 businessData={businessData}
                 realData={realData}
+                savedData={accessibilityData}
+                onDataChange={setAccessibilityData}
               />
             </TabsContent>
 
@@ -483,6 +497,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               <DataPrivacyAnalysis 
                 businessData={businessData}
                 realData={realData}
+                savedData={privacyData}
+                onDataChange={setPrivacyData}
               />
             </TabsContent>
 
@@ -511,6 +527,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                   companyServices={companyServices}
+                  privacyData={privacyData}
+                  accessibilityData={accessibilityData}
                 />
                 <HTMLExport
                   businessData={businessData}

@@ -28,6 +28,8 @@ interface SaveAnalysisDialogProps {
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   keywordScore?: number | null;
   companyServices?: CompanyServices;
+  privacyData?: any;
+  accessibilityData?: any;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -43,7 +45,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   currentAnalysisId,
   manualKeywordData,
   keywordScore,
-  companyServices
+  companyServices,
+  privacyData,
+  accessibilityData
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [analysisName, setAnalysisName] = useState('');
@@ -80,7 +84,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         deletedCompetitors: Array.from(deletedCompetitors),
         keywordData: manualKeywordData || undefined,
         keywordScore: keywordScore || undefined,
-        companyServices: companyServices || undefined
+        companyServices: companyServices || undefined,
+        privacyData: privacyData || undefined,
+        accessibilityData: accessibilityData || undefined
       };
 
       if (currentAnalysisId) {
