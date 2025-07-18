@@ -605,7 +605,7 @@ export const generateCustomerHTML = ({
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%; background-color: ${getScoreColor(effectiveKeywordScore)};"></div>
-                    <div class="progress-point" style="position: absolute; left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(effectiveKeywordScore)}; border-radius: 50%; z-index: 10;"></div>
+                    <div style="position: absolute; left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 16px; height: 16px; background: white; border: 2px solid #374151; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;"></div>
                   </div>
                 </div>
               <small style="color: #666;">Score: ${effectiveKeywordScore}%</small>
@@ -871,7 +871,7 @@ export const generateCustomerHTML = ({
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%; background-color: ${getScoreColor(localSEOData.localKeywords.score)};"></div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.localKeywords.score)}; border-radius: 50%; z-index: 10;"></div>
+              <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 16px; height: 16px; background: white; border: 2px solid #374151; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;"></div>
             </div>
           </div>
         </div>
@@ -1868,7 +1868,8 @@ export const generateCustomerHTML = ({
               <button class="percentage-btn" data-score="${getScoreRange(Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}">${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%; background-color: ${getScoreColor(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)};"></div>
+              <div style="position: absolute; left: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 16px; height: 16px; background: white; border: 2px solid #374151; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;"></div>
             </div>
           </div>
           <div class="keyword-grid">
