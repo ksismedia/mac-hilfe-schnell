@@ -845,11 +845,11 @@ export const generateCustomerHTML = ({
             ${localSEOData.localCitations.topDirectories.map(directory => `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
                 <span style="font-size: 14px;">${directory.name}</span>
-                <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: ${
-                  directory.status === 'vollständig' ? '#dcfce7; color: #166534' :
-                  directory.status === 'unvollständig' ? '#fef3c7; color: #92400e' :
-                  '#fecaca; color: #991b1b'
-                };">${directory.status}</span>
+                 <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: ${
+                   directory.status === 'vollständig' ? '#fbbf24; color: #000000' :        // gelb für vollständig
+                   directory.status === 'unvollständig' ? '#ef4444; color: #ffffff' :      // rot für unvollständig  
+                   '#ef4444; color: #ffffff'                                              // rot für nicht gefunden
+                 };">${directory.status}</span>
               </div>
             `).join('')}
           </div>
