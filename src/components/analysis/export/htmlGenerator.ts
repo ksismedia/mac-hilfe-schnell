@@ -1302,12 +1302,12 @@ export const generateCustomerHTML = ({
                   </td>
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
                   <td style="padding: 12px; text-align: center; color: #d1d5db;">
-                    <span style="font-weight: bold; color: ${estimatedScore >= 70 ? '#22c55e' : estimatedScore >= 50 ? '#eab308' : '#ef4444'};">${estimatedScore}</span>
+                    <span style="font-weight: bold; color: ${estimatedScore <= 60 ? '#ef4444' : estimatedScore <= 80 ? '#22c55e' : '#eab308'};">${estimatedScore}</span>
                     <br><small style="color: #9ca3af;">${serviceCount} Services</small>
                     <br><small style="color: #9ca3af;">${uniqueServices.length} Unique</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
-                    <span style="color: ${estimatedScore >= (competitorComparisonScore - 10) ? '#22c55e' : estimatedScore >= (competitorComparisonScore - 20) ? '#eab308' : '#ef4444'}; font-weight: bold;">
+                    <span style="color: ${estimatedScore <= 60 ? '#ef4444' : estimatedScore <= 80 ? '#22c55e' : '#eab308'}; font-weight: bold;">
                       ${estimatedScore >= (competitorComparisonScore - 10) ? 'Starker Wettbewerber' : 'Wettbewerber'}
                     </span>
                   </td>
