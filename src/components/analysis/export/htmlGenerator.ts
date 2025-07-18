@@ -369,15 +369,15 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 class="header-accessibility" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="header-${getScoreColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
-          <span style="background: white; color: ${getScoreColor(accessibilityScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
+          <span class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(accessibilityScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${accessibilityScore}%</div>
+          <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
-              <span style="color: ${getScoreColor(accessibilityScore)}; font-weight: bold;">
+              <span class="score-text ${getScoreColorClass(accessibilityScore)}">
                 ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}
               </span>
             </p>
@@ -386,21 +386,12 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
+            <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%;"></div>
           </div>
         </div>
 
         <!-- WCAG-Analyse -->
-        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: ${
-          accessibilityScore < 20 ? '#CD0000' :
-          accessibilityScore <= 60 ? '#dc2626' :
-          accessibilityScore <= 80 ? '#16a34a' :
-          '#eab308'
-        }; border-radius: 8px; border: 1px solid ${
-          accessibilityScore <= 60 ? '#dc2626' :
-          accessibilityScore <= 80 ? '#16a34a' :
-          '#eab308'
-        };">
+        <div class="collapsible header-${getScoreColorClass(accessibilityScore)}" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
           <h4 style="color: white; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
         </div>
         
@@ -410,11 +401,7 @@ export const generateCustomerHTML = ({
             <h4>🚨 Erkannte Probleme</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               ${violations.map(v => `
-                <div style="padding: 8px; background: ${
-                  v.impact === 'critical' ? 'rgba(239, 68, 68, 0.2)' :
-                  v.impact === 'serious' ? 'rgba(245, 158, 11, 0.2)' :
-                  v.impact === 'moderate' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(107, 114, 128, 0.2)'
-                }; border-radius: 6px;">
+                  <div class="violation-${v.impact}" style="padding: 8px; border-radius: 6px;">
                   <p class="${
                     v.impact === 'critical' ? 'error-text' :
                     v.impact === 'serious' ? 'error-text' :
@@ -453,7 +440,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${Math.max(30, accessibilityScore)}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
+                    <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${Math.max(30, accessibilityScore)}%;"></div>
                   </div>
                 </div>
               </div>
@@ -465,7 +452,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${accessibilityScore}%; background-color: ${getScoreColor(accessibilityScore)};"></div>
+                    <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%;"></div>
                   </div>
                 </div>
               </div>
@@ -477,7 +464,7 @@ export const generateCustomerHTML = ({
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${Math.max(25, accessibilityScore * 0.9)}%; background-color: ${getScoreColor(Math.max(25, accessibilityScore * 0.9))};"></div>
+                    <div class="progress-fill progress-${getScoreColorClass(Math.max(25, accessibilityScore * 0.9))}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%;"></div>
                   </div>
                 </div>
               </div>
@@ -622,7 +609,7 @@ export const generateCustomerHTML = ({
               <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%; background-color: ${getScoreColor(effectiveKeywordScore)};"></div>
+                    <div class="progress-fill progress-${getScoreColorClass(effectiveKeywordScore)}" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%;"></div>
                     <div class="progress-point" style="left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                   </div>
                 </div>
@@ -632,7 +619,7 @@ export const generateCustomerHTML = ({
               <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%; background-color: ${getScoreColor(Math.max(20, effectiveKeywordScore * 0.6))};"></div>
+                  <div class="progress-fill progress-${getScoreColorClass(Math.max(20, effectiveKeywordScore * 0.6))}" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%;"></div>
                   <div class="progress-point" style="left: ${Math.max(20, effectiveKeywordScore * 0.6)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
@@ -642,7 +629,7 @@ export const generateCustomerHTML = ({
               <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; background-color: ${getScoreColor(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)};"></div>
+                  <div class="progress-fill progress-${getScoreColorClass(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%;"></div>
                   <div class="progress-point" style="left: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
@@ -777,11 +764,11 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3 class="header-local-seo" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>📍 Lokale SEO & Regionale Sichtbarkeit</span>
-          <span style="background: white; color: ${getScoreColor(localSEOData.overallScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${localSEOData.overallScore}%</span>
+          <span class="score-circle ${getScoreColorClass(localSEOData.overallScore)}">${localSEOData.overallScore}%</span>
         </h3>
         
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(localSEOData.overallScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${localSEOData.overallScore}%</div>
+          <div class="score-circle ${getScoreColorClass(localSEOData.overallScore)}">${localSEOData.overallScore}%</div>
           <div class="score-details">
             <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
             <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
@@ -807,10 +794,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 10px;">
             <div class="progress-label">
               <span>GMB Optimierung</span>
-              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.googleMyBusiness.score)};">${localSEOData.googleMyBusiness.score}%</span>
+              <span class="score-text ${getScoreColorClass(localSEOData.googleMyBusiness.score)}">${localSEOData.googleMyBusiness.score}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%; background-color: ${getScoreColor(localSEOData.googleMyBusiness.score)};"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
@@ -851,10 +838,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Citation Qualität</span>
-              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.localCitations.score)};">${localSEOData.localCitations.score}%</span>
+              <span class="score-text ${getScoreColorClass(localSEOData.localCitations.score)}">${localSEOData.localCitations.score}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%; background-color: ${getScoreColor(localSEOData.localCitations.score)};"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
@@ -871,9 +858,7 @@ export const generateCustomerHTML = ({
                   <span class="${keyword.volume === 'hoch' ? 'volume-high' : keyword.volume === 'mittel' ? 'volume-medium' : 'volume-low'}">${keyword.volume} Volumen</span>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.volume === 'hoch' ? '#fbbf24' : keyword.volume === 'mittel' ? '#22c55e' : '#ef4444'};">#${keyword.position}
-                    #${keyword.position}
-                  </div>
+                   <div class="ranking-position ${keyword.volume === 'hoch' ? 'yellow' : keyword.volume === 'mittel' ? 'green' : 'red'}">#${keyword.position}</div>
                   <div class="secondary-text" style="font-size: 11px;">Position</div>
                 </div>
               </div>
@@ -883,10 +868,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Lokale Keyword Performance</span>
-              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.localKeywords.score)};">${localSEOData.localKeywords.score}%</span>
+              <span class="score-text ${getScoreColorClass(localSEOData.localKeywords.score)}">${localSEOData.localKeywords.score}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%; background-color: ${getScoreColor(localSEOData.localKeywords.score)};"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%;"></div>
               <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
@@ -909,10 +894,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Lokaler Content</span>
-              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.onPageLocal.localContent)};">${localSEOData.onPageLocal.localContent}%</span>
+              <span class="score-text ${getScoreColorClass(localSEOData.onPageLocal.localContent)}">${localSEOData.onPageLocal.localContent}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%; background-color: ${getScoreColor(localSEOData.onPageLocal.localContent)};"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
@@ -920,10 +905,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 10px;">
             <div class="progress-label">
               <span>On-Page Local Gesamt</span>
-              <span style="font-weight: bold; color: ${getScoreColor(localSEOData.onPageLocal.score)};">${localSEOData.onPageLocal.score}%</span>
+              <span class="score-text ${getScoreColorClass(localSEOData.onPageLocal.score)}">${localSEOData.onPageLocal.score}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%; background-color: ${getScoreColor(localSEOData.onPageLocal.score)};"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
@@ -962,7 +947,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${performanceScore}%; background-color: ${getScoreColor(performanceScore)};"></div>
+            <div class="progress-fill progress-${getScoreColorClass(performanceScore)}" style="width: ${performanceScore}%;"></div>
           </div>
         </div>
         <div class="recommendations">
@@ -995,7 +980,7 @@ export const generateCustomerHTML = ({
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${mobileScore}%; background-color: ${getScoreColor(mobileScore)};"></div>
+            <div class="progress-fill progress-${getScoreColorClass(mobileScore)}" style="width: ${mobileScore}%;"></div>
           </div>
         </div>
         

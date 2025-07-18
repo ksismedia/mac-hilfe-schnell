@@ -97,7 +97,7 @@ body {
 .section { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
   margin-bottom: 30px; 
-  border-radius: 16px; 
+  border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
   overflow: hidden !important;
   border: 1px solid rgba(251, 191, 36, 0.3);
@@ -200,6 +200,33 @@ body {
 .progress-fill[data-score="0-60"] { background: #FF0000 !important; } /* Rot 0-60% */
 .progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün 60-80% */
 .progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb 80-100% */
+
+/* Progress-Fill CSS-Klassen für bessere Kontrolle */
+.progress-red { background: #FF0000 !important; }
+.progress-green { background: #22c55e !important; }
+.progress-yellow { background: #FFD700 !important; }
+
+/* Score Text Farben */
+.score-text.red { color: #FF0000 !important; font-weight: bold; }
+.score-text.green { color: #22c55e !important; font-weight: bold; }
+.score-text.yellow { color: #FFD700 !important; font-weight: bold; }
+
+/* Header-Klassen für verschiedene Bereiche */
+.header-red { background: #FF0000 !important; color: white !important; }
+.header-green { background: #22c55e !important; color: white !important; }
+.header-yellow { background: #FFD700 !important; color: black !important; }
+
+/* Spezielle Violations Klassen */
+.violation-critical { background: rgba(239, 68, 68, 0.2) !important; }
+.violation-serious { background: rgba(245, 158, 11, 0.2) !important; }
+.violation-moderate { background: rgba(59, 130, 246, 0.2) !important; }
+.violation-minor { background: rgba(107, 114, 128, 0.2) !important; }
+
+/* Ranking Position Farben */
+.ranking-position { font-size: 18px; font-weight: bold; }
+.ranking-position.red { color: #FF0000 !important; }
+.ranking-position.green { color: #22c55e !important; }
+.ranking-position.yellow { color: #FFD700 !important; }
 
 /* Progress-Fill Punkt Indikator - Größer und deutlicher */
 .progress-fill::after {
