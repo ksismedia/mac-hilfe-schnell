@@ -1946,29 +1946,29 @@ export const generateCustomerHTML = ({
             <div class="status-item">
               <h4>Fachvokabular</h4>
               <p><strong>${businessData.industry === 'shk' ? 'SHK-spezifisch' : businessData.industry === 'elektriker' ? 'Elektro-spezifisch' : 'Handwerk-spezifisch'}</strong></p>
-                <div class="progress-container">
-                 <div class="progress-label">
-                   <span>Branchenvokabular</span>
-                   <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50)}">${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
-                 </div>
-                 <div class="progress-bar">
-                   <div class="progress-fill" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
-                 </div>
-                </div>
-               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
-             </div>
-             <div class="status-item">
-               <h4>Dienstleistungen</h4>
-               <p><strong>${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
-                <div class="progress-container">
+                 <div class="progress-container">
                   <div class="progress-label">
-                    <span>Dienstleistungen</span>
-                    <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45)}">${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
+                    <span>Branchenvokabular</span>
+                    <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
                   </div>
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
+                  </div>
                  </div>
-               </div>
+               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
+             </div>
+               <div class="status-item">
+                <h4>Dienstleistungen</h4>
+                <p><strong>${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
+                 <div class="progress-container">
+                   <div class="progress-label">
+                     <span>Dienstleistungen</span>
+                     <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
+                   </div>
+                   <div class="progress-bar">
+                     <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                  </div>
+                </div>
               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
             </div>
             <div class="status-item">

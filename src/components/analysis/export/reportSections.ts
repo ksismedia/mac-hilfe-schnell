@@ -90,7 +90,7 @@ export const generateSEOSection = (
                                 <button class="percentage-btn" data-score="${keywordsScore <= 20 ? '0-20' : keywordsScore <= 40 ? '20-40' : keywordsScore <= 60 ? '40-60' : keywordsScore <= 80 ? '60-80' : '80-100'}">${keywordsScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" style="width: ${keywordsScore}%"></div>
+                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" data-score="${keywordsScore <= 20 ? '0-20' : keywordsScore <= 40 ? '20-40' : keywordsScore <= 60 ? '40-60' : keywordsScore <= 80 ? '60-80' : '80-100'}" style="width: ${keywordsScore}%"></div>
                             </div>
                         </div>
                     </div>
