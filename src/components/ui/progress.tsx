@@ -33,8 +33,8 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Indicator
       className="h-full transition-all rounded-full"
       style={{ 
-        width: `${value || 0}%`,
-        background: getProgressColor(value || 0)
+        width: `${value ?? 0}%`,
+        background: getProgressColor(value ?? 0)
       }}
     />
   </ProgressPrimitive.Root>
