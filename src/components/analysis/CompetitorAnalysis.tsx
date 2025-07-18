@@ -64,24 +64,35 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { rating: number; reviews: number; services: string[] }) => {
-    const ratingScore = (competitor.rating / 5) * 100;
-    const reviewScore = Math.min(100, (competitor.reviews / 50) * 100);
-    
-    const services = Array.isArray(competitor.services) ? competitor.services : [];
-    const serviceCount = services.length;
-    const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
-    
-    const uniqueServices = services.filter((service: string) => 
-      typeof service === 'string' && !ownServices.some(ownService => 
-        ownService.toLowerCase().includes(service.toLowerCase()) || 
-        service.toLowerCase().includes(ownService.toLowerCase())
-      )
-    );
-    
-    const uniqueServiceBonus = uniqueServices.length * 5;
-    const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
-    
-    return Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35));
+    try {
+      const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
+      const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
+      
+      const ratingScore = (rating / 5) * 100;
+      const reviewScore = Math.min(100, (reviews / 50) * 100);
+      
+      const services = Array.isArray(competitor.services) ? competitor.services : [];
+      const serviceCount = services.length;
+      const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
+      
+      const uniqueServices = services.filter((service: string) => 
+        typeof service === 'string' && service.trim().length > 0 && !ownServices.some(ownService => 
+          typeof ownService === 'string' && ownService.trim().length > 0 && (
+            ownService.toLowerCase().includes(service.toLowerCase()) || 
+            service.toLowerCase().includes(ownService.toLowerCase())
+          )
+        )
+      );
+      
+      const uniqueServiceBonus = uniqueServices.length * 5;
+      const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+      
+      const score = (ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35);
+      return Math.round(isNaN(score) ? 0 : score);
+    } catch (error) {
+      console.error('Error calculating competitor score:', error);
+      return 0;
+    }
   };
 
   // Lösch-Funktionen

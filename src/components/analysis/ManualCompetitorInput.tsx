@@ -28,26 +28,43 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
   const [servicesInput, setServicesInput] = useState('');
 
   const addCompetitor = () => {
-    if (newCompetitor.name && newCompetitor.rating && newCompetitor.distance) {
-      const competitor: ManualCompetitor = {
-        name: newCompetitor.name,
-        rating: Number(newCompetitor.rating),
-        reviews: Number(newCompetitor.reviews) || 0,
-        distance: newCompetitor.distance,
-        services: servicesInput ? servicesInput.split(',').map(s => s.trim()) : []
-      };
-      
-      onCompetitorsChange([...competitors, competitor]);
-      
-      // Reset form
-      setNewCompetitor({
-        name: '',
-        rating: 4.0,
-        reviews: 0,
-        distance: '',
-        services: []
-      });
-      setServicesInput('');
+    try {
+      if (newCompetitor.name && newCompetitor.rating && newCompetitor.distance) {
+        const rating = typeof newCompetitor.rating === 'number' ? newCompetitor.rating : parseFloat(String(newCompetitor.rating));
+        const reviews = typeof newCompetitor.reviews === 'number' ? newCompetitor.reviews : parseInt(String(newCompetitor.reviews)) || 0;
+        
+        if (isNaN(rating) || rating < 1 || rating > 5) {
+          console.error('Invalid rating value:', newCompetitor.rating);
+          return;
+        }
+        
+        if (isNaN(reviews) || reviews < 0) {
+          console.error('Invalid reviews value:', newCompetitor.reviews);
+          return;
+        }
+        
+        const competitor: ManualCompetitor = {
+          name: newCompetitor.name,
+          rating: rating,
+          reviews: reviews,
+          distance: newCompetitor.distance,
+          services: servicesInput ? servicesInput.split(',').map(s => s.trim()).filter(s => s.length > 0) : []
+        };
+        
+        onCompetitorsChange([...competitors, competitor]);
+        
+        // Reset form
+        setNewCompetitor({
+          name: '',
+          rating: 4.0,
+          reviews: 0,
+          distance: '',
+          services: []
+        });
+        setServicesInput('');
+      }
+    } catch (error) {
+      console.error('Error adding competitor:', error);
     }
   };
 
@@ -144,7 +161,15 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
                 max="5"
                 step="0.1"
                 value={newCompetitor.rating || 4.0}
-                onChange={(e) => setNewCompetitor(prev => ({ ...prev, rating: parseFloat(e.target.value) }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const parsed = parseFloat(value);
+                  if (!isNaN(parsed) && parsed >= 1 && parsed <= 5) {
+                    setNewCompetitor(prev => ({ ...prev, rating: parsed }));
+                  } else if (value === '') {
+                    setNewCompetitor(prev => ({ ...prev, rating: 4.0 }));
+                  }
+                }}
               />
             </div>
             
@@ -155,7 +180,15 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
                 type="number"
                 min="0"
                 value={newCompetitor.reviews || ''}
-                onChange={(e) => setNewCompetitor(prev => ({ ...prev, reviews: parseInt(e.target.value) }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const parsed = parseInt(value);
+                  if (!isNaN(parsed) && parsed >= 0) {
+                    setNewCompetitor(prev => ({ ...prev, reviews: parsed }));
+                  } else if (value === '') {
+                    setNewCompetitor(prev => ({ ...prev, reviews: 0 }));
+                  }
+                }}
                 placeholder="z.B. 25"
               />
             </div>
