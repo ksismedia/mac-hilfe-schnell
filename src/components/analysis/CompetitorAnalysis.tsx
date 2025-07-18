@@ -477,6 +477,30 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 </Card>
               )}
 
+              {/* Marktpositions-Vergleich */}
+              <Card className="border-blue-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    Marktpositions-Vergleich
+                  </CardTitle>
+                  <CardDescription>
+                    Ihre Position: {sortedCompetitors.findIndex(c => c.source === 'own') + 1} von {sortedCompetitors.length} | 
+                    Ihr Score: {ownCompanyScore} Punkte | 
+                    Stärkster Konkurrent: {sortedCompetitors.find(c => c.source !== 'own')?.score || 0} Punkte
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-semibold text-blue-900 mb-2">Bewertungsverteilung:</h4>
+                    <div className="text-sm text-blue-800">
+                      <div><strong>Rating:</strong> 50% | <strong>Anzahl Bewertungen:</strong> 20% | <strong>Services:</strong> 30%</div>
+                      <div className="mt-2"><strong>Unter dem Marktdurchschnitt:</strong> 0-60 Punkte | <strong>Mittel:</strong> 61-80 Punkte | <strong>Hoch:</strong> 81-100 Punkte</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Konkurrenten-Ranking */}
               <Card>
                 <CardHeader>
@@ -485,12 +509,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     Wettbewerber-Ranking
                   </CardTitle>
                   <CardDescription>
-                    Sortiert nach Gesamtperformance (Bewertungen + Services)
+                    Sortiert nach Gesamtperformance (ohne Ihr Unternehmen)
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {sortedCompetitors.map((competitor, index) => (
+                    {sortedCompetitors.filter(c => c.source !== 'own').map((competitor, index) => (
                       <div key={`${competitor.name}-${index}`} className="border rounded-lg p-4">
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
@@ -516,7 +540,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                                 <Users className="h-4 w-4" />
                                 <span>{competitor.reviews} Bewertungen</span>
                               </div>
-                              {(competitor.source !== 'own' && 'distance' in competitor && competitor.distance && competitor.distance !== competitor.location) && (
+                              {('distance' in competitor && competitor.distance && competitor.distance !== competitor.location) && (
                                 <div className="flex items-center gap-1">
                                   <MapPin className="h-4 w-4" />
                                   <span>{competitor.distance}</span>
