@@ -52,9 +52,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const overallScore = Math.round(weightedScore / totalWeight);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-yellow-600';
-    if (score >= 60) return 'text-green-600';
-    return 'text-red-600';
+    if (score >= 80) return 'score-text-high';
+    if (score >= 60) return 'score-text-medium';
+    return 'score-text-low';
   };
 
   const getScoreBadge = (score: number) => {
@@ -125,19 +125,19 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold score-text-high">
                   {metrics.filter(m => m.score >= 80).length}
                 </div>
                 <div className="text-sm text-gray-600">Sehr gut (≥80%)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">
+                <div className="text-2xl font-bold score-text-medium">
                   {metrics.filter(m => m.score >= 60 && m.score < 80).length}
                 </div>
                 <div className="text-sm text-gray-600">Gut (60-79%)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">
+                <div className="text-2xl font-bold score-text-low">
                   {metrics.filter(m => m.score < 60).length}
                 </div>
                 <div className="text-sm text-gray-600">Verbesserung nötig (&lt;60%)</div>

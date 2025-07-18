@@ -152,6 +152,19 @@
   background: linear-gradient(135deg, hsl(var(--handwerk-gold-hover)) 0%, hsl(var(--handwerk-gold-dark)) 100%);
 }
 
+/* Score Color Classes */
+.score-text-low {
+  color: hsl(var(--progress-red));
+}
+
+.score-text-medium {
+  color: hsl(var(--progress-green));
+}
+
+.score-text-high {
+  color: hsl(var(--progress-yellow));
+}
+
 /* Neue einfarbige Progress Bar Klassen */
 .progress-score-0-20 {
   background: hsl(var(--progress-dark-red));

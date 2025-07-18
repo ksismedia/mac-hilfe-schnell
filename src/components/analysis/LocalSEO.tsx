@@ -80,9 +80,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-yellow-600";  // 80-100% gelb
-    if (score >= 60) return "text-green-600";   // 60-80% grün
-    return "text-red-600";                      // 0-60% rot
+    if (score >= 80) return "score-text-high";  // 80-100% gelb
+    if (score >= 60) return "score-text-medium";   // 60-80% grün
+    return "score-text-low";                      // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
@@ -92,9 +92,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
   };
 
   const getPositionColor = (position: number) => {
-    if (position <= 3) return "text-green-600";
-    if (position <= 10) return "text-yellow-600";
-    return "text-red-600";
+    if (position <= 3) return "score-text-medium";
+    if (position <= 10) return "score-text-high";
+    return "score-text-low";
   };
 
   const getStatusBadge = (status: string) => {
@@ -189,24 +189,24 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {localSEOData.localCitations.totalCitations}
-                  </div>
-                  <p className="text-sm text-gray-600">Gefundene Einträge</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {localSEOData.localCitations.consistent}
-                  </div>
-                  <p className="text-sm text-gray-600">Konsistent</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">
-                    {localSEOData.localCitations.inconsistent}
-                  </div>
-                  <p className="text-sm text-gray-600">Inkonsistent</p>
-                </div>
+                 <div className="text-center">
+                   <div className="text-2xl font-bold text-blue-600">
+                     {localSEOData.localCitations.totalCitations}
+                   </div>
+                   <p className="text-sm text-gray-600">Gefundene Einträge</p>
+                 </div>
+                 <div className="text-center">
+                   <div className="text-2xl font-bold score-text-medium">
+                     {localSEOData.localCitations.consistent}
+                   </div>
+                   <p className="text-sm text-gray-600">Konsistent</p>
+                 </div>
+                 <div className="text-center">
+                   <div className="text-2xl font-bold score-text-low">
+                     {localSEOData.localCitations.inconsistent}
+                   </div>
+                   <p className="text-sm text-gray-600">Inkonsistent</p>
+                 </div>
               </div>
 
               <div className="space-y-2">
