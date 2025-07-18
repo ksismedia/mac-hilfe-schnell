@@ -241,7 +241,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     if (score < 50 || criticalViolations >= 2) {
       return {
         risk: 'sehr hoch',
-        color: 'text-red-600',
+        color: 'score-text-low',
         bgColor: 'bg-red-50',
         borderColor: 'border-red-300',
         message: 'Sehr hohes Abmahnungsrisiko',
@@ -259,7 +259,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     } else if (score < 85) {
       return {
         risk: 'mittel',
-        color: 'text-yellow-600',
+        color: 'score-text-high',
         bgColor: 'bg-yellow-50',
         borderColor: 'border-yellow-300',
         message: 'Mittleres Abmahnungsrisiko',
@@ -268,7 +268,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     } else {
       return {
         risk: 'niedrig',
-        color: 'text-green-600',
+        color: 'score-text-medium',
         bgColor: 'bg-green-50',
         borderColor: 'border-green-300',
         message: 'Niedriges Abmahnungsrisiko',

@@ -175,7 +175,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     if (score < 50 || criticalViolations >= 3) {
       return {
         risk: 'hoch',
-        color: 'text-red-600',
+        color: 'score-text-low',
         bgColor: 'bg-red-50',
         borderColor: 'border-red-300',
         message: 'Hohes Abmahnungsrisiko',
@@ -195,7 +195,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     } else if (score < 90) {
       return {
         risk: 'niedrig',
-        color: 'text-yellow-600',
+        color: 'score-text-high',
         bgColor: 'bg-yellow-50',
         borderColor: 'border-yellow-300',
         message: 'Niedriges Abmahnungsrisiko',
@@ -205,7 +205,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     } else {
       return {
         risk: 'sehr niedrig',
-        color: 'text-green-600',
+        color: 'score-text-medium',
         bgColor: 'bg-green-50',
         borderColor: 'border-green-300',
         message: 'Sehr niedriges Abmahnungsrisiko',

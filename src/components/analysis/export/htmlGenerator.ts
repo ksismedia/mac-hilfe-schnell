@@ -384,16 +384,13 @@ export const generateCustomerHTML = ({
         <!-- WCAG-Analyse -->
         <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: ${
           accessibilityScore < 20 ? '#CD0000' :
-          accessibilityScore < 40 ? '#FF0000' :
-          accessibilityScore < 60 ? '#FF4500' :
-          accessibilityScore < 80 ? '#22c55e' :
-          '#FFD700'
+          accessibilityScore <= 60 ? '#dc2626' :
+          accessibilityScore <= 80 ? '#16a34a' :
+          '#eab308'
         }; border-radius: 8px; border: 1px solid ${
-          accessibilityScore < 20 ? '#CD0000' :
-          accessibilityScore < 40 ? '#FF0000' :
-          accessibilityScore < 60 ? '#FF4500' :
-          accessibilityScore < 80 ? '#22c55e' :
-          '#FFD700'
+          accessibilityScore <= 60 ? '#dc2626' :
+          accessibilityScore <= 80 ? '#16a34a' :
+          '#eab308'
         };">
           <h4 style="color: white; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
         </div>
@@ -465,7 +462,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
-                  <span style="color: ${accessibilityScore >= 70 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
                     ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
@@ -497,7 +494,7 @@ export const generateCustomerHTML = ({
 
         <!-- Verbesserungsvorschläge -->
         <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="color: #22c55e; margin: 0;">▶ Verbesserungsvorschläge</h4>
+          <h4 style="color: #16a34a; margin: 0;">▶ Verbesserungsvorschläge</h4>
         </div>
         
         <div id="accessibility-improvements" style="display: none;">
@@ -543,7 +540,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 style="background: #22c55e; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="background: #16a34a; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>🔍 SEO-Bestandsanalyse</span>
           <span style="background: white; color: ${getScoreColor(criticalSeoScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${criticalSeoScore}%</span>
         </h3>
@@ -825,7 +822,7 @@ export const generateCustomerHTML = ({
               <p style="font-size: 12px; color: #666;">Gefundene Einträge</p>
             </div>
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #22c55e;">${localSEOData.localCitations.consistent}</div>
+              <div style="font-size: 24px; font-weight: bold; color: #16a34a;">${localSEOData.localCitations.consistent}</div>
               <p style="font-size: 12px; color: #666;">Konsistent</p>
             </div>
             <div style="text-align: center;">
@@ -871,7 +868,7 @@ export const generateCustomerHTML = ({
                   <span style="margin-left: 8px; padding: 2px 6px; background: #f3f4f6; color: #6b7280; border-radius: 4px; font-size: 11px;">${keyword.volume} Volumen</span>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#22c55e' : keyword.position <= 10 ? '#f59e0b' : '#ef4444'};">
+                  <div style="font-size: 18px; font-weight: bold; color: ${keyword.position <= 3 ? '#eab308' : keyword.position <= 10 ? '#16a34a' : '#dc2626'};">
                     #${keyword.position}
                   </div>
                   <div style="font-size: 11px; color: #9ca3af;">Position</div>
