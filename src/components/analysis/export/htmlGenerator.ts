@@ -626,7 +626,7 @@ export const generateCustomerHTML = ({
                     <div style="position: absolute; left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                   </div>
                 </div>
-              <small style="color: #666;">Score: ${effectiveKeywordScore}%</small>
+              <small class="secondary-text">Score: ${effectiveKeywordScore}%</small>
             </div>
             <div>
               <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
@@ -636,7 +636,7 @@ export const generateCustomerHTML = ({
                   <div style="position: absolute; left: ${Math.max(20, effectiveKeywordScore * 0.6)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
+              <small class="secondary-text">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
             </div>
             <div>
               <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
@@ -646,12 +646,12 @@ export const generateCustomerHTML = ({
                   <div style="position: absolute; left: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
-              <small style="color: #666;">Score: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20).toFixed(0)}%</small>
+              <small class="secondary-text">Score: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20).toFixed(0)}%</small>
             </div>
           </div>
           ${manualKeywordData ? `
           <div style="margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px;">
-            <h5 style="margin: 0 0 10px 0; color: #059669;">✅ Analysierte Keywords:</h5>
+            <h5 class="success-text" style="margin: 0 0 10px 0;">✅ Analysierte Keywords:</h5>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${keywordData.map(kw => `<span style="background: ${kw.found ? '#dcfce7' : '#fef2f2'}; color: ${kw.found ? '#059669' : '#dc2626'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${kw.keyword}${kw.found ? ' ✓' : ' ✗'}</span>`).join('')}
             </div>
