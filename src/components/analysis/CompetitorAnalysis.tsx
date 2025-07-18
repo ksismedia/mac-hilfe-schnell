@@ -228,17 +228,15 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-yellow-600';  // 80-100% gelb
+    if (score >= 60) return 'text-green-600';   // 60-80% grün
+    return 'text-red-600';                      // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return 'default';
-    if (score >= 60) return 'secondary';
-    if (score >= 40) return 'outline';
-    return 'destructive';
+    if (score >= 80) return 'secondary';        // gelb
+    if (score >= 60) return 'default';          // grün
+    return 'destructive';                       // rot
   };
 
   return (
