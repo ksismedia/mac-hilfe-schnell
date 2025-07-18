@@ -99,9 +99,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "vollständig": return "secondary";      // gelb (vollständig = hoch)
-      case "unvollständig": return "destructive";  // rot (unvollständig = niedrig)
-      default: return "destructive";               // rot (nicht gefunden = niedrig)
+      case "vollständig": return "secondary";      // gelb (vollständig = gelb)
+      case "unvollständig": return "destructive";  // rot (unvollständig = rot)
+      default: return "destructive";               // rot (nicht gefunden = rot)
     }
   };
 
