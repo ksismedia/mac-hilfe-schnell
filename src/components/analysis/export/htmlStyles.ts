@@ -183,15 +183,15 @@ body {
 .progress-container { margin-top: 15px; }
 .progress-bar { 
   background: #374151; 
-  height: 12px; 
-  border-radius: 6px; 
+  height: 16px; 
+  border-radius: 8px; 
   overflow: hidden;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
   position: relative;
 }
 .progress-fill { 
   height: 100%; 
-  border-radius: 6px; 
+  border-radius: 8px; 
   transition: width 0.8s ease;
   position: relative;
   overflow: hidden;
@@ -202,19 +202,19 @@ body {
 .progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün 60-80% */
 .progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb 80-100% */
 
-/* Progress-Fill Punkt Indikator */
+/* Progress-Fill Punkt Indikator - Größer und deutlicher */
 .progress-fill::after {
   content: '';
   position: absolute;
   top: 50%;
-  right: -3px;
-  width: 6px;
-  height: 6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
   background: white;
-  border: 1px solid #666;
+  border: 2px solid #333;
   border-radius: 50%;
   transform: translateY(-50%);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .percentage-btn {
