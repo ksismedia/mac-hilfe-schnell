@@ -1691,7 +1691,7 @@ export const generateCustomerHTML = ({
           ` : ''}
           <div class="score-card">
             <div class="score-big"><span style="color: ${workplaceScore <= 20 ? '#dc2626' : workplaceScore <= 40 ? '#ea580c' : workplaceScore <= 60 ? '#eab308' : workplaceScore <= 80 ? '#16a34a' : '#22c55e'};">${workplaceScore}%</span></div>
-            <div class="score-label">Arbeitgeber-Bewertung</div>
+            <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
         </div>
       </div>
