@@ -138,6 +138,18 @@ export const generateCustomerHTML = ({
   const accessibilityScore = calculateAccessibilityScore(realData);
   const legalScore = impressumScore;
   
+  
+  // Calculate overall score
+  const overallScore = Math.round((
+    realData.seo.score * 0.2 + 
+    realData.performance.score * 0.15 + 
+    realData.mobile.overallScore * 0.15 +
+    socialMediaScore * 0.15 +
+    reputationScore * 0.15 +
+    impressumScore * 0.1 +
+    accessibilityScore * 0.1
+  ));
+  
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
   console.log('manualImprintData:', manualImprintData);
@@ -1632,6 +1644,10 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
+            <div class="score-big"><span style="color: ${overallScore <= 20 ? '#dc2626' : overallScore <= 40 ? '#ea580c' : overallScore <= 60 ? '#eab308' : overallScore <= 80 ? '#16a34a' : '#22c55e'};">${overallScore}%</span></div>
+            <div class="score-label">Gesamtscore</div>
+          </div>
+          <div class="score-card">
             <div class="score-big"><span style="color: ${realData.seo.score <= 20 ? '#dc2626' : realData.seo.score <= 40 ? '#ea580c' : realData.seo.score <= 60 ? '#eab308' : realData.seo.score <= 80 ? '#16a34a' : '#22c55e'};">${realData.seo.score}%</span></div>
             <div class="score-label">SEO Optimierung</div>
           </div>
@@ -1642,6 +1658,10 @@ export const generateCustomerHTML = ({
           <div class="score-card">
             <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 20 ? '#dc2626' : realData.mobile.overallScore <= 40 ? '#ea580c' : realData.mobile.overallScore <= 60 ? '#eab308' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#22c55e'};">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big"><span style="color: ${74 <= 20 ? '#dc2626' : 74 <= 40 ? '#ea580c' : 74 <= 60 ? '#eab308' : 74 <= 80 ? '#16a34a' : '#22c55e'};">74%</span></div>
+            <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
             <div class="score-big"><span style="color: ${socialMediaScore <= 20 ? '#dc2626' : socialMediaScore <= 40 ? '#ea580c' : socialMediaScore <= 60 ? '#eab308' : socialMediaScore <= 80 ? '#16a34a' : '#22c55e'};">${socialMediaScore}%</span></div>
@@ -1662,6 +1682,16 @@ export const generateCustomerHTML = ({
           <div class="score-card">
             <div class="score-big"><span style="color: ${dataPrivacyScore <= 20 ? '#dc2626' : dataPrivacyScore <= 40 ? '#ea580c' : dataPrivacyScore <= 60 ? '#eab308' : dataPrivacyScore <= 80 ? '#16a34a' : '#22c55e'};">${dataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
+          </div>
+          ${hourlyRateData ? `
+          <div class="score-card">
+            <div class="score-big"><span style="color: ${pricingScore <= 20 ? '#dc2626' : pricingScore <= 40 ? '#ea580c' : pricingScore <= 60 ? '#eab308' : pricingScore <= 80 ? '#16a34a' : '#22c55e'};">${pricingScore}%</span></div>
+            <div class="score-label">Preispositionierung</div>
+          </div>
+          ` : ''}
+          <div class="score-card">
+            <div class="score-big"><span style="color: ${workplaceScore <= 20 ? '#dc2626' : workplaceScore <= 40 ? '#ea580c' : workplaceScore <= 60 ? '#eab308' : workplaceScore <= 80 ? '#16a34a' : '#22c55e'};">${workplaceScore}%</span></div>
+            <div class="score-label">Arbeitgeber-Bewertung</div>
           </div>
         </div>
       </div>
