@@ -37,20 +37,16 @@ const getScoreRange = (score: number) => {
 
 // Function to get score color class
 const getScoreColorClass = (score: number) => {
-  if (score <= 20) return "dark-red";
-  if (score <= 40) return "red";
-  if (score <= 60) return "orange";
-  if (score <= 80) return "green";
-  return "yellow";
+  if (score < 60) return "red";       // 0-60% rot
+  if (score < 80) return "green";     // 60-80% grün
+  return "yellow";                    // 80-100% gelb
 };
 
 // Function to get score color (hex value for inline styles)
 const getScoreColor = (score: number) => {
-  if (score < 20) return '#CD0000';   // dark red
-  if (score < 40) return '#FF0000';   // red
-  if (score < 60) return '#FF4500';   // orange
-  if (score < 80) return '#22c55e';   // green
-  return '#FFD700';                   // yellow/gold
+  if (score < 60) return '#FF0000';   // 0-60% rot
+  if (score < 80) return '#22c55e';   // 60-80% grün
+  return '#FFD700';                   // 80-100% gelb
 };
 
 export const generateCustomerHTML = ({
