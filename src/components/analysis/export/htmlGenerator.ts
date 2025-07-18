@@ -99,17 +99,24 @@ export const generateCustomerHTML = ({
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
-  // Verwende die GLEICHE Score-Berechnung wie für Konkurrenten
+  // Berechnung für Konkurrenten-Vergleich - verwende identische Logik wie in CompetitorAnalysis.tsx
   const ownRatingScore = (realData.reviews.google.rating / 5) * 100;
   const ownReviewScore = Math.min(100, (realData.reviews.google.count / 50) * 100);
   const ownBaseServiceScore = Math.min(100, (expectedServices.length / 12) * 100);
-  const ownFinalServiceScore = Math.min(100, ownBaseServiceScore); // Keine unique service bonus für eigene Firma
+  
+  // Keine unique service bonus für eigenes Unternehmen, da es die Referenz ist
+  const ownFinalServiceScore = Math.min(100, ownBaseServiceScore);
+  
+  // WICHTIG: Verwende exakt die gleiche Gewichtung wie bei Konkurrenten
   const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
   
   console.log('HTML Generator - Own Business Scores (Competitor Method):', {
-    rating: ownRatingScore,
-    reviews: ownReviewScore,
-    services: ownFinalServiceScore,
+    rating: realData.reviews.google.rating,
+    reviews: realData.reviews.google.count,
+    services: expectedServices.length,
+    ratingScore: ownRatingScore,
+    reviewScore: ownReviewScore,
+    serviceScore: ownFinalServiceScore,
     overall: competitorComparisonScore
   });
   
@@ -1234,7 +1241,7 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                   <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                    <span style="font-weight: bold; font-size: 1.2em;">${ownCompanyScore}</span>
+                    <span style="font-weight: bold; font-size: 1.2em;">${competitorComparisonScore}</span>
                     <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
