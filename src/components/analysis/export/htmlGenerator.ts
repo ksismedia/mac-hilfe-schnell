@@ -44,9 +44,9 @@ const getScoreColorClass = (score: number) => {
 
 // Function to get score color (hex value for inline styles)
 const getScoreColor = (score: number) => {
-  if (score < 60) return '#FF0000';   // 0-60% rot
-  if (score < 80) return '#22c55e';   // 60-80% grün
-  return '#FFD700';                   // 80-100% gelb
+  if (score <= 60) return '#dc2626';   // 0-60% rot
+  if (score <= 80) return '#16a34a';   // 61-80% grün
+  return '#eab308';                    // 81-100% gelb
 };
 
 export const generateCustomerHTML = ({
@@ -202,10 +202,9 @@ export const generateCustomerHTML = ({
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${workplaceScore}%; background-color: ${
                 workplaceScore < 20 ? '#CD0000' :
-                workplaceScore < 40 ? '#FF0000' :
-                workplaceScore < 60 ? '#FF4500' :
-                workplaceScore < 80 ? '#22c55e' :
-                '#FFD700'
+                workplaceScore <= 60 ? '#dc2626' :
+                workplaceScore <= 80 ? '#16a34a' :
+                '#eab308'
               };"></div>
             </div>
           </div>
@@ -231,10 +230,9 @@ export const generateCustomerHTML = ({
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${reputationScore}%; background-color: ${
                 reputationScore < 20 ? '#CD0000' :
-                reputationScore < 40 ? '#FF0000' :
-                reputationScore < 60 ? '#FF4500' :
-                reputationScore < 80 ? '#22c55e' :
-                '#FFD700'
+                reputationScore <= 60 ? '#dc2626' :
+                reputationScore <= 80 ? '#16a34a' :
+                '#eab308'
               };"></div>
             </div>
           </div>
@@ -262,10 +260,9 @@ export const generateCustomerHTML = ({
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${pricingScore}%; background-color: ${
                 pricingScore < 20 ? '#CD0000' :
-                pricingScore < 40 ? '#FF0000' :
-                pricingScore < 60 ? '#FF4500' :
-                pricingScore < 80 ? '#22c55e' :
-                '#FFD700'
+                pricingScore <= 60 ? '#dc2626' :
+                pricingScore <= 80 ? '#16a34a' :
+                '#eab308'
               };"></div>
             </div>
           </div>
@@ -290,10 +287,9 @@ export const generateCustomerHTML = ({
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${legalScore}%; background-color: ${
                 legalScore < 20 ? '#CD0000' :
-                legalScore < 40 ? '#FF0000' :
-                legalScore < 60 ? '#FF4500' :
-                legalScore < 80 ? '#22c55e' :
-                '#FFD700'
+                legalScore <= 60 ? '#dc2626' :
+                legalScore <= 80 ? '#16a34a' :
+                '#eab308'
               };"></div>
             </div>
           </div>
@@ -445,7 +441,7 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
                     ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
@@ -457,7 +453,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
                     ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
@@ -1668,33 +1664,33 @@ export const generateCustomerHTML = ({
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${socialMediaScore <= 20 ? '#dc2626' : socialMediaScore <= 40 ? '#ea580c' : socialMediaScore <= 60 ? '#eab308' : socialMediaScore <= 80 ? '#16a34a' : '#22c55e'};">${socialMediaScore}%</span></div>
+            <div class="score-big"><span style="color: ${socialMediaScore <= 60 ? '#dc2626' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'};">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${googleReviewScore <= 20 ? '#dc2626' : googleReviewScore <= 40 ? '#ea580c' : googleReviewScore <= 60 ? '#eab308' : googleReviewScore <= 80 ? '#16a34a' : '#22c55e'};">${googleReviewScore}%</span></div>
+            <div class="score-big"><span style="color: ${googleReviewScore <= 60 ? '#dc2626' : googleReviewScore <= 80 ? '#16a34a' : '#eab308'};">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${impressumScore <= 20 ? '#dc2626' : impressumScore <= 40 ? '#ea580c' : impressumScore <= 60 ? '#eab308' : impressumScore <= 80 ? '#16a34a' : '#22c55e'};">${impressumScore}%</span></div>
+            <div class="score-big"><span style="color: ${impressumScore <= 60 ? '#dc2626' : impressumScore <= 80 ? '#16a34a' : '#eab308'};">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${accessibilityScore <= 20 ? '#dc2626' : accessibilityScore <= 40 ? '#ea580c' : accessibilityScore <= 60 ? '#eab308' : accessibilityScore <= 80 ? '#16a34a' : '#22c55e'};">${accessibilityScore}%</span></div>
+            <div class="score-big"><span style="color: ${accessibilityScore <= 60 ? '#dc2626' : accessibilityScore <= 80 ? '#16a34a' : '#eab308'};">${accessibilityScore}%</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${dataPrivacyScore <= 20 ? '#dc2626' : dataPrivacyScore <= 40 ? '#ea580c' : dataPrivacyScore <= 60 ? '#eab308' : dataPrivacyScore <= 80 ? '#16a34a' : '#22c55e'};">${dataPrivacyScore}%</span></div>
+            <div class="score-big"><span style="color: ${dataPrivacyScore <= 60 ? '#dc2626' : dataPrivacyScore <= 80 ? '#16a34a' : '#eab308'};">${dataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           ${hourlyRateData ? `
           <div class="score-card">
-            <div class="score-big"><span style="color: ${pricingScore <= 20 ? '#dc2626' : pricingScore <= 40 ? '#ea580c' : pricingScore <= 60 ? '#eab308' : pricingScore <= 80 ? '#16a34a' : '#22c55e'};">${pricingScore}%</span></div>
+            <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'};">${pricingScore}%</span></div>
             <div class="score-label">Preispositionierung</div>
           </div>
           ` : ''}
           <div class="score-card">
-            <div class="score-big"><span style="color: ${workplaceScore <= 20 ? '#dc2626' : workplaceScore <= 40 ? '#ea580c' : workplaceScore <= 60 ? '#eab308' : workplaceScore <= 80 ? '#16a34a' : '#22c55e'};">${workplaceScore}%</span></div>
+            <div class="score-big"><span style="color: ${workplaceScore <= 60 ? '#dc2626' : workplaceScore <= 80 ? '#16a34a' : '#eab308'};">${workplaceScore}%</span></div>
             <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
         </div>
