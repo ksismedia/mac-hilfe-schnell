@@ -874,7 +874,7 @@ export const generateCustomerHTML = ({
                   <div style="font-size: 18px; font-weight: bold; color: ${keyword.volume === 'hoch' ? '#fbbf24' : keyword.volume === 'mittel' ? '#22c55e' : '#ef4444'};">#${keyword.position}
                     #${keyword.position}
                   </div>
-                  <div style="font-size: 11px; color: #9ca3af;">Position</div>
+                  <div class="secondary-text" style="font-size: 11px;">Position</div>
                 </div>
               </div>
             `).join('')}
@@ -1162,7 +1162,7 @@ export const generateCustomerHTML = ({
       return `
         <div class="metric-card warning">
           <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
-          <p class="text-center" style="color: #d1d5db; font-style: italic; margin: 20px 0;">
+          <p class="light-gray-text text-center" style="font-style: italic; margin: 20px 0;">
             Keine Wettbewerber zum Vergleich erfasst.
           </p>
           <div class="recommendations">
@@ -1202,10 +1202,10 @@ export const generateCustomerHTML = ({
       <div class="metric-card good">
         <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
         <div style="margin-bottom: 20px;">
-          <p style="color: #d1d5db; margin-bottom: 15px;">
+          <p class="light-gray-text" style="margin-bottom: 15px;">
             <strong>Anzahl analysierte Wettbewerber:</strong> ${allCompetitors.length}
           </p>
-          <p style="color: #d1d5db; margin-bottom: 15px;">
+          <p class="light-gray-text" style="margin-bottom: 15px;">
             <strong>Maximaler Umgebungsradius der Suche:</strong> ${maxRadius}
           </p>
         </div>
@@ -1288,24 +1288,24 @@ export const generateCustomerHTML = ({
                 
                 return `
                 <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
-                  <td style="padding: 12px; color: #d1d5db;">
+                  <td class="table-text" style="padding: 12px;">
                     <strong>Wettbewerber ${String.fromCharCode(65 + index)}</strong>
                   </td>
-                  <td style="padding: 12px; text-align: center; color: #d1d5db;">
-                    <span style="font-weight: bold; color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#eab308' : '#ef4444'};">${competitor.rating}/5</span>
+                  <td class="table-text" style="padding: 12px; text-align: center;">
+                    <span class="score-badge ${competitor.rating >= 4 ? 'green' : competitor.rating >= 3 ? 'yellow' : 'red'}" style="font-weight: bold;">${competitor.rating}/5</span>
                   </td>
-                  <td style="padding: 12px; text-align: center; color: #d1d5db;">${competitor.reviews}</td>
-                  <td style="padding: 12px; text-align: center; color: #d1d5db;">
-                    <span style="font-weight: bold; color: ${estimatedScore <= 60 ? '#ef4444' : estimatedScore <= 80 ? '#22c55e' : '#eab308'};">${estimatedScore}</span>
-                    <br><small style="color: #9ca3af;">${serviceCount} Services</small>
-                    <br><small style="color: #9ca3af;">${uniqueServices.length} Unique</small>
+                  <td class="table-text" style="padding: 12px; text-align: center;">${competitor.reviews}</td>
+                  <td class="table-text" style="padding: 12px; text-align: center;">
+                    <span class="score-badge ${estimatedScore <= 60 ? 'red' : estimatedScore <= 80 ? 'green' : 'yellow'}" style="font-weight: bold;">${estimatedScore}</span>
+                    <br><small class="secondary-text">${serviceCount} Services</small>
+                    <br><small class="secondary-text">${uniqueServices.length} Unique</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
-                    <span style="color: ${estimatedScore <= 60 ? '#ef4444' : estimatedScore <= 80 ? '#22c55e' : '#eab308'}; font-weight: bold;">
+                    <span class="score-badge ${estimatedScore <= 60 ? 'red' : estimatedScore <= 80 ? 'green' : 'yellow'}" style="font-weight: bold;">
                       ${estimatedScore >= (competitorComparisonScore - 10) ? 'Starker Wettbewerber' : 'Wettbewerber'}
                     </span>
                   </td>
-                  <td style="padding: 12px; color: #d1d5db; font-size: 0.9em;">
+                  <td class="table-text" style="padding: 12px; font-size: 0.9em;">
                     ${services.length > 0 ? services.join(', ') : 'Nicht erfasst'}
                   </td>
                 </tr>
@@ -1355,17 +1355,17 @@ export const generateCustomerHTML = ({
             </div>
             <div>
               <p><strong>Stärkster Konkurrent:</strong> ${allCompetitors.length > 0 ? `Konkurrent ${String.fromCharCode(65 + allCompetitors.findIndex(c => c.rating === Math.max(...allCompetitors.map(comp => comp.rating))))}` : 'Keine Daten'}</p>
-              <p style="font-size: 0.9em; color: #9ca3af;">Rating: ${allCompetitors.length > 0 ? `${Math.max(...allCompetitors.map(c => c.rating))}/5` : 'N/A'}</p>
+              <p class="gray-text" style="font-size: 0.9em;">Rating: ${allCompetitors.length > 0 ? `${Math.max(...allCompetitors.map(c => c.rating))}/5` : 'N/A'}</p>
             </div>
             <div>
               <p><strong>Markt-Durchschnitt:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => acc + comp.rating, 0) / allCompetitors.length).toFixed(1) : '0'}/5</p>
-              <p style="font-size: 0.9em; color: #9ca3af;">Ohne Ihr Unternehmen</p>
+              <p class="gray-text" style="font-size: 0.9em;">Ohne Ihr Unternehmen</p>
             </div>
             <div>
               <p><strong>Bewertungsverteilung:</strong></p>
-              <p style="font-size: 0.9em; color: #9ca3af;">
+              <p class="gray-text" style="font-size: 0.9em;">
                 Stark: ${allCompetitors.filter(c => c.rating >= 4).length} | 
-                Mittel: ${allCompetitors.filter(c => c.rating >= 3 && c.rating < 4).length} | 
+                Mittel: ${allCompetitors.filter(c => c.rating >= 3 && c.rating < 4).length} |
                 Schwach: ${allCompetitors.filter(c => c.rating < 3).length}
               </p>
             </div>
@@ -1384,7 +1384,7 @@ export const generateCustomerHTML = ({
               <p><strong>Durchschnitt Wettbewerber:</strong> ${allCompetitors.length > 0 ? (allCompetitors.reduce((acc, comp) => {
                 return acc + comp.services.length;
               }, 0) / allCompetitors.length).toFixed(1) : '0'} Services</p>
-              <p style="font-size: 0.9em; color: #9ca3af;">Pro Anbieter</p>
+              <p class="gray-text" style="font-size: 0.9em;">Pro Anbieter</p>
             </div>
             <div>
               <p><strong>Service-Score:</strong> <span style="color: #fbbf24; font-weight: bold;">${ownServiceScore} Punkte</span></p>
@@ -1643,7 +1643,7 @@ export const generateCustomerHTML = ({
       </div>
       <h1>UNNA - die Unternehmensanalyse fürs Handwerk</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
-      <p style="margin-top: 15px; color: #9ca3af;">Potenziale und Chancen erkennen, Risiken minimieren!</p>
+      <p class="gray-text" style="margin-top: 15px;">Potenziale und Chancen erkennen, Risiken minimieren!</p>
     </div>
 
     <!-- Executive Summary -->
@@ -1974,7 +1974,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2004,7 +2004,7 @@ export const generateCustomerHTML = ({
                     <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
                   </div>
                  </div>
-               <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
+               <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
              </div>
                <div class="status-item">
                 <h4>Dienstleistungen</h4>
@@ -2018,7 +2018,7 @@ export const generateCustomerHTML = ({
                      <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
                   </div>
                 </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Service-Keywords gefunden</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Service-Keywords gefunden</p>
             </div>
             <div class="status-item">
               <h4>Lokaler Bezug</h4>
@@ -2032,7 +2032,7 @@ export const generateCustomerHTML = ({
                    <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
                  </div>
                </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2058,7 +2058,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(60)}" style="width: 60%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Empfehlung: Quartalweise</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Empfehlung: Quartalweise</p>
             </div>
             <div class="status-item">
               <h4>News & Updates</h4>
@@ -2068,7 +2068,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(25)}" style="width: 25%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Blog/News-Bereich fehlt</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Blog/News-Bereich fehlt</p>
             </div>
             <div class="status-item">
               <h4>Saisonale Inhalte</h4>
@@ -2078,7 +2078,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(35)}" style="width: 35%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Winterdienst, Klimaanlagen etc.</p>
+              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Winterdienst, Klimaanlagen etc.</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2647,10 +2647,10 @@ export const generateCustomerHTML = ({
       <div class="logo-container" style="margin-bottom: 20px;">
         ${createCSSLogo()}
       </div>
-      <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
-      <p style="color: #d1d5db; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
-      <p style="color: #9ca3af; font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
-      <p style="color: #9ca3af; font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
+      <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
+      <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
+      <p class="gray-text" style="font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
+      <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
     </div>
   </div>
 </body>

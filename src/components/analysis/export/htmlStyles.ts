@@ -618,6 +618,14 @@ table tr {
     background: #ef4444 !important;
     color: #ffffff !important;
   }
+  
+  .gray-text {
+    color: #9ca3af !important;
+  }
+  
+  .light-gray-text {
+    color: #d1d5db !important;
+  }
 }
 `;
 };
