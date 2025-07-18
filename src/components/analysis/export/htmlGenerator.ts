@@ -558,7 +558,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(titleTagScore)}" style="width: ${titleTagScore}%; background-color: ${getScoreColor(titleTagScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(titleTagScore)}; border-radius: 50%; z-index: 10;"></div>
+                  <div class="progress-point" style="position: absolute; left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
               <small style="color: #666;">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
@@ -568,7 +568,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(metaDescriptionScore)}" style="width: ${metaDescriptionScore}%; background-color: ${getScoreColor(metaDescriptionScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(metaDescriptionScore)}; border-radius: 50%; z-index: 10;"></div>
+                  <div class="progress-point" style="position: absolute; left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
               <small style="color: #666;">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
@@ -578,7 +578,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(headingScore)}" style="width: ${headingScore}%; background-color: ${getScoreColor(headingScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(headingScore)}; border-radius: 50%; z-index: 10;"></div>
+                  <div class="progress-point" style="position: absolute; left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
               <small style="color: #666;">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
@@ -588,7 +588,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(altTagsScore)}" style="width: ${altTagsScore}%; background-color: ${getScoreColor(altTagsScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(altTagsScore)}; border-radius: 50%; z-index: 10;"></div>
+                  <div class="progress-point" style="position: absolute; left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
                 </div>
               </div>
               <small style="color: #666;">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
@@ -799,7 +799,7 @@ export const generateCustomerHTML = ({
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%; background-color: ${getScoreColor(localSEOData.googleMyBusiness.score)};"></div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.googleMyBusiness.score)}; border-radius: 50%; z-index: 10;"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
         </div>
@@ -843,7 +843,7 @@ export const generateCustomerHTML = ({
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%; background-color: ${getScoreColor(localSEOData.localCitations.score)};"></div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.localCitations.score)}; border-radius: 50%; z-index: 10;"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
         </div>
@@ -901,7 +901,7 @@ export const generateCustomerHTML = ({
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%; background-color: ${getScoreColor(localSEOData.onPageLocal.localContent)};"></div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.onPageLocal.localContent)}; border-radius: 50%; z-index: 10;"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
           
@@ -912,7 +912,7 @@ export const generateCustomerHTML = ({
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%; background-color: ${getScoreColor(localSEOData.onPageLocal.score)};"></div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 10px; height: 10px; background: white; border: 2px solid ${getScoreColor(localSEOData.onPageLocal.score)}; border-radius: 50%; z-index: 10;"></div>
+              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
         </div>
