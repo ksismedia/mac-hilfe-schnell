@@ -2084,7 +2084,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Lokale SEO & Regionale Sichtbarkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(74)}" style="color: ${getScoreColor(74)};">74%</div>
+        <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
       </div>
       <div class="section-content">
         ${getLocalSEOAnalysis()}
@@ -2171,7 +2171,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}" style="color: ${getScoreColor(realData.workplace ? realData.workplace.overallScore : 65)};">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2319,7 +2319,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Online Reputation</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}" style="color: ${getScoreColor(realData.reviews.google.rating * 20)};">${realData.reviews.google.rating}/5</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2352,7 +2352,7 @@ export const generateCustomerHTML = ({
     <div class="section">
         <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
           <span>Barrierefreiheit & Zugänglichkeit</span>
-          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}" style="color: ${getScoreColor(calculateAccessibilityScore(realData))};">${calculateAccessibilityScore(realData)}%</div>
+          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
         </div>
       <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
@@ -2525,7 +2525,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>💰 Preispositionierung</span>
-        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}" style="color: ${getScoreColor(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))};">${hourlyRateData.ownRate}€</div>
+        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2560,7 +2560,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Rechtssicherheit</span>
-        <div class="header-score-circle ${getScoreColorClass(impressumScore)}" style="color: ${getScoreColor(impressumScore)};">${impressumScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
