@@ -324,7 +324,7 @@ const Index = () => {
             />
           </div>
           <h1 className="text-4xl font-bold text-yellow-400 mb-4">
-            Unna - die Unternehmensanalyse fürs Handwerk
+            UNNA - die Unternehmensanalyse fürs Handwerk
           </h1>
           <p className="text-xl text-gray-300">
             Potenziale und Chancen erkennen, Risiken minimieren!
