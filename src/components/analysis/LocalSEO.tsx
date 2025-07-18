@@ -253,7 +253,11 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                   <div key={index} className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">{directory.name}</span>
                      <span 
-                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusBadgeClass(directory.status)}`}
+                       className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                       style={{
+                         backgroundColor: directory.status === "vollständig" ? "#fbbf24" : "#ef4444",
+                         color: directory.status === "vollständig" ? "#000000" : "#ffffff"
+                       }}
                      >
                        {directory.status}
                      </span>
@@ -275,7 +279,11 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                     <div>
                       <span className="font-medium">{keyword.keyword}</span>
                         <span 
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2 ${getVolumeBadgeClass(keyword.volume)}`}
+                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2"
+                          style={{
+                            backgroundColor: keyword.volume === "hoch" ? "#fbbf24" : keyword.volume === "mittel" ? "#22c55e" : "#ef4444",
+                            color: keyword.volume === "hoch" ? "#000000" : "#ffffff"
+                          }}
                         >
                           {keyword.volume} Volumen
                         </span>
