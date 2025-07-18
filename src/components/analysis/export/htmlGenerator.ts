@@ -447,7 +447,7 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
+                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
                     ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
@@ -459,7 +459,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
+                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
                     ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
@@ -471,7 +471,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
+                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
                     ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
@@ -788,12 +788,6 @@ export const generateCustomerHTML = ({
           </div>
         </div>
         
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(localSEOData.overallScore)}" style="width: ${localSEOData.overallScore}%; background-color: ${getScoreColor(localSEOData.overallScore)};"></div>
-            <div class="progress-point" style="position: absolute; left: ${localSEOData.overallScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 18px; height: 18px; background: white; border: 3px solid ${getScoreColor(localSEOData.overallScore)}; border-radius: 50%; z-index: 10; box-shadow: 0 3px 8px rgba(0,0,0,0.4);"></div>
-          </div>
-        </div>
 
         <!-- Google My Business -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">

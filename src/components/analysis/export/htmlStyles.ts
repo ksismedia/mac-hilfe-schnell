@@ -450,6 +450,27 @@ table tr {
     display: inline-block !important;
     margin-bottom: 10px !important;
   }
+  
+  .score-badge {
+    padding: 2px 6px !important;
+    border-radius: 12px !important;
+    font-weight: bold !important;
+  }
+  
+  .score-badge.red {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+  }
+  
+  .score-badge.green {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+  }
+  
+  .score-badge.yellow {
+    background-color: #eab308 !important;
+    color: #000000 !important;
+  }
 }
 `;
 };
