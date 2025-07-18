@@ -5,6 +5,7 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
+  console.log('Progress value:', value); // Debug log
   if (value >= 81) {
     // 81-100%: Gelb
     return '#fbbf24';
