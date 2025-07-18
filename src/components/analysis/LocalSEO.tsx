@@ -105,6 +105,14 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
     }
   };
 
+  const getVolumeBadge = (volume: string) => {
+    switch (volume) {
+      case "hoch": return "secondary";             // gelb (hoch Volumen = gelb)
+      case "mittel": return "default";             // grün (mittel Volumen = grün)
+      default: return "destructive";               // rot (gering/niedrig Volumen = rot)
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -234,9 +242,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <span className="font-medium">{keyword.keyword}</span>
-                      <Badge variant="outline" className="ml-2 text-xs">
-                        {keyword.volume} Volumen
-                      </Badge>
+                       <Badge variant={getVolumeBadge(keyword.volume)} className="ml-2 text-xs">
+                         {keyword.volume} Volumen
+                       </Badge>
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${getPositionColor(keyword.position)}`}>
