@@ -97,30 +97,50 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
     return "score-text-low";
   };
 
-  const getStatusBadge = (status: string) => {
-    // Direkte Inline-Styles verwenden, um sicherzustellen, dass die Farben korrekt sind
+  const getStatusBadgeClass = (status: string) => {
+    console.log('DEBUG LocalSEO - Status:', status);
+    let className = "";
     switch (status) {
       case "vollständig": 
-        return { backgroundColor: '#fbbf24', color: '#000000' }; // gelb
+        className = "bg-yellow-400 text-black"; // gelb
+        console.log('DEBUG: vollständig -> gelb');
+        break;
       case "unvollständig": 
-        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
+        className = "bg-red-500 text-white"; // rot
+        console.log('DEBUG: unvollständig -> rot');
+        break;
       default: 
-        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot (nicht gefunden)
+        className = "bg-red-500 text-white"; // rot (nicht gefunden)
+        console.log('DEBUG: nicht gefunden -> rot');
+        break;
     }
+    console.log('DEBUG: Final className:', className);
+    return className;
   };
 
-  const getVolumeBadge = (volume: string) => {
-    // Direkte Inline-Styles verwenden
+  const getVolumeBadgeClass = (volume: string) => {
+    console.log('DEBUG LocalSEO - Volume:', volume);
+    let className = "";
     switch (volume) {
       case "hoch": 
-        return { backgroundColor: '#fbbf24', color: '#000000' }; // gelb
+        className = "bg-yellow-400 text-black"; // gelb
+        console.log('DEBUG: hoch -> gelb');
+        break;
       case "mittel": 
-        return { backgroundColor: '#22c55e', color: '#ffffff' }; // grün  
+        className = "bg-green-500 text-white"; // grün  
+        console.log('DEBUG: mittel -> grün');
+        break;
       case "niedrig": 
-        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
+        className = "bg-red-500 text-white"; // rot
+        console.log('DEBUG: niedrig -> rot');
+        break;
       default: 
-        return { backgroundColor: '#ef4444', color: '#ffffff' }; // rot
+        className = "bg-red-500 text-white"; // rot
+        console.log('DEBUG: default -> rot');
+        break;
     }
+    console.log('DEBUG: Final volume className:', className);
+    return className;
   };
 
   return (
@@ -233,8 +253,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                   <div key={index} className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">{directory.name}</span>
                      <span 
-                       className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                       style={getStatusBadge(directory.status)}
+                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusBadgeClass(directory.status)}`}
                      >
                        {directory.status}
                      </span>
@@ -256,8 +275,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                     <div>
                       <span className="font-medium">{keyword.keyword}</span>
                         <span 
-                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2"
-                          style={getVolumeBadge(keyword.volume)}
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2 ${getVolumeBadgeClass(keyword.volume)}`}
                         >
                           {keyword.volume} Volumen
                         </span>
