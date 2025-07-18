@@ -99,24 +99,25 @@ export const generateCustomerHTML = ({
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
-  // Berechnung für Konkurrenten-Vergleich - verwende identische Logik wie in CompetitorAnalysis.tsx
+  // Berechnung für eigenes Unternehmen - EXAKT wie in CompetitorAnalysis.tsx
   const ownRatingScore = (realData.reviews.google.rating / 5) * 100;
   const ownReviewScore = Math.min(100, (realData.reviews.google.count / 50) * 100);
   const ownBaseServiceScore = Math.min(100, (expectedServices.length / 12) * 100);
   
-  // Keine unique service bonus für eigenes Unternehmen, da es die Referenz ist
-  const ownFinalServiceScore = Math.min(100, ownBaseServiceScore);
+  // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
+  const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
-  // WICHTIG: Verwende exakt die gleiche Gewichtung wie bei Konkurrenten
+  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis
   const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35));
   
-  console.log('HTML Generator - Own Business Scores (Competitor Method):', {
+  console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
     reviews: realData.reviews.google.count,
     services: expectedServices.length,
     ratingScore: ownRatingScore,
     reviewScore: ownReviewScore,
-    serviceScore: ownFinalServiceScore,
+    baseServiceScore: ownBaseServiceScore,
+    finalServiceScore: ownFinalServiceScore,
     overall: competitorComparisonScore
   });
   
