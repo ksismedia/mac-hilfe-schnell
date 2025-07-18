@@ -98,18 +98,32 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
   };
 
   const getStatusBadge = (status: string) => {
+    console.log('DEBUG LocalSEO getStatusBadge:', status);
     switch (status) {
-      case "vollständig": return "secondary";      // gelb (vollständig = gelb)
-      case "unvollständig": return "destructive";  // rot (unvollständig = rot)
-      default: return "destructive";               // rot (nicht gefunden = rot)
+      case "vollständig": 
+        console.log('DEBUG: vollständig -> secondary (gelb)');
+        return "secondary";      // gelb (vollständig = gelb)
+      case "unvollständig": 
+        console.log('DEBUG: unvollständig -> destructive (rot)');
+        return "destructive";  // rot (unvollständig = rot)
+      default: 
+        console.log('DEBUG: nicht gefunden -> destructive (rot)');
+        return "destructive";               // rot (nicht gefunden = rot)
     }
   };
 
   const getVolumeBadge = (volume: string) => {
+    console.log('DEBUG LocalSEO getVolumeBadge:', volume);
     switch (volume) {
-      case "hoch": return "secondary";             // gelb (hoch Volumen = gelb)
-      case "mittel": return "default";             // grün (mittel Volumen = grün)
-      default: return "destructive";               // rot (gering/niedrig Volumen = rot)
+      case "hoch": 
+        console.log('DEBUG: hoch -> secondary (gelb)');
+        return "secondary";             // gelb (hoch Volumen = gelb)
+      case "mittel": 
+        console.log('DEBUG: mittel -> default (grün)');
+        return "default";             // grün (mittel Volumen = grün)
+      default: 
+        console.log('DEBUG: niedrig -> destructive (rot)');
+        return "destructive";               // rot (gering/niedrig Volumen = rot)
     }
   };
 
