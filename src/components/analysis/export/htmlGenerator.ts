@@ -2285,171 +2285,6 @@ export const generateCustomerHTML = ({
     </div>
 
 
-    <!-- Social Media Listening & Monitoring -->
-    <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Social Media Listening & Monitoring</span>
-        <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Social Media Gesamtbewertung</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
-            <div class="score-details">
-              <p><strong>Präsenz-Score:</strong> ${socialMediaScore >= 80 ? 'Exzellent' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
-              <p><strong>Empfehlung:</strong> ${socialMediaScore >= 70 ? 'Starke digitale Präsenz' : 'Social Media Aktivitäten strategisch ausbauen'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(socialMediaScore)}" style="width: ${socialMediaScore}%"></div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Plattform-spezifische Analysen -->
-        ${['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube', 'TikTok'].map(platform => {
-          const platformKey = platform.toLowerCase();
-          const platformUrl = manualSocialData?.[platformKey + 'Url'];
-          const platformFollowers = manualSocialData?.[platformKey + (platform === 'YouTube' ? 'Subscribers' : 'Followers')] || '0';
-          const platformLastPost = manualSocialData?.[platformKey + 'LastPost'] || 'Unbekannt';
-          
-          if (!platformUrl) return '';
-          
-          const followerCount = parseInt(platformFollowers) || 0;
-          const lastPostDays = platformLastPost === 'Unbekannt' ? 999 : parseInt(platformLastPost) || 0;
-          
-          const platformScore = Math.min(100, 
-            30 + // Basis-Score für Präsenz
-            (followerCount > 5000 ? 30 : followerCount > 1000 ? 20 : followerCount > 500 ? 15 : followerCount > 100 ? 10 : 5) +
-            (lastPostDays <= 7 ? 25 : lastPostDays <= 30 ? 15 : lastPostDays <= 90 ? 10 : 0)
-          );
-          
-          return `
-            <div class="collapsible" onclick="toggleSection('${platformKey}-details')" style="cursor: pointer; margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <h4 style="color: #3b82f6; margin: 0;">▶ ${platform} Analyse</h4>
-                <div class="score-circle ${getScoreColorClass(platformScore)}" style="width: 40px; height: 40px; font-size: 0.8em;">${platformScore}%</div>
-              </div>
-            </div>
-            
-            <div id="${platformKey}-details" style="display: none; margin-top: 10px; padding: 15px; background: rgba(17, 24, 39, 0.6); border-radius: 8px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
-                <div class="metric-item">
-                  <div class="metric-title">${platform === 'YouTube' ? 'Abonnenten' : 'Follower'}</div>
-                  <div class="metric-value">${followerCount.toLocaleString()}</div>
-                  <div class="progress-container">
-                    <div class="progress-bar">
-                      <div class="progress-fill" data-score="${getScoreRange(followerCount > 5000 ? 90 : followerCount > 1000 ? 70 : 40)}" style="width: ${followerCount > 5000 ? 90 : followerCount > 1000 ? 70 : 40}%"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="metric-item">
-                  <div class="metric-title">Letzter Post</div>
-                  <div class="metric-value">${lastPostDays === 999 ? 'Unbekannt' : lastPostDays === 0 ? 'Heute' : `vor ${lastPostDays} Tagen`}</div>
-                  <div class="progress-container">
-                    <div class="progress-bar">
-                      <div class="progress-fill" data-score="${getScoreRange(lastPostDays <= 7 ? 90 : lastPostDays <= 30 ? 60 : 30)}" style="width: ${lastPostDays <= 7 ? 90 : lastPostDays <= 30 ? 60 : 30}%"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="metric-item">
-                  <div class="metric-title">Aktivitätslevel</div>
-                  <div class="metric-value">${lastPostDays <= 7 ? 'Sehr aktiv' : lastPostDays <= 30 ? 'Aktiv' : 'Inaktiv'}</div>
-                  <div class="progress-container">
-                    <div class="progress-bar">
-                      <div class="progress-fill" data-score="${getScoreRange(lastPostDays <= 7 ? 85 : lastPostDays <= 30 ? 65 : 25)}" style="width: ${lastPostDays <= 7 ? 85 : lastPostDays <= 30 ? 65 : 25}%"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="metric-item">
-                  <div class="metric-title">Reichweite</div>
-                  <div class="metric-value">${followerCount > 5000 ? 'Hoch' : followerCount > 1000 ? 'Mittel' : 'Niedrig'}</div>
-                  <div class="progress-container">
-                    <div class="progress-bar">
-                      <div class="progress-fill" data-score="${getScoreRange(followerCount > 5000 ? 80 : followerCount > 1000 ? 60 : 35)}" style="width: ${followerCount > 5000 ? 80 : followerCount > 1000 ? 60 : 35}%"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="recommendations">
-                <h5>Plattform-spezifische Empfehlungen:</h5>
-                <ul>
-                  ${platform === 'Facebook' ? `
-                    <li>Facebook Business Suite für professionelle Verwaltung nutzen</li>
-                    <li>Lokale Events und Termine bewerben</li>
-                    <li>Kundenbewertungen und Testimonials teilen</li>
-                  ` : ''}
-                  ${platform === 'Instagram' ? `
-                    <li>Stories für tägliche Einblicke nutzen</li>
-                    <li>Hashtag-Strategie für lokale Reichweite optimieren</li>
-                    <li>Reels für höhere Sichtbarkeit erstellen</li>
-                  ` : ''}
-                  ${platform === 'LinkedIn' ? `
-                    <li>Fachliche Expertise durch Artikel demonstrieren</li>
-                    <li>Mitarbeiter-Posts für Authentizität fördern</li>
-                    <li>B2B-Networking für Geschäftskontakte nutzen</li>
-                  ` : ''}
-                  ${platform === 'Twitter' ? `
-                    <li>Aktuelle Branchenthemen kommentieren</li>
-                    <li>Schnelle Kundenbetreuung über Twitter anbieten</li>
-                    <li>Hashtags für lokale Ereignisse nutzen</li>
-                  ` : ''}
-                  ${platform === 'YouTube' ? `
-                    <li>Tutorial-Videos für Fachexpertise erstellen</li>
-                    <li>Vorher-Nachher-Videos von Projekten zeigen</li>
-                    <li>SEO-optimierte Video-Beschreibungen verwenden</li>
-                  ` : ''}
-                  ${platform === 'TikTok' ? `
-                    <li>Kurze, authentische Videos produzieren</li>
-                    <li>Trending Hashtags und Challenges nutzen</li>
-                    <li>Behind-the-scenes Einblicke geben</li>
-                  ` : ''}
-                </ul>
-              </div>
-            </div>
-          `;
-        }).join('')}
-        
-        <!-- Allgemeine Social Media Empfehlungen -->
-        <div class="collapsible" onclick="toggleSection('social-recommendations')" style="cursor: pointer; margin-top: 20px; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="color: #22c55e; margin: 0;">▶ Strategische Empfehlungen</h4>
-        </div>
-        
-        <div id="social-recommendations" style="display: none; margin-top: 10px; padding: 15px; background: rgba(17, 24, 39, 0.6); border-radius: 8px;">
-          <div class="recommendations">
-            <h5>Content-Strategie:</h5>
-            <ul>
-              <li>80/20 Regel: 80% wertvollen Content, 20% Werbung</li>
-              <li>Regelmäßiger Posting-Rhythmus (min. 3x pro Woche)</li>
-              <li>Authentische Einblicke in Arbeitsabläufe</li>
-              <li>Saisonale Inhalte und Trends nutzen</li>
-            </ul>
-            
-            <h5>Engagement-Optimierung:</h5>
-            <ul>
-              <li>Schnelle Antworten auf Kommentare und Nachrichten</li>
-              <li>User-Generated Content fördern</li>
-              <li>Lokale Community-Gruppen aktiv nutzen</li>
-              <li>Cross-Platform-Promotion implementieren</li>
-            </ul>
-            
-            <h5>Erfolgsmessung:</h5>
-            <ul>
-              <li>Monatliche Analyse der Reichweite und Engagement</li>
-              <li>Conversion-Tracking für Lead-Generierung</li>
-              <li>Sentiment-Analyse der Kommentare</li>
-              <li>Wettbewerbervergleich durchführen</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Online Reputation -->
     <div class="section">
@@ -2618,59 +2453,31 @@ export const generateCustomerHTML = ({
         
         <div id="social-platforms-details" style="display: none;">
           <div style="margin-top: 15px;">
-            ${manualSocialData && manualSocialData.facebookUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>Facebook</h3>
-                <p><strong>Follower:</strong> ${manualSocialData.facebookFollowers || 'Nicht verfügbar'}</p>
-                <p><strong>Letzter Post:</strong> ${manualSocialData.facebookLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
-            
-            ${manualSocialData && manualSocialData.instagramUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>Instagram</h3>
-                <p><strong>Follower:</strong> ${manualSocialData.instagramFollowers || 'Nicht verfügbar'}</p>
-                <p><strong>Letzter Post:</strong> ${manualSocialData.instagramLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
-            
-            ${manualSocialData && manualSocialData.linkedinUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>LinkedIn</h3>
-                <p><strong>Follower:</strong> ${manualSocialData.linkedinFollowers || 'Nicht verfügbar'}</p>
-                <p><strong>Letzter Post:</strong> ${manualSocialData.linkedinLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
-            
-            ${manualSocialData && manualSocialData.twitterUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>Twitter</h3>
-                <p><strong>Follower:</strong> ${manualSocialData.twitterFollowers || 'Nicht verfügbar'}</p>
-                <p><strong>Letzter Post:</strong> ${manualSocialData.twitterLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
-            
-            ${manualSocialData && manualSocialData.youtubeUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>YouTube</h3>
-                <p><strong>Abonnenten:</strong> ${manualSocialData.youtubeSubscribers || 'Nicht verfügbar'}</p>
-                <p><strong>Letztes Video:</strong> ${manualSocialData.youtubeLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
-            
-            ${manualSocialData && manualSocialData.tiktokUrl ? `
-              <div class="metric-card" style="margin-bottom: 20px;">
-                <h3>TikTok</h3>
-                <p><strong>Follower:</strong> ${manualSocialData.tiktokFollowers || 'Nicht verfügbar'}</p>
-                <p><strong>Letztes Video:</strong> ${manualSocialData.tiktokLastPost || 'Unbekannt'}</p>
-                <p><strong>Engagement:</strong> ${socialMediaScore >= 70 ? 'Hoch' : socialMediaScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              </div>
-            ` : ''}
+            ${['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube', 'TikTok'].map(platform => {
+              const platformKey = platform.toLowerCase();
+              const platformUrl = manualSocialData?.[platformKey + 'Url'];
+              const platformFollowers = manualSocialData?.[platformKey + (platform === 'YouTube' ? 'Subscribers' : 'Followers')] || '0';
+              const platformLastPost = manualSocialData?.[platformKey + 'LastPost'] || 'Unbekannt';
+              
+              const hasData = !!platformUrl;
+              const followerCount = parseInt(platformFollowers) || 0;
+              const lastPostDays = platformLastPost === 'Unbekannt' ? 999 : parseInt(platformLastPost) || 0;
+              
+              return `
+                <div class="metric-card" style="margin-bottom: 20px; ${hasData ? '' : 'opacity: 0.6; border: 2px dashed #666;'}">
+                  <h3>${platform} ${hasData ? '✓' : '✗'}</h3>
+                  <p><strong>Status:</strong> ${hasData ? 'Vorhanden' : 'Nicht eingerichtet'}</p>
+                  ${hasData ? `
+                    <p><strong>${platform === 'YouTube' ? 'Abonnenten' : 'Follower'}:</strong> ${followerCount.toLocaleString()}</p>
+                    <p><strong>Letzter Post:</strong> ${lastPostDays === 999 ? 'Unbekannt' : lastPostDays === 0 ? 'Heute' : `vor ${lastPostDays} Tagen`}</p>
+                    <p><strong>Aktivität:</strong> ${lastPostDays <= 7 ? 'Sehr aktiv' : lastPostDays <= 30 ? 'Aktiv' : 'Inaktiv'}</p>
+                  ` : `
+                    <p><strong>Empfehlung:</strong> Kanal einrichten für bessere Reichweite</p>
+                    <p><strong>Potenzial:</strong> ${platform === 'Facebook' ? 'Lokale Zielgruppe erreichen' : platform === 'Instagram' ? 'Visuelle Inhalte teilen' : platform === 'LinkedIn' ? 'B2B Networking' : platform === 'Twitter' ? 'Schnelle Kommunikation' : platform === 'YouTube' ? 'Video-Marketing' : 'Junge Zielgruppe ansprechen'}</p>
+                  `}
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       </div>
