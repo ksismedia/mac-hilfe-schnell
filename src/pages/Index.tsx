@@ -21,6 +21,7 @@ interface BusinessData {
 }
 
 const Index = () => {
+  console.log('Index component mounting/re-mounting');
   const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
   const [businessData, setBusinessData] = useState<BusinessData>({
     address: '',
@@ -36,6 +37,15 @@ const Index = () => {
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('Step changed to:', step);
+  }, [step]);
+
+  useEffect(() => {
+    console.log('BusinessData changed:', businessData);
+  }, [businessData]);
+
   // Check for existing API key on mount
   useEffect(() => {
     const existingKey = GoogleAPIService.getApiKey();
@@ -45,9 +55,11 @@ const Index = () => {
   }, []);
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
+    console.log('handleBusinessSubmit called');
     e.preventDefault();
     
     if (!businessData.address || !businessData.url) {
+      console.log('Form validation failed - missing fields');
       toast({
         title: "Fehler",
         description: "Bitte füllen Sie alle Pflichtfelder aus.",
@@ -58,9 +70,12 @@ const Index = () => {
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
+    console.log('Existing API key found:', !!existingKey);
     if (existingKey) {
+      console.log('Setting step to results');
       setStep('results');
     } else {
+      console.log('Setting step to api');
       setStep('api');
     }
   };
@@ -117,9 +132,11 @@ const Index = () => {
   };
 
   const handleApiKeySubmit = async (e: React.FormEvent) => {
+    console.log('handleApiKeySubmit called');
     e.preventDefault();
     
     if (!apiKey.trim()) {
+      console.log('API key validation failed - empty key');
       toast({
         title: "Fehler",
         description: "Bitte geben Sie einen API-Key ein.",
@@ -128,6 +145,7 @@ const Index = () => {
       return;
     }
 
+    console.log('Calling validateAndSaveApiKey with:', apiKey.trim());
     await validateAndSaveApiKey(apiKey.trim());
   };
 
