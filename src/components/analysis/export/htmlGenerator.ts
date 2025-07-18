@@ -1754,7 +1754,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Website Performance</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}" style="color: ${getScoreColor(realData.performance.score)};">${realData.performance.score}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -1846,7 +1846,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>SEO Optimierung</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}" style="color: ${getScoreColor(realData.seo.score)};">${realData.seo.score}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -1910,7 +1910,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Content-Qualität</span>
-        <button class="percentage-btn" data-score="${getScoreRange(contentQualityScore)}">${contentQualityScore}%</button>
+        <button class="percentage-btn" data-score="${getScoreRange(contentQualityScore)}" style="color: ${getScoreColor(contentQualityScore)};">${contentQualityScore}%</button>
       </div>
       <div id="content-content" class="section-content" style="display: none;">
         
@@ -1930,7 +1930,7 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-label">
               <span>Keyword-Optimierung</span>
-              <button class="percentage-btn" data-score="${getScoreRange(Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}">${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
+              <button class="percentage-btn" data-score="${getScoreRange(Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}" style="color: ${getScoreColor(Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))};">${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
             </div>
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%; background-color: ${getScoreColor(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)};"></div>
@@ -1957,35 +1957,24 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-label">
                   <span>Lesbarkeit</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(Math.max(60, realData.seo.score))}">${Math.max(60, realData.seo.score)}%</button>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(60, realData.seo.score))}" style="width: ${Math.max(60, realData.seo.score)}%"></div>
+                  <button class="percentage-btn" data-score="${getScoreRange(Math.max(60, realData.seo.score))}" style="color: ${getScoreColor(Math.max(60, realData.seo.score))};">${Math.max(60, realData.seo.score)}%</button>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Flesch-Reading-Ease: ${Math.max(45, realData.seo.score - 10)}</p>
-            </div>
-            <div class="status-item">
-              <h4>Textlänge</h4>
-              <p><strong>${realData.seo.metaDescription ? 'Ausreichend' : 'Zu kurz'}</strong></p>
+              
               <div class="progress-container">
                 <div class="progress-label">
-                  <span>Textlänge</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}">${realData.seo.metaDescription ? 85 : 40}%</button>
+                  <span>Meta-Description</span>
+                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}" style="color: ${getScoreColor(realData.seo.metaDescription ? 85 : 40)};">${realData.seo.metaDescription ? 85 : 40}%</button>
                 </div>
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}" style="width: ${realData.seo.metaDescription ? 85 : 40}%"></div>
+                  <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 85 : 40}%; background-color: ${getScoreColor(realData.seo.metaDescription ? 85 : 40)};"></div>
                 </div>
               </div>
-              <p style="font-size: 0.9em; color: #9ca3af; margin-top: 5px;">Wörter: ${realData.seo.metaDescription ? '450-800' : '< 300'}</p>
-            </div>
-            <div class="status-item">
-              <h4>Strukturierung</h4>
-              <p><strong>${realData.seo.headings.h1.length > 0 ? 'Gut strukturiert' : 'Struktur fehlt'}</strong></p>
+              
               <div class="progress-container">
                 <div class="progress-label">
-                  <span>Strukturierung</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}">${realData.seo.headings.h1.length > 0 ? 90 : 30}%</button>
+                  <span>H1-Überschriften</span>
+                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="color: ${getScoreColor(realData.seo.headings.h1.length > 0 ? 90 : 30)};">${realData.seo.headings.h1.length > 0 ? 90 : 30}%</button>
                 </div>
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
@@ -2015,7 +2004,7 @@ export const generateCustomerHTML = ({
                  <div class="progress-container">
                   <div class="progress-label">
                     <span>Branchenvokabular</span>
-                    <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
+                    <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="color: ${getScoreColor((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)};">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
                   </div>
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
@@ -2029,7 +2018,7 @@ export const generateCustomerHTML = ({
                  <div class="progress-container">
                    <div class="progress-label">
                      <span>Dienstleistungen</span>
-                     <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
+                     <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="color: ${getScoreColor((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)};">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
                    </div>
                    <div class="progress-bar">
                      <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
@@ -2043,7 +2032,7 @@ export const generateCustomerHTML = ({
                <div class="progress-container">
                  <div class="progress-label">
                    <span>Lokaler Bezug</span>
-                   <button class="percentage-btn" data-score="${getScoreRange(businessData.address ? 90 : 30)}">${businessData.address ? 90 : 30}%</button>
+                   <button class="percentage-btn" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="color: ${getScoreColor(businessData.address ? 90 : 30)};">${businessData.address ? 90 : 30}%</button>
                  </div>
                  <div class="progress-bar">
                    <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
@@ -2116,7 +2105,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Lokale SEO & Regionale Sichtbarkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
+        <div class="header-score-circle ${getScoreColorClass(74)}" style="color: ${getScoreColor(74)};">74%</div>
       </div>
       <div class="section-content">
         ${getLocalSEOAnalysis()}
@@ -2127,7 +2116,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Backlinks Übersicht</span>
-        <button class="percentage-btn" data-score="${getScoreRange(backlinksScore)}">${backlinksScore}%</button>
+        <button class="percentage-btn" data-score="${getScoreRange(backlinksScore)}" style="color: ${getScoreColor(backlinksScore)};">${backlinksScore}%</button>
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
@@ -2145,7 +2134,7 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-label">
               <span>Backlink-Qualität</span>
-              <button class="percentage-btn" data-score="${getScoreRange(backlinksScore)}">${backlinksScore}%</button>
+              <button class="percentage-btn" data-score="${getScoreRange(backlinksScore)}" style="color: ${getScoreColor(backlinksScore)};">${backlinksScore}%</button>
             </div>
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${backlinksScore}%; background-color: ${getScoreColor(backlinksScore)};"></div>
@@ -2168,7 +2157,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Mobile Optimierung</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}" style="color: ${getScoreColor(realData.mobile.overallScore)};">${realData.mobile.overallScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2203,7 +2192,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}" style="color: ${getScoreColor(realData.workplace ? realData.workplace.overallScore : 65)};">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2351,7 +2340,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Online Reputation</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}" style="color: ${getScoreColor(realData.reviews.google.rating * 20)};">${realData.reviews.google.rating}/5</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2384,7 +2373,7 @@ export const generateCustomerHTML = ({
     <div class="section">
         <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
           <span>Barrierefreiheit & Zugänglichkeit</span>
-          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
+          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}" style="color: ${getScoreColor(calculateAccessibilityScore(realData))};">${calculateAccessibilityScore(realData)}%</div>
         </div>
       <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
@@ -2502,7 +2491,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Social Media Listening & Monitoring</span>
-        <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}" style="color: ${getScoreColor(socialMediaScore)};">${socialMediaScore}%</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
         ${getSocialMediaAnalysis()}
@@ -2557,7 +2546,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>💰 Preispositionierung</span>
-        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
+        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}" style="color: ${getScoreColor(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))};">${hourlyRateData.ownRate}€</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2592,7 +2581,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Rechtssicherheit</span>
-        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(impressumScore)}" style="color: ${getScoreColor(impressumScore)};">${impressumScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
