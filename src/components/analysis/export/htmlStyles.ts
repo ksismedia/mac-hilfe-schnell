@@ -220,6 +220,9 @@ body {
 .header-yellow .score-circle.yellow { color: black !important; }
 .header-green .score-circle.green { color: white !important; }
 .header-red .score-circle.red { color: white !important; }
+.header-yellow .header-score-circle.yellow { color: black !important; }
+.header-green .header-score-circle.green { color: white !important; }
+.header-red .header-score-circle.red { color: white !important; }
 
 /* Spezielle Violations Klassen */
 .violation-critical { background: rgba(239, 68, 68, 0.2) !important; }
