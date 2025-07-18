@@ -68,12 +68,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
       
+      // Rating-Score: 4.4/5 = 88%
       const ratingScore = (rating / 5) * 100;
-      const reviewScore = Math.min(100, (reviews / 50) * 100);
+      
+      // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt
+      const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      const baseServiceScore = Math.min(100, (serviceCount / 12) * 100);
+      // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
+      const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
       
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && !ownServices.some(ownService => 
@@ -84,10 +88,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         )
       );
       
-      const uniqueServiceBonus = uniqueServices.length * 5;
+      const uniqueServiceBonus = uniqueServices.length * 2;
       const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
       
-      const score = (ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35);
+      // Gewichtung: Rating 50%, Reviews 20%, Services 30%
+      const score = (ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3);
       return Math.round(isNaN(score) ? 0 : score);
     } catch (error) {
       console.error('Error calculating competitor score:', error);
