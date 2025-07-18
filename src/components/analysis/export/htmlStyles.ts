@@ -125,16 +125,15 @@ body {
   border-radius: 50%;
   font-size: 1.2em;
   font-weight: 700;
-  background: white !important;
   margin-left: auto;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-.header-score-circle.dark-red { color: #CD0000; }
-.header-score-circle.red { color: #FF0000; }
-.header-score-circle.orange { color: #FF4500; }
-.header-score-circle.green { color: #22c55e; }
-.header-score-circle.yellow { color: #FFD700; }
+.header-score-circle.dark-red { background: #FF0000; color: white; }
+.header-score-circle.red { background: #FF0000; color: white; }
+.header-score-circle.orange { background: #FF4500; color: white; }
+.header-score-circle.green { background: #22c55e; color: white; }
+.header-score-circle.yellow { background: #FFD700; color: black; }
 .section-content { 
   padding: 30px; 
   max-width: 100% !important;
