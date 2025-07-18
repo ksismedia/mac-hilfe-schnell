@@ -155,16 +155,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     ...manualCompetitors
       .filter(comp => !deletedCompetitors.has(comp.name))
       .map(comp => {
-        console.log('DEBUG CompetitorAnalysis: Processing manual competitor', comp);
         // Verwende die Services direkt aus dem manuellen Konkurrenten
         const services = Array.isArray(comp.services) ? comp.services : [];
-        console.log('DEBUG CompetitorAnalysis: Manual competitor services', services);
         const score = calculateCompetitorScore({
           rating: comp.rating,
           reviews: comp.reviews,
           services: services
         });
-        console.log('DEBUG CompetitorAnalysis: Manual competitor score', score);
         
         const uniqueServices = services.filter((service: string) => 
           typeof service === 'string' && !ownServices.some(ownService => 
@@ -173,7 +170,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
           )
         );
         
-        const result = {
+        return {
           name: comp.name,
           rating: comp.rating,
           reviews: comp.reviews,
@@ -184,8 +181,6 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
           source: 'manual' as const,
           location: comp.distance
         };
-        console.log('DEBUG CompetitorAnalysis: Final manual competitor result', result);
-        return result;
       })
   ];
 
