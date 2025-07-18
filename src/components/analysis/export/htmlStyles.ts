@@ -171,7 +171,7 @@ body {
   flex-shrink: 0;
 }
 .score-circle.green { background: #22c55e; color: white; }
-.score-circle.yellow { background: #FFD700; color: white !important; }
+.score-circle.yellow { background: #FFD700; color: black !important; }
 .score-circle.orange { background: #FF4500; color: white; }
 .score-circle.red { background: #FF0000; color: white; }
 .score-circle.dark-red { background: #CD0000; color: white; }
@@ -230,9 +230,9 @@ body {
   color: white;
 }
 
-.percentage-btn[data-score="0-60"] { background: #FF0000; }
-.percentage-btn[data-score="60-80"] { background: #22c55e; }
-.percentage-btn[data-score="80-100"] { background: #FFD700; color: white; }
+.percentage-btn[data-score="0-60"] { background: #FF0000; color: white; }
+.percentage-btn[data-score="60-80"] { background: #22c55e; color: white; }
+.percentage-btn[data-score="80-100"] { background: #FFD700; color: black; }
 
 .percentage-btn:hover {
   transform: translateY(-1px);
