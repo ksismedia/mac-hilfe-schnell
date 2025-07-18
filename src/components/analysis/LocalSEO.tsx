@@ -252,15 +252,15 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                 {localSEOData.localCitations.topDirectories.map((directory, index) => (
                   <div key={index} className="flex items-center justify-between p-2 border rounded">
                     <span className="text-sm">{directory.name}</span>
-                     <span 
-                       className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                       style={{
-                         backgroundColor: directory.status === "vollständig" ? "#fbbf24" : "#ef4444",
-                         color: directory.status === "vollständig" ? "#000000" : "#ffffff"
-                       }}
+                     <div
+                       className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                         directory.status === "vollständig" 
+                           ? "bg-yellow-400 text-black" 
+                           : "bg-red-500 text-white"
+                       }`}
                      >
                        {directory.status}
-                     </span>
+                     </div>
                   </div>
                 ))}
               </div>
@@ -278,15 +278,17 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <span className="font-medium">{keyword.keyword}</span>
-                        <span 
-                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2"
-                          style={{
-                            backgroundColor: keyword.volume === "hoch" ? "#fbbf24" : keyword.volume === "mittel" ? "#22c55e" : "#ef4444",
-                            color: keyword.volume === "hoch" ? "#000000" : "#ffffff"
-                          }}
+                        <div
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ml-2 ${
+                            keyword.volume === "hoch" 
+                              ? "bg-yellow-400 text-black"
+                              : keyword.volume === "mittel" 
+                              ? "bg-green-500 text-white" 
+                              : "bg-red-500 text-white"
+                          }`}
                         >
                           {keyword.volume} Volumen
-                        </span>
+                        </div>
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${getPositionColor(keyword.position)}`}>
