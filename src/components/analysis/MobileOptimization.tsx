@@ -15,9 +15,9 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
   const mobileData = realData.mobile;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-yellow-600";  // 80-100% gelb
-    if (score >= 60) return "text-green-600";   // 60-80% grün
-    return "text-red-600";                      // 0-60% rot
+    if (score >= 80) return "score-text-high";  // 80-100% gelb
+    if (score >= 60) return "score-text-medium";   // 60-80% grün
+    return "score-text-low";                      // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
@@ -129,18 +129,18 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
               </div>
               
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Viewport Meta-Tag:</span>
-                  <span className={`font-medium ${mobileData.touchFriendly ? 'text-green-600' : 'text-red-600'}`}>
-                    {mobileData.touchFriendly ? "Vorhanden" : "Fehlt"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Responsive CSS:</span>
-                  <span className={`font-medium ${mobileData.responsive ? 'text-green-600' : 'text-red-600'}`}>
-                    {mobileData.responsive ? "Erkannt" : "Nicht erkannt"}
-                  </span>
-                </div>
+                   <div className="flex justify-between">
+                     <span className="text-gray-600">Viewport Meta-Tag:</span>
+                     <span className={`font-medium ${mobileData.touchFriendly ? 'score-text-medium' : 'score-text-low'}`}>
+                       {mobileData.touchFriendly ? "Vorhanden" : "Fehlt"}
+                     </span>
+                   </div>
+                   <div className="flex justify-between">
+                     <span className="text-gray-600">Responsive CSS:</span>
+                     <span className={`font-medium ${mobileData.responsive ? 'score-text-medium' : 'score-text-low'}`}>
+                       {mobileData.responsive ? "Erkannt" : "Nicht erkannt"}
+                     </span>
+                   </div>
               </div>
             </CardContent>
           </Card>

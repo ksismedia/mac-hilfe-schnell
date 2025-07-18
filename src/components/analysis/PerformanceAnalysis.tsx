@@ -14,9 +14,9 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
   const performanceData = realData.performance;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-yellow-600";  // 80-100% gelb
-    if (score >= 60) return "text-green-600";   // 60-80% grün
-    return "text-red-600";                      // 0-60% rot
+    if (score >= 80) return "score-text-high";  // 80-100% gelb
+    if (score >= 60) return "score-text-medium";   // 60-80% grün
+    return "score-text-low";                      // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {

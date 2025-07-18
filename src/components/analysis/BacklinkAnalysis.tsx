@@ -33,10 +33,10 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
 
   const getQualityColor = (quality: string) => {
     switch (quality) {
-      case 'hoch': return 'text-green-600';
-      case 'mittel': return 'text-yellow-600';
-      case 'niedrig': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'hoch': return 'score-text-medium';
+      case 'mittel': return 'score-text-high';
+      case 'niedrig': return 'score-text-low';
+      default: return 'score-text-low';
     }
   };
 
@@ -67,30 +67,30 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
           <div className="space-y-6">
             {/* Übersicht */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
-                  {backlinkData.internalLinks}
-                </div>
-                <div className="text-sm text-gray-600">Interne Links</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  {backlinkData.externalLinks}
-                </div>
-                <div className="text-sm text-gray-600">Externe Links</div>
-              </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">
-                  {backlinkData.brokenLinks}
-                </div>
-                <div className="text-sm text-gray-600">Defekte Links</div>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
-                  {backlinkData.linkQuality}
-                </div>
-                <div className="text-sm text-gray-600">Link-Qualität</div>
-              </div>
+               <div className="text-center p-4 bg-blue-50 rounded-lg">
+                 <div className="text-2xl font-bold text-blue-600">
+                   {backlinkData.internalLinks}
+                 </div>
+                 <div className="text-sm text-gray-600">Interne Links</div>
+               </div>
+               <div className="text-center p-4 bg-green-50 rounded-lg">
+                 <div className="text-2xl font-bold score-text-medium">
+                   {backlinkData.externalLinks}
+                 </div>
+                 <div className="text-sm text-gray-600">Externe Links</div>
+               </div>
+               <div className="text-center p-4 bg-red-50 rounded-lg">
+                 <div className="text-2xl font-bold score-text-low">
+                   {backlinkData.brokenLinks}
+                 </div>
+                 <div className="text-sm text-gray-600">Defekte Links</div>
+               </div>
+               <div className="text-center p-4 bg-purple-50 rounded-lg">
+                 <div className="text-2xl font-bold text-purple-600">
+                   {backlinkData.linkQuality}
+                 </div>
+                 <div className="text-sm text-gray-600">Link-Qualität</div>
+               </div>
             </div>
 
             {/* Interne Links */}
@@ -175,20 +175,20 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                 <CardTitle className="text-lg">Empfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-600">×</span>
-                    <span>Defekte interne Links reparieren (besonders /referenzen)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-600">!</span>
-                    <span>Mehr interne Verlinkungen zwischen verwandten Seiten hinzufügen</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600">✓</span>
-                    <span>Externe Links zu hochwertigen Branchenpartnern sind gut gewählt</span>
-                  </li>
-                </ul>
+                 <ul className="space-y-2 text-sm">
+                   <li className="flex items-start gap-2">
+                     <span className="score-text-low">×</span>
+                     <span>Defekte interne Links reparieren (besonders /referenzen)</span>
+                   </li>
+                   <li className="flex items-start gap-2">
+                     <span className="score-text-high">!</span>
+                     <span>Mehr interne Verlinkungen zwischen verwandten Seiten hinzufügen</span>
+                   </li>
+                   <li className="flex items-start gap-2">
+                     <span className="score-text-medium">✓</span>
+                     <span>Externe Links zu hochwertigen Branchenpartnern sind gut gewählt</span>
+                   </li>
+                 </ul>
               </CardContent>
             </Card>
           </div>
