@@ -505,6 +505,119 @@ table tr {
   .secondary-text {
     color: #666666 !important;
   }
+  
+  .keyword-found {
+    background: #dcfce7 !important;
+    color: #059669 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+  }
+  
+  .keyword-missing {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+  }
+  
+  .header-accessibility {
+    background: #FFD700 !important;
+    color: #000000 !important;
+  }
+  
+  .header-seo {
+    background: #16a34a !important;
+    color: #000000 !important;
+  }
+  
+  .header-local-seo {
+    background: #10b981 !important;
+    color: #000000 !important;
+  }
+  
+  .progress-point {
+    position: absolute !important;
+    background: white !important;
+    border: 3px solid #374151 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+    z-index: 10 !important;
+  }
+  
+  .citation-total {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #3b82f6 !important;
+  }
+  
+  .citation-consistent {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #16a34a !important;
+  }
+  
+  .citation-inconsistent {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #ef4444 !important;
+  }
+  
+  .table-header {
+    color: #fbbf24 !important;
+  }
+  
+  .table-text {
+    color: #d1d5db !important;
+  }
+  
+  .primary-highlight {
+    color: #fbbf24 !important;
+    font-weight: bold !important;
+  }
+  
+  .volume-high {
+    background: #fbbf24 !important;
+    color: #000000 !important;
+    margin-left: 8px !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+  }
+  
+  .volume-medium {
+    background: #22c55e !important;
+    color: #ffffff !important;
+    margin-left: 8px !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+  }
+  
+  .volume-low {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    margin-left: 8px !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+  }
+  
+  .directory-complete {
+    background: #fbbf24 !important;
+    color: #000000 !important;
+  }
+  
+  .directory-incomplete {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+  }
+  
+  .directory-missing {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+  }
 }
 `;
 };

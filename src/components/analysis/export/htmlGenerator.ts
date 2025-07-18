@@ -369,7 +369,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 style="background: #FFD700; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="header-accessibility" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
           <span style="background: white; color: ${getScoreColor(accessibilityScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${accessibilityScore}%</span>
         </h3>
@@ -549,7 +549,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 style="background: #16a34a; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="header-seo" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>🔍 SEO-Bestandsanalyse</span>
           <span style="background: white; color: ${getScoreColor(criticalSeoScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${criticalSeoScore}%</span>
         </h3>
@@ -576,7 +576,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(titleTagScore)}" style="width: ${titleTagScore}%; background-color: ${getScoreColor(titleTagScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
@@ -586,7 +586,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(metaDescriptionScore)}" style="width: ${metaDescriptionScore}%; background-color: ${getScoreColor(metaDescriptionScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
@@ -596,7 +596,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(headingScore)}" style="width: ${headingScore}%; background-color: ${getScoreColor(headingScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
@@ -606,7 +606,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(altTagsScore)}" style="width: ${altTagsScore}%; background-color: ${getScoreColor(altTagsScore)};"></div>
-                  <div class="progress-point" style="position: absolute; left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
@@ -623,7 +623,7 @@ export const generateCustomerHTML = ({
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%; background-color: ${getScoreColor(effectiveKeywordScore)};"></div>
-                    <div style="position: absolute; left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                    <div class="progress-point" style="left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                   </div>
                 </div>
               <small class="secondary-text">Score: ${effectiveKeywordScore}%</small>
@@ -633,7 +633,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%; background-color: ${getScoreColor(Math.max(20, effectiveKeywordScore * 0.6))};"></div>
-                  <div style="position: absolute; left: ${Math.max(20, effectiveKeywordScore * 0.6)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${Math.max(20, effectiveKeywordScore * 0.6)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
@@ -643,7 +643,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; background-color: ${getScoreColor(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)};"></div>
-                  <div style="position: absolute; left: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+                  <div class="progress-point" style="left: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                 </div>
               </div>
               <small class="secondary-text">Score: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20).toFixed(0)}%</small>
@@ -653,7 +653,7 @@ export const generateCustomerHTML = ({
           <div style="margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px;">
             <h5 class="success-text" style="margin: 0 0 10px 0;">✅ Analysierte Keywords:</h5>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              ${keywordData.map(kw => `<span style="background: ${kw.found ? '#dcfce7' : '#fef2f2'}; color: ${kw.found ? '#059669' : '#dc2626'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${kw.keyword}${kw.found ? ' ✓' : ' ✗'}</span>`).join('')}
+              ${keywordData.map(kw => `<span class="${kw.found ? 'keyword-found' : 'keyword-missing'}">${kw.keyword}${kw.found ? ' ✓' : ' ✗'}</span>`).join('')}
             </div>
           </div>
           ` : ''}
@@ -775,7 +775,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 style="background: #10b981; color: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="header-local-seo" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>📍 Lokale SEO & Regionale Sichtbarkeit</span>
           <span style="background: white; color: ${getScoreColor(localSEOData.overallScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${localSEOData.overallScore}%</span>
         </h3>
@@ -821,16 +821,16 @@ export const generateCustomerHTML = ({
           <h4>🌐 Lokale Verzeichnisse & Citations</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${localSEOData.localCitations.totalCitations}</div>
-              <p style="font-size: 12px; color: #666;">Gefundene Einträge</p>
+              <div class="citation-total">${localSEOData.localCitations.totalCitations}</div>
+              <p class="secondary-text" style="font-size: 12px;">Gefundene Einträge</p>
             </div>
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #16a34a;">${localSEOData.localCitations.consistent}</div>
-              <p style="font-size: 12px; color: #666;">Konsistent</p>
+              <div class="citation-consistent">${localSEOData.localCitations.consistent}</div>
+              <p class="secondary-text" style="font-size: 12px;">Konsistent</p>
             </div>
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #ef4444;">${localSEOData.localCitations.inconsistent}</div>
-              <p style="font-size: 12px; color: #666;">Inkonsistent</p>
+              <div class="citation-inconsistent">${localSEOData.localCitations.inconsistent}</div>
+              <p class="secondary-text" style="font-size: 12px;">Inkonsistent</p>
             </div>
           </div>
           
@@ -840,9 +840,9 @@ export const generateCustomerHTML = ({
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
                 <span style="font-size: 14px;">${directory.name}</span>
                  <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: ${
-                   directory.status === 'vollständig' ? '#fbbf24; color: #000000' :        // gelb für vollständig
-                   directory.status === 'unvollständig' ? '#ef4444; color: #ffffff' :      // rot für unvollständig  
-                   '#ef4444; color: #ffffff'                                              // rot für nicht gefunden
+                   directory.status === 'vollständig' ? 'directory-complete' :        
+                   directory.status === 'unvollständig' ? 'directory-incomplete' :      
+                   'directory-missing'
                  };">${directory.status}</span>
               </div>
             `).join('')}
@@ -868,7 +868,7 @@ export const generateCustomerHTML = ({
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
                 <div>
                   <span style="font-weight: 500;">${keyword.keyword}</span>
-                  <span style="margin-left: 8px; padding: 2px 6px; border-radius: 4px; font-size: 11px; background: ${keyword.volume === 'hoch' ? '#fbbf24; color: #000000' : keyword.volume === 'mittel' ? '#22c55e; color: #ffffff' : '#ef4444; color: #ffffff'};">${keyword.volume} Volumen</span>
+                  <span class="${keyword.volume === 'hoch' ? 'volume-high' : keyword.volume === 'mittel' ? 'volume-medium' : 'volume-low'}">${keyword.volume} Volumen</span>
                 </div>
                 <div style="text-align: right;">
                   <div style="font-size: 18px; font-weight: bold; color: ${keyword.volume === 'hoch' ? '#fbbf24' : keyword.volume === 'mittel' ? '#22c55e' : '#ef4444'};">#${keyword.position}
@@ -1215,12 +1215,12 @@ export const generateCustomerHTML = ({
           <table style="width: 100%; border-collapse: collapse; background: rgba(17, 24, 39, 0.6); border-radius: 8px; overflow: hidden;">
             <thead>
               <tr style="background: rgba(251, 191, 36, 0.2);">
-                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Wettbewerber</th>
-                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Bewertung</th>
-                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Anzahl Bewertungen</th>
-                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Gesamtscore</th>
-                <th style="padding: 12px; text-align: center; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Marktposition</th>
-                <th style="padding: 12px; text-align: left; color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Services</th>
+                <th class="table-header" style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Wettbewerber</th>
+                <th class="table-header" style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Bewertung</th>
+                <th class="table-header" style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Anzahl Bewertungen</th>
+                <th class="table-header" style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Gesamtscore</th>
+                <th class="table-header" style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Marktposition</th>
+                <th class="table-header" style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(251, 191, 36, 0.3);">Services</th>
               </tr>
             </thead>
             <tbody>
