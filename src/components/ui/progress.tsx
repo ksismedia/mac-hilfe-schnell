@@ -5,13 +5,14 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const getProgressColor = (value: number) => {
-  // Use CSS variables from index.css
-  if (value >= 81) {
-    return 'hsl(var(--progress-yellow))'; // Gelb
-  } else if (value >= 61) {
+  console.log('Progress value:', value, 'Color logic check:', value <= 60, value >= 61 && value <= 80, value >= 81);
+  // 0-60%: Rot, 61-80%: Grün, 81-100%: Gelb
+  if (value <= 60) {
+    return 'hsl(var(--progress-red))'; // Rot
+  } else if (value <= 80) {
     return 'hsl(var(--progress-green))'; // Grün  
   } else {
-    return 'hsl(var(--progress-red))'; // Rot
+    return 'hsl(var(--progress-yellow))'; // Gelb
   }
 };
 
