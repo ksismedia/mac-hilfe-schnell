@@ -1654,39 +1654,39 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span style="color: ${overallScore <= 60 ? '#ffffff' : overallScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${overallScore <= 60 ? '#dc2626' : overallScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${overallScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.seo.score <= 60 ? '#ffffff' : realData.seo.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.seo.score <= 60 ? '#dc2626' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.seo.score}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
             <div class="score-label">SEO-Bestandsanalyse</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.performance.score <= 60 ? '#ffffff' : realData.performance.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.performance.score <= 60 ? '#dc2626' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.performance.score}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 60 ? '#ffffff' : realData.mobile.overallScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.mobile.overallScore <= 60 ? '#dc2626' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${74 <= 60 ? '#ffffff' : 74 <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${74 <= 60 ? '#dc2626' : 74 <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">74%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(74)}">74%</span></div>
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${socialMediaScore <= 60 ? '#ffffff' : socialMediaScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${socialMediaScore <= 60 ? '#dc2626' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${socialMediaScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${googleReviewScore <= 60 ? '#ffffff' : googleReviewScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${googleReviewScore <= 60 ? '#dc2626' : googleReviewScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${googleReviewScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${impressumScore <= 60 ? '#ffffff' : impressumScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${impressumScore <= 60 ? '#dc2626' : impressumScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${impressumScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${accessibilityScore <= 60 ? '#ffffff' : accessibilityScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore <= 60 ? '#dc2626' : accessibilityScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${accessibilityScore}%</span></div>
+            <div class="score-big"><span class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
