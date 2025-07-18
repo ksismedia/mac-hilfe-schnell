@@ -216,6 +216,11 @@ body {
 .header-green { background: #22c55e !important; color: white !important; }
 .header-yellow { background: #FFD700 !important; color: black !important; }
 
+/* Header score-circle overrides - Kreise in Headern behalten ihre eigene Farbe */
+.header-yellow .score-circle.yellow { color: black !important; }
+.header-green .score-circle.green { color: white !important; }
+.header-red .score-circle.red { color: white !important; }
+
 /* Spezielle Violations Klassen */
 .violation-critical { background: rgba(239, 68, 68, 0.2) !important; }
 .violation-serious { background: rgba(245, 158, 11, 0.2) !important; }
