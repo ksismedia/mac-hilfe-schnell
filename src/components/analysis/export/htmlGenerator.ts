@@ -447,7 +447,7 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
                     ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
@@ -459,7 +459,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
                     ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
@@ -471,7 +471,7 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
-                  <span style="color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; font-weight: bold;">
+                  <span style="color: ${accessibilityScore >= 81 ? '#ffffff' : accessibilityScore >= 61 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore >= 81 ? '#eab308' : accessibilityScore >= 61 ? '#16a34a' : '#dc2626'}; padding: 2px 6px; border-radius: 12px; font-weight: bold;">
                     ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
@@ -1675,53 +1675,53 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span style="color: ${overallScore <= 60 ? '#dc2626' : overallScore <= 80 ? '#16a34a' : '#eab308'};">${overallScore}%</span></div>
+            <div class="score-big"><span style="color: ${overallScore <= 60 ? '#ffffff' : overallScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${overallScore <= 60 ? '#dc2626' : overallScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.seo.score <= 60 ? '#dc2626' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'};">${realData.seo.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.seo.score <= 60 ? '#ffffff' : realData.seo.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.seo.score <= 60 ? '#dc2626' : realData.seo.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.seo.score}%</span></div>
             <div class="score-label">SEO Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.performance.score <= 60 ? '#dc2626' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'};">${realData.performance.score}%</span></div>
+            <div class="score-big"><span style="color: ${realData.performance.score <= 60 ? '#ffffff' : realData.performance.score <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.performance.score <= 60 ? '#dc2626' : realData.performance.score <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 60 ? '#dc2626' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'};">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span style="color: ${realData.mobile.overallScore <= 60 ? '#ffffff' : realData.mobile.overallScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${realData.mobile.overallScore <= 60 ? '#dc2626' : realData.mobile.overallScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${74 <= 60 ? '#dc2626' : 74 <= 80 ? '#16a34a' : '#eab308'};">74%</span></div>
+            <div class="score-big"><span style="color: ${74 <= 60 ? '#ffffff' : 74 <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${74 <= 60 ? '#dc2626' : 74 <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">74%</span></div>
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${socialMediaScore <= 60 ? '#dc2626' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'};">${socialMediaScore}%</span></div>
+            <div class="score-big"><span style="color: ${socialMediaScore <= 60 ? '#ffffff' : socialMediaScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${socialMediaScore <= 60 ? '#dc2626' : socialMediaScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${googleReviewScore <= 60 ? '#dc2626' : googleReviewScore <= 80 ? '#16a34a' : '#eab308'};">${googleReviewScore}%</span></div>
+            <div class="score-big"><span style="color: ${googleReviewScore <= 60 ? '#ffffff' : googleReviewScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${googleReviewScore <= 60 ? '#dc2626' : googleReviewScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${impressumScore <= 60 ? '#dc2626' : impressumScore <= 80 ? '#16a34a' : '#eab308'};">${impressumScore}%</span></div>
+            <div class="score-big"><span style="color: ${impressumScore <= 60 ? '#ffffff' : impressumScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${impressumScore <= 60 ? '#dc2626' : impressumScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${accessibilityScore <= 60 ? '#dc2626' : accessibilityScore <= 80 ? '#16a34a' : '#eab308'};">${accessibilityScore}%</span></div>
+            <div class="score-big"><span style="color: ${accessibilityScore <= 60 ? '#ffffff' : accessibilityScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${accessibilityScore <= 60 ? '#dc2626' : accessibilityScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${accessibilityScore}%</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${dataPrivacyScore <= 60 ? '#dc2626' : dataPrivacyScore <= 80 ? '#16a34a' : '#eab308'};">${dataPrivacyScore}%</span></div>
+            <div class="score-big"><span style="color: ${dataPrivacyScore <= 60 ? '#ffffff' : dataPrivacyScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${dataPrivacyScore <= 60 ? '#dc2626' : dataPrivacyScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${dataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           ${hourlyRateData ? `
           <div class="score-card">
-            <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'};">${pricingScore}%</span></div>
+            <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#ffffff' : pricingScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${pricingScore}%</span></div>
             <div class="score-label">Preispositionierung</div>
           </div>
           ` : ''}
           <div class="score-card">
-            <div class="score-big"><span style="color: ${workplaceScore <= 60 ? '#dc2626' : workplaceScore <= 80 ? '#16a34a' : '#eab308'};">${workplaceScore}%</span></div>
+            <div class="score-big"><span style="color: ${workplaceScore <= 60 ? '#ffffff' : workplaceScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${workplaceScore <= 60 ? '#dc2626' : workplaceScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${workplaceScore}%</span></div>
             <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
         </div>

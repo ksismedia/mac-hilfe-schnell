@@ -15,6 +15,13 @@ const Progress = React.forwardRef<
     return 'bg-yellow-500'; // GELB für 81-100%
   };
 
+  // Text color for contrast
+  const getTextColor = (val: number): string => {
+    if (val <= 60) return 'text-white'; // Weiß auf rot
+    if (val <= 80) return 'text-white'; // Weiß auf grün
+    return 'text-white'; // Weiß auf gelb für besseren Kontrast
+  };
+
   // Debug logging
   React.useEffect(() => {
     console.log(`🔴 PROGRESS DEBUG: ${percentage}% -> ${getBarColor(percentage)}`);
@@ -27,9 +34,15 @@ const Progress = React.forwardRef<
       {...props}
     >
       <div 
-        className={cn("h-full transition-all duration-300 rounded-full", getBarColor(percentage))}
+        className={cn("h-full transition-all duration-300 rounded-full flex items-center justify-center", getBarColor(percentage))}
         style={{ width: `${percentage}%` }}
-      />
+      >
+        {percentage > 0 && (
+          <span className={cn("text-xs font-medium", getTextColor(percentage))}>
+            {percentage}%
+          </span>
+        )}
+      </div>
     </div>
   );
 })
