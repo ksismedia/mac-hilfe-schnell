@@ -710,6 +710,11 @@ table tr {
   .light-gray-text {
     color: #d1d5db !important;
   }
+  
+  /* Score Badge Farben für Wettbewerber */
+  .score-badge.red { color: #FF0000 !important; font-weight: bold; }
+  .score-badge.green { color: #22c55e !important; font-weight: bold; }  
+  .score-badge.yellow { color: #FFD700 !important; font-weight: bold; }
 }
 `;
 };
