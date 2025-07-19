@@ -1278,13 +1278,13 @@ export const generateCustomerHTML = ({
                   </td>
                   <td class="table-text" style="padding: 12px; text-align: center;">${competitor.reviews}</td>
                   <td class="table-text" style="padding: 12px; text-align: center;">
-                    <span class="score-badge" data-score="${getScoreRange(estimatedScore)}">${estimatedScore}</span>
+                    <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}">${estimatedScore}</span>
                     <br><small class="secondary-text">${serviceCount} Services</small>
                     <br><small class="secondary-text">${uniqueServices.length} Unique</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
-                    <span class="score-badge" data-score="${getScoreRange(estimatedScore)}">
-                      ${estimatedScore >= (competitorComparisonScore - 10) ? 'Starker Wettbewerber' : 'Wettbewerber'}
+                    <span style="color: #9ca3af;">
+                      ${estimatedScore > competitorComparisonScore ? 'Starker Wettbewerber' : 'Wettbewerber'}
                     </span>
                   </td>
                   <td class="table-text" style="padding: 12px; font-size: 0.9em;">
