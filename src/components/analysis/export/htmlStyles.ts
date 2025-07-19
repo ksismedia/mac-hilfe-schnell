@@ -172,6 +172,7 @@ body {
   flex-shrink: 0;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   border: 2px solid rgba(255,255,255,0.1);
+  text-align: center;
 }
 
 /* Score-Tile Farben basierend auf einheitlichem Schema */

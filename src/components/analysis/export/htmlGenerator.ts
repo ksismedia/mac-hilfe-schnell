@@ -1690,7 +1690,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span style="color: ${dataPrivacyScore <= 60 ? '#ffffff' : dataPrivacyScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${dataPrivacyScore <= 60 ? '#dc2626' : dataPrivacyScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${dataPrivacyScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(dataPrivacyScore)}">${dataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           ${hourlyRateData ? `
@@ -1700,7 +1700,7 @@ export const generateCustomerHTML = ({
           </div>
           ` : ''}
           <div class="score-card">
-            <div class="score-big"><span style="color: ${workplaceScore <= 60 ? '#ffffff' : workplaceScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${workplaceScore <= 60 ? '#dc2626' : workplaceScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${workplaceScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</span></div>
             <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
         </div>
