@@ -228,7 +228,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
         <h3>Google Bewertungen</h3>
         <div class="score-display">
-          <div class="score-circle" data-score="${getScoreRange(reputationScore)}">${realData.reviews.google.rating}/5</div>
+          <div class="score-circle ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
           <div class="score-details">
             <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5</p>
             <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
@@ -258,7 +258,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card good">
         <h3>Stundensatz-Analyse</h3>
         <div class="score-display">
-          <div class="score-circle" data-score="${getScoreRange(pricingScore)}">${pricingScore}%</div>
+          <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
           <div class="score-details">
             <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
             <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
@@ -286,7 +286,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
         <h3>⚖️ Impressum & Rechtssicherheit</h3>
         <div class="score-display">
-          <div class="score-circle" data-score="${getScoreRange(legalScore)}">${legalScore}%</div>
+          <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
           <div class="score-details">
             <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
             <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
@@ -374,7 +374,7 @@ export const generateCustomerHTML = ({
           <span class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" data-score="${getScoreRange(accessibilityScore)}">${accessibilityScore}%</div>
+          <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
               <span class="score-text ${getScoreColorClass(accessibilityScore)}">
