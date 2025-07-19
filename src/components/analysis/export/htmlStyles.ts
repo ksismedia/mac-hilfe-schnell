@@ -167,12 +167,13 @@ body {
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 1.8em; 
+  font-size: 1.4em; 
   font-weight: bold; 
   flex-shrink: 0;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   border: 2px solid rgba(255,255,255,0.1);
   text-align: center;
+  line-height: 1;
 }
 
 /* Score-Tile Farben basierend auf einheitlichem Schema */
