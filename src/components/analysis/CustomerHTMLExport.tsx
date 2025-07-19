@@ -167,16 +167,37 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       dataPrivacyScore: 75 // Pass data privacy score
     });
 
-    // Create and download the HTML file
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Social-Listening-Report-${businessData.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.html`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    try {
+      // Create and download the HTML file
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      // Ensure the link is properly configured
+      link.href = url;
+      link.download = `Social-Listening-Report-${businessData.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.html`;
+      link.style.display = 'none';
+      
+      // Add to DOM, click, and clean up
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up with a small delay to ensure download starts
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('Download initiated successfully');
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: open in new window
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+      }
+    }
   };
 
   const missingElements = getMissingImprintElements();
