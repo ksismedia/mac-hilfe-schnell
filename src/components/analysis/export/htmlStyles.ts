@@ -174,6 +174,13 @@ body {
 .score-circle.orange { background: #FF0000 !important; color: white !important; }
 .score-circle.red { background: #FF0000 !important; color: white !important; }
 .score-circle.dark-red { background: #FF0000 !important; color: white !important; }
+
+/* Data-score attribute based styling */
+.score-circle[data-score="green"] { background: #22c55e !important; color: white !important; }
+.score-circle[data-score="yellow"] { background: #FFD700 !important; color: black !important; }
+.score-circle[data-score="orange"] { background: #FF0000 !important; color: white !important; }
+.score-circle[data-score="red"] { background: #FF0000 !important; color: white !important; }
+.score-circle[data-score="dark-red"] { background: #FF0000 !important; color: white !important; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
