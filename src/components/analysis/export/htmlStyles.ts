@@ -174,12 +174,12 @@ body {
   border: 2px solid rgba(255,255,255,0.1);
 }
 
-/* Score-Tile Farben */
+/* Score-Tile Farben basierend auf Score-Bereichen */
 .score-tile.green { background: #22c55e !important; color: white !important; }
 .score-tile.yellow { background: #FFD700 !important; color: black !important; }
-.score-tile.orange { background: #FF0000 !important; color: white !important; }
-.score-tile.red { background: #FF0000 !important; color: white !important; }
-.score-tile.dark-red { background: #FF0000 !important; color: white !important; }
+.score-tile.orange { background: #ff6b35 !important; color: white !important; }
+.score-tile.red { background: #dc2626 !important; color: white !important; }
+.score-tile.dark-red { background: #991b1b !important; color: white !important; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
