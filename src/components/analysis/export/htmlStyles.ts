@@ -296,12 +296,11 @@ body {
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   min-width: 50px;
-  color: white;
 }
 
-.percentage-btn[data-score="0-60"] { background: #FF0000; color: white; }
-.percentage-btn[data-score="60-80"] { background: #22c55e; color: white; }
-.percentage-btn[data-score="80-100"] { background: #FFD700; color: black; }
+.percentage-btn[data-score="0-60"] { background: #FF0000; color: white !important; }
+.percentage-btn[data-score="60-80"] { background: #22c55e; color: white !important; }
+.percentage-btn[data-score="80-100"] { background: #FFD700; color: black !important; }
 
 .percentage-btn:hover {
   transform: translateY(-1px);
