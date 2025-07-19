@@ -158,29 +158,28 @@ body {
 }
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-.score-circle { 
-  width: 100px; 
-  height: 100px; 
-  border-radius: 50%; 
+
+/* Score Tile - rechteckige Kachel statt Kreis */
+.score-tile { 
+  min-width: 120px; 
+  height: 80px; 
+  border-radius: 12px; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 1.6em; 
+  font-size: 1.8em; 
   font-weight: bold; 
   flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.1);
 }
-.score-circle.green { background: #22c55e !important; color: white !important; }
-.score-circle.yellow { background: #FFD700 !important; color: black !important; }
-.score-circle.orange { background: #FF0000 !important; color: white !important; }
-.score-circle.red { background: #FF0000 !important; color: white !important; }
-.score-circle.dark-red { background: #FF0000 !important; color: white !important; }
 
-/* Data-score attribute based styling */
-.score-circle[data-score="green"] { background: #22c55e !important; color: white !important; }
-.score-circle[data-score="yellow"] { background: #FFD700 !important; color: black !important; }
-.score-circle[data-score="orange"] { background: #FF0000 !important; color: white !important; }
-.score-circle[data-score="red"] { background: #FF0000 !important; color: white !important; }
-.score-circle[data-score="dark-red"] { background: #FF0000 !important; color: white !important; }
+/* Score-Tile Farben */
+.score-tile.green { background: #22c55e !important; color: white !important; }
+.score-tile.yellow { background: #FFD700 !important; color: black !important; }
+.score-tile.orange { background: #FF0000 !important; color: white !important; }
+.score-tile.red { background: #FF0000 !important; color: white !important; }
+.score-tile.dark-red { background: #FF0000 !important; color: white !important; }
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
