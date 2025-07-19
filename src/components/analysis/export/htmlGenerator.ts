@@ -1818,15 +1818,15 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- SEO Optimierung -->
+    <!-- SEO-Bestandsanalyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>SEO Optimierung</span>
+        <span>SEO-Bestandsanalyse</span>
         <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>SEO Optimierung</h3>
+          <h3>SEO-Bestandsanalyse</h3>
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</div>
             <div class="score-details">
