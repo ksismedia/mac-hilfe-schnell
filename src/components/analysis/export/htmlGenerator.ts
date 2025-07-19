@@ -541,7 +541,7 @@ export const generateCustomerHTML = ({
           <span style="background: white; color: ${getScoreColor(criticalSeoScore)}; padding: 8px 16px; border-radius: 20px; font-weight: bold;">${criticalSeoScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle" style="background-color: ${getScoreColor(criticalSeoScore)}; color: white; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">${criticalSeoScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(criticalSeoScore)}">${criticalSeoScore}%</div>
           <div class="score-details">
             <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'SEO-Grundlagen vorhanden, Optimierung empfohlen' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
