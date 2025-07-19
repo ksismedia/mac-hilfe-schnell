@@ -1654,39 +1654,39 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(overallScore)}">${overallScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
             <div class="score-label">SEO-Bestandsanalyse</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(74)}">74%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(socialMediaScore)}">${socialMediaScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(googleReviewScore)}">${googleReviewScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(impressumScore)}">${impressumScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(accessibilityScore)}">${accessibilityScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
