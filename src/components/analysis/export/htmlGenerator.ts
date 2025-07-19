@@ -201,7 +201,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card warning">
         <h3>💼 Arbeitgeber-Bewertung</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(workplaceScore)}">${workplaceScore}%</div>
           <div class="score-details">
             <p><strong>Gesamtbewertung:</strong> ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
             <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
@@ -228,7 +228,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
         <h3>Google Bewertungen</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
+          <div class="score-circle" data-score="${getScoreRange(reputationScore)}">${realData.reviews.google.rating}/5</div>
           <div class="score-details">
             <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5</p>
             <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
@@ -258,7 +258,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card good">
         <h3>Stundensatz-Analyse</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(pricingScore)}">${pricingScore}%</div>
           <div class="score-details">
             <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
             <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
@@ -286,7 +286,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
         <h3>⚖️ Impressum & Rechtssicherheit</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(legalScore)}">${legalScore}%</div>
           <div class="score-details">
             <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
             <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
@@ -374,7 +374,7 @@ export const generateCustomerHTML = ({
           <span class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
             <p><strong>Compliance-Level:</strong> 
               <span class="score-text ${getScoreColorClass(accessibilityScore)}">
@@ -768,7 +768,7 @@ export const generateCustomerHTML = ({
         </h3>
         
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(localSEOData.overallScore)}">${localSEOData.overallScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(localSEOData.overallScore)}">${localSEOData.overallScore}%</div>
           <div class="score-details">
             <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
             <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
@@ -939,7 +939,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>Performance Analyse</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(performanceScore)}">${performanceScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(performanceScore)}">${performanceScore}%</div>
           <div class="score-details">
             <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
             <p><strong>Empfehlung:</strong> ${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'}</p>
@@ -972,7 +972,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>Mobile Optimierung</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 70 ? 'Hoch' : mobileScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
@@ -1519,7 +1519,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${cardClass}">
         <h3>Social Media Präsenz</h3>
         <div class="score-display">
-          <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+          <div class="score-circle" data-score="${getScoreRange(socialMediaScore)}">${socialMediaScore}%</div>
           <div class="score-details">
             <p><strong>Aktive Plattformen:</strong> ${activePlatforms.length}</p>
             <p><strong>Status:</strong> ${socialMediaScore >= 80 ? 'Sehr gut' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
@@ -1639,7 +1639,7 @@ export const generateCustomerHTML = ({
          <div class="metric-card ${overallCompanyScore >= 80 ? 'excellent' : overallCompanyScore >= 60 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
            <h3>Gesamtbewertung</h3>
            <div class="score-display">
-             <div class="score-circle ${getScoreColorClass(overallCompanyScore)}">${overallCompanyScore}%</div>
+             <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
                <p><strong>Digitale Marktposition:</strong> ${overallCompanyScore >= 80 ? 'Sehr stark' : overallCompanyScore >= 60 ? 'Gut positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
                <p><strong>Priorität:</strong> ${overallCompanyScore >= 80 ? 'Optimierung' : overallCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
@@ -1658,35 +1658,35 @@ export const generateCustomerHTML = ({
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</span></div>
             <div class="score-label">SEO-Bestandsanalyse</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</span></div>
             <div class="score-label">Website Performance</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
             <div class="score-label">Mobile Optimierung</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(74)}">74%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(74)}">74%</span></div>
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(socialMediaScore)}">${socialMediaScore}%</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(googleReviewScore)}">${googleReviewScore}%</span></div>
             <div class="score-label">Online Reputation</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(impressumScore)}">${impressumScore}%</span></div>
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(accessibilityScore)}">${accessibilityScore}%</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
@@ -1739,7 +1739,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card">
           <h3>Performance Analyse</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+            <div class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</div>
             <div class="score-details">
               <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
               <p><strong>Empfehlung:</strong> ${realData.performance.score >= 80 ? 'Sehr gute Performance' : 'Performance optimieren'}</p>
@@ -1831,7 +1831,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card">
           <h3>SEO Optimierung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+            <div class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</div>
             <div class="score-details">
               <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 70 ? 'Hoch' : realData.seo.score >= 40 ? 'Mittel' : 'Niedrig'}</p>
               <p><strong>Empfehlung:</strong> ${realData.seo.score >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
@@ -2142,7 +2142,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card">
           <h3>Mobile Optimierung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
+            <div class="score-circle" data-score="${getScoreRange(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
             <div class="score-details">
               <p><strong>Mobile-Friendly:</strong> ${realData.mobile.overallScore >= 80 ? 'Sehr gut' : realData.mobile.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${realData.mobile.overallScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
