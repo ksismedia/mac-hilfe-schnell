@@ -1654,7 +1654,7 @@ export const generateCustomerHTML = ({
 
         <div class="score-overview">
           <div class="score-card">
-            <div class="score-big"><span class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
+            <div class="score-big"><span class="score-circle" data-score="${getScoreRange(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
           <div class="score-card">
