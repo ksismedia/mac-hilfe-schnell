@@ -1625,7 +1625,7 @@ export const generateCustomerHTML = ({
       </div>
       <h1>UNNA - die Unternehmensanalyse fürs Handwerk</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
-      <p class="gray-text" style="margin-top: 15px;">Potenziale und Chancen erkennen, Risiken minimieren!</p>
+      <p class="gray-text" style="margin-top: 15px;">Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht für: ${realData.company.name}</p>
     </div>
 
     <!-- Executive Summary -->
