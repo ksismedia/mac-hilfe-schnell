@@ -1695,7 +1695,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Datenschutz</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${corporateIdentityScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
             <div class="score-label">Corporate Identity</div>
           </div>
           ${hourlyRateData ? `
