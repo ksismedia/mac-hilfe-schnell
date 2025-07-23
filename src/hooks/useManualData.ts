@@ -36,6 +36,14 @@ export interface ManualWorkplaceData {
   glassdoorReviews: string;
 }
 
+export interface ManualCorporateIdentityData {
+  uniformLogo: boolean;
+  uniformWorkClothing: boolean;
+  uniformVehicleBranding: boolean;
+  uniformColorScheme: boolean;
+  notes?: string;
+}
+
 export interface ManualCompetitor {
   name: string;
   rating: number;
@@ -66,6 +74,7 @@ export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
   const [manualWorkplaceData, setManualWorkplaceData] = useState<ManualWorkplaceData | null>(null);
+  const [manualCorporateIdentityData, setManualCorporateIdentityData] = useState<ManualCorporateIdentityData | null>(null);
   const [manualCompetitors, setManualCompetitors] = useState<ManualCompetitor[]>([]);
   const [competitorServices, setCompetitorServices] = useState<CompetitorServices>({});
   const [removedMissingServices, setRemovedMissingServices] = useState<string[]>([]);
@@ -85,6 +94,11 @@ export const useManualData = () => {
   const updateWorkplaceData = useCallback((data: ManualWorkplaceData | null) => {
     setManualWorkplaceData(data);
     console.log('Manual Workplace Data Updated:', data);
+  }, []);
+
+  const updateCorporateIdentityData = useCallback((data: ManualCorporateIdentityData | null) => {
+    setManualCorporateIdentityData(data);
+    console.log('Manual Corporate Identity Data Updated:', data);
   }, []);
 
   const updateCompetitors = useCallback((competitors: ManualCompetitor[]) => {
@@ -141,6 +155,7 @@ export const useManualData = () => {
     manualImprintData,
     manualSocialData,
     manualWorkplaceData,
+    manualCorporateIdentityData,
     manualCompetitors,
     competitorServices,
     removedMissingServices,
@@ -149,6 +164,7 @@ export const useManualData = () => {
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
+    updateCorporateIdentityData,
     updateCompetitors,
     updateCompetitorServices,
     updateRemovedMissingServices,
