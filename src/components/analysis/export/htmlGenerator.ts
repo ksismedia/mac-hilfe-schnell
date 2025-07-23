@@ -1694,6 +1694,10 @@ export const generateCustomerHTML = ({
             <div class="score-big"><span class="score-tile ${getScoreColorClass(dataPrivacyScore)}">${dataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
+          <div class="score-card">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${corporateIdentityScore}%</span></div>
+            <div class="score-label">Corporate Identity</div>
+          </div>
           ${hourlyRateData ? `
           <div class="score-card">
             <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#ffffff' : pricingScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${pricingScore}%</span></div>
