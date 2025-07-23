@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 
 interface SaveAnalysisDialogProps {
@@ -20,6 +20,7 @@ interface SaveAnalysisDialogProps {
   manualImprintData?: ManualImprintData | null;
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
+  manualCorporateIdentityData?: ManualCorporateIdentityData | null;
   manualCompetitors: ManualCompetitor[];
   competitorServices: CompetitorServices;
   removedMissingServices?: string[];
@@ -38,6 +39,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualImprintData,
   manualSocialData,
   manualWorkplaceData,
+  manualCorporateIdentityData,
   manualCompetitors,
   competitorServices,
   removedMissingServices = [],
@@ -78,6 +80,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         imprint: manualImprintData || undefined,
         social: manualSocialData || undefined,
         workplace: manualWorkplaceData || undefined,
+        corporateIdentity: manualCorporateIdentityData || undefined,
         competitors: manualCompetitors,
         competitorServices,
         removedMissingServices: removedMissingServices || [],

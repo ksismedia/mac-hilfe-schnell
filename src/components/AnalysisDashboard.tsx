@@ -18,6 +18,7 @@ import SocialMediaAnalysis from './analysis/SocialMediaAnalysis';
 import SocialProof from './analysis/SocialProof';
 import ConversionOptimization from './analysis/ConversionOptimization';
 import WorkplaceReviews from './analysis/WorkplaceReviews';
+import { CorporateIdentityAnalysis } from './analysis/CorporateIdentityAnalysis';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
@@ -400,7 +401,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         <div className="space-y-6">
           <Tabs defaultValue="seo" className="w-full">
             <div className="mb-6 overflow-x-auto">
-              <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-gray-800 border border-yellow-400/30 p-1 text-muted-foreground min-w-full">
+               <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-gray-800 border border-yellow-400/30 p-1 text-muted-foreground min-w-full">
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="performance">Performance</TabsTrigger>
                 <TabsTrigger value="mobile">Mobile</TabsTrigger>
@@ -411,6 +412,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 <TabsTrigger value="accessibility">Barrierefreiheit</TabsTrigger>
                 <TabsTrigger value="dataprivacy">Datenschutz</TabsTrigger>
                 <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
+                <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
@@ -512,6 +514,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               />
             </TabsContent>
 
+            <TabsContent value="corporate" className="space-y-6 mt-0">
+              <CorporateIdentityAnalysis 
+                businessData={{ companyName: realData.company.name, url: businessData.url }}
+                manualData={manualCorporateIdentityData}
+                onUpdate={updateCorporateIdentityData}
+              />
+            </TabsContent>
+
             <TabsContent value="export" className="space-y-6 mt-0">
               <div className="space-y-6">
                 <SaveAnalysisDialog 
@@ -520,6 +530,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
                   manualWorkplaceData={manualWorkplaceData}
+                  manualCorporateIdentityData={manualCorporateIdentityData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   removedMissingServices={removedMissingServices}
@@ -549,6 +560,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
                   manualWorkplaceData={manualWorkplaceData}
+                  manualCorporateIdentityData={manualCorporateIdentityData}
                   manualCompetitors={manualCompetitors}
                   competitorServices={competitorServices}
                   companyServices={companyServices}
