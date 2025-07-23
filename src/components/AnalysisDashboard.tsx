@@ -94,6 +94,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     manualImprintData,
     manualSocialData,
     manualWorkplaceData,
+    manualCorporateIdentityData,
     manualCompetitors,
     competitorServices,
     removedMissingServices,
@@ -102,6 +103,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
+    updateCorporateIdentityData,
     updateCompetitors,
     updateCompetitorServices,
     addRemovedMissingService,
@@ -160,6 +162,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               updateImprintData,
               updateSocialData,
               updateWorkplaceData,
+              updateCorporateIdentityData,
               updateCompetitors,
               updateCompetitorServices,
               updateCompanyServices

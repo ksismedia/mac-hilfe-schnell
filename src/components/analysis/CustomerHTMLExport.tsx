@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -17,6 +17,7 @@ interface CustomerHTMLExportProps {
   manualImprintData?: any;
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: any;
+  manualCorporateIdentityData?: ManualCorporateIdentityData | null;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
@@ -36,7 +37,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   competitorServices = {},
   companyServices,
   deletedCompetitors = new Set(),
-  hourlyRateData,
+    manualCorporateIdentityData,
+    hourlyRateData,
   manualKeywordData,
   keywordScore
 }) => {
@@ -125,12 +127,13 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       deletedCompetitors,
       hourlyRateData,
       missingImprintElements,
-      manualSocialData, // Pass the manual social data to the HTML generator
-      manualWorkplaceData, // Pass workplace data for Kununu/Glassdoor integration
-      manualKeywordData, // Pass manual keyword data
-      keywordScore, // Pass keyword score
-      manualImprintData, // Pass manual imprint data
-      dataPrivacyScore: 75 // Pass data privacy score
+      manualSocialData,
+      manualWorkplaceData,
+      manualCorporateIdentityData,
+      manualKeywordData,
+      keywordScore,
+      manualImprintData,
+      dataPrivacyScore: 75
     });
 
     const newWindow = window.open('', '_blank');
@@ -159,12 +162,13 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       deletedCompetitors,
       hourlyRateData,
       missingImprintElements,
-      manualSocialData, // Pass the manual social data to the HTML generator
-      manualWorkplaceData, // Pass workplace data for Kununu/Glassdoor integration
-      manualKeywordData, // Pass manual keyword data
-      keywordScore, // Pass keyword score
-      manualImprintData, // Pass manual imprint data
-      dataPrivacyScore: 75 // Pass data privacy score
+      manualSocialData,
+      manualWorkplaceData,
+      manualCorporateIdentityData,
+      manualKeywordData,
+      keywordScore,
+      manualImprintData,
+      dataPrivacyScore: 75
     });
 
     try {

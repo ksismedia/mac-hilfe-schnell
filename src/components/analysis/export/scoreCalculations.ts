@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualCorporateIdentityData } from '@/hooks/useManualData';
 
 export const calculateScore = (value: number, maxValue: number = 100) => {
   return Math.min(100, Math.max(0, value));
@@ -278,6 +278,22 @@ export const calculateAccessibilityScore = (realData: RealBusinessData) => {
   return finalScore;
 };
 
+export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: ManualCorporateIdentityData | null): number => {
+  if (!manualCorporateIdentityData) {
+    return 50; // Default neutral score when not assessed
+  }
+  
+  const checks = [
+    manualCorporateIdentityData.uniformLogo,
+    manualCorporateIdentityData.uniformWorkClothing,
+    manualCorporateIdentityData.uniformVehicleBranding,
+    manualCorporateIdentityData.uniformColorScheme
+  ];
+  
+  const score = (checks.filter(Boolean).length / checks.length) * 100;
+  return Math.round(score);
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,
@@ -285,22 +301,21 @@ export const calculateOverallScore = (
   socialMediaScore: number,
   impressumScore: number,
   hourlyRateScore: number,
-  dataPrivacyScore: number = 75
+  dataPrivacyScore: number = 75,
+  corporateIdentityScore: number = 50
 ) => {
-  const overallScore = Math.round(
-    (seoScore + performanceScore + mobileScore + socialMediaScore + impressumScore + hourlyRateScore + dataPrivacyScore) / 7
+  const weightedScore = (
+    seoScore * 0.20 +
+    performanceScore * 0.15 +
+    mobileScore * 0.15 +
+    socialMediaScore * 0.15 +
+    impressumScore * 0.10 +
+    hourlyRateScore * 0.10 +
+    dataPrivacyScore * 0.10 +
+    corporateIdentityScore * 0.05
   );
-  console.log('Overall score calculation:', {
-    seo: seoScore,
-    performance: performanceScore,
-    mobile: mobileScore,
-    socialMedia: socialMediaScore,
-    impressum: impressumScore,
-    hourlyRate: hourlyRateScore,
-    dataPrivacy: dataPrivacyScore,
-    overall: overallScore
-  });
-  return overallScore;
+  
+  return Math.round(Math.max(0, Math.min(100, weightedScore)));
 };
 
 // Berechnung für Local SEO Score - SEHR STRENGE BEWERTUNG für Handwerk

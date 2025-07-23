@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices } from './useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from './useManualData';
 
 export interface SavedAnalysis {
   id: string;
@@ -17,6 +17,7 @@ export interface SavedAnalysis {
     imprint?: ManualImprintData;
     social?: ManualSocialData;
     workplace?: ManualWorkplaceData;
+    corporateIdentity?: ManualCorporateIdentityData;
     competitors: ManualCompetitor[];
     competitorServices: CompetitorServices;
     removedMissingServices: string[];

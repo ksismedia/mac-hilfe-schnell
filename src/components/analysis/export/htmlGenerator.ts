@@ -1,10 +1,10 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
@@ -22,6 +22,7 @@ interface CustomerReportData {
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
+  manualCorporateIdentityData?: ManualCorporateIdentityData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   manualImprintData?: { elements: string[] } | null;
@@ -60,6 +61,7 @@ export const generateCustomerHTML = ({
   missingImprintElements = [],
   manualSocialData,
   manualWorkplaceData,
+  manualCorporateIdentityData,
   manualKeywordData,
   keywordScore,
   manualImprintData,
@@ -72,6 +74,7 @@ export const generateCustomerHTML = ({
   
   // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
   // Calculate additional scores
@@ -1586,7 +1589,8 @@ export const generateCustomerHTML = ({
     googleReviewScore,
     impressumScore,
     accessibilityScore,
-    dataPrivacyScore
+    dataPrivacyScore,
+    corporateIdentityScore
   ].filter(score => score !== undefined && score !== null);
   
   // Calculate overall score as true average of all sections
@@ -2161,6 +2165,85 @@ export const generateCustomerHTML = ({
         <div id="mobile-details" style="display: none;">
           ${getMobileOptimizationAnalysis()}
         </div>
+      </div>
+    </div>
+
+    <!-- Corporate Identity -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Corporate Identity</span>
+        <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${corporateIdentityScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Corporate Identity Konsistenz</h3>
+          <div class="score-display">
+            <div class="score-circle" data-score="${getScoreRange(corporateIdentityScore)}">${corporateIdentityScore}%</div>
+            <div class="score-details">
+              <p><strong>Einheitlichkeit:</strong> ${corporateIdentityScore >= 75 ? 'Sehr konsistent' : corporateIdentityScore >= 50 ? 'Teilweise konsistent' : 'Inkonsistent'}</p>
+              <p><strong>Empfehlung:</strong> ${corporateIdentityScore >= 75 ? 'Professionelle Corporate Identity' : 'Corporate Identity standardisieren'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(corporateIdentityScore)}" style="width: ${corporateIdentityScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        ${manualCorporateIdentityData ? `
+        <div class="collapsible" onclick="toggleSection('corporate-identity-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Corporate Identity Details anzeigen</h4>
+        </div>
+        
+        <div id="corporate-identity-details" style="display: none;">
+          <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4>🎨 Corporate Identity Bewertung</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Einheitliches Logo:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.uniformLogo ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformLogo ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Einheitliche Arbeitskleidung:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.uniformWorkClothing ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformWorkClothing ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Einheitliche Fahrzeugbeklebung:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.uniformVehicleBranding ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformVehicleBranding ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Einheitliche Farbgebung:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.uniformColorScheme ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformColorScheme ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  </span>
+                </p>
+              </div>
+            </div>
+            
+            ${manualCorporateIdentityData.notes ? `
+            <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(59, 130, 246, 0.1);">
+              <h4>📝 Zusätzliche Notizen:</h4>
+              <p style="margin-top: 10px;">${manualCorporateIdentityData.notes}</p>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        ` : `
+        <div class="warning-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+          <h4>⚠️ Corporate Identity nicht bewertet</h4>
+          <p style="margin-top: 10px;">Die Corporate Identity wurde noch nicht manuell bewertet.</p>
+        </div>
+        `}
       </div>
     </div>
 

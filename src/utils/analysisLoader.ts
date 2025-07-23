@@ -1,6 +1,6 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
 
 export const loadCompetitorServices = (
   competitorServices: CompetitorServices,
@@ -16,6 +16,7 @@ export const loadSavedAnalysisData = (
   updateImprintData: (data: ManualImprintData | null) => void,
   updateSocialData: (data: ManualSocialData | null) => void,
   updateWorkplaceData: (data: ManualWorkplaceData | null) => void,
+  updateCorporateIdentityData: (data: ManualCorporateIdentityData | null) => void,
   updateCompetitors: (competitors: ManualCompetitor[]) => void,
   updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void,
   updateCompanyServices?: (services: string[]) => void
@@ -29,6 +30,9 @@ export const loadSavedAnalysisData = (
   }
   if (savedAnalysis.manualData.workplace) {
     updateWorkplaceData(savedAnalysis.manualData.workplace);
+  }
+  if (savedAnalysis.manualData.corporateIdentity) {
+    updateCorporateIdentityData(savedAnalysis.manualData.corporateIdentity);
   }
   if (savedAnalysis.manualData.competitors && savedAnalysis.manualData.competitors.length > 0) {
     updateCompetitors(savedAnalysis.manualData.competitors);
