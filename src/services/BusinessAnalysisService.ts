@@ -208,7 +208,7 @@ export class BusinessAnalysisService {
     }
   }
 
-  // Verbesserte Konkurrenten-Suche mit robuster Fehlerbehandlung
+  // Stark verbesserte Konkurrenten-Suche mit Ausschluss der eigenen Firma
   private static async getRealCompetitorsData(address: string, industry: string, ownCompanyName?: string): Promise<any[]> {
     console.log('=== STARTING COMPETITOR ANALYSIS ===');
     console.log('Address:', address);
@@ -216,33 +216,27 @@ export class BusinessAnalysisService {
     console.log('Own Company:', ownCompanyName);
 
     try {
-      // Timeout für die API-Anfrage
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Competitor search timeout')), 10000);
-      });
+      // Verwende die verbesserte Google API Suche mit Firmenname
+      const nearbyResult = await GoogleAPIService.getNearbyCompetitors(address, industry, ownCompanyName);
       
-      const searchPromise = GoogleAPIService.getNearbyCompetitors(address, industry, ownCompanyName);
-      
-      const nearbyResult = await Promise.race([searchPromise, timeoutPromise]);
-      
-      if (nearbyResult?.results && Array.isArray(nearbyResult.results) && nearbyResult.results.length > 0) {
-        console.log(`SUCCESS: Found ${nearbyResult.results.length} real competitors`);
+      if (nearbyResult?.results && nearbyResult.results.length > 0) {
+        console.log(`SUCCESS: Found ${nearbyResult.results.length} real competitors (excluding own company)`);
         
-        return nearbyResult.results.slice(0, 6).map((place: any) => ({
-          name: place.name || 'Unbekannt',
+        return nearbyResult.results.map((place: any) => ({
+          name: place.name,
           distance: place.distance || this.calculateDistance(place.geometry?.location) || '< 10 km',
-          rating: Math.min(Math.max(place.rating || 0, 0), 5),
-          reviews: Math.max(place.user_ratings_total || 0, 0),
+          rating: place.rating || 0,
+          reviews: place.user_ratings_total || 0,
           location: place.locationInfo?.display || ''
         }));
       }
       
-      console.log('No competitors found via API');
-      return [];
+      console.log('No real competitors found via API - returning empty array instead of fake data');
+      return []; // Keine Phantasiefirmen mehr!
       
     } catch (error) {
-      console.warn('Competitor search failed, continuing with empty list:', error.message);
-      return [];
+      console.error('Competitor search failed:', error);
+      return []; // Auch bei Fehlern keine Phantasiefirmen
     }
   }
 

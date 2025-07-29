@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,23 +32,19 @@ const Index = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
-  
-  // Use ref to track component stability
-  const componentMountedRef = useRef(false);
   const { toast } = useToast();
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
-  // Remove debug effects that cause unnecessary re-renders
-
-  // Stabilize component mount
+  // Debug state changes
   useEffect(() => {
-    componentMountedRef.current = true;
-    return () => {
-      componentMountedRef.current = false;
-    };
-  }, []);
+    console.log('Step changed to:', step);
+  }, [step]);
+
+  useEffect(() => {
+    console.log('BusinessData changed:', businessData);
+  }, [businessData]);
 
   // Check for existing API key on mount
   useEffect(() => {
@@ -62,11 +57,6 @@ const Index = () => {
   const handleBusinessSubmit = (e: React.FormEvent) => {
     console.log('handleBusinessSubmit called');
     e.preventDefault();
-    
-    if (!componentMountedRef.current) {
-      console.log('Component not mounted, skipping submit');
-      return;
-    }
     
     if (!businessData.address || !businessData.url) {
       console.log('Form validation failed - missing fields');
@@ -91,13 +81,10 @@ const Index = () => {
   };
 
   const handleForceApiKeyInput = () => {
-    if (!componentMountedRef.current) return;
     setStep('api');
   };
 
   const handleResetApiKey = () => {
-    if (!componentMountedRef.current) return;
-    
     // Clear stored API key
     localStorage.removeItem('google_api_key');
     GoogleAPIService.setApiKey('');
@@ -111,16 +98,12 @@ const Index = () => {
   };
 
   const validateAndSaveApiKey = async (keyToValidate: string) => {
-    if (!componentMountedRef.current) return false;
-    
     setIsValidatingApiKey(true);
 
     try {
       const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
       const response = await fetch(testUrl);
       const data = await response.json();
-
-      if (!componentMountedRef.current) return false;
 
       if (response.ok && data.status === 'OK') {
         GoogleAPIService.setApiKey(keyToValidate);
@@ -137,26 +120,20 @@ const Index = () => {
       }
     } catch (error) {
       console.error('API Key validation error:', error);
-      if (componentMountedRef.current) {
-        toast({
-          title: "❌ Ungültiger API-Key",
-          description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "❌ Ungültiger API-Key",
+        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe.",
+        variant: "destructive",
+      });
       return false;
     } finally {
-      if (componentMountedRef.current) {
-        setIsValidatingApiKey(false);
-      }
+      setIsValidatingApiKey(false);
     }
   };
 
   const handleApiKeySubmit = async (e: React.FormEvent) => {
     console.log('handleApiKeySubmit called');
     e.preventDefault();
-    
-    if (!componentMountedRef.current) return;
     
     if (!apiKey.trim()) {
       console.log('API key validation failed - empty key');
@@ -173,8 +150,6 @@ const Index = () => {
   };
 
   const handleExtensionDataProcess = (processedData: BusinessData) => {
-    if (!componentMountedRef.current) return;
-    
     setBusinessData(processedData);
     setLoadedAnalysisId(undefined);
     setStep('results');
@@ -185,14 +160,11 @@ const Index = () => {
   };
 
   const handleBusinessDataChange = (newBusinessData: BusinessData) => {
-    if (!componentMountedRef.current) return;
     setBusinessData(newBusinessData);
   };
 
   const handleLoadSavedAnalysis = (analysis: any) => {
     console.log('handleLoadSavedAnalysis called with:', analysis);
-    
-    if (!componentMountedRef.current) return;
     
     // Set business data and analysis ID
     setBusinessData(analysis.businessData);
@@ -206,8 +178,6 @@ const Index = () => {
   };
 
   const resetToStart = () => {
-    if (!componentMountedRef.current) return;
-    
     setStep('business');
     setLoadedAnalysisId(undefined);
     setBusinessData({
@@ -323,6 +293,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-4xl mx-auto">
+        {/* Header mit Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
             <img 
@@ -345,6 +316,7 @@ const Index = () => {
           </div>
         </div>
 
+        {/* API-Key Management Buttons */}
         {GoogleAPIService.hasApiKey() && (
           <div className="mb-6 text-center">
             <div className="flex justify-center gap-4 mb-4">
@@ -368,6 +340,7 @@ const Index = () => {
           </div>
         )}
 
+        {/* Gespeicherte Analysen Button */}
         <div className="mb-6 text-center">
           <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
         </div>

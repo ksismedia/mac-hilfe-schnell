@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,6 @@ import SocialProof from './analysis/SocialProof';
 import ConversionOptimization from './analysis/ConversionOptimization';
 import WorkplaceReviews from './analysis/WorkplaceReviews';
 import { CorporateIdentityAnalysis } from './analysis/CorporateIdentityAnalysis';
-import { MarketDemandAnalysis } from './analysis/MarketDemandAnalysis';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
@@ -77,20 +76,18 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [marketDemandData, setMarketDemandData] = useState<any>(null);
   
-  // Use refs to track if analysis has been loaded to prevent re-loading
-  const analysisLoadedRef = useRef<string>('');
-  const isFirstLoadRef = useRef(true);
-  
-  const handleKeywordsScoreChange = useCallback((score: number | null) => {
+  const handleKeywordsScoreChange = (score: number | null) => {
+    console.log('=== KEYWORDS SCORE CHANGE IN DASHBOARD ===');
+    console.log('New score received:', score);
     setKeywordsScore(score);
-  }, []);
+  };
 
-  const handleKeywordDataChange = useCallback((keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
+  const handleKeywordDataChange = (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
+    console.log('=== KEYWORD DATA CHANGE IN DASHBOARD ===');
+    console.log('New keyword data received:', keywordData);
     setManualKeywordData(keywordData);
-  }, []);
-
+  };
   const { toast } = useToast();
 
   // Manual data management
@@ -119,27 +116,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   // Access saved analyses hook
   const { loadAnalysis } = useSavedAnalyses();
 
-  // Market demand analysis handler
-  const handleMarketAnalysisComplete = useCallback((data: any) => {
-    setMarketDemandData(data);
-  }, []);
+  // No transformation needed - use competitorServices directly
 
-  // STABILIZED: Load analysis data with proper dependency management
+  // Load analysis data or load saved analysis - FIXED: Don't reload on businessData changes
   useEffect(() => {
     const loadAnalysisData = async () => {
       console.log('=== LOAD ANALYSIS EFFECT ===');
       console.log('loadedAnalysisId:', loadedAnalysisId);
       console.log('realData exists:', !!realData);
-      console.log('analysisLoadedRef.current:', analysisLoadedRef.current);
-      
-      // Create a unique key for this analysis
-      const analysisKey = loadedAnalysisId || `${businessData.url}-${businessData.address}-${businessData.industry}`;
-      
-      // Prevent re-loading if we already loaded this analysis
-      if (analysisLoadedRef.current === analysisKey) {
-        console.log('Analysis already loaded, skipping');
-        return;
-      }
       
       // If we have a saved analysis to load
       if (loadedAnalysisId && !realData) {
@@ -185,8 +169,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               updateCompanyServices
             );
             
-            // Mark this analysis as loaded
-            analysisLoadedRef.current = analysisKey;
             console.log('Saved analysis loaded successfully');
             return;
           } else {
@@ -212,7 +194,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       // If we already have data, skip
       if (realData) {
         console.log('Analysis data already loaded, skipping');
-        analysisLoadedRef.current = analysisKey;
         return;
       }
       
@@ -224,7 +205,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         try {
           const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
           setRealData(analysisData);
-          analysisLoadedRef.current = analysisKey;
           console.log('New analysis completed successfully');
         } catch (error) {
           console.error('Analysis error:', error);
@@ -239,31 +219,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
       }
     };
 
-    // Only run on first load or when analysis ID changes
-    if (isFirstLoadRef.current || (loadedAnalysisId && analysisLoadedRef.current !== loadedAnalysisId)) {
-      isFirstLoadRef.current = false;
-      loadAnalysisData();
-    }
-  }, [loadedAnalysisId]); // CRITICAL: Only depend on loadedAnalysisId, NOT on businessData
-
-  // Reset analysis when business data changes (for new analyses)
-  useEffect(() => {
-    if (!loadedAnalysisId) {
-      // Only reset if this is a new analysis (not a loaded one)
-      const newAnalysisKey = `${businessData.url}-${businessData.address}-${businessData.industry}`;
-      if (analysisLoadedRef.current !== newAnalysisKey) {
-        console.log('Business data changed for new analysis, resetting...');
-        setRealData(null);
-        setKeywordsScore(null);
-        setManualKeywordData(null);
-        setPrivacyData(null);
-        setAccessibilityData(null);
-        setMarketDemandData(null);
-        analysisLoadedRef.current = '';
-        isFirstLoadRef.current = true;
-      }
-    }
-  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId]);
+    loadAnalysisData();
+  }, [toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
 
   if (isLoading) {
     return (
@@ -293,10 +250,12 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     );
   }
 
+  // KORRIGIERTE Score-Berechnungen - Social Media Score wird LIVE berechnet
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
   const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
   
+  // Use manual keywords score if set (including 0), otherwise use default
   const currentKeywordsScore = keywordsScore !== null ? keywordsScore : defaultKeywordsScore;
   
   console.log('=== DASHBOARD KEYWORDS SCORE CALCULATION ===');
@@ -304,6 +263,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   console.log('defaultKeywordsScore:', defaultKeywordsScore);
   console.log('currentKeywordsScore (final):', currentKeywordsScore);
   
+  // WICHTIG: Social Media Score wird mit aktuellen manuellen Daten berechnet
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   console.log('Dashboard - LIVE Social Media Score:', socialMediaScore, 'Manual Data:', manualSocialData);
 
@@ -322,6 +282,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
           <div className="flex items-center gap-4">
             <Button onClick={onReset} variant="outline" size="sm">
@@ -342,6 +303,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
+        {/* Overall Rating Component */}
         <div className="mb-8">
           <OverallRating 
             businessData={businessData}
@@ -351,6 +313,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           />
         </div>
 
+        {/* Score Overview Tiles - KORRIGIERT: Verwendet live berechneten socialMediaScore */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-yellow-400 mb-4">Detailbewertung - {realData.company.name}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
@@ -399,6 +362,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
               </div>
             </div>
             
+            {/* KORRIGIERT: Hier wird jetzt der live berechnete socialMediaScore verwendet */}
             <div className={`p-4 rounded-lg border ${getScoreBg(socialMediaScore)}`}>
               <div className="text-center">
                 <div className={`text-4xl font-bold ${getScoreColor(socialMediaScore)} relative`}>
@@ -412,6 +376,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             </div>
           </div>
 
+          {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
               <div className="text-lg font-semibold text-yellow-400">{realData.performance.loadTime}s</div>
@@ -432,6 +397,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
           </div>
         </div>
 
+        {/* Analysis Tabs */}
         <div className="space-y-6">
           <Tabs defaultValue="seo" className="w-full">
             <div className="mb-6 overflow-x-auto">
@@ -447,7 +413,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 <TabsTrigger value="dataprivacy">Datenschutz</TabsTrigger>
                 <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
                 <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
-                <TabsTrigger value="market">Marktbedarf</TabsTrigger>
                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
@@ -554,15 +519,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 businessData={{ companyName: realData.company.name, url: businessData.url }}
                 manualData={manualCorporateIdentityData}
                 onUpdate={updateCorporateIdentityData}
-              />
-            </TabsContent>
-
-            <TabsContent value="market" className="space-y-6 mt-0">
-              <MarketDemandAnalysis 
-                address={businessData.address}
-                industry={businessData.industry}
-                competitors={realData.competitors || []}
-                onAnalysisComplete={handleMarketAnalysisComplete}
               />
             </TabsContent>
 

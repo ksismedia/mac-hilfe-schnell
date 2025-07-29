@@ -109,25 +109,20 @@ export const useExtensionData = () => {
     let pollCount = 0;
     const maxPolls = 10; // Max 10 Sekunden warten
     let pollTimeout: NodeJS.Timeout;
-    let pollingActive = false;
     
     const pollForData = () => {
-      if (pollCount >= maxPolls || !pollingActive) {
-        console.log('Polling beendet - keine Extension-Daten gefunden oder gestoppt');
-        pollingActive = false;
+      if (pollCount >= maxPolls) {
+        console.log('Polling beendet - keine Extension-Daten gefunden');
         return;
       }
       
       if (checkLocalStorage()) {
         console.log('Extension-Daten via Polling gefunden');
-        pollingActive = false;
         return;
       }
       
       pollCount++;
-      if (pollingActive) {
-        pollTimeout = setTimeout(pollForData, 1000);
-      }
+      pollTimeout = setTimeout(pollForData, 1000);
     };
 
     // Starte sofortigen Check
@@ -139,14 +134,11 @@ export const useExtensionData = () => {
     // Starte Polling nur wenn keine Daten sofort gefunden wurden
     if (!immediateSuccess) {
       console.log('Starte Polling für Extension-Daten...');
-      pollingActive = true;
       pollTimeout = setTimeout(pollForData, 1000);
     }
 
     // Cleanup
     return () => {
-      console.log('useExtensionData: Cleanup wird ausgeführt');
-      pollingActive = false;
       window.removeEventListener('message', handleExtensionMessage);
       if (pollTimeout) {
         clearTimeout(pollTimeout);
