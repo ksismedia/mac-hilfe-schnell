@@ -221,7 +221,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
+  }, [toast, loadedAnalysisId, businessData.url, businessData.address, businessData.industry]);
 
   if (isLoading) {
     return (
