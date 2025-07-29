@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { Save, FolderOpen, Trash2, Download, Calendar, Globe } from 'lucide-react';
@@ -53,6 +53,9 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Gespeicherte Analysen</DialogTitle>
+            <DialogDescription>
+              Sie haben noch keine Analysen gespeichert.
+            </DialogDescription>
           </DialogHeader>
           <div className="text-center py-8 text-gray-500">
             <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -75,6 +78,9 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
+          <DialogDescription>
+            Laden oder löschen Sie Ihre gespeicherten Analysen.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           {savedAnalyses.map((analysis) => (
