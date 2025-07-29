@@ -19,6 +19,7 @@ import SocialProof from './analysis/SocialProof';
 import ConversionOptimization from './analysis/ConversionOptimization';
 import WorkplaceReviews from './analysis/WorkplaceReviews';
 import { CorporateIdentityAnalysis } from './analysis/CorporateIdentityAnalysis';
+import { MarketDemandAnalysis } from './analysis/MarketDemandAnalysis';
 import ImprintCheck from './analysis/ImprintCheck';
 import IndustryFeatures from './analysis/IndustryFeatures';
 import PDFExport from './analysis/PDFExport';
@@ -413,6 +414,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 <TabsTrigger value="dataprivacy">Datenschutz</TabsTrigger>
                 <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
                 <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
+                <TabsTrigger value="market">Marktbedarf</TabsTrigger>
                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
@@ -519,6 +521,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 businessData={{ companyName: realData.company.name, url: businessData.url }}
                 manualData={manualCorporateIdentityData}
                 onUpdate={updateCorporateIdentityData}
+              />
+            </TabsContent>
+
+            <TabsContent value="market" className="space-y-6 mt-0">
+              <MarketDemandAnalysis 
+                address={businessData.address}
+                industry={businessData.industry}
+                competitors={realData.competitors || []}
               />
             </TabsContent>
 
