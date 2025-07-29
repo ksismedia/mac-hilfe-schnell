@@ -41,14 +41,7 @@ const Index = () => {
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
-  // Debug state changes
-  useEffect(() => {
-    console.log('Step changed to:', step);
-  }, [step]);
-
-  useEffect(() => {
-    console.log('BusinessData changed:', businessData);
-  }, [businessData]);
+  // Remove debug effects that cause unnecessary re-renders
 
   // Stabilize component mount
   useEffect(() => {

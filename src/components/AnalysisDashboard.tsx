@@ -84,14 +84,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
   const isFirstLoadRef = useRef(true);
   
   const handleKeywordsScoreChange = useCallback((score: number | null) => {
-    console.log('=== KEYWORDS SCORE CHANGE IN DASHBOARD ===');
-    console.log('New score received:', score);
     setKeywordsScore(score);
   }, []);
 
   const handleKeywordDataChange = useCallback((keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
-    console.log('=== KEYWORD DATA CHANGE IN DASHBOARD ===');
-    console.log('New keyword data received:', keywordData);
     setManualKeywordData(keywordData);
   }, []);
 
@@ -125,7 +121,6 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
   // Market demand analysis handler
   const handleMarketAnalysisComplete = useCallback((data: any) => {
-    console.log('Market analysis completed:', data);
     setMarketDemandData(data);
   }, []);
 
