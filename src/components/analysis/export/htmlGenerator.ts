@@ -4,8 +4,9 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateMarketDemandScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
+import { generateMarketDemandSection } from './marketDemandSection';
 
 interface CustomerReportData {
   businessData: {
@@ -27,6 +28,7 @@ interface CustomerReportData {
   keywordScore?: number;
   manualImprintData?: { elements: string[] } | null;
   dataPrivacyScore?: number;
+  marketDemandData?: any;
 }
 
 // Function to get score range for data attribute
@@ -65,7 +67,8 @@ export const generateCustomerHTML = ({
   manualKeywordData,
   keywordScore,
   manualImprintData,
-  dataPrivacyScore = 75
+  dataPrivacyScore = 75,
+  marketDemandData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
@@ -75,6 +78,7 @@ export const generateCustomerHTML = ({
   // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
+  const marketDemandScore = calculateMarketDemandScore(marketDemandData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   
   // Calculate additional scores
@@ -154,17 +158,18 @@ export const generateCustomerHTML = ({
   const accessibilityScore = calculateAccessibilityScore(realData);
   const legalScore = impressumScore;
   
-  
-  // Calculate overall score
-  const overallScore = Math.round((
-    realData.seo.score * 0.2 + 
-    realData.performance.score * 0.15 + 
-    realData.mobile.overallScore * 0.15 +
-    socialMediaScore * 0.15 +
-    reputationScore * 0.15 +
-    impressumScore * 0.1 +
-    accessibilityScore * 0.1
-  ));
+  // Calculate overall score with market demand included
+  const overallScore = calculateOverallScore(
+    realData.seo.score,
+    realData.performance.score,
+    realData.mobile.overallScore,
+    socialMediaScore,
+    impressumScore,
+    hourlyRateScore,
+    dataPrivacyScore,
+    corporateIdentityScore,
+    marketDemandScore
+  );
   
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
@@ -1698,6 +1703,10 @@ export const generateCustomerHTML = ({
             <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
             <div class="score-label">Corporate Identity</div>
           </div>
+          <div class="score-card">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(marketDemandScore)}">${Math.round(marketDemandScore)}%</span></div>
+            <div class="score-label">Marktbedarf</div>
+          </div>
           ${hourlyRateData ? `
           <div class="score-card">
             <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#ffffff' : pricingScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${pricingScore}%</span></div>
@@ -2674,6 +2683,8 @@ export const generateCustomerHTML = ({
     </div>
 
     ${generateDataPrivacySection(dataPrivacyScore)}
+
+    ${generateMarketDemandSection(businessData, realData, marketDemandData)}
 
     <!-- Strategische Empfehlungen -->
     <div class="section">

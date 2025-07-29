@@ -529,6 +529,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 address={businessData.address}
                 industry={businessData.industry}
                 competitors={realData.competitors || []}
+                onAnalysisComplete={(data) => {
+                  // Speichere Marktdaten in einem Ref oder State für spätere Verwendung
+                  console.log('Market analysis completed:', data);
+                }}
               />
             </TabsContent>
 

@@ -294,6 +294,26 @@ export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: Ma
   return Math.round(score);
 };
 
+export const calculateMarketDemandScore = (marketData?: any): number => {
+  if (!marketData) return 50; // Default score without analysis
+  
+  // Extract key metrics from market analysis
+  const serviceDemands = marketData.serviceDemands || [];
+  const opportunities = marketData.marketOpportunities || [];
+  const regionalInsights = marketData.regionalInsights || {};
+  
+  // Calculate score based on market positioning
+  const avgDemandScore = serviceDemands.length > 0 
+    ? serviceDemands.reduce((sum: number, service: any) => sum + service.demandScore, 0) / serviceDemands.length 
+    : 50;
+  
+  const opportunityBonus = Math.min(20, opportunities.length * 5); // Max 20 points for opportunities
+  const saturationPenalty = (regionalInsights.marketSaturation || 50) > 80 ? -10 : 0;
+  
+  const score = Math.round(avgDemandScore * 0.7 + opportunityBonus + saturationPenalty);
+  return Math.max(0, Math.min(100, score));
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,
@@ -302,17 +322,19 @@ export const calculateOverallScore = (
   impressumScore: number,
   hourlyRateScore: number,
   dataPrivacyScore: number = 75,
-  corporateIdentityScore: number = 50
+  corporateIdentityScore: number = 50,
+  marketDemandScore: number = 50
 ) => {
   const weightedScore = (
-    seoScore * 0.20 +
-    performanceScore * 0.15 +
-    mobileScore * 0.15 +
-    socialMediaScore * 0.15 +
-    impressumScore * 0.10 +
-    hourlyRateScore * 0.10 +
-    dataPrivacyScore * 0.10 +
-    corporateIdentityScore * 0.05
+    seoScore * 0.18 +
+    performanceScore * 0.13 +
+    mobileScore * 0.13 +
+    socialMediaScore * 0.13 +
+    impressumScore * 0.09 +
+    hourlyRateScore * 0.09 +
+    dataPrivacyScore * 0.09 +
+    corporateIdentityScore * 0.05 +
+    marketDemandScore * 0.11
   );
   
   return Math.round(Math.max(0, Math.min(100, weightedScore)));
