@@ -243,26 +243,40 @@ export class GoogleAPIService {
     }
   }
 
-  // Verbesserte Nearby-Suche mit kleineren Radien zuerst
+  // Verbesserte Nearby-Suche mit besserer Fehlerbehandlung
   private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string, businessType?: string): Promise<any[]> {
     const apiKey = this.getApiKey();
     const results: any[] = [];
 
     try {
-      // Kleinere Radien zuerst: 500m, 1km, 2km, 5km, 10km für bessere lokale Abdeckung
-      const radii = [500, 1000, 2000, 5000, 10000];
+      // Verkürzte Radien-Liste für schnellere Suche
+      const radii = [1000, 2000, 5000];
       
       for (const radius of radii) {
-        const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=${radius}&keyword=${encodeURIComponent(searchTerm)}&type=establishment&key=${apiKey}`;
-        
-        const proxies = [
-          `https://corsproxy.io/?${encodeURIComponent(nearbyUrl)}`,
-          nearbyUrl
-        ];
+        try {
+          // Verzögerung zwischen Requests um Rate Limits zu vermeiden
+          if (results.length > 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
 
-        for (const proxyUrl of proxies) {
+          const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=${radius}&keyword=${encodeURIComponent(searchTerm)}&type=establishment&key=${apiKey}`;
+          
+          // Nur einen Proxy verwenden um Requests zu reduzieren
+          const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(nearbyUrl)}`;
+          
           try {
-            const response = await fetch(proxyUrl);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s Timeout
+            
+            const response = await fetch(proxyUrl, {
+              signal: controller.signal,
+              headers: {
+                'Accept': 'application/json',
+              }
+            });
+            
+            clearTimeout(timeoutId);
+            
             if (response.ok) {
               const data = await response.json();
               if (data?.results?.length > 0) {
@@ -277,27 +291,34 @@ export class GoogleAPIService {
                   ...place,
                   locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
                   name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity),
-                  searchRadius: radius // Für Debugging
+                  searchRadius: radius
                 }));
                 
                 results.push(...businessesWithLocation);
-                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} relevant businesses (excluding own company)`);
+                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} relevant businesses`);
                 
-                if (results.length >= 12) break; // Sammle mehr Ergebnisse für bessere Auswahl
+                if (results.length >= 8) break; // Weniger Ergebnisse für Stabilität
               }
+            } else {
+              console.warn(`API request failed with status: ${response.status}`);
             }
-          } catch (error) {
+          } catch (fetchError) {
+            console.warn(`Request failed for radius ${radius}m:`, fetchError.message);
             continue;
           }
+        } catch (radiusError) {
+          console.warn(`Error processing radius ${radius}m:`, radiusError.message);
+          continue;
         }
         
-        if (results.length >= 12) break; // Genug gefunden
+        if (results.length >= 8) break;
       }
 
     } catch (error) {
       console.error('Nearby search error:', error);
     }
 
+    console.log(`Final competitor search result: ${results.length} businesses found`);
     return results;
   }
 
