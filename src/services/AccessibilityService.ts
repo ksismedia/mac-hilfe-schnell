@@ -260,58 +260,58 @@ export class AccessibilityService {
     let factors: string[] = [];
     let recommendations: string[] = [];
     
-    // Sehr konservative, rechtlich fundierte Bewertung
-    if (criticalCount >= 3 || score < 40) {
+    // Realistische, praxisnahe Bewertung
+    if (criticalCount >= 5 || score < 25) {
       level = 'high';
-      riskScore = 85;
+      riskScore = 70;
       factors = [
-        'Mehrere kritische WCAG A-Level Verstöße',
-        'BGG §4 - Barrierefreie Informationstechnik',
-        'Mögliche Abmahnungen nach UWG'
+        'Viele kritische WCAG-Verstöße erkannt',
+        'Deutliche Barrieren für Nutzer mit Behinderungen',
+        'Erhöhtes Risiko für Beschwerden'
       ];
       recommendations = [
-        'Sofortige Behebung kritischer Alt-Text und Label-Probleme',
-        'Accessibility-Audit durch Experten',
-        'Schrittweise WCAG 2.1 AA Konformität anstreben'
+        'Alt-Texte und Formular-Labels ergänzen',
+        'Farbkontraste überprüfen und anpassen',
+        'Grundlegende Barrierefreiheit umsetzen'
       ];
-    } else if (criticalCount >= 1 || highCount >= 3 || score < 60) {
+    } else if (criticalCount >= 3 || highCount >= 4 || score < 45) {
       level = 'medium';
-      riskScore = 60;
+      riskScore = 50;
       factors = [
-        'Vereinzelte kritische Barrierefreiheitsprobleme',
-        'EU-Richtlinie 2016/2102 nicht vollständig erfüllt',
-        'Potenzielle Benachteiligung von Nutzern'
+        'Mehrere Barrierefreiheitsprobleme vorhanden',
+        'Verbesserungsbedarf bei WCAG-Konformität',
+        'Einige Nutzer könnten Schwierigkeiten haben'
       ];
       recommendations = [
-        'Kritische Probleme innerhalb 4-6 Wochen beheben',
-        'Farbkontraste und Fokusmanagement verbessern',
-        'Regelmäßige Accessibility-Tests etablieren'
+        'Schrittweise Behebung der kritischen Punkte',
+        'Farbkontraste und Navigation verbessern',
+        'Accessibility-Grundlagen implementieren'
       ];
-    } else if (score < 75) {
+    } else if (score < 65) {
       level = 'low';
-      riskScore = 35;
+      riskScore = 30;
       factors = [
-        'Grundlegende Barrierefreiheit größtenteils vorhanden',
-        'Kleinere WCAG AA Abweichungen',
-        'Verbesserungspotenzial bei Nutzerfreundlichkeit'
+        'Barrierefreiheit teilweise umgesetzt',
+        'Kleinere Optimierungen erforderlich',
+        'Gute Basis für weitere Verbesserungen'
       ];
       recommendations = [
-        'Kontinuierliche Verbesserung der Barrierefreiheit',
-        'Nutzer-Feedback zu Accessibility einholen',
-        'Team-Schulungen zu inklusivem Design'
+        'Verbleibende Probleme systematisch angehen',
+        'Regelmäßige Überprüfung etablieren',
+        'Best Practices weiter ausbauen'
       ];
     } else {
       level = 'very-low';
       riskScore = 15;
       factors = [
-        'Gute WCAG 2.1 Konformität',
-        'Proaktive Barrierefreiheit implementiert',
-        'Inklusives Design umgesetzt'
+        'Solide Barrierefreiheit implementiert',
+        'WCAG-Grundlagen größtenteils erfüllt',
+        'Nutzerfreundlich für verschiedene Bedürfnisse'
       ];
       recommendations = [
-        'Regelmäßige Accessibility-Audits durchführen',
-        'Neue Features auf Barrierefreiheit prüfen',
-        'Best Practices weiter ausbauen'
+        'Aktuelle Standards beibehalten',
+        'Kontinuierliche Verbesserung fortsetzen',
+        'Neue Features barrierefrei gestalten'
       ];
     }
     
