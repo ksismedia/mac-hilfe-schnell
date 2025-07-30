@@ -8,6 +8,8 @@ import BacklinkAnalysis from '../BacklinkAnalysis';
 import AccessibilityAnalysis from '../AccessibilityAnalysis';
 import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
+import CompetitorAnalysis from '../CompetitorAnalysis';
+import IndustryFeatures from '../IndustryFeatures';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface SEOContentCategoryProps {
@@ -23,6 +25,17 @@ interface SEOContentCategoryProps {
   setAccessibilityData: (data: any) => void;
   manualImprintData: any;
   updateImprintData: (data: any) => void;
+  manualCompetitors: any[];
+  competitorServices: any;
+  removedMissingServices: string[];
+  companyServices: any;
+  deletedCompetitors: Set<string>;
+  updateCompetitors: (competitors: any[]) => void;
+  updateCompetitorServices: (name: string, services: string[]) => void;
+  addRemovedMissingService: (service: string) => void;
+  updateCompanyServices: (services: string[]) => void;
+  addDeletedCompetitor: (competitorName: string) => void;
+  removeDeletedCompetitor: (competitorName: string) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -38,6 +51,17 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   setAccessibilityData,
   manualImprintData,
   updateImprintData,
+  manualCompetitors,
+  competitorServices,
+  removedMissingServices,
+  companyServices,
+  deletedCompetitors,
+  updateCompetitors,
+  updateCompetitorServices,
+  addRemovedMissingService,
+  updateCompanyServices,
+  addDeletedCompetitor,
+  removeDeletedCompetitor,
 }) => {
   return (
     <div className="space-y-6">
@@ -47,7 +71,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
       </div>
       
       <Tabs defaultValue="seo" className="w-full">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-6">
+        <TabsList className="grid grid-cols-5 lg:grid-cols-10 mb-6">
           <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
@@ -56,6 +80,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
           <TabsTrigger value="accessibility">Barrierefreiheit</TabsTrigger>
           <TabsTrigger value="privacy">Datenschutz</TabsTrigger>
           <TabsTrigger value="imprint">Impressum</TabsTrigger>
+          <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
+          <TabsTrigger value="industry">Branche</TabsTrigger>
         </TabsList>
 
         <TabsContent value="seo">
@@ -111,6 +137,29 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             manualData={manualImprintData}
             onManualDataChange={updateImprintData}
           />
+        </TabsContent>
+
+        <TabsContent value="competitors">
+          <CompetitorAnalysis 
+            address={businessData.address}
+            industry={businessData.industry}
+            realData={realData}
+            manualCompetitors={manualCompetitors}
+            competitorServices={competitorServices}
+            removedMissingServices={removedMissingServices}
+            companyServices={companyServices}
+            deletedCompetitors={deletedCompetitors}
+            onCompetitorsChange={updateCompetitors}
+            onCompetitorServicesChange={updateCompetitorServices}
+            onRemovedMissingServicesChange={addRemovedMissingService}
+            onCompanyServicesChange={updateCompanyServices}
+            onDeletedCompetitorChange={addDeletedCompetitor}
+            onRestoreCompetitorChange={removeDeletedCompetitor}
+          />
+        </TabsContent>
+
+        <TabsContent value="industry">
+          <IndustryFeatures businessData={businessData} />
         </TabsContent>
       </Tabs>
     </div>

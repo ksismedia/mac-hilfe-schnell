@@ -236,6 +236,17 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             setAccessibilityData={setAccessibilityData}
             manualImprintData={manualImprintData}
             updateImprintData={updateImprintData}
+            manualCompetitors={manualCompetitors}
+            competitorServices={competitorServices}
+            removedMissingServices={removedMissingServices}
+            companyServices={companyServices}
+            deletedCompetitors={deletedCompetitors}
+            updateCompetitors={updateCompetitors}
+            updateCompetitorServices={updateCompetitorServices}
+            addRemovedMissingService={addRemovedMissingService}
+            updateCompanyServices={updateCompanyServices}
+            addDeletedCompetitor={addDeletedCompetitor}
+            removeDeletedCompetitor={removeDeletedCompetitor}
           />
         );
       case 'performance-mobile':
