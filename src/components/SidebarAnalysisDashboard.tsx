@@ -105,13 +105,13 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
   // Load analysis data or load saved analysis
   useEffect(() => {
-    console.log('=== SIDEBAR DASHBOARD useEffect TRIGGERED ===');
-    console.log('loadedAnalysisId:', loadedAnalysisId);
-    console.log('realData exists:', !!realData);
-    console.log('businessData:', businessData);
-    
     const loadAnalysisData = async () => {
-      if (loadedAnalysisId && !realData) {
+      // Prevent duplicate analysis loading
+      if (realData) {
+        return;
+      }
+      
+      if (loadedAnalysisId) {
         try {
           const savedAnalysis = loadAnalysis(loadedAnalysisId);
           
@@ -160,13 +160,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           });
           return;
         }
-      }
-      
-      if (realData) {
-        return;
-      }
-      
-      if (!loadedAnalysisId) {
+      } else {
         setIsLoading(true);
         
         try {
@@ -186,7 +180,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [toast, loadedAnalysisId, realData, loadAnalysis]);
+  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis]);
 
   if (isLoading) {
     return (

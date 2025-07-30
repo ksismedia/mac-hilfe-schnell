@@ -61,28 +61,26 @@ interface ExtensionMessage {
 export const useExtensionData = () => {
   const [extensionData, setExtensionData] = useState<ExtensionWebsiteData | null>(null);
   const [isFromExtension, setIsFromExtension] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    console.log('useExtensionData: Hook initialisiert');
+    if (isInitialized) return;
 
     // 1. Überprüfe localStorage sofort beim Laden
     const checkLocalStorage = () => {
       try {
         const storedData = localStorage.getItem('seo_extension_data');
-        console.log('LocalStorage Check:', !!storedData);
         
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
           
           if (parsedData.timestamp > fiveMinutesAgo) {
-            console.log('✓ Extension-Daten aus localStorage geladen:', parsedData.data);
             setExtensionData(parsedData.data);
             setIsFromExtension(true);
             localStorage.removeItem('seo_extension_data');
             return true;
           } else {
-            console.log('Extension-Daten zu alt, lösche sie');
             localStorage.removeItem('seo_extension_data');
           }
         }
@@ -94,30 +92,27 @@ export const useExtensionData = () => {
 
     // 2. PostMessage-Listener für Extension-Kommunikation
     const handleExtensionMessage = (event: MessageEvent) => {
-      console.log('PostMessage erhalten:', event.data);
-      
       if (event.data?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.data?.source === 'seo-analyzer-extension' &&
           event.data?.data) {
-        console.log('✓ Extension-Website-Daten über PostMessage erhalten:', event.data.data);
         setExtensionData(event.data.data);
         setIsFromExtension(true);
       }
     };
 
-    // 3. Polling für localStorage (falls die Daten erst später ankommen)
+    // 3. Optimized polling with less console noise
     let pollCount = 0;
-    const maxPolls = 10; // Max 10 Sekunden warten
+    const maxPolls = 10;
     let pollTimeout: NodeJS.Timeout;
     
     const pollForData = () => {
       if (pollCount >= maxPolls) {
-        console.log('Polling beendet - keine Extension-Daten gefunden');
+        setIsInitialized(true);
         return;
       }
       
       if (checkLocalStorage()) {
-        console.log('Extension-Daten via Polling gefunden');
+        setIsInitialized(true);
         return;
       }
       
@@ -125,16 +120,17 @@ export const useExtensionData = () => {
       pollTimeout = setTimeout(pollForData, 1000);
     };
 
-    // Starte sofortigen Check
+    // Immediate check
     const immediateSuccess = checkLocalStorage();
     
-    // Event Listeners registrieren
+    // Register event listeners
     window.addEventListener('message', handleExtensionMessage);
     
-    // Starte Polling nur wenn keine Daten sofort gefunden wurden
+    // Start polling only if no immediate success
     if (!immediateSuccess) {
-      console.log('Starte Polling für Extension-Daten...');
       pollTimeout = setTimeout(pollForData, 1000);
+    } else {
+      setIsInitialized(true);
     }
 
     // Cleanup
@@ -144,7 +140,7 @@ export const useExtensionData = () => {
         clearTimeout(pollTimeout);
       }
     };
-  }, []); // Keine Dependencies! Läuft nur einmal beim Mount
+  }, [isInitialized]);
 
   const clearExtensionData = () => {
     setExtensionData(null);

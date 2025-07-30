@@ -21,7 +21,7 @@ interface BusinessData {
 }
 
 const Index = () => {
-  console.log('Index component mounting/re-mounting');
+  // Stable refs to prevent unnecessary re-renders
   const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
   const [businessData, setBusinessData] = useState<BusinessData>({
     address: '',
@@ -32,34 +32,27 @@ const Index = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
+  const [isInitialized, setIsInitialized] = useState(false);
   const { toast } = useToast();
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
 
-  // Debug state changes
+  // Initialization effect - runs only once
   useEffect(() => {
-    console.log('Step changed to:', step);
-  }, [step]);
-
-  useEffect(() => {
-    console.log('BusinessData changed:', businessData);
-  }, [businessData]);
-
-  // Check for existing API key on mount
-  useEffect(() => {
-    const existingKey = GoogleAPIService.getApiKey();
-    if (existingKey) {
-      setApiKey(existingKey);
+    if (!isInitialized) {
+      const existingKey = GoogleAPIService.getApiKey();
+      if (existingKey) {
+        setApiKey(existingKey);
+      }
+      setIsInitialized(true);
     }
-  }, []);
+  }, [isInitialized]);
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
-    console.log('handleBusinessSubmit called');
     e.preventDefault();
     
     if (!businessData.address || !businessData.url) {
-      console.log('Form validation failed - missing fields');
       toast({
         title: "Fehler",
         description: "Bitte füllen Sie alle Pflichtfelder aus.",
@@ -70,12 +63,9 @@ const Index = () => {
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
-    console.log('Existing API key found:', !!existingKey);
     if (existingKey) {
-      console.log('Setting step to results');
       setStep('results');
     } else {
-      console.log('Setting step to api');
       setStep('api');
     }
   };
@@ -132,11 +122,9 @@ const Index = () => {
   };
 
   const handleApiKeySubmit = async (e: React.FormEvent) => {
-    console.log('handleApiKeySubmit called');
     e.preventDefault();
     
     if (!apiKey.trim()) {
-      console.log('API key validation failed - empty key');
       toast({
         title: "Fehler",
         description: "Bitte geben Sie einen API-Key ein.",
@@ -145,7 +133,6 @@ const Index = () => {
       return;
     }
 
-    console.log('Calling validateAndSaveApiKey with:', apiKey.trim());
     await validateAndSaveApiKey(apiKey.trim());
   };
 
@@ -164,7 +151,10 @@ const Index = () => {
   };
 
   const handleLoadSavedAnalysis = (analysis: any) => {
-    console.log('handleLoadSavedAnalysis called with:', analysis);
+    // Prevent state updates if we're already in results
+    if (step === 'results' && loadedAnalysisId === analysis.id) {
+      return;
+    }
     
     // Set business data and analysis ID
     setBusinessData(analysis.businessData);
@@ -178,8 +168,11 @@ const Index = () => {
   };
 
   const resetToStart = () => {
-    console.log('=== RESET TO START CALLED ===');
-    console.log('Current step before reset:', step);
+    // Prevent multiple reset calls
+    if (step === 'business' && !loadedAnalysisId && businessData.address === '' && businessData.url === '') {
+      return;
+    }
+    
     setStep('business');
     setLoadedAnalysisId(undefined);
     setBusinessData({
@@ -188,7 +181,6 @@ const Index = () => {
       industry: 'shk'
     });
     clearExtensionData();
-    console.log('Reset completed - step set to business');
   };
 
   // Handle extension data if available
