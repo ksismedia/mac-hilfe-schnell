@@ -105,6 +105,11 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
   // Load analysis data or load saved analysis
   useEffect(() => {
+    console.log('=== SIDEBAR DASHBOARD useEffect TRIGGERED ===');
+    console.log('loadedAnalysisId:', loadedAnalysisId);
+    console.log('realData exists:', !!realData);
+    console.log('businessData:', businessData);
+    
     const loadAnalysisData = async () => {
       if (loadedAnalysisId && !realData) {
         try {
@@ -181,7 +186,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [toast, loadedAnalysisId, realData, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCompetitors, updateCompetitorServices]);
+  }, [toast, loadedAnalysisId, realData, loadAnalysis]);
 
   if (isLoading) {
     return (

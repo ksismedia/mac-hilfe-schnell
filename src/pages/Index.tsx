@@ -178,6 +178,8 @@ const Index = () => {
   };
 
   const resetToStart = () => {
+    console.log('=== RESET TO START CALLED ===');
+    console.log('Current step before reset:', step);
     setStep('business');
     setLoadedAnalysisId(undefined);
     setBusinessData({
@@ -186,6 +188,7 @@ const Index = () => {
       industry: 'shk'
     });
     clearExtensionData();
+    console.log('Reset completed - step set to business');
   };
 
   // Handle extension data if available
