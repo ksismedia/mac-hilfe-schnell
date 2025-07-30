@@ -15,6 +15,7 @@ import StaffServiceCategory from './analysis/categories/StaffServiceCategory';
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
+import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
 import OverallRating from './analysis/OverallRating';
 
 // Services
@@ -338,6 +339,25 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualSocialData={manualSocialData}
                   keywordScore={keywordsScore}
                   manualKeywordData={manualKeywordData}
+                />
+                <SelectiveHTMLExport
+                  businessData={businessData}
+                  realData={realData}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualWorkplaceData={manualWorkplaceData}
+                  manualCorporateIdentityData={manualCorporateIdentityData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={competitorServices}
+                  companyServices={companyServices}
+                  deletedCompetitors={deletedCompetitors}
+                  hourlyRateData={hourlyRateData}
+                  manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
+                  staffQualificationData={staffQualificationData}
+                  quoteResponseData={quoteResponseData}
+                  privacyData={privacyData}
+                  accessibilityData={accessibilityData}
                 />
               </div>
             </div>
