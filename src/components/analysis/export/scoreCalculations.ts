@@ -383,32 +383,160 @@ export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseDat
   return finalScore;
 };
 
-export const calculateOverallScore = (
-  seoScore: number,
-  performanceScore: number,
-  mobileScore: number,
-  socialMediaScore: number,
-  impressumScore: number,
-  hourlyRateScore: number,
-  dataPrivacyScore: number = 75,
-  corporateIdentityScore: number = 50,
-  staffQualificationScore: number = 50,
-  quoteResponseScore: number = 50
-) => {
-  const weightedScore = (
-    seoScore * 0.16 +              // SEO reduziert von 18% auf 16%
-    performanceScore * 0.12 +      // Performance reduziert von 14% auf 12%
-    mobileScore * 0.12 +           // Mobile reduziert von 14% auf 12%
-    socialMediaScore * 0.12 +      // Social Media reduziert von 14% auf 12%
-    impressumScore * 0.08 +        // Impressum reduziert von 9% auf 8%
-    hourlyRateScore * 0.08 +       // Hourly Rate reduziert von 9% auf 8%
-    dataPrivacyScore * 0.08 +      // Data Privacy reduziert von 9% auf 8%
-    corporateIdentityScore * 0.04 + // Corporate Identity reduziert von 5% auf 4%
-    staffQualificationScore * 0.08 + // Staff bleibt bei 8%
-    quoteResponseScore * 0.12      // NEU: Quote Response mit 12%
-  );
+// Neue Funktionen für Kategorie-Scores (jeweils maximal 100 Punkte)
+export const calculateSEOContentScore = (
+  realData: RealBusinessData, 
+  keywordsScore: number | null,
+  businessData?: any,
+  privacyData?: any,
+  accessibilityData?: any
+): number => {
+  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
+  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
   
-  return Math.round(Math.max(0, Math.min(100, weightedScore)));
+  const seoScore = realData.seo.score;
+  const localSEOScore = calculateLocalSEOScore(businessData, realData);
+  const imprintScore = realData.imprint.score;
+  const accessibilityScore = calculateAccessibilityScore(realData);
+  const dataPrivacyScore = 75; // Default-Wert
+  
+  // Gewichtung innerhalb der Kategorie
+  const weightedScore = 
+    (seoScore * 25) +
+    (currentKeywordsScore * 20) +
+    (localSEOScore * 25) +
+    (imprintScore * 15) +
+    (accessibilityScore * 10) +
+    (dataPrivacyScore * 5);
+    
+  return Math.round(weightedScore / 100);
+};
+
+export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
+  const performanceScore = realData.performance.score;
+  const mobileScore = realData.mobile.overallScore;
+  
+  // 60% Performance, 40% Mobile
+  const weightedScore = (performanceScore * 60) + (mobileScore * 40);
+  return Math.round(weightedScore / 100);
+};
+
+export const calculateSocialMediaCategoryScore = (
+  realData: RealBusinessData,
+  manualSocialData?: ManualSocialData | null,
+  manualWorkplaceData?: any
+): number => {
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
+  const socialProofScore = realData.socialProof.overallScore;
+  const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  const workplaceScore = realData.workplace.overallScore;
+  
+  // Gewichtung: Social Media 40%, Reviews 35%, Social Proof 15%, Workplace 10%
+  const weightedScore = 
+    (socialMediaScore * 40) +
+    (reviewsScore * 35) +
+    (socialProofScore * 15) +
+    (workplaceScore * 10);
+    
+  return Math.round(weightedScore / 100);
+};
+
+export const calculateStaffServiceScore = (
+  staffData?: any,
+  quoteResponseData?: QuoteResponseData | null,
+  corporateIdentityData?: any,
+  hourlyRateData?: { ownRate: number; regionAverage: number }
+): number => {
+  const staffQualificationScore = calculateStaffQualificationScore(staffData);
+  const quoteScore = calculateQuoteResponseScore(quoteResponseData);
+  const corporateScore = calculateCorporateIdentityScore(corporateIdentityData);
+  const hourlyScore = calculateHourlyRateScore(hourlyRateData);
+  
+  // Nur bewerten wenn Daten vorhanden sind
+  let totalWeight = 0;
+  let weightedScore = 0;
+  
+  if (staffData) {
+    weightedScore += staffQualificationScore * 35;
+    totalWeight += 35;
+  }
+  
+  if (quoteResponseData) {
+    weightedScore += quoteScore * 30;
+    totalWeight += 30;
+  }
+  
+  if (corporateIdentityData) {
+    weightedScore += corporateScore * 20;
+    totalWeight += 20;
+  }
+  
+  if (hourlyRateData) {
+    weightedScore += hourlyScore * 15;
+    totalWeight += 15;
+  }
+  
+  return totalWeight > 0 ? Math.round(weightedScore / totalWeight) : 0;
+};
+
+export const calculateOverallScore = (
+  realData: RealBusinessData,
+  keywordsScore: number | null,
+  manualSocialData?: ManualSocialData | null,
+  businessData?: any,
+  staffData?: any,
+  hourlyRateData?: { ownRate: number; regionAverage: number },
+  quoteResponseData?: QuoteResponseData | null
+): number => {
+  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
+  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
+  
+  const seoScore = realData.seo.score;
+  const performanceScore = realData.performance.score;
+  const mobileScore = realData.mobile.overallScore;
+  const localSEOScore = calculateLocalSEOScore(businessData, realData);
+  const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
+  const socialProofScore = realData.socialProof.overallScore;
+  const imprintScore = realData.imprint.score;
+  const staffQualificationScore = calculateStaffQualificationScore(staffData);
+  const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
+  const workplaceScore = realData.workplace.overallScore;
+  const competitorScore = realData.competitors.length > 0 ? 80 : 60;
+
+  // Neue Berechnung: Durchschnitt der 4 Hauptkategorien
+  const seoContentScore = calculateSEOContentScore(realData, keywordsScore, businessData);
+  const performanceMobileScore = calculatePerformanceMobileScore(realData);
+  const socialMediaCategoryScore = calculateSocialMediaCategoryScore(realData, manualSocialData);
+  const staffServiceScore = calculateStaffServiceScore(staffData, quoteResponseData);
+
+  // Durchschnitt der 4 Kategorien
+  let totalCategories = 0;
+  let totalScore = 0;
+
+  if (seoContentScore > 0) {
+    totalScore += seoContentScore;
+    totalCategories++;
+  }
+  
+  if (performanceMobileScore > 0) {
+    totalScore += performanceMobileScore;
+    totalCategories++;
+  }
+  
+  if (socialMediaCategoryScore > 0) {
+    totalScore += socialMediaCategoryScore;
+    totalCategories++;
+  }
+  
+  if (staffServiceScore > 0) {
+    totalScore += staffServiceScore;
+    totalCategories++;
+  }
+
+  return totalCategories > 0 ? Math.round(totalScore / totalCategories) : 0;
 };
 
 // Berechnung für Local SEO Score - SEHR STRENGE BEWERTUNG für Handwerk
