@@ -33,6 +33,7 @@ import AccessibilityAnalysis from './analysis/AccessibilityAnalysis';
 import DataPrivacyAnalysis from './analysis/DataPrivacyAnalysis';
 import { StaffQualificationInput } from './analysis/StaffQualificationInput';
 import HourlyRateTab from './analysis/HourlyRateTab';
+import QuoteResponseInput from './analysis/QuoteResponseInput';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -105,6 +106,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     deletedCompetitors,
     staffQualificationData,
     hourlyRateData,
+    quoteResponseData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -115,7 +117,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     updateCompanyServices,
     addDeletedCompetitor,
     removeDeletedCompetitor,
-    updateStaffQualificationData
+    updateStaffQualificationData,
+    updateQuoteResponseData
   } = useManualData();
 
   // Access saved analyses hook
@@ -421,6 +424,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                  <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
                  <TabsTrigger value="staff">Personal</TabsTrigger>
                  <TabsTrigger value="pricing">Preise</TabsTrigger>
+                 <TabsTrigger value="service">Kundenservice</TabsTrigger>
                  <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
@@ -540,6 +544,13 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
 
             <TabsContent value="pricing" className="space-y-6 mt-0">
               <HourlyRateTab />
+            </TabsContent>
+
+            <TabsContent value="service" className="space-y-6 mt-0">
+              <QuoteResponseInput 
+                data={quoteResponseData || undefined}
+                onDataChange={updateQuoteResponseData}
+              />
             </TabsContent>
 
             <TabsContent value="export" className="space-y-6 mt-0">

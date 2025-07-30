@@ -95,6 +95,23 @@ export interface HourlyRateData {
   regionAverage: number;
 }
 
+export interface QuoteResponseData {
+  responseTime: string;
+  contactMethods: {
+    phone: boolean;
+    email: boolean;
+    contactForm: boolean;
+    whatsapp: boolean;
+    messenger: boolean;
+  };
+  automaticConfirmation: boolean;
+  responseQuality: string;
+  followUpProcess: boolean;
+  availabilityHours: string;
+  personalContact: boolean;
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -107,6 +124,7 @@ export const useManualData = () => {
   const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
   const [staffQualificationData, setStaffQualificationData] = useState<StaffQualificationData | null>(null);
   const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData | null>(null);
+  const [quoteResponseData, setQuoteResponseData] = useState<QuoteResponseData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -188,6 +206,11 @@ export const useManualData = () => {
     console.log('Hourly Rate Data Updated:', data);
   }, []);
 
+  const updateQuoteResponseData = useCallback((data: QuoteResponseData | null) => {
+    setQuoteResponseData(data);
+    console.log('Quote Response Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -200,6 +223,7 @@ export const useManualData = () => {
     deletedCompetitors,
     staffQualificationData,
     hourlyRateData,
+    quoteResponseData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -212,6 +236,7 @@ export const useManualData = () => {
     addDeletedCompetitor,
     removeDeletedCompetitor,
     updateStaffQualificationData,
-    updateHourlyRateData
+    updateHourlyRateData,
+    updateQuoteResponseData
   };
 };
