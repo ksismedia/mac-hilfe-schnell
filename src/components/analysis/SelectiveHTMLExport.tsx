@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData } from '@/hooks/useManualData';
-import { FileText, Download, Printer, Settings } from 'lucide-react';
+import { FileText, Download, Printer, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 import { generateSelectiveCustomerHTML } from './export/selectiveHtmlGenerator';
 
 interface SelectiveHTMLExportProps {
@@ -86,6 +87,14 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   accessibilityData
 }) => {
   const [showSelections, setShowSelections] = useState(false);
+  
+  // Collapsible states - alle sections standardmäßig offen
+  const [sectionStates, setSectionStates] = useState({
+    seoContent: true,
+    performanceTech: true,
+    socialMedia: true,
+    staffService: true
+  });
   
   // Main sections selections
   const [sectionSelections, setSectionSelections] = useState<SectionSelections>({
@@ -362,146 +371,202 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
           </div>
 
           {showSelections && (
-            <div className="space-y-6 p-4 bg-gray-50 rounded-lg border">
-              <h4 className="font-semibold text-gray-800">Hauptbereiche auswählen:</h4>
+            <div className="grid gap-4 max-w-4xl">
+              <h4 className="font-semibold text-foreground mb-4">Hauptbereiche auswählen:</h4>
               
               {/* SEO & Content Section */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="seo-content"
-                    checked={sectionSelections.seoContent}
-                    onCheckedChange={(checked) => handleSectionChange('seoContent', !!checked)}
-                  />
-                  <label htmlFor="seo-content" className="text-sm font-medium text-yellow-600">
-                    🔍 SEO & Content Analyse
-                  </label>
-                </div>
-                
-                {sectionSelections.seoContent && (
-                  <div className="ml-6 space-y-2 border-l-2 border-yellow-200 pl-4">
-                    {[
-                      { id: 'seoAnalysis', label: 'SEO-Analyse', key: 'seoAnalysis' as keyof SubSectionSelections },
-                      { id: 'keywordAnalysis', label: 'Keyword-Analyse', key: 'keywordAnalysis' as keyof SubSectionSelections },
-                      { id: 'localSeo', label: 'Lokales SEO', key: 'localSeo' as keyof SubSectionSelections },
-                      { id: 'contentQuality', label: 'Content-Qualität', key: 'contentQuality' as keyof SubSectionSelections },
-                      { id: 'backlinks', label: 'Backlink-Analyse', key: 'backlinks' as keyof SubSectionSelections },
-                      { id: 'accessibility', label: 'Barrierefreiheit', key: 'accessibility' as keyof SubSectionSelections },
-                      { id: 'dataPrivacy', label: 'Datenschutz', key: 'dataPrivacy' as keyof SubSectionSelections },
-                      { id: 'imprint', label: 'Impressum', key: 'imprint' as keyof SubSectionSelections },
-                      { id: 'competitorAnalysis', label: 'Konkurrenz-Analyse', key: 'competitorAnalysis' as keyof SubSectionSelections }
-                    ].map(({ id, label, key }) => (
-                      <div key={id} className="flex items-center space-x-2">
+              <Card className="border border-border">
+                <Collapsible 
+                  open={sectionStates.seoContent} 
+                  onOpenChange={(open) => setSectionStates(prev => ({ ...prev, seoContent: open }))}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
-                          id={id}
-                          checked={subSectionSelections[key]}
-                          onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                          id="seo-content"
+                          checked={sectionSelections.seoContent}
+                          onCheckedChange={(checked) => handleSectionChange('seoContent', !!checked)}
                         />
-                        <label htmlFor={id} className="text-sm text-gray-600">{label}</label>
+                        <label htmlFor="seo-content" className="text-sm font-medium text-primary cursor-pointer">
+                          🔍 SEO & Content Analyse
+                        </label>
                       </div>
-                    ))}
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="p-1">
+                          {sectionStates.seoContent ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  
+                    <CollapsibleContent className="space-y-2 mt-4">
+                      <div className="ml-8 space-y-3 border-l-2 border-primary/20 pl-4">
+                        {[
+                          { id: 'seoAnalysis', label: 'SEO-Analyse', key: 'seoAnalysis' as keyof SubSectionSelections },
+                          { id: 'keywordAnalysis', label: 'Keyword-Analyse', key: 'keywordAnalysis' as keyof SubSectionSelections },
+                          { id: 'localSeo', label: 'Lokales SEO', key: 'localSeo' as keyof SubSectionSelections },
+                          { id: 'contentQuality', label: 'Content-Qualität', key: 'contentQuality' as keyof SubSectionSelections },
+                          { id: 'backlinks', label: 'Backlink-Analyse', key: 'backlinks' as keyof SubSectionSelections },
+                          { id: 'accessibility', label: 'Barrierefreiheit', key: 'accessibility' as keyof SubSectionSelections },
+                          { id: 'dataPrivacy', label: 'Datenschutz', key: 'dataPrivacy' as keyof SubSectionSelections },
+                          { id: 'imprint', label: 'Impressum', key: 'imprint' as keyof SubSectionSelections },
+                          { id: 'competitorAnalysis', label: 'Konkurrenz-Analyse', key: 'competitorAnalysis' as keyof SubSectionSelections }
+                        ].map(({ id, label, key }) => (
+                          <div key={id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={id}
+                              checked={subSectionSelections[key]}
+                              onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                            />
+                            <label htmlFor={id} className="text-sm text-muted-foreground cursor-pointer">{label}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                )}
-              </div>
+                </Collapsible>
+              </Card>
 
               {/* Performance & Technik Section */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="performance-tech"
-                    checked={sectionSelections.performanceTech}
-                    onCheckedChange={(checked) => handleSectionChange('performanceTech', !!checked)}
-                  />
-                  <label htmlFor="performance-tech" className="text-sm font-medium text-blue-600">
-                    ⚡ Performance & Technik
-                  </label>
-                </div>
-                
-                {sectionSelections.performanceTech && (
-                  <div className="ml-6 space-y-2 border-l-2 border-blue-200 pl-4">
-                    {[
-                      { id: 'performance', label: 'Performance-Analyse', key: 'performance' as keyof SubSectionSelections },
-                      { id: 'mobile', label: 'Mobile Optimierung', key: 'mobile' as keyof SubSectionSelections },
-                      { id: 'conversion', label: 'Conversion-Optimierung', key: 'conversion' as keyof SubSectionSelections }
-                    ].map(({ id, label, key }) => (
-                      <div key={id} className="flex items-center space-x-2">
+              <Card className="border border-border">
+                <Collapsible 
+                  open={sectionStates.performanceTech} 
+                  onOpenChange={(open) => setSectionStates(prev => ({ ...prev, performanceTech: open }))}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
-                          id={id}
-                          checked={subSectionSelections[key]}
-                          onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                          id="performance-tech"
+                          checked={sectionSelections.performanceTech}
+                          onCheckedChange={(checked) => handleSectionChange('performanceTech', !!checked)}
                         />
-                        <label htmlFor={id} className="text-sm text-gray-600">{label}</label>
+                        <label htmlFor="performance-tech" className="text-sm font-medium text-primary cursor-pointer">
+                          ⚡ Performance & Technik
+                        </label>
                       </div>
-                    ))}
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="p-1">
+                          {sectionStates.performanceTech ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  
+                    <CollapsibleContent className="space-y-2 mt-4">
+                      <div className="ml-8 space-y-3 border-l-2 border-primary/20 pl-4">
+                        {[
+                          { id: 'performance', label: 'Performance-Analyse', key: 'performance' as keyof SubSectionSelections },
+                          { id: 'mobile', label: 'Mobile Optimierung', key: 'mobile' as keyof SubSectionSelections },
+                          { id: 'conversion', label: 'Conversion-Optimierung', key: 'conversion' as keyof SubSectionSelections }
+                        ].map(({ id, label, key }) => (
+                          <div key={id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={id}
+                              checked={subSectionSelections[key]}
+                              onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                            />
+                            <label htmlFor={id} className="text-sm text-muted-foreground cursor-pointer">{label}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                )}
-              </div>
+                </Collapsible>
+              </Card>
 
               {/* Social Media Section */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="social-media"
-                    checked={sectionSelections.socialMedia}
-                    onCheckedChange={(checked) => handleSectionChange('socialMedia', !!checked)}
-                  />
-                  <label htmlFor="social-media" className="text-sm font-medium text-green-600">
-                    📱 Social Media & Online-Präsenz
-                  </label>
-                </div>
-                
-                {sectionSelections.socialMedia && (
-                  <div className="ml-6 space-y-2 border-l-2 border-green-200 pl-4">
-                    {[
-                      { id: 'socialMediaSimple', label: 'Social Media Analyse', key: 'socialMediaSimple' as keyof SubSectionSelections },
-                      { id: 'workplaceReviews', label: 'Arbeitsplatz-Bewertungen', key: 'workplaceReviews' as keyof SubSectionSelections }
-                    ].map(({ id, label, key }) => (
-                      <div key={id} className="flex items-center space-x-2">
+              <Card className="border border-border">
+                <Collapsible 
+                  open={sectionStates.socialMedia} 
+                  onOpenChange={(open) => setSectionStates(prev => ({ ...prev, socialMedia: open }))}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
-                          id={id}
-                          checked={subSectionSelections[key]}
-                          onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                          id="social-media"
+                          checked={sectionSelections.socialMedia}
+                          onCheckedChange={(checked) => handleSectionChange('socialMedia', !!checked)}
                         />
-                        <label htmlFor={id} className="text-sm text-gray-600">{label}</label>
+                        <label htmlFor="social-media" className="text-sm font-medium text-primary cursor-pointer">
+                          📱 Social Media & Online-Präsenz
+                        </label>
                       </div>
-                    ))}
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="p-1">
+                          {sectionStates.socialMedia ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  
+                    <CollapsibleContent className="space-y-2 mt-4">
+                      <div className="ml-8 space-y-3 border-l-2 border-primary/20 pl-4">
+                        {[
+                          { id: 'socialMediaSimple', label: 'Social Media Analyse', key: 'socialMediaSimple' as keyof SubSectionSelections },
+                          { id: 'workplaceReviews', label: 'Arbeitsplatz-Bewertungen', key: 'workplaceReviews' as keyof SubSectionSelections }
+                        ].map(({ id, label, key }) => (
+                          <div key={id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={id}
+                              checked={subSectionSelections[key]}
+                              onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                            />
+                            <label htmlFor={id} className="text-sm text-muted-foreground cursor-pointer">{label}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                )}
-              </div>
+                </Collapsible>
+              </Card>
 
               {/* Personal & Service Section */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="staff-service"
-                    checked={sectionSelections.staffService}
-                    onCheckedChange={(checked) => handleSectionChange('staffService', !!checked)}
-                  />
-                  <label htmlFor="staff-service" className="text-sm font-medium text-purple-600">
-                    👥 Personal & Kundenservice
-                  </label>
-                </div>
-                
-                {sectionSelections.staffService && (
-                  <div className="ml-6 space-y-2 border-l-2 border-purple-200 pl-4">
-                    {[
-                      { id: 'staffQualification', label: 'Personal-Qualifikation', key: 'staffQualification' as keyof SubSectionSelections },
-                      { id: 'corporateIdentity', label: 'Corporate Identity', key: 'corporateIdentity' as keyof SubSectionSelections },
-                      { id: 'quoteResponse', label: 'Angebots-Reaktion', key: 'quoteResponse' as keyof SubSectionSelections },
-                      { id: 'hourlyRate', label: 'Stundensatz-Analyse', key: 'hourlyRate' as keyof SubSectionSelections }
-                    ].map(({ id, label, key }) => (
-                      <div key={id} className="flex items-center space-x-2">
+              <Card className="border border-border">
+                <Collapsible 
+                  open={sectionStates.staffService} 
+                  onOpenChange={(open) => setSectionStates(prev => ({ ...prev, staffService: open }))}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
-                          id={id}
-                          checked={subSectionSelections[key]}
-                          onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                          id="staff-service"
+                          checked={sectionSelections.staffService}
+                          onCheckedChange={(checked) => handleSectionChange('staffService', !!checked)}
                         />
-                        <label htmlFor={id} className="text-sm text-gray-600">{label}</label>
+                        <label htmlFor="staff-service" className="text-sm font-medium text-primary cursor-pointer">
+                          👥 Personal & Kundenservice
+                        </label>
                       </div>
-                    ))}
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="p-1">
+                          {sectionStates.staffService ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  
+                    <CollapsibleContent className="space-y-2 mt-4">
+                      <div className="ml-8 space-y-3 border-l-2 border-primary/20 pl-4">
+                        {[
+                          { id: 'staffQualification', label: 'Personal-Qualifikation', key: 'staffQualification' as keyof SubSectionSelections },
+                          { id: 'corporateIdentity', label: 'Corporate Identity', key: 'corporateIdentity' as keyof SubSectionSelections },
+                          { id: 'quoteResponse', label: 'Angebots-Reaktion', key: 'quoteResponse' as keyof SubSectionSelections },
+                          { id: 'hourlyRate', label: 'Stundensatz-Analyse', key: 'hourlyRate' as keyof SubSectionSelections }
+                        ].map(({ id, label, key }) => (
+                          <div key={id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={id}
+                              checked={subSectionSelections[key]}
+                              onCheckedChange={(checked) => handleSubSectionChange(key, !!checked)}
+                            />
+                            <label htmlFor={id} className="text-sm text-muted-foreground cursor-pointer">{label}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                )}
-              </div>
+                </Collapsible>
+              </Card>
             </div>
           )}
 
