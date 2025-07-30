@@ -127,21 +127,45 @@ export class BusinessAnalysisService {
       websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
     }
     
-    // Google Places Daten
-    const placeDetails = await this.getRealPlaceData(companyName, address, url);
-    console.log('Google Places data retrieved');
+    // Google Places Daten - mit Fehlerbehandlung
+    let placeDetails = null;
+    try {
+      placeDetails = await this.getRealPlaceData(companyName, address, url);
+      console.log('Google Places data retrieved successfully');
+    } catch (error) {
+      console.warn('Google Places data failed, using fallback:', error);
+      placeDetails = null;
+    }
     
-    // PageSpeed Daten
-    const pageSpeedData = await this.getRealPageSpeedData(url);
-    console.log('PageSpeed data retrieved');
+    // PageSpeed Daten - mit Fehlerbehandlung
+    let pageSpeedData = null;
+    try {
+      pageSpeedData = await this.getRealPageSpeedData(url);
+      console.log('PageSpeed data retrieved successfully');
+    } catch (error) {
+      console.warn('PageSpeed data failed, using fallback:', error);
+      pageSpeedData = null;
+    }
     
-    // Verbesserte Konkurrenten-Suche mit strengeren Filtern und Ausschluss der eigenen Firma
-    const competitorsData = await this.getRealCompetitorsData(address, industry, companyName);
-    console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
+    // Verbesserte Konkurrenten-Suche - mit Fehlerbehandlung
+    let competitorsData = [];
+    try {
+      competitorsData = await this.getRealCompetitorsData(address, industry, companyName);
+      console.log('Competitors data retrieved:', competitorsData.length, 'competitors found');
+    } catch (error) {
+      console.warn('Competitors data failed, using fallback:', error);
+      competitorsData = [];
+    }
     
-    // Social Media Analyse - verbessert
-    const socialMediaData = await this.analyzeSocialMediaPresence(companyName, url, websiteContent);
-    console.log('Social media analysis completed');
+    // Social Media Analyse - mit Fehlerbehandlung
+    let socialMediaData = null;
+    try {
+      socialMediaData = await this.analyzeSocialMediaPresence(companyName, url, websiteContent);
+      console.log('Social media analysis completed');
+    } catch (error) {
+      console.warn('Social media analysis failed, using fallback:', error);
+      socialMediaData = this.generateFallbackSocialMediaData();
+    }
     
     // Generiere alle Analysedaten mit realistischen Scores
     const seoData = this.generateSEOFromContent(websiteContent, industry, companyName);
@@ -768,6 +792,25 @@ export class BusinessAnalysisService {
       pageSpeedDesktop: Math.min(100, Math.round(score + 10)),
       overallScore: Math.round(score),
       issues,
+    };
+  }
+
+  // Fallback für Social Media Daten
+  private static generateFallbackSocialMediaData() {
+    return {
+      facebook: {
+        found: false,
+        followers: 0,
+        lastPost: '',
+        engagement: 'Nicht verfügbar'
+      },
+      instagram: {
+        found: false,
+        followers: 0,
+        lastPost: '',
+        engagement: 'Nicht verfügbar'
+      },
+      overallScore: 30 // Neutraler Score für fehlende Social Media Präsenz
     };
   }
 }
