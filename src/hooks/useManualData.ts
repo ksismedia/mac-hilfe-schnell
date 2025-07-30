@@ -90,6 +90,11 @@ export interface StaffQualificationData {
   average_experience_years: number;
 }
 
+export interface HourlyRateData {
+  ownRate: number;
+  regionAverage: number;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -101,6 +106,7 @@ export const useManualData = () => {
   const [companyServices, setCompanyServices] = useState<CompanyServices>({ services: [] });
   const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
   const [staffQualificationData, setStaffQualificationData] = useState<StaffQualificationData | null>(null);
+  const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -177,6 +183,11 @@ export const useManualData = () => {
     console.log('Staff Qualification Data Updated:', data);
   }, []);
 
+  const updateHourlyRateData = useCallback((data: HourlyRateData | null) => {
+    setHourlyRateData(data);
+    console.log('Hourly Rate Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -188,6 +199,7 @@ export const useManualData = () => {
     companyServices,
     deletedCompetitors,
     staffQualificationData,
+    hourlyRateData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -199,6 +211,7 @@ export const useManualData = () => {
     updateCompanyServices,
     addDeletedCompetitor,
     removeDeletedCompetitor,
-    updateStaffQualificationData
+    updateStaffQualificationData,
+    updateHourlyRateData
   };
 };

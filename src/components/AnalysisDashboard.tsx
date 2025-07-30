@@ -32,6 +32,7 @@ import SocialMediaSimple from './analysis/SocialMediaSimple';
 import AccessibilityAnalysis from './analysis/AccessibilityAnalysis';
 import DataPrivacyAnalysis from './analysis/DataPrivacyAnalysis';
 import { StaffQualificationInput } from './analysis/StaffQualificationInput';
+import HourlyRateTab from './analysis/HourlyRateTab';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -103,6 +104,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     companyServices,
     deletedCompetitors,
     staffQualificationData,
+    hourlyRateData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -418,6 +420,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                  <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
                  <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
                  <TabsTrigger value="staff">Personal</TabsTrigger>
+                 <TabsTrigger value="pricing">Preise</TabsTrigger>
                  <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
@@ -533,6 +536,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 data={staffQualificationData}
                 onUpdate={updateStaffQualificationData}
               />
+            </TabsContent>
+
+            <TabsContent value="pricing" className="space-y-6 mt-0">
+              <HourlyRateTab />
             </TabsContent>
 
             <TabsContent value="export" className="space-y-6 mt-0">

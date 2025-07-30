@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, CompanyServices, CompetitorServices } from '@/hooks/useManualData';
+import { ManualCompetitor, CompanyServices, CompetitorServices, useManualData } from '@/hooks/useManualData';
 import HTMLExport from './HTMLExport';
 import CustomerHTMLExport from './CustomerHTMLExport';
-import HourlyRateInput from './HourlyRateInput';
-import { Users, FileText } from 'lucide-react';
+import { Users, FileText, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface PDFExportProps {
   businessData: {
@@ -25,15 +25,10 @@ interface PDFExportProps {
   staffQualificationData?: any;
 }
 
-interface HourlyRateData {
-  ownRate: number;
-  regionAverage: number;
-}
-
 const PDFExport: React.FC<PDFExportProps> = ({ 
   businessData, 
   realData, 
-  manualImprintData, 
+  manualImprintData,
   manualSocialData,
   manualCompetitors = [],
   competitorServices = {},
@@ -43,84 +38,95 @@ const PDFExport: React.FC<PDFExportProps> = ({
   keywordScore,
   staffQualificationData
 }) => {
-  const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData>();
+  const { hourlyRateData } = useManualData();
 
-  const handleHourlyRateChange = (data: HourlyRateData) => {
-    setHourlyRateData(data);
-  };
-  
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Konfiguration */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Stundensatz-Konfiguration</CardTitle>
-          <CardDescription>Geben Sie Ihren Stundensatz für die Kalkulation ein</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <HourlyRateInput 
-            data={hourlyRateData}
-            onDataChange={handleHourlyRateChange}
-          />
-        </CardContent>
-      </Card>
+      {/* Stundensatz-Warnung */}
+      {!hourlyRateData && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Hinweis:</strong> Für vollständige Reports mit Kostenkalkulation muss ein Stundensatz 
+            im "Preise"-Tab eingegeben werden. Ohne Stundensatz werden keine Bewertungen generiert.
+          </AlertDescription>
+        </Alert>
+      )}
 
-      {/* Kunden-Report */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-700">
-            <Users className="h-5 w-5" />
-            Kunden-Report
-          </CardTitle>
-          <CardDescription>
-            Professioneller Report für Kundenpräsentationen
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CustomerHTMLExport 
-            businessData={businessData}
-            realData={realData}
-            manualImprintData={manualImprintData}
-            manualSocialData={manualSocialData}
-            manualCompetitors={manualCompetitors}
-            competitorServices={competitorServices}
-            companyServices={companyServices}
-            deletedCompetitors={deletedCompetitors}
-            hourlyRateData={hourlyRateData}
-            manualKeywordData={manualKeywordData}
-            keywordScore={keywordScore}
-            staffQualificationData={staffQualificationData}
-          />
-        </CardContent>
-      </Card>
+      {/* Export-Komponenten nur anzeigen wenn Stundensatz vorhanden */}
+      {hourlyRateData ? (
+        <>
+          {/* Kunden-Report */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Kundenreport
+              </CardTitle>
+              <CardDescription>
+                Professioneller Report für Ihre Kunden mit Handlungsempfehlungen
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CustomerHTMLExport 
+                businessData={businessData}
+                realData={realData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualWorkplaceData={null}
+                manualCorporateIdentityData={null}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                companyServices={companyServices}
+                deletedCompetitors={deletedCompetitors}
+                manualKeywordData={manualKeywordData}
+                keywordScore={keywordScore}
+                staffQualificationData={staffQualificationData}
+                hourlyRateData={hourlyRateData}
+              />
+            </CardContent>
+          </Card>
 
-      {/* Technischer Report */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-700">
-            <FileText className="h-5 w-5" />
-            Technischer Report
-          </CardTitle>
-          <CardDescription>
-            Detaillierte Analyse für interne Zwecke
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <HTMLExport 
-            businessData={businessData}
-            realData={realData}
-            manualImprintData={manualImprintData}
-            manualSocialData={manualSocialData}
-            manualCompetitors={manualCompetitors}
-            competitorServices={competitorServices}
-            companyServices={companyServices}
-            deletedCompetitors={deletedCompetitors}
-            hourlyRateData={hourlyRateData}
-            manualKeywordData={manualKeywordData}
-            keywordScore={keywordScore}
-          />
-        </CardContent>
-      </Card>
+          {/* Interner Report */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Interner Report
+              </CardTitle>
+              <CardDescription>
+                Detaillierter technischer Report für interne Zwecke
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HTMLExport
+                businessData={businessData}
+                realData={realData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                companyServices={companyServices}
+                deletedCompetitors={deletedCompetitors}
+                manualKeywordData={manualKeywordData}
+                keywordScore={keywordScore}
+                hourlyRateData={hourlyRateData}
+              />
+            </CardContent>
+          </Card>
+        </>
+      ) : (
+        <Card>
+          <CardContent className="text-center py-12">
+            <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Stundensatz erforderlich</h3>
+            <p className="text-gray-600">
+              Bitte geben Sie zuerst Ihren Stundensatz im "Preise"-Tab ein, 
+              um Reports mit Kostenkalkulation zu generieren.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
