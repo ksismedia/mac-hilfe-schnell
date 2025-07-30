@@ -31,6 +31,7 @@ import OverallRating from './analysis/OverallRating';
 import SocialMediaSimple from './analysis/SocialMediaSimple';
 import AccessibilityAnalysis from './analysis/AccessibilityAnalysis';
 import DataPrivacyAnalysis from './analysis/DataPrivacyAnalysis';
+import { StaffQualificationInput } from './analysis/StaffQualificationInput';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -101,6 +102,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     removedMissingServices,
     companyServices,
     deletedCompetitors,
+    staffQualificationData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -110,7 +112,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
     addRemovedMissingService,
     updateCompanyServices,
     addDeletedCompetitor,
-    removeDeletedCompetitor
+    removeDeletedCompetitor,
+    updateStaffQualificationData
   } = useManualData();
 
   // Access saved analyses hook
@@ -411,9 +414,10 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 <TabsTrigger value="legal">Legal</TabsTrigger>
                 <TabsTrigger value="accessibility">Barrierefreiheit</TabsTrigger>
                 <TabsTrigger value="dataprivacy">Datenschutz</TabsTrigger>
-                <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
-                <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
-                <TabsTrigger value="export">Export</TabsTrigger>
+                 <TabsTrigger value="workplace">Arbeitgeber</TabsTrigger>
+                 <TabsTrigger value="corporate">Corporate Identity</TabsTrigger>
+                 <TabsTrigger value="staff">Personal</TabsTrigger>
+                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
             </div>
 
@@ -519,6 +523,14 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                 businessData={{ companyName: realData.company.name, url: businessData.url }}
                 manualData={manualCorporateIdentityData}
                 onUpdate={updateCorporateIdentityData}
+              />
+            </TabsContent>
+
+            <TabsContent value="staff" className="space-y-6 mt-0">
+              <StaffQualificationInput 
+                businessData={businessData}
+                data={staffQualificationData}
+                onUpdate={updateStaffQualificationData}
               />
             </TabsContent>
 

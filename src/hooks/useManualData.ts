@@ -70,6 +70,26 @@ export interface CompanyServices {
   lastUpdated?: string;
 }
 
+export interface StaffQualificationData {
+  totalEmployees: number;
+  apprentices: number;
+  skilled_workers: number;
+  masters: number;
+  unskilled_workers: number;
+  certifications: {
+    welding_certificates: boolean;
+    safety_training: boolean;
+    first_aid: boolean;
+    digital_skills: boolean;
+    instructor_qualification: boolean;
+    business_qualification: boolean;
+  };
+  industry_specific: string[];
+  specializations: string;
+  training_budget_per_year: number;
+  average_experience_years: number;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -80,6 +100,7 @@ export const useManualData = () => {
   const [removedMissingServices, setRemovedMissingServices] = useState<string[]>([]);
   const [companyServices, setCompanyServices] = useState<CompanyServices>({ services: [] });
   const [deletedCompetitors, setDeletedCompetitors] = useState<Set<string>>(new Set());
+  const [staffQualificationData, setStaffQualificationData] = useState<StaffQualificationData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -151,6 +172,11 @@ export const useManualData = () => {
     });
   }, []);
 
+  const updateStaffQualificationData = useCallback((data: StaffQualificationData | null) => {
+    setStaffQualificationData(data);
+    console.log('Staff Qualification Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -161,6 +187,7 @@ export const useManualData = () => {
     removedMissingServices,
     companyServices,
     deletedCompetitors,
+    staffQualificationData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -171,6 +198,7 @@ export const useManualData = () => {
     addRemovedMissingService,
     updateCompanyServices,
     addDeletedCompetitor,
-    removeDeletedCompetitor
+    removeDeletedCompetitor,
+    updateStaffQualificationData
   };
 };
