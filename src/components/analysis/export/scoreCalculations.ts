@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualCorporateIdentityData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualCorporateIdentityData, QuoteResponseData } from '@/hooks/useManualData';
 
 export const calculateScore = (value: number, maxValue: number = 100) => {
   return Math.min(100, Math.max(0, value));
@@ -322,6 +322,67 @@ export const calculateStaffQualificationScore = (staffData?: any): number => {
   return Math.round(Math.min(100, score));
 };
 
+export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseData | null) => {
+  console.log('=== QUOTE RESPONSE SCORE BERECHNUNG GESTARTET ===');
+  console.log('Quote Response Data:', quoteResponseData);
+  
+  if (!quoteResponseData) {
+    console.log('Keine Quote Response Daten -> Score: 50 (Standard)');
+    return 50;
+  }
+  
+  let score = 0;
+  
+  // Reaktionszeit (40% der Bewertung)
+  switch (quoteResponseData.responseTime) {
+    case '1-hour': score += 40; break;
+    case '2-4-hours': score += 35; break;
+    case '4-8-hours': score += 30; break;
+    case '1-day': score += 20; break;
+    case '2-3-days': score += 10; break;
+    case 'over-3-days': score += 5; break;
+    default: score += 0; break;
+  }
+  
+  // Kontaktmöglichkeiten (20% der Bewertung)
+  const contactCount = Object.values(quoteResponseData.contactMethods).filter(Boolean).length;
+  score += Math.min(20, contactCount * 4);
+  
+  // Antwortqualität (20% der Bewertung)
+  switch (quoteResponseData.responseQuality) {
+    case 'excellent': score += 20; break;
+    case 'good': score += 15; break;
+    case 'average': score += 10; break;
+    case 'poor': score += 5; break;
+    default: score += 0; break;
+  }
+  
+  // Service-Features (20% der Bewertung)
+  if (quoteResponseData.automaticConfirmation) score += 5;
+  if (quoteResponseData.followUpProcess) score += 5;
+  if (quoteResponseData.personalContact) score += 5;
+  
+  // Erreichbarkeitszeiten
+  switch (quoteResponseData.availabilityHours) {
+    case '24-7': score += 5; break;
+    case 'extended-hours': score += 3; break;
+    case 'business-hours': score += 2; break;
+    default: score += 0; break;
+  }
+  
+  const finalScore = Math.round(Math.min(100, score));
+  
+  console.log('=== QUOTE RESPONSE SCORE ERGEBNIS ===');
+  console.log(`Reaktionszeit: ${quoteResponseData.responseTime} -> Punkte basierend darauf`);
+  console.log(`Kontaktmöglichkeiten: ${contactCount} -> ${Math.min(20, contactCount * 4)} Punkte`);
+  console.log(`Antwortqualität: ${quoteResponseData.responseQuality} -> Punkte basierend darauf`);
+  console.log(`Service-Features: ${[quoteResponseData.automaticConfirmation, quoteResponseData.followUpProcess, quoteResponseData.personalContact].filter(Boolean).length * 5} Punkte`);
+  console.log(`FINALER QUOTE RESPONSE SCORE: ${finalScore}`);
+  console.log('=== BERECHNUNG BEENDET ===');
+  
+  return finalScore;
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,
@@ -331,18 +392,20 @@ export const calculateOverallScore = (
   hourlyRateScore: number,
   dataPrivacyScore: number = 75,
   corporateIdentityScore: number = 50,
-  staffQualificationScore: number = 50
+  staffQualificationScore: number = 50,
+  quoteResponseScore: number = 50
 ) => {
   const weightedScore = (
-    seoScore * 0.18 +
-    performanceScore * 0.14 +
-    mobileScore * 0.14 +
-    socialMediaScore * 0.14 +
-    impressumScore * 0.09 +
-    hourlyRateScore * 0.09 +
-    dataPrivacyScore * 0.09 +
-    corporateIdentityScore * 0.05 +
-    staffQualificationScore * 0.08
+    seoScore * 0.16 +              // SEO reduziert von 18% auf 16%
+    performanceScore * 0.12 +      // Performance reduziert von 14% auf 12%
+    mobileScore * 0.12 +           // Mobile reduziert von 14% auf 12%
+    socialMediaScore * 0.12 +      // Social Media reduziert von 14% auf 12%
+    impressumScore * 0.08 +        // Impressum reduziert von 9% auf 8%
+    hourlyRateScore * 0.08 +       // Hourly Rate reduziert von 9% auf 8%
+    dataPrivacyScore * 0.08 +      // Data Privacy reduziert von 9% auf 8%
+    corporateIdentityScore * 0.04 + // Corporate Identity reduziert von 5% auf 4%
+    staffQualificationScore * 0.08 + // Staff bleibt bei 8%
+    quoteResponseScore * 0.12      // NEU: Quote Response mit 12%
   );
   
   return Math.round(Math.max(0, Math.min(100, weightedScore)));

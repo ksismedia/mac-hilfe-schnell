@@ -319,6 +319,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             manualSocialData={manualSocialData}
             keywordsScore={currentKeywordsScore}
             staffQualificationData={staffQualificationData}
+            quoteResponseData={quoteResponseData}
           />
         </div>
 

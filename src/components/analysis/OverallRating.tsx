@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, StaffQualificationData } from '@/hooks/useManualData';
+import { ManualSocialData, StaffQualificationData, QuoteResponseData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore } from './export/scoreCalculations';
 
 interface OverallRatingProps {
   businessData: {
@@ -18,9 +18,10 @@ interface OverallRatingProps {
   manualSocialData?: ManualSocialData | null;
   keywordsScore?: number | null;
   staffQualificationData?: StaffQualificationData | null;
+  quoteResponseData?: QuoteResponseData | null;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData }) => {
   // Keywords-Score - use provided score or calculate default
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
@@ -34,6 +35,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
   // Staff Qualification Score
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
+  const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
 
   // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG
   const metrics = [

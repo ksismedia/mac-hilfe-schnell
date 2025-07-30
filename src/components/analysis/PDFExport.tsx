@@ -38,7 +38,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
   keywordScore,
   staffQualificationData
 }) => {
-  const { hourlyRateData } = useManualData();
+  const { hourlyRateData, quoteResponseData } = useManualData();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
