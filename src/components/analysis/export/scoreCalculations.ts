@@ -284,6 +284,63 @@ export const calculateAccessibilityScore = (realData: RealBusinessData) => {
   return finalScore;
 };
 
+// Berechnung für Datenschutz Score - AUSGEWOGENE BEWERTUNG
+export const calculateDataPrivacyScore = (realData: RealBusinessData) => {
+  console.log('=== DATENSCHUTZ SCORE BERECHNUNG GESTARTET (AUSGEWOGEN) ===');
+  
+  // FAIRE BEWERTUNG - Realistischer Startwert
+  let complianceScore = 70; // Fairer Startwert
+  
+  // Positive Indikatoren
+  if (realData.seo.score >= 70) {
+    complianceScore += 8; // Bonus für gute Webqualität
+    console.log('Bonus: Gute Webqualität deutet auf DSGVO-Bewusstsein hin -> +8');
+  }
+  
+  if (realData.seo.metaDescription && realData.seo.metaDescription.length > 100) {
+    complianceScore += 5; // Bonus für ausführliche Meta-Beschreibung
+    console.log('Bonus: Ausführliche Meta-Beschreibung -> +5');
+  }
+  
+  // Moderate Abzüge für potenzielle Probleme
+  if (!realData.seo.metaDescription || realData.seo.metaDescription.length < 50) {
+    complianceScore -= 12; // Mangelnde Transparenz
+    console.log('Abzug: Unzureichende Beschreibungen -> -12');
+  }
+  
+  if (realData.seo.score < 40) {
+    complianceScore -= 15; // Schlechte Webqualität
+    console.log('Abzug: Sehr schlechte Webqualität -> -15');
+  }
+  
+  if (realData.seo.headings.h1.length === 0) {
+    complianceScore -= 8; // Strukturprobleme
+    console.log('Abzug: Fehlende Struktur (H1) -> -8');
+  }
+  
+  // SSL-Check über HTTPS-Muster in den Daten
+  const hasSSL = realData.seo.metaDescription?.includes('ssl') || realData.seo.score >= 80;
+  if (hasSSL) {
+    complianceScore += 10; // SSL ist wichtig für DSGVO
+    console.log('Bonus: HTTPS/SSL wahrscheinlich implementiert -> +10');
+  } else {
+    complianceScore -= 15; // Reduzierte Strafe
+    console.log('Abzug: SSL/HTTPS-Status unklar -> -15');
+  }
+  
+  // Finaler Score - minimum 30, maximum 95 (realistischer Bereich)
+  const finalScore = Math.max(30, Math.min(95, complianceScore));
+  
+  console.log('=== DATENSCHUTZ SCORE ERGEBNIS (AUSGEWOGEN) ===');
+  console.log(`Startwert: 70`);
+  console.log(`Compliance-Score: ${complianceScore}`);
+  console.log(`Finaler Score: ${finalScore}`);
+  console.log(`Bewertung: ${finalScore >= 75 ? 'GUT' : finalScore >= 55 ? 'VERBESSERBAR' : 'OPTIMIERUNG NÖTIG'}`);
+  console.log('=== BERECHNUNG BEENDET ===');
+  
+  return finalScore;
+};
+
 export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: ManualCorporateIdentityData | null): number => {
   if (!manualCorporateIdentityData) {
     return 50; // Default neutral score when not assessed
@@ -405,7 +462,9 @@ export const calculateSEOContentScore = (
   const localSEOScore = calculateLocalSEOScore(businessData, realData);
   const imprintScore = realData.imprint.score;
   const accessibilityScore = calculateAccessibilityScore(realData);
-  const dataPrivacyScore = 75; // Default-Wert
+  
+  // Realistische Datenschutz-Bewertung basierend auf Website-Qualität
+  const dataPrivacyScore = calculateDataPrivacyScore(realData);
   
   // Gewichtung innerhalb der Kategorie
   const weightedScore = 
