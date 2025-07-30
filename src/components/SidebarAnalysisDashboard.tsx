@@ -13,10 +13,8 @@ import SocialMediaCategory from './analysis/categories/SocialMediaCategory';
 import StaffServiceCategory from './analysis/categories/StaffServiceCategory';
 
 // Components
-import PDFExport from './analysis/PDFExport';
-import HTMLExport from './analysis/HTMLExport';
-import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
+import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import OverallRating from './analysis/OverallRating';
 
 // Services
@@ -324,21 +322,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
                 />
-                <HTMLExport 
-                  businessData={businessData}
-                  realData={realData}
-                  manualSocialData={manualSocialData}
-                  keywordScore={keywordsScore}
-                  manualKeywordData={manualKeywordData}
-                />
                 <CustomerHTMLExport 
-                  businessData={businessData}
-                  realData={realData}
-                  manualSocialData={manualSocialData}
-                  keywordScore={keywordsScore}
-                  manualKeywordData={manualKeywordData}
-                />
-                <PDFExport 
                   businessData={businessData}
                   realData={realData}
                   manualSocialData={manualSocialData}
