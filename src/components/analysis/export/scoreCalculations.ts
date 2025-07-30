@@ -294,6 +294,34 @@ export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: Ma
   return Math.round(score);
 };
 
+// Calculate Staff Qualification Score
+export const calculateStaffQualificationScore = (staffData?: any): number => {
+  if (!staffData) return 50; // Default neutral score when not assessed
+  
+  let score = 0;
+  const totalEmployees = staffData.totalEmployees || 1;
+  
+  // Qualifikationsgrad (40% der Bewertung)
+  const qualifiedStaff = staffData.skilled_workers + staffData.masters;
+  const qualificationRatio = qualifiedStaff / totalEmployees;
+  score += qualificationRatio * 40;
+  
+  // Meister-Quote (20% der Bewertung)
+  const masterRatio = staffData.masters / totalEmployees;
+  score += masterRatio * 20;
+  
+  // Zertifizierungen (25% der Bewertung)
+  const certCount = Object.values(staffData.certifications || {}).filter(Boolean).length;
+  score += (certCount / 6) * 25;
+  
+  // Branchenspezifische Qualifikationen (15% der Bewertung)
+  const industrySpecificCount = (staffData.industry_specific || []).length;
+  const maxIndustrySpecific = 6; // Durchschnittliche Anzahl pro Branche
+  score += (industrySpecificCount / maxIndustrySpecific) * 15;
+  
+  return Math.round(Math.min(100, score));
+};
+
 export const calculateOverallScore = (
   seoScore: number,
   performanceScore: number,
@@ -302,17 +330,19 @@ export const calculateOverallScore = (
   impressumScore: number,
   hourlyRateScore: number,
   dataPrivacyScore: number = 75,
-  corporateIdentityScore: number = 50
+  corporateIdentityScore: number = 50,
+  staffQualificationScore: number = 50
 ) => {
   const weightedScore = (
-    seoScore * 0.20 +
-    performanceScore * 0.15 +
-    mobileScore * 0.15 +
-    socialMediaScore * 0.15 +
-    impressumScore * 0.10 +
-    hourlyRateScore * 0.10 +
-    dataPrivacyScore * 0.10 +
-    corporateIdentityScore * 0.05
+    seoScore * 0.18 +
+    performanceScore * 0.14 +
+    mobileScore * 0.14 +
+    socialMediaScore * 0.14 +
+    impressumScore * 0.09 +
+    hourlyRateScore * 0.09 +
+    dataPrivacyScore * 0.09 +
+    corporateIdentityScore * 0.05 +
+    staffQualificationScore * 0.08
   );
   
   return Math.round(Math.max(0, Math.min(100, weightedScore)));

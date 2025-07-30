@@ -1,10 +1,10 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 
 interface CustomerReportData {
@@ -27,6 +27,7 @@ interface CustomerReportData {
   keywordScore?: number;
   manualImprintData?: { elements: string[] } | null;
   dataPrivacyScore?: number;
+  staffQualificationData?: StaffQualificationData | null;
 }
 
 // Function to get score range for data attribute
@@ -65,7 +66,8 @@ export const generateCustomerHTML = ({
   manualKeywordData,
   keywordScore,
   manualImprintData,
-  dataPrivacyScore = 75
+  dataPrivacyScore = 75,
+  staffQualificationData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
@@ -76,6 +78,7 @@ export const generateCustomerHTML = ({
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
   // Calculate additional scores
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData);
@@ -1697,6 +1700,10 @@ export const generateCustomerHTML = ({
           <div class="score-card">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
             <div class="score-label">Corporate Identity</div>
+          </div>
+          <div class="score-card">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</span></div>
+            <div class="score-label">Mitarbeiterqualifizierung</div>
           </div>
           ${hourlyRateData ? `
           <div class="score-card">

@@ -25,6 +25,7 @@ interface CustomerHTMLExportProps {
   hourlyRateData?: { ownRate: number; regionAverage: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
+  staffQualificationData?: any;
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -40,7 +41,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     manualCorporateIdentityData,
     hourlyRateData,
   manualKeywordData,
-  keywordScore
+  keywordScore,
+  staffQualificationData
 }) => {
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -133,6 +135,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualKeywordData,
       keywordScore,
       manualImprintData,
+      staffQualificationData,
       dataPrivacyScore: 75
     });
 
@@ -168,6 +171,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualKeywordData,
       keywordScore,
       manualImprintData,
+      staffQualificationData,
       dataPrivacyScore: 75
     });
 

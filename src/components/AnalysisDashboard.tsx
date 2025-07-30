@@ -313,6 +313,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
             realData={realData}
             manualSocialData={manualSocialData}
             keywordsScore={currentKeywordsScore}
+            staffQualificationData={staffQualificationData}
           />
         </div>
 
@@ -578,7 +579,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   companyServices={companyServices}
                   deletedCompetitors={deletedCompetitors}
                   manualKeywordData={manualKeywordData}
-                  keywordScore={keywordsScore}
+                  keywordScore={currentKeywordsScore}
+                  staffQualificationData={staffQualificationData}
                 />
                 <PDFExport 
                   businessData={businessData} 
@@ -591,6 +593,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
                   deletedCompetitors={deletedCompetitors}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
+                  staffQualificationData={staffQualificationData}
                 />
               </div>
             </TabsContent>

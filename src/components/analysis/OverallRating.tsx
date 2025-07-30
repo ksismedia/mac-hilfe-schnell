@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData } from '@/hooks/useManualData';
+import { ManualSocialData, StaffQualificationData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore } from './export/scoreCalculations';
 
 interface OverallRatingProps {
   businessData: {
@@ -17,9 +17,10 @@ interface OverallRatingProps {
   realData: RealBusinessData;
   manualSocialData?: ManualSocialData | null;
   keywordsScore?: number | null;
+  staffQualificationData?: StaffQualificationData | null;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData }) => {
   // Keywords-Score - use provided score or calculate default
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
@@ -31,19 +32,23 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   // Local SEO Score - STRENGE BEWERTUNG MIT HÖCHSTER GEWICHTUNG
   const localSEOScore = calculateLocalSEOScore(businessData, realData);
 
-  // Alle Metriken - LOCAL SEO JETZT MIT HÖCHSTER GEWICHTUNG (25%)
+  // Staff Qualification Score
+  const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
+
+  // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG
   const metrics = [
-    { name: 'Local SEO', score: localSEOScore, weight: 25, maxScore: 100 }, // HÖCHSTE GEWICHTUNG für Handwerk
-    { name: 'SEO', score: realData.seo.score, weight: 15, maxScore: 100 },
-    { name: 'Performance', score: realData.performance.score, weight: 12, maxScore: 100 },
-    { name: 'Impressum', score: realData.imprint.score, weight: 10, maxScore: 100 },
+    { name: 'Local SEO', score: localSEOScore, weight: 24, maxScore: 100 }, // HÖCHSTE GEWICHTUNG für Handwerk
+    { name: 'SEO', score: realData.seo.score, weight: 14, maxScore: 100 },
+    { name: 'Performance', score: realData.performance.score, weight: 11, maxScore: 100 },
+    { name: 'Impressum', score: realData.imprint.score, weight: 9, maxScore: 100 },
+    { name: 'Personal', score: staffQualificationScore, weight: 8, maxScore: 100 }, // NEU: Mitarbeiterqualifizierung
     { name: 'Keywords', score: currentKeywordsScore, weight: 8, maxScore: 100 },
-    { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 8, maxScore: 100 },
-    { name: 'Mobile', score: realData.mobile.overallScore, weight: 7, maxScore: 100 },
+    { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 7, maxScore: 100 },
+    { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, maxScore: 100 },
     { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
-    { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 5, maxScore: 100 },
+    { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 4, maxScore: 100 },
     { name: 'Arbeitsplatz', score: realData.workplace.overallScore, weight: 2, maxScore: 100 },
-    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 2, maxScore: 100 }
+    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 1, maxScore: 100 }
   ];
 
   // Gewichteter Gesamtscore

@@ -22,6 +22,7 @@ interface PDFExportProps {
   deletedCompetitors?: Set<string>;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
+  staffQualificationData?: any;
 }
 
 interface HourlyRateData {
@@ -39,7 +40,8 @@ const PDFExport: React.FC<PDFExportProps> = ({
   companyServices,
   deletedCompetitors = new Set(),
   manualKeywordData,
-  keywordScore
+  keywordScore,
+  staffQualificationData
 }) => {
   const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData>();
 
@@ -87,6 +89,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
             hourlyRateData={hourlyRateData}
             manualKeywordData={manualKeywordData}
             keywordScore={keywordScore}
+            staffQualificationData={staffQualificationData}
           />
         </CardContent>
       </Card>
