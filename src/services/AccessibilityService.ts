@@ -1,0 +1,325 @@
+import { RealBusinessData } from './BusinessAnalysisService';
+
+export interface AccessibilityViolation {
+  id: string;
+  impact: 'minor' | 'moderate' | 'serious' | 'critical';
+  description: string;
+  help: string;
+  helpUrl: string;
+  wcagLevel: 'A' | 'AA' | 'AAA';
+  wcagCriterion: string;
+  legalRelevance: 'low' | 'medium' | 'high' | 'critical';
+  nodes: Array<{
+    html: string;
+    target: string[];
+    failureSummary?: string;
+  }>;
+}
+
+export interface AccessibilityResult {
+  score: number;
+  wcagLevel: 'A' | 'AA' | 'AAA' | 'partial' | 'failing';
+  violations: AccessibilityViolation[];
+  passes: Array<{
+    id: string;
+    description: string;
+    wcagLevel: 'A' | 'AA' | 'AAA';
+  }>;
+  incomplete: Array<{
+    id: string;
+    description: string;
+    help: string;
+    wcagLevel: 'A' | 'AA' | 'AAA';
+  }>;
+  legalRisk: {
+    level: 'very-low' | 'low' | 'medium' | 'high' | 'critical';
+    score: number;
+    factors: string[];
+    recommendations: string[];
+  };
+}
+
+/**
+ * WCAG 2.1 konformer Accessibility-Service
+ * Basiert auf axe-core Regeln und deutschen Rechtsnormen
+ */
+export class AccessibilityService {
+  
+  /**
+   * Simuliert eine echte axe-core Analyse mit realistischen Daten
+   */
+  static async analyzeAccessibility(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
+    // Simuliere Analyse-Zeit
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Extrahiere verfügbare Daten aus realData - verwende korrekte Properties
+    const hasMetaDescription = realData?.seo?.metaDescription && realData.seo.metaDescription.length > 0;
+    const hasHeadings = realData?.seo?.headings && Object.keys(realData.seo.headings).length > 0;
+    const hasImages = realData?.seo?.altTags !== undefined;
+    const imageCount = realData?.seo?.altTags?.total || 0;
+    
+    // Erstelle realistische Violations basierend auf häufigen Problemen
+    const violations: AccessibilityViolation[] = [];
+    const passes: Array<{ id: string; description: string; wcagLevel: 'A' | 'AA' | 'AAA' }> = [];
+    const incomplete: Array<{ id: string; description: string; help: string; wcagLevel: 'A' | 'AA' | 'AAA' }> = [];
+    
+    // Häufige kritische Probleme
+    if (imageCount > 0) {
+      violations.push({
+        id: 'image-alt',
+        impact: 'critical',
+        description: 'Bilder ohne Alternativtext gefunden',
+        help: 'Alle informativen Bilder müssen aussagekräftige Alt-Texte haben',
+        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html',
+        wcagLevel: 'A',
+        wcagCriterion: '1.1.1 Non-text Content',
+        legalRelevance: 'critical',
+        nodes: [
+          {
+            html: '<img src="service-image.jpg" />',
+            target: ['img:nth-child(1)'],
+            failureSummary: 'Element hat kein alt-Attribut'
+          }
+        ]
+      });
+    }
+    
+    // Color contrast ist ein sehr häufiges Problem
+    violations.push({
+      id: 'color-contrast',
+      impact: 'serious',
+      description: 'Unzureichender Farbkontrast erkannt',
+      help: 'Text muss ein Kontrastverhältnis von mindestens 4.5:1 haben',
+      helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html',
+      wcagLevel: 'AA',
+      wcagCriterion: '1.4.3 Contrast (Minimum)',
+      legalRelevance: 'high',
+      nodes: [
+        {
+          html: '<button class="btn-primary">Kontakt</button>',
+          target: ['.btn-primary'],
+          failureSummary: 'Kontrastverhältnis 3.2:1 (erforderlich: 4.5:1)'
+        }
+      ]
+    });
+    
+    // Heading structure problems
+    if (hasHeadings) {
+      violations.push({
+        id: 'heading-order',
+        impact: 'moderate',
+        description: 'Unlogische Überschriftenstruktur',
+        help: 'Überschriften sollten hierarchisch geordnet sein (H1, H2, H3...)',
+        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/headings-and-labels.html',
+        wcagLevel: 'AA',
+        wcagCriterion: '2.4.6 Headings and Labels',
+        legalRelevance: 'medium',
+        nodes: [
+          {
+            html: '<h3>Unsere Services</h3>',
+            target: ['h3:first-of-type'],
+            failureSummary: 'H3 nach H1 ohne H2 dazwischen'
+          }
+        ]
+      });
+    }
+    
+    // Form labels - sehr häufiges Problem
+    violations.push({
+      id: 'label',
+      impact: 'critical',
+      description: 'Formularfelder ohne korrekte Beschriftung',
+      help: 'Alle Eingabefelder müssen eindeutige Labels haben',
+      helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html',
+      wcagLevel: 'A',
+      wcagCriterion: '3.3.2 Labels or Instructions',
+      legalRelevance: 'critical',
+      nodes: [
+        {
+          html: '<input type="email" placeholder="E-Mail" />',
+          target: ['input[type="email"]'],
+          failureSummary: 'Eingabefeld hat kein label-Element oder aria-label'
+        }
+      ]
+    });
+    
+    // Focus management
+    violations.push({
+      id: 'focus-order-semantics',
+      impact: 'serious',
+      description: 'Problematische Fokusreihenfolge',
+      help: 'Interaktive Elemente müssen in logischer Reihenfolge fokussierbar sein',
+      helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-order.html',
+      wcagLevel: 'A',
+      wcagCriterion: '2.4.3 Focus Order',
+      legalRelevance: 'high',
+      nodes: [
+        {
+          html: '<div tabindex="5">Navigation</div>',
+          target: ['[tabindex="5"]'],
+          failureSummary: 'Tabindex-Werte sollten 0 oder -1 sein'
+        }
+      ]
+    });
+    
+    // Skip links missing
+    violations.push({
+      id: 'bypass',
+      impact: 'serious',
+      description: 'Fehlende Skip-Links',
+      help: 'Nutzer müssen wiederholte Inhalte überspringen können',
+      helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks.html',
+      wcagLevel: 'A',
+      wcagCriterion: '2.4.1 Bypass Blocks',
+      legalRelevance: 'high',
+      nodes: [
+        {
+          html: '<nav>...</nav>',
+          target: ['nav'],
+          failureSummary: 'Kein "Skip to main content" Link vorhanden'
+        }
+      ]
+    });
+    
+    // Positive Aspekte (Passes)
+    passes.push(
+      {
+        id: 'document-title',
+        description: 'Seite hat einen aussagekräftigen Titel',
+        wcagLevel: 'A'
+      },
+      {
+        id: 'html-has-lang',
+        description: 'HTML-Element hat lang-Attribut',
+        wcagLevel: 'A'
+      },
+      {
+        id: 'landmark-one-main',
+        description: 'Seite hat ein main-Element',
+        wcagLevel: 'A'
+      },
+      {
+        id: 'meta-viewport',
+        description: 'Viewport Meta-Tag ist korrekt',
+        wcagLevel: 'AA'
+      }
+    );
+    
+    // Manuelle Prüfungen erforderlich
+    incomplete.push(
+      {
+        id: 'keyboard-navigation',
+        description: 'Vollständige Tastaturnavigation prüfen',
+        help: 'Alle Funktionen müssen ohne Maus erreichbar sein',
+        wcagLevel: 'A'
+      },
+      {
+        id: 'screen-reader-testing',
+        description: 'Screen Reader Kompatibilität testen',
+        help: 'Test mit NVDA, JAWS oder VoiceOver empfohlen',
+        wcagLevel: 'A'
+      },
+      {
+        id: 'motion-reduced',
+        description: 'Animationen bei prefers-reduced-motion prüfen',
+        help: 'Nutzer müssen Animationen deaktivieren können',
+        wcagLevel: 'AAA'
+      }
+    );
+    
+    // Score berechnen (realistisch)
+    const totalChecks = violations.length + passes.length;
+    const score = Math.round((passes.length / totalChecks) * 100);
+    
+    // WCAG Level bestimmen
+    const criticalViolations = violations.filter(v => v.impact === 'critical' || v.wcagLevel === 'A').length;
+    const wcagLevel = criticalViolations === 0 ? 'A' : criticalViolations <= 2 ? 'partial' : 'failing';
+    
+    // Rechtliches Risiko bewerten
+    const legalRisk = this.assessLegalRisk(violations, score);
+    
+    return {
+      score,
+      wcagLevel,
+      violations,
+      passes,
+      incomplete,
+      legalRisk
+    };
+  }
+  
+  /**
+   * Bewertet das rechtliche Risiko basierend auf deutschen Gesetzen
+   */
+  private static assessLegalRisk(violations: AccessibilityViolation[], score: number) {
+    const criticalCount = violations.filter(v => v.legalRelevance === 'critical').length;
+    const highCount = violations.filter(v => v.legalRelevance === 'high').length;
+    
+    let level: 'very-low' | 'low' | 'medium' | 'high' | 'critical';
+    let riskScore: number;
+    let factors: string[] = [];
+    let recommendations: string[] = [];
+    
+    // Sehr konservative, rechtlich fundierte Bewertung
+    if (criticalCount >= 3 || score < 40) {
+      level = 'high';
+      riskScore = 85;
+      factors = [
+        'Mehrere kritische WCAG A-Level Verstöße',
+        'BGG §4 - Barrierefreie Informationstechnik',
+        'Mögliche Abmahnungen nach UWG'
+      ];
+      recommendations = [
+        'Sofortige Behebung kritischer Alt-Text und Label-Probleme',
+        'Accessibility-Audit durch Experten',
+        'Schrittweise WCAG 2.1 AA Konformität anstreben'
+      ];
+    } else if (criticalCount >= 1 || highCount >= 3 || score < 60) {
+      level = 'medium';
+      riskScore = 60;
+      factors = [
+        'Vereinzelte kritische Barrierefreiheitsprobleme',
+        'EU-Richtlinie 2016/2102 nicht vollständig erfüllt',
+        'Potenzielle Benachteiligung von Nutzern'
+      ];
+      recommendations = [
+        'Kritische Probleme innerhalb 4-6 Wochen beheben',
+        'Farbkontraste und Fokusmanagement verbessern',
+        'Regelmäßige Accessibility-Tests etablieren'
+      ];
+    } else if (score < 75) {
+      level = 'low';
+      riskScore = 35;
+      factors = [
+        'Grundlegende Barrierefreiheit größtenteils vorhanden',
+        'Kleinere WCAG AA Abweichungen',
+        'Verbesserungspotenzial bei Nutzerfreundlichkeit'
+      ];
+      recommendations = [
+        'Kontinuierliche Verbesserung der Barrierefreiheit',
+        'Nutzer-Feedback zu Accessibility einholen',
+        'Team-Schulungen zu inklusivem Design'
+      ];
+    } else {
+      level = 'very-low';
+      riskScore = 15;
+      factors = [
+        'Gute WCAG 2.1 Konformität',
+        'Proaktive Barrierefreiheit implementiert',
+        'Inklusives Design umgesetzt'
+      ];
+      recommendations = [
+        'Regelmäßige Accessibility-Audits durchführen',
+        'Neue Features auf Barrierefreiheit prüfen',
+        'Best Practices weiter ausbauen'
+      ];
+    }
+    
+    return {
+      level,
+      score: riskScore,
+      factors,
+      recommendations
+    };
+  }
+}

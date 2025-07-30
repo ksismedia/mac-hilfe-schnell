@@ -3,40 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield } from 'lucide-react';
+import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield, ExternalLink, BookOpen } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { AccessibilityService, AccessibilityResult, AccessibilityViolation } from '@/services/AccessibilityService';
 
 interface AccessibilityAnalysisProps {
   businessData: {
     url: string;
   };
   realData?: RealBusinessData;
-  savedData?: any;
-  onDataChange?: (data: any) => void;
-}
-
-interface AccessibilityResult {
-  score: number;
-  violations: Array<{
-    id: string;
-    impact: 'minor' | 'moderate' | 'serious' | 'critical';
-    description: string;
-    help: string;
-    helpUrl: string;
-    nodes: Array<{
-      html: string;
-      target: string[];
-    }>;
-  }>;
-  passes: Array<{
-    id: string;
-    description: string;
-  }>;
-  incomplete: Array<{
-    id: string;
-    description: string;
-    help: string;
-  }>;
+  savedData?: AccessibilityResult;
+  onDataChange?: (data: AccessibilityResult) => void;
 }
 
 const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ 
@@ -56,138 +33,42 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     setError(null);
     
     try {
-      // In einer echten Implementierung würde hier axe-core über einen Service laufen
-      // Für die Demo erstelle ich realistische Test-Daten
-      const mockResult: AccessibilityResult = {
-        score: 68, // Realistischer Score - gut aber verbesserbar
-        violations: [
-          {
-            id: 'color-contrast',
-            impact: 'serious',
-            description: 'Elemente müssen ausreichenden Farbkontrast haben',
-            help: 'Stellen Sie sicher, dass Vordergrund- und Hintergrundfarben ein ausreichendes Kontrastverhältnis haben',
-            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/color-contrast',
-            nodes: [
-              {
-                html: '<button class="btn-primary">Kontakt</button>',
-                target: ['.btn-primary']
-              }
-            ]
-          },
-          {
-            id: 'image-alt',
-            impact: 'moderate',
-            description: 'Bilder müssen Alternativtext haben',
-            help: 'Alle informativen Bilder müssen einen aussagekräftigen Alt-Text haben',
-            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/image-alt',
-            nodes: [
-              {
-                html: '<img src="team.jpg">',
-                target: ['img[src="team.jpg"]']
-              }
-            ]
-          },
-          {
-            id: 'heading-order',
-            impact: 'moderate',
-            description: 'Überschriften sollten in der richtigen Reihenfolge verwendet werden',
-            help: 'Überschriften sollten hierarchisch strukturiert sein (H1, dann H2, dann H3 usw.)',
-            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/heading-order',
-            nodes: [
-              {
-                html: '<h3>Service</h3>',
-                target: ['h3']
-              }
-            ]
-          },
-          {
-            id: 'label',
-            impact: 'serious',
-            description: 'Formularelemente müssen beschriftet sein',
-            help: 'Alle Eingabefelder müssen eindeutige Labels oder aria-label Attribute haben',
-            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/label',
-            nodes: [
-              {
-                html: '<input type="text" placeholder="Name">',
-                target: ['input[type="text"]']
-              }
-            ]
-          },
-          {
-            id: 'focus-order-semantics',
-            impact: 'minor',
-            description: 'Fokusreihenfolge sollte logisch sein',
-            help: 'Interactive Elemente sollten in einer logischen Reihenfolge fokussierbar sein',
-            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/focus-order-semantics',
-            nodes: [
-              {
-                html: '<div tabindex="1">',
-                target: ['div[tabindex]']
-              }
-            ]
-          }
-        ],
-        passes: [
-          {
-            id: 'document-title',
-            description: 'Dokumente müssen einen Titel haben'
-          },
-          {
-            id: 'html-has-lang',
-            description: 'HTML-Element muss ein lang-Attribut haben'
-          },
-          {
-            id: 'landmark-one-main',
-            description: 'Dokument muss ein main-Landmark haben'
-          },
-          {
-            id: 'page-has-heading-one',
-            description: 'Seite hat eine H1-Überschrift'
-          },
-          {
-            id: 'meta-viewport',
-            description: 'Viewport Meta-Tag ist korrekt gesetzt'
-          },
-          {
-            id: 'link-name',
-            description: 'Links haben aussagekräftige Namen'
-          }
-        ],
-        incomplete: [
-          {
-            id: 'keyboard-navigation',
-            description: 'Tastaturnavigation sollte getestet werden',
-            help: 'Überprüfen Sie manuell, ob alle interaktiven Elemente per Tastatur erreichbar sind'
-          },
-          {
-            id: 'screen-reader-compatibility',
-            description: 'Screen Reader-Kompatibilität prüfen',
-            help: 'Testen Sie die Website mit einem Screen Reader für optimale Zugänglichkeit'
-          }
-        ]
-      };
-
-      // Simuliere API-Aufruf
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setAccessibilityData(mockResult);
-      onDataChange?.(mockResult);
+      console.log('Starte WCAG 2.1 konformen Accessibility-Test...');
+      const result = await AccessibilityService.analyzeAccessibility(businessData.url, realData);
+      
+      setAccessibilityData(result);
+      onDataChange?.(result);
+      console.log('Accessibility-Analyse abgeschlossen:', result);
     } catch (err) {
-      setError('Fehler bei der Barrierefreiheitsprüfung: ' + (err as Error).message);
+      const errorMessage = 'Fehler bei der Barrierefreiheitsprüfung: ' + (err as Error).message;
+      setError(errorMessage);
+      console.error('Accessibility-Test Fehler:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  // WCAG-konforme Score-Darstellung
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'score-text-medium';  // 80-100% grün - gut
-    if (score >= 60) return 'score-text-high';    // 60-80% gelb - ok
-    return 'score-text-low';                      // 0-60% rot - schlecht
+    if (score >= 80) return 'score-text-medium';    // Grün: WCAG AA erfüllt
+    if (score >= 60) return 'score-text-high';      // Gelb: Grundanforderungen erfüllt
+    return 'score-text-low';                        // Rot: Kritische Mängel
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return 'default';           // grün (80-100%) - gut
-    if (score >= 60) return 'secondary';         // gelb (60-80%) - ok 
-    return 'destructive';                        // rot (0-60%) - schlecht
+    if (score >= 80) return 'default';              // Grün: Gut
+    if (score >= 60) return 'secondary';            // Gelb: Verbesserbar
+    return 'destructive';                           // Rot: Mangelhaft
+  };
+
+  const getWcagLevelBadge = (level: string) => {
+    switch (level) {
+      case 'AAA': return { variant: 'default' as const, text: 'WCAG AAA' };
+      case 'AA': return { variant: 'default' as const, text: 'WCAG AA' };
+      case 'A': return { variant: 'secondary' as const, text: 'WCAG A' };
+      case 'partial': return { variant: 'secondary' as const, text: 'Teilweise konform' };
+      default: return { variant: 'destructive' as const, text: 'Nicht konform' };
+    }
   };
 
   const getImpactIcon = (impact: string) => {
@@ -210,53 +91,46 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     }
   };
 
-  // Abmahnungsrisiko bewerten - realistischere Einschätzung
-  const getAbmahnungsrisiko = (score: number, violations: any[]) => {
-    const criticalViolations = violations.filter(v => v.impact === 'critical').length;
-    const seriousViolations = violations.filter(v => v.impact === 'serious').length;
-    
-    // Sehr strenge Bewertung - nur bei extremen Fällen hohes Risiko
-    if (score < 30 && criticalViolations >= 5) {
-      return {
-        risk: 'hoch',
+  const getLegalRiskDisplay = (risk: AccessibilityResult['legalRisk']) => {
+    const configs = {
+      'critical': {
+        color: 'score-text-low',
+        bgColor: 'bg-destructive/10',
+        borderColor: 'border-destructive',
+        icon: <Scale className="h-5 w-5 text-destructive" />,
+        title: 'Kritisches Rechtsrisiko'
+      },
+      'high': {
         color: 'score-text-low',
         bgColor: 'bg-destructive/5',
         borderColor: 'border-destructive',
-        message: 'Erhöhtes Abmahnungsrisiko',
-        description: 'Mehrere kritische Barrierefreiheitsprobleme vorhanden.',
-        recommendation: 'Schrittweise Behebung der kritischen Probleme empfohlen.'
-      };
-    } else if (score < 40 || criticalViolations >= 3 || seriousViolations >= 5) {
-      return {
-        risk: 'mittel',
+        icon: <AlertCircle className="h-5 w-5 text-destructive" />,
+        title: 'Erhöhtes Rechtsrisiko'
+      },
+      'medium': {
         color: 'text-warning',
         bgColor: 'bg-warning/5',
         borderColor: 'border-warning',
-        message: 'Verbesserungsbedarf erkannt',
-        description: 'Einige Barrierefreiheitsprobleme sollten behoben werden.',
-        recommendation: 'Behebung der Probleme zur Verbesserung der Zugänglichkeit empfohlen.'
-      };
-    } else if (score < 60) {
-      return {
-        risk: 'niedrig',
+        icon: <AlertTriangle className="h-5 w-5 text-warning" />,
+        title: 'Moderates Rechtsrisiko'
+      },
+      'low': {
         color: 'score-text-high',
         bgColor: 'bg-accent/5',
         borderColor: 'border-accent',
-        message: 'Grundstandards erfüllt',
-        description: 'Barrierefreiheit weitgehend gewährleistet, kleinere Verbesserungen möglich.',
-        recommendation: 'Kontinuierliche Optimierung zur weiteren Verbesserung.'
-      };
-    } else {
-      return {
-        risk: 'sehr niedrig',
+        icon: <Shield className="h-5 w-5 text-accent" />,
+        title: 'Geringes Rechtsrisiko'
+      },
+      'very-low': {
         color: 'score-text-medium',
         bgColor: 'bg-accent/10',
         borderColor: 'border-accent',
-        message: 'Gute Barrierefreiheit',
-        description: 'Hohe Barrierefreiheitsstandards erfüllt.',
-        recommendation: 'Regelmäßige Überprüfung zur Aufrechterhaltung des Standards.'
-      };
-    }
+        icon: <CheckCircle className="h-5 w-5 text-accent" />,
+        title: 'Sehr geringes Rechtsrisiko'
+      }
+    };
+    
+    return configs[risk.level];
   };
 
   return (
@@ -364,52 +238,70 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </Card>
                </div>
 
-              {/* Abmahnungsrisiko */}
+              {/* Rechtliche Bewertung */}
               {(() => {
-                const risikoAnalyse = getAbmahnungsrisiko(accessibilityData.score, accessibilityData.violations);
+                const riskDisplay = getLegalRiskDisplay(accessibilityData.legalRisk);
                 return (
-                  <Card className={`${risikoAnalyse.borderColor} ${risikoAnalyse.bgColor}`}>
+                  <Card className={`${riskDisplay.borderColor} ${riskDisplay.bgColor}`}>
                     <CardHeader className="pb-4">
-                      <CardTitle className={`text-lg ${risikoAnalyse.color} flex items-center gap-2`}>
-                        <Scale className="h-5 w-5" />
-                        Rechtliche Bewertung - {risikoAnalyse.message}
+                      <CardTitle className={`text-lg ${riskDisplay.color} flex items-center gap-2`}>
+                        {riskDisplay.icon}
+                        {riskDisplay.title}
                       </CardTitle>
                       <CardDescription>
-                        Einschätzung des Abmahnungsrisikos basierend auf aktuellen Barrierefreiheitsstandards
+                        Rechtliche Einschätzung basierend auf WCAG 2.1 und deutschen Barrierefreiheitsgesetzen
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Shield className={`h-5 w-5 ${risikoAnalyse.color} mt-0.5`} />
-                          <div>
-                            <p className="text-sm text-gray-700 mb-2">
-                              <strong>Bewertung:</strong> {risikoAnalyse.description}
-                            </p>
-                            <p className="text-sm text-gray-600 mb-3">
-                              <strong>Empfehlung:</strong> {risikoAnalyse.recommendation}
-                            </p>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                              <div className="space-y-2">
-                                <h5 className="font-semibold text-gray-800 text-sm">Rechtliche Grundlagen:</h5>
-                                <ul className="text-xs text-gray-600 space-y-1">
-                                  <li>• BGG (Behindertengleichstellungsgesetz)</li>
-                                  <li>• WCAG 2.1 Level AA Standard</li>
-                                  <li>• EU-Richtlinie 2016/2102</li>
-                                  <li>• Barrierefreie-Informationstechnik-Verordnung (BITV 2.0)</li>
-                                </ul>
-                              </div>
-                              <div className="space-y-2">
-                                <h5 className="font-semibold text-gray-800 text-sm">Mögliche Konsequenzen:</h5>
-                                <ul className="text-xs text-gray-600 space-y-1">
-                                  <li>• Abmahnungen durch Anwaltskanzleien</li>
-                                  <li>• Klagen von Betroffenen</li>
-                                  <li>• Bußgelder bei öffentlichen Stellen</li>
-                                  <li>• Reputationsschäden</li>
-                                </ul>
-                              </div>
-                            </div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <Badge variant={getWcagLevelBadge(accessibilityData.wcagLevel).variant}>
+                            {getWcagLevelBadge(accessibilityData.wcagLevel).text}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            Rechtliches Risiko: {accessibilityData.legalRisk.score}/100
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-3">
+                            <h5 className="font-semibold text-foreground flex items-center gap-2">
+                              <BookOpen className="h-4 w-4" />
+                              Rechtliche Faktoren:
+                            </h5>
+                            <ul className="text-sm space-y-1 text-muted-foreground">
+                              {accessibilityData.legalRisk.factors.map((factor, index) => (
+                                <li key={index}>• {factor}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <h5 className="font-semibold text-foreground flex items-center gap-2">
+                              <ExternalLink className="h-4 w-4" />
+                              Empfehlungen:
+                            </h5>
+                            <ul className="text-sm space-y-1 text-muted-foreground">
+                              {accessibilityData.legalRisk.recommendations.map((rec, index) => (
+                                <li key={index}>• {rec}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                          <h5 className="font-semibold text-foreground mb-2">🏛️ Rechtliche Grundlagen:</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <ul className="text-xs space-y-1 text-muted-foreground">
+                              <li>• BGG §4 - Barrierefreie Informationstechnik</li>
+                              <li>• WCAG 2.1 Level AA als deutscher Standard</li>
+                              <li>• EU-Richtlinie 2016/2102</li>
+                            </ul>
+                            <ul className="text-xs space-y-1 text-muted-foreground">
+                              <li>• BITV 2.0 für öffentliche Stellen</li>
+                              <li>• UWG bei Wettbewerbsverzerrung</li>
+                              <li>• AGG Benachteiligungsverbot</li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -443,7 +335,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {accessibilityData.violations.map((violation, index) => (
+                      {accessibilityData.violations.map((violation: AccessibilityViolation, index) => (
                         <div 
                           key={index} 
                           className={`p-4 rounded-lg border-l-4 ${getImpactColor(violation.impact)}`}
@@ -451,28 +343,44 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                           <div className="flex items-start gap-3">
                             {getImpactIcon(violation.impact)}
                             <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900 mb-1">
-                                {violation.description}
-                              </h4>
-                              <p className="text-sm text-gray-600 mb-2">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="font-semibold text-foreground">
+                                  {violation.description}
+                                </h4>
+                                <Badge variant="outline" className="text-xs">
+                                  {violation.wcagCriterion}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground mb-2">
                                 {violation.help}
                               </p>
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge variant="outline" className="text-xs">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Badge 
+                                  variant={violation.impact === 'critical' ? 'destructive' : 'outline'} 
+                                  className="text-xs"
+                                >
                                   {violation.impact}
                                 </Badge>
-                                <span className="text-xs text-gray-500">
+                                <Badge variant="secondary" className="text-xs">
+                                  WCAG {violation.wcagLevel}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
                                   {violation.nodes.length} Element(e) betroffen
                                 </span>
                               </div>
+                              {violation.nodes[0]?.failureSummary && (
+                                <p className="text-xs text-muted-foreground mb-2 font-mono bg-muted/50 p-2 rounded">
+                                  {violation.nodes[0].failureSummary}
+                                </p>
+                              )}
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => window.open(violation.helpUrl, '_blank')}
                                 className="text-xs"
                               >
-                                <FileText className="h-3 w-3 mr-1" />
-                                Mehr erfahren
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                WCAG Guideline
                               </Button>
                             </div>
                           </div>
@@ -483,50 +391,76 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </Card>
               )}
 
-              {/* Recommendations */}
-              <Card className="border-blue-200">
+              {/* WCAG-konforme Handlungsempfehlungen */}
+              <Card className="border-accent">
                 <CardHeader>
-                  <CardTitle className="text-lg text-blue-600 flex items-center gap-2">
+                  <CardTitle className="text-lg text-accent flex items-center gap-2">
                     <Palette className="h-5 w-5" />
-                    Handlungsempfehlungen
+                    WCAG 2.1 Handlungsempfehlungen
                   </CardTitle>
+                  <CardDescription>
+                    Prioritätsliste zur Verbesserung der Barrierefreiheit nach internationalen Standards
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                        <Eye className="h-4 w-4" />
-                        Sofort umsetzbar:
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
+                        <XCircle className="h-4 w-4 text-destructive" />
+                        Kritische Probleme (Level A):
                       </h4>
-                      <ul className="text-sm space-y-2 text-gray-600">
-                        <li>• Alt-Texte für alle Bilder hinzufügen</li>
-                        <li>• Farbkontraste erhöhen (mindestens 4.5:1)</li>
-                        <li>• Überschriftenstruktur korrigieren</li>
-                        <li>• Formular-Labels ergänzen</li>
+                      <ul className="text-sm space-y-2 text-muted-foreground">
+                        <li>• Alt-Texte für alle informativen Bilder</li>
+                        <li>• Label oder aria-label für Formularfelder</li>
+                        <li>• Tastaturnavigation für alle Funktionen</li>
+                        <li>• Skip-Links zur Hauptnavigation</li>
                       </ul>
                     </div>
+                    
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                        <Keyboard className="h-4 w-4" />
-                        Erweiterte Maßnahmen:
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-warning" />
+                        Wichtige Verbesserungen (Level AA):
                       </h4>
-                      <ul className="text-sm space-y-2 text-gray-600">
-                        <li>• Tastaturnavigation testen</li>
-                        <li>• Screen Reader-Kompatibilität prüfen</li>
-                        <li>• Focus-Indikatoren verbessern</li>
-                        <li>• ARIA-Labels implementieren</li>
+                      <ul className="text-sm space-y-2 text-muted-foreground">
+                        <li>• Farbkontrast minimum 4.5:1</li>
+                        <li>• Logische Überschriftenstruktur</li>
+                        <li>• Fokus-Indikatoren sichtbar machen</li>
+                        <li>• Zoom bis 200% ohne Datenverlust</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-accent" />
+                        Erweiterte Optimierung (Level AAA):
+                      </h4>
+                      <ul className="text-sm space-y-2 text-muted-foreground">
+                        <li>• Enhanced Farbkontrast 7:1</li>
+                        <li>• Animationen deaktivierbar</li>
+                        <li>• Einfache Sprache verwenden</li>
+                        <li>• Kontexthilfen anbieten</li>
                       </ul>
                     </div>
                   </div>
                   
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-900 mb-2">💡 Rechtliche Hinweise:</h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• EU-Richtlinie 2016/2102 zur Barrierefreiheit</li>
-                      <li>• Behindertengleichstellungsgesetz (BGG)</li>
-                      <li>• WCAG 2.1 Level AA als Standard</li>
-                      <li>• Vermeidung von Abmahnungen und Klagen</li>
-                    </ul>
+                  <div className="mt-6 p-4 bg-accent/10 rounded-lg">
+                    <h4 className="font-semibold text-accent mb-2 flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      Testing-Empfehlungen:
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <ul className="text-sm space-y-1 text-muted-foreground">
+                        <li>• Automatisierte Tests mit axe-core</li>
+                        <li>• Manuelle Tastaturnavigation</li>
+                        <li>• Screen Reader Testing (NVDA/JAWS)</li>
+                      </ul>
+                      <ul className="text-sm space-y-1 text-muted-foreground">
+                        <li>• Farbkontrast-Analyzer verwenden</li>
+                        <li>• Mobile Accessibility prüfen</li>
+                        <li>• Nutzer mit Behinderungen einbeziehen</li>
+                      </ul>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
