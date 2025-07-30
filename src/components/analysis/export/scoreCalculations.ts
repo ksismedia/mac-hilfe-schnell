@@ -225,54 +225,60 @@ export const calculateBacklinksScore = (realData: RealBusinessData) => {
   return Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
 };
 
-// Berechnung für Accessibility Score - SEHR STRENGE BEWERTUNG
+// Berechnung für Accessibility Score - AUSGEWOGENE BEWERTUNG
 export const calculateAccessibilityScore = (realData: RealBusinessData) => {
-  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET (SEHR STRENG) ===');
+  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET (AUSGEWOGEN) ===');
   
-  // VIEL STRENGERE BEWERTUNG - Rechtliche Compliance hat Priorität
-  let complianceScore = 45; // Deutlich niedrigerer Startwert
+  // AUSGEWOGENE BEWERTUNG - Realistische Bewertung mit fairem Startwert
+  let complianceScore = 65; // Fairerer Startwert
   
   // Simuliere Violation-Detektion basierend auf SEO-Qualität
   const hasImageAltIssues = !realData.seo.metaDescription || realData.seo.metaDescription.length < 50;
   const hasHeadingIssues = realData.seo.headings.h1.length === 0 || realData.seo.headings.h2.length === 0;
-  const hasContrastIssues = realData.seo.score < 60; // Indikator für schlechte Webqualität
+  const hasContrastIssues = realData.seo.score < 50; // Weniger strenger Indikator
   
-  // SEHR STRENGE BEWERTUNG - Jeder Verstoß führt zu drastischen Abzügen
+  // FAIRE BEWERTUNG - Moderate Abzüge für Probleme
   if (hasImageAltIssues) {
-    complianceScore -= 25; // Fehlende Alt-Texte = kritischer Verstoß
-    console.log('Kritischer Verstoß: Fehlende/schlechte Alt-Texte -> -25');
+    complianceScore -= 15; // Moderater Abzug für Alt-Text-Probleme
+    console.log('Problem erkannt: Alt-Text-Optimierung nötig -> -15');
   }
   
   if (hasHeadingIssues) {
-    complianceScore -= 20; // Schlechte Heading-Struktur
-    console.log('Kritischer Verstoß: Schlechte Heading-Struktur -> -20');
+    complianceScore -= 12; // Moderater Abzug für Struktur
+    console.log('Problem erkannt: Heading-Struktur verbesserbar -> -12');
   }
   
   if (hasContrastIssues) {
-    complianceScore -= 25; // Kontrast-Probleme
-    console.log('Kritischer Verstoß: Potentielle Kontrast-Probleme -> -25');
+    complianceScore -= 15; // Moderater Abzug für Kontrast
+    console.log('Problem erkannt: Kontrast-Optimierung empfohlen -> -15');
   }
   
-  // Zusätzliche Abzüge für schlechte allgemeine Webqualität
-  if (realData.seo.score < 40) {
-    complianceScore -= 15; // Sehr schlechte Webqualität
-    console.log('Zusätzlicher Abzug: Sehr schlechte Webqualität -> -15');
+  // Moderate Abzüge für allgemeine Webqualität
+  if (realData.seo.score < 30) {
+    complianceScore -= 10; // Nur bei sehr schlechter Qualität
+    console.log('Zusätzlicher Abzug: Grundlegende Weboptimierung nötig -> -10');
   }
   
-  // Weitere Abzüge für fehlende SEO-Grundlagen
+  // Leichte Abzüge für fehlende Grundlagen
   if (!realData.seo.titleTag || realData.seo.titleTag.length < 30) {
-    complianceScore -= 10; // Schlechter Titel deutet auf schlechte Barrierefreiheit hin
-    console.log('Zusätzlicher Abzug: Schlechter/fehlender Titel -> -10');
+    complianceScore -= 8; // Moderater Abzug
+    console.log('Zusätzlicher Abzug: Titel-Optimierung empfohlen -> -8');
   }
   
-  // Finaler Score - minimum 0, maximum 100
-  const finalScore = Math.max(0, Math.min(100, complianceScore));
+  // Bonus für gute SEO-Werte
+  if (realData.seo.score >= 70) {
+    complianceScore += 5;
+    console.log('Bonus: Gute Webqualität deutet auf Accessibility-Bewusstsein hin -> +5');
+  }
   
-  console.log('=== ACCESSIBILITY SCORE ERGEBNIS (SEHR STRENG) ===');
-  console.log(`Startwert: 45`);
+  // Finaler Score - minimum 20, maximum 100 (realistischer Bereich)
+  const finalScore = Math.max(20, Math.min(100, complianceScore));
+  
+  console.log('=== ACCESSIBILITY SCORE ERGEBNIS (AUSGEWOGEN) ===');
+  console.log(`Startwert: 65`);
   console.log(`Compliance-Score: ${complianceScore}`);
   console.log(`Finaler Score: ${finalScore}`);
-  console.log(`Rechtliche Compliance: ${finalScore >= 80 ? 'ERFÜLLT' : finalScore >= 60 ? 'TEILWEISE' : 'NICHT ERFÜLLT'}`);
+  console.log(`Bewertung: ${finalScore >= 70 ? 'GUT' : finalScore >= 50 ? 'VERBESSERBAR' : 'OPTIMIERUNG NÖTIG'}`);
   console.log('=== BERECHNUNG BEENDET ===');
   
   return finalScore;
