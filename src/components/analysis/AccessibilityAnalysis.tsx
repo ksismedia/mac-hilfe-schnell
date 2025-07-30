@@ -59,7 +59,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
       // In einer echten Implementierung würde hier axe-core über einen Service laufen
       // Für die Demo erstelle ich realistische Test-Daten
       const mockResult: AccessibilityResult = {
-        score: 35, // Deutlich niedrigerer Score für strengere Bewertung
+        score: 68, // Realistischer Score - gut aber verbesserbar
         violations: [
           {
             id: 'color-contrast',
@@ -76,7 +76,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
           },
           {
             id: 'image-alt',
-            impact: 'critical',
+            impact: 'moderate',
             description: 'Bilder müssen Alternativtext haben',
             help: 'Alle informativen Bilder müssen einen aussagekräftigen Alt-Text haben',
             helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/image-alt',
@@ -99,6 +99,32 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 target: ['h3']
               }
             ]
+          },
+          {
+            id: 'label',
+            impact: 'serious',
+            description: 'Formularelemente müssen beschriftet sein',
+            help: 'Alle Eingabefelder müssen eindeutige Labels oder aria-label Attribute haben',
+            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/label',
+            nodes: [
+              {
+                html: '<input type="text" placeholder="Name">',
+                target: ['input[type="text"]']
+              }
+            ]
+          },
+          {
+            id: 'focus-order-semantics',
+            impact: 'minor',
+            description: 'Fokusreihenfolge sollte logisch sein',
+            help: 'Interactive Elemente sollten in einer logischen Reihenfolge fokussierbar sein',
+            helpUrl: 'https://dequeuniversity.com/rules/axe/4.10/focus-order-semantics',
+            nodes: [
+              {
+                html: '<div tabindex="1">',
+                target: ['div[tabindex]']
+              }
+            ]
           }
         ],
         passes: [
@@ -113,13 +139,30 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
           {
             id: 'landmark-one-main',
             description: 'Dokument muss ein main-Landmark haben'
+          },
+          {
+            id: 'page-has-heading-one',
+            description: 'Seite hat eine H1-Überschrift'
+          },
+          {
+            id: 'meta-viewport',
+            description: 'Viewport Meta-Tag ist korrekt gesetzt'
+          },
+          {
+            id: 'link-name',
+            description: 'Links haben aussagekräftige Namen'
           }
         ],
         incomplete: [
           {
-            id: 'label',
-            description: 'Formularelemente müssen Labels haben',
-            help: 'Überprüfen Sie manuell, ob alle Eingabefelder korrekt beschriftet sind'
+            id: 'keyboard-navigation',
+            description: 'Tastaturnavigation sollte getestet werden',
+            help: 'Überprüfen Sie manuell, ob alle interaktiven Elemente per Tastatur erreichbar sind'
+          },
+          {
+            id: 'screen-reader-compatibility',
+            description: 'Screen Reader-Kompatibilität prüfen',
+            help: 'Testen Sie die Website mit einem Screen Reader für optimale Zugänglichkeit'
           }
         ]
       };
@@ -136,79 +179,80 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'score-text-high';  // 80-100% gelb
-    if (score >= 60) return 'score-text-medium';   // 60-80% grün
-    return 'score-text-low';                      // 0-60% rot
+    if (score >= 80) return 'score-text-medium';  // 80-100% grün - gut
+    if (score >= 60) return 'score-text-high';    // 60-80% gelb - ok
+    return 'score-text-low';                      // 0-60% rot - schlecht
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return 'secondary';        // gelb (80-100%)
-    if (score >= 60) return 'default';          // grün (60-80%)
-    return 'destructive';                       // rot (0-60%)
+    if (score >= 80) return 'default';           // grün (80-100%) - gut
+    if (score >= 60) return 'secondary';         // gelb (60-80%) - ok 
+    return 'destructive';                        // rot (0-60%) - schlecht
   };
 
   const getImpactIcon = (impact: string) => {
     switch (impact) {
-      case 'critical': return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'serious': return <AlertCircle className="h-4 w-4 text-red-400" />;
-      case 'moderate': return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'minor': return <AlertTriangle className="h-4 w-4 text-blue-500" />;
-      default: return <AlertCircle className="h-4 w-4 text-gray-500" />;
+      case 'critical': return <XCircle className="h-4 w-4 text-destructive" />;
+      case 'serious': return <AlertCircle className="h-4 w-4 text-destructive" />;
+      case 'moderate': return <AlertTriangle className="h-4 w-4 text-warning" />;
+      case 'minor': return <AlertTriangle className="h-4 w-4 text-accent" />;
+      default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'critical': return 'border-red-500 bg-red-50';
-      case 'serious': return 'border-red-400 bg-red-50';
-      case 'moderate': return 'border-yellow-500 bg-yellow-50';
-      case 'minor': return 'border-blue-500 bg-blue-50';
-      default: return 'border-gray-300 bg-gray-50';
+      case 'critical': return 'border-destructive bg-destructive/5';
+      case 'serious': return 'border-destructive bg-destructive/5';
+      case 'moderate': return 'border-warning bg-warning/5';
+      case 'minor': return 'border-accent bg-accent/5';
+      default: return 'border-border bg-muted/20';
     }
   };
 
-  // Abmahnungsrisiko bewerten
+  // Abmahnungsrisiko bewerten - realistischere Einschätzung
   const getAbmahnungsrisiko = (score: number, violations: any[]) => {
     const criticalViolations = violations.filter(v => v.impact === 'critical').length;
     const seriousViolations = violations.filter(v => v.impact === 'serious').length;
     
-    if (score < 50 || criticalViolations >= 3) {
+    // Sehr strenge Bewertung - nur bei extremen Fällen hohes Risiko
+    if (score < 30 && criticalViolations >= 5) {
       return {
         risk: 'hoch',
         color: 'score-text-low',
-        bgColor: 'bg-red-50',
-        borderColor: 'border-red-300',
-        message: 'Hohes Abmahnungsrisiko',
-        description: 'Mehrere schwerwiegende Verstöße gegen Barrierefreiheitsstandards vorhanden.',
-        recommendation: 'Sofortige Behebung der kritischen Probleme empfohlen.'
+        bgColor: 'bg-destructive/5',
+        borderColor: 'border-destructive',
+        message: 'Erhöhtes Abmahnungsrisiko',
+        description: 'Mehrere kritische Barrierefreiheitsprobleme vorhanden.',
+        recommendation: 'Schrittweise Behebung der kritischen Probleme empfohlen.'
       };
-    } else if (score < 70 || criticalViolations >= 1 || seriousViolations >= 3) {
+    } else if (score < 40 || criticalViolations >= 3 || seriousViolations >= 5) {
       return {
         risk: 'mittel',
-        color: 'text-orange-600',
-        bgColor: 'bg-orange-50',
-        borderColor: 'border-orange-300',
-        message: 'Mittleres Abmahnungsrisiko',
-        description: 'Einige Verstöße vorhanden, die zu rechtlichen Problemen führen könnten.',
-        recommendation: 'Behebung der Probleme innerhalb von 4-6 Wochen empfohlen.'
+        color: 'text-warning',
+        bgColor: 'bg-warning/5',
+        borderColor: 'border-warning',
+        message: 'Verbesserungsbedarf erkannt',
+        description: 'Einige Barrierefreiheitsprobleme sollten behoben werden.',
+        recommendation: 'Behebung der Probleme zur Verbesserung der Zugänglichkeit empfohlen.'
       };
-    } else if (score < 90) {
+    } else if (score < 60) {
       return {
         risk: 'niedrig',
         color: 'score-text-high',
-        bgColor: 'bg-yellow-50',
-        borderColor: 'border-yellow-300',
-        message: 'Niedriges Abmahnungsrisiko',
-        description: 'Grundlegende Standards erfüllt, aber Verbesserungen möglich.',
-        recommendation: 'Kontinuierliche Verbesserung zur Risikominimierung.'
+        bgColor: 'bg-accent/5',
+        borderColor: 'border-accent',
+        message: 'Grundstandards erfüllt',
+        description: 'Barrierefreiheit weitgehend gewährleistet, kleinere Verbesserungen möglich.',
+        recommendation: 'Kontinuierliche Optimierung zur weiteren Verbesserung.'
       };
     } else {
       return {
         risk: 'sehr niedrig',
         color: 'score-text-medium',
-        bgColor: 'bg-green-50',
-        borderColor: 'border-green-300',
-        message: 'Sehr niedriges Abmahnungsrisiko',
+        bgColor: 'bg-accent/10',
+        borderColor: 'border-accent',
+        message: 'Gute Barrierefreiheit',
         description: 'Hohe Barrierefreiheitsstandards erfüllt.',
         recommendation: 'Regelmäßige Überprüfung zur Aufrechterhaltung des Standards.'
       };
