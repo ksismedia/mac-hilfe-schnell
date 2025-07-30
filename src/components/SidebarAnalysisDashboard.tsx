@@ -312,48 +312,38 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                 <SaveAnalysisDialog 
                   businessData={businessData}
                   realData={realData}
-                  manualData={{
-                    imprintData: manualImprintData,
-                    socialData: manualSocialData,
-                    workplaceData: manualWorkplaceData,
-                    corporateIdentityData: manualCorporateIdentityData,
-                    competitors: manualCompetitors,
-                    competitorServices,
-                    companyServices,
-                    keywordData: manualKeywordData,
-                    keywordScore: keywordsScore,
-                    privacyData,
-                    accessibilityData,
-                    staffQualificationData,
-                    quoteResponseData
-                  }}
+                  manualImprintData={manualImprintData}
+                  manualSocialData={manualSocialData}
+                  manualWorkplaceData={manualWorkplaceData}
+                  manualCorporateIdentityData={manualCorporateIdentityData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={competitorServices}
+                  companyServices={companyServices}
+                  manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
+                  privacyData={privacyData}
+                  accessibilityData={accessibilityData}
                 />
                 <HTMLExport 
                   businessData={businessData}
                   realData={realData}
                   manualSocialData={manualSocialData}
-                  keywordsScore={keywordsScore}
+                  keywordScore={keywordsScore}
                   manualKeywordData={manualKeywordData}
-                  staffQualificationData={staffQualificationData}
-                  quoteResponseData={quoteResponseData}
                 />
                 <CustomerHTMLExport 
                   businessData={businessData}
                   realData={realData}
                   manualSocialData={manualSocialData}
-                  keywordsScore={keywordsScore}
+                  keywordScore={keywordsScore}
                   manualKeywordData={manualKeywordData}
-                  staffQualificationData={staffQualificationData}
-                  quoteResponseData={quoteResponseData}
                 />
                 <PDFExport 
                   businessData={businessData}
                   realData={realData}
                   manualSocialData={manualSocialData}
-                  keywordsScore={keywordsScore}
+                  keywordScore={keywordsScore}
                   manualKeywordData={manualKeywordData}
-                  staffQualificationData={staffQualificationData}
-                  quoteResponseData={quoteResponseData}
                 />
               </div>
             </div>
