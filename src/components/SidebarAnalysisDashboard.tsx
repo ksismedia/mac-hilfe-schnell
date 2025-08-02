@@ -286,17 +286,16 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full">
-      <SidebarProvider>
-        <div className="flex w-full min-h-screen">
-          <CategorySidebar
-            onCategoryChange={setActiveCategory}
-            activeCategory={activeCategory}
-            scores={scores}
-          />
-          
-          <main className="flex-1 bg-background">
-            <div className="p-6">
+    <SidebarProvider>
+      <div className="flex w-full min-h-screen">
+        <CategorySidebar
+          onCategoryChange={setActiveCategory}
+          activeCategory={activeCategory}
+          scores={scores}
+        />
+        
+        <main className="flex-1 bg-background">
+          <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
@@ -377,11 +376,10 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
             {/* Active Category Content */}
             {renderActiveCategory()}
-            </div>
-          </main>
-        </div>
-      </SidebarProvider>
-    </div>
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 
