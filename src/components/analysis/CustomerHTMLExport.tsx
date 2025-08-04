@@ -302,8 +302,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
       </svg>
     </div>
-    <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 26px; font-weight: 500; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430; font-stretch: ultra-condensed;">HANDWERK</div>
-    <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 26px; font-weight: 500; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430; font-stretch: ultra-condensed;">STARS</div>
+    <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 30px; font-weight: 500; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430; font-stretch: ultra-condensed;">HANDWERK</div>
+    <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 30px; font-weight: 500; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430; font-stretch: ultra-condensed;">STARS</div>
   </div>
 </div>
 <h1 style="text-align: center; color: #f4c430; margin: 30px 0;">UNNA - die Unternehmensanalyse fürs Handwerk</h1>
