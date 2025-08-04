@@ -286,16 +286,31 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="flex gap-3">
             <Button 
               onClick={() => {
-                console.log('🔴 BUTTON HANDLER START');
-                alert('BUTTON CLICKED!');
-                console.log('🔴 ABOUT TO CALL generateCustomerReport');
-                try {
-                  generateCustomerReport();
-                  console.log('🔴 generateCustomerReport COMPLETED');
-                } catch (error) {
-                  console.error('🔴 ERROR in generateCustomerReport:', error);
+                // SUPER EINFACHER TEST
+                const testHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head><title>Logo Test</title></head>
+                <body style="background: #1f2937; color: white; padding: 50px; font-family: Arial;">
+                  <div style="text-align: center; padding: 30px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 12px; border: 3px solid #fbbf24;">
+                    <div style="font-family: Arial Black, Arial; font-size: 36px; font-weight: 900; color: #fbbf24; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); letter-spacing: 3px; margin-bottom: 10px;">
+                      ⭐ HANDWERK STARS ⭐
+                    </div>
+                    <div style="font-family: Arial; font-size: 18px; color: #e5e7eb; font-weight: bold; letter-spacing: 1px;">
+                      Business Analyse System
+                    </div>
+                  </div>
+                  <h1 style="text-align: center; margin-top: 30px;">LOGO TEST ERFOLGREICH!</h1>
+                </body>
+                </html>`;
+                
+                const newWindow = window.open('', '_blank');
+                if (newWindow) {
+                  newWindow.document.write(testHTML);
+                  newWindow.document.close();
+                } else {
+                  alert('Popup blockiert! Bitte erlauben Sie Popups.');
                 }
-                console.log('🔴 BUTTON HANDLER END');
               }}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
