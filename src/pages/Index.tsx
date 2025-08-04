@@ -292,8 +292,8 @@ const Index = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
             <img 
-              src="/lovable-uploads/5a2019ec-f8dd-42b4-bf03-3a7fdb9696b8.png" 
-              alt="Handwerk Stars Logo" 
+              src="/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png" 
+              alt="Handwerk Stars Logo"
               className="h-32 w-auto"
             />
           </div>
