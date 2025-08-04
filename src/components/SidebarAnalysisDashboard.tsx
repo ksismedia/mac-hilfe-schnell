@@ -3,10 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Globe, Building } from 'lucide-react';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 // Category Components
-import CategorySidebar from './analysis/CategorySidebar';
 import SEOContentCategory from './analysis/categories/SEOContentCategory';
 import PerformanceMobileCategory from './analysis/categories/PerformanceMobileCategory';
 import SocialMediaCategory from './analysis/categories/SocialMediaCategory';
