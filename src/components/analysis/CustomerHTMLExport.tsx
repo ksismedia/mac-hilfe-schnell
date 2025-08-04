@@ -321,7 +321,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         .logo-star {
             width: 50px;
             height: 50px;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             margin-right: 5px;
         }
         .logo-star svg {
@@ -334,34 +334,32 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         }
         .logo-title {
             font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; 
-            font-size: 36px; 
+            font-size: 28px; 
             font-weight: 600; 
-            color: #f4c430;
+            text-align: right;
+            text-transform: uppercase;
+            line-height: 0.8;
+            margin-bottom: 1px;
+            letter-spacing: -0.5px;
+            font-stretch: condensed;
             background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -0.5px; 
-            margin-bottom: 2px;
-            text-align: right;
-            text-transform: uppercase;
-            line-height: 0.8;
-            font-stretch: condensed;
         }
         .logo-subtitle {
             font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; 
-            font-size: 36px; 
+            font-size: 28px; 
             font-weight: 600;
-            color: #f4c430;
+            text-align: right;
+            text-transform: uppercase;
+            line-height: 0.8;
+            letter-spacing: -0.5px;
+            font-stretch: condensed;
             background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -0.5px;
-            text-align: right;
-            text-transform: uppercase;
-            line-height: 0.8;
-            font-stretch: condensed;
         }
     </style>
 </head>
