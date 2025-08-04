@@ -3,33 +3,77 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ExternalLink, Link, AlertCircle, CheckCircle, Edit } from 'lucide-react';
+import { ManualBacklinkInput } from './ManualBacklinkInput';
+import { useManualData } from '@/hooks/useManualData';
 
 interface BacklinkAnalysisProps {
   url: string;
 }
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
-  // Simulierte Backlink-Daten
-  const backlinkData = {
-    internalLinks: 24,
-    externalLinks: 8,
-    brokenLinks: 2,
-    overallScore: 72,
-    linkQuality: 'gut',
-    internalLinksData: [
-      { text: 'Über uns', url: '/ueber-uns', status: 'aktiv' },
-      { text: 'Leistungen', url: '/leistungen', status: 'aktiv' },
-      { text: 'Kontakt', url: '/kontakt', status: 'aktiv' },
-      { text: 'Notdienst', url: '/notdienst', status: 'aktiv' },
-      { text: 'Referenzen', url: '/referenzen', status: 'defekt' }
-    ],
-    externalLinksData: [
-      { text: 'Hersteller XY', url: 'https://example-hersteller.de', quality: 'hoch' },
-      { text: 'Branchenverband', url: 'https://shk-verband.de', quality: 'hoch' },
-      { text: 'Lieferant ABC', url: 'https://lieferant-abc.com', quality: 'mittel' },
-      { text: 'Partnerfirma', url: 'https://partner.de', quality: 'niedrig' }
-    ]
+  const { manualBacklinkData, updateManualBacklinkData } = useManualData();
+
+  // Helper function to merge manual and automatic backlink data
+  const getEffectiveBacklinkData = () => {
+    const baseData = {
+      internalLinks: 24,
+      externalLinks: 8,
+      brokenLinks: 2,
+      overallScore: 72,
+      linkQuality: 'gut',
+      internalLinksData: [
+        { text: 'Über uns', url: '/ueber-uns', status: 'aktiv' },
+        { text: 'Leistungen', url: '/leistungen', status: 'aktiv' },
+        { text: 'Kontakt', url: '/kontakt', status: 'aktiv' },
+        { text: 'Notdienst', url: '/notdienst', status: 'aktiv' },
+        { text: 'Referenzen', url: '/referenzen', status: 'defekt' }
+      ],
+      externalLinksData: [
+        { text: 'Hersteller XY', url: 'https://example-hersteller.de', quality: 'hoch' },
+        { text: 'Branchenverband', url: 'https://shk-verband.de', quality: 'hoch' },
+        { text: 'Lieferant ABC', url: 'https://lieferant-abc.com', quality: 'mittel' },
+        { text: 'Partnerfirma', url: 'https://partner.de', quality: 'niedrig' }
+      ],
+      dataSource: "automatic" as const
+    };
+
+    // If manual data exists, use it to override automatic scores
+    if (manualBacklinkData) {
+      const qualityScore = Math.round(
+        (manualBacklinkData.qualityScore + 
+         manualBacklinkData.domainAuthority + 
+         manualBacklinkData.localRelevance) / 3
+      );
+
+      // Calculate spam penalty
+      const spamPenalty = manualBacklinkData.totalBacklinks > 0 
+        ? (manualBacklinkData.spamLinks / manualBacklinkData.totalBacklinks) * 30 
+        : 0;
+      
+      const finalScore = Math.max(0, qualityScore - spamPenalty);
+
+      return {
+        ...baseData,
+        overallScore: Math.round(finalScore),
+        linkQuality: finalScore >= 80 ? 'sehr gut' : finalScore >= 60 ? 'gut' : 'verbesserungsfähig',
+        totalBacklinks: manualBacklinkData.totalBacklinks,
+        spamLinks: manualBacklinkData.spamLinks,
+        domainAuthority: manualBacklinkData.domainAuthority,
+        localRelevance: manualBacklinkData.localRelevance,
+        qualityScore: manualBacklinkData.qualityScore,
+        dataSource: "manual" as const,
+        manualNotes: manualBacklinkData.notes
+      };
+    }
+
+    return baseData;
   };
+
+  // Get the effective backlink data (manual overrides automatic)
+  const backlinkData = getEffectiveBacklinkData();
 
   const getQualityColor = (quality: string) => {
     switch (quality) {
@@ -55,15 +99,37 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Backlink-Analyse
-            <Badge variant={backlinkData.overallScore >= 80 ? "secondary" : backlinkData.overallScore >= 60 ? "default" : "destructive"}>
-              {backlinkData.overallScore}/100 Punkte
-            </Badge>
+            <div className="flex items-center gap-2">
+              {backlinkData.dataSource === "manual" && (
+                <Badge variant="outline" className="text-blue-600 border-blue-600">
+                  📝 Manuell bewertet
+                </Badge>
+              )}
+              <Badge variant={backlinkData.overallScore >= 80 ? "secondary" : backlinkData.overallScore >= 60 ? "default" : "destructive"}>
+                {backlinkData.overallScore}/100 Punkte
+              </Badge>
+            </div>
           </CardTitle>
           <CardDescription>
             Analyse der internen und externen Verlinkungen
+            {backlinkData.dataSource === "manual" && backlinkData.manualNotes && (
+              <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                <strong>Manuelle Notizen:</strong> {backlinkData.manualNotes}
+              </div>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <Tabs defaultValue="automatic" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>
+              <TabsTrigger value="manual" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                Manuelle Bewertung
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="automatic" className="space-y-6 mt-6">
           <div className="space-y-6">
             {/* Übersicht */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -192,6 +258,15 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
               </CardContent>
             </Card>
           </div>
+            </TabsContent>
+            
+            <TabsContent value="manual" className="mt-6">
+              <ManualBacklinkInput 
+                onSave={updateManualBacklinkData}
+                initialData={manualBacklinkData}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

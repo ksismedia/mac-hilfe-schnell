@@ -57,88 +57,125 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
 
   const currentIndustry = industryContentTopics[industry];
 
-  // Erweiterte simulierte Content-Analyse-Daten
-  const contentData = {
-    overallScore: 69,
-    contentQuality: {
-      score: 72,
-      textLength: 1850,
-      readabilityScore: 78,
-      uniqueness: 92,
-      keywordDensity: 2.3,
-      headingStructure: "gut",
-      grammarScore: 94,
-      technicalAccuracy: 87,
-      customerFocus: 76
-    },
-    contentTypes: {
-      textPages: 12,
-      images: 28,
-      videos: 2,
-      downloadContent: 5,
-      blogPosts: 8,
-      caseStudies: 4,
-      faq: 1,
-      testimonials: 6
-    },
-    topicCoverage: {
-      score: 66,
-      coreTopics: currentIndustry.coreTopics.map((topic, index) => ({
-        topic,
-        coverage: 85 - (index * 8),
-        importance: index < 3 ? "sehr hoch" : index < 5 ? "hoch" : "mittel",
-        contentPieces: Math.floor(Math.random() * 5) + 1,
-        lastUpdated: `vor ${Math.floor(Math.random() * 60) + 1} Tagen`
-      })),
-      seasonalTopics: currentIndustry.seasonalTopics.map((topic, index) => ({
-        topic,
-        coverage: 45 + (index * 15),
-        relevance: "saisonal",
-        nextRelevance: "in 2 Monaten"
-      })),
-      expertTopics: currentIndustry.expertTopics.map((topic, index) => ({
-        topic,
-        coverage: 25 + (index * 20),
-        difficulty: "expert",
-        potentialValue: "sehr hoch"
-      }))
-    },
-    contentFreshness: {
-      score: 58,
-      lastUpdate: "vor 3 Monaten",
-      blogLastPost: "vor 6 Wochen",
-      newsUpdates: 2,
-      seasonalContent: false,
-      contentCalendar: false,
-      updateFrequency: "unregelmäßig",
-      trendAwareness: 45
-    },
-    userEngagement: {
-      averageTimeOnPage: "2:45",
-      bounceRate: "42%",
-      pageViews: 1.8,
-      conversionRate: "3.2%",
-      socialShares: 23,
-      comments: 8,
-      downloadRate: "12%",
-      returnVisitors: "34%"
-    },
-    seoOptimization: {
-      score: 73,
-      metaDescriptions: "60% vollständig",
-      internalLinking: "gut strukturiert",
-      imageAlt: "80% optimiert",
-      contentLength: "überdurchschnittlich",
-      keywordOptimization: "ausbaufähig"
-    },
-    competitorComparison: {
-      contentVolume: "durchschnittlich",
-      contentQuality: "überdurchschnittlich", 
-      updateFrequency: "unterdurchschnittlich",
-      topicAbdeckung: "gut",
-      recommendation: "Häufigere Updates und mehr Expertencontent"
+  // Helper function to merge manual and automatic data
+  const getEffectiveContentData = () => {
+    const baseData = {
+      overallScore: 69,
+      contentQuality: {
+        score: 72,
+        textLength: 1850,
+        readabilityScore: 78,
+        uniqueness: 92,
+        keywordDensity: 2.3,
+        headingStructure: "gut",
+        grammarScore: 94,
+        technicalAccuracy: 87,
+        customerFocus: 76
+      },
+      contentTypes: {
+        textPages: 12,
+        images: 28,
+        videos: 2,
+        downloadContent: 5,
+        blogPosts: 8,
+        caseStudies: 4,
+        faq: 1,
+        testimonials: 6
+      },
+      topicCoverage: {
+        score: 66,
+        coreTopics: currentIndustry.coreTopics.map((topic, index) => ({
+          topic,
+          coverage: 85 - (index * 8),
+          importance: index < 3 ? "sehr hoch" : index < 5 ? "hoch" : "mittel",
+          contentPieces: Math.floor(Math.random() * 5) + 1,
+          lastUpdated: `vor ${Math.floor(Math.random() * 60) + 1} Tagen`
+        })),
+        seasonalTopics: currentIndustry.seasonalTopics.map((topic, index) => ({
+          topic,
+          coverage: 45 + (index * 15),
+          relevance: "saisonal",
+          nextRelevance: "in 2 Monaten"
+        })),
+        expertTopics: currentIndustry.expertTopics.map((topic, index) => ({
+          topic,
+          coverage: 25 + (index * 20),
+          difficulty: "expert",
+          potentialValue: "sehr hoch"
+        }))
+      },
+      contentFreshness: {
+        score: 58,
+        lastUpdate: "vor 3 Monaten",
+        blogLastPost: "vor 6 Wochen",
+        newsUpdates: 2,
+        seasonalContent: false,
+        contentCalendar: false,
+        updateFrequency: "unregelmäßig",
+        trendAwareness: 45
+      },
+      userEngagement: {
+        averageTimeOnPage: "2:45",
+        bounceRate: "42%",
+        pageViews: 1.8,
+        conversionRate: "3.2%",
+        socialShares: 23,
+        comments: 8,
+        downloadRate: "12%",
+        returnVisitors: "34%"
+      },
+      seoOptimization: {
+        score: 73,
+        metaDescriptions: "60% vollständig",
+        internalLinking: "gut strukturiert",
+        imageAlt: "80% optimiert",
+        contentLength: "überdurchschnittlich",
+        keywordOptimization: "ausbaufähig"
+      },
+      competitorComparison: {
+        contentVolume: "durchschnittlich",
+        contentQuality: "überdurchschnittlich", 
+        updateFrequency: "unterdurchschnittlich",
+        topicAbdeckung: "gut",
+        recommendation: "Häufigere Updates und mehr Expertencontent"
+      },
+      dataSource: "automatic" as const
+    };
+
+    // If manual data exists, use it to override automatic scores
+    if (manualContentData) {
+      const manualScore = Math.round(
+        (manualContentData.textQuality + 
+         manualContentData.contentRelevance + 
+         manualContentData.expertiseLevel + 
+         manualContentData.contentFreshness) / 4
+      );
+
+      return {
+        ...baseData,
+        overallScore: manualScore,
+        contentQuality: {
+          ...baseData.contentQuality,
+          score: manualScore,
+          grammarScore: manualContentData.textQuality,
+          technicalAccuracy: manualContentData.expertiseLevel,
+          customerFocus: manualContentData.contentRelevance
+        },
+        contentFreshness: {
+          ...baseData.contentFreshness,
+          score: manualContentData.contentFreshness,
+          trendAwareness: manualContentData.contentFreshness
+        },
+        dataSource: "manual" as const,
+        manualNotes: manualContentData.notes
+      };
     }
+
+    return baseData;
   };
+
+  // Get the effective content data (manual overrides automatic)
+  const contentData = getEffectiveContentData();
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "score-text-high";  // 80-100% gelb
@@ -173,12 +210,24 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Content-Analyse für {currentIndustry.name}
-            <Badge variant={getScoreBadge(contentData.overallScore)}>
-              {contentData.overallScore}/100 Punkte
-            </Badge>
+            <div className="flex items-center gap-2">
+              {contentData.dataSource === "manual" && (
+                <Badge variant="outline" className="text-blue-600 border-blue-600">
+                  📝 Manuell bewertet
+                </Badge>
+              )}
+              <Badge variant={getScoreBadge(contentData.overallScore)}>
+                {contentData.overallScore}/100 Punkte
+              </Badge>
+            </div>
           </CardTitle>
           <CardDescription>
             Detaillierte Analyse der Website-Inhalte für {url}
+            {contentData.dataSource === "manual" && contentData.manualNotes && (
+              <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                <strong>Manuelle Notizen:</strong> {contentData.manualNotes}
+              </div>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -25,9 +25,49 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   savedData, 
   onDataChange 
 }) => {
+  const { manualAccessibilityData, updateManualAccessibilityData } = useManualData();
   const [accessibilityData, setAccessibilityData] = useState<AccessibilityResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper function to merge manual and automatic accessibility data
+  const getEffectiveAccessibilityData = () => {
+    if (manualAccessibilityData) {
+      const featuresScore = [
+        manualAccessibilityData.keyboardNavigation,
+        manualAccessibilityData.screenReaderCompatible,
+        manualAccessibilityData.colorContrast,
+        manualAccessibilityData.altTextsPresent,
+        manualAccessibilityData.focusVisibility,
+        manualAccessibilityData.textScaling
+      ].filter(Boolean).length * 10;
+      
+      const finalScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
+      
+      return {
+        score: finalScore,
+        wcagLevel: finalScore >= 80 ? 'AA' : finalScore >= 60 ? 'A' : 'none',
+        violations: [],
+        passes: [],
+        incomplete: [],
+        legalRisk: {
+          level: finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : 'high',
+          score: finalScore,
+          factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
+          recommendations: ['Kontinuierliche Überwachung empfohlen']
+        },
+        dataSource: "manual" as const,
+        manualNotes: manualAccessibilityData.notes
+      };
+    }
+    
+    return accessibilityData;
+  };
+
+  // Get the effective accessibility data (manual overrides automatic)
+  const getCurrentAccessibilityData = () => {
+    return getEffectiveAccessibilityData();
+  };
 
   const runAccessibilityTest = async () => {
     if (!businessData.url) return;
@@ -149,46 +189,56 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!accessibilityData && !loading && (
-            <div className="text-center py-8">
-              <Eye className="h-12 w-12 mx-auto text-blue-500 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                Barrierefreiheitsprüfung starten
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Überprüfen Sie Ihre Website auf Accessibility-Standards und rechtliche Anforderungen
-              </p>
-              <Button onClick={runAccessibilityTest} className="bg-blue-600 hover:bg-blue-700">
-                <Eye className="h-4 w-4 mr-2" />
-                Jetzt prüfen
-              </Button>
-            </div>
-          )}
+          <Tabs defaultValue="automatic" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>
+              <TabsTrigger value="manual" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                Manuelle Bewertung
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="automatic" className="mt-6">
+              {!accessibilityData && !loading && (
+                <div className="text-center py-8">
+                  <Eye className="h-12 w-12 mx-auto text-blue-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                    Barrierefreiheitsprüfung starten
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Überprüfen Sie Ihre Website auf Accessibility-Standards und rechtliche Anforderungen
+                  </p>
+                  <Button onClick={runAccessibilityTest} className="bg-blue-600 hover:bg-blue-700">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Jetzt prüfen
+                  </Button>
+                </div>
+              )}
 
-          {loading && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                Prüfung läuft...
-              </h3>
-              <p className="text-gray-500">
-                Analysiere Website auf Barrierefreiheit
-              </p>
-            </div>
-          )}
+              {loading && (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                    Prüfung läuft...
+                  </h3>
+                  <p className="text-gray-500">
+                    Analysiere Website auf Barrierefreiheit
+                  </p>
+                </div>
+              )}
 
-          {error && (
-            <div className="text-center py-8">
-              <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
-              <h3 className="text-lg font-semibold text-red-600 mb-2">
-                Fehler bei der Analyse
-              </h3>
-              <p className="text-red-500 mb-4">{error}</p>
-              <Button onClick={runAccessibilityTest} variant="outline">
-                Erneut versuchen
-              </Button>
-            </div>
-          )}
+              {error && (
+                <div className="text-center py-8">
+                  <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-red-600 mb-2">
+                    Fehler bei der Analyse
+                  </h3>
+                  <p className="text-red-500 mb-4">{error}</p>
+                  <Button onClick={runAccessibilityTest} variant="outline">
+                    Erneut versuchen
+                  </Button>
+                </div>
+              )}
 
           {accessibilityData && (
             <div className="space-y-6">
@@ -481,6 +531,15 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               </div>
             </div>
           )}
+            </TabsContent>
+            
+            <TabsContent value="manual" className="mt-6">
+              <ManualAccessibilityInput 
+                onSave={updateManualAccessibilityData}
+                initialData={manualAccessibilityData}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
