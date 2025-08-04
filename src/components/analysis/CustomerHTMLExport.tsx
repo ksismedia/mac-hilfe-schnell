@@ -286,13 +286,16 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="flex gap-3">
             <Button 
               onClick={() => {
+                console.log('🔴 BUTTON HANDLER START');
                 alert('BUTTON CLICKED!');
-                console.log('=== BROWSER BUTTON CLICKED ===');
+                console.log('🔴 ABOUT TO CALL generateCustomerReport');
                 try {
                   generateCustomerReport();
+                  console.log('🔴 generateCustomerReport COMPLETED');
                 } catch (error) {
-                  console.error('Error in generateCustomerReport:', error);
+                  console.error('🔴 ERROR in generateCustomerReport:', error);
                 }
+                console.log('🔴 BUTTON HANDLER END');
               }}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
