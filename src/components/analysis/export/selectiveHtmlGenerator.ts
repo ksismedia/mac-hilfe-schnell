@@ -4,6 +4,7 @@ import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
+import { getLogoHTML } from './logoData';
 
 interface SectionSelections {
   seoContent: boolean;
