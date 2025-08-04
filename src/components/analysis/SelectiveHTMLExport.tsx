@@ -329,7 +329,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
