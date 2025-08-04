@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users } from 'lucide-react';
-import handwerkStarsLogo from '@/assets/handwerk-stars-logo.png';
+import handwerkStarsLogo from '/lovable-uploads/3898b8f7-668b-402d-a799-d96148362bfa.png';
 
 // Category Components
 import SEOContentCategory from './analysis/categories/SEOContentCategory';
