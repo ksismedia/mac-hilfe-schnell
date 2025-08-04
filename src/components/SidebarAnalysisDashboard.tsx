@@ -231,7 +231,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     },
     { 
       id: 'social-media', 
-      title: 'Social Media', 
+      title: 'Social Listening', 
       icon: Share2, 
       score: scores.socialMedia
     },

@@ -250,7 +250,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     },
     { 
       id: 'social-media', 
-      title: 'Social Media', 
+      title: 'Social Listening', 
       icon: Share2, 
       score: scores.socialMedia
     },
