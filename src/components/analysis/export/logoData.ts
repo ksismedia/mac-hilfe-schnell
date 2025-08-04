@@ -10,8 +10,8 @@ export const getLogoHTML = () => {
             <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
           </svg>
         </div>
-        <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 22px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430; font-stretch: ultra-condensed;">HANDWERK</div>
-        <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 22px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430; font-stretch: ultra-condensed;">STARS</div>
+        <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 21px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430; font-stretch: ultra-condensed;">HANDWERK</div>
+        <div style="font-family: 'Arial Narrow', 'Helvetica Condensed', Arial; font-size: 21px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430; font-stretch: ultra-condensed;">STARS</div>
       </div>
     </div>
   `;
