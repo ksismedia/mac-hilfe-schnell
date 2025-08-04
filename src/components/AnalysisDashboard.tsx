@@ -1,7 +1,7 @@
 import React from 'react';
-import SidebarAnalysisDashboard from './SidebarAnalysisDashboard';
+import SimpleAnalysisDashboard from './SimpleAnalysisDashboard';
 
-// Legacy Dashboard - jetzt nur noch Weiterleitung zur neuen Sidebar-Version
+// Legacy Dashboard - jetzt nur noch Weiterleitung zur neuen stabilen Version
 interface BusinessData {
   address: string;
   url: string;
@@ -16,8 +16,8 @@ interface AnalysisDashboardProps {
 }
 
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = (props) => {
-  // Weiterleitung zur neuen Sidebar-Version
-  return <SidebarAnalysisDashboard {...props} />;
+  // Weiterleitung zur neuen stabilen Version
+  return <SimpleAnalysisDashboard {...props} />;
 };
 
 export default AnalysisDashboard;
