@@ -280,7 +280,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
-              Social Listening Report im Browser öffnen
+              UNNA-Report im Browser öffnen
             </Button>
             <Button 
               onClick={downloadCustomerReport}
