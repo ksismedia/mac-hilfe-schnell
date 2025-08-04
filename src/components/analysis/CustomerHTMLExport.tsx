@@ -216,7 +216,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   ));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-4xl mx-auto">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="flex items-center justify-center gap-2">
