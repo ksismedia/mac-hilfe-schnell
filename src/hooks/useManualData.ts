@@ -112,6 +112,34 @@ export interface QuoteResponseData {
   notes?: string;
 }
 
+export interface ManualContentData {
+  textQuality: number; // 1-100 Score
+  contentRelevance: number; // 1-100 Score
+  expertiseLevel: number; // 1-100 Score
+  contentFreshness: number; // 1-100 Score
+  notes?: string;
+}
+
+export interface ManualAccessibilityData {
+  keyboardNavigation: boolean;
+  screenReaderCompatible: boolean;
+  colorContrast: boolean;
+  altTextsPresent: boolean;
+  focusVisibility: boolean;
+  textScaling: boolean;
+  overallScore: number; // 1-100 Score
+  notes?: string;
+}
+
+export interface ManualBacklinkData {
+  totalBacklinks: number;
+  qualityScore: number; // 1-100 Score
+  domainAuthority: number; // 1-100 Score
+  localRelevance: number; // 1-100 Score
+  spamLinks: number;
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
