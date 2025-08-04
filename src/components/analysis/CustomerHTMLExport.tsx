@@ -316,30 +316,35 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             justify-content: center;
             align-items: flex-end;
             margin: 0 auto 30px auto;
+            line-height: 0.8;
         }
         .logo-star {
-            font-size: 24px;
+            font-size: 32px;
             color: #fbbf24;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
         .logo-title {
-            font-family: 'Arial Black', Arial, sans-serif; 
-            font-size: 24px; 
-            font-weight: 900; 
+            font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; 
+            font-size: 32px; 
+            font-weight: bold; 
             color: #fbbf24; 
             text-shadow: 2px 2px 6px rgba(0,0,0,0.8); 
             letter-spacing: 1px; 
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             text-align: right;
+            text-transform: uppercase;
+            line-height: 0.8;
         }
         .logo-subtitle {
-            font-family: Arial, sans-serif; 
-            font-size: 24px; 
+            font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; 
+            font-size: 32px; 
             color: #fbbf24; 
             font-weight: bold; 
             letter-spacing: 1px;
             text-align: right;
+            text-transform: uppercase;
+            line-height: 0.8;
         }
     </style>
 </head>
@@ -362,10 +367,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
         <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-            <div style="width: 120px; height: 120px; padding: 15px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 8px; border: 2px solid #fbbf24; display: flex; flex-direction: column; justify-content: center; align-items: flex-end;">
-                <div style="font-size: 16px; color: #fbbf24; margin-bottom: 3px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">⭐</div>
-                <div style="font-family: Arial Black, Arial; font-size: 16px; font-weight: 900; color: #fbbf24; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); text-align: right;">Handwerk</div>
-                <div style="font-family: Arial; font-size: 16px; color: #fbbf24; font-weight: bold; text-align: right;">Stars</div>
+            <div style="width: 120px; height: 120px; padding: 15px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 8px; border: 2px solid #fbbf24; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; line-height: 0.8;">
+                <div style="font-size: 20px; color: #fbbf24; margin-bottom: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">⭐</div>
+                <div style="font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; font-size: 20px; font-weight: bold; color: #fbbf24; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px;">HANDWERK</div>
+                <div style="font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; font-size: 20px; color: #fbbf24; font-weight: bold; text-align: right; text-transform: uppercase; line-height: 0.8;">STARS</div>
             </div>
         </div>
         <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
