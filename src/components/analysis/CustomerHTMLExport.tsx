@@ -285,7 +285,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 
           <div className="flex gap-3">
             <Button 
-              onClick={generateCustomerReport}
+              onClick={() => {
+                console.log('=== BROWSER BUTTON CLICKED ===');
+                try {
+                  generateCustomerReport();
+                } catch (error) {
+                  console.error('Error in generateCustomerReport:', error);
+                }
+              }}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
