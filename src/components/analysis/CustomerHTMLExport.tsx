@@ -334,7 +334,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         }
         .logo-title {
             font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; 
-            font-size: 28px; 
+            font-size: 36px; 
             font-weight: 600; 
             color: #f4c430;
             background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%);
@@ -350,7 +350,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         }
         .logo-subtitle {
             font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; 
-            font-size: 28px; 
+            font-size: 36px; 
             font-weight: 600;
             color: #f4c430;
             background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%);
@@ -394,8 +394,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
                         <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
                     </svg>
                 </div>
-                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 22px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
-                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 22px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
+                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
+                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
             </div>
         </div>
         <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
