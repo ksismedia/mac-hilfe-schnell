@@ -303,35 +303,51 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             margin: 0;
         }
         .logo-container {
-            text-align: center; 
-            padding: 30px; 
+            text-align: right; 
+            padding: 20px; 
             background: linear-gradient(135deg, #1f2937, #374151); 
             border-radius: 12px; 
             border: 3px solid #fbbf24;
             margin-bottom: 30px;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            margin: 0 auto 30px auto;
+        }
+        .logo-star {
+            font-size: 24px;
+            color: #fbbf24;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
         .logo-title {
             font-family: 'Arial Black', Arial, sans-serif; 
-            font-size: 36px; 
+            font-size: 24px; 
             font-weight: 900; 
             color: #fbbf24; 
             text-shadow: 2px 2px 6px rgba(0,0,0,0.8); 
-            letter-spacing: 3px; 
-            margin-bottom: 10px;
+            letter-spacing: 1px; 
+            margin-bottom: 5px;
+            text-align: right;
         }
         .logo-subtitle {
             font-family: Arial, sans-serif; 
-            font-size: 18px; 
-            color: #e5e7eb; 
+            font-size: 24px; 
+            color: #fbbf24; 
             font-weight: bold; 
             letter-spacing: 1px;
+            text-align: right;
         }
     </style>
 </head>
 <body>
     <div class="logo-container">
-        <div class="logo-title">⭐ HANDWERK STARS ⭐</div>
-        <div class="logo-subtitle">Business Analyse System</div>
+        <div class="logo-star">⭐</div>
+        <div class="logo-title">Handwerk</div>
+        <div class="logo-subtitle">Stars</div>
     </div>
     
     <h1 style="text-align: center; color: #fbbf24; margin-bottom: 30px;">
@@ -345,9 +361,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
-        <div class="logo-container" style="margin-bottom: 20px;">
-            <div class="logo-title" style="font-size: 24px;">⭐ HANDWERK STARS ⭐</div>
-            <div class="logo-subtitle" style="font-size: 14px;">Business Analyse System</div>
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <div style="width: 120px; height: 120px; padding: 15px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 8px; border: 2px solid #fbbf24; display: flex; flex-direction: column; justify-content: center; align-items: flex-end;">
+                <div style="font-size: 16px; color: #fbbf24; margin-bottom: 3px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">⭐</div>
+                <div style="font-family: Arial Black, Arial; font-size: 16px; font-weight: 900; color: #fbbf24; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); text-align: right;">Handwerk</div>
+                <div style="font-family: Arial; font-size: 16px; color: #fbbf24; font-weight: bold; text-align: right;">Stars</div>
+            </div>
         </div>
         <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
         <p style="color: #9ca3af; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
