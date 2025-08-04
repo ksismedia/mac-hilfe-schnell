@@ -304,10 +304,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
         }
         .logo-container {
             text-align: right; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #1f2937, #374151); 
-            border-radius: 12px; 
-            border: 3px solid #fbbf24;
+            padding: 25px; 
+            background: #1a1a1a; 
+            border-radius: 8px; 
+            border: 4px solid #f4c430;
             margin-bottom: 30px;
             width: 200px;
             height: 200px;
@@ -316,43 +316,54 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             justify-content: center;
             align-items: flex-end;
             margin: 0 auto 30px auto;
-            line-height: 0.8;
+            position: relative;
         }
         .logo-star {
-            font-size: 40px;
-            color: #fbbf24;
-            margin-bottom: 8px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+            margin-right: 5px;
+        }
+        .logo-star svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: #f4c430;
+            stroke-width: 3;
+            stroke-linejoin: round;
         }
         .logo-title {
-            font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; 
-            font-size: 40px; 
-            font-weight: bold; 
-            color: #fbbf24; 
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.8); 
-            letter-spacing: 1px; 
+            font-family: 'Arial Black', 'Helvetica Condensed', Arial, sans-serif; 
+            font-size: 26px; 
+            font-weight: 900; 
+            color: #f4c430; 
+            letter-spacing: 0.5px; 
             margin-bottom: 2px;
             text-align: right;
             text-transform: uppercase;
-            line-height: 0.8;
+            line-height: 0.9;
         }
         .logo-subtitle {
-            font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; 
-            font-size: 40px; 
-            color: #fbbf24; 
-            font-weight: bold; 
-            letter-spacing: 1px;
+            font-family: 'Arial Black', 'Helvetica Condensed', Arial, sans-serif; 
+            font-size: 26px; 
+            color: #f4c430; 
+            font-weight: 900; 
+            letter-spacing: 0.5px;
             text-align: right;
             text-transform: uppercase;
-            line-height: 0.8;
+            line-height: 0.9;
         }
     </style>
 </head>
 <body>
     <div class="logo-container">
-        <div class="logo-star">⭐</div>
-        <div class="logo-title">Handwerk</div>
-        <div class="logo-subtitle">Stars</div>
+        <div class="logo-star">
+            <svg viewBox="0 0 100 100">
+                <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
+            </svg>
+        </div>
+        <div class="logo-title">HANDWERK</div>
+        <div class="logo-subtitle">STARS</div>
     </div>
     
     <h1 style="text-align: center; color: #fbbf24; margin-bottom: 30px;">
@@ -367,10 +378,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
         <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-            <div style="width: 140px; height: 140px; padding: 15px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 8px; border: 2px solid #fbbf24; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; line-height: 0.8;">
-                <div style="font-size: 28px; color: #fbbf24; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">⭐</div>
-                <div style="font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; font-size: 28px; font-weight: bold; color: #fbbf24; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px;">HANDWERK</div>
-                <div style="font-family: 'Helvetica Neue Condensed', 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif; font-size: 28px; color: #fbbf24; font-weight: bold; text-align: right; text-transform: uppercase; line-height: 0.8;">STARS</div>
+            <div style="width: 140px; height: 140px; padding: 15px; background: #1a1a1a; border-radius: 8px; border: 3px solid #f4c430; display: flex; flex-direction: column; justify-content: center; align-items: flex-end;">
+                <div style="width: 35px; height: 35px; margin-bottom: 8px; margin-right: 3px;">
+                    <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: none; stroke: #f4c430; stroke-width: 4; stroke-linejoin: round;">
+                        <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
+                    </svg>
+                </div>
+                <div style="font-family: 'Arial Black', 'Helvetica Condensed', Arial, sans-serif; font-size: 20px; font-weight: 900; color: #f4c430; text-align: right; text-transform: uppercase; line-height: 0.9; margin-bottom: 1px;">HANDWERK</div>
+                <div style="font-family: 'Arial Black', 'Helvetica Condensed', Arial, sans-serif; font-size: 20px; color: #f4c430; font-weight: 900; text-align: right; text-transform: uppercase; line-height: 0.9;">STARS</div>
             </div>
         </div>
         <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
