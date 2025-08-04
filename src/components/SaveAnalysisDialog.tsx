@@ -128,7 +128,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" onClick={handleOpen}>
+        <Button variant="outline" size="lg" onClick={handleOpen}>
           <Save className="h-4 w-4 mr-2" />
           {currentAnalysisId ? 'Speichern' : 'Analyse speichern'}
         </Button>
