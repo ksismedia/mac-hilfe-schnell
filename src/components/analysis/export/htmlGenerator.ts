@@ -2812,16 +2812,7 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <svg width="200" height="100" viewBox="0 0 200 100" style="max-width: 200px; height: auto; filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));">
-          <rect width="200" height="100" fill="#2c3e50" rx="8"/>
-          <rect x="10" y="10" width="180" height="80" fill="#f1c40f" rx="4"/>
-          <!-- Star -->
-          <polygon points="100,25 105,35 115,35 107,42 110,52 100,47 90,52 93,42 85,35 95,35" fill="#2c3e50"/>
-          <!-- Text HANDWERK -->
-          <text x="100" y="60" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="18" font-weight="bold">HANDWERK</text>
-          <!-- Text STARS -->
-          <text x="100" y="78" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="14" font-weight="600">STARS</text>
-        </svg>
+        <img src="data:image/png;base64,[...base64 des neuen Logos...]" alt="Handwerk Stars Logo" style="max-width: 150px; height: auto; filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));" />
       </div>
       <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
       <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
