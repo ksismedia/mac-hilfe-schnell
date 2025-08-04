@@ -2813,7 +2813,14 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        ${getLogoHTML()}
+        <div style="text-align: center; border: 2px solid red; padding: 15px; background: yellow;">
+          <div style="font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #fbcf24; text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3); letter-spacing: 1px; margin-bottom: 5px;">
+            ⭐ HANDWERK STARS ⭐
+          </div>
+          <div style="font-family: Arial, sans-serif; font-size: 14px; color: #9ca3af; letter-spacing: 0.5px;">
+            Business Analyse
+          </div>
+        </div>
       </div>
       <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
       <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
