@@ -322,95 +322,101 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+      <div className="w-full max-w-none mx-auto p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button onClick={onReset} variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Neue Analyse
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-yellow-400">Analyse-Ergebnisse</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <Globe className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-300 break-all">{businessData.url}</span>
-                <Badge variant="secondary" className="shrink-0">
-                  <Building className="h-3 w-3 mr-1" />
-                  {industryNames[businessData.industry]}
-                </Badge>
+        <div className="w-full mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Button onClick={onReset} variant="outline" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Neue Analyse
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-yellow-400">Analyse-Ergebnisse</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <Globe className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-300 text-sm break-all">{businessData.url}</span>
+                  <Badge variant="secondary" className="shrink-0">
+                    <Building className="h-3 w-3 mr-1" />
+                    {industryNames[businessData.industry]}
+                  </Badge>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <SaveAnalysisDialog 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              manualKeywordData={manualKeywordData}
-              keywordScore={keywordsScore}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-            />
-            <CustomerHTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualSocialData={manualSocialData}
-              keywordScore={keywordsScore}
-              manualKeywordData={manualKeywordData}
-            />
-            <SelectiveHTMLExport
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              hourlyRateData={hourlyRateData}
-              manualKeywordData={manualKeywordData}
-              keywordScore={keywordsScore}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-            />
+            
+            <div className="flex items-center gap-2">
+              <SaveAnalysisDialog 
+                businessData={businessData}
+                realData={realData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualWorkplaceData={manualWorkplaceData}
+                manualCorporateIdentityData={manualCorporateIdentityData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                companyServices={companyServices}
+                manualKeywordData={manualKeywordData}
+                keywordScore={keywordsScore}
+                privacyData={privacyData}
+                accessibilityData={accessibilityData}
+              />
+              <CustomerHTMLExport 
+                businessData={businessData}
+                realData={realData}
+                manualSocialData={manualSocialData}
+                keywordScore={keywordsScore}
+                manualKeywordData={manualKeywordData}
+              />
+              <SelectiveHTMLExport
+                businessData={businessData}
+                realData={realData}
+                manualImprintData={manualImprintData}
+                manualSocialData={manualSocialData}
+                manualWorkplaceData={manualWorkplaceData}
+                manualCorporateIdentityData={manualCorporateIdentityData}
+                manualCompetitors={manualCompetitors}
+                competitorServices={competitorServices}
+                companyServices={companyServices}
+                deletedCompetitors={deletedCompetitors}
+                hourlyRateData={hourlyRateData}
+                manualKeywordData={manualKeywordData}
+                keywordScore={keywordsScore}
+                staffQualificationData={staffQualificationData}
+                quoteResponseData={quoteResponseData}
+                privacyData={privacyData}
+                accessibilityData={accessibilityData}
+              />
+            </div>
           </div>
         </div>
 
         {/* Category Navigation */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categories.map((category) => {
-            const IconComponent = category.icon;
-            return (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
-                  activeCategory === category.id 
-                    ? 'bg-yellow-400 text-black border-yellow-400' 
-                    : 'bg-gray-800/50 text-gray-300 border-gray-600 hover:bg-gray-700/50'
-                }`}
-              >
-                <IconComponent className="h-4 w-4" />
-                <span className="font-medium">{category.title}</span>
-                <span className={`text-sm font-bold ${getScoreColor(category.score)}`}>
-                  {Math.round(category.score)}
-                </span>
-              </button>
-            );
-          })}
+        <div className="w-full mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
+                    activeCategory === category.id 
+                      ? 'bg-yellow-400 text-black border-yellow-400' 
+                      : 'bg-gray-800/50 text-gray-300 border-gray-600 hover:bg-gray-700/50'
+                  }`}
+                >
+                  <IconComponent className="h-5 w-5 flex-shrink-0" />
+                  <div className="flex-1 text-left">
+                    <div className="font-medium text-sm">{category.title}</div>
+                    <div className={`text-xs font-bold ${activeCategory === category.id ? 'text-black' : getScoreColor(category.score)}`}>
+                      Score: {Math.round(category.score)}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Overall Rating */}
