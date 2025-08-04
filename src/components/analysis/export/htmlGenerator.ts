@@ -1631,7 +1631,7 @@ export const generateCustomerHTML = ({
   <div class="container">
     <div class="header">
       <div class="logo-container">
-        <img src="/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png" alt="Handwerk Stars Logo" class="logo" />
+        <img src="/lovable-uploads/e49818ec-ce33-4392-912b-0248c8825dbd.png" alt="Handwerk Stars Logo" class="logo" />
       </div>
       <h1>UNNA - die Unternehmensanalyse fürs Handwerk</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
@@ -2812,7 +2812,7 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <img src="/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png" alt="Handwerk Stars Logo" class="logo" />
+        <img src="/lovable-uploads/e49818ec-ce33-4392-912b-0248c8825dbd.png" alt="Handwerk Stars Logo" class="logo" />
       </div>
       <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
       <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>

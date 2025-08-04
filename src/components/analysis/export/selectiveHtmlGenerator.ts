@@ -771,7 +771,7 @@ export const generateSelectiveCustomerHTML = ({
         <div class="container">
             <div class="header">
                 <div class="logo-container">
-                    <img src="/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png" alt="Handwerk Stars Logo" class="logo" />
+                    <img src="/lovable-uploads/e49818ec-ce33-4392-912b-0248c8825dbd.png" alt="Handwerk Stars Logo" class="logo" />
                 </div>
                 <h1>Selektiver Digitaler Analysebericht</h1>
                 <p class="subtitle">Maßgeschneiderter Report für ${businessData.address}</p>
