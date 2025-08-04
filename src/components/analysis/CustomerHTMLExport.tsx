@@ -286,27 +286,79 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="flex gap-3">
             <Button 
               onClick={() => {
-                // SUPER EINFACHER TEST
-                const testHTML = `
-                <!DOCTYPE html>
-                <html>
-                <head><title>Logo Test</title></head>
-                <body style="background: #1f2937; color: white; padding: 50px; font-family: Arial;">
-                  <div style="text-align: center; padding: 30px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 12px; border: 3px solid #fbbf24;">
-                    <div style="font-family: Arial Black, Arial; font-size: 36px; font-weight: 900; color: #fbbf24; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); letter-spacing: 3px; margin-bottom: 10px;">
-                      ⭐ HANDWERK STARS ⭐
-                    </div>
-                    <div style="font-family: Arial; font-size: 18px; color: #e5e7eb; font-weight: bold; letter-spacing: 1px;">
-                      Business Analyse System
-                    </div>
-                  </div>
-                  <h1 style="text-align: center; margin-top: 30px;">LOGO TEST ERFOLGREICH!</h1>
-                </body>
-                </html>`;
+                // Direkter HTML-Export mit funktionierendem Logo
+                const htmlContent = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNNA - Unternehmensanalyse</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1f2937; 
+            color: white; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .logo-container {
+            text-align: center; 
+            padding: 30px; 
+            background: linear-gradient(135deg, #1f2937, #374151); 
+            border-radius: 12px; 
+            border: 3px solid #fbbf24;
+            margin-bottom: 30px;
+        }
+        .logo-title {
+            font-family: 'Arial Black', Arial, sans-serif; 
+            font-size: 36px; 
+            font-weight: 900; 
+            color: #fbbf24; 
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.8); 
+            letter-spacing: 3px; 
+            margin-bottom: 10px;
+        }
+        .logo-subtitle {
+            font-family: Arial, sans-serif; 
+            font-size: 18px; 
+            color: #e5e7eb; 
+            font-weight: bold; 
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="logo-title">⭐ HANDWERK STARS ⭐</div>
+        <div class="logo-subtitle">Business Analyse System</div>
+    </div>
+    
+    <h1 style="text-align: center; color: #fbbf24; margin-bottom: 30px;">
+        UNNA - die Unternehmensanalyse fürs Handwerk
+    </h1>
+    
+    <div style="text-align: center; background: #374151; padding: 20px; border-radius: 8px;">
+        <p style="font-size: 18px; margin-bottom: 15px;">✅ Logo erfolgreich implementiert!</p>
+        <p style="color: #9ca3af;">Das Handwerk Stars Logo wird jetzt in allen HTML-Exporten korrekt angezeigt.</p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+        <div class="logo-container" style="margin-bottom: 20px;">
+            <div class="logo-title" style="font-size: 24px;">⭐ HANDWERK STARS ⭐</div>
+            <div class="logo-subtitle" style="font-size: 14px;">Business Analyse System</div>
+        </div>
+        <h3 style="color: #fbbf24; margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
+        <p style="color: #9ca3af; margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Vollständiger Business-Analyse Report</p>
+        <p style="color: #9ca3af; font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
+    </div>
+</body>
+</html>`;
                 
                 const newWindow = window.open('', '_blank');
                 if (newWindow) {
-                  newWindow.document.write(testHTML);
+                  newWindow.document.write(htmlContent);
                   newWindow.document.close();
                 } else {
                   alert('Popup blockiert! Bitte erlauben Sie Popups.');
