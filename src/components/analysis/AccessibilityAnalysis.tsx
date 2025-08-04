@@ -3,7 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield, ExternalLink, BookOpen } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield, ExternalLink, BookOpen, Edit } from 'lucide-react';
+import { ManualAccessibilityInput } from './ManualAccessibilityInput';
+import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { AccessibilityService, AccessibilityResult, AccessibilityViolation } from '@/services/AccessibilityService';
 

@@ -153,6 +153,9 @@ export const useManualData = () => {
   const [staffQualificationData, setStaffQualificationData] = useState<StaffQualificationData | null>(null);
   const [hourlyRateData, setHourlyRateData] = useState<HourlyRateData | null>(null);
   const [quoteResponseData, setQuoteResponseData] = useState<QuoteResponseData | null>(null);
+  const [manualContentData, setManualContentData] = useState<ManualContentData | null>(null);
+  const [manualAccessibilityData, setManualAccessibilityData] = useState<ManualAccessibilityData | null>(null);
+  const [manualBacklinkData, setManualBacklinkData] = useState<ManualBacklinkData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -239,6 +242,21 @@ export const useManualData = () => {
     console.log('Quote Response Data Updated:', data);
   }, []);
 
+  const updateManualContentData = useCallback((data: ManualContentData | null) => {
+    setManualContentData(data);
+    console.log('Manual Content Data Updated:', data);
+  }, []);
+
+  const updateManualAccessibilityData = useCallback((data: ManualAccessibilityData | null) => {
+    setManualAccessibilityData(data);
+    console.log('Manual Accessibility Data Updated:', data);
+  }, []);
+
+  const updateManualBacklinkData = useCallback((data: ManualBacklinkData | null) => {
+    setManualBacklinkData(data);
+    console.log('Manual Backlink Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -252,6 +270,9 @@ export const useManualData = () => {
     staffQualificationData,
     hourlyRateData,
     quoteResponseData,
+    manualContentData,
+    manualAccessibilityData,
+    manualBacklinkData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -265,6 +286,9 @@ export const useManualData = () => {
     removeDeletedCompetitor,
     updateStaffQualificationData,
     updateHourlyRateData,
-    updateQuoteResponseData
+    updateQuoteResponseData,
+    updateManualContentData,
+    updateManualAccessibilityData,
+    updateManualBacklinkData
   };
 };

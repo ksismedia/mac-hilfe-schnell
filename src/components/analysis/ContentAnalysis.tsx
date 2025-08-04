@@ -1,9 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit } from 'lucide-react';
+import { ManualContentInput } from './ManualContentInput';
+import { useManualData } from '@/hooks/useManualData';
 
 interface ContentAnalysisProps {
   url: string;
@@ -11,6 +13,8 @@ interface ContentAnalysisProps {
 }
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
+  const { manualContentData, updateManualContentData } = useManualData();
+  
   // Branchenspezifische Content-Themen
   const industryContentTopics = {
     shk: {
@@ -166,6 +170,29 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   return (
     <div className="space-y-6">
       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Content-Analyse für {currentIndustry.name}
+            <Badge variant={getScoreBadge(contentData.overallScore)}>
+              {contentData.overallScore}/100 Punkte
+            </Badge>
+          </CardTitle>
+          <CardDescription>
+            Detaillierte Analyse der Website-Inhalte für {url}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="automatic" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>
+              <TabsTrigger value="manual" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                Manuelle Bewertung
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="automatic" className="space-y-6 mt-6">
+              
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Content-Analyse für {currentIndustry.name}
@@ -608,6 +635,18 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
               </div>
             </CardContent>
           </Card>
+        </CardContent>
+      </Card>
+    
+            </TabsContent>
+            
+            <TabsContent value="manual" className="mt-6">
+              <ManualContentInput 
+                onSave={updateManualContentData}
+                initialData={manualContentData}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
