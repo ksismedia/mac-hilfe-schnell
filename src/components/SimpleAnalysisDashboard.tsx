@@ -345,16 +345,17 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         {/* Logo Section */}
         <div style={{ 
           textAlign: 'center',
-          marginBottom: '32px',
-          paddingTop: '20px'
+          marginBottom: '48px',
+          paddingTop: '40px'
         }}>
           <img 
             src={handwerkStarsLogo} 
             alt="Handwerk Stars Logo" 
             style={{ 
-              height: '80px', 
-              maxWidth: '300px',
-              objectFit: 'contain'
+              height: '120px', 
+              maxWidth: '400px',
+              objectFit: 'contain',
+              margin: '0 auto'
             }}
           />
         </div>
