@@ -5,6 +5,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
 import { FileText, Download, Printer } from 'lucide-react';
 import { getHTMLStyles } from './export/htmlStyles';
+import { getLogoHTML } from './export/logoData';
 
 interface HTMLExportProps {
   businessData: {
@@ -146,9 +147,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo-container">
-                <img src="/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png" alt="Handwerk Stars Logo" class="logo" />
-            </div>
+            ${getLogoHTML()}
             <h1>Interne Digitale Analyse</h1>
             <p class="subtitle">Technischer Report für ${businessData.address}</p>
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">
