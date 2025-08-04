@@ -291,19 +291,19 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="flex gap-3">
             <Button 
               onClick={() => {
-                // DIREKTE LOGO-LÖSUNG - KEIN DEBUGGING MEHR!
+                // DIREKTE LOGO-LÖSUNG - VERBESSERTES PADDING
                 const directHTML = `<!DOCTYPE html>
 <html><head><title>UNNA Report</title></head>
 <body style="background: #1f2937; color: white; padding: 20px; font-family: Arial;">
 <div style="text-align: center; margin-bottom: 30px;">
-  <div style="width: 140px; height: 140px; padding: 15px; background: #1a1a1a; border-radius: 8px; border: 3px solid #f4c430; display: inline-flex; flex-direction: column; justify-content: center; align-items: flex-end;">
-    <div style="width: 35px; height: 35px; margin-bottom: 3px; margin-right: 3px;">
+  <div style="width: 160px; height: 160px; padding: 25px; background: #1a1a1a; border-radius: 8px; border: 3px solid #f4c430; display: inline-flex; flex-direction: column; justify-content: center; align-items: flex-end;">
+    <div style="width: 30px; height: 30px; margin-bottom: 5px; margin-right: 5px;">
       <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: none; stroke: #f4c430; stroke-width: 4;">
         <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
       </svg>
     </div>
-    <div style="font-family: 'Helvetica Condensed', Arial; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430;">HANDWERK</div>
-    <div style="font-family: 'Helvetica Condensed', Arial; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430;">STARS</div>
+    <div style="font-family: 'Helvetica Condensed', Arial; font-size: 24px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; color: #f4c430;">HANDWERK</div>
+    <div style="font-family: 'Helvetica Condensed', Arial; font-size: 24px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; color: #f4c430;">STARS</div>
   </div>
 </div>
 <h1 style="text-align: center; color: #f4c430; margin: 30px 0;">UNNA - die Unternehmensanalyse fürs Handwerk</h1>
