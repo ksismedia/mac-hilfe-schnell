@@ -331,12 +331,12 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   return (
     <div className="space-y-6 w-full max-w-4xl mx-auto">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="text-center">
+          <CardTitle className="flex items-center justify-center gap-2">
             <Settings className="h-5 w-5 text-purple-600" />
             Selektiver HTML-Export
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-center">
             Wählen Sie gezielt die Bereiche aus, die im Export enthalten sein sollen
           </CardDescription>
         </CardHeader>
