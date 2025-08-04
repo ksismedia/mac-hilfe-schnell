@@ -218,12 +218,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="text-center">
+          <CardTitle className="flex items-center justify-center gap-2">
             <Users className="h-5 w-5 text-blue-600" />
             UNNA - die Unternehmensanalyse fürs Handwerk
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-center">
             Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht
           </CardDescription>
         </CardHeader>
