@@ -844,7 +844,7 @@ export const generateSelectiveCustomerHTML = ({
         <!-- Footer -->
         <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
           <div class="logo-container" style="margin-bottom: 20px;">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMTUwIDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZmJiZjI0IiBvcGFjaXR5PSIwLjIiLz4KPHR5eHQgeD0iMTAiIHk9IjE1IiBmaWxsPSIjZmJiZjI0IiBmb250LWZhbWlseT0iJ0FyaWFsJywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiPkhBTkRXRVJLPC90ZXh0Pgo8dGV4dCB4PSIxMCIgeT0iMzUiIGZpbGw9IiNmYmJmMjQiIGZvbnQtZmFtaWx5PSInQXJpYWwnLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iNTAwIj5TVEFSU1M8L3RleHQ+Cjx0ZXh0IHg9IjEwIiB5PSI1MCIgZmlsbD0iI2ZiYmYyNCIgZm9udC1mYW1pbHk9IidBcmlhbCcsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiPkFuYWx5c2U8L3RleHQ+Cjwvc3ZnPgo=" alt="Handwerk Stars Logo" class="logo" style="max-width: 150px; height: auto; filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));" />
+            <img src="/lovable-uploads/bdfa0af9-bcd3-4ae2-b7d6-ea14eab1c88b.png" alt="Handwerk Stars Logo" class="logo" style="max-width: 150px; height: auto; filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));" />
           </div>
           <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
           <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Selektiver Business-Analyse Report</p>
