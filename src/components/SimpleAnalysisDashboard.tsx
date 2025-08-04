@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users } from 'lucide-react';
+import handwerkStarsLogo from '@/assets/handwerk-stars-logo.png';
 
 // Category Components
 import SEOContentCategory from './analysis/categories/SEOContentCategory';
@@ -341,83 +342,80 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         
-        {/* Header */}
+        {/* Logo Section */}
         <div style={{ 
-          background: 'rgba(31, 41, 55, 0.8)', 
-          borderRadius: '12px', 
-          padding: '24px',
-          marginBottom: '24px',
-          border: '1px solid rgba(75, 85, 99, 0.5)'
+          textAlign: 'center',
+          marginBottom: '32px',
+          paddingTop: '20px'
         }}>
-          
-          {/* Top Row */}
+          <img 
+            src={handwerkStarsLogo} 
+            alt="Handwerk Stars Logo" 
+            style={{ 
+              height: '80px', 
+              maxWidth: '300px',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        {/* Button Section */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '32px'
+        }}>
           <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'flex-start',
-            marginBottom: '16px',
+            display: 'inline-flex',
+            gap: '16px',
             flexWrap: 'wrap',
-            gap: '16px'
+            justifyContent: 'center'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Button onClick={onReset} variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Neue Analyse
-              </Button>
-              <h1 style={{ color: '#facc15', fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
-                Analyse-Ergebnisse
-              </h1>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <SaveAnalysisDialog 
-                businessData={businessData}
-                realData={realData}
-                manualImprintData={manualImprintData}
-                manualSocialData={manualSocialData}
-                manualWorkplaceData={manualWorkplaceData}
-                manualCorporateIdentityData={manualCorporateIdentityData}
-                manualCompetitors={manualCompetitors}
-                competitorServices={competitorServices}
-                companyServices={companyServices}
-                manualKeywordData={manualKeywordData}
-                keywordScore={keywordsScore}
-                privacyData={privacyData}
-                accessibilityData={accessibilityData}
-              />
-              <CustomerHTMLExport 
-                businessData={businessData}
-                realData={realData}
-                manualSocialData={manualSocialData}
-                keywordScore={keywordsScore}
-                manualKeywordData={manualKeywordData}
-              />
-              <SelectiveHTMLExport
-                businessData={businessData}
-                realData={realData}
-                manualImprintData={manualImprintData}
-                manualSocialData={manualSocialData}
-                manualWorkplaceData={manualWorkplaceData}
-                manualCorporateIdentityData={manualCorporateIdentityData}
-                manualCompetitors={manualCompetitors}
-                competitorServices={competitorServices}
-                companyServices={companyServices}
-                deletedCompetitors={deletedCompetitors}
-                hourlyRateData={hourlyRateData}
-                manualKeywordData={manualKeywordData}
-                keywordScore={keywordsScore}
-                staffQualificationData={staffQualificationData}
-                quoteResponseData={quoteResponseData}
-                privacyData={privacyData}
-                accessibilityData={accessibilityData}
-              />
-            </div>
+            <Button onClick={onReset} variant="outline" size="lg">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Neue Analyse
+            </Button>
+            <SaveAnalysisDialog 
+              businessData={businessData}
+              realData={realData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              companyServices={companyServices}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
+            />
           </div>
+        </div>
+
+        {/* Title Section */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '32px'
+        }}>
+          <h1 style={{ 
+            color: '#facc15', 
+            fontSize: '32px', 
+            fontWeight: 'bold', 
+            margin: '0 0 16px 0' 
+          }}>
+            Analyse-Ergebnisse
+          </h1>
           
           {/* Website Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            justifyContent: 'center',
+            flexWrap: 'wrap' 
+          }}>
             <Globe className="h-4 w-4" style={{ color: '#9ca3af' }} />
-            <span style={{ color: '#d1d5db', fontSize: '14px' }}>{businessData.url}</span>
+            <span style={{ color: '#d1d5db', fontSize: '16px' }}>{businessData.url}</span>
             <Badge variant="secondary">
               <Building className="h-3 w-3 mr-1" />
               {industryNames[businessData.industry]}
@@ -425,12 +423,52 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           </div>
         </div>
 
+        {/* Export Buttons Section */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '40px'
+        }}>
+          <div style={{ 
+            display: 'inline-flex',
+            gap: '12px',
+            flexWrap: 'wrap',
+            justifyContent: 'center'
+          }}>
+            <CustomerHTMLExport 
+              businessData={businessData}
+              realData={realData}
+              manualSocialData={manualSocialData}
+              keywordScore={keywordsScore}
+              manualKeywordData={manualKeywordData}
+            />
+            <SelectiveHTMLExport
+              businessData={businessData}
+              realData={realData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              companyServices={companyServices}
+              deletedCompetitors={deletedCompetitors}
+              hourlyRateData={hourlyRateData}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
+              staffQualificationData={staffQualificationData}
+              quoteResponseData={quoteResponseData}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
+            />
+          </div>
+        </div>
+
         {/* Category Navigation */}
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px'
+          gap: '20px',
+          marginBottom: '40px'
         }}>
           {categories.map((category) => {
             const IconComponent = category.icon;
@@ -440,28 +478,29 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
                 style={{
-                  background: isActive ? '#facc15' : 'rgba(31, 41, 55, 0.6)',
+                  background: isActive ? '#facc15' : 'rgba(31, 41, 55, 0.8)',
                   color: isActive ? '#000' : '#d1d5db',
-                  border: isActive ? '2px solid #facc15' : '2px solid rgba(75, 85, 99, 0.5)',
-                  borderRadius: '12px',
-                  padding: '20px',
+                  border: isActive ? '3px solid #facc15' : '2px solid rgba(75, 85, 99, 0.5)',
+                  borderRadius: '16px',
+                  padding: '24px',
                   textAlign: 'center',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)'
                 }}
               >
-                <div style={{ marginBottom: '8px' }}>
-                  <IconComponent style={{ width: '24px', height: '24px', margin: '0 auto' }} />
+                <div style={{ marginBottom: '12px' }}>
+                  <IconComponent style={{ width: '28px', height: '28px', margin: '0 auto' }} />
                 </div>
-                <div style={{ fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>
+                <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px' }}>
                   {category.title}
                 </div>
                 <div style={{ 
                   fontWeight: 'bold', 
-                  fontSize: '18px',
+                  fontSize: '20px',
                   color: isActive ? '#000' : getScoreColor(category.score)
                 }}>
-                  {Math.round(category.score)}
+                  {Math.round(category.score)} Punkte
                 </div>
               </button>
             );
@@ -469,7 +508,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
 
         {/* Overall Rating */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '40px' }}>
           <OverallRating 
             businessData={businessData}
             realData={realData}
@@ -481,7 +520,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
 
         {/* Active Category Content */}
-        {renderActiveCategory()}
+        <div>
+          {renderActiveCategory()}
+        </div>
       </div>
     </div>
   );
