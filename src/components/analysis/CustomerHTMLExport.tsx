@@ -105,11 +105,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const generateCustomerReport = () => {
-    console.log('=== GENERATE CUSTOMER REPORT CLICKED ===');
+    console.log('🔴 GENERATE CUSTOMER REPORT AUFGERUFEN');
     exportAsCustomerReport();
   };
 
   const exportAsCustomerReport = () => {
+    console.log('🔴 EXPORT AS CUSTOMER REPORT STARTET');
     const missingImprintElements = getMissingImprintElements();
     
     // Social Media Score für Customer Report berechnen
@@ -146,6 +147,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
+    console.log('HTML includes polygon:', htmlContent.includes('polygon'));
+    console.log('HTML includes f4c430:', htmlContent.includes('f4c430'));
+    console.log('HTML Content Length:', htmlContent.length);
+    console.log('First 500 chars:', htmlContent.substring(0, 500));
 
     const newWindow = window.open('', '_blank');
     if (newWindow) {
