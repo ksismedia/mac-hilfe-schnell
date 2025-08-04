@@ -286,6 +286,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
           <div className="flex gap-3">
             <Button 
               onClick={() => {
+                alert('BUTTON CLICKED!');
                 console.log('=== BROWSER BUTTON CLICKED ===');
                 try {
                   generateCustomerReport();
