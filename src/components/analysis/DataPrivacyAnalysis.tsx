@@ -132,6 +132,24 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
 
           {privacyData && (
             <div className="space-y-6">
+              {/* Legal Warning for Data Privacy Issues */}
+              {(privacyData.violations.length > 0 || privacyData.score < 70) && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                    <Scale className="h-5 w-5" />
+                    Rechtlicher Hinweis: DSGVO-Verstöße erkannt
+                  </div>
+                  <p className="text-red-700 text-sm mb-3">
+                    Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
+                    Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+                  </p>
+                  <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                    <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Datenschutz-Anwalt 
+                    für eine rechtssichere Bewertung und zur Vermeidung von Bußgeldern.
+                  </div>
+                </div>
+              )}
+
               {/* Score Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="border-accent">

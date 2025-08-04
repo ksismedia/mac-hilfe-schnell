@@ -379,6 +379,21 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
+        ${violations.length > 0 || accessibilityScore < 70 ? `
+          <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+              ⚖️ RECHTLICHER HINWEIS: Barrierefreiheits-Verstöße erkannt
+            </h4>
+            <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+              <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheits-Probleme identifiziert. 
+              Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
+            </p>
+            <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+              <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Anwalt für Barrierefreiheit 
+              für eine rechtssichere Bewertung und zur Vermeidung rechtlicher Risiken.
+            </div>
+          </div>
+        ` : ''}
         <h3 class="header-${getScoreColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
           <span class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span>

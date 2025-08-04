@@ -273,6 +273,21 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
+                ${dataPrivacyScore < 70 ? `
+                    <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+                        <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                            ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
+                        </h4>
+                        <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+                            <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
+                            Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+                        </p>
+                        <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                            <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Datenschutz-Anwalt 
+                            für eine rechtssichere Bewertung und zur Vermeidung von Bußgeldern.
+                        </div>
+                    </div>
+                ` : ''}
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">DSGVO-Compliance</div>
