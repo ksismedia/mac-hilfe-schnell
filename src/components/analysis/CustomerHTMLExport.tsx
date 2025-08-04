@@ -105,6 +105,11 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const generateCustomerReport = () => {
+    console.log('=== GENERATE CUSTOMER REPORT CLICKED ===');
+    exportAsCustomerReport();
+  };
+
+  const exportAsCustomerReport = () => {
     const missingImprintElements = getMissingImprintElements();
     
     // Social Media Score für Customer Report berechnen
