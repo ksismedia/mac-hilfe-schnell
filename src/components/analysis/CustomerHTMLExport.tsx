@@ -323,14 +323,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 </head>
 <body>
     <div class="logo-container">
-        <div class="logo-box">
-            <div style="width: 40px; height: 40px; margin-bottom: 5px; margin-right: -10px;">
+        <div style="width: 200px; height: 200px; padding: 15px; background: #1a1a1a; border-radius: 8px; border: 3px solid #f4c430; display: flex; flex-direction: column; justify-content: center; align-items: flex-end;">
+            <div style="width: 35px; height: 35px; margin-bottom: 3px; margin-right: 3px;">
                 <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: none; stroke: #f4c430; stroke-width: 4; stroke-linejoin: round;">
                     <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
                 </svg>
             </div>
-            <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 38px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-right: -15px;">HANDWERK</div>
-            <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 38px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-right: -15px;">STARS</div>
+            <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
+            <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
         </div>
     </div>
     
