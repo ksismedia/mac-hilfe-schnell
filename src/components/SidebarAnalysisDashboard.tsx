@@ -322,125 +322,111 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <div className="w-80 bg-gray-800/90 border-r border-gray-700 flex-shrink-0">
-          <div className="p-4">
-            <h2 className="text-yellow-400 font-bold text-lg mb-4">Analyse-Kategorien</h2>
-            <div className="space-y-2">
-              {categories.map((category) => {
-                const IconComponent = category.icon;
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveCategory(category.id)}
-                    className={`w-full p-3 rounded-lg text-left border-l-4 transition-all ${
-                      activeCategory === category.id 
-                        ? 'bg-gray-700 border-yellow-400' 
-                        : `bg-gray-800/50 border-gray-600 hover:bg-gray-700/50 ${getScoreBorder(category.score)}`
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <IconComponent className="h-5 w-5 text-yellow-400" />
-                        <span className="font-medium text-white">{category.title}</span>
-                      </div>
-                      <span className={`text-sm font-bold ${getScoreColor(category.score)}`}>
-                        {Math.round(category.score)}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-        
-        {/* Main Content */}
-        <div className="flex-1 bg-background overflow-auto">
-          <div className="p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <Button onClick={onReset} variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Neue Analyse
-                </Button>
-                <div>
-                  <h1 className="text-2xl font-bold text-yellow-400">Analyse-Ergebnisse</h1>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Globe className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-300 break-all">{businessData.url}</span>
-                    <Badge variant="secondary" className="shrink-0">
-                      <Building className="h-3 w-3 mr-1" />
-                      {industryNames[businessData.industry]}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <SaveAnalysisDialog 
-                  businessData={businessData}
-                  realData={realData}
-                  manualImprintData={manualImprintData}
-                  manualSocialData={manualSocialData}
-                  manualWorkplaceData={manualWorkplaceData}
-                  manualCorporateIdentityData={manualCorporateIdentityData}
-                  manualCompetitors={manualCompetitors}
-                  competitorServices={competitorServices}
-                  companyServices={companyServices}
-                  manualKeywordData={manualKeywordData}
-                  keywordScore={keywordsScore}
-                  privacyData={privacyData}
-                  accessibilityData={accessibilityData}
-                />
-                <CustomerHTMLExport 
-                  businessData={businessData}
-                  realData={realData}
-                  manualSocialData={manualSocialData}
-                  keywordScore={keywordsScore}
-                  manualKeywordData={manualKeywordData}
-                />
-                <SelectiveHTMLExport
-                  businessData={businessData}
-                  realData={realData}
-                  manualImprintData={manualImprintData}
-                  manualSocialData={manualSocialData}
-                  manualWorkplaceData={manualWorkplaceData}
-                  manualCorporateIdentityData={manualCorporateIdentityData}
-                  manualCompetitors={manualCompetitors}
-                  competitorServices={competitorServices}
-                  companyServices={companyServices}
-                  deletedCompetitors={deletedCompetitors}
-                  hourlyRateData={hourlyRateData}
-                  manualKeywordData={manualKeywordData}
-                  keywordScore={keywordsScore}
-                  staffQualificationData={staffQualificationData}
-                  quoteResponseData={quoteResponseData}
-                  privacyData={privacyData}
-                  accessibilityData={accessibilityData}
-                />
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Button onClick={onReset} variant="outline" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Neue Analyse
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-yellow-400">Analyse-Ergebnisse</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <Globe className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-300 break-all">{businessData.url}</span>
+                <Badge variant="secondary" className="shrink-0">
+                  <Building className="h-3 w-3 mr-1" />
+                  {industryNames[businessData.industry]}
+                </Badge>
               </div>
             </div>
-
-            {/* Overall Rating */}
-            <div className="mb-8">
-              <OverallRating 
-                businessData={businessData}
-                realData={realData}
-                manualSocialData={manualSocialData}
-                keywordsScore={keywordsScore}
-                staffQualificationData={staffQualificationData}
-                quoteResponseData={quoteResponseData}
-              />
-            </div>
-
-            {/* Active Category Content */}
-            {renderActiveCategory()}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <SaveAnalysisDialog 
+              businessData={businessData}
+              realData={realData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              companyServices={companyServices}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
+            />
+            <CustomerHTMLExport 
+              businessData={businessData}
+              realData={realData}
+              manualSocialData={manualSocialData}
+              keywordScore={keywordsScore}
+              manualKeywordData={manualKeywordData}
+            />
+            <SelectiveHTMLExport
+              businessData={businessData}
+              realData={realData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              companyServices={companyServices}
+              deletedCompetitors={deletedCompetitors}
+              hourlyRateData={hourlyRateData}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
+              staffQualificationData={staffQualificationData}
+              quoteResponseData={quoteResponseData}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
+            />
           </div>
         </div>
+
+        {/* Category Navigation */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {categories.map((category) => {
+            const IconComponent = category.icon;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                  activeCategory === category.id 
+                    ? 'bg-yellow-400 text-black border-yellow-400' 
+                    : 'bg-gray-800/50 text-gray-300 border-gray-600 hover:bg-gray-700/50'
+                }`}
+              >
+                <IconComponent className="h-4 w-4" />
+                <span className="font-medium">{category.title}</span>
+                <span className={`text-sm font-bold ${getScoreColor(category.score)}`}>
+                  {Math.round(category.score)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Overall Rating */}
+        <div className="mb-8">
+          <OverallRating 
+            businessData={businessData}
+            realData={realData}
+            manualSocialData={manualSocialData}
+            keywordsScore={keywordsScore}
+            staffQualificationData={staffQualificationData}
+            quoteResponseData={quoteResponseData}
+          />
+        </div>
+
+        {/* Active Category Content */}
+        {renderActiveCategory()}
       </div>
     </div>
   );
