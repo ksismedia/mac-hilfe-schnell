@@ -120,6 +120,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('DEBUG CustomerHTMLExport - companyServices:', companyServices);
     console.log('DEBUG CustomerHTMLExport - deletedCompetitors:', deletedCompetitors);
     
+    console.log('=== STARTING HTML GENERATION ===');
     const htmlContent = generateCustomerHTML({
       businessData,
       realData,
@@ -138,6 +139,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       staffQualificationData,
       dataPrivacyScore: 75
     });
+    console.log('=== HTML CONTENT GENERATED ===');
+    console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
 
     const newWindow = window.open('', '_blank');
     if (newWindow) {
