@@ -426,14 +426,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
         {/* Export Buttons Section */}
         <div style={{
-          textAlign: 'center',
           marginBottom: '40px'
         }}>
           <div style={{ 
-            display: 'inline-flex',
-            gap: '12px',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
+            display: 'flex',
+            gap: '20px',
+            flexDirection: 'column',
+            alignItems: 'center'
           }}>
             <CustomerHTMLExport 
               businessData={businessData}
