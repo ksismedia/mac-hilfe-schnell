@@ -1,7 +1,9 @@
 // Text-based logo for HTML exports
 export const getLogoHTML = () => {
-  return `
-    <div style="text-align: center;">
+  console.log('getLogoHTML called'); // Debug log
+  
+  const logoHTML = `
+    <div style="text-align: center; border: 1px solid red; padding: 10px; background: yellow;">
       <div style="
         font-family: Arial, sans-serif;
         font-size: 28px;
@@ -23,4 +25,7 @@ export const getLogoHTML = () => {
       </div>
     </div>
   `;
+  
+  console.log('Logo HTML generated:', logoHTML); // Debug log
+  return logoHTML;
 };
