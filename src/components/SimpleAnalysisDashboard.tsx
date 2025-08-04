@@ -434,16 +434,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             flexDirection: 'column',
             alignItems: 'center'
           }}>
-            <div>
-              <p style={{ color: 'red', fontSize: '20px', fontWeight: 'bold' }}>LOGO DEBUG TEST AREA</p>
-              <CustomerHTMLExport 
-                businessData={businessData}
-                realData={realData}
-                manualSocialData={manualSocialData}
-                keywordScore={keywordsScore}
-                manualKeywordData={manualKeywordData}
-              />
-            </div>
+            <CustomerHTMLExport 
+              businessData={businessData}
+              realData={realData}
+              manualSocialData={manualSocialData}
+              keywordScore={keywordsScore}
+              manualKeywordData={manualKeywordData}
+            />
             <SelectiveHTMLExport
               businessData={businessData}
               realData={realData}

@@ -2813,13 +2813,14 @@ export const generateCustomerHTML = ({
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
       <div class="logo-container" style="margin-bottom: 20px;">
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 12px; border: 2px solid #fbbf24;">
-          <div style="font-family: 'Arial Black', Arial, sans-serif; font-size: 32px; font-weight: 900; color: #fbbf24; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); letter-spacing: 2px; margin-bottom: 8px;">
-            ⭐ HANDWERK STARS ⭐
+        <div style="width: 140px; height: 140px; padding: 15px; background: #1a1a1a; border-radius: 8px; border: 3px solid #f4c430; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; margin: 0 auto;">
+          <div style="width: 35px; height: 35px; margin-bottom: 3px; margin-right: 3px;">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: none; stroke: #f4c430; stroke-width: 4; stroke-linejoin: round;">
+              <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" />
+            </svg>
           </div>
-          <div style="font-family: Arial, sans-serif; font-size: 16px; color: #e5e7eb; font-weight: bold; letter-spacing: 1px;">
-            Business Analyse System
-          </div>
+          <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; margin-bottom: 1px; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
+          <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
         </div>
       </div>
       <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
