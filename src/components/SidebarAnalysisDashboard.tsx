@@ -287,20 +287,54 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <CategorySidebar
-            onCategoryChange={setActiveCategory}
-            activeCategory={activeCategory}
-            scores={scores}
-          />
-          
-          <main className="flex-1 overflow-auto">
-            <div className="p-6">
+      <div className="flex min-h-screen">
+        {/* Custom Sidebar */}
+        <div className="w-80 bg-gray-800 border-r border-gray-700 flex-shrink-0">
+          <div className="p-4">
+            <h2 className="text-yellow-400 font-bold text-lg mb-4">Analyse-Kategorien</h2>
+            <div className="space-y-2">
+              {[
+                { id: 'seo-content', title: 'SEO & Content', score: scores.seoAndContent, icon: '🔍' },
+                { id: 'performance-mobile', title: 'Performance & Technik', score: scores.performanceAndMobile, icon: '⚡' },
+                { id: 'social-media', title: 'Social Media', score: scores.socialMedia, icon: '📱' },
+                { id: 'staff-service', title: 'Personal & Service', score: scores.staffAndService, icon: '👥' }
+              ].map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`w-full p-3 rounded-lg text-left border-l-4 transition-all ${
+                    activeCategory === category.id 
+                      ? 'bg-gray-700 border-yellow-400' 
+                      : 'bg-gray-800/50 border-gray-600 hover:bg-gray-700/50'
+                  } ${
+                    category.score >= 80 ? 'border-yellow-400' :
+                    category.score >= 60 ? 'border-green-400' : 'border-red-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{category.icon}</span>
+                      <span className="font-medium text-white">{category.title}</span>
+                    </div>
+                    <span className={`text-sm font-bold ${
+                      category.score >= 80 ? 'text-yellow-400' :
+                      category.score >= 60 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {category.score}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Main Content */}
+        <div className="flex-1 bg-background overflow-auto">
+          <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
-                <SidebarTrigger />
                 <Button onClick={onReset} variant="outline" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Neue Analyse
@@ -377,10 +411,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
             {/* Active Category Content */}
             {renderActiveCategory()}
-            </div>
-          </main>
+          </div>
         </div>
-      </SidebarProvider>
+      </div>
     </div>
   );
 };
