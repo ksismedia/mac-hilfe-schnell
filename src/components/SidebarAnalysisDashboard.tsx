@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Globe, Building } from 'lucide-react';
+import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users } from 'lucide-react';
 
 // Category Components
 import SEOContentCategory from './analysis/categories/SEOContentCategory';
@@ -105,7 +105,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   // Load analysis data or load saved analysis
   useEffect(() => {
     const loadAnalysisData = async () => {
-      // Prevent duplicate analysis loading
       if (realData) {
         return;
       }
@@ -217,6 +216,45 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     staffAndService: calculateStaffServiceScore(staffQualificationData, quoteResponseData, manualCorporateIdentityData, hourlyRateData)
   };
 
+  const categories = [
+    { 
+      id: 'seo-content', 
+      title: 'SEO & Content', 
+      icon: Search, 
+      score: scores.seoAndContent
+    },
+    { 
+      id: 'performance-mobile', 
+      title: 'Performance & Technik', 
+      icon: Zap, 
+      score: scores.performanceAndMobile
+    },
+    { 
+      id: 'social-media', 
+      title: 'Social Media', 
+      icon: Share2, 
+      score: scores.socialMedia
+    },
+    { 
+      id: 'staff-service', 
+      title: 'Personal & Service', 
+      icon: Users, 
+      score: scores.staffAndService
+    }
+  ];
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-yellow-400';
+    if (score >= 60) return 'text-green-400';
+    return 'text-red-400';
+  };
+
+  const getScoreBorder = (score: number) => {
+    if (score >= 80) return 'border-yellow-400';
+    if (score >= 60) return 'border-green-400';
+    return 'border-red-400';
+  };
+
   const renderActiveCategory = () => {
     switch (activeCategory) {
       case 'seo-content':
@@ -286,43 +324,35 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
       <div className="flex min-h-screen">
-        {/* Custom Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 flex-shrink-0">
+        {/* Sidebar */}
+        <div className="w-80 bg-gray-800/90 border-r border-gray-700 flex-shrink-0">
           <div className="p-4">
             <h2 className="text-yellow-400 font-bold text-lg mb-4">Analyse-Kategorien</h2>
             <div className="space-y-2">
-              {[
-                { id: 'seo-content', title: 'SEO & Content', score: scores.seoAndContent, icon: '🔍' },
-                { id: 'performance-mobile', title: 'Performance & Technik', score: scores.performanceAndMobile, icon: '⚡' },
-                { id: 'social-media', title: 'Social Media', score: scores.socialMedia, icon: '📱' },
-                { id: 'staff-service', title: 'Personal & Service', score: scores.staffAndService, icon: '👥' }
-              ].map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`w-full p-3 rounded-lg text-left border-l-4 transition-all ${
-                    activeCategory === category.id 
-                      ? 'bg-gray-700 border-yellow-400' 
-                      : 'bg-gray-800/50 border-gray-600 hover:bg-gray-700/50'
-                  } ${
-                    category.score >= 80 ? 'border-yellow-400' :
-                    category.score >= 60 ? 'border-green-400' : 'border-red-400'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{category.icon}</span>
-                      <span className="font-medium text-white">{category.title}</span>
+              {categories.map((category) => {
+                const IconComponent = category.icon;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`w-full p-3 rounded-lg text-left border-l-4 transition-all ${
+                      activeCategory === category.id 
+                        ? 'bg-gray-700 border-yellow-400' 
+                        : `bg-gray-800/50 border-gray-600 hover:bg-gray-700/50 ${getScoreBorder(category.score)}`
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <IconComponent className="h-5 w-5 text-yellow-400" />
+                        <span className="font-medium text-white">{category.title}</span>
+                      </div>
+                      <span className={`text-sm font-bold ${getScoreColor(category.score)}`}>
+                        {Math.round(category.score)}
+                      </span>
                     </div>
-                    <span className={`text-sm font-bold ${
-                      category.score >= 80 ? 'text-yellow-400' :
-                      category.score >= 60 ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      {category.score}
-                    </span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
