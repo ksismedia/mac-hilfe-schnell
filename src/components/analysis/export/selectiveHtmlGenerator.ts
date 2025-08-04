@@ -72,9 +72,9 @@ interface SelectiveReportData {
 
 // Function to get score color (hex value for inline styles)
 const getScoreColor = (score: number) => {
-  if (score <= 60) return '#dc2626';   // 0-60% rot
-  if (score <= 80) return '#16a34a';   // 61-80% grün
-  return '#eab308';                    // 81-100% gelb
+  if (score <= 60) return '#FF0000';   // 0-60% rot (consistent with CSS)
+  if (score <= 80) return '#22c55e';   // 61-80% grün (consistent with CSS)
+  return '#FFD700';                    // 81-100% gelb (consistent with CSS)
 };
 
 // Function to get score color class
