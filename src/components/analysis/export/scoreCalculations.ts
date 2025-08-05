@@ -423,19 +423,40 @@ export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: Ma
 };
 
 // Calculate Staff Qualification Score
-export const calculateStaffQualificationScore = (staffData?: any): number => {
-  if (!staffData) return 50; // Default neutral score when not assessed
+export const calculateStaffQualificationScore = (staffData?: any): number | null => {
+  console.log('=== STAFF QUALIFICATION SCORE BERECHNUNG ===');
+  console.log('Staff Data:', staffData);
+  
+  // Prüfe ob überhaupt Daten eingegeben wurden
+  if (!staffData || Object.keys(staffData).length === 0) {
+    console.log('Keine Staff Qualification Daten -> Keine Bewertung');
+    return null; // Keine Bewertung wenn keine Daten
+  }
+  
+  // Prüfe ob alle relevanten Felder leer sind
+  const hasAnyData = (
+    (staffData.totalEmployees && staffData.totalEmployees > 0) ||
+    (staffData.skilled_workers && staffData.skilled_workers > 0) ||
+    (staffData.masters && staffData.masters > 0) ||
+    (staffData.certifications && Object.values(staffData.certifications).some(Boolean)) ||
+    (staffData.industry_specific && staffData.industry_specific.length > 0)
+  );
+  
+  if (!hasAnyData) {
+    console.log('Keine relevanten Staff Qualification Daten -> Keine Bewertung');
+    return null;
+  }
   
   let score = 0;
   const totalEmployees = staffData.totalEmployees || 1;
   
   // Qualifikationsgrad (40% der Bewertung)
-  const qualifiedStaff = staffData.skilled_workers + staffData.masters;
+  const qualifiedStaff = (staffData.skilled_workers || 0) + (staffData.masters || 0);
   const qualificationRatio = qualifiedStaff / totalEmployees;
   score += qualificationRatio * 40;
   
   // Meister-Quote (20% der Bewertung)
-  const masterRatio = staffData.masters / totalEmployees;
+  const masterRatio = (staffData.masters || 0) / totalEmployees;
   score += masterRatio * 20;
   
   // Zertifizierungen (25% der Bewertung)
@@ -447,16 +468,35 @@ export const calculateStaffQualificationScore = (staffData?: any): number => {
   const maxIndustrySpecific = 6; // Durchschnittliche Anzahl pro Branche
   score += (industrySpecificCount / maxIndustrySpecific) * 15;
   
-  return Math.round(Math.min(100, score));
+  const finalScore = Math.round(Math.min(100, score));
+  console.log(`Staff Qualification Score: ${finalScore}`);
+  return finalScore;
 };
 
-export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseData | null) => {
+export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseData | null): number | null => {
   console.log('=== QUOTE RESPONSE SCORE BERECHNUNG GESTARTET ===');
   console.log('Quote Response Data:', quoteResponseData);
   
-  if (!quoteResponseData) {
-    console.log('Keine Quote Response Daten -> Score: 50 (Standard)');
-    return 50;
+  // Prüfe ob überhaupt Daten eingegeben wurden
+  if (!quoteResponseData || Object.keys(quoteResponseData).length === 0) {
+    console.log('Keine Quote Response Daten -> Keine Bewertung');
+    return null; // Keine Bewertung wenn keine Daten
+  }
+  
+  // Prüfe ob alle relevanten Felder leer sind
+  const hasAnyData = (
+    quoteResponseData.responseTime ||
+    (quoteResponseData.contactMethods && Object.values(quoteResponseData.contactMethods).some(Boolean)) ||
+    quoteResponseData.responseQuality ||
+    quoteResponseData.automaticConfirmation ||
+    quoteResponseData.followUpProcess ||
+    quoteResponseData.personalContact ||
+    quoteResponseData.availabilityHours
+  );
+  
+  if (!hasAnyData) {
+    console.log('Keine relevanten Quote Response Daten -> Keine Bewertung');
+    return null;
   }
   
   let score = 0;
@@ -473,7 +513,7 @@ export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseDat
   }
   
   // Kontaktmöglichkeiten (20% der Bewertung)
-  const contactCount = Object.values(quoteResponseData.contactMethods).filter(Boolean).length;
+  const contactCount = Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length;
   score += Math.min(20, contactCount * 4);
   
   // Antwortqualität (20% der Bewertung)
@@ -587,12 +627,12 @@ export const calculateStaffServiceScore = (
   let totalWeight = 0;
   let weightedScore = 0;
   
-  if (staffData) {
+  if (staffQualificationScore !== null) {
     weightedScore += staffQualificationScore * 35;
     totalWeight += 35;
   }
   
-  if (quoteResponseData) {
+  if (quoteScore !== null) {
     weightedScore += quoteScore * 30;
     totalWeight += 30;
   }

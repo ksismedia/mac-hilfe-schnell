@@ -33,17 +33,16 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   // Local SEO Score - STRENGE BEWERTUNG MIT HÖCHSTER GEWICHTUNG
   const localSEOScore = calculateLocalSEOScore(businessData, realData);
 
-  // Staff Qualification Score
+  // Staff Qualification Score - nur bewerten wenn Daten vorhanden
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
 
-  // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG
-  const metrics = [
+  // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG (nur wenn Daten vorhanden)
+  const baseMetrics = [
     { name: 'Local SEO', score: localSEOScore, weight: 24, maxScore: 100 }, // HÖCHSTE GEWICHTUNG für Handwerk
     { name: 'SEO', score: realData.seo.score, weight: 14, maxScore: 100 },
     { name: 'Performance', score: realData.performance.score, weight: 11, maxScore: 100 },
     { name: 'Impressum', score: realData.imprint.score, weight: 9, maxScore: 100 },
-    { name: 'Personal', score: staffQualificationScore, weight: 8, maxScore: 100 }, // NEU: Mitarbeiterqualifizierung
     { name: 'Keywords', score: currentKeywordsScore, weight: 8, maxScore: 100 },
     { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 7, maxScore: 100 },
     { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, maxScore: 100 },
@@ -52,6 +51,17 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Arbeitsplatz', score: realData.workplace.overallScore, weight: 2, maxScore: 100 },
     { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 1, maxScore: 100 }
   ];
+
+  // Füge nur bewertete Bereiche hinzu
+  const metrics = [...baseMetrics];
+  
+  if (staffQualificationScore !== null) {
+    metrics.push({ name: 'Personal', score: staffQualificationScore, weight: 8, maxScore: 100 });
+  }
+  
+  if (quoteResponseScore !== null) {
+    metrics.push({ name: 'Angebotsbearbeitung', score: quoteResponseScore, weight: 6, maxScore: 100 });
+  }
 
   // Gewichteter Gesamtscore
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
