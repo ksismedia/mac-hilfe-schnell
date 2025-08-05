@@ -579,16 +579,15 @@ export const generateCustomerHTML = ({
             
             ${accessibilityScore < 90 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
+              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
-                Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
-              </p>
-              <p class="error-text" style="margin: 0 0 10px 0; font-size: 14px;">
-                <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
-                Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
+                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
               </p>
               <p class="error-text" style="margin: 0; font-size: 14px;">
-                <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
               </p>
             </div>
             ` : ''}
@@ -2566,18 +2565,17 @@ export const generateCustomerHTML = ({
         <!-- Warnung direkt sichtbar -->
         <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
           <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-            ⚠️ WARNUNG: Abmahnungsrisiko
+            ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
           </h4>
           <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
-            Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+            Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+            Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
           </p>
-          <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
-            <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
-            Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
-          </p>
-          <p style="color: #dc2626; margin: 0; font-size: 14px;">
-            <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
-          </p>
+          <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+            <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+            Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+            Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+          </div>
         </div>
         ` : ''}
         
@@ -2640,17 +2638,16 @@ export const generateCustomerHTML = ({
             
             ${actualAccessibilityScore < 90 ? `
             <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
+              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
-                Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
               </p>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
-                <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
-                Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
-              </p>
-              <p style="color: #dc2626; margin: 0; font-size: 14px;">
-                <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
-              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
             </div>
             ` : ''}
           </div>
