@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualCorporateIdentityData, QuoteResponseData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualCorporateIdentityData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 
 export const calculateScore = (value: number, maxValue: number = 100) => {
   return Math.min(100, Math.max(0, value));
@@ -177,8 +177,42 @@ export const calculateSocialMediaScore = (realData: RealBusinessData, manualSoci
   return finalScore;
 };
 
-// Berechnung für Content-Qualität Score
-export const calculateContentQualityScore = (realData: RealBusinessData, manualKeywordData?: any, businessData?: any) => {
+// Berechnung für Content-Qualität Score - MIT MANUELLER ÜBERSCHREIBUNG
+export const calculateContentQualityScore = (
+  realData: RealBusinessData, 
+  manualKeywordData?: any, 
+  businessData?: any,
+  manualContentData?: ManualContentData | null
+) => {
+  console.log('=== CONTENT QUALITY SCORE BERECHNUNG ===');
+  console.log('Manual Content Data:', manualContentData);
+  
+  // Wenn manuelle Content-Daten vorhanden sind, verwende diese
+  if (manualContentData) {
+    let totalScore = 0;
+    let validMetrics = 0;
+    
+    // Sammle alle manuellen Scores
+    const scores = [
+      manualContentData.textQuality,
+      manualContentData.contentRelevance,
+      manualContentData.expertiseLevel,
+      manualContentData.contentFreshness
+    ];
+    
+    scores.forEach(score => {
+      if (score && score > 0) {
+        totalScore += score;
+        validMetrics++;
+      }
+    });
+    
+    const manualScore = validMetrics > 0 ? Math.round(totalScore / validMetrics) : 60;
+    console.log(`MANUELLER CONTENT SCORE: ${manualScore} (basierend auf ${validMetrics} Metriken)`);
+    return manualScore;
+  }
+  
+  // Automatische Berechnung als Fallback
   let totalScore = 0;
   let metrics = 0;
 
@@ -204,12 +238,29 @@ export const calculateContentQualityScore = (realData: RealBusinessData, manualK
   const freshnessScore = 60; // Standardwert, da schwer automatisch zu ermitteln
   totalScore += freshnessScore * 0.1;
   
-  return Math.round(totalScore);
+  const autoScore = Math.round(totalScore);
+  console.log(`AUTOMATISCHER CONTENT SCORE: ${autoScore}`);
+  return autoScore;
 };
 
-// Berechnung für Backlinks Score
-export const calculateBacklinksScore = (realData: RealBusinessData) => {
-  // Basis-Score aus SEO-Daten ableiten
+// Berechnung für Backlinks Score - MIT MANUELLER ÜBERSCHREIBUNG
+export const calculateBacklinksScore = (realData: RealBusinessData, manualBacklinkData?: ManualBacklinkData | null) => {
+  console.log('=== BACKLINKS SCORE BERECHNUNG ===');
+  console.log('Manual Backlink Data:', manualBacklinkData);
+  
+  // Wenn manuelle Backlink-Daten vorhanden sind, verwende diese
+  if (manualBacklinkData && manualBacklinkData.qualityScore) {
+    // Berechne Gesamt-Score aus den verschiedenen Metriken
+    const overallScore = Math.round(
+      (manualBacklinkData.qualityScore * 0.4) +
+      (manualBacklinkData.domainAuthority * 0.3) +
+      (manualBacklinkData.localRelevance * 0.3)
+    );
+    console.log(`MANUELLER BACKLINKS SCORE: ${overallScore}`);
+    return overallScore;
+  }
+  
+  // Automatische Berechnung als Fallback
   let baseScore = realData.seo.score;
   
   // Adjustierung basierend auf Domain-Stärke Indikatoren
@@ -222,12 +273,21 @@ export const calculateBacklinksScore = (realData: RealBusinessData) => {
   }
   
   // Cap at 100 und Minimum 30 für realistische Bewertung
-  return Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
+  const autoScore = Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
+  console.log(`AUTOMATISCHER BACKLINKS SCORE: ${autoScore}`);
+  return autoScore;
 };
 
-// Berechnung für Accessibility Score - AUSGEWOGENE BEWERTUNG
-export const calculateAccessibilityScore = (realData: RealBusinessData) => {
-  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET (AUSGEWOGEN) ===');
+// Berechnung für Accessibility Score - MIT MANUELLER ÜBERSCHREIBUNG
+export const calculateAccessibilityScore = (realData: RealBusinessData, manualAccessibilityData?: ManualAccessibilityData | null) => {
+  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET ===');
+  console.log('Manual Accessibility Data:', manualAccessibilityData);
+  
+  // Wenn manuelle Accessibility-Daten vorhanden sind, verwende diese
+  if (manualAccessibilityData && manualAccessibilityData.overallScore) {
+    console.log(`MANUELLER ACCESSIBILITY SCORE: ${manualAccessibilityData.overallScore}`);
+    return manualAccessibilityData.overallScore;
+  }
   
   // AUSGEWOGENE BEWERTUNG - Realistische Bewertung mit fairem Startwert
   let complianceScore = 65; // Fairerer Startwert
@@ -274,7 +334,7 @@ export const calculateAccessibilityScore = (realData: RealBusinessData) => {
   // Finaler Score - minimum 20, maximum 100 (realistischer Bereich)
   const finalScore = Math.max(20, Math.min(100, complianceScore));
   
-  console.log('=== ACCESSIBILITY SCORE ERGEBNIS (AUSGEWOGEN) ===');
+  console.log('=== ACCESSIBILITY SCORE ERGEBNIS ===');
   console.log(`Startwert: 65`);
   console.log(`Compliance-Score: ${complianceScore}`);
   console.log(`Finaler Score: ${finalScore}`);
@@ -284,8 +344,13 @@ export const calculateAccessibilityScore = (realData: RealBusinessData) => {
   return finalScore;
 };
 
-// Berechnung für Datenschutz Score - AUSGEWOGENE BEWERTUNG
-export const calculateDataPrivacyScore = (realData: RealBusinessData) => {
+// Berechnung für Datenschutz Score - MIT MANUELLER ÜBERSCHREIBUNG
+export const calculateDataPrivacyScore = (realData: RealBusinessData, manualDataPrivacyScore?: number | null) => {
+  // Wenn manueller Datenschutz-Score vorhanden ist, verwende diesen
+  if (manualDataPrivacyScore && manualDataPrivacyScore > 0) {
+    console.log(`MANUELLER DATENSCHUTZ SCORE: ${manualDataPrivacyScore}`);
+    return manualDataPrivacyScore;
+  }
   console.log('=== DATENSCHUTZ SCORE BERECHNUNG GESTARTET (AUSGEWOGEN) ===');
   
   // FAIRE BEWERTUNG - Realistischer Startwert

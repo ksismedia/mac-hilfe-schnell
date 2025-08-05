@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -26,6 +26,9 @@ interface CustomerHTMLExportProps {
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   staffQualificationData?: any;
+  manualContentData?: ManualContentData | null;
+  manualAccessibilityData?: ManualAccessibilityData | null;
+  manualBacklinkData?: ManualBacklinkData | null;
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -38,11 +41,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   competitorServices = {},
   companyServices,
   deletedCompetitors = new Set(),
-    manualCorporateIdentityData,
-    hourlyRateData,
+  manualCorporateIdentityData,
+  hourlyRateData,
   manualKeywordData,
   keywordScore,
-  staffQualificationData
+  staffQualificationData,
+  manualContentData,
+  manualAccessibilityData,
+  manualBacklinkData
 }) => {
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -143,7 +149,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       keywordScore,
       manualImprintData,
       staffQualificationData,
-      dataPrivacyScore: 75
+      dataPrivacyScore: 75,
+      manualContentData,
+      manualAccessibilityData,
+      manualBacklinkData
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
@@ -186,7 +195,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       keywordScore,
       manualImprintData,
       staffQualificationData,
-      dataPrivacyScore: 75
+      dataPrivacyScore: 75,
+      manualContentData,
+      manualAccessibilityData,
+      manualBacklinkData
     });
 
     try {

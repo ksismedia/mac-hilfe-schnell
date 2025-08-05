@@ -85,6 +85,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     staffQualificationData,
     hourlyRateData,
     quoteResponseData,
+    manualContentData,
+    manualAccessibilityData,
+    manualBacklinkData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -357,9 +360,21 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                 <CustomerHTMLExport 
                   businessData={businessData}
                   realData={realData}
+                  manualImprintData={manualImprintData}
                   manualSocialData={manualSocialData}
-                  keywordScore={keywordsScore}
+                  manualWorkplaceData={manualWorkplaceData}
+                  manualCorporateIdentityData={manualCorporateIdentityData}
+                  manualCompetitors={manualCompetitors}
+                  competitorServices={competitorServices}
+                  companyServices={companyServices}
+                  deletedCompetitors={deletedCompetitors}
+                  hourlyRateData={hourlyRateData}
                   manualKeywordData={manualKeywordData}
+                  keywordScore={keywordsScore}
+                  staffQualificationData={staffQualificationData}
+                  manualContentData={manualContentData}
+                  manualAccessibilityData={manualAccessibilityData}
+                  manualBacklinkData={manualBacklinkData}
                 />
                 <SelectiveHTMLExport
                   businessData={businessData}

@@ -1,10 +1,10 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { getLogoHTML } from './logoData';
 
@@ -30,6 +30,9 @@ interface CustomerReportData {
   dataPrivacyScore?: number;
   staffQualificationData?: StaffQualificationData | null;
   quoteResponseData?: QuoteResponseData | null;
+  manualContentData?: ManualContentData | null;
+  manualAccessibilityData?: ManualAccessibilityData | null;
+  manualBacklinkData?: ManualBacklinkData | null;
 }
 
 // Function to get score range for data attribute
@@ -70,7 +73,10 @@ export const generateCustomerHTML = ({
   manualImprintData,
   dataPrivacyScore = 75,
   staffQualificationData,
-  quoteResponseData
+  quoteResponseData,
+  manualContentData,
+  manualAccessibilityData,
+  manualBacklinkData
 }: CustomerReportData) => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
@@ -84,9 +90,11 @@ export const generateCustomerHTML = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
-  // Calculate additional scores
-  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData);
-  const backlinksScore = calculateBacklinksScore(realData);
+  // Calculate additional scores - MIT MANUELLEN DATEN
+  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
+  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
+  const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
+  const actualDataPrivacyScore = calculateDataPrivacyScore(realData, dataPrivacyScore);
   
   // Use actual company services if available, otherwise fall back to industry defaults
   const industryServiceMap = {
@@ -158,7 +166,7 @@ export const generateCustomerHTML = ({
   const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
   const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
   const reputationScore = realData.reviews.google.rating * 20;
-  const accessibilityScore = calculateAccessibilityScore(realData);
+  const accessibilityScore = actualAccessibilityScore; // Verwende berechneten Score mit manuellen Daten
   const legalScore = impressumScore;
   
   
