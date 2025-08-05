@@ -465,11 +465,11 @@ export const generateCustomerHTML = ({
         ${violations.length > 0 || accessibilityScore < 90 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
             <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-              ⚖️ RECHTLICHER HINWEIS: Barrierefreiheits-Verstöße erkannt
+              ⚖️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
             </h4>
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
-              <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheits-Probleme identifiziert. 
-              Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
+              <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+              Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
             </p>
             <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
               <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
