@@ -397,8 +397,7 @@ export const generateCustomerHTML = ({
               Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
             </p>
             <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-              <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Anwalt für Barrierefreiheit 
-              für eine rechtssichere Bewertung und zur Vermeidung rechtlicher Risiken.
+              <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
             </div>
           </div>
         ` : ''}
