@@ -247,15 +247,16 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />
-                    Rechtlicher Hinweis: Barrierefreiheits-Verstöße erkannt
+                    Rechtlicher Hinweis: Barrierefreiheit-Verstöße erkannt
                   </div>
                   <p className="text-red-700 text-sm mb-3">
-                    Die automatisierte Analyse hat rechtlich relevante Barrierefreiheits-Probleme identifiziert. 
-                    Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
+                    <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+                    Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
                   </p>
                   <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
-                    <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Anwalt für Barrierefreiheit 
-                    für eine rechtssichere Bewertung und zur Vermeidung rechtlicher Risiken.
+                    <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+                    Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                    Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
                   </div>
                 </div>
               )}
