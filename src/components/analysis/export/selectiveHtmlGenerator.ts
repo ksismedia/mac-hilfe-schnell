@@ -118,7 +118,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
     // Accessibility section with legal warning
     if (selections.subSections.accessibility) {
       const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
-      const hasAccessibilityIssues = accessibilityScore < 70;
+      const hasAccessibilityIssues = accessibilityScore < 90;
       
       seoContentHtml += `
         <div class="metric-card accessibility-detailed">
@@ -166,7 +166,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
     // Data Privacy section with legal warning
     if (selections.subSections.dataPrivacy) {
       const dataPrivacyScore = data.dataPrivacyScore || 75;
-      const hasDataPrivacyIssues = dataPrivacyScore < 70;
+      const hasDataPrivacyIssues = dataPrivacyScore < 90;
       
       seoContentHtml += `
         <div class="metric-card privacy-detailed">

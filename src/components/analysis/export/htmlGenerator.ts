@@ -462,7 +462,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        ${violations.length > 0 || accessibilityScore < 70 ? `
+        ${violations.length > 0 || accessibilityScore < 90 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
             <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
               ⚖️ RECHTLICHER HINWEIS: Barrierefreiheits-Verstöße erkannt
@@ -577,7 +577,7 @@ export const generateCustomerHTML = ({
               </div>
             </div>
             
-            ${accessibilityScore < 70 ? `
+            ${accessibilityScore < 90 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
               <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">

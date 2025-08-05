@@ -134,7 +134,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
           {privacyData && (
             <div className="space-y-6">
               {/* Legal Warning for Data Privacy Issues */}
-              {(privacyData.violations.length > 0 || privacyData.score < 70) && (
+              {(privacyData.violations.length > 0 || privacyData.score < 90) && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />

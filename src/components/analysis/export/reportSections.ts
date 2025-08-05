@@ -273,7 +273,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
-                ${dataPrivacyScore < 70 ? `
+                ${dataPrivacyScore < 90 ? `
                     <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
                         <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
                             ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
@@ -302,7 +302,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         </div>
                     </div>
                     
-                    ${dataPrivacyScore < 70 ? `
+                    ${dataPrivacyScore < 90 ? `
                       <div class="metric-item" style="grid-column: 1 / -1;">
                         <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                           🚨 Identifizierte DSGVO-Verstöße
@@ -393,7 +393,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                     </div>
                 </div>
                 
-                ${dataPrivacyScore < 70 ? `
+                ${dataPrivacyScore < 90 ? `
                 <div class="recommendations">
                     <h4>Empfehlungen zur Datenschutz-Verbesserung:</h4>
                     <ul>

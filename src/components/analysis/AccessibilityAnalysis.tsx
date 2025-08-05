@@ -243,7 +243,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
           {accessibilityData && (
             <div className="space-y-6">
               {/* Legal Warning for Accessibility Issues */}
-              {(accessibilityData.violations.length > 0 || accessibilityData.score < 70) && (
+              {(accessibilityData.violations.length > 0 || accessibilityData.score < 90) && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />
