@@ -17,7 +17,8 @@ import {
   Globe,
   Scale,
   BookOpen,
-  AlertCircle
+  AlertCircle,
+  Info
 } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { DataPrivacyService, DataPrivacyResult, GDPRViolation } from '@/services/DataPrivacyService';
@@ -209,6 +210,69 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 </div>
                 <Progress value={privacyData.score} className="h-3" />
               </div>
+
+              {/* DSGVO Violations Detail */}
+              {privacyData.violations && privacyData.violations.length > 0 && (
+                <Card className="border-red-200">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-red-600 flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      Gefundene DSGVO-Verstöße ({privacyData.violations.length})
+                    </CardTitle>
+                    <CardDescription>
+                      Diese Punkte sollten umgehend behoben werden, um Bußgelder zu vermeiden
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {privacyData.violations.map((violation: GDPRViolation, index: number) => (
+                        <div 
+                          key={index} 
+                          className={`p-4 rounded-lg border-l-4 ${
+                            violation.severity === 'high' ? 'border-red-500 bg-red-50' :
+                            violation.severity === 'medium' ? 'border-yellow-500 bg-yellow-50' :
+                            'border-blue-500 bg-blue-50'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            {violation.severity === 'high' ? 
+                              <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
+                              violation.severity === 'medium' ?
+                              <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
+                              <Info className="h-4 w-4 text-blue-500 mt-1" />
+                            }
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant={
+                                  violation.severity === 'high' ? 'destructive' : 
+                                  violation.severity === 'medium' ? 'secondary' : 'outline'
+                                }>
+                                  {violation.severity === 'high' ? 'Kritisch' : 
+                                   violation.severity === 'medium' ? 'Wichtig' : 'Info'}
+                                </Badge>
+                                <span className="text-sm font-medium">{violation.category}: {violation.description.split('.')[0]}</span>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-2">{violation.description}</p>
+                              {violation.article && (
+                                <p className="text-xs text-gray-500">
+                                  <strong>Rechtsgrundlage:</strong> {violation.article}
+                                </p>
+                              )}
+                              {violation.recommendation && (
+                                <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
+                                  <p className="text-sm text-blue-800">
+                                    <strong>Lösung:</strong> {violation.recommendation}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Action Button */}
               <div className="flex gap-3">

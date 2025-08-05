@@ -290,11 +290,11 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                 ` : ''}
                 <div class="metric-grid">
                     <div class="metric-item">
-                        <div class="metric-title">DSGVO-Compliance</div>
+                        <div class="metric-title">DSGVO-Bewertung</div>
                         <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">${dataPrivacyScore}/100 Punkte</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Datenschutz-Konformität</span>
+                                <span>Rechtskonformität</span>
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
@@ -302,6 +302,50 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                             </div>
                         </div>
                     </div>
+                    
+                    ${dataPrivacyScore < 70 ? `
+                      <div class="metric-item" style="grid-column: 1 / -1;">
+                        <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                          🚨 Identifizierte DSGVO-Verstöße
+                        </h4>
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
+                          <div style="display: grid; gap: 15px;">
+                            <div style="border-left: 4px solid #dc2626; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                              <strong style="color: #dc2626; display: block; margin-bottom: 5px;">🔴 Kritisch: Fehlende Einwilligung</strong>
+                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Tracking-Cookies werden ohne explizite Einwilligung gesetzt</p>
+                              <p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 6 DSGVO</p>
+                            </div>
+                            <div style="border-left: 4px solid #d97706; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                              <strong style="color: #d97706; display: block; margin-bottom: 5px;">🟡 Wichtig: Unvollständige Datenschutzerklärung</strong>
+                              <p style="margin: 0; color: #92400e; font-size: 14px;">Informationspflichten nicht vollständig erfüllt</p>
+                              <p style="margin: 5px 0 0 0; color: #a16207; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 13/14 DSGVO</p>
+                            </div>
+                            <div style="border-left: 4px solid #dc2626; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                              <strong style="color: #dc2626; display: block; margin-bottom: 5px;">🔴 Kritisch: Drittlandtransfer ohne Schutzmaßnahmen</strong>
+                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Datenübertragung ohne angemessene Schutzmaßnahmen</p>
+                              <p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 44-49 DSGVO</p>
+                            </div>
+                          </div>
+                          <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
+                            <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
+                            <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
+                              Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ` : `
+                      <div class="metric-item" style="grid-column: 1 / -1;">
+                        <h4 style="color: #059669; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                          ✅ DSGVO-Konformität erreicht
+                        </h4>
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
+                          <p style="margin: 0; color: #065f46; font-size: 14px;">
+                            Ihre Website erfüllt die grundlegenden DSGVO-Anforderungen. Regelmäßige Überprüfungen werden empfohlen.
+                          </p>
+                        </div>
+                      </div>
+                    `}
                     
                     <div class="metric-item">
                         <div class="metric-title">Cookie-Compliance</div>
