@@ -297,7 +297,7 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; background-color: ${dataPrivacyScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
                             </div>
                         </div>
                     </div>
