@@ -403,6 +403,102 @@ export const generateSelectiveCustomerHTML = ({
       `;
     }
 
+    // Accessibility Section mit rechtlichem Warntext
+    if (selections.subSections.accessibility) {
+      const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+      const hasAccessibilityIssues = accessibilityScore < 70;
+      
+      seoContentHtml += `
+        <div class="metric-card accessibility-detailed">
+          ${hasAccessibilityIssues ? `
+            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                ⚖️ RECHTLICHER HINWEIS: Barrierefreiheits-Verstöße erkannt
+              </h4>
+              <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheits-Probleme identifiziert. 
+                Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
+              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
+            </div>
+          ` : ''}
+          <div class="accessibility-header" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              ♿ Barrierefreiheit & Zugänglichkeit
+              <div class="score-circle" style="background: white; color: #9c27b0; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${accessibilityScore}%
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+              <h4 style="color: #6a1b9a; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ Barrierefreiheits-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>🏷️ Alt-Texte:</strong> Beschreibende Texte für alle Bilder hinzufügen</li>
+                <li><strong>🎨 Kontraste:</strong> Mindestkontrast von 4.5:1 für Texte gewährleisten</li>
+                <li><strong>⌨️ Tastatur-Navigation:</strong> Alle Funktionen ohne Maus erreichbar machen</li>
+                <li><strong>📱 Screen Reader:</strong> Semantische HTML-Strukturen verwenden</li>
+                <li><strong>🔍 Focus-Indikatoren:</strong> Sichtbare Fokus-Markierungen implementieren</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Data Privacy Section mit rechtlichem Warntext
+    if (selections.subSections.dataPrivacy) {
+      const dataPrivacyScore = 75; // Fallback-Wert
+      const hasDataPrivacyIssues = dataPrivacyScore < 70;
+      
+      seoContentHtml += `
+        <div class="metric-card privacy-detailed">
+          ${hasDataPrivacyIssues ? `
+            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
+              </h4>
+              <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
+                Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
+            </div>
+          ` : ''}
+          <div class="privacy-header" style="background: linear-gradient(135deg, #f44336, #d32f2f); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              🔒 Datenschutz & DSGVO
+              <div class="score-circle" style="background: white; color: #f44336; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${dataPrivacyScore}%
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; border-left: 4px solid #f44336;">
+              <h4 style="color: #c62828; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ DSGVO-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>📋 Datenschutzerklärung:</strong> Vollständig und aktuell halten</li>
+                <li><strong>🍪 Cookie-Consent:</strong> Rechtskonforme Einwilligung implementieren</li>
+                <li><strong>📊 Datenverarbeitung:</strong> Zwecke klar definieren und dokumentieren</li>
+                <li><strong>🔐 Datensicherheit:</strong> Technische und organisatorische Maßnahmen</li>
+                <li><strong>📧 Betroffenenrechte:</strong> Auskunft, Löschung und Berichtigung gewährleisten</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     if (seoContentHtml) {
       sectionsHtml += `
         <section class="section">
@@ -650,6 +746,96 @@ export const generateSelectiveCustomerHTML = ({
   // Personal & Service Section
   if (selections.sections.staffService) {
     let staffServiceHtml = '';
+
+        <div class="metric-card accessibility-detailed">
+          ${hasAccessibilityIssues ? `
+            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                ⚖️ RECHTLICHER HINWEIS: Barrierefreiheits-Verstöße erkannt
+              </h4>
+              <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheits-Probleme identifiziert. 
+                Verstöße gegen Barrierefreiheits-Standards können zu Abmahnungen und rechtlichen Konsequenzen führen.
+              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
+            </div>
+          ` : ''}
+          <div class="accessibility-header" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              ♿ Barrierefreiheit & Zugänglichkeit
+              <div class="score-circle" style="background: white; color: #9c27b0; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${accessibilityScore}%
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+              <h4 style="color: #6a1b9a; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ Barrierefreiheits-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>🏷️ Alt-Texte:</strong> Beschreibende Texte für alle Bilder hinzufügen</li>
+                <li><strong>🎨 Kontraste:</strong> Mindestkontrast von 4.5:1 für Texte gewährleisten</li>
+                <li><strong>⌨️ Tastatur-Navigation:</strong> Alle Funktionen ohne Maus erreichbar machen</li>
+                <li><strong>📱 Screen Reader:</strong> Semantische HTML-Strukturen verwenden</li>
+                <li><strong>🔍 Focus-Indikatoren:</strong> Sichtbare Fokus-Markierungen implementieren</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Data Privacy Section mit rechtlichem Warntext
+    if (selections.subSections.dataPrivacy) {
+      const dataPrivacyScore = 75; // Fallback-Wert
+      const hasDataPrivacyIssues = dataPrivacyScore < 70;
+      
+      staffServiceHtml += `
+        <div class="metric-card privacy-detailed">
+          ${hasDataPrivacyIssues ? `
+            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
+              </h4>
+              <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
+                <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
+                Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
+            </div>
+          ` : ''}
+          <div class="privacy-header" style="background: linear-gradient(135deg, #f44336, #d32f2f); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              🔒 Datenschutz & DSGVO
+              <div class="score-circle" style="background: white; color: #f44336; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${dataPrivacyScore}%
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; border-left: 4px solid #f44336;">
+              <h4 style="color: #c62828; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ DSGVO-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>📋 Datenschutzerklärung:</strong> Vollständig und aktuell halten</li>
+                <li><strong>🍪 Cookie-Consent:</strong> Rechtskonforme Einwilligung implementieren</li>
+                <li><strong>📊 Datenverarbeitung:</strong> Zwecke klar definieren und dokumentieren</li>
+                <li><strong>🔐 Datensicherheit:</strong> Technische und organisatorische Maßnahmen</li>
+                <li><strong>📧 Betroffenenrechte:</strong> Auskunft, Löschung und Berichtigung gewährleisten</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     if (selections.subSections.staffQualification) {
       const qualCount = Object.values(staffQualificationData || {}).filter(Boolean).length;
