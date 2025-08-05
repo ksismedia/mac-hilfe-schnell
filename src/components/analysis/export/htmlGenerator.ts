@@ -442,8 +442,8 @@ export const generateCustomerHTML = ({
   };
 
   const getAccessibilityAnalysis = () => {
-    // Berechne Accessibility Score basierend auf tatsächlichen Daten
-    const accessibilityScore = calculateAccessibilityScore(realData);
+    // Verwende den bereits berechneten Score mit manuellen Daten
+    const accessibilityScore = actualAccessibilityScore;
     const violations = [
       { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
       { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
@@ -2542,14 +2542,14 @@ export const generateCustomerHTML = ({
     <div class="section">
         <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
           <span>Barrierefreiheit & Zugänglichkeit</span>
-          <div class="header-score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
+          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
         </div>
       <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
         <div class="metric-card">
           <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(calculateAccessibilityScore(realData))}">${calculateAccessibilityScore(realData)}%</div>
+            <div class="score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
             <div class="score-details">
               <p><strong>Compliance-Level:</strong> Teilweise konform</p>
               <p><strong>Empfehlung:</strong> Barrierefreiheit verbessern</p>
@@ -2557,7 +2557,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${calculateAccessibilityScore(realData)}%; background-color: ${getScoreColor(calculateAccessibilityScore(realData))} !important;"></div>
+              <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)} !important;"></div>
             </div>
           </div>
         </div>
@@ -2595,31 +2595,31 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${calculateAccessibilityScore(realData) >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${calculateAccessibilityScore(realData) >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${actualAccessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                     <div class="progress-fill" style="width: ${calculateAccessibilityScore(realData)}%; background-color: ${getScoreColor(calculateAccessibilityScore(realData))};"></div>
+                     <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)};"></div>
                   </div>
                 </div>
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${calculateAccessibilityScore(realData) >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${calculateAccessibilityScore(realData) >= 80 ? 'Konform' : 'Nicht konform'}
+                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${actualAccessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
                 <div class="progress-container" style="margin-top: 5px;">
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${calculateAccessibilityScore(realData)}%; background-color: ${getScoreColor(calculateAccessibilityScore(realData))};"></div>
+                    <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)};"></div>
                   </div>
                 </div>
               </div>
             </div>
             
-            ${calculateAccessibilityScore(realData) < 70 ? `
+            ${actualAccessibilityScore < 90 ? `
             <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
               <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahnungsrisiko</h4>
               <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
@@ -2779,7 +2779,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(dataPrivacyScore)}
+    ${generateDataPrivacySection(actualDataPrivacyScore)}
 
     <!-- Kundenservice & Angebotsbearbeitung -->
     <div class="section">

@@ -3,7 +3,7 @@ import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporat
 import { getHTMLStyles } from './htmlStyles';
 import { getLogoHTML } from './logoData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateAccessibilityScore } from './scoreCalculations';
+import { calculateAccessibilityScore, calculateDataPrivacyScore } from './scoreCalculations';
 
 interface SectionSelections {
   seoContent: boolean;
@@ -74,7 +74,7 @@ interface SelectiveReportData {
 }
 
 export const generateSelectiveHTML = (data: SelectiveReportData): string => {
-  const { businessData, realData, manualSocialData, accessibilityData, selections } = data;
+  const { businessData, realData, manualSocialData, accessibilityData, privacyData, selections } = data;
   
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const staffQualificationScore = 75; // Fallback value
@@ -117,7 +117,21 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Accessibility section with legal warning
     if (selections.subSections.accessibility) {
-      const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+      // Use manual accessibility data if available (same logic as UI)
+      let accessibilityScore: number;
+      if (accessibilityData && accessibilityData.overallScore) {
+        const featuresScore = [
+          accessibilityData.keyboardNavigation,
+          accessibilityData.screenReaderCompatible,
+          accessibilityData.colorContrast,
+          accessibilityData.altTextsPresent,
+          accessibilityData.focusVisibility,
+          accessibilityData.textScaling
+        ].filter(Boolean).length * 10;
+        accessibilityScore = Math.round((featuresScore + accessibilityData.overallScore) / 2);
+      } else {
+        accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+      }
       const hasAccessibilityIssues = accessibilityScore < 90;
       
       seoContentHtml += `
@@ -165,7 +179,8 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Data Privacy section with legal warning
     if (selections.subSections.dataPrivacy) {
-      const dataPrivacyScore = data.dataPrivacyScore || 75;
+      // Use manual data privacy score if provided, otherwise fallback to calculated
+      const dataPrivacyScore = privacyData?.score || data.dataPrivacyScore || calculateDataPrivacyScore(realData);
       const hasDataPrivacyIssues = dataPrivacyScore < 90;
       
       seoContentHtml += `
