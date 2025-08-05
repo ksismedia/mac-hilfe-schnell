@@ -86,6 +86,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     staffQualificationData,
     hourlyRateData,
     quoteResponseData,
+    manualContentData,
+    manualAccessibilityData,
+    manualBacklinkData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -97,7 +100,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     addDeletedCompetitor,
     removeDeletedCompetitor,
     updateStaffQualificationData,
-    updateQuoteResponseData
+    updateQuoteResponseData,
+    updateManualContentData,
+    updateManualAccessibilityData,
+    updateManualBacklinkData
   } = useManualData();
 
   // Access saved analyses hook
@@ -437,9 +443,24 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             <CustomerHTMLExport 
               businessData={businessData}
               realData={realData}
+              manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              companyServices={companyServices}
+              deletedCompetitors={deletedCompetitors}
+              hourlyRateData={hourlyRateData}
+              staffQualificationData={staffQualificationData}
+              quoteResponseData={quoteResponseData}
+              manualContentData={manualContentData}
+              manualAccessibilityData={manualAccessibilityData}
+              manualBacklinkData={manualBacklinkData}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
             />
             <SelectiveHTMLExport
               businessData={businessData}
@@ -453,10 +474,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               companyServices={companyServices}
               deletedCompetitors={deletedCompetitors}
               hourlyRateData={hourlyRateData}
-              manualKeywordData={manualKeywordData}
-              keywordScore={keywordsScore}
               staffQualificationData={staffQualificationData}
               quoteResponseData={quoteResponseData}
+              manualContentData={manualContentData}
+              manualAccessibilityData={manualAccessibilityData}
+              manualBacklinkData={manualBacklinkData}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />

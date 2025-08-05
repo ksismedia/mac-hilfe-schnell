@@ -23,12 +23,15 @@ interface CustomerHTMLExportProps {
   companyServices?: CompanyServices;
   deletedCompetitors?: Set<string>;
   hourlyRateData?: { ownRate: number; regionAverage: number };
-  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
-  keywordScore?: number;
   staffQualificationData?: any;
+  quoteResponseData?: any;
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
+  keywordScore?: number;
+  privacyData?: any;
+  accessibilityData?: any;
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -37,18 +40,21 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualImprintData, 
   manualSocialData,
   manualWorkplaceData,
+  manualCorporateIdentityData,
   manualCompetitors = [],
   competitorServices = {},
   companyServices,
   deletedCompetitors = new Set(),
-  manualCorporateIdentityData,
   hourlyRateData,
-  manualKeywordData,
-  keywordScore,
   staffQualificationData,
+  quoteResponseData,
   manualContentData,
   manualAccessibilityData,
-  manualBacklinkData
+  manualBacklinkData,
+  manualKeywordData,
+  keywordScore,
+  privacyData,
+  accessibilityData
 }) => {
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -149,6 +155,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       keywordScore,
       manualImprintData,
       staffQualificationData,
+      quoteResponseData,
       dataPrivacyScore: 75,
       manualContentData,
       manualAccessibilityData,
@@ -195,6 +202,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       keywordScore,
       manualImprintData,
       staffQualificationData,
+      quoteResponseData,
       dataPrivacyScore: 75,
       manualContentData,
       manualAccessibilityData,
