@@ -120,10 +120,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
-  font-size: 0.9em;
+  font-size: 0.8em;
   font-weight: 700;
   margin-left: auto;
   border: 2px solid white;
