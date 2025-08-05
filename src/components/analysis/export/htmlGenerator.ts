@@ -2562,6 +2562,25 @@ export const generateCustomerHTML = ({
           </div>
         </div>
         
+        ${actualAccessibilityScore < 90 ? `
+        <!-- Warnung direkt sichtbar -->
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚠️ WARNUNG: Abmahnungsrisiko
+          </h4>
+          <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+            Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+          </p>
+          <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+            <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
+            Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
+          </p>
+          <p style="color: #dc2626; margin: 0; font-size: 14px;">
+            <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
+          </p>
+        </div>
+        ` : ''}
+        
         <!-- Collapsible Untersektionen -->
         <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
           <h4 style="color: #fbbf24; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>

@@ -168,6 +168,25 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
             </h3>
           </div>
           
+          ${hasAccessibilityIssues ? `
+          <!-- Zusätzliche Warnung nach Header -->
+          <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 0 0 8px 8px; padding: 15px;">
+            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+              ⚠️ WARNUNG: Abmahnungsrisiko
+            </h4>
+            <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+              Ihre Website erfüllt nicht die gesetzlichen Anforderungen an die Barrierefreiheit.
+            </p>
+            <p style="color: #dc2626; margin: 0 0 10px 0; font-size: 14px;">
+              <strong>Rechtliche Konsequenzen:</strong> Abmahnungen durch Anwaltskanzleien, 
+              Klagen von Betroffenen, Bußgelder bei öffentlichen Stellen.
+            </p>
+            <p style="color: #dc2626; margin: 0; font-size: 14px;">
+              <strong>Empfehlung:</strong> Sofortige Behebung der Barrierefreiheitsmängel erforderlich.
+            </p>
+          </div>
+          ` : ''}
+          
           <div style="padding: 20px; background: white;">
             <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0;">
               <h4 style="color: #6a1b9a; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
