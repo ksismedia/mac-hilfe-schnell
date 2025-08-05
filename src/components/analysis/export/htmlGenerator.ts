@@ -97,6 +97,9 @@ export const generateCustomerHTML = ({
   const actualDataPrivacyScore = calculateDataPrivacyScore(realData, dataPrivacyScore);
   
   // Use actual company services if available, otherwise fall back to industry defaults
+  console.log('CompanyServices received:', companyServices);
+  console.log('CompetitorServices received:', competitorServices);
+  
   const industryServiceMap = {
     'shk': ['Heizung', 'Sanitär', 'Klima', 'Wartung', 'Notdienst'],
     'maler': ['Innenanstrich', 'Außenanstrich', 'Tapezieren', 'Fassade', 'Renovierung'],
@@ -325,16 +328,14 @@ export const generateCustomerHTML = ({
         <div style="margin-top: 20px;">
           <h4 class="section-text" style="margin-bottom: 10px;">📋 Impressum-Analyse</h4>
           
-          ${foundImprintElements.length > 0 ? `
+          ${manualImprintData ? `
           <div style="margin-bottom: 15px;">
-            <h5 class="success-text" style="margin-bottom: 8px;">✅ Vorhandene Angaben:</h5>
+            <h5 class="success-text" style="margin-bottom: 8px;">✅ Vorhandene Angaben (manuell bestätigt):</h5>
             <ul style="margin: 0; padding-left: 20px;">
               ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">✅ ${element}</li>`).join('')}
             </ul>
-            ${manualImprintData ? '<p style="font-size: 0.9em; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
+            <p style="font-size: 0.9em; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>
           </div>
-          ` : ''}
-
           ${finalMissingImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
             <h5 class="error-text" style="margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
@@ -343,6 +344,24 @@ export const generateCustomerHTML = ({
             </ul>
           </div>
           ` : ''}
+          ` : `
+          ${foundImprintElements.length > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <h5 class="success-text" style="margin-bottom: 8px;">✅ Automatisch gefundene Angaben:</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">✅ ${element}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+          ${finalMissingImprintElements.length > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <h5 class="error-text" style="margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">❌ ${element}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+          `}
 
           ${legalScore < 80 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
