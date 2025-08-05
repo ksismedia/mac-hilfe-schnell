@@ -125,6 +125,9 @@ body {
   border-radius: 50%;
   font-size: 0.8em;
   font-weight: 700;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
   margin-left: auto;
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
