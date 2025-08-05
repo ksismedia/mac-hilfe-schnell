@@ -74,6 +74,8 @@ interface SelectiveReportData {
 }
 
 export const generateSelectiveHTML = (data: SelectiveReportData): string => {
+  console.log('=== SELECTIVE HTML GENERATOR DEBUG ===');
+  console.log('Received data:', data);
   const { businessData, realData, manualSocialData, accessibilityData, privacyData, selections } = data;
   
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -117,6 +119,8 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Accessibility section with legal warning
     if (selections.subSections.accessibility) {
+      console.log('=== ACCESSIBILITY DEBUG ===');
+      console.log('accessibilityData:', accessibilityData);
       // Use manual accessibility data if available (same logic as UI)
       let accessibilityScore: number;
       if (accessibilityData && accessibilityData.overallScore) {
@@ -129,8 +133,13 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           accessibilityData.textScaling
         ].filter(Boolean).length * 10;
         accessibilityScore = Math.round((featuresScore + accessibilityData.overallScore) / 2);
+        console.log('Using manual accessibility score:', accessibilityScore);
+      } else if (accessibilityData && accessibilityData.score) {
+        accessibilityScore = accessibilityData.score;
+        console.log('Using automatic accessibility score:', accessibilityScore);
       } else {
         accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+        console.log('Using calculated accessibility score:', accessibilityScore);
       }
       const hasAccessibilityIssues = accessibilityScore < 90;
       
@@ -179,8 +188,11 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Data Privacy section with legal warning
     if (selections.subSections.dataPrivacy) {
+      console.log('=== DATA PRIVACY DEBUG ===');
+      console.log('privacyData:', privacyData);
       // Use manual data privacy score if provided, otherwise fallback to calculated
       const dataPrivacyScore = privacyData?.score || data.dataPrivacyScore || calculateDataPrivacyScore(realData);
+      console.log('Using data privacy score:', dataPrivacyScore);
       const hasDataPrivacyIssues = dataPrivacyScore < 90;
       
       seoContentHtml += `
