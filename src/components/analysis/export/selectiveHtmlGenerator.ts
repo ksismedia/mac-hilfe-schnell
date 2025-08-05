@@ -370,14 +370,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
   if (selections.sections.staffService) {
     let staffServiceHtml = '';
 
-    if (selections.subSections.staffQualification) {
+    if (selections.subSections.staffQualification && staffQualificationScore !== null) {
       staffServiceHtml += `
         <div class="metric-card staff-detailed">
           <div class="staff-header" style="background: linear-gradient(135deg, #795548, #5d4037); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
             <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
               👨‍💼 Personal-Qualifikation
               <div class="score-circle" style="background: white; color: #795548; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
-                ${staffQualificationScore}%
+                ${Math.round(staffQualificationScore)}%
               </div>
             </h3>
           </div>

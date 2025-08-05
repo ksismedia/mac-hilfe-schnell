@@ -2797,6 +2797,113 @@ export const generateCustomerHTML = ({
 
     ${generateDataPrivacySection(actualDataPrivacyScore)}
 
+    ${staffQualificationScore !== null ? `
+    <!-- Mitarbeiterqualifizierung -->
+    <div class="section">
+      <div class="section-header collapsible" onclick="toggleSection('staff-qualification-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Mitarbeiterqualifizierung & Personal</span>
+        <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+      </div>
+      <div id="staff-qualification-content" class="section-content" style="display: none;">
+        <div class="metric-card">
+          <h3>Personal-Qualifikation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+            <div class="score-details">
+              <p><strong>Gesamt-Mitarbeiter:</strong> ${staffQualificationData?.totalEmployees || 0}</p>
+              <p><strong>Fachkräfte:</strong> ${(staffQualificationData?.skilled_workers || 0) + (staffQualificationData?.masters || 0)} von ${staffQualificationData?.totalEmployees || 0}</p>
+              <p><strong>Meister-Quote:</strong> ${staffQualificationData?.masters || 0} Meister</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(staffQualificationScore)}" style="width: ${staffQualificationScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        ${staffQualificationData ? `
+        <div class="detail-grid" style="margin-top: 20px;">
+          <div class="detail-item">
+            <h4>👨‍💼 Mitarbeiterstruktur</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+              <div style="text-align: center; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 6px;">
+                <div style="font-size: 1.5em; font-weight: bold; color: #fbbf24;">${staffQualificationData.masters || 0}</div>
+                <div style="font-size: 0.8em; color: #6b7280;">Meister</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px;">
+                <div style="font-size: 1.5em; font-weight: bold; color: #22c55e;">${staffQualificationData.skilled_workers || 0}</div>
+                <div style="font-size: 0.8em; color: #6b7280;">Gesellen</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px;">
+                <div style="font-size: 1.5em; font-weight: bold; color: #3b82f6;">${staffQualificationData.apprentices || 0}</div>
+                <div style="font-size: 0.8em; color: #6b7280;">Azubis</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(107, 114, 128, 0.1); border-radius: 6px;">
+                <div style="font-size: 1.5em; font-weight: bold; color: #6b7280;">${staffQualificationData.unskilled_workers || 0}</div>
+                <div style="font-size: 0.8em; color: #6b7280;">Ungelernte</div>
+              </div>
+            </div>
+          </div>
+          
+          ${Object.values(staffQualificationData.certifications || {}).some(Boolean) ? `
+          <div class="detail-item">
+            <h4>🏆 Zertifizierungen</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${Object.entries(staffQualificationData.certifications)
+                .filter(([, value]) => value)
+                .map(([key]) => `<span style="background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>`)
+                .join('')}
+            </div>
+          </div>
+          ` : ''}
+          
+          ${(staffQualificationData.industry_specific || []).length > 0 ? `
+          <div class="detail-item">
+            <h4>🔧 Branchenspezifische Qualifikationen</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${staffQualificationData.industry_specific.map(qual => 
+                `<span style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">${qual}</span>`
+              ).join('')}
+            </div>
+          </div>
+          ` : ''}
+          
+          <div class="detail-item">
+            <h4>📊 Weitere Kennzahlen</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div>
+                <p><strong>Durchschnittliche Berufserfahrung:</strong> ${staffQualificationData.average_experience_years || 0} Jahre</p>
+              </div>
+              <div>
+                <p><strong>Weiterbildungsbudget/Jahr:</strong> ${(staffQualificationData.training_budget_per_year || 0).toLocaleString()} €</p>
+              </div>
+            </div>
+            ${staffQualificationData.specializations ? `<p><strong>Spezialisierungen:</strong> ${staffQualificationData.specializations}</p>` : ''}
+          </div>
+        </div>
+        
+        <div class="recommendations" style="margin-top: 20px;">
+          <h4>Empfehlungen zur Personalentwicklung</h4>
+          <ul>
+            ${staffQualificationScore < 70 ? '<li><strong>Priorität:</strong> Qualifikationsgrad der Mitarbeiter erhöhen</li>' : ''}
+            ${(staffQualificationData.masters || 0) === 0 ? '<li>Meisterqualifikation anstreben für Führungspositionen</li>' : ''}
+            ${Object.values(staffQualificationData.certifications || {}).filter(Boolean).length < 3 ? '<li>Zusätzliche Zertifizierungen erwerben (Sicherheit, Digitalisierung)</li>' : ''}
+            ${(staffQualificationData.industry_specific || []).length < 2 ? '<li>Branchenspezifische Weiterbildungen verstärken</li>' : ''}
+            ${(staffQualificationData.training_budget_per_year || 0) < 1000 ? '<li>Weiterbildungsbudget erhöhen (empfohlen: mind. 1.000€/MA/Jahr)</li>' : ''}
+            ${(staffQualificationData.apprentices || 0) === 0 ? '<li>Ausbildungsplätze schaffen für Nachwuchsförderung</li>' : ''}
+          </ul>
+        </div>
+        ` : `
+        <div class="alert-box" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px;">
+          <h4 style="color: #ef4444; margin-top: 0;">Keine Daten zur Mitarbeiterqualifizierung erfasst</h4>
+          <p>Für eine vollständige Bewertung der Personalqualität sollten Daten zur Mitarbeiterstruktur, Qualifikationen und Zertifizierungen erfasst werden.</p>
+        </div>
+        `}
+      </div>
+    </div>
+    ` : ''}
+
     <!-- Kundenservice & Angebotsbearbeitung -->
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('quote-response-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">

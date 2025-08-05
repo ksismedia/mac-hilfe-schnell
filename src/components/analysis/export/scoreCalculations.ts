@@ -450,23 +450,26 @@ export const calculateStaffQualificationScore = (staffData?: any): number | null
   let score = 0;
   const totalEmployees = staffData.totalEmployees || 1;
   
-  // Qualifikationsgrad (40% der Bewertung)
+  // Basis-Score für existierende Betriebe (weniger streng)
+  score += 30; // Grundbewertung für etablierte Betriebe
+  
+  // Qualifikationsgrad (30% der Bewertung, weniger streng)
   const qualifiedStaff = (staffData.skilled_workers || 0) + (staffData.masters || 0);
   const qualificationRatio = qualifiedStaff / totalEmployees;
-  score += qualificationRatio * 40;
+  score += Math.min(30, qualificationRatio * 30 + 10); // Mindestens 10 Punkte für jeden Mitarbeiter
   
-  // Meister-Quote (20% der Bewertung)
+  // Meister-Quote (15% der Bewertung, weniger streng)
   const masterRatio = (staffData.masters || 0) / totalEmployees;
-  score += masterRatio * 20;
+  score += Math.min(15, masterRatio * 15 + 5); // Mindestens 5 Punkte wenn Meister vorhanden
   
-  // Zertifizierungen (25% der Bewertung)
+  // Zertifizierungen (15% der Bewertung, weniger streng)
   const certCount = Object.values(staffData.certifications || {}).filter(Boolean).length;
-  score += (certCount / 6) * 25;
+  score += Math.min(15, (certCount / 3) * 15); // Bereits ab 3 Zertifikaten voll
   
-  // Branchenspezifische Qualifikationen (15% der Bewertung)
+  // Branchenspezifische Qualifikationen (10% der Bewertung, weniger streng)
   const industrySpecificCount = (staffData.industry_specific || []).length;
-  const maxIndustrySpecific = 6; // Durchschnittliche Anzahl pro Branche
-  score += (industrySpecificCount / maxIndustrySpecific) * 15;
+  const maxIndustrySpecific = 4; // Reduziert von 6 auf 4
+  score += Math.min(10, (industrySpecificCount / maxIndustrySpecific) * 10);
   
   const finalScore = Math.round(Math.min(100, score));
   console.log(`Staff Qualification Score: ${finalScore}`);
