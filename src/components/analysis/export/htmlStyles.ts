@@ -120,14 +120,14 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  font-size: 1.2em;
+  font-size: 0.9em;
   font-weight: 700;
   margin-left: auto;
-  border: 3px solid white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 .header-score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
 .header-score-circle.red { background: #FF0000 !important; color: white !important; }      /* 0-60% */
