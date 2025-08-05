@@ -215,29 +215,85 @@ export const generateCustomerHTML = ({
   };
 
   // Accessibility Analysis - NEW
-  // Workplace Analysis
+  // Workplace Analysis - Verbesserte Version mit manuellen Daten
   const getWorkplaceAnalysis = () => {
-    const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
+    console.log('getWorkplaceAnalysis called with manualWorkplaceData:', manualWorkplaceData);
+    
+    // Berechne Workplace Score basierend auf manuellen Daten oder Defaults
+    let workplaceScore = 65; // Default
+    
+    if (manualWorkplaceData) {
+      // Wenn manuelle Daten vorhanden sind, berechne Score daraus
+      let score = 0;
+      let factors = 0;
+      
+      if (manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating) {
+        const kununuNum = parseFloat(manualWorkplaceData.kununuRating.replace(',', '.'));
+        score += (kununuNum / 5) * 100;
+        factors++;
+      }
+      
+      if (manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating) {
+        const glassdoorNum = parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.'));
+        score += (glassdoorNum / 5) * 100;
+        factors++;
+      }
+      
+      if (factors > 0) {
+        workplaceScore = Math.round(score / factors);
+      }
+    } else if (realData.workplace) {
+      workplaceScore = Math.round(realData.workplace.overallScore);
+    }
+    
     return `
-      <div class="metric-card warning">
-        <h3>💼 Arbeitgeber-Bewertung</h3>
-        <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
-          <div class="score-details">
-            <p><strong>Gesamtbewertung:</strong> ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-            <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+      <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+        <h4>💼 Detaillierte Arbeitgeber-Bewertung</h4>
+        
+        ${manualWorkplaceData ? `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+          <div>
+            <p><strong>Kununu Bewertung:</strong> ${
+              manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating
+                ? `✅ ${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`
+                : '❌ Nicht gefunden'
+            }</p>
+          </div>
+          <div>
+            <p><strong>Glassdoor Bewertung:</strong> ${
+              manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating
+                ? `✅ ${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`
+                : '❌ Nicht gefunden'
+            }</p>
+          </div>
+          <div>
+            <p><strong>Gesamtbewertung:</strong> 
+              <span class="score-badge ${workplaceScore >= 70 ? 'green' : workplaceScore >= 50 ? 'yellow' : 'red'}">
+                ${workplaceScore >= 70 ? '✅ Sehr gut' : workplaceScore >= 50 ? '⚠️ Gut' : '❌ Verbesserungsbedarf'}
+              </span>
+            </p>
+          </div>
+          <div>
+            <p><strong>Employer Branding:</strong> ${workplaceScore >= 70 ? 'Stark positioniert' : 'Ausbau empfohlen'}</p>
           </div>
         </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${workplaceScore}%; background-color: ${
-                workplaceScore < 20 ? '#CD0000' :
-                workplaceScore <= 60 ? '#dc2626' :
-                workplaceScore <= 80 ? '#16a34a' :
-                '#eab308'
-              };"></div>
-            </div>
-          </div>
+        
+        ` : `
+        <div class="warning-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+          <h4>⚠️ Arbeitsplatz-Bewertung nicht erfasst</h4>
+          <p style="margin-top: 10px;">Die Arbeitsplatz-Bewertung wurde noch nicht manuell erfasst. Empfehlung: Kununu und Glassdoor Profile prüfen und bewerten lassen.</p>
+        </div>
+        `}
+        
+        <div class="recommendations" style="margin-top: 20px;">
+          <h4>Handlungsempfehlungen:</h4>
+          <ul>
+            <li>Kununu und Glassdoor Profile aktiv pflegen</li>
+            <li>Mitarbeiterzufriedenheit regelmäßig messen</li>
+            <li>Positive Arbeitgeber-Bewertungen fördern</li>
+            <li>Employer Branding Strategie entwickeln</li>
+          </ul>
+        </div>
       </div>
     `;
   };
