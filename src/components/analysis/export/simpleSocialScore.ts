@@ -7,18 +7,20 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // Facebook (max 30 Punkte)
   if (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') {
-    let platformScore = 10; // Basis für Präsenz
+    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
     const followers = parseInt(manualData.facebookFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte)
-    if (followers >= 10000) platformScore += 15;
-    else if (followers >= 5000) platformScore += 12;
-    else if (followers >= 2000) platformScore += 10;
-    else if (followers >= 1000) platformScore += 8;
-    else if (followers >= 500) platformScore += 6;
-    else if (followers >= 100) platformScore += 4;
-    else if (followers >= 50) platformScore += 2;
-    else if (followers >= 10) platformScore += 1;
+    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
+    if (followers >= 5000) platformScore += 15;
+    else if (followers >= 2000) platformScore += 12;
+    else if (followers >= 1000) platformScore += 10;
+    else if (followers >= 500) platformScore += 8;
+    else if (followers >= 200) platformScore += 6;
+    else if (followers >= 100) platformScore += 5;
+    else if (followers >= 50) platformScore += 4;
+    else if (followers >= 20) platformScore += 3;
+    else if (followers >= 10) platformScore += 2;
+    else if (followers >= 1) platformScore += 1;
     
     // Post-Aktivität (max 5 Punkte)
     if (manualData.facebookLastPost) {
@@ -34,18 +36,20 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // Instagram (max 30 Punkte)
   if (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') {
-    let platformScore = 10; // Basis für Präsenz
+    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
     const followers = parseInt(manualData.instagramFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte)
-    if (followers >= 10000) platformScore += 15;
-    else if (followers >= 5000) platformScore += 12;
-    else if (followers >= 2000) platformScore += 10;
-    else if (followers >= 1000) platformScore += 8;
-    else if (followers >= 500) platformScore += 6;
-    else if (followers >= 100) platformScore += 4;
-    else if (followers >= 50) platformScore += 2;
-    else if (followers >= 10) platformScore += 1;
+    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
+    if (followers >= 5000) platformScore += 15;
+    else if (followers >= 2000) platformScore += 12;
+    else if (followers >= 1000) platformScore += 10;
+    else if (followers >= 500) platformScore += 8;
+    else if (followers >= 200) platformScore += 6;
+    else if (followers >= 100) platformScore += 5;
+    else if (followers >= 50) platformScore += 4;
+    else if (followers >= 20) platformScore += 3;
+    else if (followers >= 10) platformScore += 2;
+    else if (followers >= 1) platformScore += 1;
     
     // Post-Aktivität (max 5 Punkte)
     if (manualData.instagramLastPost) {
@@ -61,18 +65,19 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // LinkedIn (max 30 Punkte)
   if (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') {
-    let platformScore = 10; // Basis für Präsenz
+    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
     const followers = parseInt(manualData.linkedinFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte)
-    if (followers >= 5000) platformScore += 15;
-    else if (followers >= 2000) platformScore += 12;
-    else if (followers >= 1000) platformScore += 10;
-    else if (followers >= 500) platformScore += 8;
-    else if (followers >= 200) platformScore += 6;
-    else if (followers >= 100) platformScore += 4;
-    else if (followers >= 50) platformScore += 2;
-    else if (followers >= 10) platformScore += 1;
+    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
+    if (followers >= 2000) platformScore += 15;
+    else if (followers >= 1000) platformScore += 12;
+    else if (followers >= 500) platformScore += 10;
+    else if (followers >= 200) platformScore += 8;
+    else if (followers >= 100) platformScore += 6;
+    else if (followers >= 50) platformScore += 5;
+    else if (followers >= 20) platformScore += 4;
+    else if (followers >= 10) platformScore += 3;
+    else if (followers >= 1) platformScore += 2;
     
     // Post-Aktivität (max 5 Punkte)
     if (manualData.linkedinLastPost) {
@@ -88,18 +93,19 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // Twitter (max 20 Punkte)
   if (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') {
-    let platformScore = 5; // Basis für Präsenz
+    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
     const followers = parseInt(manualData.twitterFollowers || '0');
     
-    // Follower-Bewertung (max 12 Punkte)
-    if (followers >= 10000) platformScore += 12;
-    else if (followers >= 5000) platformScore += 10;
-    else if (followers >= 2000) platformScore += 8;
-    else if (followers >= 1000) platformScore += 6;
-    else if (followers >= 500) platformScore += 4;
-    else if (followers >= 100) platformScore += 3;
-    else if (followers >= 50) platformScore += 2;
-    else if (followers >= 10) platformScore += 1;
+    // Follower-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
+    if (followers >= 5000) platformScore += 12;
+    else if (followers >= 2000) platformScore += 10;
+    else if (followers >= 1000) platformScore += 8;
+    else if (followers >= 500) platformScore += 6;
+    else if (followers >= 200) platformScore += 5;
+    else if (followers >= 100) platformScore += 4;
+    else if (followers >= 50) platformScore += 3;
+    else if (followers >= 20) platformScore += 2;
+    else if (followers >= 1) platformScore += 1;
     
     // Post-Aktivität (max 3 Punkte)
     if (manualData.twitterLastPost) {
@@ -114,18 +120,19 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // YouTube (max 20 Punkte)
   if (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '') {
-    let platformScore = 5; // Basis für Präsenz
+    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
     const subscribers = parseInt(manualData.youtubeSubscribers || '0');
     
-    // Abonnenten-Bewertung (max 12 Punkte)
-    if (subscribers >= 5000) platformScore += 12;
-    else if (subscribers >= 2000) platformScore += 10;
-    else if (subscribers >= 1000) platformScore += 8;
-    else if (subscribers >= 500) platformScore += 6;
-    else if (subscribers >= 200) platformScore += 4;
-    else if (subscribers >= 100) platformScore += 3;
-    else if (subscribers >= 50) platformScore += 2;
-    else if (subscribers >= 10) platformScore += 1;
+    // Abonnenten-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
+    if (subscribers >= 2000) platformScore += 12;
+    else if (subscribers >= 1000) platformScore += 10;
+    else if (subscribers >= 500) platformScore += 8;
+    else if (subscribers >= 200) platformScore += 6;
+    else if (subscribers >= 100) platformScore += 5;
+    else if (subscribers >= 50) platformScore += 4;
+    else if (subscribers >= 20) platformScore += 3;
+    else if (subscribers >= 10) platformScore += 2;
+    else if (subscribers >= 1) platformScore += 1;
     
     // Video-Aktivität (max 3 Punkte)
     if (manualData.youtubeLastPost) {
@@ -140,18 +147,19 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   // TikTok (max 20 Punkte)
   if (manualData.tiktokUrl && manualData.tiktokUrl.trim() !== '') {
-    let platformScore = 5; // Basis für Präsenz
+    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
     const followers = parseInt(manualData.tiktokFollowers || '0');
     
-    // Follower-Bewertung (max 12 Punkte)
-    if (followers >= 10000) platformScore += 12;
-    else if (followers >= 5000) platformScore += 10;
-    else if (followers >= 2000) platformScore += 8;
-    else if (followers >= 1000) platformScore += 6;
-    else if (followers >= 500) platformScore += 4;
-    else if (followers >= 100) platformScore += 3;
-    else if (followers >= 50) platformScore += 2;
-    else if (followers >= 10) platformScore += 1;
+    // Follower-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
+    if (followers >= 5000) platformScore += 12;
+    else if (followers >= 2000) platformScore += 10;
+    else if (followers >= 1000) platformScore += 8;
+    else if (followers >= 500) platformScore += 6;
+    else if (followers >= 200) platformScore += 5;
+    else if (followers >= 100) platformScore += 4;
+    else if (followers >= 50) platformScore += 3;
+    else if (followers >= 20) platformScore += 2;
+    else if (followers >= 1) platformScore += 1;
     
     // Video-Aktivität (max 3 Punkte)
     if (manualData.tiktokLastPost) {
