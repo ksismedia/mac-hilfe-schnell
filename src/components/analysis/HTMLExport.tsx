@@ -1001,8 +1001,15 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
             </div>
         </section>
 
-        <footer style="text-align: center; margin-top: 40px; color: #9ca3af; font-size: 0.9em;">
-            <p>© ${new Date().getFullYear()} Handwerk Stars - Interne Analyse | Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
+        <footer style="text-align: center; margin: 40px auto 0 auto; padding: 20px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3); max-width: 800px; color: #9ca3af; font-size: 0.9em;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;">
+              <div style="text-align: center;">
+                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 24px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
+                <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 24px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
+              </div>
+            </div>
+            <p style="margin: 0; color: #fbbf24; font-weight: 600;">© ${new Date().getFullYear()} Handwerk Stars - Interne Analyse</p>
+            <p style="margin: 5px 0 0 0;">Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
         </footer>
     </div>
 </body>

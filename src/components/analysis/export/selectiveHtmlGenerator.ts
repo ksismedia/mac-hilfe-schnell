@@ -843,19 +843,20 @@ export const generateSelectiveCustomerHTML = ({
         </div>
 
         <!-- Footer -->
-        <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <div style="color: #9ca3af; font-size: 0.9em;">
-            <p style="margin: 0;">Erstellt am ${new Date().toLocaleDateString('de-DE')}</p>
-            <p style="margin: 5px 0 0 0; font-size: 0.8em;">Diese Analyse dient zur Orientierung und ersetzt keine rechtliche Beratung.</p>
-          </div>
-        </div>
-              <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-align: right; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
+        <div style="text-align: center; margin: 50px auto 0 auto; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3); max-width: 800px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
+            <div style="text-align: center;">
+              <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
+              <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
             </div>
           </div>
-          <h3 class="primary-highlight" style="margin-bottom: 15px;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
-          <p class="light-gray-text" style="margin-bottom: 10px;">Erstellt am ${new Date().toLocaleDateString()} | Selektiver Business-Analyse Report</p>
-          <p class="gray-text" style="font-size: 0.9em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
-          <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
+          <h3 style="color: #fbbf24; margin: 15px 0; font-size: 1.2em;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
+          <div style="color: #9ca3af; font-size: 0.9em;">
+            <p style="margin: 0;">Erstellt am ${new Date().toLocaleDateString('de-DE')} | Selektiver Business-Analyse Report</p>
+            <p style="margin: 10px 0 0 0; font-size: 0.8em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
+            <p style="margin: 5px 0 0 0; font-size: 0.8em;">Diese Analyse dient zur Orientierung und ersetzt keine rechtliche Beratung.</p>
+            <p style="margin: 5px 0 0 0; font-size: 0.8em;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
+          </div>
         </div>
     </body>
     </html>
