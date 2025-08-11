@@ -57,7 +57,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   accessibilityData
 }) => {
   // Import useManualData to get current state
-  const { manualAccessibilityData: currentManualAccessibilityData } = useManualData();
+  const { manualAccessibilityData: currentManualAccessibilityData, manualSocialData: currentManualSocialData } = useManualData();
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
     console.log('manualImprintData:', manualImprintData);
@@ -152,7 +152,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       deletedCompetitors,
       hourlyRateData,
       missingImprintElements,
-      manualSocialData,
+      manualSocialData: currentManualSocialData || manualSocialData,
       manualWorkplaceData,
       manualCorporateIdentityData,
       manualKeywordData,
