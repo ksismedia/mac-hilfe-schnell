@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { KeywordProgress } from './KeywordProgress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualKeywordInput from './ManualKeywordInput';
@@ -233,7 +233,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </div>
             </div>
 
-            <Progress value={keywordData.overallScore || 0} className="h-3" />
+            <KeywordProgress value={keywordData.overallScore || 0} className="h-3" />
 
             {/* Keyword-Tabelle */}
             <Card>
