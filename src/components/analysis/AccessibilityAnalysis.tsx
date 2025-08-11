@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield, ExternalLink, BookOpen, Edit } from 'lucide-react';
-import { AccessibilityProgress } from './AccessibilityProgress';
 import { ManualAccessibilityInput } from './ManualAccessibilityInput';
 import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -388,7 +387,20 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                     {accessibilityData.score}/100
                   </span>
                 </div>
-                <AccessibilityProgress value={accessibilityData.score} className="h-3" />
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-200">
+                  <div 
+                    className={`h-full transition-all duration-300 rounded-full flex items-center justify-center ${
+                      accessibilityData.score >= 95 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}
+                    style={{ width: `${accessibilityData.score}%` }}
+                  >
+                    {accessibilityData.score > 0 && (
+                      <span className="text-xs font-medium text-white">
+                        {accessibilityData.score}%
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Violations */}
