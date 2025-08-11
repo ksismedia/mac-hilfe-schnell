@@ -427,7 +427,7 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
   }
   
   console.log('🎯 No data available, returning default 75');
-  return 75; // Default score wenn keine Daten vorhanden
+  return 40; // FESTER WERT - Default auf 40%
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {

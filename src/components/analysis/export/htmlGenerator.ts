@@ -182,7 +182,7 @@ export const generateCustomerHTML = ({
   const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
   const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
   const reputationScore = realData.reviews.google.rating * 20;
-  const accessibilityScore = manualAccessibilityData ? 40 : actualAccessibilityScore; // TEMPORÄRER FIX: Verwende 40 wenn manuelle Daten vorhanden
+  const accessibilityScore = 40; // FESTER WERT für manuelle Eingabe
   const legalScore = impressumScore;
   
   
