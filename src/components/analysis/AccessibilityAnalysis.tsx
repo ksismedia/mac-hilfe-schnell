@@ -49,7 +49,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
         passes: [],
         incomplete: [],
         legalRisk: {
-          level: finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : 'high',
+          level: finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : hasProblems ? 'high' : 'low',
           score: finalScore,
           factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
           recommendations: ['Kontinuierliche Überwachung empfohlen']
