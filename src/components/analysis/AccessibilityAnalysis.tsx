@@ -52,7 +52,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
         passes: [],
         incomplete: [],
         legalRisk: {
-          level: finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : hasProblems ? 'high' : 'low',
+          level: (finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : hasProblems ? 'high' : 'low') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
           score: finalScore,
           factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
           recommendations: ['Kontinuierliche Überwachung empfohlen']
@@ -289,11 +289,11 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <Card className="border-red-200">
                   <CardContent className="p-6 text-center">
                     <div className="text-5xl font-bold text-red-600 mb-2">
-                      {accessibilityData.violations.length}
+                      {getCurrentAccessibilityData()?.violations?.length || 0}
                     </div>
                     <div className="text-sm text-gray-600">Probleme</div>
                     <div className="text-xs text-red-500 mt-1">
-                      {accessibilityData.violations.filter(v => v.impact === 'critical').length} kritisch
+                      {getCurrentAccessibilityData()?.violations?.filter(v => v.impact === 'critical').length || 0} kritisch
                     </div>
                   </CardContent>
                 </Card>
@@ -301,7 +301,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <Card className="border-green-200">
                   <CardContent className="p-6 text-center">
                     <div className="text-5xl font-bold text-green-600 mb-2">
-                      {accessibilityData.passes.length}
+                      {getCurrentAccessibilityData()?.passes?.length || 0}
                     </div>
                     <div className="text-sm text-gray-600">Erfolgreich</div>
                     <CheckCircle className="h-4 w-4 mx-auto text-green-500 mt-1" />
@@ -311,7 +311,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <Card className="border-yellow-200">
                   <CardContent className="p-6 text-center">
                     <div className="text-5xl font-bold text-yellow-600 mb-2">
-                      {accessibilityData.incomplete.length}
+                      {getCurrentAccessibilityData()?.incomplete?.length || 0}
                     </div>
                     <div className="text-sm text-gray-600">Zu prüfen</div>
                     <div className="text-xs text-yellow-500 mt-1">manuelle Kontrolle</div>
@@ -321,7 +321,9 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
 
               {/* Rechtliche Bewertung */}
               {(() => {
-                const riskDisplay = getLegalRiskDisplay(accessibilityData.legalRisk);
+                const currentAccessibilityData = getCurrentAccessibilityData();
+                if (!currentAccessibilityData?.legalRisk) return null;
+                const riskDisplay = getLegalRiskDisplay(currentAccessibilityData.legalRisk);
                 return (
                   <Card className={`${riskDisplay.borderColor} ${riskDisplay.bgColor}`}>
                     <CardHeader className="pb-4">
@@ -336,11 +338,11 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                     <CardContent>
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-4">
-                          <Badge variant={getWcagLevelBadge(accessibilityData.wcagLevel).variant}>
-                            {getWcagLevelBadge(accessibilityData.wcagLevel).text}
+                          <Badge variant={getWcagLevelBadge(currentAccessibilityData?.wcagLevel || 'none').variant}>
+                            {getWcagLevelBadge(currentAccessibilityData?.wcagLevel || 'none').text}
                           </Badge>
                           <span className="text-sm text-muted-foreground">
-                            Rechtliches Risiko: {accessibilityData.legalRisk.score}/100
+                            Rechtliches Risiko: {currentAccessibilityData?.legalRisk?.score || 0}/100
                           </span>
                         </div>
                         
@@ -351,7 +353,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                               Rechtliche Faktoren:
                             </h5>
                             <ul className="text-sm space-y-1 text-muted-foreground">
-                              {accessibilityData.legalRisk.factors.map((factor, index) => (
+                              {(currentAccessibilityData?.legalRisk?.factors || []).map((factor, index) => (
                                 <li key={index}>• {factor}</li>
                               ))}
                             </ul>
@@ -363,7 +365,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                               Empfehlungen:
                             </h5>
                             <ul className="text-sm space-y-1 text-muted-foreground">
-                              {accessibilityData.legalRisk.recommendations.map((rec, index) => (
+                              {(currentAccessibilityData?.legalRisk?.recommendations || []).map((rec, index) => (
                                 <li key={index}>• {rec}</li>
                               ))}
                             </ul>
@@ -416,12 +418,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               </div>
 
               {/* Violations */}
-              {accessibilityData.violations.length > 0 && (
+              {(getCurrentAccessibilityData()?.violations?.length || 0) > 0 && (
                 <Card className="border-red-200">
                   <CardHeader>
                     <CardTitle className="text-lg text-red-600 flex items-center gap-2">
                       <XCircle className="h-5 w-5" />
-                      Gefundene Probleme ({accessibilityData.violations.length})
+                      Gefundene Probleme ({getCurrentAccessibilityData()?.violations?.length || 0})
                     </CardTitle>
                     <CardDescription>
                       Diese Punkte sollten behoben werden, um die Barrierefreiheit zu verbessern
@@ -429,7 +431,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {accessibilityData.violations.map((violation: AccessibilityViolation, index) => (
+                      {(getCurrentAccessibilityData()?.violations || []).map((violation: AccessibilityViolation, index) => (
                         <div 
                           key={index} 
                           className={`p-4 rounded-lg border-l-4 ${getImpactColor(violation.impact)}`}
