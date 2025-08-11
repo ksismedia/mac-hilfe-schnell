@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Eye, Keyboard, Palette, FileText, CheckCircle, XCircle, AlertTriangle, Scale, Shield, ExternalLink, BookOpen, Edit } from 'lucide-react';
+import { AccessibilityProgress } from './AccessibilityProgress';
 import { ManualAccessibilityInput } from './ManualAccessibilityInput';
 import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -388,7 +388,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                     {accessibilityData.score}/100
                   </span>
                 </div>
-                <Progress value={accessibilityData.score} className="h-3" />
+                <AccessibilityProgress value={accessibilityData.score} className="h-3" />
               </div>
 
               {/* Violations */}

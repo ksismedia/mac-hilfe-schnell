@@ -185,3 +185,12 @@
 .progress-score-80-100 {
   background: hsl(var(--progress-yellow));
 }
+
+/* Spezielle Barrierefreiheit Progress Bar Klassen */
+.progress-accessibility-compliant {
+  background: hsl(var(--progress-yellow));
+}
+
+.progress-accessibility-non-compliant {
+  background: hsl(var(--progress-red));
+}

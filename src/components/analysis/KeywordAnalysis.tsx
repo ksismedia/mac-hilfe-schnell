@@ -227,13 +227,13 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
-                  {keywordData.overallScore}
+                  {keywordData.overallScore !== null && keywordData.overallScore !== undefined ? `${keywordData.overallScore}%` : 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Gesamtscore</div>
               </div>
             </div>
 
-            <Progress value={keywordData.overallScore} className="h-3" />
+            <Progress value={keywordData.overallScore || 0} className="h-3" />
 
             {/* Keyword-Tabelle */}
             <Card>
