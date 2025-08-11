@@ -91,17 +91,15 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     }
   };
 
-  // WCAG-konforme Score-Darstellung
+  // WCAG-konforme Score-Darstellung - Spezielle Compliance-basierte Farblogik
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'score-text-medium';    // Grün: WCAG AA erfüllt
-    if (score >= 60) return 'score-text-high';      // Gelb: Grundanforderungen erfüllt
-    return 'score-text-low';                        // Rot: Kritische Mängel
+    if (score >= 95) return 'score-text-high';      // Gelb: Vollständig konform (≥95%)
+    return 'score-text-low';                        // Rot: Nicht vollständig konform (<95%)
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return 'default';              // Grün: Gut
-    if (score >= 60) return 'secondary';            // Gelb: Verbesserbar
-    return 'destructive';                           // Rot: Mangelhaft
+    if (score >= 95) return 'secondary';            // Gelb: Vollständig konform
+    return 'destructive';                           // Rot: Nicht vollständig konform
   };
 
   const getWcagLevelBadge = (level: string) => {
