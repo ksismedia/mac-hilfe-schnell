@@ -137,6 +137,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('DEBUG CustomerHTMLExport - competitorServices:', competitorServices);
     console.log('DEBUG CustomerHTMLExport - companyServices:', companyServices);
     console.log('DEBUG CustomerHTMLExport - deletedCompetitors:', deletedCompetitors);
+    console.log('🔴 manualAccessibilityData passed to CustomerHTMLExport:', manualAccessibilityData);
     
     console.log('=== STARTING HTML GENERATION ===');
     const htmlContent = generateCustomerHTML({
