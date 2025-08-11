@@ -2019,11 +2019,11 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-label">
               <span>Keyword-Optimierung</span>
-              <button class="percentage-btn" data-score="${getScoreRange(Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}">${Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
+              <button class="percentage-btn" data-score="${getScoreRange(keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}">${keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%</button>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}" style="width: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%; background-color: ${getScoreColor(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)};"></div>
-              <div style="position: absolute; left: ${((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
+              <div class="progress-fill" data-score="${getScoreRange(keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}" style="width: ${keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%; background-color: ${getScoreColor(keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))};"></div>
+              <div style="position: absolute; left: ${keywordScore || Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
           </div>
           <div class="keyword-grid">
@@ -2093,10 +2093,10 @@ export const generateCustomerHTML = ({
                  <div class="progress-container">
                   <div class="progress-label">
                     <span>Branchenvokabular</span>
-                    <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="color: ${getScoreColor((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)};">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%</button>
+                    <button class="percentage-btn" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))};">${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%</button>
                   </div>
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50}%"></div>
+                    <div class="progress-fill" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="width: ${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%; background-color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}"></div>
                   </div>
                  </div>
                <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
@@ -2107,10 +2107,10 @@ export const generateCustomerHTML = ({
                  <div class="progress-container">
                    <div class="progress-label">
                      <span>Dienstleistungen</span>
-                     <button class="percentage-btn" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="color: ${getScoreColor((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)};">${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%</button>
+                     <button class="percentage-btn" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}" style="color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))};">${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%</button>
                    </div>
                    <div class="progress-bar">
-                     <div class="progress-fill" data-score="${getScoreRange((manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}" style="width: ${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45}%"></div>
+                     <div class="progress-fill" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}" style="width: ${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%; background-color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}"></div>
                   </div>
                 </div>
               <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Service-Keywords gefunden</p>
