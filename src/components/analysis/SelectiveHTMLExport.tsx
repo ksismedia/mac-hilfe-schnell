@@ -207,7 +207,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       quoteResponseData,
       privacyData,
       accessibilityData,
-      dataPrivacyScore: 75,
+      dataPrivacyScore: privacyData?.score || 75,
       selections: {
         sections: sectionSelections,
         subSections: subSectionSelections
@@ -244,7 +244,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       quoteResponseData,
       privacyData,
       accessibilityData,
-      dataPrivacyScore: 75,
+      dataPrivacyScore: privacyData?.score || 75,
       selections: {
         sections: sectionSelections,
         subSections: subSectionSelections

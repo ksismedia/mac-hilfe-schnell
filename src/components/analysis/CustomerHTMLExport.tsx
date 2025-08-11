@@ -156,7 +156,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: 75,
+      dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData
@@ -203,7 +203,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: 75,
+      dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData
