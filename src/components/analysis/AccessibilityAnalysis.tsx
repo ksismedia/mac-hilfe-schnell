@@ -568,7 +568,8 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </Button>
               </div>
             </div>
-          )}
+            );
+          })()}
             </TabsContent>
             
             <TabsContent value="manual" className="mt-6">
