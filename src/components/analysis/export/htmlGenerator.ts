@@ -2371,21 +2371,21 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+        <div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Arbeitsplatz & Arbeitgeber-Bewertung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.workplace ? realData.workplace.overallScore : 65)}">${realData.workplace ? Math.round(realData.workplace.overallScore) : 65}%</div>
+            <div class="score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
             <div class="score-details">
-              <p><strong>Arbeitgeber-Bewertung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Sehr gut' : realData.workplace?.overallScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-              <p><strong>Empfehlung:</strong> ${realData.workplace?.overallScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+              <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
             </div>
           </div>
         </div>
@@ -2398,7 +2398,7 @@ export const generateCustomerHTML = ({
           ${getWorkplaceAnalysis()}
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.workplace ? realData.workplace.overallScore : 65)}" style="width: ${realData.workplace ? realData.workplace.overallScore : 65}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
             </div>
           </div>
           
