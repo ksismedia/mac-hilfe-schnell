@@ -1,807 +1,346 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualCorporateIdentityData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 
-export const calculateScore = (value: number, maxValue: number = 100) => {
-  return Math.min(100, Math.max(0, value));
-};
-
-export const calculateHourlyRateScore = (hourlyRateData?: { ownRate: number; regionAverage: number }) => {
-  if (!hourlyRateData || hourlyRateData.regionAverage === 0) return 75; // Default
-  
-  const ratio = hourlyRateData.ownRate / hourlyRateData.regionAverage;
-  if (ratio >= 0.9 && ratio <= 1.1) return 100; // Optimal bei ±10%
-  if (ratio >= 0.8 && ratio <= 1.2) return 85;  // Gut bei ±20%
-  if (ratio >= 0.7 && ratio <= 1.3) return 70;  // Akzeptabel bei ±30%
-  return 50; // Suboptimal
-};
-
-// Verbesserte Funktion zur Bewertung des letzten Posts
-const getLastPostScore = (lastPost: string): number => {
-  if (!lastPost || lastPost === 'Nicht gefunden' || lastPost === '') return 0;
-  
-  const lowerPost = lastPost.toLowerCase();
-  if (lowerPost.includes('heute') || lowerPost.includes('1 tag')) return 30;
-  if (lowerPost.includes('2') || lowerPost.includes('3') || lowerPost.includes('tag')) return 25;
-  if (lowerPost.includes('woche')) return 20;
-  if (lowerPost.includes('monat')) return 12;
-  return 8; // Älter als ein Monat
-};
-
-// KOMPLETT ÜBERARBEITETE Social Media Score Berechnung - NUR MANUELLE DATEN
-export const calculateSocialMediaScore = (realData: RealBusinessData, manualSocialData?: ManualSocialData | null) => {
-  console.log('=== SOCIAL MEDIA SCORE BERECHNUNG (NUR MANUELL) GESTARTET ===');
-  console.log('Manual Data:', manualSocialData);
-  
-  let totalScore = 0;
-  let activePlatforms = 0;
-  
-  // Prüfe ob überhaupt manuelle Daten vorhanden sind
-  if (!manualSocialData) {
-    console.log('Keine manuellen Daten -> Score: 0');
-    return 0;
-  }
-  
-  console.log('=== BEWERTE NUR MANUELLE EINGABEN ===');
-  
-  // FACEBOOK - nur wenn URL eingegeben
-  if (manualSocialData.facebookUrl && manualSocialData.facebookUrl.trim() !== '') {
-    let score = 50; // Basis für Präsenz
-    const followers = parseInt(manualSocialData.facebookFollowers || '0');
-    
-    // Follower Bewertung
-    if (followers >= 1000) score += 30;
-    else if (followers >= 500) score += 25;
-    else if (followers >= 100) score += 20;
-    else if (followers >= 50) score += 15;
-    else if (followers >= 10) score += 10;
-    
-    // Post Aktivität
-    score += getLastPostScore(manualSocialData.facebookLastPost || '');
-    
-    const facebookScore = Math.min(100, score);
-    totalScore += facebookScore;
-    activePlatforms++;
-    console.log(`Facebook: ${facebookScore} Punkte (${followers} Follower, Post: ${manualSocialData.facebookLastPost})`);
-  }
-  
-  // INSTAGRAM - nur wenn URL eingegeben
-  if (manualSocialData.instagramUrl && manualSocialData.instagramUrl.trim() !== '') {
-    let score = 50;
-    const followers = parseInt(manualSocialData.instagramFollowers || '0');
-    
-    // Instagram hat höhere Follower-Standards
-    if (followers >= 2000) score += 30;
-    else if (followers >= 1000) score += 25;
-    else if (followers >= 500) score += 20;
-    else if (followers >= 100) score += 15;
-    else if (followers >= 50) score += 10;
-    
-    score += getLastPostScore(manualSocialData.instagramLastPost || '');
-    
-    const instagramScore = Math.min(100, score);
-    totalScore += instagramScore;
-    activePlatforms++;
-    console.log(`Instagram: ${instagramScore} Punkte (${followers} Follower, Post: ${manualSocialData.instagramLastPost})`);
-  }
-  
-  // LINKEDIN - nur wenn URL eingegeben
-  if (manualSocialData.linkedinUrl && manualSocialData.linkedinUrl.trim() !== '') {
-    let score = 50;
-    const followers = parseInt(manualSocialData.linkedinFollowers || '0');
-    
-    // LinkedIn hat niedrigere Standards
-    if (followers >= 500) score += 30;
-    else if (followers >= 200) score += 25;
-    else if (followers >= 100) score += 20;
-    else if (followers >= 50) score += 15;
-    else if (followers >= 10) score += 10;
-    
-    score += getLastPostScore(manualSocialData.linkedinLastPost || '');
-    
-    const linkedinScore = Math.min(100, score);
-    totalScore += linkedinScore;
-    activePlatforms++;
-    console.log(`LinkedIn: ${linkedinScore} Punkte (${followers} Follower, Post: ${manualSocialData.linkedinLastPost})`);
-  }
-  
-  // TWITTER - nur wenn URL eingegeben
-  if (manualSocialData.twitterUrl && manualSocialData.twitterUrl.trim() !== '') {
-    let score = 50;
-    const followers = parseInt(manualSocialData.twitterFollowers || '0');
-    
-    if (followers >= 1000) score += 30;
-    else if (followers >= 500) score += 25;
-    else if (followers >= 100) score += 20;
-    else if (followers >= 50) score += 15;
-    else if (followers >= 10) score += 10;
-    
-    score += getLastPostScore(manualSocialData.twitterLastPost || '');
-    
-    const twitterScore = Math.min(100, score);
-    totalScore += twitterScore;
-    activePlatforms++;
-    console.log(`Twitter: ${twitterScore} Punkte (${followers} Follower, Post: ${manualSocialData.twitterLastPost})`);
-  }
-  
-  // YOUTUBE - nur wenn URL eingegeben
-  if (manualSocialData.youtubeUrl && manualSocialData.youtubeUrl.trim() !== '') {
-    let score = 50;
-    const subscribers = parseInt(manualSocialData.youtubeSubscribers || '0');
-    
-    // YouTube hat niedrigere Standards
-    if (subscribers >= 500) score += 30;
-    else if (subscribers >= 100) score += 25;
-    else if (subscribers >= 50) score += 20;
-    else if (subscribers >= 10) score += 15;
-    else if (subscribers >= 1) score += 10;
-    
-    score += getLastPostScore(manualSocialData.youtubeLastPost || '');
-    
-    const youtubeScore = Math.min(100, score);
-    totalScore += youtubeScore;
-    activePlatforms++;
-    console.log(`YouTube: ${youtubeScore} Punkte (${subscribers} Subscriber, Video: ${manualSocialData.youtubeLastPost})`);
-  }
-  
-  // FINALE BERECHNUNG
-  let finalScore = 0;
-  
-  if (activePlatforms === 0) {
-    finalScore = 0;
-    console.log('Keine manuell eingegebenen Plattformen -> Score: 0');
-  } else {
-    // Durchschnitt aller manuell eingegebenen Plattformen
-    const averageScore = totalScore / activePlatforms;
-    console.log(`Durchschnittsscore: ${averageScore} (${totalScore} / ${activePlatforms})`);
-    
-    // Multi-Platform Bonus für Diversität
-    let diversityBonus = 0;
-    if (activePlatforms >= 5) diversityBonus = 15;      // Alle 5 Plattformen
-    else if (activePlatforms >= 4) diversityBonus = 12; // 4 Plattformen
-    else if (activePlatforms >= 3) diversityBonus = 8;  // 3 Plattformen
-    else if (activePlatforms >= 2) diversityBonus = 5;  // 2 Plattformen
-    
-    console.log(`Diversitäts-Bonus: ${diversityBonus} für ${activePlatforms} manuell eingegebene Plattformen`);
-    
-    finalScore = Math.min(100, Math.round(averageScore + diversityBonus));
-  }
-  
-  console.log('=== FINALES ERGEBNIS (NUR MANUELL) ===');
-  console.log(`Manuell eingegebene Plattformen: ${activePlatforms}`);
-  console.log(`Gesamt-Score: ${totalScore}`);
-  console.log(`Durchschnitt: ${activePlatforms > 0 ? (totalScore / activePlatforms).toFixed(1) : 0}`);
-  console.log(`Diversitäts-Bonus: ${activePlatforms >= 5 ? 15 : activePlatforms >= 4 ? 12 : activePlatforms >= 3 ? 8 : activePlatforms >= 2 ? 5 : 0}`);
-  console.log(`FINALER SOCIAL MEDIA SCORE (NUR MANUELL): ${finalScore}`);
-  console.log('=== BERECHNUNG BEENDET ===');
-  
-  return finalScore;
-};
-
-// Berechnung für Content-Qualität Score - MIT MANUELLER ÜBERSCHREIBUNG
-export const calculateContentQualityScore = (
-  realData: RealBusinessData, 
-  manualKeywordData?: any, 
-  businessData?: any,
-  manualContentData?: ManualContentData | null
-) => {
-  console.log('=== CONTENT QUALITY SCORE BERECHNUNG ===');
-  console.log('Manual Content Data:', manualContentData);
-  
-  // Wenn manuelle Content-Daten vorhanden sind, verwende diese
-  if (manualContentData) {
-    let totalScore = 0;
-    let validMetrics = 0;
-    
-    // Sammle alle manuellen Scores
-    const scores = [
-      manualContentData.textQuality,
-      manualContentData.contentRelevance,
-      manualContentData.expertiseLevel,
-      manualContentData.contentFreshness
-    ];
-    
-    scores.forEach(score => {
-      if (score && score > 0) {
-        totalScore += score;
-        validMetrics++;
-      }
-    });
-    
-    const manualScore = validMetrics > 0 ? Math.round(totalScore / validMetrics) : 60;
-    console.log(`MANUELLER CONTENT SCORE: ${manualScore} (basierend auf ${validMetrics} Metriken)`);
-    return manualScore;
-  }
-  
-  // Automatische Berechnung als Fallback
-  let totalScore = 0;
-  let metrics = 0;
-
-  // Keyword-Analyse (40% Gewichtung)
-  if (manualKeywordData || realData.keywords) {
-    const keywords = manualKeywordData || realData.keywords;
-    const keywordScore = (keywords.filter((k: any) => k.found).length / keywords.length) * 100;
-    totalScore += keywordScore * 0.4;
-    metrics++;
-  }
-
-  // Textqualität basierend auf SEO-Score (30% Gewichtung)
-  const readabilityScore = Math.max(60, realData.seo.score);
-  totalScore += readabilityScore * 0.3;
-  metrics++;
-
-  // Struktur-Score (20% Gewichtung)
-  const structureScore = realData.seo.headings.h1.length > 0 ? 90 : 30;
-  totalScore += structureScore * 0.2;
-  metrics++;
-
-  // Aktualität (10% Gewichtung)
-  const freshnessScore = 60; // Standardwert, da schwer automatisch zu ermitteln
-  totalScore += freshnessScore * 0.1;
-  
-  const autoScore = Math.round(totalScore);
-  console.log(`AUTOMATISCHER CONTENT SCORE: ${autoScore}`);
-  return autoScore;
-};
-
-// Berechnung für Backlinks Score - MIT MANUELLER ÜBERSCHREIBUNG
-export const calculateBacklinksScore = (realData: RealBusinessData, manualBacklinkData?: ManualBacklinkData | null) => {
-  console.log('=== BACKLINKS SCORE BERECHNUNG ===');
-  console.log('Manual Backlink Data:', manualBacklinkData);
-  
-  // Wenn manuelle Backlink-Daten vorhanden sind, verwende diese
-  if (manualBacklinkData && manualBacklinkData.qualityScore) {
-    // Berechne Gesamt-Score aus den verschiedenen Metriken
-    const overallScore = Math.round(
-      (manualBacklinkData.qualityScore * 0.4) +
-      (manualBacklinkData.domainAuthority * 0.3) +
-      (manualBacklinkData.localRelevance * 0.3)
-    );
-    console.log(`MANUELLER BACKLINKS SCORE: ${overallScore}`);
-    return overallScore;
-  }
-  
-  // Automatische Berechnung als Fallback
-  let baseScore = realData.seo.score;
-  
-  // Adjustierung basierend auf Domain-Stärke Indikatoren
-  // Wenn Meta-Description vorhanden, deutet auf bessere SEO-Pflege hin
-  if (realData.seo.metaDescription) baseScore += 10;
-  
-  // Wenn strukturierte Daten vorhanden (H1, H2 Tags)
-  if (realData.seo.headings.h1.length > 0 && realData.seo.headings.h2.length > 0) {
-    baseScore += 5;
-  }
-  
-  // Cap at 100 und Minimum 30 für realistische Bewertung
-  const autoScore = Math.min(100, Math.max(30, Math.round(baseScore * 0.7))); // Leicht reduziert da Backlinks oft schwächer sind
-  console.log(`AUTOMATISCHER BACKLINKS SCORE: ${autoScore}`);
-  return autoScore;
-};
-
-// Berechnung für Accessibility Score - MIT MANUELLER ÜBERSCHREIBUNG
-export const calculateAccessibilityScore = (realData: RealBusinessData, manualAccessibilityData?: ManualAccessibilityData | null) => {
-  console.log('=== ACCESSIBILITY SCORE BERECHNUNG GESTARTET ===');
-  console.log('Manual Accessibility Data:', manualAccessibilityData);
-  
-  // Wenn manuelle Accessibility-Daten vorhanden sind, verwende diese
-  if (manualAccessibilityData && manualAccessibilityData.overallScore) {
-    console.log(`MANUELLER ACCESSIBILITY SCORE: ${manualAccessibilityData.overallScore}`);
-    return manualAccessibilityData.overallScore;
-  }
-  
-  // AUSGEWOGENE BEWERTUNG - Realistische Bewertung mit fairem Startwert
-  let complianceScore = 65; // Fairerer Startwert
-  
-  // Simuliere Violation-Detektion basierend auf SEO-Qualität
-  const hasImageAltIssues = !realData.seo.metaDescription || realData.seo.metaDescription.length < 50;
-  const hasHeadingIssues = realData.seo.headings.h1.length === 0 || realData.seo.headings.h2.length === 0;
-  const hasContrastIssues = realData.seo.score < 50; // Weniger strenger Indikator
-  
-  // FAIRE BEWERTUNG - Moderate Abzüge für Probleme
-  if (hasImageAltIssues) {
-    complianceScore -= 15; // Moderater Abzug für Alt-Text-Probleme
-    console.log('Problem erkannt: Alt-Text-Optimierung nötig -> -15');
-  }
-  
-  if (hasHeadingIssues) {
-    complianceScore -= 12; // Moderater Abzug für Struktur
-    console.log('Problem erkannt: Heading-Struktur verbesserbar -> -12');
-  }
-  
-  if (hasContrastIssues) {
-    complianceScore -= 15; // Moderater Abzug für Kontrast
-    console.log('Problem erkannt: Kontrast-Optimierung empfohlen -> -15');
-  }
-  
-  // Moderate Abzüge für allgemeine Webqualität
-  if (realData.seo.score < 30) {
-    complianceScore -= 10; // Nur bei sehr schlechter Qualität
-    console.log('Zusätzlicher Abzug: Grundlegende Weboptimierung nötig -> -10');
-  }
-  
-  // Leichte Abzüge für fehlende Grundlagen
-  if (!realData.seo.titleTag || realData.seo.titleTag.length < 30) {
-    complianceScore -= 8; // Moderater Abzug
-    console.log('Zusätzlicher Abzug: Titel-Optimierung empfohlen -> -8');
-  }
-  
-  // Bonus für gute SEO-Werte
-  if (realData.seo.score >= 70) {
-    complianceScore += 5;
-    console.log('Bonus: Gute Webqualität deutet auf Accessibility-Bewusstsein hin -> +5');
-  }
-  
-  // Finaler Score - minimum 20, maximum 100 (realistischer Bereich)
-  const finalScore = Math.max(20, Math.min(100, complianceScore));
-  
-  console.log('=== ACCESSIBILITY SCORE ERGEBNIS ===');
-  console.log(`Startwert: 65`);
-  console.log(`Compliance-Score: ${complianceScore}`);
-  console.log(`Finaler Score: ${finalScore}`);
-  console.log(`Bewertung: ${finalScore >= 70 ? 'GUT' : finalScore >= 50 ? 'VERBESSERBAR' : 'OPTIMIERUNG NÖTIG'}`);
-  console.log('=== BERECHNUNG BEENDET ===');
-  
-  return finalScore;
-};
-
-// Berechnung für Datenschutz Score - MIT MANUELLER ÜBERSCHREIBUNG
-export const calculateDataPrivacyScore = (realData: RealBusinessData, manualDataPrivacyScore?: number | null) => {
-  // Wenn manueller Datenschutz-Score vorhanden ist, verwende diesen
-  if (manualDataPrivacyScore && manualDataPrivacyScore > 0) {
-    console.log(`MANUELLER DATENSCHUTZ SCORE: ${manualDataPrivacyScore}`);
-    return manualDataPrivacyScore;
-  }
-  console.log('=== DATENSCHUTZ SCORE BERECHNUNG GESTARTET (AUSGEWOGEN) ===');
-  
-  // FAIRE BEWERTUNG - Realistischer Startwert
-  let complianceScore = 70; // Fairer Startwert
-  
-  // Positive Indikatoren
-  if (realData.seo.score >= 70) {
-    complianceScore += 8; // Bonus für gute Webqualität
-    console.log('Bonus: Gute Webqualität deutet auf DSGVO-Bewusstsein hin -> +8');
-  }
-  
-  if (realData.seo.metaDescription && realData.seo.metaDescription.length > 100) {
-    complianceScore += 5; // Bonus für ausführliche Meta-Beschreibung
-    console.log('Bonus: Ausführliche Meta-Beschreibung -> +5');
-  }
-  
-  // Moderate Abzüge für potenzielle Probleme
-  if (!realData.seo.metaDescription || realData.seo.metaDescription.length < 50) {
-    complianceScore -= 12; // Mangelnde Transparenz
-    console.log('Abzug: Unzureichende Beschreibungen -> -12');
-  }
-  
-  if (realData.seo.score < 40) {
-    complianceScore -= 15; // Schlechte Webqualität
-    console.log('Abzug: Sehr schlechte Webqualität -> -15');
-  }
-  
-  if (realData.seo.headings.h1.length === 0) {
-    complianceScore -= 8; // Strukturprobleme
-    console.log('Abzug: Fehlende Struktur (H1) -> -8');
-  }
-  
-  // SSL-Check über HTTPS-Muster in den Daten
-  const hasSSL = realData.seo.metaDescription?.includes('ssl') || realData.seo.score >= 80;
-  if (hasSSL) {
-    complianceScore += 10; // SSL ist wichtig für DSGVO
-    console.log('Bonus: HTTPS/SSL wahrscheinlich implementiert -> +10');
-  } else {
-    complianceScore -= 15; // Reduzierte Strafe
-    console.log('Abzug: SSL/HTTPS-Status unklar -> -15');
-  }
-  
-  // Finaler Score - minimum 30, maximum 95 (realistischer Bereich)
-  const finalScore = Math.max(30, Math.min(95, complianceScore));
-  
-  console.log('=== DATENSCHUTZ SCORE ERGEBNIS (AUSGEWOGEN) ===');
-  console.log(`Startwert: 70`);
-  console.log(`Compliance-Score: ${complianceScore}`);
-  console.log(`Finaler Score: ${finalScore}`);
-  console.log(`Bewertung: ${finalScore >= 75 ? 'GUT' : finalScore >= 55 ? 'VERBESSERBAR' : 'OPTIMIERUNG NÖTIG'}`);
-  console.log('=== BERECHNUNG BEENDET ===');
-  
-  return finalScore;
-};
-
-export const calculateCorporateIdentityScore = (manualCorporateIdentityData?: ManualCorporateIdentityData | null): number => {
-  if (!manualCorporateIdentityData) {
-    return 50; // Default neutral score when not assessed
-  }
-  
-  const checks = [
-    manualCorporateIdentityData.uniformLogo,
-    manualCorporateIdentityData.uniformWorkClothing,
-    manualCorporateIdentityData.uniformVehicleBranding,
-    manualCorporateIdentityData.uniformColorScheme
-  ];
-  
-  const score = (checks.filter(Boolean).length / checks.length) * 100;
-  return Math.round(score);
-};
-
-// Calculate Staff Qualification Score
-export const calculateStaffQualificationScore = (staffData?: any): number | null => {
-  console.log('=== STAFF QUALIFICATION SCORE BERECHNUNG ===');
-  console.log('Staff Data:', staffData);
-  
-  // Prüfe ob überhaupt Daten eingegeben wurden
-  if (!staffData || Object.keys(staffData).length === 0) {
-    console.log('Keine Staff Qualification Daten -> Keine Bewertung');
-    return null; // Keine Bewertung wenn keine Daten
-  }
-  
-  // Prüfe ob alle relevanten Felder leer sind
-  const hasAnyData = (
-    (staffData.totalEmployees && staffData.totalEmployees > 0) ||
-    (staffData.skilled_workers && staffData.skilled_workers > 0) ||
-    (staffData.masters && staffData.masters > 0) ||
-    (staffData.certifications && Object.values(staffData.certifications).some(Boolean)) ||
-    (staffData.industry_specific && staffData.industry_specific.length > 0)
-  );
-  
-  if (!hasAnyData) {
-    console.log('Keine relevanten Staff Qualification Daten -> Keine Bewertung');
-    return null;
-  }
-  
+const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
+  const reviews = realData.google.reviews;
+  const rating = realData.google.rating;
   let score = 0;
-  const totalEmployees = staffData.totalEmployees || 1;
-  
-  // Basis-Score für existierende Betriebe (weniger streng)
-  score += 30; // Grundbewertung für etablierte Betriebe
-  
-  // Qualifikationsgrad (30% der Bewertung, weniger streng)
-  const qualifiedStaff = (staffData.skilled_workers || 0) + (staffData.masters || 0);
-  const qualificationRatio = qualifiedStaff / totalEmployees;
-  score += Math.min(30, qualificationRatio * 30 + 10); // Mindestens 10 Punkte für jeden Mitarbeiter
-  
-  // Meister-Quote (15% der Bewertung, weniger streng)
-  const masterRatio = (staffData.masters || 0) / totalEmployees;
-  score += Math.min(15, masterRatio * 15 + 5); // Mindestens 5 Punkte wenn Meister vorhanden
-  
-  // Zertifizierungen (15% der Bewertung, weniger streng)
-  const certCount = Object.values(staffData.certifications || {}).filter(Boolean).length;
-  score += Math.min(15, (certCount / 3) * 15); // Bereits ab 3 Zertifikaten voll
-  
-  // Branchenspezifische Qualifikationen (10% der Bewertung, weniger streng)
-  const industrySpecificCount = (staffData.industry_specific || []).length;
-  const maxIndustrySpecific = 4; // Reduziert von 6 auf 4
-  score += Math.min(10, (industrySpecificCount / maxIndustrySpecific) * 10);
-  
-  const finalScore = Math.round(Math.min(100, score));
-  console.log(`Staff Qualification Score: ${finalScore}`);
-  return finalScore;
+
+  if (rating > 0) {
+    score += (rating / 5) * 60; // Rating contributes 60%
+  }
+  if (reviews > 0) {
+    score += Math.min(reviews / 10, 40); // Number of reviews contributes 40%, capped at 40 points
+  }
+
+  return score;
 };
 
-export const calculateQuoteResponseScore = (quoteResponseData?: QuoteResponseData | null): number | null => {
-  console.log('=== QUOTE RESPONSE SCORE BERECHNUNG GESTARTET ===');
-  console.log('Quote Response Data:', quoteResponseData);
-  
-  // Prüfe ob überhaupt Daten eingegeben wurden
-  if (!quoteResponseData || Object.keys(quoteResponseData).length === 0) {
-    console.log('Keine Quote Response Daten -> Keine Bewertung');
-    return null; // Keine Bewertung wenn keine Daten
-  }
-  
-  // Prüfe ob alle relevanten Felder leer sind
-  const hasAnyData = (
-    quoteResponseData.responseTime ||
-    (quoteResponseData.contactMethods && Object.values(quoteResponseData.contactMethods).some(Boolean)) ||
-    quoteResponseData.responseQuality ||
-    quoteResponseData.automaticConfirmation ||
-    quoteResponseData.followUpProcess ||
-    quoteResponseData.personalContact ||
-    quoteResponseData.availabilityHours
-  );
-  
-  if (!hasAnyData) {
-    console.log('Keine relevanten Quote Response Daten -> Keine Bewertung');
-    return null;
-  }
-  
-  let score = 0;
-  
-  // Reaktionszeit (40% der Bewertung)
-  switch (quoteResponseData.responseTime) {
-    case '1-hour': score += 40; break;
-    case '2-4-hours': score += 35; break;
-    case '4-8-hours': score += 30; break;
-    case '1-day': score += 20; break;
-    case '2-3-days': score += 10; break;
-    case 'over-3-days': score += 5; break;
-    default: score += 0; break;
-  }
-  
-  // Kontaktmöglichkeiten (20% der Bewertung)
-  const contactCount = Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length;
-  score += Math.min(20, contactCount * 4);
-  
-  // Antwortqualität (20% der Bewertung)
-  switch (quoteResponseData.responseQuality) {
-    case 'excellent': score += 20; break;
-    case 'good': score += 15; break;
-    case 'average': score += 10; break;
-    case 'poor': score += 5; break;
-    default: score += 0; break;
-  }
-  
-  // Service-Features (20% der Bewertung)
-  if (quoteResponseData.automaticConfirmation) score += 5;
-  if (quoteResponseData.followUpProcess) score += 5;
-  if (quoteResponseData.personalContact) score += 5;
-  
-  // Erreichbarkeitszeiten
-  switch (quoteResponseData.availabilityHours) {
-    case '24-7': score += 5; break;
-    case 'extended-hours': score += 3; break;
-    case 'business-hours': score += 2; break;
-    default: score += 0; break;
-  }
-  
-  const finalScore = Math.round(Math.min(100, score));
-  
-  console.log('=== QUOTE RESPONSE SCORE ERGEBNIS ===');
-  console.log(`Reaktionszeit: ${quoteResponseData.responseTime} -> Punkte basierend darauf`);
-  console.log(`Kontaktmöglichkeiten: ${contactCount} -> ${Math.min(20, contactCount * 4)} Punkte`);
-  console.log(`Antwortqualität: ${quoteResponseData.responseQuality} -> Punkte basierend darauf`);
-  console.log(`Service-Features: ${[quoteResponseData.automaticConfirmation, quoteResponseData.followUpProcess, quoteResponseData.personalContact].filter(Boolean).length * 5} Punkte`);
-  console.log(`FINALER QUOTE RESPONSE SCORE: ${finalScore}`);
-  console.log('=== BERECHNUNG BEENDET ===');
-  
-  return finalScore;
-};
-
-// Neue Funktionen für Kategorie-Scores (jeweils maximal 100 Punkte)
-export const calculateSEOContentScore = (
-  realData: RealBusinessData, 
-  keywordsScore: number | null,
-  businessData?: any,
-  privacyData?: any,
-  accessibilityData?: any
+const calculateSocialMediaScore = (
+  realData: RealBusinessData,
+  manualSocialData?: ManualSocialData | null
 ): number => {
-  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
-  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
-  
-  const seoScore = realData.seo.score;
-  const localSEOScore = calculateLocalSEOScore(businessData, realData);
-  const imprintScore = realData.imprint.score;
-  const accessibilityScore = calculateAccessibilityScore(realData);
-  
-  // Realistische Datenschutz-Bewertung basierend auf Website-Qualität
-  const dataPrivacyScore = calculateDataPrivacyScore(realData);
-  
-  // Gewichtung innerhalb der Kategorie
-  const weightedScore = 
-    (seoScore * 25) +
-    (currentKeywordsScore * 20) +
-    (localSEOScore * 25) +
-    (imprintScore * 15) +
-    (accessibilityScore * 10) +
-    (dataPrivacyScore * 5);
-    
-  return Math.round(weightedScore / 100);
-};
+  let score = 0;
+  let foundPlatforms = 0;
 
-export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
-  const performanceScore = realData.performance.score;
-  const mobileScore = realData.mobile.overallScore;
-  
-  // 60% Performance, 40% Mobile
-  const weightedScore = (performanceScore * 60) + (mobileScore * 40);
-  return Math.round(weightedScore / 100);
+  if (realData.social.facebook.found || manualSocialData?.facebookUrl) {
+    foundPlatforms++;
+    if (realData.social.facebook.followers > 100 || manualSocialData?.facebookFollowers) {
+      score += 20;
+    }
+  }
+  if (realData.social.instagram.found || manualSocialData?.instagramUrl) {
+    foundPlatforms++;
+    if (realData.social.instagram.followers > 100 || manualSocialData?.instagramFollowers) {
+      score += 20;
+    }
+  }
+  if (realData.social.linkedin.found || manualSocialData?.linkedinUrl) {
+    foundPlatforms++;
+    if (realData.social.linkedin.followers > 50 || manualSocialData?.linkedinFollowers) {
+      score += 15;
+    }
+  }
+  if (realData.social.youtube.found || manualSocialData?.youtubeUrl) {
+    foundPlatforms++;
+    if (realData.social.youtube.subscribers > 50 || manualSocialData?.youtubeSubscribers) {
+      score += 15;
+    }
+  }
+  if (realData.social.tiktok.found || manualSocialData?.tiktokUrl) {
+    foundPlatforms++;
+    if (realData.social.tiktok.followers > 100 || manualSocialData?.tiktokFollowers) {
+      score += 15;
+    }
+  }
+
+  if (foundPlatforms >= 3) {
+    score += 15;
+  }
+
+  return score;
 };
 
 export const calculateSocialMediaCategoryScore = (
   realData: RealBusinessData,
   manualSocialData?: ManualSocialData | null,
-  manualWorkplaceData?: any
+  manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
+  let totalScore = 0;
+  let maxScore = 0;
+
+  // Google Reviews (30%)
+  const googleReviewsScore = calculateGoogleReviewsScore(realData);
+  totalScore += googleReviewsScore * 0.3;
+  maxScore += 100 * 0.3;
+
+  // Social Media (40%)
   const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  const socialProofScore = realData.socialProof.overallScore;
-  const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
-  const workplaceScore = realData.workplace.overallScore;
-  
-  // Gewichtung: Social Media 40%, Reviews 35%, Social Proof 15%, Workplace 10%
-  const weightedScore = 
-    (socialMediaScore * 40) +
-    (reviewsScore * 35) +
-    (socialProofScore * 15) +
-    (workplaceScore * 10);
-    
-  return Math.round(weightedScore / 100);
+  totalScore += socialMediaScore * 0.4;
+  maxScore += 100 * 0.4;
+
+  // Workplace Reviews (30%)
+  const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
+  totalScore += workplaceScore * 0.3;
+  maxScore += 100 * 0.3;
+
+  return Math.round((totalScore / maxScore) * 100);
 };
 
-export const calculateStaffServiceScore = (
-  staffData?: any,
-  quoteResponseData?: QuoteResponseData | null,
-  corporateIdentityData?: any,
-  hourlyRateData?: { ownRate: number; regionAverage: number }
+const calculateWorkplaceScore = (
+  realData: RealBusinessData,
+  manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
-  const staffQualificationScore = calculateStaffQualificationScore(staffData);
-  const quoteScore = calculateQuoteResponseScore(quoteResponseData);
-  const corporateScore = calculateCorporateIdentityScore(corporateIdentityData);
-  const hourlyScore = calculateHourlyRateScore(hourlyRateData);
-  
-  // Nur bewerten wenn Daten vorhanden sind
-  let totalWeight = 0;
-  let weightedScore = 0;
-  
-  if (staffQualificationScore !== null) {
-    weightedScore += staffQualificationScore * 35;
-    totalWeight += 35;
+  let score = 0;
+  const maxPoints = 100;
+
+  // Use manual data if available, otherwise use real data
+  const workplaceData = manualWorkplaceData || realData.workplace;
+
+  // Check if we're using manual data
+  const isManualData = manualWorkplaceData && (
+    manualWorkplaceData.kununuFound || 
+    manualWorkplaceData.glassdoorFound || 
+    manualWorkplaceData.kununuRating !== '' || 
+    manualWorkplaceData.glassdoorRating !== ''
+  );
+
+  let platformsWithData = 0;
+  let totalRating = 0;
+  let totalReviews = 0;
+
+  // kununu evaluation
+  const kununuFound = isManualData ? manualWorkplaceData!.kununuFound : workplaceData.kununu.found;
+  const kununuRating = isManualData ? manualWorkplaceData!.kununuRating : workplaceData.kununu.rating;
+  const kununuReviews = isManualData ? manualWorkplaceData!.kununuReviews : workplaceData.kununu.reviews;
+
+  if (kununuFound) {
+    platformsWithData++;
+    const rating = parseFloat(kununuRating.toString());
+    const reviews = parseInt(kununuReviews.toString());
+    
+    if (!isNaN(rating) && rating > 0) {
+      totalRating += rating;
+      
+      // Rating points (0-25 points)
+      score += (rating / 5) * 25;
+      
+      // Review count points (0-15 points)
+      if (reviews >= 50) score += 15;
+      else if (reviews >= 20) score += 12;
+      else if (reviews >= 10) score += 8;
+      else if (reviews >= 5) score += 5;
+      else if (reviews >= 1) score += 2;
+    }
   }
-  
-  if (quoteScore !== null) {
-    weightedScore += quoteScore * 30;
-    totalWeight += 30;
+
+  // Glassdoor evaluation
+  const glassdoorFound = isManualData ? manualWorkplaceData!.glassdoorFound : workplaceData.glassdoor.found;
+  const glassdoorRating = isManualData ? manualWorkplaceData!.glassdoorRating : workplaceData.glassdoor.rating;
+  const glassdoorReviews = isManualData ? manualWorkplaceData!.glassdoorReviews : workplaceData.glassdoor.reviews;
+
+  if (glassdoorFound) {
+    platformsWithData++;
+    const rating = parseFloat(glassdoorRating.toString());
+    const reviews = parseInt(glassdoorReviews.toString());
+    
+    if (!isNaN(rating) && rating > 0) {
+      totalRating += rating;
+      
+      // Rating points (0-25 points)
+      score += (rating / 5) * 25;
+      
+      // Review count points (0-15 points)
+      if (reviews >= 50) score += 15;
+      else if (reviews >= 20) score += 12;
+      else if (reviews >= 10) score += 8;
+      else if (reviews >= 5) score += 5;
+      else if (reviews >= 1) score += 2;
+    }
   }
-  
-  if (corporateIdentityData) {
-    weightedScore += corporateScore * 20;
-    totalWeight += 20;
+
+  // Platform presence bonus (0-20 points)
+  if (platformsWithData >= 2) {
+    score += 20; // Both platforms
+  } else if (platformsWithData === 1) {
+    score += 10; // One platform
   }
-  
-  if (hourlyRateData) {
-    weightedScore += hourlyScore * 15;
-    totalWeight += 15;
+
+  // If no data found, give minimum points for small businesses
+  if (platformsWithData === 0) {
+    score = 15; // Base points for small businesses without reviews
   }
-  
-  return totalWeight > 0 ? Math.round(weightedScore / totalWeight) : 0;
+
+  return Math.min(score, maxPoints);
 };
 
-export const calculateOverallScore = (
+const calculateSEOContentScore = (
   realData: RealBusinessData,
   keywordsScore: number | null,
-  manualSocialData?: ManualSocialData | null,
-  businessData?: any,
-  staffData?: any,
-  hourlyRateData?: { ownRate: number; regionAverage: number },
-  quoteResponseData?: QuoteResponseData | null
+  businessData: { address: string; url: string; industry: string },
+  privacyData: any,
+  accessibilityData: any
 ): number => {
-  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
-  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
-  
-  const seoScore = realData.seo.score;
-  const performanceScore = realData.performance.score;
-  const mobileScore = realData.mobile.overallScore;
-  const localSEOScore = calculateLocalSEOScore(businessData, realData);
-  const reviewsScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
-  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  const socialProofScore = realData.socialProof.overallScore;
-  const imprintScore = realData.imprint.score;
-  const staffQualificationScore = calculateStaffQualificationScore(staffData);
-  const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
-  const workplaceScore = realData.workplace.overallScore;
-  const competitorScore = realData.competitors.length > 0 ? 80 : 60;
+  let score = 0;
 
-  // Neue Berechnung: Durchschnitt der 4 Hauptkategorien
-  const seoContentScore = calculateSEOContentScore(realData, keywordsScore, businessData);
-  const performanceMobileScore = calculatePerformanceMobileScore(realData);
-  const socialMediaCategoryScore = calculateSocialMediaCategoryScore(realData, manualSocialData);
-  const staffServiceScore = calculateStaffServiceScore(staffData, quoteResponseData);
-
-  // Durchschnitt der 4 Kategorien
-  let totalCategories = 0;
-  let totalScore = 0;
-
-  if (seoContentScore > 0) {
-    totalScore += seoContentScore;
-    totalCategories++;
-  }
-  
-  if (performanceMobileScore > 0) {
-    totalScore += performanceMobileScore;
-    totalCategories++;
-  }
-  
-  if (socialMediaCategoryScore > 0) {
-    totalScore += socialMediaCategoryScore;
-    totalCategories++;
-  }
-  
-  if (staffServiceScore > 0) {
-    totalScore += staffServiceScore;
-    totalCategories++;
+  // Keywords ranking (30%)
+  if (keywordsScore !== null) {
+    score += keywordsScore * 0.3;
+  } else {
+    score += 50 * 0.3; // Default keyword score
   }
 
-  return totalCategories > 0 ? Math.round(totalScore / totalCategories) : 0;
+  // On-page SEO (30%)
+  if (realData.seo.title && realData.seo.description) {
+    score += 30 * 0.3;
+  } else {
+    score += 15 * 0.3;
+  }
+
+  // Content quality (20%)
+  if (realData.content.wordCount > 200) {
+    score += 20 * 0.2;
+  } else {
+    score += 10 * 0.2;
+  }
+
+  // Local SEO (10%)
+  if (realData.seo.local) {
+    score += 10 * 0.1;
+  }
+
+  // Privacy (5%)
+  if (privacyData?.hasPrivacyPolicy) {
+    score += 5 * 0.05;
+  }
+
+  // Accessibility (5%)
+  if (accessibilityData?.overallScore) {
+    score += accessibilityData.overallScore * 0.05;
+  }
+
+  return score;
 };
 
-// Berechnung für Local SEO Score - SEHR STRENGE BEWERTUNG für Handwerk
-export const calculateLocalSEOScore = (businessData: any, realData: RealBusinessData) => {
-  console.log('=== LOCAL SEO SCORE BERECHNUNG GESTARTET (SEHR STRENG) ===');
-  
-  let localScore = 20; // Sehr niedriger Startwert, da lokales SEO für Handwerk KRITISCH ist
-  
-  // Google My Business Simulation (40% Gewichtung - HÖCHSTE PRIORITÄT)
-  const hasGoodSEO = realData.seo.score >= 70;
-  const hasMetaDescription = realData.seo.metaDescription && realData.seo.metaDescription.length >= 100;
-  const hasGoodHeadings = realData.seo.headings.h1.length > 0 && realData.seo.headings.h2.length >= 2;
-  
-  // Google My Business Score (40 Punkte möglich)
-  let gmbScore = 0;
-  if (hasGoodSEO) gmbScore += 15; // Grundlegende Web-Präsenz
-  if (hasMetaDescription) gmbScore += 10; // Gute Meta-Beschreibungen deuten auf GMB-Pflege hin
-  if (hasGoodHeadings) gmbScore += 8; // Strukturierte Inhalte
-  if (realData.seo.titleTag && realData.seo.titleTag.includes(businessData.address?.split(',')[1]?.trim() || '')) {
-    gmbScore += 7; // Lokale Keywords im Title
+const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
+  let score = 0;
+
+  // Performance (50%)
+  if (realData.performance.performanceScore) {
+    score += realData.performance.performanceScore * 0.5;
   }
-  
-  // NAP (Name, Address, Phone) Konsistenz (25% Gewichtung)
-  let napScore = 0;
-  if (businessData.address && businessData.address.length > 10) napScore += 8; // Vollständige Adresse vorhanden
-  if (realData.seo.metaDescription && realData.seo.metaDescription.includes(businessData.address?.split(',')[1]?.trim() || '')) {
-    napScore += 7; // Lokale Ortschaft in Meta-Description
+
+  // Accessibility (25%)
+  if (realData.performance.accessibilityScore) {
+    score += realData.performance.accessibilityScore * 0.25;
   }
-  if (realData.seo.score >= 80) napScore += 5; // Hohe SEO-Qualität deutet auf NAP-Konsistenz hin
-  if (hasGoodHeadings) napScore += 5; // Strukturierte Daten wahrscheinlich
-  
-  // Lokale Citations und Verzeichnisse (20% Gewichtung)
-  let citationScore = 0;
-  if (realData.seo.score >= 60) citationScore += 6; // Basis-Verzeichnisse wahrscheinlich
-  if (hasGoodSEO) citationScore += 6; // Bessere Verzeichnis-Präsenz bei guter SEO
-  if (realData.performance.score >= 70) citationScore += 4; // Schnelle Website = professionellere Präsenz
-  if (realData.reviews.google.count > 0) citationScore += 4; // Google Reviews vorhanden
-  
-  // Lokale Keywords und Content (15% Gewichtung)
-  let localContentScore = 0;
-  const industryKeywords = realData.keywords.filter(k => k.found).length;
-  if (industryKeywords >= 3) localContentScore += 5; // Branchenkeywords gefunden
-  if (industryKeywords >= 5) localContentScore += 3; // Viele Branchenkeywords
-  if (realData.seo.metaDescription && realData.seo.metaDescription.length >= 120) {
-    localContentScore += 4; // Ausführliche lokale Beschreibungen
+
+  // Best Practices (25%)
+  if (realData.performance.bestPracticesScore) {
+    score += realData.performance.bestPracticesScore * 0.25;
   }
-  if (realData.seo.headings.h2.length >= 3) localContentScore += 3; // Strukturierter lokaler Content
-  
-  // SEHR STRENGE BEWERTUNG - Jeder fehlende Aspekt führt zu drastischen Abzügen
-  let penalties = 0;
-  
-  // Kritische Penalties für Handwerksbetriebe
-  if (!hasGoodSEO) {
-    penalties += 25; // Schlechte SEO = schlechte lokale Sichtbarkeit
-    console.log('KRITISCHER ABZUG: Schlechte SEO-Grundlage -> -25');
+
+  return score;
+};
+
+const calculateStaffServiceScore = (
+  staffQualificationData: any,
+  quoteResponseData: any,
+  manualCorporateIdentityData: any,
+  hourlyRateData: any
+): number => {
+  let score = 50;
+
+  if (staffQualificationData) {
+    // Education and Training (30%)
+    const totalEmployees = staffQualificationData.totalEmployees || 1;
+    const skilledWorkers = staffQualificationData.skilled_workers || 0;
+    const masters = staffQualificationData.masters || 0;
+    const apprentices = staffQualificationData.apprentices || 0;
+
+    const educationScore =
+      (skilledWorkers / totalEmployees) * 0.4 +
+      (masters / totalEmployees) * 0.4 +
+      (apprentices / totalEmployees) * 0.2;
+    score += Math.min(educationScore * 30, 30);
+
+    // Certifications (20%)
+    let certificationPoints = 0;
+    if (staffQualificationData.certifications?.welding_certificates)
+      certificationPoints += 0.2;
+    if (staffQualificationData.certifications?.safety_training)
+      certificationPoints += 0.2;
+    if (staffQualificationData.certifications?.first_aid)
+      certificationPoints += 0.2;
+    if (staffQualificationData.certifications?.digital_skills)
+      certificationPoints += 0.2;
+    if (staffQualificationData.certifications?.instructor_qualification)
+      certificationPoints += 0.2;
+    if (staffQualificationData.certifications?.business_qualification)
+      certificationPoints += 0.2;
+
+    score += Math.min(certificationPoints * 20, 20);
   }
-  
-  if (realData.reviews.google.count === 0) {
-    penalties += 20; // Keine Google Reviews = sehr schlecht für lokales SEO
-    console.log('KRITISCHER ABZUG: Keine Google Reviews -> -20');
+
+  if (quoteResponseData) {
+    // Response Time (20%)
+    const responseTimeScore =
+      quoteResponseData.responseTime === 'prompt'
+        ? 20
+        : quoteResponseData.responseTime === 'moderate'
+        ? 10
+        : 0;
+    score += responseTimeScore;
+
+    // Contact Methods (15%)
+    let contactMethodPoints = 0;
+    if (quoteResponseData.contactMethods?.phone) contactMethodPoints += 0.25;
+    if (quoteResponseData.contactMethods?.email) contactMethodPoints += 0.25;
+    if (quoteResponseData.contactMethods?.contactForm)
+      contactMethodPoints += 0.25;
+    if (quoteResponseData.contactMethods?.whatsapp) contactMethodPoints += 0.125;
+    if (quoteResponseData.contactMethods?.messenger)
+      contactMethodPoints += 0.125;
+
+    score += Math.min(contactMethodPoints * 15, 15);
+
+    // Response Quality (15%)
+    const responseQualityScore =
+      quoteResponseData.responseQuality === 'high'
+        ? 15
+        : quoteResponseData.responseQuality === 'medium'
+        ? 8
+        : 0;
+    score += responseQualityScore;
   }
-  
-  if (!hasMetaDescription) {
-    penalties += 15; // Schlechte Meta-Descriptions = schlechte lokale Snippets
-    console.log('KRITISCHER ABZUG: Schlechte/fehlende Meta-Description -> -15');
+
+  if (manualCorporateIdentityData) {
+    // Uniform Appearance (20%)
+    let uniformPoints = 0;
+    if (manualCorporateIdentityData.uniformLogo) uniformPoints += 0.25;
+    if (manualCorporateIdentityData.uniformWorkClothing) uniformPoints += 0.25;
+    if (manualCorporateIdentityData.uniformVehicleBranding)
+      uniformPoints += 0.25;
+    if (manualCorporateIdentityData.uniformColorScheme) uniformPoints += 0.25;
+
+    score += Math.min(uniformPoints * 20, 20);
   }
-  
-  if (!hasGoodHeadings) {
-    penalties += 15; // Schlechte Struktur = schlechte lokale Inhalte
-    console.log('KRITISCHER ABZUG: Schlechte Heading-Struktur -> -15');
+
+  if (hourlyRateData) {
+    // Hourly Rate (10%)
+    const rateDifference = hourlyRateData.ownRate - hourlyRateData.regionAverage;
+    let rateScore = 0;
+
+    if (rateDifference <= 0) {
+      rateScore = 10;
+    } else if (rateDifference <= 10) {
+      rateScore = 7;
+    } else if (rateDifference <= 20) {
+      rateScore = 4;
+    }
+
+    score += rateScore;
   }
-  
-  if (realData.performance.score < 50) {
-    penalties += 10; // Schlechte Performance schadet lokaler Sichtbarkeit
-    console.log('KRITISCHER ABZUG: Schlechte Performance -> -10');
-  }
-  
-  // Finale Berechnung
-  const rawScore = localScore + gmbScore + napScore + citationScore + localContentScore - penalties;
-  const finalScore = Math.max(0, Math.min(100, rawScore));
-  
-  console.log('=== LOCAL SEO SCORE ERGEBNIS (SEHR STRENG) ===');
-  console.log(`Startwert: ${localScore}`);
-  console.log(`Google My Business: +${gmbScore} (von 40 möglich)`);
-  console.log(`NAP Konsistenz: +${napScore} (von 25 möglich)`);
-  console.log(`Citations: +${citationScore} (von 20 möglich)`);
-  console.log(`Lokaler Content: +${localContentScore} (von 15 möglich)`);
-  console.log(`Penalties: -${penalties}`);
-  console.log(`Raw Score: ${rawScore}`);
-  console.log(`FINALER LOCAL SEO SCORE: ${finalScore}`);
-  console.log(`Lokale Sichtbarkeit: ${finalScore >= 80 ? 'EXZELLENT' : finalScore >= 60 ? 'GUT' : finalScore >= 40 ? 'AUSBAUFÄHIG' : 'KRITISCH'}`);
-  console.log('=== BERECHNUNG BEENDET ===');
-  
-  return finalScore;
-}
+
+  return Math.min(score, 100);
+};
