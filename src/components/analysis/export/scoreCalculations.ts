@@ -339,15 +339,20 @@ export const calculateStaffServiceScore = (
 
 // Add missing function stubs for exported functions that are expected by other files
 export const calculateLocalSEOScore = (businessData: any, realData: any): number => {
-  return 75; // Default score
+  // Verwende echte SEO-Daten falls vorhanden
+  return realData?.seo?.score || 75; // Verwende den echten SEO-Score
 };
 
 export const calculateStaffQualificationScore = (data: any): number => {
-  return 80; // Default score
+  // Echte Berechnung basierend auf Daten
+  if (!data) return 80;
+  return calculateStaffServiceScore(data, null, null, null); // Verwende existierende Logik
 };
 
 export const calculateQuoteResponseScore = (data: any): number => {
-  return 70; // Default score
+  // Echte Berechnung basierend auf Quote Response Daten
+  if (!data) return 70;
+  return calculateStaffServiceScore(null, data, null, null); // Verwende existierende Logik
 };
 
 export const calculateOverallScore = (scores: any): number => {
@@ -374,11 +379,20 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
 };
 
 export const calculateContentQualityScore = (realData: any, manualKeywordData: any, businessData: any, manualContentData: any): number => {
-  return 75; // Default score
+  // Verwende manuelle Content-Daten falls vorhanden
+  if (manualContentData) {
+    return Math.round((manualContentData.textQuality + manualContentData.contentRelevance + 
+                      manualContentData.expertiseLevel + manualContentData.contentFreshness) / 4);
+  }
+  return realData?.content?.qualityScore || 75; // Fallback auf echte Daten oder Default
 };
 
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
-  return 75; // Default score
+  // Verwende manuelle Backlink-Daten falls vorhanden
+  if (manualBacklinkData) {
+    return manualBacklinkData.overallScore || 75;
+  }
+  return realData?.backlinks?.score || 75; // Fallback auf echte Daten oder Default
 };
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
@@ -431,7 +445,18 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
-  return 75; // Default score
+  // Verwende echte Corporate Identity Daten
+  if (!data) return 75;
+  
+  let score = 50; // Basis-Score
+  let checkedItems = 0;
+  
+  if (data.uniformLogo) { score += 12.5; checkedItems++; }
+  if (data.uniformWorkClothing) { score += 12.5; checkedItems++; }
+  if (data.uniformVehicleBranding) { score += 12.5; checkedItems++; }
+  if (data.uniformColorScheme) { score += 12.5; checkedItems++; }
+  
+  return Math.min(100, score);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any): number => {
