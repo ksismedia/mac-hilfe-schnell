@@ -455,16 +455,35 @@ export class BusinessAnalysisService {
     
     // Spezifische Varianten für deutsche Begriffe
     const germanVariants: { [key: string]: string[] } = {
-      'sanitär': ['sanitaer', 'sanitaer-', 'sanitär-', 'sanitar'],
-      'heizung': ['heiz', 'heizungs', 'heizungsanlage', 'heizungsbau'],
+      'sanitär': ['sanitaer', 'sanitaer-', 'sanitär-', 'sanitar', 'sanitärinstallation', 'sanitärtechnik'],
+      'heizung': ['heiz', 'heizungs', 'heizungsanlage', 'heizungsbau', 'heizungstechnik'],
       'klima': ['klima-', 'klimaanlage', 'klimatechnik'],
-      'installation': ['install', 'installations', 'installateur'],
+      'installation': ['install', 'installations', 'installateur', 'elektroinstallation', 'sanitärinstallation'],
       'wartung': ['wartungs', 'service', 'instandhaltung'],
       'notdienst': ['notfall', 'emergency', '24h'],
-      'bad': ['badezimmer', 'bäder', 'bad-'],
+      'bad': ['badezimmer', 'bäder', 'bad-', 'badsanierung', 'badmodernisierung', 'barrierefreies bad'],
       'dusche': ['duschen', 'dusch-'],
       'rohrreinigung': ['rohr', 'rohre', 'abfluss'],
-      'handwerker': ['handwerk', 'meister', 'betrieb']
+      'handwerker': ['handwerk', 'meister', 'betrieb', 'meisterbetrieb'],
+      'maler': ['malerei', 'malerbetrieb', 'malerarbeiten'],
+      'lackierung': ['lack', 'lackier'],
+      'fassade': ['fassaden', 'fassadensanierung'],
+      'anstrich': ['innenanstrich', 'außenanstrich'],
+      'wärmedämmung': ['dämmung', 'wärmedämm'],
+      'elektriker': ['elektro', 'elektrotechnik', 'elektroarbeiten', 'elektroplanung', 'elektromontage'],
+      'beleuchtung': ['licht', 'lampen'],
+      'photovoltaik': ['pv', 'solar', 'solaranlage'],
+      'dachdecker': ['dachdeckerei', 'dachbau'],
+      'dach': ['dacharbeiten', 'dacheindeckung', 'dachschutz', 'dachreparatur', 'dachmodernisierung'],
+      'abdichtung': ['abdicht'],
+      'ziegel': ['dachziegel'],
+      'stukateur': ['stuck', 'stuckarbeiten'],
+      'putz': ['verputz', 'oberputz', 'unterputz', 'fassadenputz', 'putzarbeiten'],
+      'trockenbau': ['trockenausbau'],
+      'planung': ['planungsbüro', 'fachplanung', 'projektplanung', 'bauplanung', 'technikplanung'],
+      'versorgungstechnik': ['haustechnik', 'gebäudetechnik', 'anlagenplanung'],
+      'beratung': ['energieberatung', 'technische planung'],
+      'ingenieurbüro': ['ingenieur']
     };
     
     if (germanVariants[keyword]) {
@@ -705,13 +724,38 @@ export class BusinessAnalysisService {
       'shk': [
         'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 
         'rohrreinigung', 'badezimmer', 'bad', 'installateur', 'badsanierung', 
-        'badmodernisierung', 'wärmepumpe', 'barrierefreies bad', 'photovoltaik'
+        'badmodernisierung', 'wärmepumpe', 'barrierefreies bad', 'photovoltaik',
+        'heizungsbau', 'klimaanlage', 'lüftung', 'sanitärinstallation', 'handwerker',
+        'meisterbetrieb', 'sanitärtechnik', 'heizungstechnik', 'klimatechnik'
       ],
-      'maler': ['malerei', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren'],
-      'elektriker': ['elektro', 'installation', 'beleuchtung', 'smart home', 'strom'],
-      'dachdecker': ['dach', 'dachdeckung', 'ziegel', 'abdichtung', 'flachdach'],
-      'stukateur': ['stuck', 'putz', 'fassade', 'innenausbau', 'trockenbau'],
-      'planungsbuero': ['planung', 'versorgungstechnik', 'beratung', 'technikplanung'],
+      'maler': [
+        'maler', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren', 
+        'malerbetrieb', 'wärmedämmung', 'innenausbau', 'bodenbelag', 'malerei',
+        'fassadensanierung', 'innenanstrich', 'außenanstrich', 'malerarbeiten',
+        'handwerker', 'meisterbetrieb', 'renovierungsarbeiten', 'wandgestaltung'
+      ],
+      'elektriker': [
+        'elektriker', 'elektro', 'installation', 'beleuchtung', 'smart home', 
+        'elektroinstallation', 'photovoltaik', 'sicherheitstechnik', 'brandschutz', 
+        'stromausfall', 'elektrotechnik', 'elektroarbeiten', 'elektroplanung',
+        'handwerker', 'meisterbetrieb', 'elektromontage', 'energietechnik'
+      ],
+      'dachdecker': [
+        'dachdecker', 'dach', 'ziegel', 'abdichtung', 'flachdach', 'dachsanierung', 
+        'dachrinne', 'photovoltaik', 'dachdeckerei', 'sturmsicherung', 'dachdeckung',
+        'dachbau', 'dacharbeiten', 'dacheindeckung', 'dachschutz',
+        'handwerker', 'meisterbetrieb', 'dachreparatur', 'dachmodernisierung'
+      ],
+      'stukateur': [
+        'stuck', 'putz', 'fassade', 'innenausbau', 'trockenbau', 'stukateur',
+        'verputz', 'oberputz', 'unterputz', 'wärmedämmung', 'fassadenputz',
+        'handwerker', 'meisterbetrieb', 'putzarbeiten', 'stuckarbeiten'
+      ],
+      'planungsbuero': [
+        'planung', 'versorgungstechnik', 'beratung', 'technikplanung', 'planungsbüro',
+        'haustechnik', 'gebäudetechnik', 'anlagenplanung', 'technische planung',
+        'ingenieurbüro', 'fachplanung', 'projektplanung', 'bauplanung'
+      ],
     };
     
     return keywords[industry as keyof typeof keywords] || ['handwerk', 'service'];

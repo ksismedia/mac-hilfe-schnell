@@ -71,12 +71,41 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
 
   const getIndustryKeywords = (industry: string) => {
     const suggestions = {
-      'shk': ['sanitär', 'heizung', 'klima', 'bad', 'installation', 'wartung', 'notdienst', 'rohrreinigung', 'badezimmer', 'wärmepumpe'],
-      'maler': ['maler', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren', 'malerbetrieb', 'wärmedämmung', 'innenausbau', 'bodenbelag'],
-      'elektriker': ['elektriker', 'elektro', 'installation', 'beleuchtung', 'smart home', 'elektroinstallation', 'photovoltaik', 'sicherheitstechnik', 'brandschutz', 'stromausfall'],
-      'dachdecker': ['dachdecker', 'dach', 'ziegel', 'abdichtung', 'flachdach', 'dachsanierung', 'dachrinne', 'photovoltaik', 'dachdeckerei', 'sturmsicherung'],
-      'stukateur': ['stuckateur', 'putz', 'fassade', 'innenausbau', 'trockenbau', 'wärmedämmung', 'fassadensanierung', 'verputz', 'stuck', 'wandgestaltung'],
-      'planungsbuero': ['planung', 'beratung', 'versorgungstechnik', 'haustechnik', 'energieberatung', 'bauplanung', 'gebäudetechnik', 'anlagentechnik', 'projektplanung', 'ingenieur']
+      'shk': [
+        'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst', 
+        'rohrreinigung', 'badezimmer', 'bad', 'installateur', 'badsanierung', 
+        'badmodernisierung', 'wärmepumpe', 'barrierefreies bad', 'photovoltaik',
+        'heizungsbau', 'klimaanlage', 'lüftung', 'sanitärinstallation', 'handwerker',
+        'meisterbetrieb', 'sanitärtechnik', 'heizungstechnik', 'klimatechnik'
+      ],
+      'maler': [
+        'maler', 'lackierung', 'fassade', 'anstrich', 'renovierung', 'tapezieren', 
+        'malerbetrieb', 'wärmedämmung', 'innenausbau', 'bodenbelag', 'malerei',
+        'fassadensanierung', 'innenanstrich', 'außenanstrich', 'malerarbeiten',
+        'handwerker', 'meisterbetrieb', 'renovierungsarbeiten', 'wandgestaltung'
+      ],
+      'elektriker': [
+        'elektriker', 'elektro', 'installation', 'beleuchtung', 'smart home', 
+        'elektroinstallation', 'photovoltaik', 'sicherheitstechnik', 'brandschutz', 
+        'stromausfall', 'elektrotechnik', 'elektroarbeiten', 'elektroplanung',
+        'handwerker', 'meisterbetrieb', 'elektromontage', 'energietechnik'
+      ],
+      'dachdecker': [
+        'dachdecker', 'dach', 'ziegel', 'abdichtung', 'flachdach', 'dachsanierung', 
+        'dachrinne', 'photovoltaik', 'dachdeckerei', 'sturmsicherung', 'dachdeckung',
+        'dachbau', 'dacharbeiten', 'dacheindeckung', 'dachschutz',
+        'handwerker', 'meisterbetrieb', 'dachreparatur', 'dachmodernisierung'
+      ],
+      'stukateur': [
+        'stuck', 'putz', 'fassade', 'innenausbau', 'trockenbau', 'stukateur',
+        'verputz', 'oberputz', 'unterputz', 'wärmedämmung', 'fassadenputz',
+        'handwerker', 'meisterbetrieb', 'putzarbeiten', 'stuckarbeiten'
+      ],
+      'planungsbuero': [
+        'planung', 'versorgungstechnik', 'beratung', 'technikplanung', 'planungsbüro',
+        'haustechnik', 'gebäudetechnik', 'anlagenplanung', 'technische planung',
+        'ingenieurbüro', 'fachplanung', 'projektplanung', 'bauplanung'
+      ],
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];
   };
