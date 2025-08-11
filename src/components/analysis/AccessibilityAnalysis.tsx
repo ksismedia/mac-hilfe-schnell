@@ -389,10 +389,11 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </div>
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-200">
                   <div 
-                    className={`h-full transition-all duration-300 rounded-full flex items-center justify-center ${
-                      accessibilityData.score >= 95 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${accessibilityData.score}%` }}
+                    className="h-full transition-all duration-300 rounded-full flex items-center justify-center"
+                    style={{ 
+                      width: `${accessibilityData.score}%`,
+                      backgroundColor: accessibilityData.score >= 95 ? '#eab308' : '#ef4444' // yellow-500 : red-500
+                    }}
                   >
                     {accessibilityData.score > 0 && (
                       <span className="text-xs font-medium text-white">
