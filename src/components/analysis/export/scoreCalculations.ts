@@ -382,7 +382,14 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
 };
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
+  console.log('🎯 calculateAccessibilityScore called with:', {
+    realData: realData ? 'present' : 'null',
+    manualAccessibilityData: manualAccessibilityData ? manualAccessibilityData : 'null'
+  });
+  
   if (manualAccessibilityData) {
+    console.log('🎯 Using manual accessibility data:', manualAccessibilityData);
+    
     const featuresScore = [
       manualAccessibilityData.keyboardNavigation,
       manualAccessibilityData.screenReaderCompatible,
@@ -402,14 +409,24 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
                        !manualAccessibilityData.focusVisibility || 
                        !manualAccessibilityData.textScaling;
     
-    return hasProblems ? Math.min(59, baseScore) : baseScore;
+    const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
+    console.log('🎯 Calculated accessibility score:', {
+      featuresScore,
+      baseScore,
+      hasProblems,
+      finalScore
+    });
+    
+    return finalScore;
   }
   
   // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger
   if (realData?.violations && realData.violations.length > 0) {
+    console.log('🎯 Using real data with violations, returning 40');
     return Math.min(59, 40); // Grundwert bei automatisch erkannten Problemen
   }
   
+  console.log('🎯 No data available, returning default 75');
   return 75; // Default score wenn keine Daten vorhanden
 };
 
