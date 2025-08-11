@@ -188,9 +188,9 @@
 
 /* Spezielle Barrierefreiheit Progress Bar Klassen */
 .progress-accessibility-compliant {
-  background: hsl(var(--progress-yellow));
+  background: hsl(var(--progress-yellow)) !important;
 }
 
 .progress-accessibility-non-compliant {
-  background: hsl(var(--progress-red));
+  background: hsl(var(--progress-red)) !important;
 }
