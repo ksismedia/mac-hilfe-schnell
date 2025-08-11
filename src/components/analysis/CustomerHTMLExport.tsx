@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -56,6 +56,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   privacyData,
   accessibilityData
 }) => {
+  // Import useManualData to get current state
+  const { manualAccessibilityData: currentManualAccessibilityData } = useManualData();
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
     console.log('manualImprintData:', manualImprintData);
@@ -138,6 +140,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('DEBUG CustomerHTMLExport - companyServices:', companyServices);
     console.log('DEBUG CustomerHTMLExport - deletedCompetitors:', deletedCompetitors);
     console.log('🔴 manualAccessibilityData passed to CustomerHTMLExport:', manualAccessibilityData);
+    console.log('🔴 currentManualAccessibilityData from hook:', currentManualAccessibilityData);
     
     console.log('=== STARTING HTML GENERATION ===');
     const htmlContent = generateCustomerHTML({
@@ -159,7 +162,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       quoteResponseData,
       dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
-      manualAccessibilityData,
+      manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData
     });
     console.log('=== HTML CONTENT GENERATED ===');
