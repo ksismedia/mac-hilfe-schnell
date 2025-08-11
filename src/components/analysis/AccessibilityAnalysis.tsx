@@ -33,6 +33,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   // Helper function to merge manual and automatic accessibility data
   const getEffectiveAccessibilityData = () => {
     if (manualAccessibilityData) {
+      // Erzwinge neue Berechnung mit der korrigierten Logik
       const finalScore = calculateAccessibilityScore(null, manualAccessibilityData);
       
       const hasProblems = !manualAccessibilityData.keyboardNavigation || 
@@ -41,6 +42,8 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                          !manualAccessibilityData.altTextsPresent || 
                          !manualAccessibilityData.focusVisibility || 
                          !manualAccessibilityData.textScaling;
+      
+      console.log('Manual Accessibility Score berechnet:', finalScore, 'Hat Probleme:', hasProblems);
       
       return {
         score: finalScore,
@@ -64,7 +67,9 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
 
   // Get the effective accessibility data (manual overrides automatic)
   const getCurrentAccessibilityData = () => {
-    return getEffectiveAccessibilityData();
+    const effectiveData = getEffectiveAccessibilityData();
+    console.log('Aktuelle Accessibility Data:', effectiveData);
+    return effectiveData;
   };
 
   const runAccessibilityTest = async () => {
