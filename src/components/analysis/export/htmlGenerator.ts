@@ -1805,7 +1805,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(dataPrivacyScore)}">${dataPrivacyScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(actualDataPrivacyScore)}">${actualDataPrivacyScore}%</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           <div class="score-card">
