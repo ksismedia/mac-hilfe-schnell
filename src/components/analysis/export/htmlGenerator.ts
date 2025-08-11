@@ -487,12 +487,12 @@ export const generateCustomerHTML = ({
             </div>
           </div>
         ` : ''}
-        <h3 class="header-${getScoreColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="header-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
-          <span class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span>
+          <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${accessibilityScore}%</span>
         </h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
+          <div class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
              <p><strong>Compliance-Level:</strong> 
                <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
@@ -509,7 +509,7 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- WCAG-Analyse -->
-        <div class="collapsible header-${getScoreColorClass(accessibilityScore)}" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
+        <div class="collapsible header-${getAccessibilityComplianceColorClass(accessibilityScore)}" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
           <h4 style="color: white; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
         </div>
         
