@@ -104,7 +104,9 @@ export const generateCustomerHTML = ({
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
+  console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
+  console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   const actualDataPrivacyScore = calculateDataPrivacyScore(realData, dataPrivacyScore);
   
   // Use actual company services if available, otherwise fall back to industry defaults
