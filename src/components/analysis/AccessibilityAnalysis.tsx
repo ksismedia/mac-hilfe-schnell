@@ -249,7 +249,9 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
             return currentData && (
             <div className="space-y-6">
               {/* Legal Warning for Accessibility Issues */}
-              {(accessibilityData.violations.length > 0 || accessibilityData.score < 90) && (
+              {(() => {
+                const currentData = getCurrentAccessibilityData();
+                return (currentData && (currentData.violations.length > 0 || currentData.score < 90)) && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />
@@ -265,7 +267,8 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                     Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
                   </div>
                 </div>
-              )}
+                );
+              })()}
 
               {/* Score Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
