@@ -63,9 +63,13 @@ const Index = () => {
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
-    if (existingKey) {
+    console.log('Existing API key found:', !!existingKey);
+    
+    if (existingKey && existingKey.length > 0) {
+      console.log('Moving to results with existing API key');
       setStep('results');
     } else {
+      console.log('No valid API key found, requesting API key input');
       setStep('api');
     }
   };
@@ -89,14 +93,30 @@ const Index = () => {
 
   const validateAndSaveApiKey = async (keyToValidate: string) => {
     setIsValidatingApiKey(true);
+    console.log('Validating API key...');
 
     try {
+      // Use CORS proxy for API validation
       const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
-      const response = await fetch(testUrl);
+      const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(testUrl)}`;
+      
+      console.log('Testing API key with URL:', proxiedUrl);
+      const response = await fetch(proxiedUrl);
+      
+      if (!response.ok) {
+        console.error('Network error:', response.status, response.statusText);
+        throw new Error(`Network error: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('API validation response:', data);
 
-      if (response.ok && data.status === 'OK') {
+      if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
+        console.log('API key is valid, saving...');
         GoogleAPIService.setApiKey(keyToValidate);
+        setApiKey(keyToValidate);
+        
+        console.log('Moving to results step...');
         setStep('results');
         
         toast({
@@ -106,13 +126,14 @@ const Index = () => {
         
         return true;
       } else {
+        console.error('API validation failed with status:', data.status);
         throw new Error(`API validation failed: ${data.status || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('API Key validation error:', error);
       toast({
         title: "❌ Ungültiger API-Key",
-        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe.",
+        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe und Internetverbindung.",
         variant: "destructive",
       });
       return false;
