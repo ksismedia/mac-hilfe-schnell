@@ -56,6 +56,17 @@ const getScoreColor = (score: number) => {
   return '#FFD700';                    // 81-100% gelb (consistent with CSS)
 };
 
+// Spezielle Farbfunktionen für Barrierefreiheit Compliance (nur für diesen einen Balken)
+const getAccessibilityComplianceColorClass = (score: number) => {
+  if (score < 95) return "red";        // unter 95% rot
+  return "yellow";                     // über 95% gelb
+};
+
+const getAccessibilityComplianceColor = (score: number) => {
+  if (score < 95) return "#FF0000";    // unter 95% rot
+  return "#FFD700";                    // über 95% gelb
+};
+
 export const generateCustomerHTML = ({
   businessData,
   realData,
@@ -483,17 +494,17 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</div>
           <div class="score-details">
-            <p><strong>Compliance-Level:</strong> 
-              <span class="score-text ${getScoreColorClass(accessibilityScore)}">
-                ${accessibilityScore >= 80 ? 'AA konform' : accessibilityScore >= 60 ? 'Teilweise konform' : 'Nicht konform'}
-              </span>
-            </p>
+             <p><strong>Compliance-Level:</strong> 
+               <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
+                 ${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'}
+               </span>
+             </p>
             <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
           </div>
         </div>
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%;"></div>
+            <div class="progress-fill progress-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%; background-color: ${getAccessibilityComplianceColor(accessibilityScore)};"></div>
           </div>
         </div>
 
