@@ -630,7 +630,7 @@ export const generateCustomerHTML = ({
   // SEO Analysis - Enhanced - basierend auf tatsächlichen Werten der SEOAnalysis Komponente
   const getSEOAnalysis = () => {
     // Kritischere Bewertung basierend auf realen SEO-Daten
-    const effectiveKeywordScore = keywordScore !== undefined ? keywordScore : realData.seo.score;
+    const effectiveKeywordScore = keywordScore !== null && keywordScore !== undefined ? keywordScore : realData.seo.score;
     const keywordData = manualKeywordData || realData.keywords;
     const foundKeywords = keywordData.filter(k => k.found).length;
     
@@ -730,7 +730,7 @@ export const generateCustomerHTML = ({
                     <div class="progress-point" style="left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
                   </div>
                 </div>
-              <small class="secondary-text">Score: ${effectiveKeywordScore}%</small>
+              <small class="secondary-text">Score: ${effectiveKeywordScore !== null && effectiveKeywordScore !== undefined ? effectiveKeywordScore : 'N/A'}%</small>
             </div>
             <div>
               <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
