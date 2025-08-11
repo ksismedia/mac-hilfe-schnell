@@ -51,7 +51,9 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       console.log('Loaded score:', loadedKeywordScore);
       
       const foundKeywords = loadedKeywordData.filter(k => k.found).length;
-      const score = loadedKeywordScore || Math.round((foundKeywords / loadedKeywordData.length) * 100);
+      const score = loadedKeywordScore !== undefined && loadedKeywordScore !== null 
+        ? loadedKeywordScore 
+        : Math.max(30, Math.round((foundKeywords / loadedKeywordData.length) * 100));
       
       setKeywordData({
         totalKeywords: loadedKeywordData.length,
