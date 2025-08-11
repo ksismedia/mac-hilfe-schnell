@@ -266,14 +266,14 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="border-blue-200">
                   <CardContent className="p-6 text-center">
-                    <div className={`text-5xl font-bold ${getScoreColor(accessibilityData.score)} mb-2`}>
-                      {accessibilityData.score}
+                    <div className={`text-5xl font-bold ${getScoreColor(getCurrentAccessibilityData()?.score || 0)} mb-2`}>
+                      {getCurrentAccessibilityData()?.score || 0}
                     </div>
                     <div className="text-sm text-gray-600">Gesamt-Score</div>
-                    <Badge variant={getScoreBadge(accessibilityData.score)} className="mt-2">
-                      {accessibilityData.score >= 90 ? 'Excellent' : 
-                       accessibilityData.score >= 70 ? 'Gut' : 
-                       accessibilityData.score >= 50 ? 'Verbesserbar' : 'Kritisch'}
+                    <Badge variant={getScoreBadge(getCurrentAccessibilityData()?.score || 0)} className="mt-2">
+                      {(getCurrentAccessibilityData()?.score || 0) >= 90 ? 'Excellent' : 
+                       (getCurrentAccessibilityData()?.score || 0) >= 70 ? 'Gut' : 
+                       (getCurrentAccessibilityData()?.score || 0) >= 50 ? 'Verbesserbar' : 'Kritisch'}
                     </Badge>
                   </CardContent>
                 </Card>
@@ -387,20 +387,20 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span>Barrierefreiheits-Score</span>
-                  <span className={getScoreColor(accessibilityData.score)}>
-                    {accessibilityData.score}/100
+                  <span className={getScoreColor(getCurrentAccessibilityData()?.score || 0)}>
+                    {getCurrentAccessibilityData()?.score || 0}/100
                   </span>
                 </div>
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-200">
                   <div 
                     className={`h-full transition-all duration-300 rounded-full flex items-center justify-center ${
-                      accessibilityData.score >= 95 ? 'progress-accessibility-compliant' : 'progress-accessibility-non-compliant'
+                      (getCurrentAccessibilityData()?.score || 0) >= 95 ? 'progress-accessibility-compliant' : 'progress-accessibility-non-compliant'
                     }`}
-                    style={{ width: `${accessibilityData.score}%` }}
+                    style={{ width: `${getCurrentAccessibilityData()?.score || 0}%` }}
                   >
-                    {accessibilityData.score > 0 && (
+                    {(getCurrentAccessibilityData()?.score || 0) > 0 && (
                       <span className="text-xs font-medium text-white">
-                        {accessibilityData.score}%
+                        {getCurrentAccessibilityData()?.score || 0}%
                       </span>
                     )}
                   </div>
