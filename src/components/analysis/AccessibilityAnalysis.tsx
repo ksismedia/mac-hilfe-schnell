@@ -241,7 +241,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </div>
               )}
 
-          {accessibilityData && (
+          {(() => {
+            const currentData = getCurrentAccessibilityData();
+            console.log('🔍 ACCESSIBILITY DEBUG - Current Data:', currentData);
+            console.log('🔍 ACCESSIBILITY DEBUG - Raw accessibilityData:', accessibilityData);
+            console.log('🔍 ACCESSIBILITY DEBUG - manualAccessibilityData:', manualAccessibilityData);
+            return currentData && (
             <div className="space-y-6">
               {/* Legal Warning for Accessibility Issues */}
               {(accessibilityData.violations.length > 0 || accessibilityData.score < 90) && (
