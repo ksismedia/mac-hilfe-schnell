@@ -392,7 +392,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                     className="h-full transition-all duration-300 rounded-full flex items-center justify-center"
                     style={{ 
                       width: `${accessibilityData.score}%`,
-                      backgroundColor: accessibilityData.score >= 95 ? '#eab308' : '#ef4444' // yellow-500 : red-500
+                      backgroundColor: accessibilityData.score >= 95 ? '#eab308 !important' : '#ef4444 !important' // Force override
                     }}
                   >
                     {accessibilityData.score > 0 && (
