@@ -140,7 +140,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateCorporateIdentityData,
               updateCompetitors,
               updateCompetitorServices,
-              updateCompanyServices
+              updateCompanyServices,
+              setManualKeywordData
             );
             
             return;

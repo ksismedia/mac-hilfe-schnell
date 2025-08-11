@@ -144,7 +144,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               updateCorporateIdentityData,
               updateCompetitors,
               updateCompetitorServices,
-              updateCompanyServices
+              updateCompanyServices,
+              setManualKeywordData
             );
             
             return;

@@ -19,7 +19,8 @@ export const loadSavedAnalysisData = (
   updateCorporateIdentityData: (data: ManualCorporateIdentityData | null) => void,
   updateCompetitors: (competitors: ManualCompetitor[]) => void,
   updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void,
-  updateCompanyServices?: (services: string[]) => void
+  updateCompanyServices?: (services: string[]) => void,
+  setManualKeywordData?: (data: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void
 ) => {
   // Load manual data
   if (savedAnalysis.manualData.imprint) {
@@ -44,5 +45,10 @@ export const loadSavedAnalysisData = (
   // Load company services if available
   if (savedAnalysis.manualData.companyServices && updateCompanyServices) {
     updateCompanyServices(savedAnalysis.manualData.companyServices.services || []);
+  }
+  
+  // Load keyword data if available
+  if (savedAnalysis.manualData.keywordData && setManualKeywordData) {
+    setManualKeywordData(savedAnalysis.manualData.keywordData);
   }
 };
