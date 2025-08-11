@@ -96,6 +96,7 @@ export const generateCustomerHTML = ({
   
   // Calculate scores for own business including services
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  console.log('🔶 HTML Generator Social Media Debug:', { manualSocialData, socialMediaScore });
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
@@ -1526,6 +1527,7 @@ export const generateCustomerHTML = ({
   const getSocialMediaAnalysis = () => {
     console.log('getSocialMediaAnalysis called with socialMediaScore:', socialMediaScore);
     console.log('getSocialMediaAnalysis called with manualSocialData:', manualSocialData);
+    console.log('🔶 Detailed manual social data check:', JSON.stringify(manualSocialData, null, 2));
     
     if (!manualSocialData) {
       return `
