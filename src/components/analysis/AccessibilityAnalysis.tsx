@@ -8,6 +8,7 @@ import { ManualAccessibilityInput } from './ManualAccessibilityInput';
 import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { AccessibilityService, AccessibilityResult, AccessibilityViolation } from '@/services/AccessibilityService';
+import { calculateAccessibilityScore } from './export/scoreCalculations';
 
 interface AccessibilityAnalysisProps {
   businessData: {
@@ -32,26 +33,14 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   // Helper function to merge manual and automatic accessibility data
   const getEffectiveAccessibilityData = () => {
     if (manualAccessibilityData) {
-      const featuresScore = [
-        manualAccessibilityData.keyboardNavigation,
-        manualAccessibilityData.screenReaderCompatible,
-        manualAccessibilityData.colorContrast,
-        manualAccessibilityData.altTextsPresent,
-        manualAccessibilityData.focusVisibility,
-        manualAccessibilityData.textScaling
-      ].filter(Boolean).length * 10;
+      const finalScore = calculateAccessibilityScore(null, manualAccessibilityData);
       
-      const baseScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
-      
-      // Neue Bewertungslogik: Bei Problemen sofort 59% oder weniger
       const hasProblems = !manualAccessibilityData.keyboardNavigation || 
                          !manualAccessibilityData.screenReaderCompatible || 
                          !manualAccessibilityData.colorContrast || 
                          !manualAccessibilityData.altTextsPresent || 
                          !manualAccessibilityData.focusVisibility || 
                          !manualAccessibilityData.textScaling;
-      
-      const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
       
       return {
         score: finalScore,
