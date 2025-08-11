@@ -227,9 +227,10 @@ export class AccessibilityService {
       }
     );
     
-    // Score berechnen (realistisch)
+    // Score berechnen mit neuer Logik: Bei Problemen sofort 59% oder weniger
     const totalChecks = violations.length + passes.length;
-    const score = Math.round((passes.length / totalChecks) * 100);
+    const baseScore = Math.round((passes.length / totalChecks) * 100);
+    const score = violations.length > 0 ? Math.min(59, baseScore) : baseScore;
     
     // WCAG Level bestimmen
     const criticalViolations = violations.filter(v => v.impact === 'critical' || v.wcagLevel === 'A').length;

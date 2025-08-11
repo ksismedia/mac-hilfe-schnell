@@ -41,7 +41,17 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
         manualAccessibilityData.textScaling
       ].filter(Boolean).length * 10;
       
-      const finalScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
+      const baseScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
+      
+      // Neue Bewertungslogik: Bei Problemen sofort 59% oder weniger
+      const hasProblems = !manualAccessibilityData.keyboardNavigation || 
+                         !manualAccessibilityData.screenReaderCompatible || 
+                         !manualAccessibilityData.colorContrast || 
+                         !manualAccessibilityData.altTextsPresent || 
+                         !manualAccessibilityData.focusVisibility || 
+                         !manualAccessibilityData.textScaling;
+      
+      const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
       
       return {
         score: finalScore,
