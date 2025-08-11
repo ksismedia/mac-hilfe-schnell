@@ -227,7 +227,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
-                  {keywordData.overallScore !== null && keywordData.overallScore !== undefined ? `${keywordData.overallScore}%` : 'N/A'}
+                  {(() => {
+                    console.log('🔍 KEYWORD SCORE DEBUG:', {
+                      overallScore: keywordData.overallScore,
+                      type: typeof keywordData.overallScore,
+                      isNull: keywordData.overallScore === null,
+                      isUndefined: keywordData.overallScore === undefined
+                    });
+                    return keywordData.overallScore !== null && keywordData.overallScore !== undefined ? `${keywordData.overallScore}%` : 'N/A';
+                  })()}
                 </div>
                 <div className="text-sm text-gray-600">Gesamtscore</div>
               </div>

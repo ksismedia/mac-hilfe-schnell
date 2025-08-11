@@ -9,6 +9,8 @@ const KeywordProgress = React.forwardRef<HTMLDivElement, KeywordProgressProps>(
   ({ className, value = 0, ...props }, ref) => {
     const percentage = Math.max(0, Math.min(100, Number(value) || 0));
     
+    console.log('🎯 KEYWORD PROGRESS DEBUG:', { originalValue: value, percentage });
+    
     // Standard Score-basierte Farblogik für Keywords
     const getBarColor = (val: number): string => {
       if (val <= 60) return 'bg-red-500'; // Rot für 0-60%
