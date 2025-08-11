@@ -382,7 +382,35 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
 };
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
-  return 75; // Default score
+  if (manualAccessibilityData) {
+    const featuresScore = [
+      manualAccessibilityData.keyboardNavigation,
+      manualAccessibilityData.screenReaderCompatible,
+      manualAccessibilityData.colorContrast,
+      manualAccessibilityData.altTextsPresent,
+      manualAccessibilityData.focusVisibility,
+      manualAccessibilityData.textScaling
+    ].filter(Boolean).length * 10;
+    
+    const baseScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
+    
+    // Neue Bewertungslogik: Bei Problemen sofort 59% oder weniger
+    const hasProblems = !manualAccessibilityData.keyboardNavigation || 
+                       !manualAccessibilityData.screenReaderCompatible || 
+                       !manualAccessibilityData.colorContrast || 
+                       !manualAccessibilityData.altTextsPresent || 
+                       !manualAccessibilityData.focusVisibility || 
+                       !manualAccessibilityData.textScaling;
+    
+    return hasProblems ? Math.min(59, baseScore) : baseScore;
+  }
+  
+  // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger
+  if (realData?.violations && realData.violations.length > 0) {
+    return Math.min(59, 40); // Grundwert bei automatisch erkannten Problemen
+  }
+  
+  return 75; // Default score wenn keine Daten vorhanden
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
