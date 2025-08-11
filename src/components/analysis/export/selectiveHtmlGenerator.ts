@@ -209,7 +209,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       console.log('=== DATA PRIVACY DEBUG ===');
       console.log('privacyData:', privacyData);
       // Use manual data privacy score if provided, otherwise fallback to calculated
-      const dataPrivacyScore = privacyData?.score || data.dataPrivacyScore || calculateDataPrivacyScore(realData);
+      const dataPrivacyScore = privacyData?.score || data.dataPrivacyScore || calculateDataPrivacyScore(realData, privacyData);
       console.log('Using data privacy score:', dataPrivacyScore);
       const hasDataPrivacyIssues = dataPrivacyScore < 90;
       
