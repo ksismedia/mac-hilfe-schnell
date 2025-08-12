@@ -495,8 +495,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
               ${getLogoHTML()}
             </div>
             <div class="footer-text">
-              <p><strong>HANDWERK STARS</strong></p>
-              <p>Professionelle Website-Analyse für das Handwerk</p>
+              <p>Professionelle Website-Analyse</p>
               <p>© ${new Date().getFullYear()} Alle Rechte vorbehalten</p>
             </div>
           </div>

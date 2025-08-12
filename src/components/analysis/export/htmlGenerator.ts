@@ -1721,7 +1721,7 @@ export const generateCustomerHTML = ({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNNA - die Unternehmensanalyse fürs Handwerk - ${realData.company.name}</title>
+  <title>UNNA - die Unternehmensanalyse - ${realData.company.name}</title>
   <style>
     ${getHTMLStyles()}
   </style>
@@ -1743,7 +1743,7 @@ export const generateCustomerHTML = ({
   <div class="container">
     <div class="header">
       ${getLogoHTML()}
-      <h1>UNNA - die Unternehmensanalyse fürs Handwerk</h1>
+      <h1>UNNA - die Unternehmensanalyse</h1>
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
       <p class="gray-text" style="margin-top: 15px;">Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht für: ${realData.company.name}</p>
     </div>
@@ -3045,13 +3045,7 @@ export const generateCustomerHTML = ({
 
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3); max-width: 800px; margin-left: auto; margin-right: auto;">
-      <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
-        <div style="text-align: center;">
-          <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">HANDWERK</div>
-          <div style="font-family: 'Helvetica Condensed', 'Arial Narrow', 'Impact', Arial, sans-serif; font-size: 28px; font-weight: 600; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.5px; font-stretch: condensed; background: linear-gradient(135deg, #f4c430 0%, #ffdf3a 50%, #f4c430 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">STARS</div>
-        </div>
-      </div>
-      <h3 style="color: #fbbf24; margin: 15px 0; font-size: 1.2em;">UNNA - die Unternehmensanalyse fürs Handwerk</h3>
+      <h3 style="color: #fbbf24; margin: 15px 0; font-size: 1.2em;">UNNA - die Unternehmensanalyse</h3>
       <div style="color: #9ca3af; font-size: 0.9em;">
         <p style="margin: 0;">Erstellt am ${new Date().toLocaleDateString('de-DE')} | Vollständiger Business-Analyse Report</p>
         <p style="margin: 10px 0 0 0; font-size: 0.8em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
