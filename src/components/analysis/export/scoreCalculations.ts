@@ -351,7 +351,7 @@ export const calculateStaffQualificationScore = (data: any): number => {
 
 export const calculateQuoteResponseScore = (data: any): number => {
   // Echte Berechnung basierend auf Quote Response Daten
-  if (!data) return 70;
+  if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
   return calculateStaffServiceScore(null, data, null, null); // Verwende existierende Logik
 };
 

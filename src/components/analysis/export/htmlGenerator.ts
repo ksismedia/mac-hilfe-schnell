@@ -2923,13 +2923,13 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('quote-response-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Kundenservice & Angebotsbearbeitung</span>
-        <div class="header-score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>
+        ${quoteResponseScore > 0 ? `<div class="header-score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>` : '<div class="header-score-circle" style="background: #e5e7eb; color: #6b7280;">Nicht bewertet</div>'}
       </div>
       <div id="quote-response-content" class="section-content" style="display: none;">
         <div class="metric-card">
           <h3>Anfragebearbeitung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>
+            ${quoteResponseScore > 0 ? `<div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>` : '<div class="score-circle" style="background: #e5e7eb; color: #6b7280;">Nicht bewertet</div>'}
             <div class="score-details">
               <p><strong>Reaktionszeit:</strong> ${quoteResponseData?.responseTime ? 
                 quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde' :
@@ -2947,11 +2947,11 @@ export const generateCustomerHTML = ({
                 'Verbesserungsbedarf' : 'Nicht bewertet'}</p>
             </div>
           </div>
-          <div class="progress-container">
+          ${quoteResponseScore > 0 ? `<div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(quoteResponseScore)}" style="width: ${quoteResponseScore}%"></div>
             </div>
-          </div>
+          </div>` : ''}
         </div>
         
         ${quoteResponseData ? `
