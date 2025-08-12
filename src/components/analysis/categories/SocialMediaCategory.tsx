@@ -68,7 +68,12 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="social-analysis">
-          <SocialMediaAnalysis realData={realData} businessData={businessData} />
+          <SocialMediaAnalysis 
+            realData={realData} 
+            businessData={businessData}
+            manualData={manualSocialData}
+            onManualDataChange={updateSocialData}
+          />
         </TabsContent>
       </Tabs>
     </div>
