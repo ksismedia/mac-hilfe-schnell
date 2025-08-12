@@ -172,8 +172,13 @@ const Index = () => {
   };
 
   const handleLoadSavedAnalysis = (analysis: any) => {
-    // Prevent state updates if we're already in results
+    // Prevent state updates if we're already in results with the same analysis
     if (step === 'results' && loadedAnalysisId === analysis.id) {
+      return;
+    }
+    
+    // Prevent unnecessary state changes during input
+    if (step === 'results' && analysis.businessData.url === businessData.url) {
       return;
     }
     

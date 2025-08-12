@@ -112,7 +112,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Load analysis data or load saved analysis
   useEffect(() => {
     const loadAnalysisData = async () => {
-      if (realData) {
+      // Prevent re-loading if we already have data and it's not a new analysis
+      if (realData && !loadedAnalysisId) {
         return;
       }
       
@@ -166,7 +167,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           });
           return;
         }
-      } else {
+      } else if (!realData) {
+        // Only load new analysis if we don't have real data yet
         setIsLoading(true);
         
         try {
@@ -186,7 +188,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis]);
+  }, [loadedAnalysisId, toast, loadAnalysis]); // Removed businessData dependencies to prevent re-triggering
 
   if (isLoading) {
     return (
