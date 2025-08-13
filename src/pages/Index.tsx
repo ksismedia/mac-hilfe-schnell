@@ -167,9 +167,7 @@ const Index = () => {
     });
   };
 
-  const handleBusinessDataChange = (newBusinessData: BusinessData) => {
-    setBusinessData(newBusinessData);
-  };
+  // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
   const handleLoadSavedAnalysis = (analysis: any) => {
     // Prevent state updates if we're already in results with the same analysis
@@ -226,7 +224,6 @@ const Index = () => {
       <AnalysisDashboard 
         businessData={businessData} 
         onReset={resetToStart}
-        onBusinessDataChange={handleBusinessDataChange}
         loadedAnalysisId={loadedAnalysisId}
       />
     );

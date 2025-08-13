@@ -35,7 +35,6 @@ interface BusinessData {
 interface SimpleAnalysisDashboardProps {
   businessData: BusinessData;
   onReset: () => void;
-  onBusinessDataChange?: (data: BusinessData) => void;
   loadedAnalysisId?: string;
 }
 
@@ -51,7 +50,6 @@ const industryNames = {
 const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({ 
   businessData, 
   onReset, 
-  onBusinessDataChange,
   loadedAnalysisId 
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
