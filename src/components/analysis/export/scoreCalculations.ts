@@ -241,7 +241,12 @@ export const calculateStaffServiceScore = (
   manualCorporateIdentityData: any,
   hourlyRateData: any
 ): number => {
-  let score = 50;
+  // Return 0 if no data is provided at all
+  if (!staffQualificationData && !quoteResponseData && !manualCorporateIdentityData && !hourlyRateData) {
+    return 0;
+  }
+
+  let score = 0;
 
   if (staffQualificationData) {
     // Education and Training (30%)
@@ -345,7 +350,7 @@ export const calculateLocalSEOScore = (businessData: any, realData: any): number
 
 export const calculateStaffQualificationScore = (data: any): number => {
   // Echte Berechnung basierend auf Daten
-  if (!data) return 80;
+  if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
   return calculateStaffServiceScore(data, null, null, null); // Verwende existierende Logik
 };
 
