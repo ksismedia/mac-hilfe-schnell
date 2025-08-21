@@ -452,6 +452,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             keywordsScore={keywordsScore}
             staffQualificationData={staffQualificationData}
             quoteResponseData={quoteResponseData}
+            manualWorkplaceData={manualWorkplaceData}
           />
         </div>
 

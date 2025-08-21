@@ -88,7 +88,7 @@ export const calculateSocialMediaCategoryScore = (
   return Math.round((totalScore / maxScore) * 100);
 };
 
-const calculateWorkplaceScore = (
+export const calculateWorkplaceScore = (
   realData: RealBusinessData,
   manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
