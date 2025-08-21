@@ -5,7 +5,7 @@ import SimpleAnalysisDashboard from './SimpleAnalysisDashboard';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
 }
 
 interface AnalysisDashboardProps {

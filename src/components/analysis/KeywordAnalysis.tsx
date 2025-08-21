@@ -9,7 +9,7 @@ import ManualKeywordInput from './ManualKeywordInput';
 
 interface KeywordAnalysisProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
   realData: RealBusinessData;
   onScoreChange?: (score: number | null) => void;
   onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;

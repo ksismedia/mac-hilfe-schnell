@@ -15,7 +15,7 @@ interface SocialMediaSimpleProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
   };
   realData: RealBusinessData;
   manualData?: ManualSocialData | null;

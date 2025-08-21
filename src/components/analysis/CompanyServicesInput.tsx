@@ -51,6 +51,10 @@ const CompanyServicesInput: React.FC<CompanyServicesInputProps> = ({
       'planungsbuero': [
         'Planung', 'Beratung', 'Projektmanagement', 'Genehmigungen', 
         'Überwachung', 'Gutachten', 'Energieberatung'
+      ],
+      'facility-management': [
+        'Büroreinigung', 'Glasreinigung', 'Hausmeisterservice', 'Gartenpflege', 
+        'Winterdienst', 'Sicherheitsdienst', 'Wartung & Instandhaltung', 'Objektbetreuung'
       ]
     };
     return standardServices[industry as keyof typeof standardServices] || [];

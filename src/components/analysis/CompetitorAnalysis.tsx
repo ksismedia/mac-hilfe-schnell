@@ -54,7 +54,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       'elektriker': ['Elektroinstallation', 'Beleuchtung', 'Smart Home', 'Sicherheitstechnik', 'Wartung', 'Notdienst'],
       'dachdecker': ['Dacheindeckung', 'Dachreparatur', 'Dachrinnen', 'Isolierung', 'Flachdach', 'Wartung'],
       'stukateur': ['Innenputz', 'Außenputz', 'Trockenbau', 'Sanierung', 'Dämmung', 'Stuck'],
-      'planungsbuero': ['Planung', 'Beratung', 'Projektmanagement', 'Genehmigungen', 'Überwachung', 'Gutachten']
+      'planungsbuero': ['Planung', 'Beratung', 'Projektmanagement', 'Genehmigungen', 'Überwachung', 'Gutachten'],
+      'facility-management': ['Büroreinigung', 'Glasreinigung', 'Hausmeisterservice', 'Gartenpflege', 'Winterdienst', 'Sicherheitsdienst']
     };
     return industryServices[industry as keyof typeof industryServices] || [];
   };

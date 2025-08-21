@@ -8,7 +8,7 @@ interface IndustryFeaturesProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
   };
 }
 
@@ -161,6 +161,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           { name: "Baubegleitung", found: true, importance: "mittel" }
         ]
       }
+    ],
+    'facility-management': [
+      {
+        group: "Gebäudereinigung",
+        features: [
+          { name: "Büroreinigung", found: true, importance: "hoch" },
+          { name: "Glasreinigung", found: true, importance: "hoch" },
+          { name: "Industriereinigung", found: false, importance: "mittel" },
+          { name: "Grundreinigung", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Facility Services",
+        features: [
+          { name: "Hausmeisterservice", found: true, importance: "hoch" },
+          { name: "Sicherheitsdienste", found: false, importance: "mittel" },
+          { name: "Gartenpflege", found: true, importance: "mittel" },
+          { name: "Winterdienst", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Wartung & Instandhaltung",
+        features: [
+          { name: "Technische Wartung", found: true, importance: "hoch" },
+          { name: "Kleine Reparaturen", found: true, importance: "hoch" },
+          { name: "Aufzugswartung", found: false, importance: "niedrig" },
+          { name: "Klimaanlagenwartung", found: false, importance: "mittel" }
+        ]
+      }
     ]
   };
 
@@ -197,7 +226,8 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
     elektriker: 'Elektriker',
     dachdecker: 'Dachdecker',
     stukateur: 'Stukateure',
-    planungsbuero: 'Planungsbüro Versorgungstechnik'
+    planungsbuero: 'Planungsbüro Versorgungstechnik',
+    'facility-management': 'Facility-Management & Gebäudereinigung'
   };
 
   return (
@@ -348,7 +378,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
                       </div>
                     </>
                   )}
-                  {businessData.industry === 'planungsbuero' && (
+                   {businessData.industry === 'planungsbuero' && (
                     <>
                       <div className="flex items-start gap-2">
                         <span className="text-green-600">✓</span>
@@ -363,7 +393,23 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
                         <span><strong>Trend:</strong> Brandschutzplanung als zusätzliche Kompetenz</span>
                       </div>
                     </>
-                  )}
+                   )}
+                   {businessData.industry === 'facility-management' && (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-600">✓</span>
+                        <span><strong>Positiv:</strong> Grundlegende Reinigungsleistungen werden angeboten</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Empfehlung:</strong> Industriereinigung als Zusatzservice</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">!</span>
+                        <span><strong>Potenzial:</strong> Sicherheitsdienste für Komplettlösungen</span>
+                      </div>
+                    </>
+                   )}
                 </div>
               </CardContent>
             </Card>

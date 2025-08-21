@@ -12,7 +12,7 @@ interface OverallRatingProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
   };
   realData: RealBusinessData;
   manualSocialData?: ManualSocialData | null;

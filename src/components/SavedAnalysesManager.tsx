@@ -19,7 +19,8 @@ const industryNames = {
   'elektriker': 'Elektroinstallation',
   'dachdecker': 'Dachdeckerei',
   'stukateur': 'Stuckateur & Trockenbau',
-  'planungsbuero': 'Planungsbüro'
+  'planungsbuero': 'Planungsbüro',
+  'facility-management': 'Facility-Management & Gebäudereinigung'
 };
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {

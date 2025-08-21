@@ -16,7 +16,7 @@ import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff } from 'lucide-
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
   extensionData?: any;
 }
 
@@ -416,7 +416,7 @@ const Index = () => {
                 </Label>
                 <Select 
                   value={businessData.industry} 
-                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero') => 
+                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management') => 
                     setBusinessData({...businessData, industry: value})
                   }
                 >
@@ -430,6 +430,7 @@ const Index = () => {
                     <SelectItem value="dachdecker">Dachdecker</SelectItem>
                     <SelectItem value="stukateur">Stukateure</SelectItem>
                     <SelectItem value="planungsbuero">Planungsbüro Versorgungstechnik</SelectItem>
+                    <SelectItem value="facility-management">Facility-Management & Gebäudereinigung</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
