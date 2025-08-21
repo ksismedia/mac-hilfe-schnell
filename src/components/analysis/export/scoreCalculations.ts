@@ -158,9 +158,9 @@ const calculateWorkplaceScore = (
     score += 10; // One platform
   }
 
-  // If no data found, give minimum points for small businesses
+  // If no data found, return 0 (no rating)
   if (platformsWithData === 0) {
-    score = 15; // Base points for small businesses without reviews
+    score = 0; // No rating when no data is provided
   }
 
   return Math.min(score, maxPoints);
