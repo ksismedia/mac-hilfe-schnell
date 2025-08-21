@@ -67,25 +67,26 @@ export const calculateSocialMediaCategoryScore = (
   manualSocialData?: ManualSocialData | null,
   manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
-  let totalScore = 0;
-  let maxScore = 0;
-
-  // Google Reviews (30%)
-  const googleReviewsScore = calculateGoogleReviewsScore(realData);
-  totalScore += googleReviewsScore * 0.3;
-  maxScore += 100 * 0.3;
-
-  // Social Media (40%)
-  const socialMediaScore = calculateSocialMediaScore(realData, manualSocialData);
-  totalScore += socialMediaScore * 0.4;
-  maxScore += 100 * 0.4;
-
-  // Workplace Reviews (30%)
+  // Use the same logic as in OverallRating component for consistent results
+  const { calculateSimpleSocialScore } = require('./simpleSocialScore');
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
-  totalScore += workplaceScore * 0.3;
-  maxScore += 100 * 0.3;
-
-  return Math.round((totalScore / maxScore) * 100);
+  
+  // Google Reviews Score
+  const googleReviewsScore = realData.reviews.google.count > 0 ? 
+    Math.min(100, realData.reviews.google.rating * 20) : 0;
+  
+  const metrics = [
+    { score: socialMediaScore, weight: 6 }, // Social Media
+    { score: googleReviewsScore, weight: 7 }, // Bewertungen
+    { score: realData.socialProof.overallScore, weight: 4 }, // Social Proof
+    { score: workplaceScore, weight: 2 }, // Arbeitsplatz
+  ];
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
 };
 
 export const calculateWorkplaceScore = (
@@ -173,66 +174,38 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  let score = 0;
-
-  // Keywords ranking (30%)
-  if (keywordsScore !== null) {
-    score += keywordsScore * 0.3;
-  } else {
-    score += 50 * 0.3; // Default keyword score
-  }
-
-  // On-page SEO (30%)
-  if (realData.seo.titleTag && realData.seo.metaDescription) {
-    score += 30 * 0.3;
-  } else {
-    score += 15 * 0.3;
-  }
-
-  // Content quality (20%) - using a basic estimation since content property doesn't exist
-  if (realData.seo.titleTag.length > 30) {
-    score += 20 * 0.2;
-  } else {
-    score += 10 * 0.2;
-  }
-
-  // Local SEO (10%) - using a basic check
-  if (realData.imprint.found) {
-    score += 10 * 0.1;
-  }
-
-  // Privacy (5%)
-  if (privacyData?.hasPrivacyPolicy) {
-    score += 5 * 0.05;
-  }
-
-  // Accessibility (5%)
-  if (accessibilityData?.overallScore) {
-    score += accessibilityData.overallScore * 0.05;
-  }
-
-  return score;
+  // Use the same logic as in OverallRating component for consistent results
+  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
+  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
+  
+  const localSEOScore = calculateLocalSEOScore(businessData, realData);
+  
+  // Weighted calculation based on the same weights as in OverallRating
+  const metrics = [
+    { score: localSEOScore, weight: 24 }, // Local SEO - highest weight
+    { score: realData.seo.score, weight: 14 }, // SEO
+    { score: realData.imprint.score, weight: 9 }, // Impressum
+    { score: currentKeywordsScore, weight: 8 }, // Keywords
+  ];
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
-  let score = 0;
-
-  // Performance (50%) - using the existing score
-  if (realData.performance.score) {
-    score += realData.performance.score * 0.5;
-  }
-
-  // Mobile specific (25%) - using mobile data
-  if (realData.mobile.overallScore) {
-    score += realData.mobile.overallScore * 0.25;
-  }
-
-  // Page speed (25%) - using mobile page speed
-  if (realData.mobile.pageSpeedMobile) {
-    score += realData.mobile.pageSpeedMobile * 0.25;
-  }
-
-  return score;
+  // Use the same logic as in OverallRating component for consistent results
+  const metrics = [
+    { score: realData.performance.score, weight: 11 }, // Performance
+    { score: realData.mobile.overallScore, weight: 6 }, // Mobile
+  ];
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
 };
 
 export const calculateStaffServiceScore = (
@@ -241,105 +214,29 @@ export const calculateStaffServiceScore = (
   manualCorporateIdentityData: any,
   hourlyRateData: any
 ): number => {
-  // Return 0 if no data is provided at all
-  if (!staffQualificationData && !quoteResponseData && !manualCorporateIdentityData && !hourlyRateData) {
-    return 0;
-  }
-
-  let score = 0;
-
+  // Use the same logic as in OverallRating component for consistent results
+  const metrics = [];
+  
+  // Only include metrics that have data (like in OverallRating)
   if (staffQualificationData) {
-    // Education and Training (30%)
-    const totalEmployees = staffQualificationData.totalEmployees || 1;
-    const skilledWorkers = staffQualificationData.skilled_workers || 0;
-    const masters = staffQualificationData.masters || 0;
-    const apprentices = staffQualificationData.apprentices || 0;
-
-    const educationScore =
-      (skilledWorkers / totalEmployees) * 0.4 +
-      (masters / totalEmployees) * 0.4 +
-      (apprentices / totalEmployees) * 0.2;
-    score += Math.min(educationScore * 30, 30);
-
-    // Certifications (20%)
-    let certificationPoints = 0;
-    if (staffQualificationData.certifications?.welding_certificates)
-      certificationPoints += 0.2;
-    if (staffQualificationData.certifications?.safety_training)
-      certificationPoints += 0.2;
-    if (staffQualificationData.certifications?.first_aid)
-      certificationPoints += 0.2;
-    if (staffQualificationData.certifications?.digital_skills)
-      certificationPoints += 0.2;
-    if (staffQualificationData.certifications?.instructor_qualification)
-      certificationPoints += 0.2;
-    if (staffQualificationData.certifications?.business_qualification)
-      certificationPoints += 0.2;
-
-    score += Math.min(certificationPoints * 20, 20);
+    const staffScore = calculateStaffQualificationScore(staffQualificationData);
+    metrics.push({ score: staffScore, weight: 8 }); // Personal
   }
-
+  
   if (quoteResponseData) {
-    // Response Time (20%)
-    const responseTimeScore =
-      quoteResponseData.responseTime === 'prompt'
-        ? 20
-        : quoteResponseData.responseTime === 'moderate'
-        ? 10
-        : 0;
-    score += responseTimeScore;
-
-    // Contact Methods (15%)
-    let contactMethodPoints = 0;
-    if (quoteResponseData.contactMethods?.phone) contactMethodPoints += 0.25;
-    if (quoteResponseData.contactMethods?.email) contactMethodPoints += 0.25;
-    if (quoteResponseData.contactMethods?.contactForm)
-      contactMethodPoints += 0.25;
-    if (quoteResponseData.contactMethods?.whatsapp) contactMethodPoints += 0.125;
-    if (quoteResponseData.contactMethods?.messenger)
-      contactMethodPoints += 0.125;
-
-    score += Math.min(contactMethodPoints * 15, 15);
-
-    // Response Quality (15%)
-    const responseQualityScore =
-      quoteResponseData.responseQuality === 'high'
-        ? 15
-        : quoteResponseData.responseQuality === 'medium'
-        ? 8
-        : 0;
-    score += responseQualityScore;
+    const quoteScore = calculateQuoteResponseScore(quoteResponseData);
+    metrics.push({ score: quoteScore, weight: 6 }); // Angebotsbearbeitung
   }
-
-  if (manualCorporateIdentityData) {
-    // Uniform Appearance (20%)
-    let uniformPoints = 0;
-    if (manualCorporateIdentityData.uniformLogo) uniformPoints += 0.25;
-    if (manualCorporateIdentityData.uniformWorkClothing) uniformPoints += 0.25;
-    if (manualCorporateIdentityData.uniformVehicleBranding)
-      uniformPoints += 0.25;
-    if (manualCorporateIdentityData.uniformColorScheme) uniformPoints += 0.25;
-
-    score += Math.min(uniformPoints * 20, 20);
+  
+  // If no data available, return a default score
+  if (metrics.length === 0) {
+    return 50;
   }
-
-  if (hourlyRateData) {
-    // Hourly Rate (10%)
-    const rateDifference = hourlyRateData.ownRate - hourlyRateData.regionAverage;
-    let rateScore = 0;
-
-    if (rateDifference <= 0) {
-      rateScore = 10;
-    } else if (rateDifference <= 10) {
-      rateScore = 7;
-    } else if (rateDifference <= 20) {
-      rateScore = 4;
-    }
-
-    score += rateScore;
-  }
-
-  return Math.min(score, 100);
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
 };
 
 // Add missing function stubs for exported functions that are expected by other files
@@ -351,13 +248,70 @@ export const calculateLocalSEOScore = (businessData: any, realData: any): number
 export const calculateStaffQualificationScore = (data: any): number => {
   // Echte Berechnung basierend auf Daten
   if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
-  return calculateStaffServiceScore(data, null, null, null); // Verwende existierende Logik
+  
+  let score = 0;
+  
+  // Education and Training
+  const totalEmployees = data.totalEmployees || 1;
+  const skilledWorkers = data.skilled_workers || 0;
+  const masters = data.masters || 0;
+  const apprentices = data.apprentices || 0;
+
+  const educationScore =
+    (skilledWorkers / totalEmployees) * 0.4 +
+    (masters / totalEmployees) * 0.4 +
+    (apprentices / totalEmployees) * 0.2;
+  score += Math.min(educationScore * 60, 60);
+
+  // Certifications
+  let certificationPoints = 0;
+  if (data.certifications?.welding_certificates) certificationPoints += 0.2;
+  if (data.certifications?.safety_training) certificationPoints += 0.2;
+  if (data.certifications?.first_aid) certificationPoints += 0.2;
+  if (data.certifications?.digital_skills) certificationPoints += 0.2;
+  if (data.certifications?.instructor_qualification) certificationPoints += 0.2;
+  if (data.certifications?.business_qualification) certificationPoints += 0.2;
+
+  score += Math.min(certificationPoints * 40, 40);
+  
+  return Math.min(score, 100);
 };
 
 export const calculateQuoteResponseScore = (data: any): number => {
   // Echte Berechnung basierend auf Quote Response Daten
   if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
-  return calculateStaffServiceScore(null, data, null, null); // Verwende existierende Logik
+  
+  let score = 0;
+  
+  // Response Time (40%)
+  const responseTimeScore =
+    data.responseTime === 'prompt'
+      ? 40
+      : data.responseTime === 'moderate'
+      ? 20
+      : 0;
+  score += responseTimeScore;
+
+  // Contact Methods (30%)
+  let contactMethodPoints = 0;
+  if (data.contactMethods?.phone) contactMethodPoints += 0.25;
+  if (data.contactMethods?.email) contactMethodPoints += 0.25;
+  if (data.contactMethods?.contactForm) contactMethodPoints += 0.25;
+  if (data.contactMethods?.whatsapp) contactMethodPoints += 0.125;
+  if (data.contactMethods?.messenger) contactMethodPoints += 0.125;
+
+  score += Math.min(contactMethodPoints * 30, 30);
+
+  // Response Quality (30%)
+  const responseQualityScore =
+    data.responseQuality === 'high'
+      ? 30
+      : data.responseQuality === 'medium'
+      ? 15
+      : 0;
+  score += responseQualityScore;
+  
+  return Math.min(score, 100);
 };
 
 export const calculateOverallScore = (scores: any): number => {
