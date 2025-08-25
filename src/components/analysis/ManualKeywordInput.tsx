@@ -70,10 +70,14 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
     console.log('Applying manual keywords:', manualKeywords);
     onKeywordsUpdate(manualKeywords);
     
-    // Automatisch zur nächsten Kategorie navigieren nach erfolgreicher Anwendung
-    setTimeout(() => {
-      onNavigateNext?.();
-    }, 500); // Kurze Verzögerung für bessere UX
+    // Toast anzeigen für besseres Feedback
+    if (manualKeywords.length > 0) {
+      // Automatisch zur nächsten Kategorie navigieren nach erfolgreicher Anwendung
+      setTimeout(() => {
+        console.log('Triggering navigation...');
+        onNavigateNext?.();
+      }, 1000); // Längere Verzögerung für bessere UX
+    }
   };
 
   const getIndustryKeywords = (industry: string) => {
@@ -216,7 +220,7 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
               ))}
             </div>
             
-            {/* Daten übernehmen und Speichern Buttons */}
+            {/* Daten übernehmen und Navigation Buttons */}
             <div className="flex justify-center gap-3 pt-4">
               <Button 
                 onClick={applyData}
@@ -226,6 +230,18 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
                 <Check className="h-4 w-4 mr-2" />
                 Daten übernehmen
               </Button>
+              {manualKeywords.length > 0 && onNavigateNext && (
+                <Button 
+                  onClick={() => {
+                    applyData();
+                    setTimeout(() => onNavigateNext(), 200);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  size="lg"
+                >
+                  ➡️ Weiter zur nächsten Kategorie
+                </Button>
+              )}
               {onSaveRequested && (
                 <Button 
                   onClick={() => {
