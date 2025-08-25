@@ -279,41 +279,49 @@ export class WebsiteAnalysisService {
       let position = 0;
       const volume = this.getKeywordVolume(keyword, industry);
       
-      // Strikte Keyword-Suche - nur echte Treffer zählen
+      // Strikte aber flexiblere Keyword-Suche
       if (keywordLower.length > 0) {
-        // 1. Exakte Wortgrenze-Suche (am genauesten)
-        const exactRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+        // 1. Exakte Wortgrenze-Suche für einfache Begriffe
+        const exactRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
         const exactMatches = allText.match(exactRegex);
         
-        if (exactMatches && exactMatches.length > 0) {
+        // 2. Teilstring-Suche für zusammengesetzte Begriffe (deutscher Sprachraum)
+        const substringRegex = new RegExp(keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const substringMatches = allText.match(substringRegex);
+        
+        // 3. Ähnlichkeitssuche für Variationen (Plural, etc.)
+        const variations = this.getKeywordVariations(keywordLower);
+        let variationMatches: RegExpMatchArray | null = null;
+        
+        for (const variation of variations) {
+          const varRegex = new RegExp(`\\b${variation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi');
+          const matches = allText.match(varRegex);
+          if (matches && matches.length > 0) {
+            variationMatches = matches;
+            break;
+          }
+        }
+        
+        // Bewerte die besten Treffer
+        const allMatches = [
+          { matches: exactMatches, type: 'exact', weight: 1.0 },
+          { matches: substringMatches, type: 'substring', weight: 0.8 },
+          { matches: variationMatches, type: 'variation', weight: 0.9 }
+        ].filter(m => m.matches && m.matches.length > 0);
+        
+        if (allMatches.length > 0) {
           found = true;
-          console.log(`✓ FOUND (exact match): "${keyword}" - ${exactMatches.length} times`);
+          const bestMatch = allMatches[0];
+          const matchCount = bestMatch.matches!.length;
+          
+          console.log(`✓ FOUND (${bestMatch.type}): "${keyword}" - ${matchCount} times`);
           
           // Berechne genaue Dichte
           const totalWords = allText.split(/\s+/).filter(word => word.length > 0).length;
-          density = totalWords > 0 ? (exactMatches.length / totalWords) * 100 : 0;
+          density = totalWords > 0 ? (matchCount / totalWords) * 100 * bestMatch.weight : 0;
           
           // Bestimme Position basierend auf Fundstelle
-          if (content.title.toLowerCase().match(exactRegex)) {
-            position = Math.floor(Math.random() * 5) + 1; // Top 5 für Titel
-          } else if (content.metaDescription.toLowerCase().match(exactRegex)) {
-            position = Math.floor(Math.random() * 10) + 6; // Position 6-15 für Meta
-          } else if (content.headings.h1.some(h => h.toLowerCase().match(exactRegex))) {
-            position = Math.floor(Math.random() * 10) + 4; // Position 4-13 für H1
-          } else if (content.headings.h2.some(h => h.toLowerCase().match(exactRegex))) {
-            position = Math.floor(Math.random() * 15) + 8; // Position 8-22 für H2
-          } else {
-            // Im Content gefunden
-            const firstIndex = allText.search(exactRegex);
-            const relativePosition = firstIndex / allText.length;
-            if (relativePosition < 0.3) {
-              position = Math.floor(Math.random() * 15) + 10; // Früh im Text: Position 10-24
-            } else if (relativePosition < 0.7) {
-              position = Math.floor(Math.random() * 20) + 20; // Mitte: Position 20-39
-            } else {
-              position = Math.floor(Math.random() * 30) + 25; // Spät im Text: Position 25-54
-            }
-          }
+          position = this.calculateKeywordPosition(keyword, content, bestMatch.type);
         } else {
           console.log(`✗ NOT FOUND: "${keyword}"`);
         }
@@ -440,5 +448,73 @@ export class WebsiteAnalysisService {
       missingElements,
       score: Math.min(100, score)
     };
+  }
+
+  private static getKeywordVariations(keyword: string): string[] {
+    const variations: string[] = [keyword];
+    
+    // Deutsche Plural-Endungen
+    if (!keyword.endsWith('s')) variations.push(keyword + 's');
+    if (!keyword.endsWith('e')) variations.push(keyword + 'e');
+    if (!keyword.endsWith('en')) variations.push(keyword + 'en');
+    if (!keyword.endsWith('er')) variations.push(keyword + 'er');
+    
+    // Umlaute-Variationen
+    const umlautMap: { [key: string]: string[] } = {
+      'ä': ['ae', 'a'],
+      'ö': ['oe', 'o'],
+      'ü': ['ue', 'u'],
+      'ß': ['ss']
+    };
+    
+    Object.entries(umlautMap).forEach(([umlaut, replacements]) => {
+      if (keyword.includes(umlaut)) {
+        replacements.forEach(replacement => {
+          variations.push(keyword.replace(umlaut, replacement));
+        });
+      }
+    });
+    
+    // Spezielle Handwerks-Variationen
+    const specialVariations: { [key: string]: string[] } = {
+      'sanitär': ['sanitaer', 'sanitar', 'sanitaertechnik', 'sanitärinstallation'],
+      'heizung': ['heizungstechnik', 'heizungsbau', 'heizungsinstallation', 'heizungsservice'],
+      'elektriker': ['elektro', 'elektrotechnik', 'elektroinstallation', 'elektroservice'],
+      'maler': ['malerei', 'malerarbeiten', 'malerbetrieb', 'anstreicher'],
+      'dachdecker': ['dach', 'bedachung', 'dachdeckung', 'dachservice'],
+      'installation': ['installateur', 'installieren', 'installiert'],
+      'wartung': ['service', 'instandhaltung', 'pflege'],
+      'notdienst': ['notruf', 'notfall', '24h service', 'emergency']
+    };
+    
+    if (specialVariations[keyword]) {
+      variations.push(...specialVariations[keyword]);
+    }
+    
+    return [...new Set(variations)]; // Duplikate entfernen
+  }
+
+  private static calculateKeywordPosition(keyword: string, content: WebsiteContent, matchType: string): number {
+    const keywordLower = keyword.toLowerCase();
+    const titleMatch = content.title.toLowerCase().includes(keywordLower);
+    const metaMatch = content.metaDescription.toLowerCase().includes(keywordLower);
+    const h1Match = content.headings.h1.some(h => h.toLowerCase().includes(keywordLower));
+    const h2Match = content.headings.h2.some(h => h.toLowerCase().includes(keywordLower));
+    
+    // Bonus für exakte Treffer
+    const exactBonus = matchType === 'exact' ? 5 : 0;
+    
+    if (titleMatch) {
+      return Math.max(1, Math.floor(Math.random() * 5) + 1 - exactBonus); // Top 5 für Titel
+    } else if (metaMatch) {
+      return Math.max(1, Math.floor(Math.random() * 10) + 6 - exactBonus); // Position 6-15 für Meta
+    } else if (h1Match) {
+      return Math.max(1, Math.floor(Math.random() * 10) + 4 - exactBonus); // Position 4-13 für H1
+    } else if (h2Match) {
+      return Math.max(1, Math.floor(Math.random() * 15) + 8 - exactBonus); // Position 8-22 für H2
+    } else {
+      // Standard Content-Position
+      return Math.max(1, Math.floor(Math.random() * 30) + 15 - exactBonus); // Position 15-44
+    }
   }
 }
