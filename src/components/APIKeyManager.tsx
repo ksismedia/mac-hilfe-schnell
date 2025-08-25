@@ -46,9 +46,9 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       // API-Key setzen
       GoogleAPIService.setApiKey(apiKey);
       
-      // API-Key Format validieren (Google API Keys beginnen mit AIza)
-      if (!apiKey.startsWith('AIza') || apiKey.length < 30) {
-        throw new Error('API-Key Format ungültig');
+      // API-Key Format validieren (Google API Keys beginnen normalerweise mit AIza)
+      if (apiKey.length < 20) {
+        throw new Error('API-Key zu kurz');
       }
 
       // Da direkte API-Calls aufgrund von CORS-Beschränkungen fehlschlagen können,
