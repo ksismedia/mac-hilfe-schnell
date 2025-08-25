@@ -43,58 +43,34 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
     setIsValidating(true);
 
     try {
+      console.log('Validating API key format...');
+      
+      // Einfache Format-Validierung für Google API Keys
+      if (!apiKey.startsWith('AIza')) {
+        throw new Error('Google API-Keys beginnen mit "AIza"');
+      }
+      
+      if (apiKey.length < 35 || apiKey.length > 45) {
+        throw new Error('Google API-Keys haben normalerweise 39 Zeichen');
+      }
+      
       // API-Key setzen
       GoogleAPIService.setApiKey(apiKey);
+      console.log('API key saved successfully');
       
-      console.log('Starting API key validation...');
+      toast({
+        title: "API-Key gespeichert",
+        description: "Der Google API-Key wurde erfolgreich gespeichert und wird bei der Analyse validiert.",
+      });
       
-      // Einfachere Validierung: Direkt PageSpeed Insights API testen
-      const testUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://example.com&key=${apiKey}`;
-      console.log('Testing with URL:', testUrl);
-      
-      const testResponse = await fetch(testUrl);
-      console.log('Response status:', testResponse.status);
-      
-      if (testResponse.ok) {
-        const data = await testResponse.json();
-        console.log('Response data:', data);
-        
-        // Wenn wir eine gültige Antwort erhalten (auch bei Fehlern), ist der Key gültig
-        if (data && (data.lighthouseResult || data.error)) {
-          toast({
-            title: "API-Key erfolgreich",
-            description: "Der Google API-Key wurde erfolgreich validiert.",
-          });
-          onApiKeySet();
-          return;
-        }
-      }
-      
-      // Fallback: Einfache Format-Prüfung
-      if (apiKey.startsWith('AIza') && apiKey.length > 30) {
-        console.log('Using format validation as fallback');
-        toast({
-          title: "API-Key gespeichert",
-          description: "Der API-Key wurde gespeichert. Die Validierung erfolgt bei der ersten Nutzung.",
-        });
-        onApiKeySet();
-        return;
-      }
-      
-      throw new Error('API-Key Format ungültig');
+      onApiKeySet();
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
       toast({
-        title: "API-Key Fehler",
-        description: "Überprüfen Sie den API-Key. Bei Netzwerkproblemen wird der Key trotzdem gespeichert.",
+        title: "Ungültiger API-Key",
+        description: error.message || "Bitte überprüfen Sie das Format Ihres Google API-Keys.",
         variant: "destructive",
       });
-      
-      // Bei Netzwerkfehlern trotzdem den Key speichern, wenn das Format stimmt
-      if (apiKey.startsWith('AIza') && apiKey.length > 30) {
-        console.log('Saving API key despite validation error due to network issues');
-        onApiKeySet();
-      }
     } finally {
       setIsValidating(false);
     }
