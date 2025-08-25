@@ -714,6 +714,7 @@ export class BusinessAnalysisService {
       'dachdecker': ['Dachdecker', 'Bedachung', 'Zimmerei'],
       'stukateur': ['Stuckateur', 'Putz', 'Fassaden'],
       'planungsbuero': ['Planung', 'Ingenieurbüro', 'Technik'],
+      'facility-management': ['Facility Management', 'Gebäudereinigung', 'Hausmeisterdienst'],
     };
     
     return terms[industry as keyof typeof terms] || ['Handwerk', 'Service', 'Betrieb'];
@@ -756,6 +757,16 @@ export class BusinessAnalysisService {
         'haustechnik', 'gebäudetechnik', 'anlagenplanung', 'technische planung',
         'ingenieurbüro', 'fachplanung', 'projektplanung', 'bauplanung'
       ],
+      'facility-management': [
+        'facility management', 'facility', 'gebäudemanagement', 'hausmeisterdienst', 
+        'hausmeister', 'gebäudedienste', 'objektbetreuung', 'liegenschaftsservice',
+        'reinigung', 'gebäudereinigung', 'büroreinigung', 'unterhaltsreinigung',
+        'grundreinigung', 'glasreinigung', 'fensterreinigung', 'teppichreinigung',
+        'industriereinigung', 'wartung', 'instandhaltung', 'technischer service', 
+        'anlagenwartung', 'haustechnik', 'gebäudetechnik', 'sicherheitsdienst',
+        'pförtnerdienst', 'empfangsdienst', 'grünpflege', 'gartenpflege', 
+        'winterdienst', 'schneeräumung', 'catering', 'energiemanagement'
+      ]
     };
     
     return keywords[industry as keyof typeof keywords] || ['handwerk', 'service'];
