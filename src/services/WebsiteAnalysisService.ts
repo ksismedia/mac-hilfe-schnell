@@ -386,6 +386,44 @@ export class WebsiteAnalysisService {
         'planung', 'planungsbüro', 'versorgungstechnik', 'beratung',
         'ingenieurbüro', 'haustechnik', 'gebäudetechnik', 'technikplanung',
         'anlagenbau', 'projektierung', 'consulting'
+      ],
+      'facility-management': [
+        // Kerndienste
+        'facility management', 'facility', 'gebäudemanagement', 'hausmeisterdienst', 
+        'hausmeister', 'gebäudedienste', 'objektbetreuung', 'liegenschaftsservice',
+        
+        // Reinigungsdienste
+        'reinigung', 'gebäudereinigung', 'büroreinigung', 'unterhaltsreinigung',
+        'grundreinigung', 'glasreinigung', 'fensterreinigung', 'teppichreinigung',
+        'industriereinigung', 'sonderreinigung', 'desinfektionsreinigung',
+        
+        // Technische Dienste
+        'wartung', 'instandhaltung', 'technischer service', 'anlagenwartung',
+        'haustechnik', 'gebäudetechnik', 'klimawartung', 'heizungswartung',
+        'aufzugswartung', 'sicherheitstechnik', 'brandschutz',
+        
+        // Sicherheitsdienste
+        'sicherheitsdienst', 'pförtnerdienst', 'empfangsdienst', 'kontrolldienst',
+        'objektschutz', 'überwachung', 'zutrittskontrolle',
+        
+        // Grünpflege & Außenbereich
+        'grünpflege', 'gartenpflege', 'landschaftspflege', 'winterdienst',
+        'schneeräumung', 'streudienst', 'außenanlagenpflege',
+        
+        // Catering & Verpflegung
+        'catering', 'kantinenbetrieb', 'verpflegung', 'betriebsgastronomie',
+        
+        // Energiemanagement
+        'energiemanagement', 'energieoptimierung', 'energieeffizienz',
+        'verbrauchsmanagement', 'nachhaltigkeit',
+        
+        // Arbeitsplatzservice
+        'arbeitsplatzservice', 'büroservice', 'postservice', 'reprographie',
+        'dokumentenmanagement', 'archivierung',
+        
+        // Spezialbereiche
+        'krankenhaus', 'klinik', 'schulreinigung', 'hotelreinigung',
+        'einzelhandel', 'logistik', 'produktion', 'pharma', 'labor'
       ]
     };
     
