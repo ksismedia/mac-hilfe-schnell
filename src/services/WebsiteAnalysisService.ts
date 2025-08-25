@@ -297,17 +297,25 @@ export class WebsiteAnalysisService {
           allMatches.push({ matches: substringMatches, type: 'substring', weight: 0.9 });
         }
         
-        // 3. Wortteile-Suche für Komposita (deutsch typisch)
+        // 3. Erweiterte Wortteile-Suche für Komposita (flexibler)
         const words = keywordLower.split(/[\s\-]+/);
         if (words.length > 1) {
           for (const word of words) {
-            if (word.length >= 4) { // Nur längere Wortteile
+            if (word.length >= 3) { // Reduziert von 4 auf 3
               const wordRegex = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
               const wordMatches = allText.match(wordRegex);
               if (wordMatches) {
-                allMatches.push({ matches: wordMatches, type: 'wordpart', weight: 0.7 });
+                allMatches.push({ matches: wordMatches, type: 'wordpart', weight: 0.8 });
               }
             }
+          }
+        }
+        
+        // 3.5. Auch umgekehrt: Suche Keywords als Teil von Wörtern im Text
+        const textWords = allText.toLowerCase().split(/\W+/);
+        for (const textWord of textWords) {
+          if (textWord.length >= 5 && textWord.includes(keywordLower) && keywordLower.length >= 3) {
+            allMatches.push({ matches: [textWord], type: 'contains', weight: 0.75 });
           }
         }
         

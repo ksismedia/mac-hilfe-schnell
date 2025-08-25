@@ -186,7 +186,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [loadedAnalysisId, toast, loadAnalysis]); // Removed businessData dependencies to prevent re-triggering
+  }, [loadedAnalysisId]); // Only depend on loadedAnalysisId to prevent re-triggering
 
   if (isLoading) {
     return (
