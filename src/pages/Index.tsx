@@ -124,6 +124,11 @@ const Index = () => {
     );
   }
 
+  // Only render dashboard if we have business data
+  if (!businessData) {
+    return null; // This should not happen, but safety check
+  }
+
   // Render the appropriate layout based on the URL parameter
   if (layout === 'simple') {
     return <SimpleAnalysisDashboard businessData={businessData} onReset={handleReset} />;
