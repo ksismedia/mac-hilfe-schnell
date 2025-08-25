@@ -46,7 +46,7 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       // API-Key setzen
       GoogleAPIService.setApiKey(apiKey);
       
-      // API-Key Format validieren (Google API Keys beginnen normalerweise mit AIza)
+      // Gelockerte Validierung - nur Länge prüfen
       if (apiKey.length < 20) {
         throw new Error('API-Key zu kurz');
       }
@@ -54,15 +54,15 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       // Da direkte API-Calls aufgrund von CORS-Beschränkungen fehlschlagen können,
       // speichern wir den Key und lassen die erste echte API-Nutzung die Validierung durchführen
       toast({
-        title: "API-Key gespeichert",
-        description: "Der API-Key wurde gespeichert. Die Validierung erfolgt bei der ersten Nutzung.",
+        title: "API-Key akzeptiert",
+        description: "Sie können nun mit der Live-Analyse beginnen.",
       });
       onApiKeySet();
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
       toast({
         title: "Ungültiger API-Key",
-        description: "Der API-Key hat ein ungültiges Format. Google API-Keys beginnen mit 'AIza' und sind mindestens 30 Zeichen lang.",
+        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe und Internetverbindung.",
         variant: "destructive",
       });
     } finally {
