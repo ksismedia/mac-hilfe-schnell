@@ -8,7 +8,7 @@ const statusDiv = document.getElementById('status');
 const currentUrlDiv = document.getElementById('currentUrl');
 
 // Ihre deployed Lovable App URL
-const LOVABLE_APP_URL = 'https://mac-hilfe-schnell.lovable.app';
+const LOVABLE_APP_URL = 'https://id-preview--25bfc271-cf93-4b75-85b5-47a649c1832b.lovable.app';
 
 // Status-Funktionen
 function showStatus(message, type = 'loading') {
