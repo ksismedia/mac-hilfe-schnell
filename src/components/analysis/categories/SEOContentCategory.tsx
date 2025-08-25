@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SEOAnalysis from '../SEOAnalysis';
 import ContentAnalysis from '../ContentAnalysis';
@@ -65,6 +65,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   removeDeletedCompetitor,
   onNavigateToCategory,
 }) => {
+  const [activeTab, setActiveTab] = useState("seo");
+
   return (
     <div className="space-y-6">
       <div>
@@ -72,7 +74,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
         <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
       </div>
       
-      <Tabs defaultValue="seo" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-5 lg:grid-cols-10 mb-6">
           <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
@@ -99,7 +101,11 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             onKeywordDataChange={onKeywordDataChange}
             loadedKeywordScore={keywordsScore}
             loadedKeywordData={manualKeywordData}
-            onNavigateToNextCategory={() => onNavigateToCategory?.('performance-mobile')}
+            onNavigateToNextCategory={() => {
+              onNavigateToCategory?.('performance-mobile');
+              // Auch zum Content Tab wechseln als Alternative
+              setActiveTab('content');
+            }}
           />
         </TabsContent>
 
