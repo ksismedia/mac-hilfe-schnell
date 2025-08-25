@@ -106,6 +106,13 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
         'haustechnik', 'gebäudetechnik', 'anlagenplanung', 'technische planung',
         'ingenieurbüro', 'fachplanung', 'projektplanung', 'bauplanung'
       ],
+      'facility-management': [
+        'facility management', 'gebäudemanagement', 'hausmeisterdienst', 'reinigung',
+        'gebäudereinigung', 'büroreinigung', 'unterhaltsreinigung', 'grundreinigung',
+        'glasreinigung', 'fensterreinigung', 'wartung', 'instandhaltung', 'haustechnik',
+        'sicherheitsdienst', 'pförtnerdienst', 'grünpflege', 'winterdienst',
+        'energiemanagement', 'objektbetreuung', 'liegenschaftsservice', 'catering'
+      ]
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];
   };
