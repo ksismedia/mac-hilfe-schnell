@@ -7,12 +7,15 @@ import AnalysisDashboard from '@/components/AnalysisDashboard';
 import SidebarAnalysisDashboard from '@/components/SidebarAnalysisDashboard';
 import SimpleAnalysisDashboard from '@/components/SimpleAnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
+import { useExtensionData } from '@/hooks/useExtensionData';
 
 const Index = () => {
   const [searchParams] = useSearchParams();
   const [hasApiKey, setHasApiKey] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const [businessData, setBusinessData] = useState(null);
   const { toast } = useToast();
+  const { extensionData, clearExtensionData } = useExtensionData();
   
   // Get layout from URL params, default to 'sidebar'
   const layout = searchParams.get('layout') || 'sidebar';
@@ -70,6 +73,20 @@ const Index = () => {
     setHasApiKey(true);
   };
 
+  const handleProcessExtensionData = (data: any) => {
+    setBusinessData(data);
+    setHasApiKey(true);
+  };
+
+  const handleDiscardExtensionData = () => {
+    clearExtensionData();
+  };
+
+  const handleReset = () => {
+    setBusinessData(null);
+    setHasApiKey(false);
+  };
+
   if (!hasApiKey) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -88,12 +105,20 @@ const Index = () => {
             </p>
           </div>
 
-          <ExtensionDataProcessor />
+          {extensionData && (
+            <ExtensionDataProcessor 
+              extensionData={extensionData}
+              onProcessData={handleProcessExtensionData}
+              onDiscard={handleDiscardExtensionData}
+            />
+          )}
           
-          <APIKeyManager 
-            onApiKeySet={handleApiKeySet}
-            onLoadSavedAnalysis={handleLoadSavedAnalysis}
-          />
+          {!extensionData && (
+            <APIKeyManager 
+              onApiKeySet={handleApiKeySet}
+              onLoadSavedAnalysis={handleLoadSavedAnalysis}
+            />
+          )}
         </div>
       </div>
     );
@@ -101,12 +126,12 @@ const Index = () => {
 
   // Render the appropriate layout based on the URL parameter
   if (layout === 'simple') {
-    return <SimpleAnalysisDashboard />;
+    return <SimpleAnalysisDashboard businessData={businessData} onReset={handleReset} />;
   } else if (layout === 'classic') {
-    return <AnalysisDashboard />;
+    return <AnalysisDashboard businessData={businessData} onReset={handleReset} />;
   } else {
     // Default to sidebar layout
-    return <SidebarAnalysisDashboard />;
+    return <SidebarAnalysisDashboard businessData={businessData} onReset={handleReset} />;
   }
 };
 
