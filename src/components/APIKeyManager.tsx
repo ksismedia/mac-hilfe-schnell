@@ -43,15 +43,15 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
     setIsValidating(true);
 
     try {
-      console.log('Validating API key format...');
+      console.log('Validating API key format...', apiKey.substring(0, 10) + '...');
       
-      // Einfache Format-Validierung für Google API Keys
-      if (!apiKey.startsWith('AIza')) {
-        throw new Error('Google API-Keys beginnen mit "AIza"');
+      // Sehr einfache Format-Validierung für Google API Keys
+      if (!apiKey || apiKey.length < 10) {
+        throw new Error('API-Key ist zu kurz');
       }
       
-      if (apiKey.length < 35 || apiKey.length > 45) {
-        throw new Error('Google API-Keys haben normalerweise 39 Zeichen');
+      if (!apiKey.startsWith('AIza')) {
+        console.warn('API-Key beginnt nicht mit AIza, aber wir akzeptieren ihn trotzdem');
       }
       
       // API-Key setzen
@@ -60,10 +60,13 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       
       toast({
         title: "API-Key gespeichert",
-        description: "Der Google API-Key wurde erfolgreich gespeichert und wird bei der Analyse validiert.",
+        description: "Der Google API-Key wurde erfolgreich gespeichert.",
       });
       
-      onApiKeySet();
+      // Kurze Verzögerung und dann weiterleiten
+      setTimeout(() => {
+        onApiKeySet();
+      }, 100);
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
       toast({
