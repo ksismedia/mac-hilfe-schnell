@@ -46,23 +46,30 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       // API-Key setzen
       GoogleAPIService.setApiKey(apiKey);
       
-      // Gelockerte Validierung - nur Länge prüfen
-      if (apiKey.length < 20) {
-        throw new Error('API-Key zu kurz');
-      }
+      // API-Key validieren
+      const testResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
+      );
 
-      // Da direkte API-Calls aufgrund von CORS-Beschränkungen fehlschlagen können,
-      // speichern wir den Key und lassen die erste echte API-Nutzung die Validierung durchführen
-      toast({
-        title: "API-Key akzeptiert",
-        description: "Sie können nun mit der Live-Analyse beginnen.",
-      });
-      onApiKeySet();
+      if (testResponse.ok) {
+        const data = await testResponse.json();
+        if (data.status === 'OK') {
+          toast({
+            title: "API-Key erfolgreich",
+            description: "Der Google API-Key wurde erfolgreich validiert.",
+          });
+          onApiKeySet();
+        } else {
+          throw new Error(`API-Key ungültig: ${data.status}`);
+        }
+      } else {
+        throw new Error('API-Key Validierung fehlgeschlagen');
+      }
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
       toast({
         title: "Ungültiger API-Key",
-        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe und Internetverbindung.",
+        description: "Der eingegebene Google API-Key ist ungültig. Bitte überprüfen Sie Ihren Key.",
         variant: "destructive",
       });
     } finally {
