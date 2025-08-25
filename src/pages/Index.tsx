@@ -124,19 +124,33 @@ const Index = () => {
     );
   }
 
-  // Only render dashboard if we have business data
-  if (!businessData) {
-    return null; // This should not happen, but safety check
+  // If we have businessData, render the appropriate dashboard
+  if (businessData) {
+    if (layout === 'simple') {
+      return <SimpleAnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    } else if (layout === 'classic') {
+      return <AnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    } else {
+      // Default to sidebar layout
+      return <SidebarAnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    }
   }
 
-  // Render the appropriate layout based on the URL parameter
+  // If we have API key but no businessData, show the analysis dashboard with empty data
+  // This will show the normal input form for website URL
+  const defaultBusinessData = {
+    address: '',
+    url: '',
+    industry: 'shk' as const
+  };
+
   if (layout === 'simple') {
-    return <SimpleAnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    return <SimpleAnalysisDashboard businessData={defaultBusinessData} onReset={handleReset} />;
   } else if (layout === 'classic') {
-    return <AnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    return <AnalysisDashboard businessData={defaultBusinessData} onReset={handleReset} />;
   } else {
     // Default to sidebar layout
-    return <SidebarAnalysisDashboard businessData={businessData} onReset={handleReset} />;
+    return <SidebarAnalysisDashboard businessData={defaultBusinessData} onReset={handleReset} />;
   }
 };
 
