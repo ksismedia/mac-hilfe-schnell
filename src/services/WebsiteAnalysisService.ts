@@ -381,76 +381,213 @@ export class WebsiteAnalysisService {
   static getIndustryKeywords(industry: string): string[] {
     const keywords = {
       'shk': [
+        // Grundbegriffe
         'sanitär', 'heizung', 'klima', 'installation', 'wartung', 'notdienst',
         'rohrreinigung', 'badezimmer', 'bad', 'dusche', 'wc', 'toilette',
         'heizungsbau', 'klimaanlage', 'lüftung', 'installateur', 'handwerker',
+        
         // Erweiterte Bad-Keywords
         'badsanierung', 'badplanung', 'badumbau', 'badmodernisierung',
         'badausstattung', 'badrenovierung', 'badeinrichtung', 'badfliesen',
-        'badkeramik', 'badmöbel', 'badewanne', 'badgarnitur', 'badezimmersanierung'
+        'badkeramik', 'badmöbel', 'badewanne', 'badgarnitur', 'badezimmersanierung',
+        
+        // Heizung erweitert
+        'heizungssanierung', 'heizungsoptimierung', 'heizkessel', 'brenner',
+        'thermostat', 'heizkörper', 'fußbodenheizung', 'gasheizung', 'ölheizung',
+        'wärmepumpe', 'solarthermie', 'fernwärme', 'heizungstechnik',
+        
+        // Sanitär erweitert
+        'sanitärinstallation', 'wasserinstallation', 'abwasser', 'rohrleitungsbau',
+        'sanitärtechnik', 'wassertechnik', 'rohrverlegung', 'sanitärkeramik',
+        'armaturen', 'wasserhahn', 'spüle', 'waschbecken', 'bidet',
+        
+        // Klima/Lüftung erweitert
+        'klimatechnik', 'lüftungstechnik', 'belüftung', 'entlüftung',
+        'raumlufttechnik', 'luftqualität', 'wohnraumlüftung', 'klimaservice'
       ],
+      
       'maler': [
+        // Grundbegriffe
         'malerei', 'maler', 'lackierung', 'fassade', 'anstrich', 'renovierung',
         'innenausbau', 'tapezieren', 'streichen', 'lackierer', 'farbe', 'putz',
-        'wandgestaltung', 'bodenbelag', 'malerarbeiten'
+        'wandgestaltung', 'bodenbelag', 'malerarbeiten',
+        
+        // Fassade erweitert
+        'fassadenanstrich', 'fassadensanierung', 'fassadenreinigung', 'fassadendämmung',
+        'wärmedämmung', 'vollwärmeschutz', 'außenanstrich', 'fassadengestaltung',
+        
+        // Innenbereich erweitert
+        'innenanstrich', 'raumgestaltung', 'wohnraumgestaltung', 'deckenanstrich',
+        'wandanstrich', 'tapeten', 'vliestapete', 'rauhfaser', 'strukturputz',
+        'dekorputz', 'spachteltechnik', 'lasurtechnik', 'wischtechnik',
+        
+        // Bodenbelag erweitert
+        'laminat', 'parkett', 'vinyl', 'pvc', 'teppichboden', 'fliesen',
+        'bodenbeschichtung', 'estrich', 'bodenverlegung', 'bodensanierung',
+        
+        // Lackierung erweitert
+        'holzlackierung', 'metalllackierung', 'möbellackierung', 'türenlackierung',
+        'fensterlackierung', 'heizkörperlackierung', 'korrosionsschutz', 'grundierung'
       ],
+      
       'elektriker': [
+        // Grundbegriffe
         'elektro', 'elektriker', 'installation', 'beleuchtung', 'smart home',
         'elektroinstallation', 'strom', 'kabel', 'sicherung', 'steckdose',
-        'lichtschalter', 'elektrotechnik', 'photovoltaik', 'solar'
+        'lichtschalter', 'elektrotechnik', 'photovoltaik', 'solar',
+        
+        // Installation erweitert
+        'elektroplanung', 'hauselektrik', 'gebäudeelektrik', 'industrieelektrik',
+        'kabelverlegung', 'leitungsverlegung', 'verteilerbau', 'schaltschrankbau',
+        'sicherungskasten', 'fi-schutzschalter', 'überspannungsschutz',
+        
+        // Beleuchtung erweitert
+        'led-beleuchtung', 'außenbeleuchtung', 'innenbeleuchtung', 'lichtplanung',
+        'lichtsteuerung', 'dimmer', 'bewegungsmelder', 'zeitschaltuhr',
+        'notbeleuchtung', 'sicherheitsbeleuchtung', 'gartenbeleuchtung',
+        
+        // Smart Home erweitert
+        'hausautomation', 'gebäudeautomation', 'smarthome', 'iot', 'vernetzung',
+        'smart-home-system', 'intelligente-steuerung', 'app-steuerung',
+        'sprachsteuerung', 'sensortechnik', 'überwachungstechnik',
+        
+        // Energie erweitert
+        'solaranlage', 'photovoltaikanlage', 'pv-anlage', 'solartechnik',
+        'energiespeicher', 'batteriespeicher', 'wallbox', 'elektromobilität',
+        'ladesäule', 'energiemanagement', 'netzeinspeisung'
       ],
+      
       'dachdecker': [
+        // Grundbegriffe
         'dach', 'dachdecker', 'dachdeckung', 'ziegel', 'abdichtung',
         'flachdach', 'steildach', 'dachrinne', 'schiefer', 'bedachung',
-        'dachsanierung', 'dachaufbau', 'zimmerei'
+        'dachsanierung', 'dachaufbau', 'zimmerei',
+        
+        // Dacharten erweitert
+        'satteldach', 'walmdach', 'pultdach', 'mansarddach', 'tonnendach',
+        'sheddach', 'dachgaube', 'dachfenster', 'lichtkuppel', 'oberlicht',
+        
+        // Materialien erweitert
+        'dachziegel', 'dachstein', 'tonziegel', 'betondachstein', 'metalldach',
+        'blechdach', 'kupferdach', 'zinkdach', 'reet', 'stroh', 'holzschindel',
+        'schieferplatte', 'eternit', 'wellblech', 'trapezblech',
+        
+        // Abdichtung erweitert
+        'dachabdichtung', 'flachdachabdichtung', 'bitumen', 'schweißbahn',
+        'kunststoffbahn', 'epdm', 'tpo', 'pvc-folie', 'dampfsperre',
+        'dampfbremse', 'unterspannbahn', 'unterdeckbahn',
+        
+        // Dämmung & Energie
+        'dachdämmung', 'zwischensparrendämmung', 'aufsparrendämmung',
+        'untersparrendämmung', 'wärmedämmung', 'dachbegrünung', 'gründach',
+        'extensivbegrünung', 'intensivbegrünung', 'solardach'
       ],
+      
       'stukateur': [
+        // Grundbegriffe
         'stuck', 'stuckateur', 'putz', 'fassade', 'innenausbau',
         'trockenbau', 'wärmedämmung', 'verputz', 'gipskarton',
-        'dämmung', 'sanierung', 'renovierung'
+        'dämmung', 'sanierung', 'renovierung',
+        
+        // Putzarten erweitert
+        'innenputz', 'außenputz', 'grundputz', 'oberputz', 'edelputz',
+        'strukturputz', 'reibeputz', 'kratzputz', 'scheibenputz',
+        'mineralputz', 'silikatputz', 'silikonputz', 'kunstharzputz',
+        'kalkputz', 'lehmputz', 'gipsputz', 'zementputz',
+        
+        // Stuck erweitert
+        'stuckarbeiten', 'stuckrestaurierung', 'stuckprofile', 'stuckleisten',
+        'stuckrosetten', 'stuck-ornamente', 'gipsstuck', 'kunststoffstuck',
+        'styroporstuck', 'polyurethanstuck', 'profilleisten', 'zierleisten',
+        
+        // Trockenbau erweitert
+        'trockenbauwand', 'vorsatzschale', 'ständerwand', 'metallständer',
+        'gipskartonplatte', 'gipsfaserplatte', 'osb-platte', 'rigips',
+        'knauf', 'abhangdecke', 'unterdecke', 'akustikdecke',
+        
+        // Dämmung erweitert
+        'innendämmung', 'kerndämmung', 'perimeterdämmung', 'kellerdämmung',
+        'bodendämmung', 'deckendämmung', 'wanddämmung', 'dämmstoff',
+        'mineralwolle', 'steinwolle', 'glaswolle', 'polystyrol', 'polyurethan'
       ],
+      
       'planungsbuero': [
+        // Grundbegriffe
         'planung', 'planungsbüro', 'versorgungstechnik', 'beratung',
         'ingenieurbüro', 'haustechnik', 'gebäudetechnik', 'technikplanung',
-        'anlagenbau', 'projektierung', 'consulting'
+        'anlagenbau', 'projektierung', 'consulting',
+        
+        // Planungsarten erweitert
+        'ausführungsplanung', 'entwurfsplanung', 'genehmigungsplanung',
+        'werkplanung', 'detailplanung', 'technische-planung', 'fachplanung',
+        'objektplanung', 'tragwerksplanung', 'bauplanung', 'anlagenplanung',
+        
+        // Gebäudetechnik erweitert
+        'heizungsplanung', 'lüftungsplanung', 'sanitärplanung', 'elektroplanung',
+        'brandschutzplanung', 'sicherheitstechnik', 'msr-technik', 'automation',
+        'gebäudeleittechnik', 'facility-management-planung',
+        
+        // Energie & Nachhaltigkeit
+        'energieplanung', 'energiekonzept', 'energieberatung', 'energieausweis',
+        'nachhaltigkeit', 'green-building', 'leed', 'breeam', 'dgnb',
+        'passivhaus', 'nullenergiehaus', 'plusenergiehaus', 'kfw-standard',
+        
+        // Software & Methoden
+        'cad-planung', 'bim', 'building-information-modeling', '3d-planung',
+        'simulation', 'energiesimulation', 'strömungssimulation', 'fem-analyse'
       ],
+      
       'facility-management': [
         // Kerndienste
         'facility management', 'facility', 'gebäudemanagement', 'hausmeisterdienst', 
         'hausmeister', 'gebäudedienste', 'objektbetreuung', 'liegenschaftsservice',
+        'immobilienservice', 'property-management', 'objektservice',
         
-        // Reinigungsdienste
+        // Reinigungsdienste erweitert
         'reinigung', 'gebäudereinigung', 'büroreinigung', 'unterhaltsreinigung',
         'grundreinigung', 'glasreinigung', 'fensterreinigung', 'teppichreinigung',
         'industriereinigung', 'sonderreinigung', 'desinfektionsreinigung',
+        'praxisreinigung', 'arztpraxisreinigung', 'kanzleireinigung',
+        'einzelhandelsreinigung', 'ladenreinigung', 'verkaufsraumreinigung',
+        'gastronomiereinigung', 'restaurantreinigung', 'hotelreinigung',
         
-        // Technische Dienste
+        // Technische Dienste erweitert
         'wartung', 'instandhaltung', 'technischer service', 'anlagenwartung',
         'haustechnik', 'gebäudetechnik', 'klimawartung', 'heizungswartung',
-        'aufzugswartung', 'sicherheitstechnik', 'brandschutz',
+        'aufzugswartung', 'sicherheitstechnik', 'brandschutz', 'störungsdienst',
+        'reparaturdienst', 'kleinreparaturen', 'handwerkerdienste',
         
-        // Sicherheitsdienste
+        // Sicherheitsdienste erweitert
         'sicherheitsdienst', 'pförtnerdienst', 'empfangsdienst', 'kontrolldienst',
-        'objektschutz', 'überwachung', 'zutrittskontrolle',
+        'objektschutz', 'überwachung', 'zutrittskontrolle', 'werkschutz',
+        'bewachung', 'sicherheitskonzept', 'alarmanlage', 'videoüberwachung',
         
-        // Grünpflege & Außenbereich
+        // Grünpflege & Außenbereich erweitert
         'grünpflege', 'gartenpflege', 'landschaftspflege', 'winterdienst',
-        'schneeräumung', 'streudienst', 'außenanlagenpflege',
+        'schneeräumung', 'streudienst', 'außenanlagenpflege', 'rasenpflege',
+        'heckenschnitt', 'baumschnitt', 'unkrautentfernung', 'bewässerung',
+        'spielplatzwartung', 'parkplatzreinigung', 'gehwegreinigung',
         
-        // Catering & Verpflegung
+        // Catering & Verpflegung erweitert
         'catering', 'kantinenbetrieb', 'verpflegung', 'betriebsgastronomie',
+        'mensabetrieb', 'automatenbetrieb', 'getränkeservice', 'eventcatering',
+        'businesscatering', 'meetingservice', 'konferenzservice',
         
-        // Energiemanagement
+        // Energiemanagement erweitert
         'energiemanagement', 'energieoptimierung', 'energieeffizienz',
-        'verbrauchsmanagement', 'nachhaltigkeit',
+        'verbrauchsmanagement', 'nachhaltigkeit', 'energiecontrolling',
+        'energiemonitoring', 'stromablesung', 'wasserablesung', 'heizungsablesung',
         
-        // Arbeitsplatzservice
+        // Arbeitsplatzservice erweitert
         'arbeitsplatzservice', 'büroservice', 'postservice', 'reprographie',
-        'dokumentenmanagement', 'archivierung',
+        'dokumentenmanagement', 'archivierung', 'kurierdienst', 'botendienst',
+        'telefondienst', 'rezeptionsdienst', 'besuchermanagement',
         
-        // Spezialbereiche
-        'krankenhaus', 'klinik', 'schulreinigung', 'hotelreinigung',
-        'einzelhandel', 'logistik', 'produktion', 'pharma', 'labor'
+        // Spezialbereiche erweitert
+        'krankenhaus', 'klinik', 'praxis', 'labor', 'pharma', 'produktion',
+        'schulreinigung', 'universitätsreinigung', 'hotelreinigung', 'einzelhandel',
+        'logistik', 'bankreinigung', 'versicherungsreinigung', 'behördenreinigung',
+        'justizreinigung', 'flughafenreinigung', 'bahnhofsreinigung'
       ]
     };
     
@@ -540,16 +677,42 @@ export class WebsiteAnalysisService {
       }
     });
     
-    // Spezielle Handwerks-Variationen
+    // Spezielle Handwerks-Variationen für alle Branchen
     const specialVariations: { [key: string]: string[] } = {
-      'sanitär': ['sanitaer', 'sanitar', 'sanitaertechnik', 'sanitärinstallation'],
-      'heizung': ['heizungstechnik', 'heizungsbau', 'heizungsinstallation', 'heizungsservice'],
-      'elektriker': ['elektro', 'elektrotechnik', 'elektroinstallation', 'elektroservice'],
-      'maler': ['malerei', 'malerarbeiten', 'malerbetrieb', 'anstreicher'],
-      'dachdecker': ['dach', 'bedachung', 'dachdeckung', 'dachservice'],
-      'installation': ['installateur', 'installieren', 'installiert'],
-      'wartung': ['service', 'instandhaltung', 'pflege'],
-      'notdienst': ['notruf', 'notfall', '24h service', 'emergency']
+      // SHK
+      'sanitär': ['sanitaer', 'sanitar', 'sanitaertechnik', 'sanitärinstallation', 'sanitärservice'],
+      'heizung': ['heizungstechnik', 'heizungsbau', 'heizungsinstallation', 'heizungsservice', 'heizungsreparatur'],
+      
+      // Elektriker
+      'elektriker': ['elektro', 'elektrotechnik', 'elektroinstallation', 'elektroservice', 'elektrofachbetrieb'],
+      'installation': ['installationstechnik', 'installateur', 'installationsservice'],
+      'beleuchtung': ['licht', 'lichttechnik', 'lichtplanung', 'beleuchtungstechnik'],
+      
+      // Maler
+      'malerei': ['maler', 'malerarbeiten', 'malerservice', 'malerbetrieb', 'malerfachbetrieb'],
+      'lackierung': ['lackierer', 'lackierarbeiten', 'lackierservice', 'autolackierung'],
+      'fassade': ['fassadenarbeiten', 'fassadentechnik', 'fassadengestaltung', 'fassadensanierung'],
+      
+      // Dachdecker
+      'dach': ['dacharbeiten', 'dachservice', 'dachbau', 'dachsystem'],
+      'dachdecker': ['dachdeckerei', 'dachdeckerbetrieb', 'dachdeckermeister'],
+      'bedachung': ['dachdeckung', 'dacheindeckung', 'dachbedachung'],
+      
+      // Stuckateur
+      'stuckateur': ['stuck', 'stuckarbeiten', 'stuckservice', 'stuckbetrieb'],
+      'putz': ['verputz', 'putzarbeiten', 'putztechnik', 'putzservice'],
+      'trockenbau': ['trockenbauwand', 'trockenbauarbeiten', 'trockenbauwände'],
+      
+      // Facility Management
+      'facility': ['facilities', 'facility-management', 'facilitymanagement'],
+      'gebäudereinigung': ['reinigung', 'reinigungsservice', 'reinigungsdienst', 'gebäudereiniger'],
+      'hausmeister': ['hausmeisterdienst', 'hausmeisterservice', 'haustechnik'],
+      'wartung': ['instandhaltung', 'service', 'wartungsservice', 'wartungsdienst'],
+      'sicherheit': ['sicherheitsdienst', 'objektschutz', 'bewachung', 'security'],
+      
+      // Planungsbüro
+      'planung': ['planungsservice', 'planungsleistung', 'fachplanung', 'projektplanung'],
+      'beratung': ['consulting', 'beratungsservice', 'ingenieursberatung', 'fachberatung']
     };
     
     if (specialVariations[keyword]) {
