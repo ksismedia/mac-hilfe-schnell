@@ -52,10 +52,22 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
       coreTopics: ['Anlagenplanung', 'Energiekonzepte', 'Gebäudetechnik', 'Beratung', 'Projektmanagement', 'Gutachten'],
       seasonalTopics: ['Energieaudits', 'Heizungsplanung', 'Klimakonzepte'],
       expertTopics: ['BIM-Planung', 'Passivhaus', 'Gebäudeautomation', 'Nachhaltigkeitsberatung']
+    },
+    'facility-management': {
+      name: 'Facility Management',
+      coreTopics: ['Gebäudereinigung', 'Hausmeisterdienst', 'Wartung', 'Sicherheitsdienst', 'Grünpflege', 'Energiemanagement'],
+      seasonalTopics: ['Winterdienst', 'Gartenpflege Sommer', 'Heizungsablesung', 'Klimawartung'],
+      expertTopics: ['Smart Building', 'Nachhaltigkeitsmanagement', 'Compliance', 'Digitales Facility Management']
     }
   };
 
-  const currentIndustry = industryContentTopics[industry];
+  // Safe access to industry data with fallback
+  const currentIndustry = industryContentTopics[industry] || {
+    name: 'Allgemein',
+    coreTopics: ['Service', 'Qualität', 'Beratung', 'Wartung', 'Reparatur', 'Installation'],
+    seasonalTopics: ['Frühjahrscheck', 'Sommerservice', 'Wintervorbereitung'],
+    expertTopics: ['Speziallösungen', 'Beratung', 'Modernisierung', 'Effizienz']
+  };
 
   // Helper function to merge manual and automatic data
   const getEffectiveContentData = () => {
