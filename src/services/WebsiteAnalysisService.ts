@@ -279,35 +279,62 @@ export class WebsiteAnalysisService {
       let position = 0;
       const volume = this.getKeywordVolume(keyword, industry);
       
-      // Strikte aber flexiblere Keyword-Suche
+      // Erweiterte und flexible Keyword-Suche
       if (keywordLower.length > 0) {
-        // 1. Exakte Wortgrenze-Suche für einfache Begriffe
+        let allMatches: Array<{ matches: RegExpMatchArray; type: string; weight: number }> = [];
+
+        // 1. Exakte Wortgrenze-Suche
         const exactRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
         const exactMatches = allText.match(exactRegex);
+        if (exactMatches) {
+          allMatches.push({ matches: exactMatches, type: 'exact', weight: 1.0 });
+        }
         
-        // 2. Teilstring-Suche für zusammengesetzte Begriffe (deutscher Sprachraum)
+        // 2. Teilstring-Suche (wichtig für deutsche zusammengesetzte Wörter)
         const substringRegex = new RegExp(keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         const substringMatches = allText.match(substringRegex);
+        if (substringMatches) {
+          allMatches.push({ matches: substringMatches, type: 'substring', weight: 0.9 });
+        }
         
-        // 3. Ähnlichkeitssuche für Variationen (Plural, etc.)
-        const variations = this.getKeywordVariations(keywordLower);
-        let variationMatches: RegExpMatchArray | null = null;
-        
-        for (const variation of variations) {
-          const varRegex = new RegExp(`\\b${variation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi');
-          const matches = allText.match(varRegex);
-          if (matches && matches.length > 0) {
-            variationMatches = matches;
-            break;
+        // 3. Wortteile-Suche für Komposita (deutsch typisch)
+        const words = keywordLower.split(/[\s\-]+/);
+        if (words.length > 1) {
+          for (const word of words) {
+            if (word.length >= 4) { // Nur längere Wortteile
+              const wordRegex = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+              const wordMatches = allText.match(wordRegex);
+              if (wordMatches) {
+                allMatches.push({ matches: wordMatches, type: 'wordpart', weight: 0.7 });
+              }
+            }
           }
         }
         
-        // Bewerte die besten Treffer
-        const allMatches = [
-          { matches: exactMatches, type: 'exact', weight: 1.0 },
-          { matches: substringMatches, type: 'substring', weight: 0.8 },
-          { matches: variationMatches, type: 'variation', weight: 0.9 }
-        ].filter(m => m.matches && m.matches.length > 0);
+        // 4. Variationen (Plural, Umlaute, etc.)
+        const variations = this.getKeywordVariations(keywordLower);
+        for (const variation of variations) {
+          const varRegex = new RegExp(`\\b${variation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi');
+          const varMatches = allText.match(varRegex);
+          if (varMatches) {
+            allMatches.push({ matches: varMatches, type: 'variation', weight: 0.8 });
+            break; // Erste Variation reicht
+          }
+        }
+        
+        // 5. Flexiblere Suche nach Wortanfängen (für Fachbegriffe)
+        if (keywordLower.length >= 5) {
+          const stemRegex = new RegExp(`\\b${keywordLower.substring(0, Math.max(4, keywordLower.length - 2)).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\w*`, 'gi');
+          const stemMatches = allText.match(stemRegex);
+          if (stemMatches) {
+            allMatches.push({ matches: stemMatches, type: 'stem', weight: 0.6 });
+          }
+        }
+        
+        // Entferne Duplikate und sortiere nach Gewichtung
+        allMatches = allMatches.filter((match, index, self) => 
+          index === self.findIndex(m => m.type === match.type)
+        ).sort((a, b) => b.weight - a.weight);
         
         if (allMatches.length > 0) {
           found = true;
