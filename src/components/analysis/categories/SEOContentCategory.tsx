@@ -67,6 +67,11 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
+  const handleTabChange = (value: string) => {
+    console.log('Tab changed to:', value);
+    setActiveTab(value);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -74,18 +79,68 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
         <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 lg:grid-cols-10 mb-6">
-          <TabsTrigger value="seo">SEO</TabsTrigger>
-          <TabsTrigger value="keywords">Keywords</TabsTrigger>
-          <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="local-seo">Local SEO</TabsTrigger>
-          <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
-          <TabsTrigger value="accessibility">Barrierefreiheit</TabsTrigger>
-          <TabsTrigger value="privacy">Datenschutz</TabsTrigger>
-          <TabsTrigger value="imprint">Impressum</TabsTrigger>
-          <TabsTrigger value="competitors">Konkurrenz</TabsTrigger>
-          <TabsTrigger value="industry">Branche</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        <TabsList className="grid grid-cols-5 lg:grid-cols-10 mb-6 bg-gray-800">
+          <TabsTrigger 
+            value="seo" 
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            SEO
+          </TabsTrigger>
+          <TabsTrigger 
+            value="keywords"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Keywords
+          </TabsTrigger>
+          <TabsTrigger 
+            value="content"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Content
+          </TabsTrigger>
+          <TabsTrigger 
+            value="local-seo"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Local SEO
+          </TabsTrigger>
+          <TabsTrigger 
+            value="backlinks"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Backlinks
+          </TabsTrigger>
+          <TabsTrigger 
+            value="accessibility"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Barrierefreiheit
+          </TabsTrigger>
+          <TabsTrigger 
+            value="privacy"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Datenschutz
+          </TabsTrigger>
+          <TabsTrigger 
+            value="imprint"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Impressum
+          </TabsTrigger>
+          <TabsTrigger 
+            value="competitors"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Konkurrenz
+          </TabsTrigger>
+          <TabsTrigger 
+            value="industry"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
+          >
+            Branche
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="seo">
