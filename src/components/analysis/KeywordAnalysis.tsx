@@ -15,9 +15,10 @@ interface KeywordAnalysisProps {
   onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;
   loadedKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   loadedKeywordScore?: number | null;
+  onNavigateToNextCategory?: () => void; // Neue Prop für Navigation
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore }) => {
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory }) => {
   const [keywordData, setKeywordData] = useState(() => {
     const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
     return {
@@ -298,6 +299,10 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                 currentKeywords={[]} // Leere Liste für neue manuelle Eingabe
                 onSaveRequested={() => {
                   console.log('Save requested from KeywordAnalysis');
+                }}
+                onNavigateNext={() => {
+                  // Direkte Navigation über die Parent-Komponente
+                  onNavigateToNextCategory?.();
                 }}
               />
             )}

@@ -36,6 +36,7 @@ interface SEOContentCategoryProps {
   updateCompanyServices: (services: string[]) => void;
   addDeletedCompetitor: (competitorName: string) => void;
   removeDeletedCompetitor: (competitorName: string) => void;
+  onNavigateToCategory?: (categoryId: string) => void; // Neue Prop für Navigation
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -62,6 +63,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateCompanyServices,
   addDeletedCompetitor,
   removeDeletedCompetitor,
+  onNavigateToCategory,
 }) => {
   return (
     <div className="space-y-6">
@@ -97,6 +99,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             onKeywordDataChange={onKeywordDataChange}
             loadedKeywordScore={keywordsScore}
             loadedKeywordData={manualKeywordData}
+            onNavigateToNextCategory={() => onNavigateToCategory?.('performance-mobile')}
           />
         </TabsContent>
 

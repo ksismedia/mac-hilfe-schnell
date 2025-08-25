@@ -303,6 +303,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateCompanyServices={updateCompanyServices}
             addDeletedCompetitor={addDeletedCompetitor}
             removeDeletedCompetitor={removeDeletedCompetitor}
+            onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
           />
         );
       case 'performance-mobile':

@@ -12,13 +12,15 @@ interface ManualKeywordInputProps {
   industry: string;
   currentKeywords?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   onSaveRequested?: () => void;
+  onNavigateNext?: () => void; // Neue Prop für Navigation
 }
 
 const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({ 
   onKeywordsUpdate, 
   industry, 
   currentKeywords,
-  onSaveRequested 
+  onSaveRequested,
+  onNavigateNext
 }) => {
   const [newKeyword, setNewKeyword] = useState('');
   const [manualKeywords, setManualKeywords] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }>>(currentKeywords || []);
@@ -67,6 +69,11 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
     console.log('=== APPLY DATA BUTTON CLICKED ===');
     console.log('Applying manual keywords:', manualKeywords);
     onKeywordsUpdate(manualKeywords);
+    
+    // Automatisch zur nächsten Kategorie navigieren nach erfolgreicher Anwendung
+    setTimeout(() => {
+      onNavigateNext?.();
+    }, 500); // Kurze Verzögerung für bessere UX
   };
 
   const getIndustryKeywords = (industry: string) => {
