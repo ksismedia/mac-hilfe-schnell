@@ -79,153 +79,125 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
         <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid grid-cols-5 lg:grid-cols-10 mb-6 bg-gray-800">
-          <TabsTrigger 
-            value="seo" 
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            SEO
-          </TabsTrigger>
-          <TabsTrigger 
-            value="keywords"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Keywords
-          </TabsTrigger>
-          <TabsTrigger 
-            value="content"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Content
-          </TabsTrigger>
-          <TabsTrigger 
-            value="local-seo"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Local SEO
-          </TabsTrigger>
-          <TabsTrigger 
-            value="backlinks"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Backlinks
-          </TabsTrigger>
-          <TabsTrigger 
-            value="accessibility"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Barrierefreiheit
-          </TabsTrigger>
-          <TabsTrigger 
-            value="privacy"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Datenschutz
-          </TabsTrigger>
-          <TabsTrigger 
-            value="imprint"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Impressum
-          </TabsTrigger>
-          <TabsTrigger 
-            value="competitors"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Konkurrenz
-          </TabsTrigger>
-          <TabsTrigger 
-            value="industry"
-            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black text-white"
-          >
-            Branche
-          </TabsTrigger>
-        </TabsList>
+      
+      {/* Custom Tab Navigation - Vereinfacht */}
+      <div className="w-full">
+        <div className="flex flex-wrap gap-2 mb-6 p-2 bg-gray-800 rounded-lg">
+          {[
+            { id: 'seo', label: 'SEO' },
+            { id: 'keywords', label: 'Keywords' },
+            { id: 'content', label: 'Content' },
+            { id: 'local-seo', label: 'Local SEO' },
+            { id: 'backlinks', label: 'Backlinks' },
+            { id: 'accessibility', label: 'Barrierefreiheit' },
+            { id: 'privacy', label: 'Datenschutz' },
+            { id: 'imprint', label: 'Impressum' },
+            { id: 'competitors', label: 'Konkurrenz' },
+            { id: 'industry', label: 'Branche' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                console.log('Clicking tab:', tab.id);
+                handleTabChange(tab.id);
+              }}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-yellow-500 text-black'
+                  : 'bg-gray-600 text-white hover:bg-gray-500'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-        <TabsContent value="seo">
-          <SEOAnalysis realData={realData} url={businessData.url} />
-        </TabsContent>
+        {/* Tab Content */}
+        <div className="w-full">
+          {activeTab === 'seo' && (
+            <SEOAnalysis realData={realData} url={businessData.url} />
+          )}
 
-        <TabsContent value="keywords">
-          <KeywordAnalysis 
-            url={businessData.url}
-            industry={businessData.industry}
-            realData={realData}
-            onScoreChange={onKeywordsScoreChange}
-            onKeywordDataChange={onKeywordDataChange}
-            loadedKeywordScore={keywordsScore}
-            loadedKeywordData={manualKeywordData}
-            onNavigateToNextCategory={() => {
-              onNavigateToCategory?.('performance-mobile');
-              // Auch zum Content Tab wechseln als Alternative
-              setActiveTab('content');
-            }}
-          />
-        </TabsContent>
+          {activeTab === 'keywords' && (
+            <KeywordAnalysis 
+              url={businessData.url}
+              industry={businessData.industry}
+              realData={realData}
+              onScoreChange={onKeywordsScoreChange}
+              onKeywordDataChange={onKeywordDataChange}
+              loadedKeywordScore={keywordsScore}
+              loadedKeywordData={manualKeywordData}
+              onNavigateToNextCategory={() => {
+                onNavigateToCategory?.('performance-mobile');
+                // Auch zum Content Tab wechseln als Alternative
+                setActiveTab('content');
+              }}
+            />
+          )}
 
-        <TabsContent value="content">
-          <ContentAnalysis url={businessData.url} industry={businessData.industry} />
-        </TabsContent>
+          {activeTab === 'content' && (
+            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
+          )}
 
-        <TabsContent value="local-seo">
-          <LocalSEO businessData={businessData} realData={realData} />
-        </TabsContent>
+          {activeTab === 'local-seo' && (
+            <LocalSEO businessData={businessData} realData={realData} />
+          )}
 
-        <TabsContent value="backlinks">
-          <BacklinkAnalysis url={businessData.url} />
-        </TabsContent>
+          {activeTab === 'backlinks' && (
+            <BacklinkAnalysis url={businessData.url} />
+          )}
 
-        <TabsContent value="accessibility">
-          <AccessibilityAnalysis 
-            businessData={businessData}
-            realData={realData} 
-            onDataChange={setAccessibilityData}
-            savedData={accessibilityData}
-          />
-        </TabsContent>
+          {activeTab === 'accessibility' && (
+            <AccessibilityAnalysis 
+              businessData={businessData}
+              realData={realData} 
+              onDataChange={setAccessibilityData}
+              savedData={accessibilityData}
+            />
+          )}
 
-        <TabsContent value="privacy">
-          <DataPrivacyAnalysis 
-            businessData={businessData}
-            realData={realData}
-            onDataChange={setPrivacyData}
-            savedData={privacyData}
-          />
-        </TabsContent>
+          {activeTab === 'privacy' && (
+            <DataPrivacyAnalysis 
+              businessData={businessData}
+              realData={realData}
+              onDataChange={setPrivacyData}
+              savedData={privacyData}
+            />
+          )}
 
-        <TabsContent value="imprint">
-          <ImprintCheck 
-            url={businessData.url}
-            realData={realData}
-            manualData={manualImprintData}
-            onManualDataChange={updateImprintData}
-          />
-        </TabsContent>
+          {activeTab === 'imprint' && (
+            <ImprintCheck 
+              url={businessData.url}
+              realData={realData}
+              manualData={manualImprintData}
+              onManualDataChange={updateImprintData}
+            />
+          )}
 
-        <TabsContent value="competitors">
-          <CompetitorAnalysis 
-            address={businessData.address}
-            industry={businessData.industry}
-            realData={realData}
-            manualCompetitors={manualCompetitors}
-            competitorServices={competitorServices}
-            removedMissingServices={removedMissingServices}
-            companyServices={companyServices}
-            deletedCompetitors={deletedCompetitors}
-            onCompetitorsChange={updateCompetitors}
-            onCompetitorServicesChange={updateCompetitorServices}
-            onRemovedMissingServicesChange={addRemovedMissingService}
-            onCompanyServicesChange={updateCompanyServices}
-            onDeletedCompetitorChange={addDeletedCompetitor}
-            onRestoreCompetitorChange={removeDeletedCompetitor}
-          />
-        </TabsContent>
+          {activeTab === 'competitors' && (
+            <CompetitorAnalysis 
+              address={businessData.address}
+              industry={businessData.industry}
+              realData={realData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              removedMissingServices={removedMissingServices}
+              companyServices={companyServices}
+              deletedCompetitors={deletedCompetitors}
+              onCompetitorsChange={updateCompetitors}
+              onCompetitorServicesChange={updateCompetitorServices}
+              onRemovedMissingServicesChange={addRemovedMissingService}
+              onCompanyServicesChange={updateCompanyServices}
+              onDeletedCompetitorChange={addDeletedCompetitor}
+              onRestoreCompetitorChange={removeDeletedCompetitor}
+            />
+          )}
 
-        <TabsContent value="industry">
-          <IndustryFeatures businessData={businessData} />
-        </TabsContent>
-      </Tabs>
+          {activeTab === 'industry' && (
+            <IndustryFeatures businessData={businessData} />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
