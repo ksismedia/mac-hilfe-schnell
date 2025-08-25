@@ -1,5 +1,6 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
+import { calculateSimpleSocialScore } from './simpleSocialScore';
 
 const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
   const reviews = realData.reviews.google.count;
@@ -68,7 +69,6 @@ export const calculateSocialMediaCategoryScore = (
   manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
   // Use the same logic as in OverallRating component for consistent results
-  const { calculateSimpleSocialScore } = require('./simpleSocialScore');
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   
