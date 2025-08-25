@@ -46,24 +46,41 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
       // API-Key setzen
       GoogleAPIService.setApiKey(apiKey);
       
-      // API-Key validieren
-      const testResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`
-      );
+      // API-Key validieren mit CORS-Proxy
+      const corsProxies = [
+        'https://cors-anywhere.herokuapp.com/',
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?'
+      ];
+      
+      let validationSuccessful = false;
+      
+      for (const proxy of corsProxies) {
+        try {
+          const testUrl = `${proxy}https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${apiKey}`;
+          const testResponse = await fetch(testUrl);
 
-      if (testResponse.ok) {
-        const data = await testResponse.json();
-        if (data.status === 'OK') {
-          toast({
-            title: "API-Key erfolgreich",
-            description: "Der Google API-Key wurde erfolgreich validiert.",
-          });
-          onApiKeySet();
-        } else {
-          throw new Error(`API-Key ungültig: ${data.status}`);
+          if (testResponse.ok) {
+            const data = await testResponse.json();
+            if (data.status === 'OK') {
+              validationSuccessful = true;
+              break;
+            }
+          }
+        } catch (proxyError) {
+          console.log(`Proxy ${proxy} failed, trying next...`);
+          continue;
         }
+      }
+      
+      if (validationSuccessful) {
+        toast({
+          title: "API-Key erfolgreich",
+          description: "Der Google API-Key wurde erfolgreich validiert.",
+        });
+        onApiKeySet();
       } else {
-        throw new Error('API-Key Validierung fehlgeschlagen');
+        throw new Error('API-Key ungültig oder alle CORS-Proxies nicht erreichbar');
       }
     } catch (error) {
       console.error('API-Key Validierung fehlgeschlagen:', error);
