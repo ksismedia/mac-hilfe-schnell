@@ -157,11 +157,17 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         setIsOpen(false);
       } catch (error) {
         console.error('Error calling onLoadAnalysis:', error);
-        // Fallback: Seite neu laden mit URL-Parameter
+      }
+      
+      // DIREKTER FALLBACK: Immer zur Analyse-Seite weiterleiten
+      console.log('Executing direct redirect to analysis...');
+      setTimeout(() => {
+        // Setze URL-Parameter und lade die Seite neu
         const url = new URL(window.location.href);
         url.searchParams.set('loadAnalysis', analysisId);
+        console.log('Redirecting to:', url.toString());
         window.location.href = url.toString();
-      }
+      }, 1000); // 1 Sekunde Delay für Toast-Anzeige
 
       toast({
         title: "Import erfolgreich",
