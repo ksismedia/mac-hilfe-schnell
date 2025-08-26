@@ -134,6 +134,24 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
 
       console.log('Analysis saved with ID:', analysisId);
 
+      // Sofort nach dem Import laden
+      const newAnalysis = {
+        id: analysisId,
+        name: importName,
+        businessData: importedAnalysis.businessData,
+        realData: importedAnalysis.realData,
+        manualData: importedAnalysis.manualData || {
+          competitors: [],
+          competitorServices: {},
+          removedMissingServices: []
+        },
+        savedAt: new Date().toISOString()
+      };
+
+      // Sofort die importierte Analyse laden
+      onLoadAnalysis(newAnalysis);
+      setIsOpen(false);
+
       toast({
         title: "Import erfolgreich",
         description: `Analyse "${importName}" wurde erfolgreich importiert.`,
