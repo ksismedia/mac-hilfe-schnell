@@ -6,7 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { Save, FolderOpen, Trash2, Download, Calendar, Globe } from 'lucide-react';
+import { Save, FolderOpen, Trash2, Download, Calendar, Globe, Upload } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
 
 interface SavedAnalysesManagerProps {
   onLoadAnalysis: (analysis: SavedAnalysis) => void;
@@ -24,8 +26,9 @@ const industryNames = {
 };
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {
-  const { savedAnalyses, deleteAnalysis, exportAnalysis } = useSavedAnalyses();
+  const { savedAnalyses, deleteAnalysis, exportAnalysis, saveAnalysis } = useSavedAnalyses();
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('de-DE', {
@@ -40,6 +43,53 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
   const handleLoadAnalysis = (analysis: SavedAnalysis) => {
     onLoadAnalysis(analysis);
     setIsOpen(false);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const importedAnalysis = JSON.parse(text) as SavedAnalysis;
+      
+      // Validierung der JSON-Struktur
+      if (!importedAnalysis.id || !importedAnalysis.name || !importedAnalysis.businessData || !importedAnalysis.realData) {
+        throw new Error('Ungültiges Dateiformat');
+      }
+
+      // Generiere neue ID für Import
+      const newAnalysis = {
+        ...importedAnalysis,
+        id: `imported-${Date.now()}`,
+        name: `${importedAnalysis.name} (Importiert)`,
+        savedAt: new Date().toISOString()
+      };
+
+      saveAnalysis(
+        newAnalysis.name,
+        newAnalysis.businessData,
+        newAnalysis.realData,
+        newAnalysis.manualData
+      );
+
+      toast({
+        title: "Import erfolgreich",
+        description: `Analyse "${newAnalysis.name}" wurde erfolgreich importiert.`,
+      });
+
+      // Reset file input
+      event.target.value = '';
+      
+    } catch (error) {
+      console.error('Import error:', error);
+      toast({
+        title: "Import fehlgeschlagen",
+        description: "Die JSON-Datei konnte nicht gelesen werden. Bitte überprüfen Sie das Dateiformat.",
+        variant: "destructive"
+      });
+      event.target.value = '';
+    }
   };
 
   if (savedAnalyses.length === 0) {
@@ -75,7 +125,26 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
+            <div className="flex items-center gap-2">
+              <Input
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="json-upload"
+              />
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => document.getElementById('json-upload')?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                JSON Import
+              </Button>
+            </div>
+          </div>
         </DialogHeader>
         <div className="grid gap-4">
           {savedAnalyses.map((analysis) => (
