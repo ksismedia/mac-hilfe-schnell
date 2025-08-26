@@ -67,6 +67,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const ownServicesForScore = ownServices.filter(service => 
     !removedMissingServices.includes(service)
   );
+  
+  console.log('=== COMPETITOR ANALYSIS DEBUG ===');
+  console.log('ownServices:', ownServices);
+  console.log('removedMissingServices:', removedMissingServices);
+  console.log('ownServicesForScore:', ownServicesForScore);
+  console.log('services count change:', ownServices.length, '->', ownServicesForScore.length);
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { rating: number; reviews: number; services: string[] }) => {
@@ -133,6 +139,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     location: 'Ihr Unternehmen'
   };
   const ownCompanyScore = calculateCompetitorScore(ownCompany);
+  
+  console.log('=== OWN COMPANY SCORE CALCULATION ===');
+  console.log('ownCompany object:', ownCompany);
+  console.log('calculated ownCompanyScore:', ownCompanyScore);
 
   // Alle Konkurrenten zusammenführen - manuelle Konkurrenten direkt verwenden
   const allCompetitors = [
