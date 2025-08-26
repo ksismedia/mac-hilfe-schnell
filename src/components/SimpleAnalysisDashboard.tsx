@@ -120,8 +120,23 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         console.log('LoadedAnalysisId:', loadedAnalysisId);
         
         try {
-          const savedAnalysis = loadAnalysis(loadedAnalysisId);
+          let savedAnalysis = loadAnalysis(loadedAnalysisId);
           console.log('Loaded analysis from storage:', savedAnalysis);
+          
+          // Fallback: Direkt aus localStorage lesen wenn Hook noch nicht ready ist
+          if (!savedAnalysis) {
+            console.log('Hook returned null, trying direct localStorage access...');
+            try {
+              const stored = localStorage.getItem('saved_analyses');
+              if (stored) {
+                const analyses = JSON.parse(stored);
+                savedAnalysis = analyses.find((a: any) => a.id === loadedAnalysisId);
+                console.log('Direct localStorage result:', savedAnalysis);
+              }
+            } catch (error) {
+              console.error('Direct localStorage access failed:', error);
+            }
+          }
           
           if (savedAnalysis) {
             console.log('Setting real data from saved analysis...');
