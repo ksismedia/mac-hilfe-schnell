@@ -54,6 +54,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
@@ -119,6 +120,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         console.log('=== LOADING SAVED ANALYSIS ===');
         console.log('LoadedAnalysisId:', loadedAnalysisId);
         
+        setIsLoadingFromStorage(true);
+        
         try {
           let savedAnalysis = loadAnalysis(loadedAnalysisId);
           console.log('Loaded analysis from storage:', savedAnalysis);
@@ -168,9 +171,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             );
             
             console.log('=== SAVED ANALYSIS LOADED SUCCESSFULLY ===');
+            setIsLoadingFromStorage(false);
             return;
           } else {
             console.error('Saved analysis not found in storage for ID:', loadedAnalysisId);
+            setIsLoadingFromStorage(false);
             toast({
               title: "Fehler beim Laden",
               description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
@@ -180,6 +185,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           }
         } catch (error) {
           console.error('Error loading saved analysis:', error);
+          setIsLoadingFromStorage(false);
           toast({
             title: "Fehler beim Laden", 
             description: "Beim Laden der Analyse ist ein Fehler aufgetreten.",
@@ -203,6 +209,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           });
         } finally {
           setIsLoading(false);
+          setIsLoadingFromStorage(false);
         }
       }
     };
@@ -210,7 +217,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     loadAnalysisData();
   }, [loadedAnalysisId]); // Only depend on loadedAnalysisId to prevent re-triggering
 
-  if (isLoading) {
+  if (isLoading || isLoadingFromStorage) {
     return (
       <div style={{ 
         minHeight: '100vh', 
