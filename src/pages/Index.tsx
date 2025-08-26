@@ -45,6 +45,20 @@ const Index = () => {
       if (existingKey) {
         setApiKey(existingKey);
       }
+      
+      // Check for URL parameter to load analysis
+      const urlParams = new URLSearchParams(window.location.search);
+      const analysisIdFromUrl = urlParams.get('loadAnalysis');
+      if (analysisIdFromUrl) {
+        console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
+        setLoadedAnalysisId(analysisIdFromUrl);
+        setStep('results');
+        // Clean URL
+        const url = new URL(window.location.href);
+        url.searchParams.delete('loadAnalysis');
+        window.history.replaceState({}, '', url.toString());
+      }
+      
       setIsInitialized(true);
     }
   }, [isInitialized]);

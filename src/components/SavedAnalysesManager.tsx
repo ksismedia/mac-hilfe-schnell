@@ -134,7 +134,7 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
 
       console.log('Analysis saved with ID:', analysisId);
 
-      // Sofort nach dem Import laden
+      // Erstelle die komplette Analyse-Struktur
       const newAnalysis = {
         id: analysisId,
         name: importName,
@@ -148,9 +148,20 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         savedAt: new Date().toISOString()
       };
 
-      // Sofort die importierte Analyse laden
-      onLoadAnalysis(newAnalysis);
-      setIsOpen(false);
+      console.log('Calling onLoadAnalysis with:', newAnalysis);
+      
+      // Versuche die Analyse zu laden
+      try {
+        onLoadAnalysis(newAnalysis);
+        console.log('onLoadAnalysis called successfully');
+        setIsOpen(false);
+      } catch (error) {
+        console.error('Error calling onLoadAnalysis:', error);
+        // Fallback: Seite neu laden mit URL-Parameter
+        const url = new URL(window.location.href);
+        url.searchParams.set('loadAnalysis', analysisId);
+        window.location.href = url.toString();
+      }
 
       toast({
         title: "Import erfolgreich",
