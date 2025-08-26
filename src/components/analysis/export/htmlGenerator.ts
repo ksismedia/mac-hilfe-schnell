@@ -130,10 +130,9 @@ export const generateCustomerHTML = ({
     ? companyServices.services 
     : industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
   
-  // Services für Score-Berechnung (ohne entfernte Services) - GLEICH wie in CompetitorAnalysis
-  const servicesForScore = expectedServices.filter(service => 
-    !removedMissingServices.includes(service)
-  );
+  // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
+  // (entfernte "fehlende" Services = Services die man auch anbietet, nur anders benannt)
+  const servicesForScore = [...expectedServices, ...removedMissingServices];
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
