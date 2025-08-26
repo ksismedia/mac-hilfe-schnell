@@ -22,33 +22,51 @@ export const loadSavedAnalysisData = (
   updateCompanyServices?: (services: string[]) => void,
   setManualKeywordData?: (data: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void
 ) => {
+  console.log('Loading saved analysis data:', savedAnalysis.id);
+  
   // Load manual data
-  if (savedAnalysis.manualData.imprint) {
+  if (savedAnalysis.manualData?.imprint) {
+    console.log('Loading imprint data');
     updateImprintData(savedAnalysis.manualData.imprint);
   }
-  if (savedAnalysis.manualData.social) {
+  
+  if (savedAnalysis.manualData?.social) {
+    console.log('Loading social data');
     updateSocialData(savedAnalysis.manualData.social);
   }
-  if (savedAnalysis.manualData.workplace) {
+  
+  if (savedAnalysis.manualData?.workplace) {
+    console.log('Loading workplace data');
     updateWorkplaceData(savedAnalysis.manualData.workplace);
   }
-  if (savedAnalysis.manualData.corporateIdentity) {
+  
+  if (savedAnalysis.manualData?.corporateIdentity) {
+    console.log('Loading corporate identity data');
     updateCorporateIdentityData(savedAnalysis.manualData.corporateIdentity);
   }
-  if (savedAnalysis.manualData.competitors && savedAnalysis.manualData.competitors.length > 0) {
+  
+  if (savedAnalysis.manualData?.competitors && Array.isArray(savedAnalysis.manualData.competitors)) {
+    console.log('Loading competitors:', savedAnalysis.manualData.competitors.length);
     updateCompetitors(savedAnalysis.manualData.competitors);
   }
-  if (savedAnalysis.manualData.competitorServices) {
+  
+  if (savedAnalysis.manualData?.competitorServices) {
+    console.log('Loading competitor services');
     loadCompetitorServices(savedAnalysis.manualData.competitorServices, updateCompetitorServices);
   }
   
-  // Load company services if available
-  if (savedAnalysis.manualData.companyServices && updateCompanyServices) {
-    updateCompanyServices(savedAnalysis.manualData.companyServices.services || []);
+  // Load company services if available and function is provided
+  if (savedAnalysis.manualData?.companyServices && updateCompanyServices) {
+    console.log('Loading company services:', savedAnalysis.manualData.companyServices);
+    const services = savedAnalysis.manualData.companyServices.services || [];
+    updateCompanyServices(services);
   }
   
-  // Load keyword data if available
-  if (savedAnalysis.manualData.keywordData && setManualKeywordData) {
+  // Load keyword data if available and function is provided
+  if (savedAnalysis.manualData?.keywordData && setManualKeywordData) {
+    console.log('Loading keyword data:', savedAnalysis.manualData.keywordData.length, 'keywords');
     setManualKeywordData(savedAnalysis.manualData.keywordData);
   }
+  
+  console.log('Saved analysis data loaded successfully');
 };

@@ -114,24 +114,31 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
       
       if (loadedAnalysisId) {
         try {
+          console.log('Loading saved analysis with ID:', loadedAnalysisId);
           const savedAnalysis = loadAnalysis(loadedAnalysisId);
           
           if (savedAnalysis) {
+            console.log('Found saved analysis:', savedAnalysis.name);
             setRealData(savedAnalysis.realData);
             
             if (savedAnalysis.manualData?.keywordData) {
+              console.log('Setting keyword data from saved analysis');
               setManualKeywordData(savedAnalysis.manualData.keywordData);
             }
             if (savedAnalysis.manualData?.keywordScore !== undefined) {
+              console.log('Setting keyword score from saved analysis:', savedAnalysis.manualData.keywordScore);
               setKeywordsScore(savedAnalysis.manualData.keywordScore);
             }
             if (savedAnalysis.manualData?.privacyData) {
+              console.log('Setting privacy data from saved analysis');
               setPrivacyData(savedAnalysis.manualData.privacyData);
             }
             if (savedAnalysis.manualData?.accessibilityData) {
+              console.log('Setting accessibility data from saved analysis');
               setAccessibilityData(savedAnalysis.manualData.accessibilityData);
             }
             
+            console.log('Loading manual data via analysisLoader...');
             loadSavedAnalysisData(
               savedAnalysis,
               updateImprintData,
@@ -144,8 +151,10 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               setManualKeywordData
             );
             
+            console.log('Saved analysis loaded successfully');
             return;
           } else {
+            console.error('Saved analysis not found with ID:', loadedAnalysisId);
             toast({
               title: "Fehler beim Laden",
               description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
@@ -182,7 +191,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis]);
+  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCorporateIdentityData, updateCompetitors, updateCompetitorServices, updateCompanyServices]);
 
   if (isLoading) {
     return (
