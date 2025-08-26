@@ -63,15 +63,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   // Verwende eigene Services statt Standard-Services
   const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServices(industry);
   
-  // Services für Score-Berechnung (ohne entfernte Services)
-  const ownServicesForScore = ownServices.filter(service => 
-    !removedMissingServices.includes(service)
-  );
+  // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
+  // (entfernte "fehlende" Services = Services die man auch anbietet, nur anders benannt)
+  const ownServicesForScore = [...ownServices, ...removedMissingServices];
   
   console.log('=== COMPETITOR ANALYSIS DEBUG ===');
-  console.log('ownServices:', ownServices);
-  console.log('removedMissingServices:', removedMissingServices);
-  console.log('ownServicesForScore:', ownServicesForScore);
+  console.log('ownServices (original):', ownServices);
+  console.log('removedMissingServices (ich biete auch an):', removedMissingServices);
+  console.log('ownServicesForScore (total):', ownServicesForScore);
   console.log('services count change:', ownServices.length, '->', ownServicesForScore.length);
 
   // Konkurrenten-Score berechnen
@@ -92,7 +91,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
       
       const uniqueServices = services.filter((service: string) => 
-        typeof service === 'string' && service.trim().length > 0 && !ownServices.some(ownService => 
+        typeof service === 'string' && service.trim().length > 0 && 
+        !ownServicesForScore.some(ownService => 
           typeof ownService === 'string' && ownService.trim().length > 0 && (
             ownService.toLowerCase().includes(service.toLowerCase()) || 
             service.toLowerCase().includes(ownService.toLowerCase())
@@ -247,7 +247,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   });
 
   const missingServices = Array.from(allCompetitorServices).filter((service: string) => 
-    !ownServices.some(ownService => 
+    !ownServicesForScore.some(ownService => 
       ownService.toLowerCase().includes(service.toLowerCase()) || 
       service.toLowerCase().includes(ownService.toLowerCase())
     ) && !removedMissingServices.includes(service)
