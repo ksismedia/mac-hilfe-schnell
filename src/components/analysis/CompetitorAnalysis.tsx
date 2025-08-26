@@ -201,7 +201,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       ...ownCompany,
       score: ownCompanyScore,
       uniqueServices: [],
-      services: ownServices,
+      services: ownServicesForScore, // Verwende gefilterte Services auch für Anzeige
       source: 'own' as const
     },
     ...allCompetitors
