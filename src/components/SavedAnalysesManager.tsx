@@ -47,17 +47,41 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    console.log('File upload started:', file);
+    
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
+
+    console.log('File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
 
     try {
+      console.log('Reading file content...');
       const text = await file.text();
+      console.log('File content read, length:', text.length);
+      console.log('First 100 chars:', text.substring(0, 100));
+      
       const importedAnalysis = JSON.parse(text) as SavedAnalysis;
+      console.log('JSON parsed successfully:', importedAnalysis);
       
       // Validierung der JSON-Struktur
       if (!importedAnalysis.id || !importedAnalysis.name || !importedAnalysis.businessData || !importedAnalysis.realData) {
-        throw new Error('Ungültiges Dateiformat');
+        console.error('Validation failed:', {
+          hasId: !!importedAnalysis.id,
+          hasName: !!importedAnalysis.name,
+          hasBusinessData: !!importedAnalysis.businessData,
+          hasRealData: !!importedAnalysis.realData
+        });
+        throw new Error('Ungültiges Dateiformat - fehlerhafte JSON-Struktur');
       }
 
+      console.log('Validation passed, creating new analysis...');
+      
       // Generiere neue ID für Import
       const newAnalysis = {
         ...importedAnalysis,
@@ -66,6 +90,8 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         savedAt: new Date().toISOString()
       };
 
+      console.log('Saving analysis:', newAnalysis);
+      
       saveAnalysis(
         newAnalysis.name,
         newAnalysis.businessData,
@@ -78,16 +104,30 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         description: `Analyse "${newAnalysis.name}" wurde erfolgreich importiert.`,
       });
 
+      console.log('Import completed successfully');
+      
       // Reset file input
       event.target.value = '';
       
     } catch (error) {
-      console.error('Import error:', error);
+      console.error('Import error details:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      
+      let errorMessage = "Die JSON-Datei konnte nicht gelesen werden.";
+      
+      if (error instanceof SyntaxError) {
+        errorMessage = "Die Datei enthält ungültiges JSON-Format.";
+      } else if (error instanceof Error && error.message.includes('Ungültiges Dateiformat')) {
+        errorMessage = "Die JSON-Datei hat nicht das erwartete Format für eine Analyse.";
+      }
+      
       toast({
         title: "Import fehlgeschlagen",
-        description: "Die JSON-Datei konnte nicht gelesen werden. Bitte überprüfen Sie das Dateiformat.",
+        description: errorMessage,
         variant: "destructive"
       });
+      
       event.target.value = '';
     }
   };
@@ -128,17 +168,16 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
           <div className="flex items-center justify-between">
             <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
             <div className="flex items-center gap-2">
-              <Input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="json-upload"
-              />
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => document.getElementById('json-upload')?.click()}
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.json';
+                  input.onchange = (e) => handleFileUpload(e as any);
+                  input.click();
+                }}
               >
                 <Upload className="h-4 w-4 mr-2" />
                 JSON Import
