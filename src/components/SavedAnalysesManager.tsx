@@ -27,8 +27,9 @@ const industryNames = {
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {
   const { savedAnalyses, deleteAnalysis, exportAnalysis, saveAnalysis } = useSavedAnalyses();
-  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('de-DE', {
@@ -45,81 +46,114 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
     setIsOpen(false);
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    console.log('File upload started:', file);
+  const triggerFileUpload = () => {
+    console.log('Triggering file upload...');
     
-    if (!file) {
-      console.log('No file selected');
-      return;
-    }
-
-    console.log('File details:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.style.display = 'none';
+    
+    input.addEventListener('change', async (event) => {
+      console.log('File input change event triggered');
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+      
+      if (!file) {
+        console.log('No file selected');
+        return;
+      }
+      
+      await handleFileUpload(file);
     });
+    
+    // Add to DOM temporarily
+    document.body.appendChild(input);
+    input.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(input);
+    }, 1000);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    console.log('=== FILE UPLOAD START ===');
+    console.log('File:', file);
+    console.log('File name:', file.name);
+    console.log('File size:', file.size);
+    console.log('File type:', file.type);
+    
+    setIsImporting(true);
 
     try {
-      console.log('Reading file content...');
-      const text = await file.text();
-      console.log('File content read, length:', text.length);
-      console.log('First 100 chars:', text.substring(0, 100));
-      
-      const importedAnalysis = JSON.parse(text) as SavedAnalysis;
-      console.log('JSON parsed successfully:', importedAnalysis);
-      
-      // Validierung der JSON-Struktur
-      if (!importedAnalysis.id || !importedAnalysis.name || !importedAnalysis.businessData || !importedAnalysis.realData) {
-        console.error('Validation failed:', {
-          hasId: !!importedAnalysis.id,
-          hasName: !!importedAnalysis.name,
-          hasBusinessData: !!importedAnalysis.businessData,
-          hasRealData: !!importedAnalysis.realData
-        });
-        throw new Error('Ungültiges Dateiformat - fehlerhafte JSON-Struktur');
+      if (!file.name.endsWith('.json')) {
+        throw new Error('Bitte wählen Sie eine .json Datei aus');
       }
 
-      console.log('Validation passed, creating new analysis...');
+      console.log('Reading file...');
+      const text = await file.text();
+      console.log('File content length:', text.length);
+      console.log('File content preview:', text.substring(0, 200));
+      
+      if (!text.trim()) {
+        throw new Error('Die Datei ist leer');
+      }
+
+      console.log('Parsing JSON...');
+      const importedAnalysis = JSON.parse(text) as SavedAnalysis;
+      console.log('Parsed analysis:', importedAnalysis);
+      
+      // Erweiterte Validierung
+      const requiredFields = ['id', 'name', 'businessData', 'realData'];
+      const missingFields = requiredFields.filter(field => !importedAnalysis[field as keyof SavedAnalysis]);
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Fehlende Felder in der JSON-Datei: ${missingFields.join(', ')}`);
+      }
+
+      if (!importedAnalysis.businessData.url || !importedAnalysis.businessData.industry) {
+        throw new Error('Ungültige Geschäftsdaten in der JSON-Datei');
+      }
+
+      console.log('Validation passed, saving analysis...');
       
       // Generiere neue ID für Import
-      const newAnalysis = {
-        ...importedAnalysis,
-        id: `imported-${Date.now()}`,
-        name: `${importedAnalysis.name} (Importiert)`,
-        savedAt: new Date().toISOString()
-      };
-
-      console.log('Saving analysis:', newAnalysis);
+      const importName = `${importedAnalysis.name} (Importiert ${new Date().toLocaleTimeString()})`;
       
-      saveAnalysis(
-        newAnalysis.name,
-        newAnalysis.businessData,
-        newAnalysis.realData,
-        newAnalysis.manualData
+      const analysisId = saveAnalysis(
+        importName,
+        importedAnalysis.businessData,
+        importedAnalysis.realData,
+        importedAnalysis.manualData || {
+          competitors: [],
+          competitorServices: {},
+          removedMissingServices: []
+        }
       );
+
+      console.log('Analysis saved with ID:', analysisId);
 
       toast({
         title: "Import erfolgreich",
-        description: `Analyse "${newAnalysis.name}" wurde erfolgreich importiert.`,
+        description: `Analyse "${importName}" wurde erfolgreich importiert.`,
       });
 
-      console.log('Import completed successfully');
-      
-      // Reset file input
-      event.target.value = '';
+      console.log('=== IMPORT COMPLETED SUCCESSFULLY ===');
       
     } catch (error) {
-      console.error('Import error details:', error);
+      console.error('=== IMPORT ERROR ===');
+      console.error('Error:', error);
       console.error('Error type:', typeof error);
       console.error('Error message:', error instanceof Error ? error.message : String(error));
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
       
-      let errorMessage = "Die JSON-Datei konnte nicht gelesen werden.";
+      let errorMessage = "Unbekannter Fehler beim Import";
       
       if (error instanceof SyntaxError) {
-        errorMessage = "Die Datei enthält ungültiges JSON-Format.";
-      } else if (error instanceof Error && error.message.includes('Ungültiges Dateiformat')) {
-        errorMessage = "Die JSON-Datei hat nicht das erwartete Format für eine Analyse.";
+        errorMessage = "Die Datei enthält ungültiges JSON-Format. Überprüfen Sie die Datei-Struktur.";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
       
       toast({
@@ -127,8 +161,8 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         description: errorMessage,
         variant: "destructive"
       });
-      
-      event.target.value = '';
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -167,22 +201,15 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = '.json';
-                  input.onchange = (e) => handleFileUpload(e as any);
-                  input.click();
-                }}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                JSON Import
-              </Button>
-            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={triggerFileUpload}
+              disabled={isImporting}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              {isImporting ? 'Importiere...' : 'JSON Import'}
+            </Button>
           </div>
         </DialogHeader>
         <div className="grid gap-4">
