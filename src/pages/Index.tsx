@@ -50,13 +50,41 @@ const Index = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const analysisIdFromUrl = urlParams.get('loadAnalysis');
       if (analysisIdFromUrl) {
+        console.log('=== URL PARAMETER ANALYSIS LOADING ===');
         console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
-        setLoadedAnalysisId(analysisIdFromUrl);
-        setStep('results');
+        
+        // Prüfe ob die Analyse im localStorage existiert
+        try {
+          const stored = localStorage.getItem('saved_analyses');
+          console.log('Raw localStorage data:', stored);
+          
+          if (stored) {
+            const analyses = JSON.parse(stored);
+            console.log('Parsed analyses:', analyses);
+            const foundAnalysis = analyses.find((a: any) => a.id === analysisIdFromUrl);
+            console.log('Found analysis for ID:', foundAnalysis);
+            
+            if (foundAnalysis) {
+              console.log('Analysis found in localStorage, setting states...');
+              setBusinessData(foundAnalysis.businessData);
+              setLoadedAnalysisId(analysisIdFromUrl);
+              setStep('results');
+              console.log('States set, moving to results step');
+            } else {
+              console.error('Analysis not found in localStorage for ID:', analysisIdFromUrl);
+            }
+          } else {
+            console.error('No saved analyses found in localStorage');
+          }
+        } catch (error) {
+          console.error('Error loading analysis from localStorage:', error);
+        }
+        
         // Clean URL
         const url = new URL(window.location.href);
         url.searchParams.delete('loadAnalysis');
         window.history.replaceState({}, '', url.toString());
+        console.log('URL cleaned');
       }
       
       setIsInitialized(true);
