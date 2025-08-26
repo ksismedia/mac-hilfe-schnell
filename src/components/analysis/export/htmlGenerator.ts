@@ -19,6 +19,7 @@ interface CustomerReportData {
   competitorServices?: { [competitorName: string]: { services: string[]; source: 'auto' | 'manual' } };
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
+  removedMissingServices?: string[];
   hourlyRateData?: { ownRate: number; regionAverage: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
@@ -74,6 +75,7 @@ export const generateCustomerHTML = ({
   competitorServices,
   companyServices,
   deletedCompetitors = new Set(),
+  removedMissingServices = [],
   hourlyRateData,
   missingImprintElements = [],
   manualSocialData,
@@ -128,6 +130,11 @@ export const generateCustomerHTML = ({
     ? companyServices.services 
     : industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
   
+  // Services für Score-Berechnung (ohne entfernte Services) - GLEICH wie in CompetitorAnalysis
+  const servicesForScore = expectedServices.filter(service => 
+    !removedMissingServices.includes(service)
+  );
+  
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
   // Berechnung für eigenes Unternehmen - EXAKT wie in CompetitorAnalysis.tsx
@@ -141,7 +148,7 @@ export const generateCustomerHTML = ({
   const ownReviewScore = ownReviews <= 100 ? ownReviews : Math.min(100, 100 + Math.log10(ownReviews / 100) * 20);
   
   // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
-  const ownBaseServiceScore = Math.min(100, (expectedServices.length / 20) * 100);
+  const ownBaseServiceScore = Math.min(100, (servicesForScore.length / 20) * 100);
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen

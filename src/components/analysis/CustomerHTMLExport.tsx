@@ -22,6 +22,7 @@ interface CustomerHTMLExportProps {
   competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
   deletedCompetitors?: Set<string>;
+  removedMissingServices?: string[];
   hourlyRateData?: { ownRate: number; regionAverage: number };
   staffQualificationData?: any;
   quoteResponseData?: any;
@@ -45,6 +46,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   competitorServices = {},
   companyServices,
   deletedCompetitors = new Set(),
+  removedMissingServices = [],
   hourlyRateData,
   staffQualificationData,
   quoteResponseData,
@@ -155,6 +157,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       competitorServices: competitorServices || {},
       companyServices,
       deletedCompetitors,
+      removedMissingServices,
       hourlyRateData,
       missingImprintElements,
       manualSocialData: currentManualSocialData || manualSocialData,
@@ -202,6 +205,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       competitorServices: competitorServices || {},
       companyServices,
       deletedCompetitors,
+      removedMissingServices,
       hourlyRateData,
       missingImprintElements,
       manualSocialData,

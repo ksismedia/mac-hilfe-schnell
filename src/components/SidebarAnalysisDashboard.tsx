@@ -378,6 +378,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   competitorServices={competitorServices}
                   companyServices={companyServices}
                   deletedCompetitors={deletedCompetitors}
+                  removedMissingServices={removedMissingServices}
                   hourlyRateData={hourlyRateData}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}

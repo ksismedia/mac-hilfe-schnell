@@ -482,6 +482,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               competitorServices={competitorServices}
               companyServices={companyServices}
               deletedCompetitors={deletedCompetitors}
+              removedMissingServices={removedMissingServices}
               hourlyRateData={hourlyRateData}
               staffQualificationData={staffQualificationData}
               quoteResponseData={quoteResponseData}
