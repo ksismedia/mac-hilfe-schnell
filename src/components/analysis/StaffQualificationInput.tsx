@@ -97,6 +97,14 @@ const industrySpecificQualifications = {
     'HOAI-Zertifizierung',
     'Passivhaus-Planer',
     'BAFA-Energieberater'
+  ],
+  'facility-management': [
+    'Gebäudetechnik-Spezialist',
+    'Facility Management Zertifikat',
+    'Energiemanagement ISO 50001',
+    'Sicherheitstechnik',
+    'Reinigungsdienstleister Qualifikation',
+    'Wartung technischer Anlagen'
   ]
 };
 
@@ -159,7 +167,8 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     
     // Branchenspezifische Qualifikationen (15% der Bewertung)
     const industrySpecificCount = data.industry_specific.length;
-    const maxIndustrySpecific = industrySpecificQualifications[businessData.industry].length;
+    const availableQualifications = industrySpecificQualifications[businessData.industry];
+    const maxIndustrySpecific = availableQualifications ? availableQualifications.length : 1;
     score += (industrySpecificCount / maxIndustrySpecific) * 15;
     
     return Math.round(score);
@@ -410,7 +419,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
               Branchenspezifische Qualifikationen
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {industrySpecificQualifications[businessData.industry].map((qualification) => (
+              {(industrySpecificQualifications[businessData.industry] || []).map((qualification) => (
                 <div key={qualification} className="flex items-center space-x-2">
                   <Checkbox
                     id={qualification}
