@@ -113,10 +113,14 @@ export interface RealBusinessData {
 
 export class BusinessAnalysisService {
   static async analyzeWebsite(url: string, address: string, industry: string): Promise<RealBusinessData> {
+    console.log('=== BUSINESS ANALYSIS START ===');
+    console.log('Input parameters:', { url, address, industry });
+    
     try {
       console.log(`Starting comprehensive analysis for: ${url} at ${address} in ${industry} industry`);
       
       const companyName = this.extractCompanyName(url, address);
+      console.log('Extracted company name:', companyName);
       
       // Echte Website-Inhaltsanalyse
       let websiteContent;
@@ -168,15 +172,80 @@ export class BusinessAnalysisService {
       socialMediaData = this.generateFallbackSocialMediaData();
     }
     
-    // Generiere alle Analysedaten mit realistischen Scores
-    const seoData = this.generateSEOFromContent(websiteContent, industry, companyName);
-    const keywordsData = this.analyzeKeywordsFromContent(websiteContent, industry);
-    const imprintData = this.analyzeImprintFromContent(websiteContent);
-    const performanceData = this.generatePerformanceFromPageSpeed(pageSpeedData, url);
-    const reviewsData = this.processGoogleReviews(placeDetails);
-    const workplaceData = this.generateRealisticWorkplaceData(companyName);
-    const socialProofData = this.generateRealisticSocialProofData(industry);
-    const mobileData = this.generateMobileDataFromPageSpeed(pageSpeedData);
+    // Generiere alle Analysedaten mit realistischen Scores - mit Fehlerbehandlung
+    let seoData, keywordsData, imprintData, performanceData, reviewsData, workplaceData, socialProofData, mobileData;
+    
+    try {
+      console.log('Generating SEO data...');
+      seoData = this.generateSEOFromContent(websiteContent, industry, companyName);
+      console.log('SEO data generated successfully');
+    } catch (error) {
+      console.error('SEO data generation failed:', error);
+      seoData = { titleTag: companyName, metaDescription: 'Professioneller Service', headings: {h1: [], h2: [], h3: []}, altTags: {total: 0, withAlt: 0}, score: 50 };
+    }
+    
+    try {
+      console.log('Analyzing keywords...');
+      keywordsData = this.analyzeKeywordsFromContent(websiteContent, industry);
+      console.log('Keywords analyzed successfully');
+    } catch (error) {
+      console.error('Keywords analysis failed:', error);
+      keywordsData = [];
+    }
+    
+    try {
+      console.log('Analyzing imprint...');
+      imprintData = this.analyzeImprintFromContent(websiteContent);
+      console.log('Imprint analyzed successfully');
+    } catch (error) {
+      console.error('Imprint analysis failed:', error);
+      imprintData = { found: false, completeness: 0, missingElements: [], foundElements: [], score: 0 };
+    }
+    
+    try {
+      console.log('Generating performance data...');
+      performanceData = this.generatePerformanceFromPageSpeed(pageSpeedData, url);
+      console.log('Performance data generated successfully');
+    } catch (error) {
+      console.error('Performance data generation failed:', error);
+      performanceData = { loadTime: 3, lcp: 2.5, fid: 100, cls: 0.1, score: 50 };
+    }
+    
+    try {
+      console.log('Processing Google reviews...');
+      reviewsData = this.processGoogleReviews(placeDetails);
+      console.log('Google reviews processed successfully');
+    } catch (error) {
+      console.error('Google reviews processing failed:', error);
+      reviewsData = { google: { rating: 0, count: 0, recent: [] } };
+    }
+    
+    try {
+      console.log('Generating workplace data...');
+      workplaceData = this.generateRealisticWorkplaceData(companyName);
+      console.log('Workplace data generated successfully');
+    } catch (error) {
+      console.error('Workplace data generation failed:', error);
+      workplaceData = { kununu: { found: false, rating: 0, reviews: 0 }, glassdoor: { found: false, rating: 0, reviews: 0 }, overallScore: 0 };
+    }
+    
+    try {
+      console.log('Generating social proof data...');
+      socialProofData = this.generateRealisticSocialProofData(industry);
+      console.log('Social proof data generated successfully');
+    } catch (error) {
+      console.error('Social proof data generation failed:', error);
+      socialProofData = { testimonials: 0, certifications: [], awards: [], overallScore: 0 };
+    }
+    
+    try {
+      console.log('Generating mobile data...');
+      mobileData = this.generateMobileDataFromPageSpeed(pageSpeedData);
+      console.log('Mobile data generated successfully');
+    } catch (error) {
+      console.error('Mobile data generation failed:', error);
+      mobileData = { responsive: true, touchFriendly: true, pageSpeedMobile: 50, pageSpeedDesktop: 50, overallScore: 50, issues: [] };
+    }
     
       return {
         company: {
@@ -198,13 +267,17 @@ export class BusinessAnalysisService {
         mobile: mobileData,
       };
     } catch (error) {
-      console.error('Critical analysis error:', error);
+      console.error('=== CRITICAL ANALYSIS ERROR ===');
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('Error type:', typeof error);
+      console.error('Error details:', error);
       
       // Return a minimal fallback analysis to prevent complete failure
       const companyName = this.extractCompanyName(url, address);
       const fallbackWebsiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
       
-      return {
+      const fallbackData = {
         company: {
           name: companyName,
           address,
@@ -222,6 +295,10 @@ export class BusinessAnalysisService {
         socialProof: this.generateRealisticSocialProofData(industry),
         mobile: this.generateMobileDataFromPageSpeed(null),
       };
+      
+      console.log('=== RETURNING FALLBACK DATA ===');
+      console.log('Fallback data prepared:', fallbackData);
+      return fallbackData;
     }
   }
 
