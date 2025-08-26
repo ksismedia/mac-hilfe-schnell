@@ -113,19 +113,20 @@ export interface RealBusinessData {
 
 export class BusinessAnalysisService {
   static async analyzeWebsite(url: string, address: string, industry: string): Promise<RealBusinessData> {
-    console.log(`Starting comprehensive analysis for: ${url} at ${address} in ${industry} industry`);
-    
-    const companyName = this.extractCompanyName(url, address);
-    
-    // Echte Website-Inhaltsanalyse
-    let websiteContent;
     try {
-      websiteContent = await WebsiteAnalysisService.analyzeWebsite(url);
-      console.log('Website content analysis completed successfully');
-    } catch (error) {
-      console.warn('Website content analysis failed, using smart fallback:', error);
-      websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
-    }
+      console.log(`Starting comprehensive analysis for: ${url} at ${address} in ${industry} industry`);
+      
+      const companyName = this.extractCompanyName(url, address);
+      
+      // Echte Website-Inhaltsanalyse
+      let websiteContent;
+      try {
+        websiteContent = await WebsiteAnalysisService.analyzeWebsite(url);
+        console.log('Website content analysis completed successfully');
+      } catch (error) {
+        console.warn('Website content analysis failed, using smart fallback:', error);
+        websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
+      }
     
     // Google Places Daten - mit Fehlerbehandlung
     let placeDetails = null;
@@ -177,25 +178,51 @@ export class BusinessAnalysisService {
     const socialProofData = this.generateRealisticSocialProofData(industry);
     const mobileData = this.generateMobileDataFromPageSpeed(pageSpeedData);
     
-    return {
-      company: {
-        name: placeDetails?.name || companyName,
-        address: placeDetails?.formatted_address || address,
-        url,
-        industry,
-        phone: placeDetails?.formatted_phone_number,
-      },
-      seo: seoData,
-      performance: performanceData,
-      reviews: reviewsData,
-      competitors: competitorsData,
-      keywords: keywordsData,
-      imprint: imprintData,
-      socialMedia: socialMediaData,
-      workplace: workplaceData,
-      socialProof: socialProofData,
-      mobile: mobileData,
-    };
+      return {
+        company: {
+          name: placeDetails?.name || companyName,
+          address: placeDetails?.formatted_address || address,
+          url,
+          industry,
+          phone: placeDetails?.formatted_phone_number,
+        },
+        seo: seoData,
+        performance: performanceData,
+        reviews: reviewsData,
+        competitors: competitorsData,
+        keywords: keywordsData,
+        imprint: imprintData,
+        socialMedia: socialMediaData,
+        workplace: workplaceData,
+        socialProof: socialProofData,
+        mobile: mobileData,
+      };
+    } catch (error) {
+      console.error('Critical analysis error:', error);
+      
+      // Return a minimal fallback analysis to prevent complete failure
+      const companyName = this.extractCompanyName(url, address);
+      const fallbackWebsiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
+      
+      return {
+        company: {
+          name: companyName,
+          address,
+          url,
+          industry,
+        },
+        seo: this.generateSEOFromContent(fallbackWebsiteContent, industry, companyName),
+        performance: this.generatePerformanceFromPageSpeed(null, url),
+        reviews: { google: { rating: 0, count: 0, recent: [] } },
+        competitors: [],
+        keywords: this.analyzeKeywordsFromContent(fallbackWebsiteContent, industry),
+        imprint: this.analyzeImprintFromContent(fallbackWebsiteContent),
+        socialMedia: this.generateFallbackSocialMediaData(),
+        workplace: this.generateRealisticWorkplaceData(companyName),
+        socialProof: this.generateRealisticSocialProofData(industry),
+        mobile: this.generateMobileDataFromPageSpeed(null),
+      };
+    }
   }
 
   private static async getRealPlaceData(companyName: string, address: string, url: string): Promise<any> {
