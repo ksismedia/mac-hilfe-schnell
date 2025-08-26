@@ -116,10 +116,15 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       }
       
       if (loadedAnalysisId) {
+        console.log('=== LOADING SAVED ANALYSIS ===');
+        console.log('LoadedAnalysisId:', loadedAnalysisId);
+        
         try {
           const savedAnalysis = loadAnalysis(loadedAnalysisId);
+          console.log('Loaded analysis from storage:', savedAnalysis);
           
           if (savedAnalysis) {
+            console.log('Setting real data from saved analysis...');
             setRealData(savedAnalysis.realData);
             
             if (savedAnalysis.manualData?.keywordData) {
@@ -147,8 +152,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               setManualKeywordData
             );
             
+            console.log('=== SAVED ANALYSIS LOADED SUCCESSFULLY ===');
             return;
           } else {
+            console.error('Saved analysis not found in storage for ID:', loadedAnalysisId);
             toast({
               title: "Fehler beim Laden",
               description: "Die gespeicherte Analyse konnte nicht gefunden werden.",

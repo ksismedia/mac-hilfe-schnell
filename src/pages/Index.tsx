@@ -184,25 +184,40 @@ const Index = () => {
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
   const handleLoadSavedAnalysis = (analysis: any) => {
+    console.log('=== HANDLE LOAD SAVED ANALYSIS START ===');
+    console.log('Current step:', step);
+    console.log('Current loadedAnalysisId:', loadedAnalysisId);
+    console.log('Analysis to load:', analysis);
+    console.log('Analysis ID:', analysis.id);
+    console.log('Business data:', analysis.businessData);
+    
     // Prevent state updates if we're already in results with the same analysis
     if (step === 'results' && loadedAnalysisId === analysis.id) {
+      console.log('Already in results with same analysis ID, skipping');
       return;
     }
     
     // Prevent unnecessary state changes during input
     if (step === 'results' && analysis.businessData.url === businessData.url) {
+      console.log('Already in results with same URL, skipping');
       return;
     }
+    
+    console.log('Setting business data and analysis ID...');
     
     // Set business data and analysis ID
     setBusinessData(analysis.businessData);
     setLoadedAnalysisId(analysis.id);
     setStep('results');
     
+    console.log('State updated - new step: results, new loadedAnalysisId:', analysis.id);
+    
     toast({
       title: "Analyse geladen",
       description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
     });
+    
+    console.log('=== HANDLE LOAD SAVED ANALYSIS COMPLETED ===');
   };
 
   const resetToStart = () => {
