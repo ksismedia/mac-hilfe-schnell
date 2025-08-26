@@ -62,6 +62,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   // Verwende eigene Services statt Standard-Services
   const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServices(industry);
+  
+  // Services für Score-Berechnung (ohne entfernte Services)
+  const ownServicesForScore = ownServices.filter(service => 
+    !removedMissingServices.includes(service)
+  );
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { rating: number; reviews: number; services: string[] }) => {
@@ -123,7 +128,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     name: realData.company.name,
     rating: realData.reviews.google.rating,
     reviews: realData.reviews.google.count,
-    services: ownServices,
+    services: ownServicesForScore, // Verwende gefilterte Services für Score-Berechnung
     source: 'own' as const,
     location: 'Ihr Unternehmen'
   };
