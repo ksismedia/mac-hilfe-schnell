@@ -257,95 +257,102 @@ export class WebsiteAnalysisService {
   }> {
     const industryKeywords = this.getIndustryKeywords(industry);
     
-    // Kombiniere allen Text (Titel, Meta-Description und Content)
-    const titleText = content.title || '';
-    const metaText = content.metaDescription || '';
-    const bodyText = content.content || '';
-    const allText = `${titleText} ${metaText} ${bodyText}`.toLowerCase();
+    // Bereite Text vor - verschiedene Bereiche getrennt für bessere Analyse
+    const titleText = (content.title || '').toLowerCase();
+    const metaText = (content.metaDescription || '').toLowerCase();
+    const bodyText = (content.content || '').toLowerCase();
     
-    console.log('=== IMPROVED KEYWORD ANALYSIS ===');
-    console.log('Text sources:', {
-      title: titleText.substring(0, 100),
-      meta: metaText.substring(0, 100),
-      content: bodyText.substring(0, 200)
+    console.log('=== BALANCED KEYWORD ANALYSIS ===');
+    console.log('Content lengths:', { 
+      title: titleText.length, 
+      meta: metaText.length, 
+      body: bodyText.length 
     });
-    console.log('Total text length:', allText.length);
     console.log('Industry:', industry);
+    console.log('Checking keywords:', industryKeywords);
     
     return industryKeywords.map(keyword => {
       const keywordLower = keyword.toLowerCase().trim();
       let found = false;
       let position = 0;
-      let density = 0;
+      let confidence = 0; // Vertrauenswert 0-100
       const volume = this.getKeywordVolume(keyword, industry);
       
-      if (keywordLower.length > 0) {
-        // 1. Exakte Suche (höchste Priorität)
-        if (allText.includes(keywordLower)) {
+      console.log(`\n--- Analyzing: "${keyword}" ---`);
+      
+      if (keywordLower.length > 1) {
+        // 1. Exakte Übereinstimmung (höchste Priorität)
+        if (titleText.includes(keywordLower)) {
           found = true;
-          console.log(`✓ EXACT MATCH: "${keyword}"`);
+          confidence = 100;
+          position = Math.floor(Math.random() * 3) + 1;
+          console.log(`✓ TITLE EXACT: "${keyword}" (confidence: 100)`);
+        }
+        else if (metaText.includes(keywordLower)) {
+          found = true;
+          confidence = 90;
+          position = Math.floor(Math.random() * 5) + 3;
+          console.log(`✓ META EXACT: "${keyword}" (confidence: 90)`);
+        }
+        else if (bodyText.includes(keywordLower)) {
+          found = true;
+          confidence = 80;
+          position = Math.floor(Math.random() * 10) + 5;
+          console.log(`✓ BODY EXACT: "${keyword}" (confidence: 80)`);
         }
         
-        // 2. Variationen des Keywords
-        if (!found) {
-          const variations = this.getKeywordVariations(keywordLower);
-          for (const variation of variations) {
-            if (allText.includes(variation)) {
-              found = true;
-              console.log(`✓ VARIATION MATCH: "${keyword}" as "${variation}"`);
-              break;
-            }
-          }
-        }
-        
-        // 3. Wortteile für zusammengesetzte deutsche Wörter
-        if (!found) {
-          const words = keywordLower.split(/[\s\-]+/);
-          if (words.length > 1) {
-            let foundParts = 0;
+        // 2. Nur für längere Keywords: Wortteile-Suche
+        if (!found && keywordLower.length >= 8) {
+          const words = keywordLower.split(/[\s\-]+/).filter(w => w.length >= 4);
+          if (words.length >= 2) {
+            let foundWords = 0;
+            let foundInTitle = false;
+            
             for (const word of words) {
-              if (word.length >= 3 && allText.includes(word)) {
-                foundParts++;
+              if (titleText.includes(word) || metaText.includes(word)) {
+                foundWords++;
+                foundInTitle = true;
+              } else if (bodyText.includes(word)) {
+                foundWords++;
               }
             }
-            // Wenn mindestens die Hälfte der Wortteile gefunden wird
-            if (foundParts >= Math.ceil(words.length / 2)) {
+            
+            // Mindestens 75% der Wortteile müssen gefunden werden
+            if (foundWords >= Math.ceil(words.length * 0.75)) {
               found = true;
-              console.log(`✓ PARTS MATCH: "${keyword}" (${foundParts}/${words.length} parts)`);
+              confidence = foundInTitle ? 70 : 60;
+              position = foundInTitle ? Math.floor(Math.random() * 5) + 2 : Math.floor(Math.random() * 8) + 8;
+              console.log(`✓ PARTS MATCH: "${keyword}" (${foundWords}/${words.length} parts, confidence: ${confidence})`);
             }
           }
         }
         
-        // 4. Sehr tolerante Suche für kurze Keywords
-        if (!found && keywordLower.length <= 6) {
-          // Suche nach Wörtern die das Keyword enthalten
-          const textWords = allText.split(/\W+/);
-          for (const textWord of textWords) {
-            if (textWord.includes(keywordLower) && textWord.length <= keywordLower.length + 3) {
+        // 3. Nur für spezielle Fälle: Variationen
+        if (!found && keywordLower.length >= 5) {
+          const variations = this.getKeywordVariations(keywordLower);
+          for (const variation of variations) {
+            if (titleText.includes(variation) || metaText.includes(variation)) {
               found = true;
-              console.log(`✓ CONTAINS MATCH: "${keyword}" in "${textWord}"`);
+              confidence = 65;
+              position = Math.floor(Math.random() * 7) + 4;
+              console.log(`✓ VARIATION: "${keyword}" as "${variation}" (confidence: 65)`);
               break;
             }
           }
         }
         
-        if (found) {
-          // Bestimme Position basierend auf Fundort
-          if (titleText.toLowerCase().includes(keywordLower)) {
-            position = Math.floor(Math.random() * 3) + 1; // Top 3
-          } else if (metaText.toLowerCase().includes(keywordLower)) {
-            position = Math.floor(Math.random() * 5) + 3; // Position 3-8
-          } else {
-            position = Math.floor(Math.random() * 12) + 8; // Position 8-20
-          }
-          
-          // Berechne vereinfachte Dichte
-          const totalWords = allText.split(/\s+/).filter(word => word.length > 2).length;
-          const keywordMatches = (allText.match(new RegExp(keywordLower, 'g')) || []).length;
-          density = totalWords > 0 ? (keywordMatches / totalWords) * 100 : 0;
-        } else {
+        if (!found) {
           console.log(`✗ NOT FOUND: "${keyword}"`);
         }
+      }
+      
+      // Berechne realistische Dichte
+      let density = 0;
+      if (found) {
+        const allText = `${titleText} ${metaText} ${bodyText}`;
+        const matches = (allText.match(new RegExp(keywordLower, 'g')) || []).length;
+        const totalWords = allText.split(/\s+/).filter(w => w.length > 2).length;
+        density = totalWords > 0 ? (matches / totalWords) * 100 : 0;
       }
       
       return {
@@ -353,7 +360,7 @@ export class WebsiteAnalysisService {
         found,
         position,
         volume,
-        density: Math.round(density * 100) / 100 // 2 Dezimalstellen
+        density: Math.round(density * 100) / 100
       };
     });
   }
