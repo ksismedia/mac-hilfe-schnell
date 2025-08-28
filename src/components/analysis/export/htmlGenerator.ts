@@ -252,20 +252,20 @@ export const generateCustomerHTML = ({
     
     const finalScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
     
-    console.log('HTML Generator - Score Calculation (EXACT MATCH):', {
-      rating,
-      reviews,
-      expectedServices: expectedServices.length,
-      ownServicesForScore: ownServicesForScore.length,
-      removedServices: removedMissingServices?.length || 0,
-      ratingScore: ratingScore.toFixed(1),
-      reviewScore: reviewScore.toFixed(1),
-      baseServiceScore: baseServiceScore.toFixed(1),
-      finalServiceScore: finalServiceScore.toFixed(1),
-      baseOwnScore,
-      serviceRemovalBonus: serviceRemovalBonus.toFixed(1),
-      finalScore
-    });
+    console.log('=== HTML GENERATOR - OWN COMPANY SCORE ===');
+    console.log('HTML Generator - expectedServices:', expectedServices);
+    console.log('HTML Generator - removedMissingServices:', removedMissingServices || []);
+    console.log('HTML Generator - ownServicesForScore:', ownServicesForScore);
+    console.log('HTML Generator - rating:', rating);
+    console.log('HTML Generator - reviews:', reviews);
+    console.log('HTML Generator - serviceCount:', serviceCount);
+    console.log('HTML Generator - ratingScore:', ratingScore.toFixed(1));
+    console.log('HTML Generator - reviewScore:', reviewScore.toFixed(1));
+    console.log('HTML Generator - baseServiceScore:', baseServiceScore.toFixed(1));
+    console.log('HTML Generator - finalServiceScore:', finalServiceScore.toFixed(1));
+    console.log('HTML Generator - baseOwnScore:', baseOwnScore);
+    console.log('HTML Generator - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
+    console.log('HTML Generator - finalScore:', finalScore);
     
     return finalScore;
   })();

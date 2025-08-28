@@ -325,6 +325,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   // Basis-Score für eigenes Unternehmen berechnen
   const baseOwnScore = calculateCompetitorScore(ownCompany);
   
+  console.log('CompetitorAnalysis - ownCompany object passed to calculateCompetitorScore:', ownCompany);
+  
   // Moderater Bonus für abgewählte Services (Verhältnis zur Konkurrenz)
   const avgCompetitorServiceCount = allCompetitors.length > 0 
     ? allCompetitors.reduce((sum, comp) => sum + (comp.services?.length || 0), 0) / allCompetitors.length 
@@ -339,11 +341,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   // Finaler Score für eigenes Unternehmen
   const ownCompanyScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
   
-  console.log('=== OWN COMPANY SCORE WITH REMOVAL BONUS ===');
-  console.log('Base score:', baseOwnScore);
-  console.log('Removed services count:', removedMissingServices.length);
-  console.log('Service removal bonus:', serviceRemovalBonus.toFixed(1));
-  console.log('Final own company score:', ownCompanyScore);
+  console.log('=== COMPETITOR ANALYSIS - OWN COMPANY SCORE ===');
+  console.log('CompetitorAnalysis - ownServicesForScore:', ownServicesForScore);
+  console.log('CompetitorAnalysis - removedMissingServices:', removedMissingServices);
+  console.log('CompetitorAnalysis - baseOwnScore:', baseOwnScore);
+  console.log('CompetitorAnalysis - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
+  console.log('CompetitorAnalysis - finalOwnCompanyScore:', ownCompanyScore);
 
   // Sortiert nach Score - INKLUSIVE eigenem Unternehmen für Ranking
   const sortedCompetitors = [
