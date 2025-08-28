@@ -115,12 +115,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Basis + Bonus für einzigartige Services
-      const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
+      // Service-Score: Verbesserte Formel - mehr Services = immer besser
+      // Basis: 50% für erste 10 Services, dann +2% pro zusätzlichem Service (kein Cap!)
+      const baseServiceScore = serviceCount <= 10 
+        ? (serviceCount / 10) * 50  // 0-50% für erste 10 Services
+        : 50 + ((serviceCount - 10) * 2); // 50% + 2% pro zusätzlichem Service
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
         serviceCount,
-        calculation: `(${serviceCount} / 20) * 100`,
+        calculation: serviceCount <= 10 
+          ? `(${serviceCount} / 10) * 50 = ${((serviceCount / 10) * 50).toFixed(1)}%`
+          : `50 + ((${serviceCount} - 10) * 2) = ${(50 + ((serviceCount - 10) * 2)).toFixed(1)}%`,
         baseServiceScore: baseServiceScore.toFixed(1)
       });
       
@@ -135,7 +140,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
       const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
-      const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+      const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP mehr!
       
       // Ausgewogenere Gewichtung: Rating 30%, Reviews 20%, Services 50% (Services haben mehr Einfluss!)
       const score = (ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5);
