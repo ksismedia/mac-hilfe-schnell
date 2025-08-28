@@ -121,7 +121,7 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
       // Generiere neue ID für Import
       const importName = `${importedAnalysis.name} (Importiert ${new Date().toLocaleTimeString()})`;
       
-      const analysisId = saveAnalysis(
+      const analysisId = await saveAnalysis(
         importName,
         importedAnalysis.businessData,
         importedAnalysis.realData,

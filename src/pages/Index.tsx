@@ -11,7 +11,9 @@ import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff } from 'lucide-react';
+import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff, LogIn, LogOut, User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface BusinessData {
   address: string;
@@ -21,6 +23,7 @@ interface BusinessData {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
   // Stable refs to prevent unnecessary re-renders
   const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
   const [businessData, setBusinessData] = useState<BusinessData>({
@@ -33,10 +36,24 @@ const Index = () => {
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
+
+  // Authentication useEffect
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Initialization effect - runs only once
   useEffect(() => {
@@ -264,6 +281,22 @@ const Index = () => {
     clearExtensionData();
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Fehler beim Abmelden",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Erfolgreich abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet.",
+      });
+    }
+  };
+
   // Handle extension data if available
   if (hasExtensionData && extensionData && step === 'business') {
     return (
@@ -415,9 +448,33 @@ const Index = () => {
           </div>
         )}
 
-        {/* Gespeicherte Analysen Button */}
+        {/* Authentication and Saved Analyses */}
         <div className="mb-6 text-center">
-          <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
+            <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="flex items-center gap-2">
+                  <User className="h-3 w-3" />
+                  {user.email}
+                </Badge>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Abmelden
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+                <LogIn className="h-4 w-4 mr-2" />
+                Anmelden für globale Speicherung
+              </Button>
+            )}
+          </div>
+          {!user && (
+            <p className="text-sm text-gray-400">
+              💾 Ohne Anmeldung werden Analysen nur lokal im Browser gespeichert
+            </p>
+          )}
         </div>
 
         <Card className="mb-8 bg-gray-800 border-yellow-400/30">

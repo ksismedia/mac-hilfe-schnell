@@ -1,5 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from './useManualData';
 
@@ -40,9 +41,58 @@ const STORAGE_KEY = 'saved_analyses';
 
 export const useSavedAnalyses = () => {
   const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+  const [user, setUser] = useState<any>(null);
+
+  // Auth state management
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Lade gespeicherte Analysen beim Start
   useEffect(() => {
+    if (user) {
+      loadAnalysesFromDatabase();
+    } else {
+      // Fallback auf localStorage wenn nicht angemeldet
+      loadAnalysesFromLocalStorage();
+    }
+  }, [user]);
+
+  const loadAnalysesFromDatabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('saved_analyses')
+        .select('*')
+        .order('saved_at', { ascending: false });
+
+      if (error) throw error;
+
+      const analyses: SavedAnalysis[] = data.map(item => ({
+        id: item.id,
+        name: item.name,
+        savedAt: item.saved_at,
+        businessData: item.business_data as SavedAnalysis['businessData'],
+        realData: item.real_data as unknown as RealBusinessData,
+        manualData: item.manual_data as unknown as SavedAnalysis['manualData']
+      }));
+
+      setSavedAnalyses(analyses);
+    } catch (error) {
+      console.error('Fehler beim Laden der Analysen aus der Datenbank:', error);
+      // Fallback auf localStorage
+      loadAnalysesFromLocalStorage();
+    }
+  };
+
+  const loadAnalysesFromLocalStorage = () => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -56,59 +106,138 @@ export const useSavedAnalyses = () => {
       }
     } catch (error) {
       console.error('Fehler beim Laden der gespeicherten Analysen:', error);
-      // Clear corrupt data
       localStorage.removeItem(STORAGE_KEY);
       setSavedAnalyses([]);
     }
-  }, []);
+  };
 
   // Speichere eine Analyse
-  const saveAnalysis = useCallback((
+  const saveAnalysis = useCallback(async (
     name: string,
     businessData: SavedAnalysis['businessData'],
     realData: RealBusinessData,
     manualData: SavedAnalysis['manualData']
   ) => {
-    const newAnalysis: SavedAnalysis = {
-      id: Date.now().toString(),
-      name,
-      savedAt: new Date().toISOString(),
-      businessData,
-      realData,
-      manualData
-    };
+    if (user) {
+      // Speichere in Datenbank
+      try {
+        const { data, error } = await supabase
+          .from('saved_analyses')
+          .insert({
+            name,
+            business_data: businessData as any,
+            real_data: realData as any,
+            manual_data: manualData as any,
+            user_id: user.id
+          })
+          .select()
+          .single();
 
-    const updatedAnalyses = [...savedAnalyses, newAnalysis];
-    setSavedAnalyses(updatedAnalyses);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-    
-    return newAnalysis.id;
-  }, [savedAnalyses]);
+        if (error) throw error;
+
+        const newAnalysis: SavedAnalysis = {
+          id: data.id,
+          name: data.name,
+          savedAt: data.saved_at,
+          businessData: data.business_data as SavedAnalysis['businessData'],
+          realData: data.real_data as unknown as RealBusinessData,
+          manualData: data.manual_data as unknown as SavedAnalysis['manualData']
+        };
+
+        setSavedAnalyses(prev => [...prev, newAnalysis]);
+        return newAnalysis.id;
+      } catch (error) {
+        console.error('Fehler beim Speichern in der Datenbank:', error);
+        throw error;
+      }
+    } else {
+      // Fallback auf localStorage
+      const newAnalysis: SavedAnalysis = {
+        id: Date.now().toString(),
+        name,
+        savedAt: new Date().toISOString(),
+        businessData,
+        realData,
+        manualData
+      };
+
+      const updatedAnalyses = [...savedAnalyses, newAnalysis];
+      setSavedAnalyses(updatedAnalyses);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+      
+      return newAnalysis.id;
+    }
+  }, [savedAnalyses, user]);
 
   // Aktualisiere eine bestehende Analyse
-  const updateAnalysis = useCallback((
+  const updateAnalysis = useCallback(async (
     id: string,
     name: string,
     businessData: SavedAnalysis['businessData'],
     realData: RealBusinessData,
     manualData: SavedAnalysis['manualData']
   ) => {
-    const updatedAnalyses = savedAnalyses.map(analysis => 
-      analysis.id === id 
-        ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
-        : analysis
-    );
-    
-    setSavedAnalyses(updatedAnalyses);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-  }, [savedAnalyses]);
+    if (user) {
+      // Aktualisiere in Datenbank
+      try {
+        const { error } = await supabase
+          .from('saved_analyses')
+          .update({
+            name,
+            business_data: businessData as any,
+            real_data: realData as any,
+            manual_data: manualData as any
+          })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        setSavedAnalyses(prev => prev.map(analysis => 
+          analysis.id === id 
+            ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
+            : analysis
+        ));
+      } catch (error) {
+        console.error('Fehler beim Aktualisieren in der Datenbank:', error);
+        throw error;
+      }
+    } else {
+      // Fallback auf localStorage
+      const updatedAnalyses = savedAnalyses.map(analysis => 
+        analysis.id === id 
+          ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
+          : analysis
+      );
+      
+      setSavedAnalyses(updatedAnalyses);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+    }
+  }, [savedAnalyses, user]);
 
   // Lösche eine Analyse
-  const deleteAnalysis = useCallback((id: string) => {
-    const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id);
-    setSavedAnalyses(updatedAnalyses);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-  }, [savedAnalyses]);
+  const deleteAnalysis = useCallback(async (id: string) => {
+    if (user) {
+      // Lösche aus Datenbank
+      try {
+        const { error } = await supabase
+          .from('saved_analyses')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+
+        setSavedAnalyses(prev => prev.filter(analysis => analysis.id !== id));
+      } catch (error) {
+        console.error('Fehler beim Löschen aus der Datenbank:', error);
+        throw error;
+      }
+    } else {
+      // Fallback auf localStorage
+      const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id);
+      setSavedAnalyses(updatedAnalyses);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+    }
+  }, [savedAnalyses, user]);
 
   // Lade eine Analyse
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
@@ -138,6 +267,7 @@ export const useSavedAnalyses = () => {
     updateAnalysis,
     deleteAnalysis,
     loadAnalysis,
-    exportAnalysis
+    exportAnalysis,
+    user
   };
 };
