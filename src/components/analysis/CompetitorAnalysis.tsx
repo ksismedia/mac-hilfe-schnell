@@ -96,6 +96,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('ownServices (original):', ownServices);
   console.log('removedMissingServices (ich biete auch an):', removedMissingServices);
   console.log('ownServicesForScore (total):', ownServicesForScore);
+  
+  console.log('🟢 REMOVED MISSING SERVICES EFFECT:');
+  console.log('🟢 removedMissingServices array:', removedMissingServices);
+  console.log('🟢 Should add', removedMissingServices.length, 'services to own score calculation');
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }) => {
@@ -286,7 +290,15 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   // Funktion zum Entfernen fehlender Services
   const handleRemoveMissingService = (service: string) => {
+    console.log('🔴 REMOVING MISSING SERVICE:', service);
+    console.log('🔴 Current removedMissingServices BEFORE:', removedMissingServices);
+    console.log('🔴 Current ownServicesForScore BEFORE:', ownServicesForScore);
+    console.log('🔴 Current own company score BEFORE:', ownCompanyScore);
+    
     onRemovedMissingServicesChange(service);
+    
+    // Log nach der Änderung (wird beim nächsten Render sichtbar)
+    console.log('🔴 Called onRemovedMissingServicesChange with:', service);
   };
 
   const handleServiceEdit = (competitorName: string) => {
