@@ -115,11 +115,16 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Verbesserte Formel - mehr Services = immer besser
-      // Basis: 50% für erste 10 Services, dann +2% pro zusätzlichem Service (kein Cap!)
-      const baseServiceScore = serviceCount <= 10 
-        ? (serviceCount / 10) * 50  // 0-50% für erste 10 Services
-        : 50 + ((serviceCount - 10) * 2); // 50% + 2% pro zusätzlichem Service
+      // Service-Score: Ausgewogene Formel mit moderaterem Anstieg
+      // 0-5 Services: 0-30%, 6-10 Services: 30-50%, 11+ Services: 50% + 1% pro Service
+      let baseServiceScore;
+      if (serviceCount <= 5) {
+        baseServiceScore = (serviceCount / 5) * 30;  // 0-30% für erste 5 Services
+      } else if (serviceCount <= 10) {
+        baseServiceScore = 30 + ((serviceCount - 5) / 5) * 20;  // 30-50% für Services 6-10
+      } else {
+        baseServiceScore = 50 + (serviceCount - 10) * 1;  // 50% + 1% pro zusätzlichem Service
+      }
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
         serviceCount,
@@ -146,12 +151,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         fairness: 'All competitors evaluated against same extended service list'
       });
       
-      // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
-      const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
-      const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP mehr!
+      // Moderater Bonus für einzigartige Services
+      const uniqueServiceBonus = uniqueServices.length * 0.5; // Weiter reduziert für bessere Balance
+      const finalServiceScore = baseServiceScore + uniqueServiceBonus;
       
-      // Ausgewogenere Gewichtung: Rating 30%, Reviews 20%, Services 50% (Services haben mehr Einfluss!)
-      const score = (ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5);
+      // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
+      const score = (ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3);
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
