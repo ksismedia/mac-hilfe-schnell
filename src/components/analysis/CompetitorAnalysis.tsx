@@ -101,8 +101,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('🟢 removedMissingServices array:', removedMissingServices);
   console.log('🟢 Should add', removedMissingServices.length, 'services to own score calculation');
 
-  // Konkurrenten-Score berechnen
-  const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }) => {
+  // Konkurrenten-Score berechnen - WICHTIG: Verwendet unterschiedliche Logik für eigenes vs. andere Unternehmen
+  const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }, isOwnCompany = false) => {
     try {
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
@@ -129,10 +129,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         baseServiceScore: baseServiceScore.toFixed(1)
       });
       
-      // Finde Services, die der Konkurrent hat, aber wir nicht (mit verbesserter Logik)
+      // ENTSCHEIDEND: Konkurrenten werden gegen ORIGINAL Services verglichen, nicht gegen erweiterte!
+      // Nur das eigene Unternehmen profitiert von den abgewählten Services
+      const referenceServices = isOwnCompany ? ownServicesForScore : ownServices;
+      
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && 
-        !ownServicesForScore.some(ownService => 
+        !referenceServices.some(ownService => 
           typeof ownService === 'string' && ownService.trim().length > 0 && 
           areServicesSimilar(ownService, service)
         )
@@ -195,7 +198,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('🔥 Service count:', ownServicesForScore.length);
   console.log('🔥 Expected base service score:', Math.min(100, (ownServicesForScore.length / 20) * 100));
   
-  const ownCompanyScore = calculateCompetitorScore(ownCompany);
+  const ownCompanyScore = calculateCompetitorScore(ownCompany, true); // TRUE = ist eigenes Unternehmen
   
   console.log('=== OWN COMPANY SCORE CALCULATION ===');
   console.log('ownCompany object:', ownCompany);
