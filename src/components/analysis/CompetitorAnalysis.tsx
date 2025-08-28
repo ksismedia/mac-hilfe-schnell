@@ -129,11 +129,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         baseServiceScore: baseServiceScore.toFixed(1)
       });
       
-      // FAIRE Lösung: Alle verwenden die gleiche Referenz-Liste (ownServicesForScore)
-      // Der Vorteil für das eigene Unternehmen kommt durch die höhere Service-Anzahl
+      // FAIRE Lösung: Konkurrenten werden gegen die ursprüngliche Service-Liste bewertet
+      // So werden sie nicht durch abgewählte Services benachteiligt
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && 
-        !ownServicesForScore.some(ownService => 
+        !ownServices.some(ownService => 
           typeof ownService === 'string' && ownService.trim().length > 0 && 
           areServicesSimilar(ownService, service)
         )
