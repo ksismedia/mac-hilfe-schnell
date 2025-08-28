@@ -123,17 +123,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Restriktiver - max 90% für Services allein
-      // 0 Services: 30%, 1-3 Services: 40-65%, 4-8 Services: 65-85%, 9+ Services: max 90%
+      // Service-Score: Reaktiv aber begrenzt - reagiert auf Abwählen aber max 95%
+      // 0 Services: 25%, 1-3 Services: 45-70%, 4-8 Services: 70-90%, 9+ Services: max 95%
       let baseServiceScore;
       if (serviceCount === 0) {
-        baseServiceScore = 30;  // Niedrigerer Grundscore
+        baseServiceScore = 25;  // Niedrigerer Grundscore
       } else if (serviceCount <= 3) {
-        baseServiceScore = 40 + ((serviceCount - 1) / 2) * 25;  // 40-65% für 1-3 Services
+        baseServiceScore = 45 + ((serviceCount - 1) / 2) * 25;  // 45-70% für 1-3 Services
       } else if (serviceCount <= 8) {
-        baseServiceScore = 65 + ((serviceCount - 3) / 5) * 20;  // 65-85% für 4-8 Services
+        baseServiceScore = 70 + ((serviceCount - 3) / 5) * 20;  // 70-90% für 4-8 Services
       } else {
-        baseServiceScore = Math.min(85 + (serviceCount - 8) * 0.5, 90);  // Max 90% für viele Services
+        baseServiceScore = Math.min(90 + (serviceCount - 8) * 0.6, 95);  // Max 95% für viele Services
       }
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
@@ -161,12 +161,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         fairness: 'All competitors evaluated against same extended service list'
       });
       
-      // Sehr kleiner Bonus für einzigartige Services
-      const uniqueServiceBonus = Math.min(uniqueServices.length * 0.3, 3); // Max 3 Punkte Bonus
-      const finalServiceScore = Math.min(baseServiceScore + uniqueServiceBonus, 92); // Service-Score max 92%
+      // Kleiner aber merkbarer Bonus für einzigartige Services
+      const uniqueServiceBonus = Math.min(uniqueServices.length * 0.5, 4); // Max 4 Punkte Bonus
+      const finalServiceScore = Math.min(baseServiceScore + uniqueServiceBonus, 95); // Service-Score max 95%
       
       // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
-      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3), 97); // Gesamtscore max 97%
+      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3), 98); // Gesamtscore max 98%
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
@@ -178,7 +178,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         calculation: `(${ratingScore.toFixed(1)} * 0.3) + (${reviewScore.toFixed(1)} * 0.2) + (${finalServiceScore.toFixed(1)} * 0.5) = ${score.toFixed(1)}`
       });
       
-      return Math.min(Math.round(isNaN(score) ? 0 : score), 97); // Max 97%
+      return Math.min(Math.round(isNaN(score) ? 0 : score), 98); // Max 98%
     } catch (error) {
       console.error('Error calculating competitor score:', error);
       return 0;

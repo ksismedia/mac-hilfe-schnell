@@ -187,24 +187,24 @@ export const generateCustomerHTML = ({
     ? Math.min(60 + ownReviews * 1.5, 90)  // Start bei 60%, max 90% bei 20 Reviews
     : Math.min(95, 90 + Math.log10(ownReviews / 20) * 5); // Max 95% auch bei vielen Reviews
   
-  // Service-Score: Restriktiver - max 90% für Services allein (EXAKT wie in CompetitorAnalysis)
+  // Service-Score: Reaktiv aber begrenzt - reagiert auf Abwählen aber max 95% (EXAKT wie in CompetitorAnalysis)
   let ownBaseServiceScore;
   const serviceCount = servicesForScore.length;
   if (serviceCount === 0) {
-    ownBaseServiceScore = 30;  // Niedrigerer Grundscore
+    ownBaseServiceScore = 25;  // Niedrigerer Grundscore
   } else if (serviceCount <= 3) {
-    ownBaseServiceScore = 40 + ((serviceCount - 1) / 2) * 25;  // 40-65% für 1-3 Services
+    ownBaseServiceScore = 45 + ((serviceCount - 1) / 2) * 25;  // 45-70% für 1-3 Services
   } else if (serviceCount <= 8) {
-    ownBaseServiceScore = 65 + ((serviceCount - 3) / 5) * 20;  // 65-85% für 4-8 Services
+    ownBaseServiceScore = 70 + ((serviceCount - 3) / 5) * 20;  // 70-90% für 4-8 Services
   } else {
-    ownBaseServiceScore = Math.min(85 + (serviceCount - 8) * 0.5, 90);  // Max 90% für viele Services
+    ownBaseServiceScore = Math.min(90 + (serviceCount - 8) * 0.6, 95);  // Max 95% für viele Services
   }
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
-  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 90); // Service-Score max 90%
+  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 95); // Service-Score max 95%
   
   // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3)), 97); // Max 97%
+  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3)), 98); // Max 98%
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -1510,19 +1510,19 @@ export const generateCustomerHTML = ({
                       
                       let baseServiceScore;
                       if (serviceCount === 0) {
-                        baseServiceScore = 30;  // Niedrigerer Grundscore
+                        baseServiceScore = 25;  // Niedrigerer Grundscore
                       } else if (serviceCount <= 3) {
-                        baseServiceScore = 40 + ((serviceCount - 1) / 2) * 25;  // 40-65% für 1-3 Services
+                        baseServiceScore = 45 + ((serviceCount - 1) / 2) * 25;  // 45-70% für 1-3 Services
                       } else if (serviceCount <= 8) {
-                        baseServiceScore = 65 + ((serviceCount - 3) / 5) * 20;  // 65-85% für 4-8 Services
+                        baseServiceScore = 70 + ((serviceCount - 3) / 5) * 20;  // 70-90% für 4-8 Services
                       } else {
-                        baseServiceScore = Math.min(85 + (serviceCount - 8) * 0.5, 90);  // Max 90% für viele Services
+                        baseServiceScore = Math.min(90 + (serviceCount - 8) * 0.6, 95);  // Max 95% für viele Services
                       }
                       
-                      const finalServiceScore = Math.min(baseServiceScore, 90); // Service-Score max 90%
+                      const finalServiceScore = Math.min(baseServiceScore, 95); // Service-Score max 95%
                       
                       // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-                      const totalScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 97); // Max 97%
+                      const totalScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 98); // Max 98%
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
