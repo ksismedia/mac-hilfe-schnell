@@ -251,29 +251,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     onRestoreCompetitorChange(competitorName);
   };
 
-  // Eigenes Unternehmen für Vergleich
-  const ownCompany = {
-    name: realData.company.name,
-    rating: realData.reviews.google.rating,
-    reviews: realData.reviews.google.count,
-    services: ownServicesForScore, // WICHTIG: Verwende gefilterte Services für Score-Berechnung
-    source: 'own' as const,
-    location: 'Ihr Unternehmen'
-  };
-  
-  // DEBUGGING: Detaillierte Score-Berechnung für eigenes Unternehmen
-  console.log('🔥 MANUAL OWN COMPANY SCORE CALCULATION:');
-  console.log('🔥 Services being used for score:', ownServicesForScore);
-  console.log('🔥 Service count:', ownServicesForScore.length);
-  console.log('🔥 Expected base service score:', Math.min(100, (ownServicesForScore.length / 20) * 100));
-  
-  const ownCompanyScore = calculateCompetitorScore(ownCompany); // Gleiche Bewertungslogik für alle
-  
-  console.log('=== OWN COMPANY SCORE CALCULATION ===');
-  console.log('ownCompany object:', ownCompany);
-  console.log('calculated ownCompanyScore:', ownCompanyScore);
-
-  // Alle Konkurrenten zusammenführen - manuelle Konkurrenten direkt verwenden
+  // Alle Konkurrenten zusammenführen - ERST berechnen, DANN eigenes Unternehmen bewerten
   const allCompetitors = [
     ...realData.competitors
       .filter(comp => !deletedCompetitors.has(comp.name))
@@ -333,6 +311,39 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         return result;
       })
   ];
+
+  // Eigenes Unternehmen für Vergleich - INKL. Abwählbonus
+  const ownCompany = {
+    name: realData.company.name,
+    rating: realData.reviews.google.rating,
+    reviews: realData.reviews.google.count,
+    services: ownServicesForScore, // WICHTIG: Verwende gefilterte Services für Score-Berechnung
+    source: 'own' as const,
+    location: 'Ihr Unternehmen'
+  };
+  
+  // Basis-Score für eigenes Unternehmen berechnen
+  const baseOwnScore = calculateCompetitorScore(ownCompany);
+  
+  // Moderater Bonus für abgewählte Services (Verhältnis zur Konkurrenz)
+  const avgCompetitorServiceCount = allCompetitors.length > 0 
+    ? allCompetitors.reduce((sum, comp) => sum + (comp.services?.length || 0), 0) / allCompetitors.length 
+    : ownServicesForScore.length;
+    
+  // Bonus-Berechnung: Pro abgewähltem Service 1.5 Punkte, aber maximal 15% des Basis-Scores
+  const serviceRemovalBonus = Math.min(
+    removedMissingServices.length * 1.5, 
+    baseOwnScore * 0.15
+  );
+  
+  // Finaler Score für eigenes Unternehmen
+  const ownCompanyScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
+  
+  console.log('=== OWN COMPANY SCORE WITH REMOVAL BONUS ===');
+  console.log('Base score:', baseOwnScore);
+  console.log('Removed services count:', removedMissingServices.length);
+  console.log('Service removal bonus:', serviceRemovalBonus.toFixed(1));
+  console.log('Final own company score:', ownCompanyScore);
 
   // Sortiert nach Score - INKLUSIVE eigenem Unternehmen für Ranking
   const sortedCompetitors = [
