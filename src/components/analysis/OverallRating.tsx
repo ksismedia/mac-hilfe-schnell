@@ -54,7 +54,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
     { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 4, maxScore: 100 },
     { name: 'Arbeitsplatz', score: workplaceScore, weight: 2, maxScore: 100 },
-    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? 80 : 60, weight: 1, maxScore: 100 }
+    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30, weight: 1, maxScore: 100 }
   ];
 
   // Füge nur bewertete Bereiche hinzu
