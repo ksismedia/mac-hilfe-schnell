@@ -102,7 +102,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('🟢 Should add', removedMissingServices.length, 'services to own score calculation');
 
   // Konkurrenten-Score berechnen - WICHTIG: Verwendet unterschiedliche Logik für eigenes vs. andere Unternehmen
-  const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }, isOwnCompany = false) => {
+  const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }) => {
     try {
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
@@ -129,17 +129,22 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         baseServiceScore: baseServiceScore.toFixed(1)
       });
       
-      // ENTSCHEIDEND: Konkurrenten werden gegen ORIGINAL Services verglichen, nicht gegen erweiterte!
-      // Nur das eigene Unternehmen profitiert von den abgewählten Services
-      const referenceServices = isOwnCompany ? ownServicesForScore : ownServices;
-      
+      // FAIRE Lösung: Alle verwenden die gleiche Referenz-Liste (ownServicesForScore)
+      // Der Vorteil für das eigene Unternehmen kommt durch die höhere Service-Anzahl
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && 
-        !referenceServices.some(ownService => 
+        !ownServicesForScore.some(ownService => 
           typeof ownService === 'string' && ownService.trim().length > 0 && 
           areServicesSimilar(ownService, service)
         )
       );
+      
+      console.log(`🎯 Fair evaluation for ${competitor.name}:`, {
+        competitorServices: serviceCount,
+        uniqueServicesAgainstUs: uniqueServices.length,
+        referenceServiceList: 'ownServicesForScore (same for all)',
+        fairness: 'All competitors evaluated against same extended service list'
+      });
       
       // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
       const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
@@ -198,7 +203,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('🔥 Service count:', ownServicesForScore.length);
   console.log('🔥 Expected base service score:', Math.min(100, (ownServicesForScore.length / 20) * 100));
   
-  const ownCompanyScore = calculateCompetitorScore(ownCompany, true); // TRUE = ist eigenes Unternehmen
+  const ownCompanyScore = calculateCompetitorScore(ownCompany); // Gleiche Bewertungslogik für alle
   
   console.log('=== OWN COMPANY SCORE CALCULATION ===');
   console.log('ownCompany object:', ownCompany);
