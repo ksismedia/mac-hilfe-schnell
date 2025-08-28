@@ -203,22 +203,33 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // Score-Berechnung für eigenes Unternehmen mit Abwählbonus
+  // Score-Berechnung für eigenes Unternehmen mit Abwählbonus (EXAKT wie CompetitorAnalysis.tsx)
   const competitorComparisonScore = (() => {
+    // Verwende expectedServices (OHNE entfernte Services) für Basis-Score wie in CompetitorAnalysis
+    const ownCompany = {
+      name: realData.company.name,
+      rating: realData.reviews.google.rating,
+      reviews: realData.reviews.google.count,
+      services: expectedServices, // WICHTIG: Verwende gefilterte Services wie in CompetitorAnalysis
+      source: 'own' as const,
+      location: 'Ihr Unternehmen'
+    };
+    
+    // Basis-Score Berechnung (EXAKT wie calculateCompetitorScore)
     const rating = realData.reviews.google.rating;
     const reviews = realData.reviews.google.count;
     
     const ratingScore = rating >= 3.0 
-      ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
+      ? 85 + ((rating - 3.0) / 2.0) * 15
       : rating >= 2.0 
-        ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
-        : 50 + (rating * 10);             // 50-70% für unter 2.0
+        ? 70 + ((rating - 2.0) * 15)
+        : 50 + (rating * 10);
     
     const reviewScore = reviews <= 15 
-      ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
+      ? Math.min(70 + reviews * 2, 100)
       : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
     
-    const serviceCount = expectedServices.length;
+    const serviceCount = expectedServices.length; // WICHTIG: expectedServices, nicht servicesForScore
     let baseServiceScore;
     if (serviceCount === 0) {
       baseServiceScore = 40;
@@ -233,13 +244,29 @@ export const generateCustomerHTML = ({
     const finalServiceScore = Math.min(baseServiceScore, 100);
     const baseOwnScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
     
-    // Bonus für abgewählte Services
+    // Bonus für abgewählte Services (EXAKT wie in CompetitorAnalysis)
     const serviceRemovalBonus = Math.min(
       (removedMissingServices?.length || 0) * 1.5, 
       baseOwnScore * 0.15
     );
     
-    return Math.min(baseOwnScore + serviceRemovalBonus, 96);
+    const finalScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
+    
+    console.log('HTML Generator - Score Calculation (EXACT MATCH):', {
+      rating,
+      reviews,
+      expectedServices: expectedServices.length,
+      removedServices: removedMissingServices?.length || 0,
+      ratingScore: ratingScore.toFixed(1),
+      reviewScore: reviewScore.toFixed(1),
+      baseServiceScore: baseServiceScore.toFixed(1),
+      finalServiceScore: finalServiceScore.toFixed(1),
+      baseOwnScore,
+      serviceRemovalBonus: serviceRemovalBonus.toFixed(1),
+      finalScore
+    });
+    
+    return finalScore;
   })();
   
   // Verwende den gleichen Score für den Marktpositions-Vergleich
