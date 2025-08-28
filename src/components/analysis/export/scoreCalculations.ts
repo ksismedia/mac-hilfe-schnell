@@ -214,29 +214,45 @@ export const calculateStaffServiceScore = (
   manualCorporateIdentityData: any,
   hourlyRateData: any
 ): number => {
-  // Use the same logic as in OverallRating component for consistent results
   const metrics = [];
   
-  // Only include metrics that have data (like in OverallRating)
+  // Personal-Qualifikation (wenn vorhanden)
   if (staffQualificationData) {
     const staffScore = calculateStaffQualificationScore(staffQualificationData);
     metrics.push({ score: staffScore, weight: 8 }); // Personal
   }
   
+  // Kundenservice/Angebotsbearbeitung (wenn vorhanden)
   if (quoteResponseData) {
     const quoteScore = calculateQuoteResponseScore(quoteResponseData);
     metrics.push({ score: quoteScore, weight: 6 }); // Angebotsbearbeitung
   }
   
-  // If no data available, return a default score
-  if (metrics.length === 0) {
-    return 50;
+  // Unternehmensidentität (wenn vorhanden)
+  if (manualCorporateIdentityData) {
+    const corporateScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
+    metrics.push({ score: corporateScore, weight: 4 }); // Corporate Identity
   }
+  
+  // Stundensatz (wenn vorhanden)
+  if (hourlyRateData) {
+    const rateScore = calculateHourlyRateScore(hourlyRateData);
+    metrics.push({ score: rateScore, weight: 3 }); // Preispositionierung
+  }
+  
+  // Fairere Bewertung bei fehlenden Daten
+  if (metrics.length === 0) {
+    return 70; // Neutraler Score wenn keine Daten vorhanden
+  }
+  
+  // Bei nur wenigen Eingaben: Bonus für vorhandene Daten
+  const completenessBonus = metrics.length < 2 ? 5 : 0;
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
-  return Math.round(weightedScore / totalWeight);
+  const finalScore = Math.round(weightedScore / totalWeight) + completenessBonus;
+  return Math.min(100, finalScore);
 };
 
 // Add missing function stubs for exported functions that are expected by other files
