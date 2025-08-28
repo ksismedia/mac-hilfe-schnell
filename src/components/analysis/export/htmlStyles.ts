@@ -718,6 +718,20 @@ table tr {
   .score-badge.red { color: #FF0000 !important; font-weight: bold; }
   .score-badge.green { color: #22c55e !important; font-weight: bold; }  
   .score-badge.yellow { color: #FFD700 !important; font-weight: bold; }
+  
+  /* Neutral styles for missing data display */
+  .score-tile.neutral, .score-circle.neutral { 
+    background: #e5e7eb !important; 
+    color: #6b7280 !important; 
+    font-size: 1.5em !important;
+    font-weight: normal !important;
+  }
+  .header-score-circle.neutral {
+    background: #e5e7eb !important;
+    color: #6b7280 !important;
+    font-size: 1.2em !important;
+    font-weight: normal !important;
+  }
 }
 `;
 };

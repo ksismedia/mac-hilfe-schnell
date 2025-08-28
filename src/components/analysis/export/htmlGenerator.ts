@@ -104,6 +104,14 @@ export const generateCustomerHTML = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
+  // Helper functions for display - zeige Querstrich für fehlende Daten
+  const displayStaffScore = staffQualificationData && staffQualificationData.totalEmployees > 0 
+    ? `${Math.round(staffQualificationScore)}%` 
+    : '–';
+  const displayQuoteScore = quoteResponseData && quoteResponseData.responseTime 
+    ? `${Math.round(quoteResponseScore)}%` 
+    : '–';
+  
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
@@ -1845,7 +1853,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Corporate Identity</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</span></div>
+            <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
             <div class="score-label">Mitarbeiterqualifizierung</div>
           </div>
           ${hourlyRateData ? `
@@ -2847,24 +2855,30 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('staff-qualification-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Mitarbeiterqualifizierung & Personal</span>
-        <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+        <div class="header-score-circle ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</div>
       </div>
       <div id="staff-qualification-content" class="section-content" style="display: none;">
         <div class="metric-card">
           <h3>Personal-Qualifikation</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+            <div class="score-circle ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</div>
             <div class="score-details">
               <p><strong>Gesamt-Mitarbeiter:</strong> ${staffQualificationData?.totalEmployees || 0}</p>
               <p><strong>Fachkräfte:</strong> ${(staffQualificationData?.skilled_workers || 0) + (staffQualificationData?.masters || 0)} von ${staffQualificationData?.totalEmployees || 0}</p>
               <p><strong>Meister-Quote:</strong> ${staffQualificationData?.masters || 0} Meister</p>
             </div>
           </div>
+          ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? `
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(staffQualificationScore)}" style="width: ${staffQualificationScore}%"></div>
             </div>
-          </div>
+          </div>` : `
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div style="text-align: center; padding: 10px; color: #6b7280; font-style: italic;">Keine Daten eingegeben</div>
+            </div>
+          </div>`}
         </div>
         
         ${staffQualificationData ? `
@@ -2953,13 +2967,13 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('quote-response-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Kundenservice & Angebotsbearbeitung</span>
-        ${quoteResponseScore > 0 ? `<div class="header-score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>` : '<div class="header-score-circle" style="background: #e5e7eb; color: #6b7280;">Nicht bewertet</div>'}
+        ${quoteResponseData && quoteResponseData.responseTime ? `<div class="header-score-circle ${getScoreColorClass(quoteResponseScore)}">${displayQuoteScore}</div>` : '<div class="header-score-circle neutral">–</div>'}
       </div>
       <div id="quote-response-content" class="section-content" style="display: none;">
         <div class="metric-card">
           <h3>Anfragebearbeitung</h3>
           <div class="score-display">
-            ${quoteResponseScore > 0 ? `<div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>` : '<div class="score-circle" style="background: #e5e7eb; color: #6b7280;">Nicht bewertet</div>'}
+            ${quoteResponseData && quoteResponseData.responseTime ? `<div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${displayQuoteScore}</div>` : '<div class="score-circle neutral">–</div>'}
             <div class="score-details">
               <p><strong>Reaktionszeit:</strong> ${quoteResponseData?.responseTime ? 
                 quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde' :
@@ -2977,11 +2991,17 @@ export const generateCustomerHTML = ({
                 'Verbesserungsbedarf' : 'Nicht bewertet'}</p>
             </div>
           </div>
-          ${quoteResponseScore > 0 ? `<div class="progress-container">
+          ${quoteResponseData && quoteResponseData.responseTime ? `
+          <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(quoteResponseScore)}" style="width: ${quoteResponseScore}%"></div>
             </div>
-          </div>` : ''}
+          </div>` : `
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div style="text-align: center; padding: 10px; color: #6b7280; font-style: italic;">Keine Daten eingegeben</div>
+            </div>
+          </div>`}
         </div>
         
         ${quoteResponseData ? `
