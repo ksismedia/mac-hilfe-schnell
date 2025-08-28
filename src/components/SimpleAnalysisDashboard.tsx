@@ -56,6 +56,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
+  const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75);
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
@@ -63,6 +64,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
+  };
+  
+  const handleCompanyScoreChange = (score: number) => {
+    setCurrentOwnCompanyScore(score);
   };
 
   const handleKeywordDataChange = (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
@@ -353,6 +358,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateCompanyServices={updateCompanyServices}
             addDeletedCompetitor={addDeletedCompetitor}
             removeDeletedCompetitor={removeDeletedCompetitor}
+            onCompanyScoreChange={handleCompanyScoreChange}
             onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
           />
         );
@@ -521,6 +527,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualContentData={manualContentData}
               manualAccessibilityData={manualAccessibilityData}
               manualBacklinkData={manualBacklinkData}
+              calculatedOwnCompanyScore={currentOwnCompanyScore}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
               privacyData={privacyData}

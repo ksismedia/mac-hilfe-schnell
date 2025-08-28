@@ -206,14 +206,8 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // VERWENDE DIREKT DEN BEREITS BERECHNETEN SCORE AUS COMPETITOR ANALYSIS
-  const competitorComparisonScore = calculatedOwnCompanyScore || 75; // Fallback nur wenn nicht übergeben
-  
-  console.log('=== HTML GENERATOR - USING CALCULATED SCORE ===');
-  console.log('calculatedOwnCompanyScore from CompetitorAnalysis:', calculatedOwnCompanyScore);
-  console.log('Using competitorComparisonScore:', competitorComparisonScore);
-  
-  // Verwende den gleichen Score für den Marktpositions-Vergleich
+  // VERWENDE DIREKT DIE WERTE AUS DER ANZEIGE - KEINE BERECHNUNG!
+  const competitorComparisonScore = calculatedOwnCompanyScore || 75; // Direkt aus CompetitorAnalysis
   const marketComparisonScore = competitorComparisonScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
@@ -1388,8 +1382,8 @@ export const generateCustomerHTML = ({
                   <span style="font-weight: bold;">${realData.reviews.google.rating}/5</span>
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
-                  <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                    <span style="font-weight: bold; font-size: 1.2em;">${competitorComparisonScore}</span>
+                <td style="padding: 12px; text-align: center; color: #fbbf24;">
+                  <span style="font-weight: bold; font-size: 1.2em;">${competitorComparisonScore}</span>
                     <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 1.5}% Bonus)` : ""}</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
