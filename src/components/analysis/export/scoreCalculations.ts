@@ -216,43 +216,39 @@ export const calculateStaffServiceScore = (
 ): number => {
   const metrics = [];
   
-  // Personal-Qualifikation (wenn vorhanden)
-  if (staffQualificationData) {
+  // Nur eingegebene Daten bewerten - keine Default-Scores für fehlende Eingaben
+  
+  // Personal-Qualifikation (nur wenn tatsächlich eingegeben)
+  if (staffQualificationData && staffQualificationData.totalEmployees > 0) {
     const staffScore = calculateStaffQualificationScore(staffQualificationData);
-    metrics.push({ score: staffScore, weight: 8 }); // Personal
+    metrics.push({ score: staffScore, weight: 40 }); // Höhere Gewichtung für vorhandene Daten
   }
   
-  // Kundenservice/Angebotsbearbeitung (wenn vorhanden)
-  if (quoteResponseData) {
+  // Kundenservice/Angebotsbearbeitung (nur wenn tatsächlich eingegeben)
+  if (quoteResponseData && quoteResponseData.responseTime) {
     const quoteScore = calculateQuoteResponseScore(quoteResponseData);
-    metrics.push({ score: quoteScore, weight: 6 }); // Angebotsbearbeitung
+    metrics.push({ score: quoteScore, weight: 35 }); // Höhere Gewichtung für vorhandene Daten
   }
   
-  // Unternehmensidentität (wenn vorhanden)
+  // Unternehmensidentität (nur wenn tatsächlich eingegeben)
   if (manualCorporateIdentityData) {
     const corporateScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
-    metrics.push({ score: corporateScore, weight: 4 }); // Corporate Identity
+    metrics.push({ score: corporateScore, weight: 25 }); // Geringere Gewichtung
   }
   
-  // Stundensatz (wenn vorhanden)
-  if (hourlyRateData) {
-    const rateScore = calculateHourlyRateScore(hourlyRateData);
-    metrics.push({ score: rateScore, weight: 3 }); // Preispositionierung
-  }
+  // Stundensatz NICHT bewerten wenn nicht eingegeben
+  // (wird separat behandelt wo benötigt)
   
-  // Fairere Bewertung bei fehlenden Daten
+  // Wenn gar keine Daten eingegeben wurden, keine Bewertung abgeben
   if (metrics.length === 0) {
-    return 70; // Neutraler Score wenn keine Daten vorhanden
+    return 0; // Zeigt an, dass keine Bewertung möglich ist
   }
   
-  // Bei nur wenigen Eingaben: Bonus für vorhandene Daten
-  const completenessBonus = metrics.length < 2 ? 5 : 0;
-  
+  // Nur die tatsächlich vorhandenen Daten gewichten
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
-  const finalScore = Math.round(weightedScore / totalWeight) + completenessBonus;
-  return Math.min(100, finalScore);
+  return Math.round(weightedScore / totalWeight);
 };
 
 // Add missing function stubs for exported functions that are expected by other files
