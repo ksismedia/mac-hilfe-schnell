@@ -155,19 +155,27 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         !isIndustrySpecific(service, industry)
       );
       
-      // Service-Score: Neue Faustformel - ab 20 Services mindestens 80%
+      // Service-Score: Fairere Bewertung - Qualität vor Quantität
+      // Basis-Score abhängig von Service-Anzahl, aber mit fairerer Skalierung
       let baseServiceScore;
       if (serviceCount === 0) {
-        baseServiceScore = 20;  // Sehr niedrig ohne Services
-      } else if (serviceCount <= 5) {
-        baseServiceScore = 20 + (serviceCount * 8);  // 28-60% für 1-5 Services
+        baseServiceScore = 15;  // Sehr niedrig ohne Services
+      } else if (serviceCount <= 3) {
+        baseServiceScore = 30 + (serviceCount * 15);  // 45-75% für 1-3 Services (Spezialbetriebe)
+      } else if (serviceCount <= 8) {
+        baseServiceScore = 75 + ((serviceCount - 3) * 2);  // 77-85% für 4-8 Services (Standard)
       } else if (serviceCount <= 15) {
-        baseServiceScore = 60 + ((serviceCount - 5) * 1.5);  // 60-75% für 6-15 Services  
-      } else if (serviceCount <= 20) {
-        baseServiceScore = 75 + ((serviceCount - 15) * 1);   // 75-80% für 16-20 Services
+        baseServiceScore = 85 + ((serviceCount - 8) * 0.7);  // 85-90% für 9-15 Services
       } else {
-        baseServiceScore = Math.min(80 + ((serviceCount - 20) * 0.5), 92);  // Min 80%, max 92% für >20 Services
+        baseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
       }
+      
+      // Spezialisierungsbonus: Belohnt hohen Anteil branchenspezifischer Services
+      const specializationRatio = serviceCount > 0 ? industrySpecificServices.length / serviceCount : 0;
+      const specializationBonus = specializationRatio * 8; // Bis zu 8 Punkte für 100% Spezialisierung
+      
+      // Branchenrelevanz-Score: Wichtiger als pure Anzahl
+      const industryRelevanceScore = Math.min(industrySpecificServices.length * 3.5, 25); // Max 25 Punkte für relevante Services
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
         serviceCount,
@@ -194,15 +202,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         fairness: 'All competitors evaluated against same extended service list'
       });
       
-      // Bonus für branchenspezifische Services, Abzug für branchenfremde
-      const industryBonus = industrySpecificServices.length * 0.8; // Bonus für Branchenrelevanz
-      const nonIndustryPenalty = nonIndustryServices.length * 0.2; // Kleiner Abzug für branchenfremde Services
-      const qualityAdjustment = industryBonus - nonIndustryPenalty;
+      // Qualitäts-Malus für zu viele branchenfremde Services (Verwässerung)
+      const dilutionPenalty = nonIndustryServices.length > 5 ? (nonIndustryServices.length - 5) * 0.8 : 0;
       
-      const finalServiceScore = Math.min(baseServiceScore + qualityAdjustment, 94); // Service-Score max 94%
+      // Finaler Service-Score: Basis + Spezialisierung + Relevanz - Verwässerung
+      const finalServiceScore = Math.min(baseServiceScore + specializationBonus + industryRelevanceScore - dilutionPenalty, 96);
       
-      // Ausgewogenere Gewichtung: Rating 45%, Reviews 25%, Services 30%
-      const score = Math.min((ratingScore * 0.45) + (reviewScore * 0.25) + (finalServiceScore * 0.3), 96); // Gesamtscore max 96%
+      // Neue Gewichtung: Rating 40%, Reviews 25%, Services 35% (Services wichtiger für Fairness)
+      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35), 96);
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
@@ -210,11 +217,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         serviceCount, 
         industryServices: industrySpecificServices.length,
         nonIndustryServices: nonIndustryServices.length,
+        specializationRatio: (specializationRatio * 100).toFixed(1) + '%',
         baseServiceScore: baseServiceScore.toFixed(1), 
-        qualityAdjustment: qualityAdjustment.toFixed(1),
+        specializationBonus: specializationBonus.toFixed(1),
+        industryRelevanceScore: industryRelevanceScore.toFixed(1),
+        dilutionPenalty: dilutionPenalty.toFixed(1),
         finalServiceScore: finalServiceScore.toFixed(1), 
         finalScore: Math.round(score),
-        calculation: `(${ratingScore.toFixed(1)} * 0.45) + (${reviewScore.toFixed(1)} * 0.25) + (${finalServiceScore.toFixed(1)} * 0.3) = ${score.toFixed(1)}`
+        calculation: `(${ratingScore.toFixed(1)} * 0.4) + (${reviewScore.toFixed(1)} * 0.25) + (${finalServiceScore.toFixed(1)} * 0.35) = ${score.toFixed(1)}`
       });
       
       return Math.min(Math.round(isNaN(score) ? 0 : score), 96); // Max 96%

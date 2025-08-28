@@ -188,25 +188,26 @@ export const generateCustomerHTML = ({
     : Math.min(95, 90 + Math.log10(ownReviews / 20) * 5); // Max 95% auch bei vielen Reviews
   
   // Service-Score: Reaktiv aber begrenzt - reagiert auf Abwählen aber max 95% (EXAKT wie in CompetitorAnalysis)
+  // Service-Score: Fairere Bewertung - Qualität vor Quantität (EXAKT wie in CompetitorAnalysis)
   let ownBaseServiceScore;
   const serviceCount = servicesForScore.length;
   if (serviceCount === 0) {
-    ownBaseServiceScore = 20;  // Sehr niedrig ohne Services
-  } else if (serviceCount <= 5) {
-    ownBaseServiceScore = 20 + (serviceCount * 8);  // 28-60% für 1-5 Services
+    ownBaseServiceScore = 15;  // Sehr niedrig ohne Services
+  } else if (serviceCount <= 3) {
+    ownBaseServiceScore = 30 + (serviceCount * 15);  // 45-75% für 1-3 Services (Spezialbetriebe)
+  } else if (serviceCount <= 8) {
+    ownBaseServiceScore = 75 + ((serviceCount - 3) * 2);  // 77-85% für 4-8 Services (Standard)
   } else if (serviceCount <= 15) {
-    ownBaseServiceScore = 60 + ((serviceCount - 5) * 1.5);  // 60-75% für 6-15 Services  
-  } else if (serviceCount <= 20) {
-    ownBaseServiceScore = 75 + ((serviceCount - 15) * 1);   // 75-80% für 16-20 Services
+    ownBaseServiceScore = 85 + ((serviceCount - 8) * 0.7);  // 85-90% für 9-15 Services
   } else {
-    ownBaseServiceScore = Math.min(80 + ((serviceCount - 20) * 0.5), 92);  // Min 80%, max 92% für >20 Services
+    ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
-  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 94); // Service-Score max 94%
+  // Vereinfachte Berechnung für HTML (ohne Branchenlogik)
+  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 96); // Service-Score max 96%
   
-  // Verwende die neue ausgewogene Gewichtung: Rating 45%, Reviews 25%, Services 30%
-  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.45) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.3)), 96); // Max 96%
+  // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 25%, Services 35%
+  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35)), 96); // Max 96%
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
