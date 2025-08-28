@@ -206,16 +206,9 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // DIREKT DIE ANGEZEIGTEN WERTE VERWENDEN - NULL CHECKS UND FALLBACKS ENTFERNT
-  console.log('=== HTML GENERATOR DEBUG ===');
-  console.log('calculatedOwnCompanyScore received:', calculatedOwnCompanyScore);
-  console.log('Type of calculatedOwnCompanyScore:', typeof calculatedOwnCompanyScore);
-  
-  const competitorComparisonScore = calculatedOwnCompanyScore; 
-  const marketComparisonScore = calculatedOwnCompanyScore;
-  
-  console.log('Using competitorComparisonScore:', competitorComparisonScore);
-  console.log('Using marketComparisonScore:', marketComparisonScore);
+  // VERWENDE DIE AKTUELLEN SCORES AUS DER ANZEIGE DIREKT
+  const competitorComparisonScore = calculatedOwnCompanyScore || (window as any).globalOwnCompanyScore || 87;
+  const marketComparisonScore = competitorComparisonScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 

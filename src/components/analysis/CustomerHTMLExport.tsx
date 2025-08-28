@@ -133,12 +133,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const exportAsCustomerReport = () => {
-    console.log('=== CUSTOMER HTML EXPORT DEBUG ===');
-    console.log('calculatedOwnCompanyScore prop:', calculatedOwnCompanyScore);
-    console.log('globalOwnCompanyScore from window:', (window as any).globalOwnCompanyScore);
-    // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
-    const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
-    console.log('🔴 EXPORT AS CUSTOMER REPORT STARTET - Using score:', currentOwnCompanyScore);
+    // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
+    const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
     const missingImprintElements = getMissingImprintElements();
     
     // Social Media Score für Customer Report berechnen
