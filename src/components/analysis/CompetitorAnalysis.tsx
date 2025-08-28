@@ -131,13 +131,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
       const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
       
-      // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
-      const score = (ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3);
+      // Ausgewogenere Gewichtung: Rating 30%, Reviews 20%, Services 50% (Services haben mehr Einfluss!)
+      const score = (ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5);
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
-        rating, ratingScore, reviews, reviewScore, 
-        serviceCount, baseServiceScore, uniqueServicesCount: uniqueServices.length, 
-        uniqueServiceBonus, finalServiceScore, finalScore: Math.round(score)
+        rating, ratingScore: ratingScore.toFixed(1), 
+        reviews, reviewScore: reviewScore.toFixed(1), 
+        serviceCount, baseServiceScore: baseServiceScore.toFixed(1), 
+        uniqueServicesCount: uniqueServices.length, 
+        uniqueServiceBonus, finalServiceScore: finalServiceScore.toFixed(1), 
+        finalScore: Math.round(score),
+        calculation: `(${ratingScore.toFixed(1)} * 0.3) + (${reviewScore.toFixed(1)} * 0.2) + (${finalServiceScore.toFixed(1)} * 0.5) = ${score.toFixed(1)}`
       });
       
       return Math.round(isNaN(score) ? 0 : score);
