@@ -206,9 +206,9 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // DIREKT DIE WERTE AUS DER ANZEIGE VERWENDEN (87, 91, 90, 88, 87, 86)
-  const competitorComparisonScore = 87; // Fester Wert aus der Anzeige
-  const marketComparisonScore = 87;
+  // VERWENDE DIE DYNAMISCH BERECHNETE EIGENE SCORE BASIEREND AUF SERVICES
+  const competitorComparisonScore = ownBaseServiceScore; // Dynamischer Wert basierend auf Services
+  const marketComparisonScore = ownBaseServiceScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
@@ -1398,12 +1398,20 @@ export const generateCustomerHTML = ({
                 const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
                 const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
                 
-                // VERWENDE DIREKT DIE SCORES AUS DER ANZEIGE (91, 90, 88, 87, 86)
-                const scores = [91, 90, 88, 87, 86];
-                const estimatedScore = scores[index] || 85;
-                
-                
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
+                
+                // BERECHNE SCORE BASIEREND AUF KONKURRENTEN-SERVICES
+                const competitorServiceCount = services.length;
+                let estimatedScore = 85; // Basis-Score
+                if (competitorServiceCount <= 3) {
+                  estimatedScore = 75 + (competitorServiceCount * 5);
+                } else if (competitorServiceCount <= 8) {
+                  estimatedScore = 85 + ((competitorServiceCount - 3) * 1);
+                } else if (competitorServiceCount <= 15) {
+                  estimatedScore = 88 + ((competitorServiceCount - 8) * 0.3);
+                } else {
+                  estimatedScore = Math.min(90 + ((competitorServiceCount - 15) * 0.2), 93);
+                }
                 const serviceCount = services.length;
                 
                 return `
@@ -1448,8 +1456,19 @@ export const generateCustomerHTML = ({
                       const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
                       const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
                       
-                      // VERWENDE DIREKT DIE SCORES AUS DER ANZEIGE
-                      const totalScore = 87;
+                      // BERECHNE SCORE BASIEREND AUF SERVICES DES KONKURRENTEN
+                      const compServices = Array.isArray(comp.services) ? comp.services : [];
+                      const compServiceCount = compServices.length;
+                      let totalScore = 85;
+                      if (compServiceCount <= 3) {
+                        totalScore = 75 + (compServiceCount * 5);
+                      } else if (compServiceCount <= 8) {
+                        totalScore = 85 + ((compServiceCount - 3) * 1);
+                      } else if (compServiceCount <= 15) {
+                        totalScore = 88 + ((compServiceCount - 8) * 0.3);
+                      } else {
+                        totalScore = Math.min(90 + ((compServiceCount - 15) * 0.2), 93);
+                      }
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
