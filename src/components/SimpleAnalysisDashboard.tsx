@@ -575,6 +575,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             keywordsScore={keywordsScore}
             staffQualificationData={staffQualificationData}
             quoteResponseData={quoteResponseData}
+            hourlyRateData={hourlyRateData}
             manualWorkplaceData={manualWorkplaceData}
           />
         </div>

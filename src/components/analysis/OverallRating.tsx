@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, StaffQualificationData, QuoteResponseData } from '@/hooks/useManualData';
+import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
 
 interface OverallRatingProps {
   businessData: {
@@ -19,10 +19,11 @@ interface OverallRatingProps {
   keywordsScore?: number | null;
   staffQualificationData?: StaffQualificationData | null;
   quoteResponseData?: QuoteResponseData | null;
+  hourlyRateData?: HourlyRateData | null;
   manualWorkplaceData?: any;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, manualWorkplaceData }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData }) => {
   // Keywords-Score - use provided score or calculate default
   const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
   const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
@@ -63,8 +64,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     metrics.push({ name: 'Personal', score: staffQualificationScore, weight: 8, maxScore: 100 });
   }
   
-  if (quoteResponseScore !== null) {
+  if (quoteResponseData && quoteResponseData.responseTime) {
     metrics.push({ name: 'Angebotsbearbeitung', score: quoteResponseScore, weight: 6, maxScore: 100 });
+  }
+  
+  // Stundensatz - nur bewerten wenn tatsächlich eingegeben
+  if (hourlyRateData && hourlyRateData.ownRate > 0) {
+    const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+    metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 4, maxScore: 100 });
   }
 
   // Gewichteter Gesamtscore
