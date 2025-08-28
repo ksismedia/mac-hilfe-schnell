@@ -173,21 +173,27 @@ export const generateCustomerHTML = ({
   const ownRating = typeof realData.reviews.google.rating === 'number' && !isNaN(realData.reviews.google.rating) ? realData.reviews.google.rating : 0;
   const ownReviews = typeof realData.reviews.google.count === 'number' && !isNaN(realData.reviews.google.count) ? realData.reviews.google.count : 0;
   
-  // Rating-Score: 4.4/5 = 88%
-  const ownRatingScore = (ownRating / 5) * 100;
+  // Rating-Score: Weniger streng - 3.5+ = 90%+, gestaffelt ab 2.5 (EXAKT wie in CompetitorAnalysis)
+  const ownRatingScore = ownRating >= 3.5 
+    ? 85 + ((ownRating - 3.5) / 1.5) * 15  // 85-100% für 3.5-5.0
+    : ownRating >= 2.5 
+      ? 60 + ((ownRating - 2.5) * 25)      // 60-85% für 2.5-3.5
+      : ownRating * 24;                    // Max 60% bei 2.5
   
-  // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt (EXAKT wie in CompetitorAnalysis)
-  const ownReviewScore = ownReviews <= 100 ? ownReviews : Math.min(100, 100 + Math.log10(ownReviews / 100) * 20);
+  // Review-Score: Weniger streng - bereits bei 30 Reviews = 90% (EXAKT wie in CompetitorAnalysis)
+  const ownReviewScore = ownReviews <= 30 
+    ? Math.min(ownReviews * 3, 90)  // 30 Reviews = 90%
+    : Math.min(100, 90 + Math.log10(ownReviews / 30) * 10);
   
-  // Service-Score: Verwende die neue ausgewogene Formel
+  // Service-Score: Großzügigere Bewertung (EXAKT wie in CompetitorAnalysis)
   let ownBaseServiceScore;
   const serviceCount = servicesForScore.length;
-  if (serviceCount <= 5) {
-    ownBaseServiceScore = (serviceCount / 5) * 30;  // 0-30% für erste 5 Services
-  } else if (serviceCount <= 10) {
-    ownBaseServiceScore = 30 + ((serviceCount - 5) / 5) * 20;  // 30-50% für Services 6-10
+  if (serviceCount <= 3) {
+    ownBaseServiceScore = (serviceCount / 3) * 50;  // 0-50% für erste 3 Services
+  } else if (serviceCount <= 7) {
+    ownBaseServiceScore = 50 + ((serviceCount - 3) / 4) * 30;  // 50-80% für Services 4-7
   } else {
-    ownBaseServiceScore = 50 + (serviceCount - 10) * 1;  // 50% + 1% pro zusätzlichem Service
+    ownBaseServiceScore = 80 + (serviceCount - 7) * 2;  // 80% + 2% pro zusätzlichem Service
   }
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
