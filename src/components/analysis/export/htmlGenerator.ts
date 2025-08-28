@@ -131,8 +131,33 @@ export const generateCustomerHTML = ({
     : industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
   
   // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
-  // (entfernte "fehlende" Services = Services die man auch anbietet, nur anders benannt)
   const servicesForScore = [...expectedServices, ...removedMissingServices];
+  
+  // Verbesserte Service-Vergleichsfunktion (wie in CompetitorAnalysis.tsx)
+  const areServicesSimilar = (service1: string, service2: string): boolean => {
+    if (!service1 || !service2) return false;
+    
+    const s1 = service1.toLowerCase().trim();
+    const s2 = service2.toLowerCase().trim();
+    
+    // Exakte Übereinstimmung
+    if (s1 === s2) return true;
+    
+    // Eine enthält die andere
+    if (s1.includes(s2) || s2.includes(s1)) return true;
+    
+    // Gemeinsame Kernwörter (mindestens 3 Zeichen)
+    const words1 = s1.split(/[\s\-_]+/).filter(w => w.length >= 3);
+    const words2 = s2.split(/[\s\-_]+/).filter(w => w.length >= 3);
+    
+    const commonWords = words1.filter(w1 => 
+      words2.some(w2 => w1.includes(w2) || w2.includes(w1))
+    );
+    
+    // Als ähnlich betrachten wenn mindestens 50% der Wörter übereinstimmen
+    const similarity = commonWords.length / Math.min(words1.length, words2.length);
+    return similarity >= 0.5;
+  };
   
   const ownServiceScore = Math.min(100, 40 + (expectedServices.length * 10));
   
@@ -152,8 +177,8 @@ export const generateCustomerHTML = ({
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
-  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 50%, Reviews 20%, Services 30%
-  const competitorComparisonScore = Math.round((ownRatingScore * 0.5) + (ownReviewScore * 0.2) + (ownFinalServiceScore * 0.3));
+  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 40%, Reviews 30%, Services 30%
+  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3));
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -1369,19 +1394,19 @@ export const generateCustomerHTML = ({
                 const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
                 
                 const uniqueServices = services.filter((service: string) => 
-                  typeof service === 'string' && service.trim().length > 0 && !expectedServices.some(ownService => 
-                    typeof ownService === 'string' && ownService.trim().length > 0 && (
-                      ownService.toLowerCase().includes(service.toLowerCase()) || 
-                      service.toLowerCase().includes(ownService.toLowerCase())
-                    )
+                  typeof service === 'string' && service.trim().length > 0 && 
+                  !servicesForScore.some(ownService => 
+                    typeof ownService === 'string' && ownService.trim().length > 0 && 
+                    areServicesSimilar(ownService, service)
                   )
                 );
                 
-                const uniqueServiceBonus = uniqueServices.length * 2;
+                // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
+                const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
                 const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
                 
-                // Gewichtung: Rating 50%, Reviews 20%, Services 30%
-                const estimatedScore = Math.round((ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3));
+                // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
+                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
                 
                 console.log('Competitor score breakdown:', {
                   name: competitor.name,
@@ -1442,16 +1467,15 @@ export const generateCustomerHTML = ({
                       const serviceCount = services.length;
                       const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
                       const uniqueServices = services.filter((service: string) => 
-                        typeof service === 'string' && service.trim().length > 0 && !expectedServices.some(ownService => 
-                          typeof ownService === 'string' && ownService.trim().length > 0 && (
-                            ownService.toLowerCase().includes(service.toLowerCase()) || 
-                            service.toLowerCase().includes(ownService.toLowerCase())
-                          )
+                        typeof service === 'string' && service.trim().length > 0 && 
+                        !servicesForScore.some(ownService => 
+                          typeof ownService === 'string' && ownService.trim().length > 0 && 
+                          areServicesSimilar(ownService, service)
                         )
                       );
-                      const uniqueServiceBonus = uniqueServices.length * 2;
+                      const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
                       const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
-                      const totalScore = Math.round((ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3));
+                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
