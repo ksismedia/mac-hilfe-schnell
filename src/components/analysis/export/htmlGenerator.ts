@@ -206,9 +206,9 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // VERWENDE DIREKT DIE WERTE AUS DER ANZEIGE - KEINE BERECHNUNG!
-  const competitorComparisonScore = calculatedOwnCompanyScore || 75; // Direkt aus CompetitorAnalysis
-  const marketComparisonScore = competitorComparisonScore;
+  // DIREKT DIE ANGEZEIGTEN WERTE VERWENDEN - NULL CHECKS UND FALLBACKS ENTFERNT
+  const competitorComparisonScore = calculatedOwnCompanyScore; 
+  const marketComparisonScore = calculatedOwnCompanyScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
