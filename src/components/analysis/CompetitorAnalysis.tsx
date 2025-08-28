@@ -107,29 +107,31 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
       
-      // Rating-Score: Weniger streng - 3.5+ = 90%+, gestaffelt ab 2.5
-      const ratingScore = rating >= 3.5 
-        ? 85 + ((rating - 3.5) / 1.5) * 15  // 85-100% für 3.5-5.0
-        : rating >= 2.5 
-          ? 60 + ((rating - 2.5) * 25)      // 60-85% für 2.5-3.5
-          : rating * 24;                    // Max 60% bei 2.5
+      // Rating-Score: Sehr großzügig - ab 3.0 = 85%+, ab 2.0 = 70%+
+      const ratingScore = rating >= 3.0 
+        ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
+        : rating >= 2.0 
+          ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
+          : 50 + (rating * 10);             // 50-70% für unter 2.0
       
-      // Review-Score: Weniger streng - bereits bei 30 Reviews = 90%
-      const reviewScore = reviews <= 30 
-        ? Math.min(reviews * 3, 90)  // 30 Reviews = 90%
-        : Math.min(100, 90 + Math.log10(reviews / 30) * 10);
+      // Review-Score: Sehr großzügig - bereits bei 15 Reviews = 90%
+      const reviewScore = reviews <= 15 
+        ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
+        : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Großzügigere Bewertung
-      // 0-3 Services: 0-50%, 4-7 Services: 50-80%, 8+ Services: 80% + 2% pro Service
+      // Service-Score: Sehr großzügig - schon 1 Service = 60%
+      // 0 Services: 40%, 1-2 Services: 60-75%, 3-5 Services: 75-90%, 6+ Services: 90% + 1% pro Service
       let baseServiceScore;
-      if (serviceCount <= 3) {
-        baseServiceScore = (serviceCount / 3) * 50;  // 0-50% für erste 3 Services
-      } else if (serviceCount <= 7) {
-        baseServiceScore = 50 + ((serviceCount - 3) / 4) * 30;  // 50-80% für Services 4-7
+      if (serviceCount === 0) {
+        baseServiceScore = 40;  // Grundscore auch ohne Services
+      } else if (serviceCount <= 2) {
+        baseServiceScore = 60 + ((serviceCount - 1) * 15);  // 60-75% für 1-2 Services
+      } else if (serviceCount <= 5) {
+        baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
       } else {
-        baseServiceScore = 80 + (serviceCount - 7) * 2;  // 80% + 2% pro zusätzlichem Service
+        baseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
       }
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
