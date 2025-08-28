@@ -5,8 +5,12 @@ import { Euro, AlertTriangle } from 'lucide-react';
 import HourlyRateInput from './HourlyRateInput';
 import { useManualData, HourlyRateData } from '@/hooks/useManualData';
 
-const HourlyRateTab: React.FC = () => {
-  const { hourlyRateData, updateHourlyRateData } = useManualData();
+interface HourlyRateTabProps {
+  hourlyRateData: HourlyRateData | null;
+  updateHourlyRateData: (data: HourlyRateData | null) => void;
+}
+
+const HourlyRateTab: React.FC<HourlyRateTabProps> = ({ hourlyRateData, updateHourlyRateData }) => {
 
   const handleDataChange = (data: HourlyRateData) => {
     updateHourlyRateData(data);

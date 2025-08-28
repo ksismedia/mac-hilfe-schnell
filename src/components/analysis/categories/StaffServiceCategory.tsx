@@ -5,7 +5,7 @@ import HourlyRateTab from '../HourlyRateTab';
 import QuoteResponseInput from '../QuoteResponseInput';
 import { CorporateIdentityAnalysis } from '../CorporateIdentityAnalysis';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { StaffQualificationData, ManualCorporateIdentityData, QuoteResponseData } from '@/hooks/useManualData';
+import { StaffQualificationData, ManualCorporateIdentityData, QuoteResponseData, HourlyRateData } from '@/hooks/useManualData';
 
 interface StaffServiceCategoryProps {
   businessData: any;
@@ -16,6 +16,8 @@ interface StaffServiceCategoryProps {
   updateCorporateIdentityData: (data: ManualCorporateIdentityData | null) => void;
   quoteResponseData: QuoteResponseData | null;
   updateQuoteResponseData: (data: QuoteResponseData | null) => void;
+  hourlyRateData: HourlyRateData | null;
+  updateHourlyRateData: (data: HourlyRateData | null) => void;
 }
 
 const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
@@ -27,6 +29,8 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
   updateCorporateIdentityData,
   quoteResponseData,
   updateQuoteResponseData,
+  hourlyRateData,
+  updateHourlyRateData,
 }) => {
   return (
     <div className="space-y-6">
@@ -52,7 +56,10 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="hourly-rate">
-          <HourlyRateTab />
+          <HourlyRateTab 
+            hourlyRateData={hourlyRateData}
+            updateHourlyRateData={updateHourlyRateData}
+          />
         </TabsContent>
 
         <TabsContent value="corporate">

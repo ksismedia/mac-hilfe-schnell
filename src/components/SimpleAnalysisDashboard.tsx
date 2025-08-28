@@ -99,6 +99,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     addDeletedCompetitor,
     removeDeletedCompetitor,
     updateStaffQualificationData,
+    updateHourlyRateData,
     updateQuoteResponseData,
     updateManualContentData,
     updateManualAccessibilityData,
@@ -355,7 +356,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         );
       case 'staff-service':
         return (
-          <StaffServiceCategory
+          <StaffServiceCategory 
             businessData={businessData}
             realData={realData}
             staffQualificationData={staffQualificationData}
@@ -364,6 +365,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateCorporateIdentityData={updateCorporateIdentityData}
             quoteResponseData={quoteResponseData}
             updateQuoteResponseData={updateQuoteResponseData}
+            hourlyRateData={hourlyRateData}
+            updateHourlyRateData={updateHourlyRateData}
           />
         );
       default:

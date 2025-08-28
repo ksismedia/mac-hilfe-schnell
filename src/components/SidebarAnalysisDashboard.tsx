@@ -99,6 +99,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     addDeletedCompetitor,
     removeDeletedCompetitor,
     updateStaffQualificationData,
+    updateHourlyRateData,
     updateQuoteResponseData
   } = useManualData();
 
@@ -318,7 +319,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
         );
       case 'staff-service':
         return (
-          <StaffServiceCategory
+          <StaffServiceCategory 
             businessData={businessData}
             realData={realData}
             staffQualificationData={staffQualificationData}
@@ -327,6 +328,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateCorporateIdentityData={updateCorporateIdentityData}
             quoteResponseData={quoteResponseData}
             updateQuoteResponseData={updateQuoteResponseData}
+            hourlyRateData={hourlyRateData}
+            updateHourlyRateData={updateHourlyRateData}
           />
         );
       default:
