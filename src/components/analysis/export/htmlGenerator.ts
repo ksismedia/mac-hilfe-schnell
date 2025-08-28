@@ -179,16 +179,22 @@ export const generateCustomerHTML = ({
   // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt (EXAKT wie in CompetitorAnalysis)
   const ownReviewScore = ownReviews <= 100 ? ownReviews : Math.min(100, 100 + Math.log10(ownReviews / 100) * 20);
   
-  // Service-Score: Verwende die gleiche verbesserte Formel wie in Live-Ansicht
-  const ownBaseServiceScore = servicesForScore.length <= 10 
-    ? (servicesForScore.length / 10) * 50  
-    : 50 + ((servicesForScore.length - 10) * 2);
+  // Service-Score: Verwende die neue ausgewogene Formel
+  let ownBaseServiceScore;
+  const serviceCount = servicesForScore.length;
+  if (serviceCount <= 5) {
+    ownBaseServiceScore = (serviceCount / 5) * 30;  // 0-30% für erste 5 Services
+  } else if (serviceCount <= 10) {
+    ownBaseServiceScore = 30 + ((serviceCount - 5) / 5) * 20;  // 30-50% für Services 6-10
+  } else {
+    ownBaseServiceScore = 50 + (serviceCount - 10) * 1;  // 50% + 1% pro zusätzlichem Service
+  }
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
-  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 30%, Reviews 20%, Services 50%
-  const competitorComparisonScore = Math.round((ownRatingScore * 0.3) + (ownReviewScore * 0.2) + (ownFinalServiceScore * 0.5));
+  // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
+  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3));
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
