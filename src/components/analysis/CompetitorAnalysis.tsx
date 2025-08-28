@@ -46,8 +46,31 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
 
-  // Basis-Services für die Branche
+  // Branchenspezifische Services für jedes Gewerbe
   const getIndustryServices = (industry: string): string[] => {
+    const industryMap: { [key: string]: string[] } = {
+      'shk': ['heizung', 'sanitär', 'klima', 'lüftung', 'installation', 'wartung', 'reparatur', 'badumbau', 'rohrreinigung'],
+      'maler': ['malen', 'lackieren', 'tapezieren', 'fassade', 'renovierung', 'anstrich', 'wandgestaltung', 'bodenbelag'],
+      'elektriker': ['elektro', 'installation', 'beleuchtung', 'schaltschrank', 'photovoltaik', 'smart home', 'automation'],
+      'dachdecker': ['dach', 'ziegel', 'schiefer', 'flachdach', 'dachrinne', 'dämmung', 'abdichtung', 'reparatur'],
+      'stukateur': ['putz', 'stuck', 'gips', 'fassade', 'dämmung', 'trockenbau', 'renovierung'],
+      'planungsbuero': ['planung', 'architektur', 'statik', 'beratung', 'projekt', 'bauüberwachung', 'genehmigung'],
+      'facility-management': ['wartung', 'reinigung', 'sicherheit', 'gebäude', 'instandhaltung', 'service']
+    };
+    return industryMap[industry] || [];
+  };
+
+  // Prüft ob ein Service branchenspezifisch ist
+  const isIndustrySpecific = (service: string, currentIndustry: string): boolean => {
+    const industryServices = getIndustryServices(currentIndustry);
+    const serviceLower = service.toLowerCase();
+    return industryServices.some(industryService => 
+      serviceLower.includes(industryService) || industryService.includes(serviceLower)
+    );
+  };
+
+  // Basis-Services für die Branche (kompatibel mit vorhandenem Code)
+  const getIndustryServicesOld = (industry: string): string[] => {
     const industryServices = {
       'shk': ['Heizungsinstallation', 'Sanitärinstallation', 'Klimaanlagen', 'Rohrreinigung', 'Wartung', 'Notdienst'],
       'maler': ['Innenanstrich', 'Außenanstrich', 'Tapezieren', 'Lackierung', 'Fassadengestaltung', 'Renovierung'],
@@ -61,7 +84,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   };
 
   // Verwende eigene Services statt Standard-Services
-  const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServices(industry);
+  const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServicesOld(industry);
   
   // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
   const ownServicesForScore = [...ownServices, ...removedMissingServices];
@@ -107,33 +130,43 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
       
-      // Rating-Score: Restriktiver - selbst 5.0 erreicht nur 95%
+      // Rating-Score: <4.5 muss unter 80% bleiben (neue Faustformel)
       const ratingScore = rating >= 4.5 
-        ? 85 + ((rating - 4.5) / 0.5) * 10  // 85-95% für 4.5-5.0
-        : rating >= 3.0 
-          ? 70 + ((rating - 3.0) / 1.5) * 15  // 70-85% für 3.0-4.5
-          : rating >= 2.0 
-            ? 50 + ((rating - 2.0) * 20)      // 50-70% für 2.0-3.0
-            : rating * 25;                    // 0-50% für unter 2.0
+        ? 80 + ((rating - 4.5) / 0.5) * 15  // 80-95% für 4.5-5.0
+        : rating >= 3.5 
+          ? 60 + ((rating - 3.5) * 20)      // 60-80% für 3.5-4.5
+          : rating >= 2.5 
+            ? 40 + ((rating - 2.5) * 20)    // 40-60% für 2.5-3.5
+            : rating * 16;                  // 0-40% für unter 2.5
       
-      // Review-Score: Restriktiver - max 95% auch bei vielen Reviews
-      const reviewScore = reviews <= 20 
-        ? Math.min(60 + reviews * 1.5, 90)  // Start bei 60%, max 90% bei 20 Reviews
-        : Math.min(95, 90 + Math.log10(reviews / 20) * 5); // Max 95% auch bei vielen Reviews
+      // Review-Score: Moderater als vorher
+      const reviewScore = reviews <= 25 
+        ? Math.min(50 + reviews * 1.6, 90)  // Start bei 50%, max 90% bei 25 Reviews
+        : Math.min(95, 90 + Math.log10(reviews / 25) * 5); // Max 95%
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Reaktiv aber begrenzt - reagiert auf Abwählen aber max 95%
-      // 0 Services: 25%, 1-3 Services: 45-70%, 4-8 Services: 70-90%, 9+ Services: max 95%
+      
+      // Unterscheide zwischen branchenspezifischen und branchenfremden Services
+      const industrySpecificServices = services.filter(service => 
+        isIndustrySpecific(service, industry)
+      );
+      const nonIndustryServices = services.filter(service => 
+        !isIndustrySpecific(service, industry)
+      );
+      
+      // Service-Score: Neue Faustformel - ab 20 Services mindestens 80%
       let baseServiceScore;
       if (serviceCount === 0) {
-        baseServiceScore = 25;  // Niedrigerer Grundscore
-      } else if (serviceCount <= 3) {
-        baseServiceScore = 45 + ((serviceCount - 1) / 2) * 25;  // 45-70% für 1-3 Services
-      } else if (serviceCount <= 8) {
-        baseServiceScore = 70 + ((serviceCount - 3) / 5) * 20;  // 70-90% für 4-8 Services
+        baseServiceScore = 20;  // Sehr niedrig ohne Services
+      } else if (serviceCount <= 5) {
+        baseServiceScore = 20 + (serviceCount * 8);  // 28-60% für 1-5 Services
+      } else if (serviceCount <= 15) {
+        baseServiceScore = 60 + ((serviceCount - 5) * 1.5);  // 60-75% für 6-15 Services  
+      } else if (serviceCount <= 20) {
+        baseServiceScore = 75 + ((serviceCount - 15) * 1);   // 75-80% für 16-20 Services
       } else {
-        baseServiceScore = Math.min(90 + (serviceCount - 8) * 0.6, 95);  // Max 95% für viele Services
+        baseServiceScore = Math.min(80 + ((serviceCount - 20) * 0.5), 92);  // Min 80%, max 92% für >20 Services
       }
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
@@ -161,24 +194,30 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         fairness: 'All competitors evaluated against same extended service list'
       });
       
-      // Kleiner aber merkbarer Bonus für einzigartige Services
-      const uniqueServiceBonus = Math.min(uniqueServices.length * 0.5, 4); // Max 4 Punkte Bonus
-      const finalServiceScore = Math.min(baseServiceScore + uniqueServiceBonus, 95); // Service-Score max 95%
+      // Bonus für branchenspezifische Services, Abzug für branchenfremde
+      const industryBonus = industrySpecificServices.length * 0.8; // Bonus für Branchenrelevanz
+      const nonIndustryPenalty = nonIndustryServices.length * 0.2; // Kleiner Abzug für branchenfremde Services
+      const qualityAdjustment = industryBonus - nonIndustryPenalty;
       
-      // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
-      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3), 98); // Gesamtscore max 98%
+      const finalServiceScore = Math.min(baseServiceScore + qualityAdjustment, 94); // Service-Score max 94%
+      
+      // Ausgewogenere Gewichtung: Rating 45%, Reviews 25%, Services 30%
+      const score = Math.min((ratingScore * 0.45) + (reviewScore * 0.25) + (finalServiceScore * 0.3), 96); // Gesamtscore max 96%
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
         reviews, reviewScore: reviewScore.toFixed(1), 
-        serviceCount, baseServiceScore: baseServiceScore.toFixed(1), 
-        uniqueServicesCount: uniqueServices.length, 
-        uniqueServiceBonus, finalServiceScore: finalServiceScore.toFixed(1), 
+        serviceCount, 
+        industryServices: industrySpecificServices.length,
+        nonIndustryServices: nonIndustryServices.length,
+        baseServiceScore: baseServiceScore.toFixed(1), 
+        qualityAdjustment: qualityAdjustment.toFixed(1),
+        finalServiceScore: finalServiceScore.toFixed(1), 
         finalScore: Math.round(score),
-        calculation: `(${ratingScore.toFixed(1)} * 0.3) + (${reviewScore.toFixed(1)} * 0.2) + (${finalServiceScore.toFixed(1)} * 0.5) = ${score.toFixed(1)}`
+        calculation: `(${ratingScore.toFixed(1)} * 0.45) + (${reviewScore.toFixed(1)} * 0.25) + (${finalServiceScore.toFixed(1)} * 0.3) = ${score.toFixed(1)}`
       });
       
-      return Math.min(Math.round(isNaN(score) ? 0 : score), 98); // Max 98%
+      return Math.min(Math.round(isNaN(score) ? 0 : score), 96); // Max 96%
     } catch (error) {
       console.error('Error calculating competitor score:', error);
       return 0;
