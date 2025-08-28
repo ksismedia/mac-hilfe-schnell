@@ -34,8 +34,6 @@ interface CustomerReportData {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
-  // WICHTIG: Eigene Firmen-Score aus CompetitorAnalysis übernehmen
-  ownCompanyScore?: number;
 }
 
 // Function to get score range for data attribute
@@ -91,7 +89,6 @@ export const generateCustomerHTML = ({
   quoteResponseData,
   manualContentData,
   manualAccessibilityData,
-  ownCompanyScore,
   manualBacklinkData
 }: CustomerReportData): string => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
@@ -206,21 +203,21 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // Verwende den übergebenen Score aus CompetitorAnalysis falls vorhanden
-  const competitorComparisonScore = ownCompanyScore || (() => {
-    console.log('HTML Generator - Fallback: Calculating own score because ownCompanyScore not provided');
-    // Fallback: Score-Berechnung nur falls nicht von außen übergeben
+  // Score-Berechnung für eigenes Unternehmen EXAKT wie in CompetitorAnalysis.tsx
+  const competitorComparisonScore = (() => {
+    // Berechne Score mit calculateCompetitorScore (gleiche Funktion wie CompetitorAnalysis)
     const rating = realData.reviews.google.rating;
     const reviews = realData.reviews.google.count;
     
+    // EXAKT wie calculateCompetitorScore in CompetitorAnalysis
     const ratingScore = rating >= 3.0 
-      ? 85 + ((rating - 3.0) / 2.0) * 15
+      ? 85 + ((rating - 3.0) / 2.0) * 15  
       : rating >= 2.0 
-        ? 70 + ((rating - 2.0) * 15)
-        : 50 + (rating * 10);
+        ? 70 + ((rating - 2.0) * 15)      
+        : 50 + (rating * 10);             
     
     const reviewScore = reviews <= 15 
-      ? Math.min(70 + reviews * 2, 100)
+      ? Math.min(70 + reviews * 2, 100)  
       : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
     
     const serviceCount = ownServicesForScore.length;
@@ -238,16 +235,23 @@ export const generateCustomerHTML = ({
     const finalServiceScore = Math.min(baseServiceScore, 100);
     const baseOwnScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
     
+    // WICHTIG: Abwählbonus wie in CompetitorAnalysis
     const serviceRemovalBonus = Math.min(
       (removedMissingServices?.length || 0) * 1.5, 
       baseOwnScore * 0.15
     );
     
-    return Math.min(baseOwnScore + serviceRemovalBonus, 96);
+    const finalScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
+    
+    console.log('=== HTML GENERATOR SCORE CALCULATION ===');
+    console.log('ownServicesForScore.length:', ownServicesForScore.length);
+    console.log('removedMissingServices.length:', removedMissingServices?.length || 0);
+    console.log('baseOwnScore:', baseOwnScore);
+    console.log('serviceRemovalBonus:', serviceRemovalBonus);
+    console.log('finalScore:', finalScore);
+    
+    return finalScore;
   })();
-  
-  console.log('HTML Generator - Using competitorComparisonScore:', competitorComparisonScore);
-  console.log('HTML Generator - ownCompanyScore from params:', ownCompanyScore);
   
   // Verwende den gleichen Score für den Marktpositions-Vergleich
   const marketComparisonScore = competitorComparisonScore;

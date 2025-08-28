@@ -36,7 +36,6 @@ interface SEOContentCategoryProps {
   updateCompanyServices: (services: string[]) => void;
   addDeletedCompetitor: (competitorName: string) => void;
   removeDeletedCompetitor: (competitorName: string) => void;
-  onCompanyScoreChange?: (score: number) => void;
   onNavigateToCategory?: (categoryId: string) => void; // Neue Prop für Navigation
 }
 
@@ -64,7 +63,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateCompanyServices,
   addDeletedCompetitor,
   removeDeletedCompetitor,
-  onCompanyScoreChange,
   onNavigateToCategory,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
@@ -192,7 +190,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               onCompanyServicesChange={updateCompanyServices}
               onDeletedCompetitorChange={addDeletedCompetitor}
               onRestoreCompetitorChange={removeDeletedCompetitor}
-              onCompanyScoreChange={onCompanyScoreChange}
             />
           )}
 
