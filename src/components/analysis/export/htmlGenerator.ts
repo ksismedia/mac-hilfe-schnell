@@ -207,8 +207,15 @@ export const generateCustomerHTML = ({
   }
   
   // DIREKT DIE ANGEZEIGTEN WERTE VERWENDEN - NULL CHECKS UND FALLBACKS ENTFERNT
+  console.log('=== HTML GENERATOR DEBUG ===');
+  console.log('calculatedOwnCompanyScore received:', calculatedOwnCompanyScore);
+  console.log('Type of calculatedOwnCompanyScore:', typeof calculatedOwnCompanyScore);
+  
   const competitorComparisonScore = calculatedOwnCompanyScore; 
   const marketComparisonScore = calculatedOwnCompanyScore;
+  
+  console.log('Using competitorComparisonScore:', competitorComparisonScore);
+  console.log('Using marketComparisonScore:', marketComparisonScore);
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
