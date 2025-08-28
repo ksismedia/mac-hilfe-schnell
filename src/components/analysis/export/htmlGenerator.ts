@@ -202,7 +202,7 @@ export const generateCustomerHTML = ({
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
   // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3));
+  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3)), 100);
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -1436,7 +1436,7 @@ export const generateCustomerHTML = ({
                 const finalServiceScore = Math.min(baseServiceScore, 100);
                 
                 // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
+                const estimatedScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
                 
                 console.log('Competitor score breakdown:', {
                   name: competitor.name,
@@ -1518,7 +1518,7 @@ export const generateCustomerHTML = ({
                       const finalServiceScore = Math.min(baseServiceScore, 100);
                       
                       // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
+                      const totalScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;

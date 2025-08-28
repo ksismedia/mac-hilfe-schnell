@@ -131,7 +131,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       } else if (serviceCount <= 5) {
         baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
       } else {
-        baseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
+        baseServiceScore = Math.min(90 + (serviceCount - 5) * 1, 100);  // 90% + 1% pro zusätzlichem Service, max 100%
       }
       
       console.log(`🟡 Service calculation for ${competitor.name}:`, {
@@ -161,10 +161,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       // Moderater Bonus für einzigartige Services
       const uniqueServiceBonus = uniqueServices.length * 0.5; // Weiter reduziert für bessere Balance
-      const finalServiceScore = baseServiceScore + uniqueServiceBonus;
+      const finalServiceScore = Math.min(baseServiceScore + uniqueServiceBonus, 100); // Begrenzt auf 100%
       
       // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
-      const score = (ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3);
+      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3), 100); // Begrenzt auf 100%
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
@@ -176,7 +176,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         calculation: `(${ratingScore.toFixed(1)} * 0.3) + (${reviewScore.toFixed(1)} * 0.2) + (${finalServiceScore.toFixed(1)} * 0.5) = ${score.toFixed(1)}`
       });
       
-      return Math.round(isNaN(score) ? 0 : score);
+      return Math.min(Math.round(isNaN(score) ? 0 : score), 100); // Zusätzliche Begrenzung
     } catch (error) {
       console.error('Error calculating competitor score:', error);
       return 0;
