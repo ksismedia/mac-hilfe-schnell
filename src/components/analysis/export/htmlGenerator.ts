@@ -179,14 +179,16 @@ export const generateCustomerHTML = ({
   // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt (EXAKT wie in CompetitorAnalysis)
   const ownReviewScore = ownReviews <= 100 ? ownReviews : Math.min(100, 100 + Math.log10(ownReviews / 100) * 20);
   
-  // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
-  const ownBaseServiceScore = Math.min(100, (servicesForScore.length / 20) * 100);
+  // Service-Score: Verwende die gleiche verbesserte Formel wie in Live-Ansicht
+  const ownBaseServiceScore = servicesForScore.length <= 10 
+    ? (servicesForScore.length / 10) * 50  
+    : 50 + ((servicesForScore.length - 10) * 2);
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
   const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
   
-  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 40%, Reviews 30%, Services 30%
-  const competitorComparisonScore = Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3));
+  // Verwende exakt die gleiche Gewichtung wie in CompetitorAnalysis: Rating 30%, Reviews 20%, Services 50%
+  const competitorComparisonScore = Math.round((ownRatingScore * 0.3) + (ownReviewScore * 0.2) + (ownFinalServiceScore * 0.5));
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -1398,8 +1400,10 @@ export const generateCustomerHTML = ({
                 
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
                 const serviceCount = services.length;
-                // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
-                const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
+                // Service-Score: Verbesserte Formel - mehr Services = immer besser (wie in Live-Ansicht)
+                const baseServiceScore = serviceCount <= 10 
+                  ? (serviceCount / 10) * 50  // 0-50% für erste 10 Services
+                  : 50 + ((serviceCount - 10) * 2); // 50% + 2% pro zusätzlichem Service
                 
                 const uniqueServices = services.filter((service: string) => 
                   typeof service === 'string' && service.trim().length > 0 && 
@@ -1409,12 +1413,12 @@ export const generateCustomerHTML = ({
                   )
                 );
                 
-                // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
-                const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
-                const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
+                // Reduzierter Bonus für einzigartige Services
+                const uniqueServiceBonus = uniqueServices.length * 1;
+                const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP!
                 
-                // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
-                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
+                // FAIRE GEWICHTUNG: Rating 30%, Reviews 20%, Services 50% (wie in Live-Ansicht)
+                const estimatedScore = Math.round((ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5));
                 
                 console.log('Competitor score breakdown:', {
                   name: competitor.name,
@@ -1473,7 +1477,12 @@ export const generateCustomerHTML = ({
                       const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
                       const services = Array.isArray(comp.services) ? comp.services : [];
                       const serviceCount = services.length;
-                      const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
+                      
+                      // Verwende die gleiche verbesserte Service-Formel
+                      const baseServiceScore = serviceCount <= 10 
+                        ? (serviceCount / 10) * 50  
+                        : 50 + ((serviceCount - 10) * 2);
+                      
                       const uniqueServices = services.filter((service: string) => 
                         typeof service === 'string' && service.trim().length > 0 && 
                         !servicesForScore.some(ownService => 
@@ -1481,9 +1490,11 @@ export const generateCustomerHTML = ({
                           areServicesSimilar(ownService, service)
                         )
                       );
-                      const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
-                      const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
-                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
+                      const uniqueServiceBonus = uniqueServices.length * 1;
+                      const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP!
+                      
+                      // FAIRE GEWICHTUNG: Rating 30%, Reviews 20%, Services 50%
+                      const totalScore = Math.round((ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5));
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
