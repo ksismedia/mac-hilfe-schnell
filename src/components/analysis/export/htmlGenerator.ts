@@ -203,22 +203,44 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // Vereinfachte Berechnung für HTML (ohne Branchenlogik)
-  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 96); // Service-Score max 96%
-  
-  // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 25%, Services 35%
-  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.25) + (ownFinalServiceScore * 0.35)), 96); // Max 96%
-  
-  console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
-    rating: realData.reviews.google.rating,
-    reviews: realData.reviews.google.count,
-    services: expectedServices.length,
-    ratingScore: ownRatingScore,
-    reviewScore: ownReviewScore,
-    baseServiceScore: ownBaseServiceScore,
-    finalServiceScore: ownFinalServiceScore,
-    overall: competitorComparisonScore
-  });
+  // Score-Berechnung für eigenes Unternehmen mit Abwählbonus
+  const competitorComparisonScore = (() => {
+    const rating = realData.reviews.google.rating;
+    const reviews = realData.reviews.google.count;
+    
+    const ratingScore = rating >= 3.0 
+      ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
+      : rating >= 2.0 
+        ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
+        : 50 + (rating * 10);             // 50-70% für unter 2.0
+    
+    const reviewScore = reviews <= 15 
+      ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
+      : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
+    
+    const serviceCount = expectedServices.length;
+    let baseServiceScore;
+    if (serviceCount === 0) {
+      baseServiceScore = 40;
+    } else if (serviceCount <= 2) {
+      baseServiceScore = 60 + ((serviceCount - 1) * 15);
+    } else if (serviceCount <= 5) {
+      baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;
+    } else {
+      baseServiceScore = 90 + (serviceCount - 5) * 1;
+    }
+    
+    const finalServiceScore = Math.min(baseServiceScore, 100);
+    const baseOwnScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
+    
+    // Bonus für abgewählte Services
+    const serviceRemovalBonus = Math.min(
+      (removedMissingServices?.length || 0) * 1.5, 
+      baseOwnScore * 0.15
+    );
+    
+    return Math.min(baseOwnScore + serviceRemovalBonus, 96);
+  })();
   
   // Verwende den gleichen Score für den Marktpositions-Vergleich
   const marketComparisonScore = competitorComparisonScore;
@@ -1396,45 +1418,8 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                   <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                    <span style="font-weight: bold; font-size: 1.2em;">${(() => {
-                      // Basis-Score für eigenes Unternehmen berechnen  
-                      const rating = realData.reviews.google.rating;
-                      const reviews = realData.reviews.google.count;
-                      
-                      const ratingScore = rating >= 3.0 
-                        ? 85 + ((rating - 3.0) / 2.0) * 15  
-                        : rating >= 2.0 
-                          ? 70 + ((rating - 2.0) * 15)      
-                          : 50 + (rating * 10);             
-                      
-                      const reviewScore = reviews <= 15 
-                        ? Math.min(70 + reviews * 2, 100)  
-                        : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
-                      
-                      const serviceCount = expectedServices.length;
-                      let baseServiceScore;
-                      if (serviceCount === 0) {
-                        baseServiceScore = 40;
-                      } else if (serviceCount <= 2) {
-                        baseServiceScore = 60 + ((serviceCount - 1) * 15);
-                      } else if (serviceCount <= 5) {
-                        baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;
-                      } else {
-                        baseServiceScore = 90 + (serviceCount - 5) * 1;
-                      }
-                      
-                      const finalServiceScore = Math.min(baseServiceScore, 100);
-                      const baseOwnScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35)), 100);
-                      
-                      // Bonus für abgewählte Services  
-                      const serviceRemovalBonus = Math.min(
-                        (removedMissingServices?.length || 0) * 1.5, 
-                        baseOwnScore * 0.15
-                      );
-                      
-                      return Math.min(baseOwnScore + serviceRemovalBonus, 96);
-                    })()}</span>
-                    <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
+                    <span style="font-weight: bold; font-size: 1.2em;">${competitorComparisonScore}</span>
+                    <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 1.5}% Bonus)` : ""}</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
