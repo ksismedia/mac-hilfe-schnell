@@ -159,6 +159,26 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               setAccessibilityData(savedAnalysis.manualData.accessibilityData);
             }
             
+            // Lade die manuellen Daten für Staff/Service-Bereich
+            if (savedAnalysis.manualData?.staffQualificationData) {
+              updateStaffQualificationData(savedAnalysis.manualData.staffQualificationData);
+            }
+            if (savedAnalysis.manualData?.hourlyRateData) {
+              updateHourlyRateData(savedAnalysis.manualData.hourlyRateData);
+            }
+            if (savedAnalysis.manualData?.quoteResponseData) {
+              updateQuoteResponseData(savedAnalysis.manualData.quoteResponseData);
+            }
+            if (savedAnalysis.manualData?.manualContentData) {
+              updateManualContentData(savedAnalysis.manualData.manualContentData);
+            }
+            if (savedAnalysis.manualData?.manualAccessibilityData) {
+              updateManualAccessibilityData(savedAnalysis.manualData.manualAccessibilityData);
+            }
+            if (savedAnalysis.manualData?.manualBacklinkData) {
+              updateManualBacklinkData(savedAnalysis.manualData.manualBacklinkData);
+            }
+            
             loadSavedAnalysisData(
               savedAnalysis,
               updateImprintData,
@@ -425,10 +445,19 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualCompetitors={manualCompetitors}
               competitorServices={competitorServices}
               companyServices={companyServices}
-              manualKeywordData={manualKeywordData}
+              deletedCompetitors={deletedCompetitors}
+              removedMissingServices={removedMissingServices}
+              hourlyRateData={hourlyRateData}
+              staffQualificationData={staffQualificationData}
+              quoteResponseData={quoteResponseData}
+              manualContentData={manualContentData}
+              manualAccessibilityData={manualAccessibilityData}
+              manualBacklinkData={manualBacklinkData}
               keywordScore={keywordsScore}
+              manualKeywordData={manualKeywordData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
+              currentAnalysisId={loadedAnalysisId}
             />
           </div>
         </div>

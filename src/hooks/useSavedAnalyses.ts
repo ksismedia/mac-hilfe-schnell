@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from './useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from './useManualData';
 
 export interface SavedAnalysis {
   id: string;
@@ -25,6 +25,12 @@ export interface SavedAnalysis {
     keywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
     keywordScore?: number;
     companyServices?: CompanyServices;
+    staffQualificationData?: StaffQualificationData;
+    hourlyRateData?: HourlyRateData;
+    quoteResponseData?: QuoteResponseData;
+    manualContentData?: ManualContentData;
+    manualAccessibilityData?: ManualAccessibilityData;
+    manualBacklinkData?: ManualBacklinkData;
     privacyData?: any; // Datenschutz-Analysedaten
     accessibilityData?: any; // Barrierefreiheits-Analysedaten
   };

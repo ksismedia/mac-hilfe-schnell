@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 
 interface SaveAnalysisDialogProps {
@@ -29,6 +29,12 @@ interface SaveAnalysisDialogProps {
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   keywordScore?: number | null;
   companyServices?: CompanyServices;
+  staffQualificationData?: StaffQualificationData | null;
+  hourlyRateData?: HourlyRateData | null;
+  quoteResponseData?: QuoteResponseData | null;
+  manualContentData?: ManualContentData | null;
+  manualAccessibilityData?: ManualAccessibilityData | null;
+  manualBacklinkData?: ManualBacklinkData | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -48,6 +54,12 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualKeywordData,
   keywordScore,
   companyServices,
+  staffQualificationData,
+  hourlyRateData,
+  quoteResponseData,
+  manualContentData,
+  manualAccessibilityData,
+  manualBacklinkData,
   privacyData,
   accessibilityData
 }) => {
@@ -88,6 +100,12 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         keywordData: manualKeywordData || undefined,
         keywordScore: keywordScore || undefined,
         companyServices: companyServices || undefined,
+        staffQualificationData: staffQualificationData || undefined,
+        hourlyRateData: hourlyRateData || undefined,
+        quoteResponseData: quoteResponseData || undefined,
+        manualContentData: manualContentData || undefined,
+        manualAccessibilityData: manualAccessibilityData || undefined,
+        manualBacklinkData: manualBacklinkData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined
       };
