@@ -72,9 +72,21 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('removedMissingServices (ich biete auch an):', removedMissingServices);
   console.log('ownServicesForScore (total):', ownServicesForScore);
   console.log('services count change:', ownServices.length, '->', ownServicesForScore.length);
+  console.log('Should improve score when removing missing services!');
+  
+  // Service-Score Berechnung Debug
+  const debugServiceScore = (services: string[], label: string) => {
+    const serviceCount = services.length;
+    const baseScore = Math.min(100, (serviceCount / 20) * 100);
+    console.log(`${label} - Service Count: ${serviceCount}, Base Score: ${baseScore}`);
+    return baseScore;
+  };
+  
+  debugServiceScore(ownServices, 'Original Services');
+  debugServiceScore(ownServicesForScore, 'With Removed Missing Services');
 
   // Konkurrenten-Score berechnen
-  const calculateCompetitorScore = (competitor: { rating: number; reviews: number; services: string[] }) => {
+  const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }) => {
     try {
       const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
       const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
@@ -105,6 +117,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       // Gewichtung: Rating 50%, Reviews 20%, Services 30%
       const score = (ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3);
+      
+      console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
+        rating, ratingScore, reviews, reviewScore, 
+        serviceCount, baseServiceScore, uniqueServicesCount: uniqueServices.length, 
+        uniqueServiceBonus, finalServiceScore, finalScore: Math.round(score)
+      });
+      
       return Math.round(isNaN(score) ? 0 : score);
     } catch (error) {
       console.error('Error calculating competitor score:', error);
