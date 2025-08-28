@@ -64,26 +64,38 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   const ownServices = companyServices.services.length > 0 ? companyServices.services : getIndustryServices(industry);
   
   // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
-  // (entfernte "fehlende" Services = Services die man auch anbietet, nur anders benannt)
   const ownServicesForScore = [...ownServices, ...removedMissingServices];
+  
+  // Verbesserte Service-Vergleichsfunktion mit Synonym-Erkennung
+  const areServicesSimilar = (service1: string, service2: string): boolean => {
+    if (!service1 || !service2) return false;
+    
+    const s1 = service1.toLowerCase().trim();
+    const s2 = service2.toLowerCase().trim();
+    
+    // Exakte Übereinstimmung
+    if (s1 === s2) return true;
+    
+    // Eine enthält die andere
+    if (s1.includes(s2) || s2.includes(s1)) return true;
+    
+    // Gemeinsame Kernwörter (mindestens 3 Zeichen)
+    const words1 = s1.split(/[\s\-_]+/).filter(w => w.length >= 3);
+    const words2 = s2.split(/[\s\-_]+/).filter(w => w.length >= 3);
+    
+    const commonWords = words1.filter(w1 => 
+      words2.some(w2 => w1.includes(w2) || w2.includes(w1))
+    );
+    
+    // Als ähnlich betrachten wenn mindestens 50% der Wörter übereinstimmen
+    const similarity = commonWords.length / Math.min(words1.length, words2.length);
+    return similarity >= 0.5;
+  };
   
   console.log('=== COMPETITOR ANALYSIS DEBUG ===');
   console.log('ownServices (original):', ownServices);
   console.log('removedMissingServices (ich biete auch an):', removedMissingServices);
   console.log('ownServicesForScore (total):', ownServicesForScore);
-  console.log('services count change:', ownServices.length, '->', ownServicesForScore.length);
-  console.log('Should improve score when removing missing services!');
-  
-  // Service-Score Berechnung Debug
-  const debugServiceScore = (services: string[], label: string) => {
-    const serviceCount = services.length;
-    const baseScore = Math.min(100, (serviceCount / 20) * 100);
-    console.log(`${label} - Service Count: ${serviceCount}, Base Score: ${baseScore}`);
-    return baseScore;
-  };
-  
-  debugServiceScore(ownServices, 'Original Services');
-  debugServiceScore(ownServicesForScore, 'With Removed Missing Services');
 
   // Konkurrenten-Score berechnen
   const calculateCompetitorScore = (competitor: { name?: string; rating: number; reviews: number; services: string[] }) => {
@@ -99,24 +111,24 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
-      // Service-Score: Anzahl Services mit Maximum bei 20 Services = 100%
+      // Service-Score: Basis + Bonus für einzigartige Services
       const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
       
+      // Finde Services, die der Konkurrent hat, aber wir nicht (mit verbesserter Logik)
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && 
         !ownServicesForScore.some(ownService => 
-          typeof ownService === 'string' && ownService.trim().length > 0 && (
-            ownService.toLowerCase().includes(service.toLowerCase()) || 
-            service.toLowerCase().includes(ownService.toLowerCase())
-          )
+          typeof ownService === 'string' && ownService.trim().length > 0 && 
+          areServicesSimilar(ownService, service)
         )
       );
       
-      const uniqueServiceBonus = uniqueServices.length * 2;
+      // Reduzierter Bonus für einzigartige Services (weniger drastische Auswirkung)
+      const uniqueServiceBonus = uniqueServices.length * 1; // Reduziert von 2 auf 1
       const finalServiceScore = Math.min(100, baseServiceScore + uniqueServiceBonus);
       
-      // Gewichtung: Rating 50%, Reviews 20%, Services 30%
-      const score = (ratingScore * 0.5) + (reviewScore * 0.2) + (finalServiceScore * 0.3);
+      // Ausgewogenere Gewichtung: Rating 40%, Reviews 30%, Services 30%
+      const score = (ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3);
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore, reviews, reviewScore, 
@@ -265,10 +277,10 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     });
   });
 
+  // Verbesserte Logik für fehlende Services
   const missingServices = Array.from(allCompetitorServices).filter((service: string) => 
     !ownServicesForScore.some(ownService => 
-      ownService.toLowerCase().includes(service.toLowerCase()) || 
-      service.toLowerCase().includes(ownService.toLowerCase())
+      areServicesSimilar(ownService, service)
     ) && !removedMissingServices.includes(service)
   );
 
