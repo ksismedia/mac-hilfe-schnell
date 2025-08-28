@@ -69,11 +69,11 @@ export const generateSEOSection = (
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">SEO-Gesamtbewertung</div>
-                        <div class="metric-value ${realData.seo.score >= 80 ? 'excellent' : realData.seo.score >= 60 ? 'good' : realData.seo.score >= 40 ? 'warning' : 'danger'}">${realData.seo.score}/100 Punkte</div>
+                        <div class="metric-value ${realData.seo.score >= 80 ? 'excellent' : realData.seo.score >= 60 ? 'good' : realData.seo.score >= 40 ? 'warning' : 'danger'}">${realData.seo.score > 0 ? `${realData.seo.score}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Optimierung</span>
-                                <button class="percentage-btn" data-score="${realData.seo.score < 60 ? '0-60' : realData.seo.score < 80 ? '60-80' : '80-100'}">${realData.seo.score}%</button>
+                                <button class="percentage-btn" data-score="${realData.seo.score < 60 ? '0-60' : realData.seo.score < 80 ? '60-80' : '80-100'}">${realData.seo.score > 0 ? `${realData.seo.score}%` : '—'}</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%"></div>
@@ -150,11 +150,11 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Performance-Score</div>
-                        <div class="metric-value ${realData.performance.score >= 80 ? 'excellent' : realData.performance.score >= 60 ? 'good' : realData.performance.score >= 40 ? 'warning' : 'danger'}">${realData.performance.score}/100 Punkte</div>
+                        <div class="metric-value ${realData.performance.score >= 80 ? 'excellent' : realData.performance.score >= 60 ? 'good' : realData.performance.score >= 40 ? 'warning' : 'danger'}">${realData.performance.score > 0 ? `${realData.performance.score}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Geschwindigkeit</span>
-                                <button class="percentage-btn">${realData.performance.score}%</button>
+                                <button class="percentage-btn">${realData.performance.score > 0 ? `${realData.performance.score}%` : '—'}</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.performance.score < 60 ? 'warning' : ''}" style="width: ${realData.performance.score}%"></div>
@@ -216,11 +216,11 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">Mobile-Score</div>
-                        <div class="metric-value ${realData.mobile.overallScore >= 80 ? 'excellent' : realData.mobile.overallScore >= 60 ? 'good' : realData.mobile.overallScore >= 40 ? 'warning' : 'danger'}">${realData.mobile.overallScore}/100 Punkte</div>
+                        <div class="metric-value ${realData.mobile.overallScore >= 80 ? 'excellent' : realData.mobile.overallScore >= 60 ? 'good' : realData.mobile.overallScore >= 40 ? 'warning' : 'danger'}">${realData.mobile.overallScore > 0 ? `${realData.mobile.overallScore}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mobile Nutzerfreundlichkeit</span>
-                                <button class="percentage-btn">${realData.mobile.overallScore}%</button>
+                                <button class="percentage-btn">${realData.mobile.overallScore > 0 ? `${realData.mobile.overallScore}%` : '—'}</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${realData.mobile.overallScore < 60 ? 'warning' : ''}" style="width: ${realData.mobile.overallScore}%"></div>
@@ -290,11 +290,11 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                 <div class="metric-grid">
                     <div class="metric-item">
                         <div class="metric-title">DSGVO-Bewertung</div>
-                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">${dataPrivacyScore}/100 Punkte</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">${dataPrivacyScore > 0 ? `${dataPrivacyScore}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Rechtskonformität</span>
-                                <button class="percentage-btn">${dataPrivacyScore}%</button>
+                                <button class="percentage-btn">${dataPrivacyScore > 0 ? `${dataPrivacyScore}%` : '—'}</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; background-color: ${dataPrivacyScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
