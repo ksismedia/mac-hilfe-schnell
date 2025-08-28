@@ -33,6 +33,7 @@ interface CustomerHTMLExportProps {
   keywordScore?: number;
   privacyData?: any;
   accessibilityData?: any;
+  calculatedOwnCompanyScore?: number; // DIREKT AUS COMPETITOR ANALYSIS
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -56,7 +57,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualKeywordData,
   keywordScore,
   privacyData,
-  accessibilityData
+  accessibilityData,
+  calculatedOwnCompanyScore
 }) => {
   // Import useManualData to get current state
   const { 
@@ -131,6 +133,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const exportAsCustomerReport = () => {
+    // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
+    const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
     console.log('🔴 EXPORT AS CUSTOMER REPORT STARTET');
     const missingImprintElements = getMissingImprintElements();
     
@@ -171,7 +175,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
-      manualBacklinkData
+      manualBacklinkData,
+      calculatedOwnCompanyScore: currentOwnCompanyScore
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
@@ -188,6 +193,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const downloadCustomerReport = () => {
+    // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
+    const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
     console.log('=== DOWNLOAD CUSTOMER REPORT CLICKED ===');
     const missingImprintElements = getMissingImprintElements();
     
@@ -219,7 +226,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData,
-      manualBacklinkData
+      manualBacklinkData,
+      calculatedOwnCompanyScore: currentOwnCompanyScore
     });
 
     try {

@@ -347,6 +347,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('CompetitorAnalysis - baseOwnScore:', baseOwnScore);
   console.log('CompetitorAnalysis - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
   console.log('CompetitorAnalysis - finalOwnCompanyScore:', ownCompanyScore);
+  
+  // WICHTIG: Score für CustomerHTMLExport verfügbar machen
+  (window as any).globalOwnCompanyScore = ownCompanyScore;
 
   // Sortiert nach Score - INKLUSIVE eigenem Unternehmen für Ranking
   const sortedCompetitors = [
