@@ -118,6 +118,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       // Service-Score: Basis + Bonus für einzigartige Services
       const baseServiceScore = Math.min(100, (serviceCount / 20) * 100);
       
+      console.log(`🟡 Service calculation for ${competitor.name}:`, {
+        serviceCount,
+        calculation: `(${serviceCount} / 20) * 100`,
+        baseServiceScore: baseServiceScore.toFixed(1)
+      });
+      
       // Finde Services, die der Konkurrent hat, aber wir nicht (mit verbesserter Logik)
       const uniqueServices = services.filter((service: string) => 
         typeof service === 'string' && service.trim().length > 0 && 
@@ -173,10 +179,17 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     name: realData.company.name,
     rating: realData.reviews.google.rating,
     reviews: realData.reviews.google.count,
-    services: ownServicesForScore, // Verwende gefilterte Services für Score-Berechnung
+    services: ownServicesForScore, // WICHTIG: Verwende gefilterte Services für Score-Berechnung
     source: 'own' as const,
     location: 'Ihr Unternehmen'
   };
+  
+  // DEBUGGING: Detaillierte Score-Berechnung für eigenes Unternehmen
+  console.log('🔥 MANUAL OWN COMPANY SCORE CALCULATION:');
+  console.log('🔥 Services being used for score:', ownServicesForScore);
+  console.log('🔥 Service count:', ownServicesForScore.length);
+  console.log('🔥 Expected base service score:', Math.min(100, (ownServicesForScore.length / 20) * 100));
+  
   const ownCompanyScore = calculateCompetitorScore(ownCompany);
   
   console.log('=== OWN COMPANY SCORE CALCULATION ===');
