@@ -34,6 +34,8 @@ interface CustomerReportData {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  // WICHTIG: Eigene Firmen-Score aus CompetitorAnalysis übernehmen
+  ownCompanyScore?: number;
 }
 
 // Function to get score range for data attribute
@@ -89,8 +91,9 @@ export const generateCustomerHTML = ({
   quoteResponseData,
   manualContentData,
   manualAccessibilityData,
+  ownCompanyScore,
   manualBacklinkData
-}: CustomerReportData) => {
+}: CustomerReportData): string => {
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   console.log('HTML Generator received competitorServices:', competitorServices);
@@ -203,19 +206,10 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // Score-Berechnung für eigenes Unternehmen mit Abwählbonus (EXAKT wie CompetitorAnalysis.tsx)
-  const competitorComparisonScore = (() => {
-    // Verwende expectedServices (OHNE entfernte Services) für Basis-Score wie in CompetitorAnalysis
-    const ownCompany = {
-      name: realData.company.name,
-      rating: realData.reviews.google.rating,
-      reviews: realData.reviews.google.count,
-      services: ownServicesForScore, // WICHTIG: Verwende gefilterte Services wie in CompetitorAnalysis
-      source: 'own' as const,
-      location: 'Ihr Unternehmen'
-    };
-    
-    // Basis-Score Berechnung (EXAKT wie calculateCompetitorScore)
+  // Verwende den übergebenen Score aus CompetitorAnalysis falls vorhanden
+  const competitorComparisonScore = ownCompanyScore || (() => {
+    console.log('HTML Generator - Fallback: Calculating own score because ownCompanyScore not provided');
+    // Fallback: Score-Berechnung nur falls nicht von außen übergeben
     const rating = realData.reviews.google.rating;
     const reviews = realData.reviews.google.count;
     
@@ -229,7 +223,7 @@ export const generateCustomerHTML = ({
       ? Math.min(70 + reviews * 2, 100)
       : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
     
-    const serviceCount = ownServicesForScore.length; // WICHTIG: ownServicesForScore, nicht expectedServices
+    const serviceCount = ownServicesForScore.length;
     let baseServiceScore;
     if (serviceCount === 0) {
       baseServiceScore = 40;
@@ -244,31 +238,16 @@ export const generateCustomerHTML = ({
     const finalServiceScore = Math.min(baseServiceScore, 100);
     const baseOwnScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
     
-    // Bonus für abgewählte Services (EXAKT wie in CompetitorAnalysis)
     const serviceRemovalBonus = Math.min(
       (removedMissingServices?.length || 0) * 1.5, 
       baseOwnScore * 0.15
     );
     
-    const finalScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
-    
-    console.log('=== HTML GENERATOR - OWN COMPANY SCORE ===');
-    console.log('HTML Generator - expectedServices:', expectedServices);
-    console.log('HTML Generator - removedMissingServices:', removedMissingServices || []);
-    console.log('HTML Generator - ownServicesForScore:', ownServicesForScore);
-    console.log('HTML Generator - rating:', rating);
-    console.log('HTML Generator - reviews:', reviews);
-    console.log('HTML Generator - serviceCount:', serviceCount);
-    console.log('HTML Generator - ratingScore:', ratingScore.toFixed(1));
-    console.log('HTML Generator - reviewScore:', reviewScore.toFixed(1));
-    console.log('HTML Generator - baseServiceScore:', baseServiceScore.toFixed(1));
-    console.log('HTML Generator - finalServiceScore:', finalServiceScore.toFixed(1));
-    console.log('HTML Generator - baseOwnScore:', baseOwnScore);
-    console.log('HTML Generator - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
-    console.log('HTML Generator - finalScore:', finalScore);
-    
-    return finalScore;
+    return Math.min(baseOwnScore + serviceRemovalBonus, 96);
   })();
+  
+  console.log('HTML Generator - Using competitorComparisonScore:', competitorComparisonScore);
+  console.log('HTML Generator - ownCompanyScore from params:', ownCompanyScore);
   
   // Verwende den gleichen Score für den Marktpositions-Vergleich
   const marketComparisonScore = competitorComparisonScore;

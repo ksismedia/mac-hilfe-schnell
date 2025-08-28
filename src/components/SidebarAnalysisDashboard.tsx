@@ -60,6 +60,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('seo-content');
+  const [ownCompanyScore, setOwnCompanyScore] = useState<number>(0); // WICHTIG: Score aus CompetitorAnalysis
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -67,6 +68,10 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
   const handleKeywordDataChange = (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
     setManualKeywordData(keywordData);
+  };
+  
+  const handleCompanyScoreChange = (score: number) => {
+    setOwnCompanyScore(score);
   };
   
   const { toast } = useToast();
@@ -297,6 +302,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateCompanyServices={updateCompanyServices}
             addDeletedCompetitor={addDeletedCompetitor}
             removeDeletedCompetitor={removeDeletedCompetitor}
+            onCompanyScoreChange={handleCompanyScoreChange}
           />
         );
       case 'performance-mobile':
@@ -389,6 +395,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualContentData={manualContentData}
                   manualAccessibilityData={manualAccessibilityData}
                   manualBacklinkData={manualBacklinkData}
+                  ownCompanyScore={ownCompanyScore}
                 />
                 <SelectiveHTMLExport
                   businessData={businessData}

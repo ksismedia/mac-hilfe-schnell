@@ -25,6 +25,7 @@ interface CompetitorAnalysisProps {
   onCompanyServicesChange: (services: string[]) => void;
   onDeletedCompetitorChange: (competitorName: string) => void;
   onRestoreCompetitorChange: (competitorName: string) => void;
+  onCompanyScoreChange?: (score: number) => void; // WICHTIG: Callback für Score-Änderungen
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
@@ -41,7 +42,8 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   onRemovedMissingServicesChange,
   onCompanyServicesChange,
   onDeletedCompetitorChange,
-  onRestoreCompetitorChange
+  onRestoreCompetitorChange,
+  onCompanyScoreChange
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
@@ -347,6 +349,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('CompetitorAnalysis - baseOwnScore:', baseOwnScore);
   console.log('CompetitorAnalysis - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
   console.log('CompetitorAnalysis - finalOwnCompanyScore:', ownCompanyScore);
+  
+  // WICHTIG: Score an Parent-Komponente weiterleiten
+  if (onCompanyScoreChange) {
+    onCompanyScoreChange(ownCompanyScore);
+  }
 
   // Sortiert nach Score - INKLUSIVE eigenem Unternehmen für Ranking
   const sortedCompetitors = [

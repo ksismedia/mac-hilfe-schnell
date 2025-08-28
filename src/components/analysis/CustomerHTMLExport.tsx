@@ -33,6 +33,7 @@ interface CustomerHTMLExportProps {
   keywordScore?: number;
   privacyData?: any;
   accessibilityData?: any;
+  ownCompanyScore?: number; // WICHTIG: Score aus CompetitorAnalysis
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -56,7 +57,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualKeywordData,
   keywordScore,
   privacyData,
-  accessibilityData
+  accessibilityData,
+  ownCompanyScore
 }) => {
   // Import useManualData to get current state
   const { 
@@ -171,7 +173,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
-      manualBacklinkData
+      manualBacklinkData,
+      ownCompanyScore
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
@@ -219,7 +222,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       dataPrivacyScore: privacyData?.score || 75,
       manualContentData,
       manualAccessibilityData,
-      manualBacklinkData
+      manualBacklinkData,
+      ownCompanyScore
     });
 
     try {
