@@ -275,7 +275,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <Card className="border-blue-200">
                   <CardContent className="p-6 text-center">
                     <div className={`text-5xl font-bold ${getScoreColor(getCurrentAccessibilityData()?.score || 0)} mb-2`}>
-                      {getCurrentAccessibilityData()?.score || 0}
+                      {(getCurrentAccessibilityData()?.score || 0) > 0 ? (getCurrentAccessibilityData()?.score || 0) : '—'}
                     </div>
                     <div className="text-sm text-gray-600">Gesamt-Score</div>
                     <Badge variant={getScoreBadge(getCurrentAccessibilityData()?.score || 0)} className="mt-2">
@@ -398,7 +398,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 <div className="flex justify-between text-sm mb-2">
                   <span>Barrierefreiheits-Score</span>
                   <span className={getScoreColor(getCurrentAccessibilityData()?.score || 0)}>
-                    {getCurrentAccessibilityData()?.score || 0}/100
+                    {(getCurrentAccessibilityData()?.score || 0) > 0 ? `${getCurrentAccessibilityData()?.score || 0}/100` : '—/100'}
                   </span>
                 </div>
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-200">

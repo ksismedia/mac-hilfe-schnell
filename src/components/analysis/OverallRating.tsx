@@ -142,11 +142,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                        {Math.round(metric.score)}/100
+                        {metric.score > 0 ? `${Math.round(metric.score)}/100` : '—'}
                       </span>
                     </div>
                   </div>
-                  <Progress value={metric.score} className="h-2" />
+                  <Progress value={metric.score > 0 ? metric.score : 0} className="h-2" />
                 </div>
               ))}
             </div>

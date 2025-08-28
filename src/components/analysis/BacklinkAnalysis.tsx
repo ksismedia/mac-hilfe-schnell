@@ -106,7 +106,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                 </Badge>
               )}
               <Badge variant={backlinkData.overallScore >= 80 ? "secondary" : backlinkData.overallScore >= 60 ? "default" : "destructive"}>
-                {backlinkData.overallScore}/100 Punkte
+                {backlinkData.overallScore > 0 ? `${backlinkData.overallScore}/100 Punkte` : '—/100 Punkte'}
               </Badge>
             </div>
           </CardTitle>

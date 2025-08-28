@@ -462,9 +462,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                    <div className="mt-3">
                      <div className="flex justify-between text-sm mb-1">
                        <span>Ihre Performance</span>
-                       <span className={getScoreColor(ownCompanyScore)}>{ownCompanyScore}/100</span>
+                       <span className={getScoreColor(ownCompanyScore)}>{ownCompanyScore > 0 ? `${ownCompanyScore}/100` : '—/100'}</span>
                      </div>
-                     <Progress value={ownCompanyScore} className="h-2" />
+                     <Progress value={ownCompanyScore > 0 ? ownCompanyScore : 0} className="h-2" />
                    </div>
                    <div className="mt-3 text-sm text-gray-600">
                      Position: {ownCompanyScore >= avgScore ? '✅ Über dem Durchschnitt' : '⚠️ Unter dem Durchschnitt'} 
@@ -695,9 +695,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                           <div>
                             <div className="flex justify-between text-sm mb-1">
                               <span>Performance-Score</span>
-                              <span className={getScoreColor(competitor.score)}>{competitor.score}/100</span>
+                              <span className={getScoreColor(competitor.score)}>{competitor.score > 0 ? `${competitor.score}/100` : '—/100'}</span>
                             </div>
-                            <Progress value={competitor.score} className="h-2" />
+                            <Progress value={competitor.score > 0 ? competitor.score : 0} className="h-2" />
                           </div>
 
                           {competitor.uniqueServices.length > 0 && (
