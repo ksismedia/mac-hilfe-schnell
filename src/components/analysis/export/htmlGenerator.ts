@@ -1406,33 +1406,37 @@ export const generateCustomerHTML = ({
                 const rating = typeof competitor.rating === 'number' && !isNaN(competitor.rating) ? competitor.rating : 0;
                 const reviews = typeof competitor.reviews === 'number' && !isNaN(competitor.reviews) ? competitor.reviews : 0;
                 
-                // Rating-Score: 4.4/5 = 88%
-                const ratingScore = (rating / 5) * 100;
+                // Rating-Score: Sehr großzügig - ab 3.0 = 85%+, ab 2.0 = 70%+
+                const ratingScore = rating >= 3.0 
+                  ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
+                  : rating >= 2.0 
+                    ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
+                    : 50 + (rating * 10);             // 50-70% für unter 2.0
                 
-                // Review-Score: Bewertungen bis 100 = 100%, darüber gestaffelt
-                const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
+                // Review-Score: Sehr großzügig - bereits bei 15 Reviews = 100%
+                const reviewScore = reviews <= 15 
+                  ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
+                  : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
                 
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
                 const serviceCount = services.length;
-                // Service-Score: Verbesserte Formel - mehr Services = immer besser (wie in Live-Ansicht)
-                const baseServiceScore = serviceCount <= 10 
-                  ? (serviceCount / 10) * 50  // 0-50% für erste 10 Services
-                  : 50 + ((serviceCount - 10) * 2); // 50% + 2% pro zusätzlichem Service
                 
-                const uniqueServices = services.filter((service: string) => 
-                  typeof service === 'string' && service.trim().length > 0 && 
-                  !servicesForScore.some(ownService => 
-                    typeof ownService === 'string' && ownService.trim().length > 0 && 
-                    areServicesSimilar(ownService, service)
-                  )
-                );
+                // Service-Score: Sehr großzügig - schon 1 Service = 60%
+                let baseServiceScore;
+                if (serviceCount === 0) {
+                  baseServiceScore = 40;  // Grundscore auch ohne Services
+                } else if (serviceCount <= 2) {
+                  baseServiceScore = 60 + ((serviceCount - 1) * 15);  // 60-75% für 1-2 Services
+                } else if (serviceCount <= 5) {
+                  baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
+                } else {
+                  baseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
+                }
                 
-                // Reduzierter Bonus für einzigartige Services
-                const uniqueServiceBonus = uniqueServices.length * 1;
-                const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP!
+                const finalServiceScore = Math.min(baseServiceScore, 100);
                 
-                // FAIRE GEWICHTUNG: Rating 30%, Reviews 20%, Services 50% (wie in Live-Ansicht)
-                const estimatedScore = Math.round((ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5));
+                // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
+                const estimatedScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
                 
                 console.log('Competitor score breakdown:', {
                   name: competitor.name,
@@ -1457,7 +1461,7 @@ export const generateCustomerHTML = ({
                   <td class="table-text" style="padding: 12px; text-align: center;">
                     <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}" style="color: ${estimatedScore >= 80 ? '#FFD700' : estimatedScore >= 60 ? '#22c55e' : '#FF0000'} !important; font-weight: bold;">${estimatedScore}</span>
                     <br><small class="secondary-text">${serviceCount} Services</small>
-                    <br><small class="secondary-text">${uniqueServices.length} Unique</small>
+                    <br><small class="secondary-text">Services: ${serviceCount}</small>
                   </td>
                   <td style="padding: 12px; text-align: center;">
                     <span style="color: #9ca3af;">
@@ -1487,28 +1491,34 @@ export const generateCustomerHTML = ({
                       const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
                       const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
                       
-                      const ratingScore = (rating / 5) * 100;
-                      const reviewScore = reviews <= 100 ? reviews : Math.min(100, 100 + Math.log10(reviews / 100) * 20);
+                      const ratingScore = rating >= 3.0 
+                        ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
+                        : rating >= 2.0 
+                          ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
+                          : 50 + (rating * 10);             // 50-70% für unter 2.0
+                      
+                      const reviewScore = reviews <= 15 
+                        ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
+                        : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
+                      
                       const services = Array.isArray(comp.services) ? comp.services : [];
                       const serviceCount = services.length;
                       
-                      // Verwende die gleiche verbesserte Service-Formel
-                      const baseServiceScore = serviceCount <= 10 
-                        ? (serviceCount / 10) * 50  
-                        : 50 + ((serviceCount - 10) * 2);
+                      let baseServiceScore;
+                      if (serviceCount === 0) {
+                        baseServiceScore = 40;  // Grundscore auch ohne Services
+                      } else if (serviceCount <= 2) {
+                        baseServiceScore = 60 + ((serviceCount - 1) * 15);  // 60-75% für 1-2 Services
+                      } else if (serviceCount <= 5) {
+                        baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
+                      } else {
+                        baseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
+                      }
                       
-                      const uniqueServices = services.filter((service: string) => 
-                        typeof service === 'string' && service.trim().length > 0 && 
-                        !servicesForScore.some(ownService => 
-                          typeof ownService === 'string' && ownService.trim().length > 0 && 
-                          areServicesSimilar(ownService, service)
-                        )
-                      );
-                      const uniqueServiceBonus = uniqueServices.length * 1;
-                      const finalServiceScore = baseServiceScore + uniqueServiceBonus; // KEIN CAP!
+                      const finalServiceScore = Math.min(baseServiceScore, 100);
                       
-                      // FAIRE GEWICHTUNG: Rating 30%, Reviews 20%, Services 50%
-                      const totalScore = Math.round((ratingScore * 0.3) + (reviewScore * 0.2) + (finalServiceScore * 0.5));
+                      // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
+                      const totalScore = Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3));
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
