@@ -138,8 +138,8 @@ export const generateCustomerHTML = ({
     ? companyServices.services 
     : industryServiceMap[businessData.industry as keyof typeof industryServiceMap] || [];
   
-  // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services
-  const servicesForScore = [...expectedServices, ...removedMissingServices];
+  // Services für Score-Berechnung: eigene Services + entfernte "fehlende" Services (EXAKT wie CompetitorAnalysis)
+  const ownServicesForScore = [...expectedServices, ...(removedMissingServices || [])];
   
   // Verbesserte Service-Vergleichsfunktion (wie in CompetitorAnalysis.tsx)
   const areServicesSimilar = (service1: string, service2: string): boolean => {
@@ -190,7 +190,7 @@ export const generateCustomerHTML = ({
   // Service-Score: Reaktiv aber begrenzt - reagiert auf Abwählen aber max 95% (EXAKT wie in CompetitorAnalysis)
   // Service-Score: Fairere Bewertung - Qualität vor Quantität (EXAKT wie in CompetitorAnalysis)
   let ownBaseServiceScore;
-  const serviceCount = servicesForScore.length;
+  const serviceCount = ownServicesForScore.length;
   if (serviceCount === 0) {
     ownBaseServiceScore = 15;  // Sehr niedrig ohne Services
   } else if (serviceCount <= 3) {
@@ -210,7 +210,7 @@ export const generateCustomerHTML = ({
       name: realData.company.name,
       rating: realData.reviews.google.rating,
       reviews: realData.reviews.google.count,
-      services: expectedServices, // WICHTIG: Verwende gefilterte Services wie in CompetitorAnalysis
+      services: ownServicesForScore, // WICHTIG: Verwende gefilterte Services wie in CompetitorAnalysis
       source: 'own' as const,
       location: 'Ihr Unternehmen'
     };
@@ -229,7 +229,7 @@ export const generateCustomerHTML = ({
       ? Math.min(70 + reviews * 2, 100)
       : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
     
-    const serviceCount = expectedServices.length; // WICHTIG: expectedServices, nicht servicesForScore
+    const serviceCount = ownServicesForScore.length; // WICHTIG: ownServicesForScore, nicht expectedServices
     let baseServiceScore;
     if (serviceCount === 0) {
       baseServiceScore = 40;
@@ -256,6 +256,7 @@ export const generateCustomerHTML = ({
       rating,
       reviews,
       expectedServices: expectedServices.length,
+      ownServicesForScore: ownServicesForScore.length,
       removedServices: removedMissingServices?.length || 0,
       ratingScore: ratingScore.toFixed(1),
       reviewScore: reviewScore.toFixed(1),
