@@ -173,36 +173,38 @@ export const generateCustomerHTML = ({
   const ownRating = typeof realData.reviews.google.rating === 'number' && !isNaN(realData.reviews.google.rating) ? realData.reviews.google.rating : 0;
   const ownReviews = typeof realData.reviews.google.count === 'number' && !isNaN(realData.reviews.google.count) ? realData.reviews.google.count : 0;
   
-  // Rating-Score: Sehr großzügig - ab 3.0 = 85%+, ab 2.0 = 70%+ (EXAKT wie in CompetitorAnalysis)
-  const ownRatingScore = ownRating >= 3.0 
-    ? 85 + ((ownRating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
-    : ownRating >= 2.0 
-      ? 70 + ((ownRating - 2.0) * 15)      // 70-85% für 2.0-3.0
-      : 50 + (ownRating * 10);             // 50-70% für unter 2.0
+  // Rating-Score: Restriktiver - selbst 5.0 erreicht nur 95% (EXAKT wie in CompetitorAnalysis)
+  const ownRatingScore = ownRating >= 4.5 
+    ? 85 + ((ownRating - 4.5) / 0.5) * 10  // 85-95% für 4.5-5.0
+    : ownRating >= 3.0 
+      ? 70 + ((ownRating - 3.0) / 1.5) * 15  // 70-85% für 3.0-4.5
+      : ownRating >= 2.0 
+        ? 50 + ((ownRating - 2.0) * 20)      // 50-70% für 2.0-3.0
+        : ownRating * 25;                    // 0-50% für unter 2.0
   
-  // Review-Score: Sehr großzügig - bereits bei 15 Reviews = 100% (EXAKT wie in CompetitorAnalysis)
-  const ownReviewScore = ownReviews <= 15 
-    ? Math.min(70 + ownReviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
-    : Math.min(100, 100 + Math.log10(ownReviews / 15) * 5);
+  // Review-Score: Restriktiver - max 95% auch bei vielen Reviews (EXAKT wie in CompetitorAnalysis)
+  const ownReviewScore = ownReviews <= 20 
+    ? Math.min(60 + ownReviews * 1.5, 90)  // Start bei 60%, max 90% bei 20 Reviews
+    : Math.min(95, 90 + Math.log10(ownReviews / 20) * 5); // Max 95% auch bei vielen Reviews
   
-  // Service-Score: Sehr großzügig - schon 1 Service = 60% (EXAKT wie in CompetitorAnalysis)
+  // Service-Score: Restriktiver - max 90% für Services allein (EXAKT wie in CompetitorAnalysis)
   let ownBaseServiceScore;
   const serviceCount = servicesForScore.length;
   if (serviceCount === 0) {
-    ownBaseServiceScore = 40;  // Grundscore auch ohne Services
-  } else if (serviceCount <= 2) {
-    ownBaseServiceScore = 60 + ((serviceCount - 1) * 15);  // 60-75% für 1-2 Services
-  } else if (serviceCount <= 5) {
-    ownBaseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
+    ownBaseServiceScore = 30;  // Niedrigerer Grundscore
+  } else if (serviceCount <= 3) {
+    ownBaseServiceScore = 40 + ((serviceCount - 1) / 2) * 25;  // 40-65% für 1-3 Services
+  } else if (serviceCount <= 8) {
+    ownBaseServiceScore = 65 + ((serviceCount - 3) / 5) * 20;  // 65-85% für 4-8 Services
   } else {
-    ownBaseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
+    ownBaseServiceScore = Math.min(85 + (serviceCount - 8) * 0.5, 90);  // Max 90% für viele Services
   }
   
   // WICHTIG: Eigenes Unternehmen bekommt KEINE unique service bonus, da es die Referenz ist
-  const ownFinalServiceScore = ownBaseServiceScore; // Keine unique services für eigenes Unternehmen
+  const ownFinalServiceScore = Math.min(ownBaseServiceScore, 90); // Service-Score max 90%
   
   // Verwende die neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3)), 100);
+  const competitorComparisonScore = Math.min(Math.round((ownRatingScore * 0.4) + (ownReviewScore * 0.3) + (ownFinalServiceScore * 0.3)), 97); // Max 97%
   
   console.log('HTML Generator - Own Business Scores (EXACT Match CompetitorAnalysis):', {
     rating: realData.reviews.google.rating,
@@ -1491,34 +1493,36 @@ export const generateCustomerHTML = ({
                       const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
                       const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
                       
-                      const ratingScore = rating >= 3.0 
-                        ? 85 + ((rating - 3.0) / 2.0) * 15  // 85-100% für 3.0-5.0
-                        : rating >= 2.0 
-                          ? 70 + ((rating - 2.0) * 15)      // 70-85% für 2.0-3.0
-                          : 50 + (rating * 10);             // 50-70% für unter 2.0
+                      const ratingScore = rating >= 4.5 
+                        ? 85 + ((rating - 4.5) / 0.5) * 10  // 85-95% für 4.5-5.0
+                        : rating >= 3.0 
+                          ? 70 + ((rating - 3.0) / 1.5) * 15  // 70-85% für 3.0-4.5
+                          : rating >= 2.0 
+                            ? 50 + ((rating - 2.0) * 20)      // 50-70% für 2.0-3.0
+                            : rating * 25;                    // 0-50% für unter 2.0
                       
-                      const reviewScore = reviews <= 15 
-                        ? Math.min(70 + reviews * 2, 100)  // Start bei 70%, 15 Reviews = 100%
-                        : Math.min(100, 100 + Math.log10(reviews / 15) * 5);
+                      const reviewScore = reviews <= 20 
+                        ? Math.min(60 + reviews * 1.5, 90)  // Start bei 60%, max 90% bei 20 Reviews
+                        : Math.min(95, 90 + Math.log10(reviews / 20) * 5); // Max 95% auch bei vielen Reviews
                       
                       const services = Array.isArray(comp.services) ? comp.services : [];
                       const serviceCount = services.length;
                       
                       let baseServiceScore;
                       if (serviceCount === 0) {
-                        baseServiceScore = 40;  // Grundscore auch ohne Services
-                      } else if (serviceCount <= 2) {
-                        baseServiceScore = 60 + ((serviceCount - 1) * 15);  // 60-75% für 1-2 Services
-                      } else if (serviceCount <= 5) {
-                        baseServiceScore = 75 + ((serviceCount - 2) / 3) * 15;  // 75-90% für 3-5 Services
+                        baseServiceScore = 30;  // Niedrigerer Grundscore
+                      } else if (serviceCount <= 3) {
+                        baseServiceScore = 40 + ((serviceCount - 1) / 2) * 25;  // 40-65% für 1-3 Services
+                      } else if (serviceCount <= 8) {
+                        baseServiceScore = 65 + ((serviceCount - 3) / 5) * 20;  // 65-85% für 4-8 Services
                       } else {
-                        baseServiceScore = 90 + (serviceCount - 5) * 1;  // 90% + 1% pro zusätzlichem Service
+                        baseServiceScore = Math.min(85 + (serviceCount - 8) * 0.5, 90);  // Max 90% für viele Services
                       }
                       
-                      const finalServiceScore = Math.min(baseServiceScore, 100);
+                      const finalServiceScore = Math.min(baseServiceScore, 90); // Service-Score max 90%
                       
                       // Neue ausgewogene Gewichtung: Rating 40%, Reviews 30%, Services 30%
-                      const totalScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 100);
+                      const totalScore = Math.min(Math.round((ratingScore * 0.4) + (reviewScore * 0.3) + (finalServiceScore * 0.3)), 97); // Max 97%
                       return acc + totalScore;
                     }, 0) / allCompetitors.length 
                   : 0;
