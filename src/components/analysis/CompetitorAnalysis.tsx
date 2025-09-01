@@ -210,8 +210,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       // Finaler Service-Score: Basis + Spezialisierung + Relevanz - Verwässerung
       const finalServiceScore = Math.min(baseServiceScore + specializationBonus + industryRelevanceScore - dilutionPenalty, 96);
       
-      // Neue Gewichtung: Rating 40%, Reviews 25%, Services 35% (Services wichtiger für Fairness)
-      const score = Math.min((ratingScore * 0.4) + (reviewScore * 0.25) + (finalServiceScore * 0.35), 96);
+      // Dynamische Gewichtung: Je mehr Services, desto wichtiger wird die Google-Bewertung
+      // Rating-Gewichtung steigt mit Anzahl der Services (30-55%)
+      // Service-Gewichtung sinkt entsprechend (40-25%)
+      const ratingWeight = Math.min(0.30 + (serviceCount * 0.015), 0.55); // 30% bei 0 Services, bis 55% bei 16+ Services
+      const serviceWeight = Math.max(0.40 - (serviceCount * 0.01), 0.25);  // 40% bei 0 Services, bis 25% bei 15+ Services
+      const reviewWeight = 1 - ratingWeight - serviceWeight; // Rest für Reviews (15-30%)
+      
+      const score = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (finalServiceScore * serviceWeight), 96);
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
@@ -224,9 +230,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         specializationBonus: specializationBonus.toFixed(1),
         industryRelevanceScore: industryRelevanceScore.toFixed(1),
         dilutionPenalty: dilutionPenalty.toFixed(1),
-        finalServiceScore: finalServiceScore.toFixed(1), 
-        finalScore: Math.round(score),
-        calculation: `(${ratingScore.toFixed(1)} * 0.4) + (${reviewScore.toFixed(1)} * 0.25) + (${finalServiceScore.toFixed(1)} * 0.35) = ${score.toFixed(1)}`
+        finalServiceScore: finalServiceScore.toFixed(1),
+        weights: {
+          rating: `${(ratingWeight * 100).toFixed(1)}%`,
+          reviews: `${(reviewWeight * 100).toFixed(1)}%`,
+          services: `${(serviceWeight * 100).toFixed(1)}%`
+        },
+        finalScore: score.toFixed(1)
       });
       
       return Math.min(Math.round(isNaN(score) ? 0 : score), 96); // Max 96%
