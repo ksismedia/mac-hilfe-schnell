@@ -417,18 +417,21 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
-  // Verwende echte Corporate Design Daten
-  if (!data) return 75;
+  // Wenn keine Corporate Design Daten vorhanden, verwende Defaultwert
+  if (!data) return 50;
   
-  let score = 50; // Basis-Score
-  let checkedItems = 0;
+  let score = 0; // Start bei 0
+  let totalItems = 6; // 6 mögliche Elemente
   
-  if (data.uniformLogo) { score += 12.5; checkedItems++; }
-  if (data.uniformWorkClothing) { score += 12.5; checkedItems++; }
-  if (data.uniformVehicleBranding) { score += 12.5; checkedItems++; }
-  if (data.uniformColorScheme) { score += 12.5; checkedItems++; }
+  // Jedes Element gibt 16.67 Punkte (100/6)
+  if (data.uniformLogo) score += 16.67;
+  if (data.uniformWorkClothing) score += 16.67;
+  if (data.uniformVehicleBranding) score += 16.67;
+  if (data.uniformColorScheme) score += 16.67;
+  if (data.uniformBusinessCards) score += 16.67;
+  if (data.uniformWebsite) score += 16.67;
   
-  return Math.min(100, score);
+  return Math.round(score);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any): number => {
