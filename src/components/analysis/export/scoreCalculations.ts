@@ -263,14 +263,26 @@ export const calculateStaffQualificationScore = (data: any): number => {
   
   let score = 0;
   const totalEmployees = data.totalEmployees || 1;
+  const masters = data.masters || 0;
+  const skilledWorkers = data.skilled_workers || 0;
   
-  // Meister-Quote (35% der Bewertung - höhere Gewichtung)
-  const masterRatio = (data.masters || 0) / totalEmployees;
-  score += masterRatio * 35;
+  // Meister-Quote (35% der Bewertung)
+  // Bonus-System: 100% Punkte wenn mindestens 30% Meister, linear ab 10%
+  const masterRatio = masters / totalEmployees;
+  if (masterRatio >= 0.3) {
+    score += 35; // Volle Punkte
+  } else if (masterRatio >= 0.1) {
+    score += (masterRatio - 0.1) * (35 / 0.2); // Linear zwischen 10% und 30%
+  }
   
-  // Facharbeiter-Quote (25% der Bewertung - höhere Gewichtung)
-  const skilledWorkerRatio = (data.skilled_workers || 0) / totalEmployees;
-  score += skilledWorkerRatio * 25;
+  // Facharbeiter-Quote (25% der Bewertung) 
+  // Bonus-System: 100% Punkte wenn mindestens 50% Facharbeiter, linear ab 20%
+  const skilledWorkerRatio = skilledWorkers / totalEmployees;
+  if (skilledWorkerRatio >= 0.5) {
+    score += 25; // Volle Punkte
+  } else if (skilledWorkerRatio >= 0.2) {
+    score += (skilledWorkerRatio - 0.2) * (25 / 0.3); // Linear zwischen 20% und 50%
+  }
   
   // Zertifizierungen (20% der Bewertung)
   let certificationPoints = 0;
