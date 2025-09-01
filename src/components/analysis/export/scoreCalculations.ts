@@ -421,15 +421,18 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   if (!data) return 50;
   
   let score = 0; // Start bei 0
-  let totalItems = 6; // 6 mögliche Elemente
   
-  // Jedes Element gibt 16.67 Punkte (100/6)
-  if (data.uniformLogo) score += 16.67;
-  if (data.uniformWorkClothing) score += 16.67;
-  if (data.uniformVehicleBranding) score += 16.67;
-  if (data.uniformColorScheme) score += 16.67;
-  if (data.uniformBusinessCards) score += 16.67;
-  if (data.uniformWebsite) score += 16.67;
+  // Jedes Element gibt 10 Punkte (100/10)
+  if (data.uniformLogo) score += 10;
+  if (data.uniformWorkClothing) score += 10;
+  if (data.uniformVehicleBranding) score += 10;
+  if (data.uniformColorScheme) score += 10;
+  if (data.uniformTypography) score += 10;
+  if (data.uniformBusinessCards) score += 10;
+  if (data.uniformWebsiteDesign) score += 10;
+  if (data.uniformDocumentTemplates) score += 10;
+  if (data.uniformSignage) score += 10;
+  if (data.uniformPackaging) score += 10;
   
   return Math.round(score);
 };
