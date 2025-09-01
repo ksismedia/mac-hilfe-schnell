@@ -262,31 +262,32 @@ export const calculateStaffQualificationScore = (data: any): number => {
   if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
   
   let score = 0;
-  
-  // Education and Training
   const totalEmployees = data.totalEmployees || 1;
-  const skilledWorkers = data.skilled_workers || 0;
-  const masters = data.masters || 0;
-  const apprentices = data.apprentices || 0;
-
-  const educationScore =
-    (skilledWorkers / totalEmployees) * 0.4 +
-    (masters / totalEmployees) * 0.4 +
-    (apprentices / totalEmployees) * 0.2;
-  score += Math.min(educationScore * 60, 60);
-
-  // Certifications
-  let certificationPoints = 0;
-  if (data.certifications?.welding_certificates) certificationPoints += 0.2;
-  if (data.certifications?.safety_training) certificationPoints += 0.2;
-  if (data.certifications?.first_aid) certificationPoints += 0.2;
-  if (data.certifications?.digital_skills) certificationPoints += 0.2;
-  if (data.certifications?.instructor_qualification) certificationPoints += 0.2;
-  if (data.certifications?.business_qualification) certificationPoints += 0.2;
-
-  score += Math.min(certificationPoints * 40, 40);
   
-  return Math.min(score, 100);
+  // Meister-Quote (35% der Bewertung - höhere Gewichtung)
+  const masterRatio = (data.masters || 0) / totalEmployees;
+  score += masterRatio * 35;
+  
+  // Facharbeiter-Quote (25% der Bewertung - höhere Gewichtung)
+  const skilledWorkerRatio = (data.skilled_workers || 0) / totalEmployees;
+  score += skilledWorkerRatio * 25;
+  
+  // Zertifizierungen (20% der Bewertung)
+  let certificationPoints = 0;
+  if (data.certifications?.welding_certificates) certificationPoints += 1;
+  if (data.certifications?.safety_training) certificationPoints += 1;
+  if (data.certifications?.first_aid) certificationPoints += 1;
+  if (data.certifications?.digital_skills) certificationPoints += 1;
+  if (data.certifications?.instructor_qualification) certificationPoints += 1;
+  if (data.certifications?.business_qualification) certificationPoints += 1;
+  score += (certificationPoints / 6) * 20;
+  
+  // Branchenspezifische Qualifikationen (20% der Bewertung)
+  const industrySpecificCount = data.industry_specific?.length || 0;
+  // Annahme: maximal 6 branchenspezifische Qualifikationen verfügbar
+  score += (industrySpecificCount / 6) * 20;
+  
+  return Math.min(Math.round(score), 100);
 };
 
 export const calculateQuoteResponseScore = (data: any): number => {

@@ -152,24 +152,23 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     let score = 0;
     const totalEmployees = data.totalEmployees || 1;
     
-    // Qualifikationsgrad (40% der Bewertung)
-    const qualifiedStaff = data.skilled_workers + data.masters;
-    const qualificationRatio = qualifiedStaff / totalEmployees;
-    score += qualificationRatio * 40;
-    
-    // Meister-Quote (20% der Bewertung)
+    // Meister-Quote (35% der Bewertung - erhöht von 20%)
     const masterRatio = data.masters / totalEmployees;
-    score += masterRatio * 20;
+    score += masterRatio * 35;
     
-    // Zertifizierungen (25% der Bewertung)
+    // Facharbeiter-Quote (25% der Bewertung - erhöht von anteilig 40%)
+    const skilledWorkerRatio = data.skilled_workers / totalEmployees;
+    score += skilledWorkerRatio * 25;
+    
+    // Zertifizierungen (20% der Bewertung - reduziert von 25%)
     const certCount = Object.values(data.certifications).filter(Boolean).length;
-    score += (certCount / 6) * 25;
+    score += (certCount / 6) * 20;
     
-    // Branchenspezifische Qualifikationen (15% der Bewertung)
+    // Branchenspezifische Qualifikationen (20% der Bewertung - erhöht von 15%)
     const industrySpecificCount = data.industry_specific.length;
     const availableQualifications = industrySpecificQualifications[businessData.industry];
     const maxIndustrySpecific = availableQualifications ? availableQualifications.length : 1;
-    score += (industrySpecificCount / maxIndustrySpecific) * 15;
+    score += (industrySpecificCount / maxIndustrySpecific) * 20;
     
     return Math.round(score);
   };
