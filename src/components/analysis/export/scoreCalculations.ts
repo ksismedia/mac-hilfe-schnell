@@ -266,22 +266,46 @@ export const calculateStaffQualificationScore = (data: any): number => {
   const masters = data.masters || 0;
   const skilledWorkers = data.skilled_workers || 0;
   
-  // Meister-Quote (35% der Bewertung)
-  // Bonus-System: 100% Punkte wenn mindestens 30% Meister, linear ab 10%
+  // Meister-Quote (35% der Bewertung) - Progressives Bewertungssystem
   const masterRatio = masters / totalEmployees;
-  if (masterRatio >= 0.3) {
-    score += 35; // Volle Punkte
+  let masterScore = 0;
+  if (masterRatio >= 0.2) {
+    masterScore = 35; // Volle Punkte ab 20% Meister
   } else if (masterRatio >= 0.1) {
-    score += (masterRatio - 0.1) * (35 / 0.2); // Linear zwischen 10% und 30%
+    masterScore = (masterRatio - 0.1) * (35 / 0.1); // Linear zwischen 10% und 20%
+  } else if (masterRatio > 0) {
+    masterScore = masterRatio * (35 / 0.1) * 0.5; // Reduzierte Punkte unter 10%
   }
   
-  // Facharbeiter-Quote (25% der Bewertung) 
-  // Bonus-System: 100% Punkte wenn mindestens 50% Facharbeiter, linear ab 20%
+  // Bonus für sehr hohe Meisterquote
+  if (masterRatio >= 0.4) {
+    masterScore += 5; // Extra 5 Punkte für >40% Meister
+  }
+  score += Math.min(masterScore, 40); // Maximal 40 Punkte für Meister
+  
+  // Facharbeiter-Quote (25% der Bewertung) - Progressives Bewertungssystem
   const skilledWorkerRatio = skilledWorkers / totalEmployees;
-  if (skilledWorkerRatio >= 0.5) {
-    score += 25; // Volle Punkte
-  } else if (skilledWorkerRatio >= 0.2) {
-    score += (skilledWorkerRatio - 0.2) * (25 / 0.3); // Linear zwischen 20% und 50%
+  let skilledScore = 0;
+  if (skilledWorkerRatio >= 0.3) {
+    skilledScore = 25; // Volle Punkte ab 30% Facharbeiter
+  } else if (skilledWorkerRatio >= 0.15) {
+    skilledScore = (skilledWorkerRatio - 0.15) * (25 / 0.15); // Linear zwischen 15% und 30%
+  } else if (skilledWorkerRatio > 0) {
+    skilledScore = skilledWorkerRatio * (25 / 0.15) * 0.6; // Reduzierte Punkte unter 15%
+  }
+  
+  // Bonus für sehr hohe Facharbeiterquote
+  if (skilledWorkerRatio >= 0.6) {
+    skilledScore += 5; // Extra 5 Punkte für >60% Facharbeiter
+  }
+  score += Math.min(skilledScore, 30); // Maximal 30 Punkte für Facharbeiter
+  
+  // Kombinationsbonus für hohe Gesamt-Qualifikationsquote
+  const totalQualifiedRatio = (masters + skilledWorkers) / totalEmployees;
+  if (totalQualifiedRatio >= 0.8) {
+    score += 10; // Bonus für >80% qualifizierte Mitarbeiter
+  } else if (totalQualifiedRatio >= 0.6) {
+    score += 5; // Bonus für >60% qualifizierte Mitarbeiter
   }
   
   // Zertifizierungen (20% der Bewertung)
