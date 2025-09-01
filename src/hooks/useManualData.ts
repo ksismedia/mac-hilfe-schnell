@@ -41,6 +41,12 @@ export interface ManualCorporateIdentityData {
   uniformWorkClothing: boolean;
   uniformVehicleBranding: boolean;
   uniformColorScheme: boolean;
+  uniformTypography: boolean;
+  uniformBusinessCards: boolean;
+  uniformWebsiteDesign: boolean;
+  uniformDocumentTemplates: boolean;
+  uniformSignage: boolean;
+  uniformPackaging: boolean;
   notes?: string;
 }
 

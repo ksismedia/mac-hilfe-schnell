@@ -24,6 +24,12 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
     uniformWorkClothing: false,
     uniformVehicleBranding: false,
     uniformColorScheme: false,
+    uniformTypography: false,
+    uniformBusinessCards: false,
+    uniformWebsiteDesign: false,
+    uniformDocumentTemplates: false,
+    uniformSignage: false,
+    uniformPackaging: false,
     notes: ''
   });
 
@@ -47,6 +53,12 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
         uniformWorkClothing: false,
         uniformVehicleBranding: false,
         uniformColorScheme: false,
+        uniformTypography: false,
+        uniformBusinessCards: false,
+        uniformWebsiteDesign: false,
+        uniformDocumentTemplates: false,
+        uniformSignage: false,
+        uniformPackaging: false,
         notes: ''
       });
     }
@@ -59,7 +71,13 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
       manualData.uniformLogo,
       manualData.uniformWorkClothing,
       manualData.uniformVehicleBranding,
-      manualData.uniformColorScheme
+      manualData.uniformColorScheme,
+      manualData.uniformTypography,
+      manualData.uniformBusinessCards,
+      manualData.uniformWebsiteDesign,
+      manualData.uniformDocumentTemplates,
+      manualData.uniformSignage,
+      manualData.uniformPackaging
     ];
     const score = (checks.filter(Boolean).length / checks.length) * 100;
     return Math.round(score);
@@ -167,8 +185,6 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                     <X className="h-5 w-5 text-red-600" />
                   )}
                 </div>
-              </div>
-              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Fahrzeugbeklebung</span>
                   {manualData.uniformVehicleBranding ? (
@@ -180,6 +196,56 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Farbgebung</span>
                   {manualData.uniformColorScheme ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Einheitliche Typografie</span>
+                  {manualData.uniformTypography ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span>Einheitliche Visitenkarten</span>
+                  {manualData.uniformBusinessCards ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Einheitliches Website-Design</span>
+                  {manualData.uniformWebsiteDesign ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Einheitliche Dokumentvorlagen</span>
+                  {manualData.uniformDocumentTemplates ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Einheitliche Beschilderung</span>
+                  {manualData.uniformSignage ? (
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <X className="h-5 w-5 text-red-600" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Einheitliche Verpackung</span>
+                  {manualData.uniformPackaging ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -263,6 +329,84 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 />
                 <Label htmlFor="uniformColorScheme">
                   Einheitliche Farbgebung (Website, Materialien, Fahrzeuge)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformTypography"
+                  checked={formData.uniformTypography}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformTypography: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformTypography">
+                  Einheitliche Typografie (Schriftarten, Schriftgrößen)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformBusinessCards"
+                  checked={formData.uniformBusinessCards}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformBusinessCards: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformBusinessCards">
+                  Einheitliche Visitenkarten (Design, Layout, Informationen)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformWebsiteDesign"
+                  checked={formData.uniformWebsiteDesign}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformWebsiteDesign: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformWebsiteDesign">
+                  Einheitliches Website-Design (konsistent mit Offline-Materialien)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformDocumentTemplates"
+                  checked={formData.uniformDocumentTemplates}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformDocumentTemplates: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformDocumentTemplates">
+                  Einheitliche Dokumentvorlagen (Rechnungen, Angebote, Briefpapier)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformSignage"
+                  checked={formData.uniformSignage}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformSignage: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformSignage">
+                  Einheitliche Beschilderung (Firmenschild, Schilder vor Ort)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="uniformPackaging"
+                  checked={formData.uniformPackaging}
+                  onCheckedChange={(checked) =>
+                    setFormData(prev => ({ ...prev, uniformPackaging: checked === true }))
+                  }
+                />
+                <Label htmlFor="uniformPackaging">
+                  Einheitliche Verpackung/Materialien (falls zutreffend)
                 </Label>
               </div>
             </div>
