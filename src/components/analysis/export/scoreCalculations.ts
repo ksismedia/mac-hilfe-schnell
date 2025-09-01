@@ -7,14 +7,22 @@ const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
   const rating = realData.reviews.google.rating;
   let score = 0;
 
+  // Höhere Bewertung der Google Reviews für bessere Wettbewerbsposition
   if (rating > 0) {
-    score += (rating / 5) * 60; // Rating contributes 60%
+    score += (rating / 5) * 50; // Rating contributes 50% (reduziert von 60%)
   }
   if (reviews > 0) {
-    score += Math.min(reviews / 10, 40); // Number of reviews contributes 40%, capped at 40 points
+    // Stark erhöhte Bewertung der Anzahl der Reviews
+    if (reviews >= 500) score += 50;
+    else if (reviews >= 200) score += 45;
+    else if (reviews >= 100) score += 40;
+    else if (reviews >= 50) score += 35;
+    else if (reviews >= 20) score += 25;
+    else if (reviews >= 10) score += 15;
+    else score += Math.min(reviews, 10);
   }
 
-  return score;
+  return Math.min(score, 100);
 };
 
 const calculateSocialMediaScore = (
