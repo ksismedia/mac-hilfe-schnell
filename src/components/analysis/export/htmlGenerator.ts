@@ -1456,21 +1456,45 @@ export const generateCustomerHTML = ({
                       const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
                       const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
                       
-                      // BERECHNE SCORE BASIEREND AUF SERVICES DES KONKURRENTEN
+                      // Rating-Score: Gleiche Logik wie in CompetitorAnalysis
+                      const ratingScore = rating >= 4.5 
+                        ? 80 + ((rating - 4.5) / 0.5) * 15  // 80-95% für 4.5-5.0
+                        : rating >= 3.5 
+                          ? 60 + ((rating - 3.5) * 20)      // 60-80% für 3.5-4.5
+                          : rating >= 2.5 
+                            ? 40 + ((rating - 2.5) * 20)    // 40-60% für 2.5-3.5
+                            : rating * 16;                  // 0-40% für unter 2.5
+                      
+                      // Review-Score: Gleiche Logik wie in CompetitorAnalysis
+                      const reviewScore = reviews <= 25 
+                        ? Math.min(50 + reviews * 1.6, 90)  // Start bei 50%, max 90% bei 25 Reviews
+                        : Math.min(95, 90 + Math.log10(reviews / 25) * 5); // Max 95%
+                      
+                      // Service-Score: Vereinfacht für HTML (nur Basis)
                       const compServices = Array.isArray(comp.services) ? comp.services : [];
-                      const compServiceCount = compServices.length;
-                      let totalScore = 85;
-                      if (compServiceCount <= 3) {
-                        totalScore = 75 + (compServiceCount * 5);
-                      } else if (compServiceCount <= 8) {
-                        totalScore = 85 + ((compServiceCount - 3) * 1);
-                      } else if (compServiceCount <= 15) {
-                        totalScore = 88 + ((compServiceCount - 8) * 0.3);
+                      const serviceCount = compServices.length;
+                      let serviceScore;
+                      if (serviceCount === 0) {
+                        serviceScore = 15;  // Sehr niedrig ohne Services
+                      } else if (serviceCount <= 3) {
+                        serviceScore = 30 + (serviceCount * 15);  // 45-75% für 1-3 Services
+                      } else if (serviceCount <= 8) {
+                        serviceScore = 75 + ((serviceCount - 3) * 2);  // 77-85% für 4-8 Services
+                      } else if (serviceCount <= 15) {
+                        serviceScore = 85 + ((serviceCount - 8) * 0.7);  // 85-90% für 9-15 Services
                       } else {
-                        totalScore = Math.min(90 + ((compServiceCount - 15) * 0.2), 93);
+                        serviceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
                       }
+                      
+                      // NEUE DYNAMISCHE GEWICHTUNG: Je mehr Services, desto wichtiger die Google-Bewertung
+                      const ratingWeight = Math.min(0.30 + (serviceCount * 0.015), 0.55); // 30-55%
+                      const serviceWeight = Math.max(0.40 - (serviceCount * 0.01), 0.25);  // 40-25%
+                      const reviewWeight = 1 - ratingWeight - serviceWeight; // Rest für Reviews
+                      
+                      const totalScore = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight), 96);
+                      
                       return acc + totalScore;
-                    }, 0) / allCompetitors.length 
+                    }, 0) / allCompetitors.length
                   : 0;
                 const isAboveAverage = marketComparisonScore >= avgCompetitorScore;
                 return `<p style="font-size: 0.9em; color: ${isAboveAverage ? '#22c55e' : '#ef4444'};">
