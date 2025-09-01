@@ -2417,43 +2417,43 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>Einheitliche Typografie:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformTypography ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformTypography ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformTypography ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformTypography ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Visitenkarten:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformBusinessCards ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformBusinessCards ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformBusinessCards ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformBusinessCards ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliches Website-Design:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformWebsiteDesign ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformWebsiteDesign ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformWebsiteDesign ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformWebsiteDesign ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Dokumentvorlagen:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformDocumentTemplates ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformDocumentTemplates ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformDocumentTemplates ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformDocumentTemplates ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Beschilderung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformSignage ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformSignage ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformSignage ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformSignage ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Verpackung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformPackaging ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformPackaging ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${(manualCorporateIdentityData.uniformPackaging ?? false) ? 'green' : 'red'}">
+                    ${(manualCorporateIdentityData.uniformPackaging ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>

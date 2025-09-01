@@ -72,12 +72,12 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
       manualData.uniformWorkClothing,
       manualData.uniformVehicleBranding,
       manualData.uniformColorScheme,
-      manualData.uniformTypography,
-      manualData.uniformBusinessCards,
-      manualData.uniformWebsiteDesign,
-      manualData.uniformDocumentTemplates,
-      manualData.uniformSignage,
-      manualData.uniformPackaging
+      manualData.uniformTypography ?? false,
+      manualData.uniformBusinessCards ?? false,
+      manualData.uniformWebsiteDesign ?? false,
+      manualData.uniformDocumentTemplates ?? false,
+      manualData.uniformSignage ?? false,
+      manualData.uniformPackaging ?? false
     ];
     const score = (checks.filter(Boolean).length / checks.length) * 100;
     return Math.round(score);
@@ -203,7 +203,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Typografie</span>
-                  {manualData.uniformTypography ? (
+                  {(manualData.uniformTypography ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -213,7 +213,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Visitenkarten</span>
-                  {manualData.uniformBusinessCards ? (
+                  {(manualData.uniformBusinessCards ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -221,7 +221,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliches Website-Design</span>
-                  {manualData.uniformWebsiteDesign ? (
+                  {(manualData.uniformWebsiteDesign ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -229,7 +229,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Dokumentvorlagen</span>
-                  {manualData.uniformDocumentTemplates ? (
+                  {(manualData.uniformDocumentTemplates ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -237,7 +237,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Beschilderung</span>
-                  {manualData.uniformSignage ? (
+                  {(manualData.uniformSignage ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -245,7 +245,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Verpackung</span>
-                  {manualData.uniformPackaging ? (
+                  {(manualData.uniformPackaging ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
                     <X className="h-5 w-5 text-red-600" />
@@ -335,7 +335,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformTypography"
-                  checked={formData.uniformTypography}
+                  checked={formData.uniformTypography ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformTypography: checked === true }))
                   }
@@ -348,7 +348,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformBusinessCards"
-                  checked={formData.uniformBusinessCards}
+                  checked={formData.uniformBusinessCards ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformBusinessCards: checked === true }))
                   }
@@ -361,7 +361,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformWebsiteDesign"
-                  checked={formData.uniformWebsiteDesign}
+                  checked={formData.uniformWebsiteDesign ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformWebsiteDesign: checked === true }))
                   }
@@ -374,7 +374,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformDocumentTemplates"
-                  checked={formData.uniformDocumentTemplates}
+                  checked={formData.uniformDocumentTemplates ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformDocumentTemplates: checked === true }))
                   }
@@ -387,7 +387,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformSignage"
-                  checked={formData.uniformSignage}
+                  checked={formData.uniformSignage ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformSignage: checked === true }))
                   }
@@ -400,7 +400,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="uniformPackaging"
-                  checked={formData.uniformPackaging}
+                  checked={formData.uniformPackaging ?? false}
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, uniformPackaging: checked === true }))
                   }
