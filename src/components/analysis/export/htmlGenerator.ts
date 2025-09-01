@@ -206,9 +206,25 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // VERWENDE DIE DYNAMISCH BERECHNETE EIGENE SCORE BASIEREND AUF SERVICES
-  const competitorComparisonScore = ownBaseServiceScore; // Dynamischer Wert basierend auf Services
-  const marketComparisonScore = ownBaseServiceScore;
+  // NEUE DYNAMISCHE GEWICHTUNG für eigene Firma (gleiche Logik wie in CompetitorAnalysis)
+  const ownRatingWeight = Math.min(0.30 + (serviceCount * 0.015), 0.55); // 30-55%
+  const ownServiceWeight = Math.max(0.40 - (serviceCount * 0.01), 0.25);  // 40-25%
+  const ownReviewWeight = 1 - ownRatingWeight - ownServiceWeight; // Rest für Reviews
+  
+  // Berechne den finalen Score mit dynamischer Gewichtung
+  const ownDynamicScore = Math.min((ownRatingScore * ownRatingWeight) + (ownReviewScore * ownReviewWeight) + (ownBaseServiceScore * ownServiceWeight), 96);
+  
+  // BONUS für abgewählte Services (gleiche Logik wie in CompetitorAnalysis)
+  const serviceRemovalBonus = removedMissingServices?.length > 0 
+    ? Math.min(removedMissingServices.length * 1.5, ownDynamicScore * 0.15)
+    : 0;
+  
+  // FINALER SCORE inklusive Bonus
+  const finalOwnScore = Math.min(ownDynamicScore + serviceRemovalBonus, 96);
+  
+  // VERWENDE DIE DYNAMISCH BERECHNETE EIGENE SCORE BASIEREND AUF SERVICES + BONUS
+  const competitorComparisonScore = finalOwnScore; // Dynamischer Wert basierend auf Services + Bonus
+  const marketComparisonScore = finalOwnScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
