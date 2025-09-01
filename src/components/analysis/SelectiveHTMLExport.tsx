@@ -561,7 +561,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
                       <div className="ml-8 space-y-3 border-l-2 border-primary/20 pl-4">
                         {[
                           { id: 'staffQualification', label: 'Personal-Qualifikation', key: 'staffQualification' as keyof SubSectionSelections },
-                          { id: 'corporateIdentity', label: 'Corporate Identity', key: 'corporateIdentity' as keyof SubSectionSelections },
+                          { id: 'corporateIdentity', label: 'Corporate Design', key: 'corporateIdentity' as keyof SubSectionSelections },
                           { id: 'quoteResponse', label: 'Angebots-Reaktion', key: 'quoteResponse' as keyof SubSectionSelections },
                           { id: 'hourlyRate', label: 'Stundensatz-Analyse', key: 'hourlyRate' as keyof SubSectionSelections }
                         ].map(({ id, label, key }) => (

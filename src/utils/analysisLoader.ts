@@ -41,7 +41,7 @@ export const loadSavedAnalysisData = (
   }
   
   if (savedAnalysis.manualData?.corporateIdentity) {
-    console.log('Loading corporate identity data');
+    console.log('Loading corporate design data');
     updateCorporateIdentityData(savedAnalysis.manualData.corporateIdentity);
   }
   

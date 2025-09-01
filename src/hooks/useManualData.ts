@@ -174,7 +174,7 @@ export const useManualData = () => {
 
   const updateCorporateIdentityData = useCallback((data: ManualCorporateIdentityData | null) => {
     setManualCorporateIdentityData(data);
-    console.log('Manual Corporate Identity Data Updated:', data);
+    console.log('Manual Corporate Design Data Updated:', data);
   }, []);
 
   const updateCompetitors = useCallback((competitors: ManualCompetitor[]) => {

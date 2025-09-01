@@ -416,7 +416,7 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
-  // Verwende echte Corporate Identity Daten
+  // Verwende echte Corporate Design Daten
   if (!data) return 75;
   
   let score = 50; // Basis-Score

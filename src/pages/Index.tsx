@@ -650,7 +650,7 @@ const Index = () => {
               {[
                 { title: "Mitarbeiterqualifikation", icon: "🎓", desc: "Ausbildung, Zertifikate, Weiterbildung" },
                 { title: "Stundensatz-Analyse", icon: "💰", desc: "Marktvergleich und Positionierung" },
-                { title: "Unternehmensidentität", icon: "🏢", desc: "Corporate Identity und Branding" },
+                { title: "Unternehmensidentität", icon: "🏢", desc: "Corporate Design und Branding" },
                 { title: "Kundenservice", icon: "📞", desc: "Reaktionszeit auf Anfragen" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-purple-400/20 hover:border-purple-400/40 transition-colors">

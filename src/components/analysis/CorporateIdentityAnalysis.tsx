@@ -85,7 +85,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
         <div className="flex justify-between items-start">
           <div>
             <CardTitle className="flex items-center gap-2">
-              Corporate Identity Analyse
+              Corporate Design Analyse
               {manualData ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
               ) : (
@@ -93,7 +93,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               )}
             </CardTitle>
             <CardDescription>
-              Bewertung der einheitlichen Corporate Identity von {businessData.companyName}
+              Bewertung des einheitlichen Corporate Designs von {businessData.companyName}
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -137,9 +137,9 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
         {!manualData && !isEditing && (
           <div className="text-center py-8 text-muted-foreground">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
-            <p className="text-lg font-medium mb-2">Corporate Identity noch nicht bewertet</p>
+            <p className="text-lg font-medium mb-2">Corporate Design noch nicht bewertet</p>
             <p className="mb-4">
-              Bewerten Sie die Einheitlichkeit der Corporate Identity Elemente
+              Bewerten Sie die Einheitlichkeit der Corporate Design Elemente
             </p>
             <Button onClick={() => setIsEditing(true)}>
               Jetzt bewerten
@@ -197,15 +197,15 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
 
             <div className="mt-4 p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <span className="font-medium">Corporate Identity Score:</span>
+                <span className="font-medium">Corporate Design Score:</span>
                 <Badge variant={getScoreBadge(score)} className={getScoreColor(score)}>
                   {score}%
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {score >= 75 && "Sehr gute Corporate Identity Konsistenz"}
-                {score >= 50 && score < 75 && "Durchschnittliche Corporate Identity Konsistenz"}
-                {score < 50 && "Verbesserungsbedarf bei der Corporate Identity"}
+                {score >= 75 && "Sehr gute Corporate Design Konsistenz"}
+                {score >= 50 && score < 75 && "Durchschnittliche Corporate Design Konsistenz"}
+                {score < 50 && "Verbesserungsbedarf beim Corporate Design"}
               </p>
             </div>
           </div>
@@ -271,7 +271,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <Label htmlFor="notes">Notizen (optional)</Label>
               <Textarea
                 id="notes"
-                placeholder="Zusätzliche Bemerkungen zur Corporate Identity..."
+                placeholder="Zusätzliche Bemerkungen zum Corporate Design..."
                 value={formData.notes || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 className="mt-1"

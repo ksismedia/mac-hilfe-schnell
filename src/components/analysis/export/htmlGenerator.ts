@@ -1835,7 +1835,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="score-card">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
-            <div class="score-label">Corporate Identity</div>
+            <div class="score-label">Corporate Design</div>
           </div>
           <div class="score-card">
             <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
@@ -2323,12 +2323,12 @@ export const generateCustomerHTML = ({
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Corporate Identity Konsistenz</h3>
+          <h3>Corporate Design Konsistenz</h3>
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(corporateIdentityScore)}">${corporateIdentityScore}%</div>
             <div class="score-details">
               <p><strong>Einheitlichkeit:</strong> ${corporateIdentityScore >= 75 ? 'Sehr konsistent' : corporateIdentityScore >= 50 ? 'Teilweise konsistent' : 'Inkonsistent'}</p>
-              <p><strong>Empfehlung:</strong> ${corporateIdentityScore >= 75 ? 'Professionelle Corporate Identity' : 'Corporate Identity standardisieren'}</p>
+              <p><strong>Empfehlung:</strong> ${corporateIdentityScore >= 75 ? 'Professionelles Corporate Design' : 'Corporate Design standardisieren'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -2340,12 +2340,12 @@ export const generateCustomerHTML = ({
         
         ${manualCorporateIdentityData ? `
         <div class="collapsible" onclick="toggleSection('corporate-identity-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ Corporate Identity Details anzeigen</h4>
+          <h4 style="color: #fbbf24; margin: 0;">▶ Corporate Design Details anzeigen</h4>
         </div>
         
         <div id="corporate-identity-details" style="display: none;">
           <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-            <h4>🎨 Corporate Identity Bewertung</h4>
+            <h4>🎨 Corporate Design Bewertung</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Einheitliches Logo:</strong> 
@@ -2387,8 +2387,8 @@ export const generateCustomerHTML = ({
         </div>
         ` : `
         <div class="warning-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-          <h4>⚠️ Corporate Identity nicht bewertet</h4>
-          <p style="margin-top: 10px;">Die Corporate Identity wurde noch nicht manuell bewertet.</p>
+          <h4>⚠️ Corporate Design nicht bewertet</h4>
+          <p style="margin-top: 10px;">Das Corporate Design wurde noch nicht manuell bewertet.</p>
         </div>
         `}
       </div>
