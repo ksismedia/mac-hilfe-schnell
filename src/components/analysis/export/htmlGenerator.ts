@@ -104,11 +104,6 @@ export const generateCustomerHTML = ({
   console.log('🔶 HTML Generator Social Media Debug:', { manualSocialData, socialMediaScore });
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
-  console.log('=== HTML GENERATOR DEBUG ===');
-  console.log('quoteResponseData in htmlGenerator:', quoteResponseData);
-  console.log('staffQualificationData in htmlGenerator:', staffQualificationData);
-  console.log('socialMediaScore in htmlGenerator:', socialMediaScore);
-  
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
@@ -116,29 +111,22 @@ export const generateCustomerHTML = ({
   const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
   const accessibilityScore = actualAccessibilityScore;
   
-  // Helper functions for display - zeige Querstrich für fehlende Daten oder bei 0%
+  // Helper functions for display - zeige Querstrich nur bei wirklich fehlenden Daten
   const displayStaffScore = staffQualificationData && staffQualificationData.totalEmployees > 0 
     ? `${Math.round(staffQualificationScore)}%` 
     : '–';
   const displayQuoteScore = quoteResponseData && quoteResponseData.responseTime 
     ? `${Math.round(quoteResponseScore)}%` 
     : '–';
-  const displaySocialScore = socialMediaScore > 0 
+  const displaySocialScore = manualSocialData || (socialMediaScore && socialMediaScore > 0)
     ? `${Math.round(socialMediaScore)}%` 
     : '–';
-  const displayAccessibilityScore = accessibilityScore > 0 
+  const displayAccessibilityScore = accessibilityScore && accessibilityScore > 0 
     ? `${Math.round(accessibilityScore)}%` 
     : '–';
-  const displayDataPrivacyScore = dataPrivacyScore > 0 
+  const displayDataPrivacyScore = dataPrivacyScore && dataPrivacyScore > 0 
     ? `${Math.round(dataPrivacyScore)}%` 
     : '–';
-  
-  console.log('=== DISPLAY SCORES DEBUG ===');
-  console.log('displayStaffScore:', displayStaffScore);
-  console.log('displayQuoteScore:', displayQuoteScore);
-  console.log('displaySocialScore:', displaySocialScore);
-  console.log('displayAccessibilityScore:', displayAccessibilityScore);
-  console.log('displayDataPrivacyScore:', displayDataPrivacyScore);
   
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
@@ -1878,7 +1866,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
+            <div class="score-big"><span class="score-tile ${socialMediaScore && socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
@@ -2820,7 +2808,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Social Media Listening & Monitoring</span>
-        <div class="header-score-circle ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</div>
+        <div class="header-score-circle ${socialMediaScore && socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
         ${getSocialMediaAnalysis()}
