@@ -175,7 +175,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div class="score-label">Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${enhancedSocialMediaScore}</div>
+                <div class="score-big">${enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–'}</div>
                 <div class="score-label">Social Media</div>
             </div>
         </section>
@@ -856,7 +856,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 <div class="score-label">Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${enhancedSocialMediaScore}</div>
+                <div class="score-big">${enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–'}</div>
                 <div class="score-label">Social Media</div>
             </div>
         </section>
