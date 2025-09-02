@@ -342,11 +342,17 @@ export const calculateQuoteResponseScore = (data: any): number => {
   
   // Response Time (40%)
   const responseTimeScore =
-    data.responseTime === 'prompt'
+    data.responseTime === '1-hour'
       ? 40
-      : data.responseTime === 'moderate'
+      : data.responseTime === '2-4-hours'
+      ? 35
+      : data.responseTime === '4-8-hours'
+      ? 30
+      : data.responseTime === '1-day'
       ? 20
-      : 0;
+      : data.responseTime === '2-3-days'
+      ? 10
+      : 0; // 'over-3-days' or no response time
   score += responseTimeScore;
 
   // Contact Methods (30%)
@@ -361,11 +367,13 @@ export const calculateQuoteResponseScore = (data: any): number => {
 
   // Response Quality (30%)
   const responseQualityScore =
-    data.responseQuality === 'high'
+    data.responseQuality === 'excellent'
       ? 30
-      : data.responseQuality === 'medium'
-      ? 15
-      : 0;
+      : data.responseQuality === 'good'
+      ? 20
+      : data.responseQuality === 'average'
+      ? 10
+      : 0; // 'poor' or no quality rating
   score += responseQualityScore;
   
   return Math.min(score, 100);
