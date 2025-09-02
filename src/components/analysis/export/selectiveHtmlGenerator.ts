@@ -400,6 +400,153 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       `;
     }
 
+    // Kundenservice & Angebotsbearbeitung
+    if (selections.subSections.quoteResponse) {
+      console.log('=== QUOTE RESPONSE DEBUG ===');
+      console.log('quoteResponseData:', data.quoteResponseData);
+      
+      const quoteResponseData = data.quoteResponseData;
+      
+      // Calculate quote response score
+      const calculateQuoteResponseScore = (quoteData: QuoteResponseData | null | undefined): number => {
+        if (!quoteData?.responseTime) return 0;
+        
+        const timeScore = {
+          '1-hour': 100,
+          '2-4-hours': 90,
+          '4-8-hours': 80,
+          '1-day': 70,
+          '2-3-days': 50,
+          'over-3-days': 30
+        }[quoteData.responseTime] || 30;
+        
+        const methodScore = Object.values(quoteData.contactMethods || {}).filter(Boolean).length * 10;
+        const qualityScore = {
+          'excellent': 100,
+          'good': 80,
+          'average': 60,
+          'poor': 40
+        }[quoteData.responseQuality || 'average'] || 60;
+        
+        const featureScore = [
+          quoteData.automaticConfirmation,
+          quoteData.followUpProcess,
+          quoteData.personalContact
+        ].filter(Boolean).length * 10;
+        
+        return Math.round((timeScore * 0.4) + (methodScore * 0.2) + (qualityScore * 0.3) + (featureScore * 0.1));
+      };
+      
+      const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
+      const displayQuoteScore = quoteResponseData && quoteResponseData.responseTime 
+        ? `${Math.round(quoteResponseScore)}%` 
+        : '–';
+      
+      staffServiceHtml += `
+        <div class="metric-card quote-detailed">
+          <div class="quote-header" style="background: linear-gradient(135deg, #ff9800, #f57c00); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              📞 Kundenservice & Angebotsbearbeitung
+              <div class="score-circle" style="background: white; color: #ff9800; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${displayQuoteScore}
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            ${quoteResponseData && quoteResponseData.responseTime ? `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+              <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <h4 style="color: #e65100; margin: 0 0 10px 0;">⏱️ Reaktionszeit</h4>
+                <p style="margin: 0; font-size: 16px; font-weight: bold;">
+                  ${quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde' :
+                    quoteResponseData.responseTime === '2-4-hours' ? '2-4 Stunden' :
+                    quoteResponseData.responseTime === '4-8-hours' ? '4-8 Stunden' :
+                    quoteResponseData.responseTime === '1-day' ? '1 Tag' :
+                    quoteResponseData.responseTime === '2-3-days' ? '2-3 Tage' :
+                    'Über 3 Tage'}
+                </p>
+              </div>
+              
+              <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <h4 style="color: #e65100; margin: 0 0 10px 0;">📱 Kontaktkanäle</h4>
+                <p style="margin: 0; font-size: 16px; font-weight: bold;">
+                  ${Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length} verfügbar
+                </p>
+              </div>
+              
+              <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <h4 style="color: #e65100; margin: 0 0 10px 0;">⭐ Antwortqualität</h4>
+                <p style="margin: 0; font-size: 16px; font-weight: bold;">
+                  ${quoteResponseData.responseQuality === 'excellent' ? 'Ausgezeichnet' :
+                    quoteResponseData.responseQuality === 'good' ? 'Gut' :
+                    quoteResponseData.responseQuality === 'average' ? 'Durchschnittlich' :
+                    'Verbesserungsbedarf'}
+                </p>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+              <div>
+                <h4 style="color: #e65100; margin-bottom: 10px;">🔧 Service-Features</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                  ${quoteResponseData.automaticConfirmation ? '<li>✅ Automatische Eingangsbestätigung</li>' : '<li>❌ Keine automatische Bestätigung</li>'}
+                  ${quoteResponseData.followUpProcess ? '<li>✅ Strukturierter Nachfass-Prozess</li>' : '<li>❌ Kein systematisches Follow-up</li>'}
+                  ${quoteResponseData.personalContact ? '<li>✅ Persönlicher Ansprechpartner</li>' : '<li>❌ Kein fester Ansprechpartner</li>'}
+                </ul>
+              </div>
+              
+              <div>
+                <h4 style="color: #e65100; margin-bottom: 10px;">📞 Verfügbare Kontaktkanäle</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                  ${quoteResponseData.contactMethods?.phone ? '<li>📞 Telefon</li>' : ''}
+                  ${quoteResponseData.contactMethods?.email ? '<li>✉️ E-Mail</li>' : ''}
+                  ${quoteResponseData.contactMethods?.contactForm ? '<li>📝 Kontaktformular</li>' : ''}
+                  ${quoteResponseData.contactMethods?.whatsapp ? '<li>💬 WhatsApp</li>' : ''}
+                  ${quoteResponseData.contactMethods?.messenger ? '<li>💬 Messenger</li>' : ''}
+                </ul>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px; background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+              <h4 style="color: #e65100; margin-bottom: 10px;">🕒 Erreichbarkeit</h4>
+              <p style="margin: 0; color: #333;">
+                <strong>Zeiten:</strong> ${
+                  quoteResponseData.availabilityHours === '24-7' ? '24/7 Erreichbarkeit' :
+                  quoteResponseData.availabilityHours === 'extended-hours' ? 'Erweiterte Zeiten (Mo-Sa 7-20 Uhr)' :
+                  quoteResponseData.availabilityHours === 'business-hours' ? 'Geschäftszeiten (Mo-Fr 8-17 Uhr)' :
+                  'Nicht definiert'
+                }
+              </p>
+              ${quoteResponseData.notes ? `<p style="margin: 10px 0 0 0; color: #333;"><strong>Notizen:</strong> ${quoteResponseData.notes}</p>` : ''}
+            </div>
+            ` : `
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800; text-align: center;">
+              <h4 style="color: #e65100; margin: 0 0 10px 0;">⚠️ Keine Kundenservice-Daten erfasst</h4>
+              <p style="margin: 0; color: #333;">
+                Für eine vollständige Bewertung des Kundenservice sollten Daten zur Reaktionszeit, 
+                Kontaktmöglichkeiten und Antwortqualität erfasst werden.
+              </p>
+            </div>
+            `}
+            
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800; margin-top: 20px;">
+              <h4 style="color: #e65100; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ Kundenservice-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>⚡ Schnelle Reaktion:</strong> Antwortzeit unter 4 Stunden anstreben</li>
+                <li><strong>📱 Mehrere Kanäle:</strong> WhatsApp und Kontaktformular anbieten</li>
+                <li><strong>🤖 Automatisierung:</strong> Eingangsbestätigung einrichten</li>
+                <li><strong>📋 Strukturiert:</strong> Systematischen Nachfass-Prozess etablieren</li>
+                <li><strong>👤 Personal:</strong> Feste Ansprechpartner zuweisen</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     if (staffServiceHtml) {
       sectionsHtml += `
         <section class="section">
