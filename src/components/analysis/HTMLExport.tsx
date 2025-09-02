@@ -134,6 +134,12 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     const performanceScore = realData.performance.score;
     const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
     const missingImprintElements = getMissingImprintElements();
+    
+    // Helper functions for display
+    const displaySocialScore = enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–';
+    const displayOverallScore = overallScore > 0 ? overallScore : '–';
+    const displayVisibilityScore = visibilityScore > 0 ? visibilityScore : '–';
+    const displayPerformanceScore = performanceScore > 0 ? performanceScore : '–';
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -163,19 +169,19 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
 
         <section class="score-overview">
             <div class="score-card">
-                <div class="score-big">${overallScore}</div>
+                <div class="score-big">${displayOverallScore}</div>
                 <div class="score-label">Gesamtbewertung</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${visibilityScore}</div>
+                <div class="score-big">${displayVisibilityScore}</div>
                 <div class="score-label">Sichtbarkeit</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${performanceScore}</div>
+                <div class="score-big">${displayPerformanceScore}</div>
                 <div class="score-label">Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–'}</div>
+                <div class="score-big">${displaySocialScore}</div>
                 <div class="score-label">Social Media</div>
             </div>
         </section>
@@ -556,11 +562,11 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Gesamtscore</div>
-                        <div class="metric-value">${enhancedSocialMediaScore}%</div>
+                        <div class="metric-value">${displaySocialScore}%</div>
                          <div class="progress-container">
                             <div class="progress-label">
                                 <span>Fortschritt</span>
-                                <span>${enhancedSocialMediaScore}%</span>
+                                <span>${displaySocialScore}%</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${enhancedSocialMediaScore}%" data-value="${Math.round(enhancedSocialMediaScore / 10) * 10}"></div>
@@ -813,6 +819,12 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     const performanceScore = realData.performance.score;
     const enhancedSocialMediaScore = calculateEnhancedSocialMediaScore();
     const missingImprintElements = getMissingImprintElements();
+    
+    // Helper functions for display
+    const displaySocialScore = enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–';
+    const displayOverallScore = overallScore > 0 ? overallScore : '–';
+    const displayVisibilityScore = visibilityScore > 0 ? visibilityScore : '–';
+    const displayPerformanceScore = performanceScore > 0 ? performanceScore : '–';
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -844,19 +856,19 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
 
         <section class="score-overview">
             <div class="score-card">
-                <div class="score-big">${overallScore}</div>
+                <div class="score-big">${displayOverallScore}</div>
                 <div class="score-label">Gesamtbewertung</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${visibilityScore}</div>
+                <div class="score-big">${displayVisibilityScore}</div>
                 <div class="score-label">Sichtbarkeit</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${performanceScore}</div>
+                <div class="score-big">${displayPerformanceScore}</div>
                 <div class="score-label">Performance</div>
             </div>
             <div class="score-card">
-                <div class="score-big">${enhancedSocialMediaScore > 0 ? enhancedSocialMediaScore : '–'}</div>
+                <div class="score-big">${displaySocialScore}</div>
                 <div class="score-label">Social Media</div>
             </div>
         </section>

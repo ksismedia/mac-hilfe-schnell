@@ -107,6 +107,10 @@ export const generateCustomerHTML = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
+  // Accessibility scores müssen erst berechnet werden
+  const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
+  const accessibilityScore = actualAccessibilityScore;
+  
   // Helper functions for display - zeige Querstrich für fehlende Daten oder bei 0%
   const displayStaffScore = staffQualificationData && staffQualificationData.totalEmployees > 0 
     ? `${Math.round(staffQualificationScore)}%` 
@@ -117,12 +121,17 @@ export const generateCustomerHTML = ({
   const displaySocialScore = socialMediaScore > 0 
     ? `${Math.round(socialMediaScore)}%` 
     : '–';
+  const displayAccessibilityScore = accessibilityScore > 0 
+    ? `${Math.round(accessibilityScore)}%` 
+    : '–';
+  const displayDataPrivacyScore = dataPrivacyScore > 0 
+    ? `${Math.round(dataPrivacyScore)}%` 
+    : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
-  const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   const actualDataPrivacyScore = calculateDataPrivacyScore(realData, dataPrivacyScore);
   
@@ -249,7 +258,7 @@ export const generateCustomerHTML = ({
   const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
   const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
   const reputationScore = realData.reviews.google.rating * 20;
-  const accessibilityScore = actualAccessibilityScore; // Jetzt mit korrigierter Berechnung
+  
   const legalScore = impressumScore;
   
   
@@ -558,10 +567,10 @@ export const generateCustomerHTML = ({
         ` : ''}
         <h3 class="header-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>♿ Barrierefreiheit & Zugänglichkeit</span>
-          <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${accessibilityScore}%</span>
+          <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</span>
         </h3>
         <div class="score-display">
-          <div class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${accessibilityScore}%</div>
+          <div class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</div>
           <div class="score-details">
              <p><strong>Compliance-Level:</strong> 
                <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
@@ -1869,11 +1878,11 @@ export const generateCustomerHTML = ({
             <div class="score-label">Rechtssicherheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(accessibilityScore)}">${accessibilityScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(actualDataPrivacyScore)}">${actualDataPrivacyScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${dataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           <div class="score-card">
