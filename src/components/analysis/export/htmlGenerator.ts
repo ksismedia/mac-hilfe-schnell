@@ -1900,6 +1900,10 @@ export const generateCustomerHTML = ({
           </div>
           ` : ''}
           <div class="score-card">
+            <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${displayQuoteScore}</span></div>
+            <div class="score-label">Kundenservice</div>
+          </div>
+          <div class="score-card">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</span></div>
             <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
