@@ -104,6 +104,11 @@ export const generateCustomerHTML = ({
   console.log('🔶 HTML Generator Social Media Debug:', { manualSocialData, socialMediaScore });
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  console.log('=== HTML GENERATOR DEBUG ===');
+  console.log('quoteResponseData in htmlGenerator:', quoteResponseData);
+  console.log('staffQualificationData in htmlGenerator:', staffQualificationData);
+  console.log('socialMediaScore in htmlGenerator:', socialMediaScore);
+  
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
@@ -127,6 +132,13 @@ export const generateCustomerHTML = ({
   const displayDataPrivacyScore = dataPrivacyScore > 0 
     ? `${Math.round(dataPrivacyScore)}%` 
     : '–';
+  
+  console.log('=== DISPLAY SCORES DEBUG ===');
+  console.log('displayStaffScore:', displayStaffScore);
+  console.log('displayQuoteScore:', displayQuoteScore);
+  console.log('displaySocialScore:', displaySocialScore);
+  console.log('displayAccessibilityScore:', displayAccessibilityScore);
+  console.log('displayDataPrivacyScore:', displayDataPrivacyScore);
   
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
