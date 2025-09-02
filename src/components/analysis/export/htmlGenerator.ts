@@ -2358,7 +2358,7 @@ export const generateCustomerHTML = ({
     <!-- Corporate Identity -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Corporate Identity</span>
+        <span>Corporate Design</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${corporateIdentityScore}%</div>
       </div>
       <div class="section-content">
