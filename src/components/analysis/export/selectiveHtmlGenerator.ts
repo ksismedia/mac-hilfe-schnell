@@ -655,3 +655,12 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
 // Export the function with the expected name for backward compatibility
 export const generateSelectiveCustomerHTML = generateSelectiveHTML;
+
+// Import the full customer HTML generator for browser display
+import { generateCustomerHTML } from './htmlGenerator';
+
+// Export a modified version that shows the full dashboard for browser display
+export const generateSelectiveCustomerHTMLForBrowser = (data: any) => {
+  // For browser display, use the full customer HTML generator with all sections
+  return generateCustomerHTML(data);
+};

@@ -6,7 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 import { FileText, Download, Printer, Settings, ChevronDown, ChevronRight } from 'lucide-react';
-import { generateSelectiveCustomerHTML } from './export/selectiveHtmlGenerator';
+import { generateSelectiveCustomerHTML, generateSelectiveCustomerHTMLForBrowser } from './export/selectiveHtmlGenerator';
 
 interface SelectiveHTMLExportProps {
   businessData: {
@@ -185,7 +185,8 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   };
 
   const generateSelectiveReport = () => {
-    const htmlContent = generateSelectiveCustomerHTML({
+    // For browser display, use the full customer HTML with dashboard that includes all score tiles
+    const htmlContent = generateSelectiveCustomerHTMLForBrowser({
       businessData,
       realData,
       manualCompetitors,
@@ -205,13 +206,8 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      privacyData,
-      accessibilityData,
       dataPrivacyScore: privacyData?.score || 75,
-      selections: {
-        sections: sectionSelections,
-        subSections: subSectionSelections
-      }
+      calculatedOwnCompanyScore: undefined
     });
 
     const newWindow = window.open('', '_blank');
