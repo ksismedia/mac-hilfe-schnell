@@ -104,6 +104,13 @@ export const generateCustomerHTML = ({
   console.log('🔶 HTML Generator Social Media Debug:', { manualSocialData, socialMediaScore });
   const corporateIdentityScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
   const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  console.log('KUNDE SERVICE DEBUG:', {
+    quoteResponseData: !!quoteResponseData,
+    hasResponseTime: quoteResponseData?.responseTime,
+    staffData: !!staffQualificationData,
+    staffEmployees: staffQualificationData?.totalEmployees
+  });
+  
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
