@@ -206,10 +206,10 @@ export const generateCustomerHTML = ({
     ownBaseServiceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
   }
   
-  // NEUE DYNAMISCHE GEWICHTUNG für eigene Firma (gleiche Logik wie in CompetitorAnalysis)
-  const ownRatingWeight = Math.min(0.30 + (serviceCount * 0.015), 0.55); // 30-55%
-  const ownServiceWeight = Math.max(0.40 - (serviceCount * 0.01), 0.25);  // 40-25%
-  const ownReviewWeight = 1 - ownRatingWeight - ownServiceWeight; // Rest für Reviews
+  // ERHÖHTE GEWICHTUNG der Google-Bewertungen für bessere Konkurrenzfähigkeit
+  const ownRatingWeight = Math.min(0.40 + (serviceCount * 0.020), 0.65); // 40-65% (erhöht von 30-55%)
+  const ownServiceWeight = Math.max(0.30 - (serviceCount * 0.015), 0.15);  // 30-15% (reduziert von 40-25%)
+  const ownReviewWeight = 1 - ownRatingWeight - ownServiceWeight; // Rest für Reviews (jetzt höher)
   
   // Berechne den finalen Score mit dynamischer Gewichtung
   const ownDynamicScore = Math.min((ownRatingScore * ownRatingWeight) + (ownReviewScore * ownReviewWeight) + (ownBaseServiceScore * ownServiceWeight), 96);
@@ -1502,10 +1502,10 @@ export const generateCustomerHTML = ({
                         serviceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);  // Max 93% für >15 Services
                       }
                       
-                      // NEUE DYNAMISCHE GEWICHTUNG: Je mehr Services, desto wichtiger die Google-Bewertung
-                      const ratingWeight = Math.min(0.30 + (serviceCount * 0.015), 0.55); // 30-55%
-                      const serviceWeight = Math.max(0.40 - (serviceCount * 0.01), 0.25);  // 40-25%
-                      const reviewWeight = 1 - ratingWeight - serviceWeight; // Rest für Reviews
+                       // ERHÖHTE GEWICHTUNG der Google-Bewertungen auch für Konkurrenten
+                       const ratingWeight = Math.min(0.40 + (serviceCount * 0.020), 0.65); // 40-65% (erhöht von 30-55%)
+                       const serviceWeight = Math.max(0.30 - (serviceCount * 0.015), 0.15);  // 30-15% (reduziert von 40-25%)
+                       const reviewWeight = 1 - ratingWeight - serviceWeight; // Rest für Reviews (jetzt höher)
                       
                       const totalScore = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight), 96);
                       
