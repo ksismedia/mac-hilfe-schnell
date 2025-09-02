@@ -271,8 +271,9 @@ export const generateCustomerHTML = (data: CustomerHTMLData): string => {
   `;
 
   const fullHtml = `
-      ${htmlTemplate}
-      ${metricsHtml}
+    ${htmlTemplate}
+    ${metricsHtml}
+        </div>
       </div>
     </body>
     </html>
