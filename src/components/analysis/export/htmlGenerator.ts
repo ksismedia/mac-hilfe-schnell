@@ -107,12 +107,15 @@ export const generateCustomerHTML = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
-  // Helper functions for display - zeige Querstrich für fehlende Daten
+  // Helper functions for display - zeige Querstrich für fehlende Daten oder bei 0%
   const displayStaffScore = staffQualificationData && staffQualificationData.totalEmployees > 0 
     ? `${Math.round(staffQualificationScore)}%` 
     : '–';
   const displayQuoteScore = quoteResponseData && quoteResponseData.responseTime 
     ? `${Math.round(quoteResponseScore)}%` 
+    : '–';
+  const displaySocialScore = socialMediaScore > 0 
+    ? `${Math.round(socialMediaScore)}%` 
     : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
@@ -1597,7 +1600,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-tile ${getScoreColorClass(0)}">0%</div>
+            <div class="score-tile neutral">–</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine Social Media Aktivität erkannt</p>
               <p><strong>Empfehlung:</strong> Aufbau einer professionellen Social Media Präsenz</p>
@@ -1631,7 +1634,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-tile ${getScoreColorClass(0)}">0%</div>
+            <div class="score-tile neutral">–</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine aktiven Social Media Kanäle</p>
               <p><strong>Empfehlung:</strong> Social Media Präsenz aufbauen</p>
@@ -1700,7 +1703,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${cardClass}">
         <h3>Social Media Präsenz</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+          <div class="score-tile ${getScoreColorClass(socialMediaScore)}">${displaySocialScore}</div>
           <div class="score-details">
             <p><strong>Aktive Plattformen:</strong> ${activePlatforms.length}</p>
             <p><strong>Status:</strong> ${socialMediaScore >= 80 ? 'Sehr gut' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
@@ -1854,7 +1857,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Lokal-SEO</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
             <div class="score-label">Social Media Präsenz</div>
           </div>
           <div class="score-card">
@@ -2796,7 +2799,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Social Media Listening & Monitoring</span>
-        <div class="header-score-circle ${getScoreColorClass(socialMediaScore)}">${socialMediaScore}%</div>
+        <div class="header-score-circle ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
         ${getSocialMediaAnalysis()}
