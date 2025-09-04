@@ -1895,7 +1895,7 @@ export const generateCustomerHTML = ({
           </div>
           ${hourlyRateData ? `
           <div class="score-card">
-            <div class="score-big"><span style="color: ${pricingScore <= 60 ? '#ffffff' : pricingScore <= 80 ? '#ffffff' : '#ffffff'}; background-color: ${pricingScore <= 60 ? '#dc2626' : pricingScore <= 80 ? '#16a34a' : '#eab308'}; padding: 4px 8px; border-radius: 50%; display: inline-block; min-width: 60px; text-align: center;">${pricingScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingScore}%</span></div>
             <div class="score-label">Preispositionierung</div>
           </div>
           ` : ''}
