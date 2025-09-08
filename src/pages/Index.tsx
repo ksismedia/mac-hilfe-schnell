@@ -74,35 +74,37 @@ const Index = () => {
         console.log('=== URL PARAMETER ANALYSIS LOADING ===');
         console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
         
-        // Use the hook to load analysis properly
-        const foundAnalysis = loadAnalysis(analysisIdFromUrl);
-        console.log('Found analysis via hook:', foundAnalysis);
-        
-        if (foundAnalysis) {
-          console.log('Analysis found, setting states...');
-          setBusinessData(foundAnalysis.businessData);
-          setLoadedAnalysisId(analysisIdFromUrl);
-          setStep('results');
-          console.log('States set, moving to results step');
+        // Small delay to ensure the hook has loaded the data
+        setTimeout(() => {
+          const foundAnalysis = loadAnalysis(analysisIdFromUrl);
+          console.log('Found analysis via hook:', foundAnalysis);
           
-          toast({
-            title: "Analyse geladen",
-            description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
-          });
-        } else {
-          console.error('Analysis not found for ID:', analysisIdFromUrl);
-          toast({
-            title: "Analysefehler",
-            description: "Die angeforderte Analyse konnte nicht gefunden werden.",
-            variant: "destructive"
-          });
-        }
-        
-        // Clean URL
-        const url = new URL(window.location.href);
-        url.searchParams.delete('loadAnalysis');
-        window.history.replaceState({}, '', url.toString());
-        console.log('URL cleaned');
+          if (foundAnalysis) {
+            console.log('Analysis found, setting states...');
+            setBusinessData(foundAnalysis.businessData);
+            setLoadedAnalysisId(analysisIdFromUrl);
+            setStep('results');
+            console.log('States set, moving to results step');
+            
+            toast({
+              title: "Analyse geladen",
+              description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
+            });
+          } else {
+            console.error('Analysis not found for ID:', analysisIdFromUrl);
+            toast({
+              title: "Analysefehler",
+              description: "Die angeforderte Analyse konnte nicht gefunden werden.",
+              variant: "destructive"
+            });
+          }
+          
+          // Clean URL
+          const url = new URL(window.location.href);
+          url.searchParams.delete('loadAnalysis');
+          window.history.replaceState({}, '', url.toString());
+          console.log('URL cleaned');
+        }, 500);
       }
       
       setIsInitialized(true);
@@ -254,12 +256,6 @@ const Index = () => {
       return;
     }
     
-    // Prevent unnecessary state changes during input
-    if (step === 'results' && analysis.businessData.url === businessData.url) {
-      console.log('Already in results with same URL, skipping');
-      return;
-    }
-    
     console.log('Setting business data and analysis ID...');
     
     try {
@@ -274,16 +270,16 @@ const Index = () => {
         title: "Analyse geladen",
         description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
       });
+      
+      console.log('=== HANDLE LOAD SAVED ANALYSIS COMPLETED ===');
     } catch (error) {
       console.error('Error loading analysis:', error);
       toast({
         title: "Analysefehler",
-        description: "Die Website konnte nicht analysiert werden.",
+        description: "Fehler beim Laden der Analyse. Bitte versuchen Sie es erneut.",
         variant: "destructive"
       });
     }
-    
-    console.log('=== HANDLE LOAD SAVED ANALYSIS COMPLETED ===');
   };
 
   const resetToStart = () => {
