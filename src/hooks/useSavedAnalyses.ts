@@ -130,10 +130,12 @@ export const useSavedAnalyses = () => {
   // Auth state management
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, 'User:', session?.user?.id || 'anonymous');
       setUser(session?.user ?? null);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session loaded. User:', session?.user?.id || 'anonymous');
       setUser(session?.user ?? null);
     });
 
