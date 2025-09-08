@@ -181,10 +181,89 @@ export const useSavedAnalyses = () => {
       }));
 
       console.log(`Loaded ${analyses.length} analyses from database`);
+      
+      // Check if we need to migrate localStorage analyses
+      await migrateLocalStorageAnalyses(analyses);
+      
       setSavedAnalyses(analyses);
     } catch (error) {
       console.error('Database error:', error);
       loadAnalysesFromLocalStorage();
+    }
+  };
+
+  const migrateLocalStorageAnalyses = async (currentDbAnalyses: SavedAnalysis[]) => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored || stored === 'null' || stored === 'undefined') return;
+
+      const localAnalyses = JSON.parse(stored);
+      if (!Array.isArray(localAnalyses) || localAnalyses.length === 0) return;
+
+      console.log(`Found ${localAnalyses.length} localStorage analyses to potentially migrate`);
+
+      // Find analyses that are in localStorage but not in database
+      const dbIds = new Set(currentDbAnalyses.map(a => a.id));
+      const analysesToMigrate = localAnalyses.filter((local: any) => !dbIds.has(local.id));
+
+      if (analysesToMigrate.length === 0) {
+        console.log('No new analyses to migrate');
+        return;
+      }
+
+      console.log(`Migrating ${analysesToMigrate.length} analyses to database`);
+
+      // Migrate each analysis
+      for (const analysis of analysesToMigrate) {
+        const completeRealData = { ...createDefaultRealData(), ...analysis.realData };
+        const completeManualData = { 
+          competitors: [], 
+          competitorServices: {}, 
+          removedMissingServices: [], 
+          ...analysis.manualData 
+        };
+
+        const { error } = await supabase
+          .from('saved_analyses')
+          .insert({
+            id: analysis.id, // Keep the original ID
+            name: analysis.name,
+            business_data: analysis.businessData as any,
+            real_data: completeRealData as any,
+            manual_data: completeManualData as any,
+            user_id: user?.id,
+            saved_at: analysis.savedAt
+          });
+
+        if (error) {
+          console.error('Migration error for analysis:', analysis.name, error);
+        } else {
+          console.log('Successfully migrated analysis:', analysis.name);
+        }
+      }
+
+      // Reload analyses after migration
+      const { data: updatedData, error: reloadError } = await supabase
+        .from('saved_analyses')
+        .select('*')
+        .order('saved_at', { ascending: false });
+
+      if (!reloadError && updatedData) {
+        const updatedAnalyses: SavedAnalysis[] = updatedData.map(item => ({
+          id: item.id,
+          name: item.name,
+          savedAt: item.saved_at,
+          businessData: item.business_data as SavedAnalysis['businessData'],
+          realData: { ...createDefaultRealData(), ...(item.real_data as any) },
+          manualData: { competitors: [], competitorServices: {}, removedMissingServices: [], ...(item.manual_data as any) }
+        }));
+        
+        setSavedAnalyses(updatedAnalyses);
+        console.log(`Migration completed. Now have ${updatedAnalyses.length} analyses in database`);
+      }
+
+    } catch (error) {
+      console.error('Migration error:', error);
     }
   };
 
