@@ -104,9 +104,16 @@ const Index = () => {
       } else {
         console.error('Analysis not found for ID:', analysisIdFromUrl);
         console.log('Available analysis IDs:', savedAnalyses.map(a => a.id));
+        
+        // Clear URL and redirect to saved analyses view
+        const url = new URL(window.location.href);
+        url.searchParams.delete('loadAnalysis');
+        url.searchParams.delete('load');
+        window.history.replaceState({}, '', url.toString());
+        
         toast({
-          title: "Analysefehler",
-          description: "Die angeforderte Analyse konnte nicht gefunden werden.",
+          title: "Analyse nicht gefunden",
+          description: "Die angeforderte Analyse konnte nicht geladen werden. Bitte wählen Sie aus der Liste.",
           variant: "destructive"
         });
       }
