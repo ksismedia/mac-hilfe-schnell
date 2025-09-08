@@ -9,6 +9,7 @@ import { AlertCircle, TrendingUp, Star, Users, Award, Target, MapPin, X } from '
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, CompetitorServices, CompanyServices } from '@/hooks/useManualData';
 import CompanyServicesInput from './CompanyServicesInput';
+import ManualCompetitorInput from './ManualCompetitorInput';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -463,6 +464,12 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         companyServices={companyServices}
         onServicesChange={onCompanyServicesChange}
         industry={industry}
+      />
+
+      {/* Manuelle Wettbewerber-Eingabe */}
+      <ManualCompetitorInput
+        competitors={manualCompetitors}
+        onCompetitorsChange={onCompetitorsChange}
       />
 
       <Card>
