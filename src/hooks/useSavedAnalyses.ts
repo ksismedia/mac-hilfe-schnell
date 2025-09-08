@@ -449,7 +449,34 @@ export const useSavedAnalyses = () => {
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
     console.log('Loading analysis with ID:', id);
     
-    // First check in current savedAnalyses
+    // FIRST: Always check localStorage directly - most reliable
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && stored !== 'null' && stored !== 'undefined') {
+        const localAnalyses = JSON.parse(stored);
+        if (Array.isArray(localAnalyses)) {
+          const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
+          if (localFound) {
+            console.log('Found analysis in localStorage (primary search):', localFound.name);
+            const completeAnalysis = {
+              ...localFound,
+              realData: { ...createDefaultRealData(), ...localFound.realData },
+              manualData: { 
+                competitors: [], 
+                competitorServices: {}, 
+                removedMissingServices: [], 
+                ...localFound.manualData 
+              }
+            };
+            return completeAnalysis;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
+    }
+    
+    // SECOND: Check in current savedAnalyses (database)
     const found = savedAnalyses.find(analysis => analysis.id === id);
     if (found) {
       const completeAnalysis = {
@@ -462,50 +489,13 @@ export const useSavedAnalyses = () => {
           ...found.manualData 
         }
       };
-      console.log('Found and completed analysis in savedAnalyses:', completeAnalysis.name);
+      console.log('Found analysis in savedAnalyses (database):', completeAnalysis.name);
       return completeAnalysis;
-    }
-    
-    // Fallback: Try localStorage (for both logged in and anonymous users)
-    try {
-      console.log('Not found in savedAnalyses, checking localStorage...');
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && stored !== 'null' && stored !== 'undefined') {
-        const localAnalyses = JSON.parse(stored);
-        if (Array.isArray(localAnalyses)) {
-          const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
-          if (localFound) {
-            console.log('Found analysis in localStorage:', localFound.name);
-            const completeAnalysis = {
-              ...localFound,
-              realData: { ...createDefaultRealData(), ...localFound.realData },
-              manualData: { 
-                competitors: [], 
-                competitorServices: {}, 
-                removedMissingServices: [], 
-                ...localFound.manualData 
-              }
-            };
-            
-            // If user is logged in, try to save to database async (don't wait)
-            if (user) {
-              console.log('Saving localStorage analysis to database...');
-              saveAnalysisToDatabase(completeAnalysis).catch(error => 
-                console.error('Failed to save localStorage analysis to database:', error)
-              );
-            }
-            
-            return completeAnalysis;
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
     }
     
     console.log('Analysis not found anywhere');
     return null;
-  }, [savedAnalyses, user]);
+  }, [savedAnalyses]);
 
   // Helper function to save localStorage analysis to database
   const saveAnalysisToDatabase = async (analysis: SavedAnalysis) => {
