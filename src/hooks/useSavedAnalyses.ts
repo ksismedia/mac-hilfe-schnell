@@ -115,15 +115,15 @@ export const useSavedAnalyses = () => {
       const stored = localStorage.getItem(STORAGE_KEY);
       console.log('Raw localStorage data:', stored);
       
-      if (stored) {
+      if (stored && stored !== 'null') {
         const analyses = JSON.parse(stored);
         console.log('Parsed analyses from localStorage:', analyses);
         
-        if (Array.isArray(analyses)) {
+        if (Array.isArray(analyses) && analyses.length > 0) {
           console.log('Setting analyses state with', analyses.length, 'analyses');
           setSavedAnalyses(analyses);
         } else {
-          console.error('Gespeicherte Analysen sind kein Array:', analyses);
+          console.log('No valid analyses found in localStorage array');
           setSavedAnalyses([]);
         }
       } else {

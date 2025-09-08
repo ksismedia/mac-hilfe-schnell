@@ -76,10 +76,31 @@ const Index = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const analysisIdFromUrl = urlParams.get('loadAnalysis');
     
-    if (analysisIdFromUrl && savedAnalyses.length >= 0) { // Check if hook has initialized
+    if (analysisIdFromUrl) {
       console.log('=== URL PARAMETER ANALYSIS LOADING ===');
       console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
       console.log('Available saved analyses:', savedAnalyses.length);
+      console.log('All saved analysis IDs:', savedAnalyses.map(a => ({ id: a.id, name: a.name })));
+      
+      // Wait for savedAnalyses to be loaded if we don't have any and no user is logged in
+      if (savedAnalyses.length === 0 && !user) {
+        console.log('Waiting for savedAnalyses to load...');
+        // Set a small timeout to allow localStorage to load
+        const timeout = setTimeout(() => {
+          console.log('Timeout reached, checking again...');
+          const foundAnalysis = loadAnalysis(analysisIdFromUrl);
+          if (!foundAnalysis) {
+            console.error('Analysis still not found after timeout:', analysisIdFromUrl);
+            toast({
+              title: "Analysefehler", 
+              description: "Die angeforderte Analyse konnte nicht gefunden werden.",
+              variant: "destructive"
+            });
+          }
+        }, 1000);
+        
+        return () => clearTimeout(timeout);
+      }
       
       const foundAnalysis = loadAnalysis(analysisIdFromUrl);
       console.log('Found analysis via hook:', foundAnalysis);
@@ -95,9 +116,9 @@ const Index = () => {
           title: "Analyse geladen",
           description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
         });
-      } else if (savedAnalyses.length > 0) {
-        // Only show error if we have analyses but couldn't find the requested one
+      } else {
         console.error('Analysis not found for ID:', analysisIdFromUrl);
+        console.log('Available analysis IDs:', savedAnalyses.map(a => a.id));
         toast({
           title: "Analysefehler",
           description: "Die angeforderte Analyse konnte nicht gefunden werden.",
@@ -111,7 +132,7 @@ const Index = () => {
       window.history.replaceState({}, '', url.toString());
       console.log('URL cleaned');
     }
-  }, [savedAnalyses, loadAnalysis, toast]);
+  }, [savedAnalyses, loadAnalysis, toast, user]);
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
