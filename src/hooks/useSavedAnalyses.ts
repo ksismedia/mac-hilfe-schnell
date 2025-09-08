@@ -258,8 +258,14 @@ export const useSavedAnalyses = () => {
           manualData: { competitors: [], competitorServices: {}, removedMissingServices: [], ...(item.manual_data as any) }
         }));
         
-        setSavedAnalyses(updatedAnalyses);
         console.log(`Migration completed. Now have ${updatedAnalyses.length} analyses in database`);
+        
+        // Update state immediately with the complete list including migrated analyses
+        setSavedAnalyses(updatedAnalyses);
+      } else {
+        console.error('Failed to reload after migration:', reloadError);
+        // Fallback: at least set the original analyses
+        setSavedAnalyses(currentDbAnalyses);
       }
 
     } catch (error) {
