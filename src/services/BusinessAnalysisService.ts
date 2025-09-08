@@ -870,6 +870,16 @@ export class BusinessAnalysisService {
         'anlagenwartung', 'haustechnik', 'gebäudetechnik', 'sicherheitsdienst',
         'pförtnerdienst', 'empfangsdienst', 'grünpflege', 'gartenpflege', 
         'winterdienst', 'schneeräumung', 'catering', 'energiemanagement'
+      ],
+      'holzverarbeitung': [
+        'schreiner', 'tischler', 'holz', 'möbel', 'küche',
+        'einbauschrank', 'massivholz', 'furniere', 'holzbearbeitung',
+        'maßanfertigung', 'innenausbau', 'treppen', 'parkett',
+        'fenster', 'türen', 'holzfenster', 'holztüren',
+        'restaurierung', 'antike möbel', 'reparatur', 'oberflächenbehandlung',
+        'lackierung', 'beizen', 'ölen', 'wachsen', 'hobeln',
+        'sägen', 'fräsen', 'verbindungen', 'holzverbindungen',
+        'schreinerei', 'tischlerei', 'handwerk', 'möbelbau'
       ]
     };
     
