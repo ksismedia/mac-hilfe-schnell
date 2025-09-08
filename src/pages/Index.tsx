@@ -66,11 +66,20 @@ const Index = () => {
       if (existingKey) {
         setApiKey(existingKey);
       }
+      
+      // Clean any analysis URL parameters immediately
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('loadAnalysis') || url.searchParams.has('load') || url.searchParams.has('analysisId')) {
+        url.searchParams.delete('loadAnalysis');
+        url.searchParams.delete('load');
+        url.searchParams.delete('analysisId');
+        window.history.replaceState({}, '', url.toString());
+        console.log('Cleaned analysis URL parameters');
+      }
+      
       setIsInitialized(true);
     }
   }, [isInitialized]);
-
-  // URL parameter loading disabled to prevent conflicts with SavedAnalysesManager
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
