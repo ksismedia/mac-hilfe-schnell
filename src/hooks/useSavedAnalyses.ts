@@ -65,8 +65,10 @@ export const useSavedAnalyses = () => {
       loadAnalysesFromDatabase();
     } else {
       console.log('No user, loading from localStorage');
-      // Fallback auf localStorage wenn nicht angemeldet
-      loadAnalysesFromLocalStorage();
+      // Kurze Verzögerung für localStorage-Initialisierung
+      setTimeout(() => {
+        loadAnalysesFromLocalStorage();
+      }, 100);
     }
   }, [user]);
 
@@ -112,10 +114,15 @@ export const useSavedAnalyses = () => {
   const loadAnalysesFromLocalStorage = () => {
     try {
       console.log('Loading analyses from localStorage...');
-      const stored = localStorage.getItem(STORAGE_KEY);
-      console.log('Raw localStorage data:', stored);
       
-      if (stored && stored !== 'null') {
+      // Teste localStorage direkt
+      const keys = Object.keys(localStorage);
+      console.log('All localStorage keys:', keys);
+      
+      const stored = localStorage.getItem(STORAGE_KEY);
+      console.log('Raw localStorage data for key "saved_analyses":', stored);
+      
+      if (stored && stored !== 'null' && stored !== 'undefined') {
         const analyses = JSON.parse(stored);
         console.log('Parsed analyses from localStorage:', analyses);
         
@@ -123,11 +130,14 @@ export const useSavedAnalyses = () => {
           console.log('Setting analyses state with', analyses.length, 'analyses');
           setSavedAnalyses(analyses);
         } else {
-          console.log('No valid analyses found in localStorage array');
+          console.log('Empty or invalid analyses array in localStorage');
           setSavedAnalyses([]);
         }
       } else {
-        console.log('No stored analyses found in localStorage');
+        console.log('No valid stored analyses found in localStorage');
+        // Teste ob es andere Keys mit Analysen gibt
+        const alternativeKeys = keys.filter(key => key.includes('analys') || key.includes('saved'));
+        console.log('Alternative analysis keys found:', alternativeKeys);
         setSavedAnalyses([]);
       }
     } catch (error) {

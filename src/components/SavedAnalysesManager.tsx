@@ -26,7 +26,7 @@ const industryNames = {
 };
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {
-  const { savedAnalyses, deleteAnalysis, exportAnalysis, saveAnalysis } = useSavedAnalyses();
+  const { savedAnalyses, deleteAnalysis, exportAnalysis, saveAnalysis, user } = useSavedAnalyses();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -201,6 +201,8 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
       setIsImporting(false);
     }
   };
+
+  console.log('SavedAnalysesManager render - savedAnalyses:', savedAnalyses.length);
 
   if (savedAnalyses.length === 0) {
     return (
