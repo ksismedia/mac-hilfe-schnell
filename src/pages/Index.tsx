@@ -70,62 +70,7 @@ const Index = () => {
     }
   }, [isInitialized]);
 
-  // Separate effect for loading analysis from URL parameter
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const analysisIdFromUrl = urlParams.get('loadAnalysis') || urlParams.get('load');
-    
-    if (analysisIdFromUrl) {
-      console.log('=== URL PARAMETER ANALYSIS LOADING ===');
-      console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
-      console.log('Available saved analyses:', savedAnalyses.length);
-      console.log('All saved analysis IDs:', savedAnalyses.map(a => ({ id: a.id, name: a.name })));
-      
-      // Warte auf savedAnalyses laden wenn wir keine haben
-      if (savedAnalyses.length === 0) {
-        console.log('Waiting for savedAnalyses to load...');
-        return; // Warten bis savedAnalyses geladen sind
-      }
-      
-      const foundAnalysis = loadAnalysis(analysisIdFromUrl);
-      console.log('Found analysis via hook:', foundAnalysis);
-      
-      if (foundAnalysis) {
-        console.log('Analysis found, setting states...');
-        setBusinessData(foundAnalysis.businessData);
-        setLoadedAnalysisId(analysisIdFromUrl);
-        setStep('results');
-        console.log('States set, moving to results step');
-        
-        toast({
-          title: "Analyse geladen",
-          description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
-        });
-      } else {
-        console.error('Analysis not found for ID:', analysisIdFromUrl);
-        console.log('Available analysis IDs:', savedAnalyses.map(a => a.id));
-        
-        // Clear URL and redirect to saved analyses view
-        const url = new URL(window.location.href);
-        url.searchParams.delete('loadAnalysis');
-        url.searchParams.delete('load');
-        window.history.replaceState({}, '', url.toString());
-        
-        toast({
-          title: "Analyse nicht gefunden",
-          description: "Die angeforderte Analyse konnte nicht geladen werden. Bitte wählen Sie aus der Liste.",
-          variant: "destructive"
-        });
-      }
-      
-      // Clean URL
-      const url = new URL(window.location.href);
-      url.searchParams.delete('loadAnalysis');
-      url.searchParams.delete('load');
-      window.history.replaceState({}, '', url.toString());
-      console.log('URL cleaned');
-    }
-  }, [savedAnalyses, loadAnalysis, toast, user]);
+  // URL parameter loading disabled to prevent conflicts with SavedAnalysesManager
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
