@@ -65,6 +65,27 @@ export const useSavedAnalyses = () => {
       loadAnalysesFromDatabase();
     } else {
       console.log('No user, loading from localStorage');
+      
+      // Test: Erstelle eine Demo-Analyse wenn keine vorhanden
+      const existingData = localStorage.getItem(STORAGE_KEY);
+      if (!existingData || existingData === 'null') {
+        console.log('Creating demo analysis for testing...');
+        const demoAnalysis = {
+          id: 'demo-123',
+          name: 'Demo Analyse',
+          savedAt: new Date().toISOString(),
+          businessData: {
+            address: 'Musterstraße 1, Berlin',
+            url: 'https://example.com',
+            industry: 'shk' as const
+          },
+          realData: {},
+          manualData: {}
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([demoAnalysis]));
+        console.log('Demo analysis created');
+      }
+      
       // Kurze Verzögerung für localStorage-Initialisierung
       setTimeout(() => {
         loadAnalysesFromLocalStorage();
