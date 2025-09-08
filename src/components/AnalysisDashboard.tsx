@@ -1,5 +1,6 @@
 import React from 'react';
 import SimpleAnalysisDashboard from './SimpleAnalysisDashboard';
+import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 
 // Legacy Dashboard - jetzt nur noch Weiterleitung zur neuen stabilen Version
 interface BusinessData {
@@ -12,7 +13,7 @@ interface AnalysisDashboardProps {
   businessData: BusinessData;
   onReset: () => void;
   onBusinessDataChange?: (data: BusinessData) => void;
-  loadedAnalysisId?: string;
+  analysisData?: SavedAnalysis | null;  // Direct analysis data
 }
 
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = (props) => {

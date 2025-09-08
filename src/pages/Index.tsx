@@ -200,25 +200,13 @@ const Index = () => {
 
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
+  const [analysisToLoad, setAnalysisToLoad] = useState<SavedAnalysis | null>(null);
+
   const handleLoadSavedAnalysis = (analysis: SavedAnalysis) => {
-    console.log('=== CONTEXT-BASED ANALYSIS LOADING ===');
-    console.log('Loading analysis via context:', analysis.name);
-    
-    if (!analysis || !analysis.id || !analysis.businessData) {
-      toast({
-        title: "Analysefehler",
-        description: "Die Analyse-Daten sind ungültig.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Set business data and step directly
+    console.log('Loading analysis:', analysis.name);
     setBusinessData(analysis.businessData);
-    setLoadedAnalysisId(analysis.id);
+    setAnalysisToLoad(analysis);  // Store complete analysis
     setStep('results');
-    
-    console.log('Context-based load completed');
     
     toast({
       title: "Analyse geladen",
@@ -275,7 +263,7 @@ const Index = () => {
       <AnalysisDashboard 
         businessData={businessData} 
         onReset={resetToStart}
-        loadedAnalysisId={loadedAnalysisId}
+        analysisData={analysisToLoad}  // Pass complete analysis
       />
     );
   }
