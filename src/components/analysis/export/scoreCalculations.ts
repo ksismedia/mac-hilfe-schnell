@@ -191,9 +191,10 @@ export const calculateSEOContentScore = (
   const localSEOScore = calculateLocalSEOScore(businessData, realData);
   
   // Weighted calculation based on the same weights as in OverallRating
+  const seoScore = realData.seo?.score || 0;
   const metrics = [
     { score: localSEOScore, weight: 24 }, // Local SEO - highest weight
-    { score: realData.seo.score, weight: 14 }, // SEO
+    { score: seoScore, weight: 14 }, // SEO
     { score: realData.imprint.score, weight: 9 }, // Impressum
     { score: currentKeywordsScore, weight: 8 }, // Keywords
   ];
