@@ -20,13 +20,14 @@ interface KeywordAnalysisProps {
 
 const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory }) => {
   const [keywordData, setKeywordData] = useState(() => {
-    const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
+    const keywords = realData.keywords || [];
+    const initialFoundKeywords = keywords.filter(k => k.found).length;
     return {
-      totalKeywords: realData.keywords.length,
+      totalKeywords: keywords.length,
       foundKeywords: initialFoundKeywords,
       overallDensity: 2.8,
-      overallScore: Math.round((initialFoundKeywords / realData.keywords.length) * 100),
-      keywords: realData.keywords
+      overallScore: keywords.length > 0 ? Math.round((initialFoundKeywords / keywords.length) * 100) : 0,
+      keywords: keywords
     };
   });
 
@@ -34,13 +35,14 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
 
   // Update keywords wenn sich realData ändert (Parameter-Wechsel)
   useEffect(() => {
-    const initialFoundKeywords = realData.keywords.filter(k => k.found).length;
+    const keywords = realData.keywords || [];
+    const initialFoundKeywords = keywords.filter(k => k.found).length;
     setKeywordData({
-      totalKeywords: realData.keywords.length,
+      totalKeywords: keywords.length,
       foundKeywords: initialFoundKeywords,
       overallDensity: 2.8,
-      overallScore: Math.round((initialFoundKeywords / realData.keywords.length) * 100),
-      keywords: realData.keywords
+      overallScore: keywords.length > 0 ? Math.round((initialFoundKeywords / keywords.length) * 100) : 0,
+      keywords: keywords
     });
   }, [realData, industry]);
 
@@ -117,15 +119,16 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       onKeywordDataChange?.(manualKeywords);
     } else {
       // Fallback zu ursprünglichen Daten
-      const originalFoundKeywords = realData.keywords.filter(k => k.found).length;
-      const originalScore = Math.round((originalFoundKeywords / realData.keywords.length) * 100);
+      const keywords = realData.keywords || [];
+      const originalFoundKeywords = keywords.filter(k => k.found).length;
+      const originalScore = keywords.length > 0 ? Math.round((originalFoundKeywords / keywords.length) * 100) : 0;
       
       setKeywordData({
-        totalKeywords: realData.keywords.length,
+        totalKeywords: keywords.length,
         foundKeywords: originalFoundKeywords,
         overallDensity: 2.8,
         overallScore: originalScore,
-        keywords: realData.keywords
+        keywords: keywords
       });
       
       console.log('Resetting to original data, calling onScoreChange with null');

@@ -25,8 +25,9 @@ interface OverallRatingProps {
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData }) => {
   // Keywords-Score - use provided score or calculate default
-  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const keywords = realData.keywords || [];
+  const keywordsFoundCount = keywords.filter(k => k.found).length;
+  const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
   const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
 
   // Social Media Score - VEREINFACHT

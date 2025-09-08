@@ -183,8 +183,9 @@ export const calculateSEOContentScore = (
   accessibilityData: any
 ): number => {
   // Use the same logic as in OverallRating component for consistent results
-  const keywordsFoundCount = realData.keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = Math.round((keywordsFoundCount / realData.keywords.length) * 100);
+  const keywords = realData.keywords || [];
+  const keywordsFoundCount = keywords.filter(k => k.found).length;
+  const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
   const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
   
   const localSEOScore = calculateLocalSEOScore(businessData, realData);

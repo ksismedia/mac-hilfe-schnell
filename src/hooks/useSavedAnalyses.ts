@@ -79,7 +79,12 @@ export const useSavedAnalyses = () => {
             url: 'https://example.com',
             industry: 'shk' as const
           },
-          realData: {},
+          realData: {
+            keywords: [],
+            seo: { score: 0 },
+            social: { facebook: { found: false }, instagram: { found: false } },
+            workplace: { glassdoor: { found: false }, kununu: { found: false } }
+          },
           manualData: {}
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify([demoAnalysis]));
