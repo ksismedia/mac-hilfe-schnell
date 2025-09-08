@@ -82,9 +82,16 @@ export const useSavedAnalyses = () => {
           realData: {
             keywords: [],
             seo: { score: 75 },
+            imprint: { score: 80 },
             social: { facebook: { found: false }, instagram: { found: false } },
-            workplace: { glassdoor: { found: false }, kununu: { found: false } },
+            socialMedia: { facebook: { found: false, followers: 0 }, instagram: { found: false, followers: 0 } },
+            socialProof: { overallScore: 65 },
+            workplace: { 
+              glassdoor: { found: false, rating: 0, reviews: 0 }, 
+              kununu: { found: false, rating: 0, reviews: 0 } 
+            },
             performance: { score: 80 },
+            mobile: { overallScore: 85 },
             accessibility: { score: 70 },
             reviews: { google: { found: false, count: 0, rating: 0 } }
           },

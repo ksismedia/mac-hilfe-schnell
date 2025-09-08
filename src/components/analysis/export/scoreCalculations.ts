@@ -3,8 +3,8 @@ import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 
 const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
-  const reviews = realData.reviews.google.count;
-  const rating = realData.reviews.google.rating;
+  const reviews = realData.reviews?.google?.count || 0;
+  const rating = realData.reviews?.google?.rating || 0;
   let score = 0;
 
   // Höhere Bewertung der Google Reviews für bessere Wettbewerbsposition
@@ -32,15 +32,15 @@ const calculateSocialMediaScore = (
   let score = 0;
   let foundPlatforms = 0;
 
-  if (realData.socialMedia.facebook.found || manualSocialData?.facebookUrl) {
+  if (realData.socialMedia?.facebook?.found || manualSocialData?.facebookUrl) {
     foundPlatforms++;
-    if (realData.socialMedia.facebook.followers > 100 || manualSocialData?.facebookFollowers) {
+    if ((realData.socialMedia?.facebook?.followers || 0) > 100 || manualSocialData?.facebookFollowers) {
       score += 20;
     }
   }
-  if (realData.socialMedia.instagram.found || manualSocialData?.instagramUrl) {
+  if (realData.socialMedia?.instagram?.found || manualSocialData?.instagramUrl) {
     foundPlatforms++;
-    if (realData.socialMedia.instagram.followers > 100 || manualSocialData?.instagramFollowers) {
+    if ((realData.socialMedia?.instagram?.followers || 0) > 100 || manualSocialData?.instagramFollowers) {
       score += 20;
     }
   }
@@ -81,13 +81,13 @@ export const calculateSocialMediaCategoryScore = (
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   
   // Google Reviews Score
-  const googleReviewsScore = realData.reviews.google.count > 0 ? 
-    Math.min(100, realData.reviews.google.rating * 20) : 0;
+  const googleReviewsScore = (realData.reviews?.google?.count || 0) > 0 ? 
+    Math.min(100, (realData.reviews?.google?.rating || 0) * 20) : 0;
   
   const metrics = [
     { score: socialMediaScore, weight: 6 }, // Social Media
     { score: googleReviewsScore, weight: 7 }, // Bewertungen
-    { score: realData.socialProof.overallScore, weight: 4 }, // Social Proof
+    { score: realData.socialProof?.overallScore || 0, weight: 4 }, // Social Proof
     { score: workplaceScore, weight: 2 }, // Arbeitsplatz
   ];
   
@@ -192,10 +192,11 @@ export const calculateSEOContentScore = (
   
   // Weighted calculation based on the same weights as in OverallRating
   const seoScore = realData.seo?.score || 0;
+  const imprintScore = realData.imprint?.score || 0;
   const metrics = [
     { score: localSEOScore, weight: 24 }, // Local SEO - highest weight
     { score: seoScore, weight: 14 }, // SEO
-    { score: realData.imprint.score, weight: 9 }, // Impressum
+    { score: imprintScore, weight: 9 }, // Impressum
     { score: currentKeywordsScore, weight: 8 }, // Keywords
   ];
   
@@ -207,9 +208,11 @@ export const calculateSEOContentScore = (
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
   // Use the same logic as in OverallRating component for consistent results
+  const performanceScore = realData.performance?.score || 0;
+  const mobileScore = realData.mobile?.overallScore || 0;
   const metrics = [
-    { score: realData.performance.score, weight: 11 }, // Performance
-    { score: realData.mobile.overallScore, weight: 6 }, // Mobile
+    { score: performanceScore, weight: 11 }, // Performance
+    { score: mobileScore, weight: 6 }, // Mobile
   ];
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
