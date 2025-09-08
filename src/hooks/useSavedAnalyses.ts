@@ -460,13 +460,13 @@ export const useSavedAnalyses = () => {
       return completeAnalysis;
     }
     
-    // Fallback: Try to load from localStorage if not found in current savedAnalyses
-    if (!user) {
-      try {
-        console.log('Analysis not found in current list, checking localStorage...');
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          const localAnalyses = JSON.parse(stored);
+    // Fallback: Try to load from localStorage regardless of user status
+    try {
+      console.log('Analysis not found in current list, checking localStorage...');
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && stored !== 'null' && stored !== 'undefined') {
+        const localAnalyses = JSON.parse(stored);
+        if (Array.isArray(localAnalyses)) {
           const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
           if (localFound) {
             console.log('Found analysis in localStorage:', localFound.name);
@@ -480,17 +480,55 @@ export const useSavedAnalyses = () => {
                 ...localFound.manualData 
               }
             };
+            
+            // If user is logged in, try to save this analysis to database
+            if (user) {
+              console.log('User is logged in, attempting to save localStorage analysis to database...');
+              saveAnalysisToDatabase(completeAnalysis).catch(error => 
+                console.error('Failed to save localStorage analysis to database:', error)
+              );
+            }
+            
             return completeAnalysis;
           }
         }
-      } catch (error) {
-        console.error('Error loading from localStorage:', error);
       }
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
     }
     
     console.log('Analysis not found in database or localStorage');
     return null;
   }, [savedAnalyses, user]);
+
+  // Helper function to save localStorage analysis to database
+  const saveAnalysisToDatabase = async (analysis: SavedAnalysis) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('saved_analyses')
+        .insert({
+          id: analysis.id,
+          name: analysis.name,
+          business_data: analysis.businessData as any,
+          real_data: analysis.realData as any,
+          manual_data: analysis.manualData as any,
+          user_id: user.id,
+          saved_at: analysis.savedAt
+        });
+
+      if (error) {
+        console.error('Error saving to database:', error);
+      } else {
+        console.log('Successfully saved localStorage analysis to database:', analysis.name);
+        // Reload analyses to include the newly saved one
+        loadAnalysesFromDatabase();
+      }
+    } catch (error) {
+      console.error('Database save error:', error);
+    }
+  };
 
   const exportAnalysis = useCallback((id: string) => {
     const analysis = loadAnalysis(id);
