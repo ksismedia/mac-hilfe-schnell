@@ -14,6 +14,7 @@ import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff, LogIn, LogOut, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 
 interface BusinessData {
   address: string;
@@ -41,6 +42,9 @@ const Index = () => {
   
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
+  
+  // Saved Analyses Hook
+  const { loadAnalysis } = useSavedAnalyses();
 
   // Authentication useEffect
   useEffect(() => {
@@ -70,49 +74,26 @@ const Index = () => {
         console.log('=== URL PARAMETER ANALYSIS LOADING ===');
         console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
         
-        // Versuche Analyse aus localStorage zu laden
-        try {
-          const stored = localStorage.getItem('saved_analyses');
-          console.log('Raw localStorage data:', stored);
+        // Use the hook to load analysis properly
+        const foundAnalysis = loadAnalysis(analysisIdFromUrl);
+        console.log('Found analysis via hook:', foundAnalysis);
+        
+        if (foundAnalysis) {
+          console.log('Analysis found, setting states...');
+          setBusinessData(foundAnalysis.businessData);
+          setLoadedAnalysisId(analysisIdFromUrl);
+          setStep('results');
+          console.log('States set, moving to results step');
           
-          if (stored) {
-            const analyses = JSON.parse(stored);
-            console.log('Parsed analyses:', analyses);
-            const foundAnalysis = analyses.find((a: any) => a.id === analysisIdFromUrl);
-            console.log('Found analysis for ID:', foundAnalysis);
-            
-            if (foundAnalysis) {
-              console.log('Analysis found in localStorage, setting states...');
-              setBusinessData(foundAnalysis.businessData);
-              setLoadedAnalysisId(analysisIdFromUrl);
-              setStep('results');
-              console.log('States set, moving to results step');
-              
-              toast({
-                title: "Analyse geladen",
-                description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
-              });
-            } else {
-              console.error('Analysis not found in localStorage for ID:', analysisIdFromUrl);
-              toast({
-                title: "Analysefehler",
-                description: "Die angeforderte Analyse konnte nicht gefunden werden.",
-                variant: "destructive"
-              });
-            }
-          } else {
-            console.error('No saved analyses found in localStorage');
-            toast({
-              title: "Analysefehler", 
-              description: "Keine gespeicherten Analysen gefunden.",
-              variant: "destructive"
-            });
-          }
-        } catch (error) {
-          console.error('Error loading analysis from localStorage:', error);
+          toast({
+            title: "Analyse geladen",
+            description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
+          });
+        } else {
+          console.error('Analysis not found for ID:', analysisIdFromUrl);
           toast({
             title: "Analysefehler",
-            description: "Die Website konnte nicht analysiert werden.",
+            description: "Die angeforderte Analyse konnte nicht gefunden werden.",
             variant: "destructive"
           });
         }
@@ -126,7 +107,7 @@ const Index = () => {
       
       setIsInitialized(true);
     }
-  }, [isInitialized]);
+  }, [isInitialized, loadAnalysis, toast]);
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,7 +229,7 @@ const Index = () => {
 
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
-  const handleLoadSavedAnalysis = (analysis: any) => {
+  const handleLoadSavedAnalysis = (analysis: SavedAnalysis) => {
     console.log('=== HANDLE LOAD SAVED ANALYSIS START ===');
     console.log('Current step:', step);
     console.log('Current loadedAnalysisId:', loadedAnalysisId);
