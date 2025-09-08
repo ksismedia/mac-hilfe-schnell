@@ -819,6 +819,7 @@ export class BusinessAnalysisService {
       'stukateur': ['Stuckateur', 'Putz', 'Fassaden'],
       'planungsbuero': ['Planung', 'Ingenieurbüro', 'Technik'],
       'facility-management': ['Facility Management', 'Gebäudereinigung', 'Hausmeisterdienst'],
+      'holzverarbeitung': ['Schreiner', 'Tischler', 'Holzverarbeitung']
     };
     
     return terms[industry as keyof typeof terms] || ['Handwerk', 'Service', 'Betrieb'];
