@@ -447,17 +447,42 @@ export const useSavedAnalyses = () => {
   }, [savedAnalyses, user]);
 
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
-    console.log('Loading analysis with ID:', id);
+    console.log('=== DETAILED ANALYSIS LOADING DEBUG ===');
+    console.log('Searching for ID:', id);
+    console.log('ID type:', typeof id);
+    console.log('ID length:', id.length);
     
     // FIRST: Always check localStorage directly - most reliable
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      console.log('localStorage raw data:', stored ? 'found' : 'null');
+      
       if (stored && stored !== 'null' && stored !== 'undefined') {
         const localAnalyses = JSON.parse(stored);
+        console.log('Parsed localStorage, is array:', Array.isArray(localAnalyses));
+        console.log('localStorage length:', localAnalyses.length);
+        
         if (Array.isArray(localAnalyses)) {
-          const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
+          console.log('All localStorage IDs:');
+          localAnalyses.forEach((analysis: any, index: number) => {
+            console.log(`  [${index}] ID: "${analysis.id}" (type: ${typeof analysis.id}, length: ${analysis.id?.length}) Name: "${analysis.name}"`);
+            console.log(`      Exact match test: ${analysis.id === id}`);
+            console.log(`      Trim match test: ${analysis.id?.toString().trim() === id.toString().trim()}`);
+          });
+          
+          // Try multiple search strategies
+          let localFound = localAnalyses.find((analysis: any) => analysis.id === id);
+          if (!localFound) {
+            console.log('Exact match failed, trying trim match...');
+            localFound = localAnalyses.find((analysis: any) => analysis.id?.toString().trim() === id.toString().trim());
+          }
+          if (!localFound) {
+            console.log('Trim match failed, trying includes match...');
+            localFound = localAnalyses.find((analysis: any) => analysis.id?.toString().includes(id) || id.includes(analysis.id?.toString()));
+          }
+          
           if (localFound) {
-            console.log('Found analysis in localStorage (primary search):', localFound.name);
+            console.log('FOUND analysis in localStorage:', localFound.name);
             const completeAnalysis = {
               ...localFound,
               realData: { ...createDefaultRealData(), ...localFound.realData },
@@ -469,6 +494,8 @@ export const useSavedAnalyses = () => {
               }
             };
             return completeAnalysis;
+          } else {
+            console.log('NO MATCH found in localStorage despite having data');
           }
         }
       }
@@ -476,7 +503,12 @@ export const useSavedAnalyses = () => {
       console.error('Error loading from localStorage:', error);
     }
     
-    // SECOND: Check in current savedAnalyses (database)
+    console.log('localStorage search failed, checking savedAnalyses...');
+    console.log('savedAnalyses length:', savedAnalyses.length);
+    savedAnalyses.forEach((analysis, index) => {
+      console.log(`  DB[${index}] ID: "${analysis.id}" Name: "${analysis.name}"`);
+    });
+    
     const found = savedAnalyses.find(analysis => analysis.id === id);
     if (found) {
       const completeAnalysis = {
@@ -493,7 +525,7 @@ export const useSavedAnalyses = () => {
       return completeAnalysis;
     }
     
-    console.log('Analysis not found anywhere');
+    console.log('=== ANALYSIS NOT FOUND ANYWHERE ===');
     return null;
   }, [savedAnalyses]);
 
