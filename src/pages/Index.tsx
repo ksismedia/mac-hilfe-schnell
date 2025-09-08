@@ -44,7 +44,7 @@ const Index = () => {
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
   
   // Saved Analyses Hook
-  const { loadAnalysis } = useSavedAnalyses();
+  const { loadAnalysis, savedAnalyses } = useSavedAnalyses();
 
   // Authentication useEffect
   useEffect(() => {
@@ -66,50 +66,52 @@ const Index = () => {
       if (existingKey) {
         setApiKey(existingKey);
       }
-      
-      // Check for URL parameter to load analysis
-      const urlParams = new URLSearchParams(window.location.search);
-      const analysisIdFromUrl = urlParams.get('loadAnalysis');
-      if (analysisIdFromUrl) {
-        console.log('=== URL PARAMETER ANALYSIS LOADING ===');
-        console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
-        
-        // Small delay to ensure the hook has loaded the data
-        setTimeout(() => {
-          const foundAnalysis = loadAnalysis(analysisIdFromUrl);
-          console.log('Found analysis via hook:', foundAnalysis);
-          
-          if (foundAnalysis) {
-            console.log('Analysis found, setting states...');
-            setBusinessData(foundAnalysis.businessData);
-            setLoadedAnalysisId(analysisIdFromUrl);
-            setStep('results');
-            console.log('States set, moving to results step');
-            
-            toast({
-              title: "Analyse geladen",
-              description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
-            });
-          } else {
-            console.error('Analysis not found for ID:', analysisIdFromUrl);
-            toast({
-              title: "Analysefehler",
-              description: "Die angeforderte Analyse konnte nicht gefunden werden.",
-              variant: "destructive"
-            });
-          }
-          
-          // Clean URL
-          const url = new URL(window.location.href);
-          url.searchParams.delete('loadAnalysis');
-          window.history.replaceState({}, '', url.toString());
-          console.log('URL cleaned');
-        }, 500);
-      }
-      
       setIsInitialized(true);
     }
-  }, [isInitialized, loadAnalysis, toast]);
+  }, [isInitialized]);
+
+  // Separate effect for loading analysis from URL parameter
+  // This runs after savedAnalyses are loaded
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const analysisIdFromUrl = urlParams.get('loadAnalysis');
+    
+    if (analysisIdFromUrl && savedAnalyses.length >= 0) { // Check if hook has initialized
+      console.log('=== URL PARAMETER ANALYSIS LOADING ===');
+      console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
+      console.log('Available saved analyses:', savedAnalyses.length);
+      
+      const foundAnalysis = loadAnalysis(analysisIdFromUrl);
+      console.log('Found analysis via hook:', foundAnalysis);
+      
+      if (foundAnalysis) {
+        console.log('Analysis found, setting states...');
+        setBusinessData(foundAnalysis.businessData);
+        setLoadedAnalysisId(analysisIdFromUrl);
+        setStep('results');
+        console.log('States set, moving to results step');
+        
+        toast({
+          title: "Analyse geladen",
+          description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
+        });
+      } else if (savedAnalyses.length > 0) {
+        // Only show error if we have analyses but couldn't find the requested one
+        console.error('Analysis not found for ID:', analysisIdFromUrl);
+        toast({
+          title: "Analysefehler",
+          description: "Die angeforderte Analyse konnte nicht gefunden werden.",
+          variant: "destructive"
+        });
+      }
+      
+      // Clean URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('loadAnalysis');
+      window.history.replaceState({}, '', url.toString());
+      console.log('URL cleaned');
+    }
+  }, [savedAnalyses, loadAnalysis, toast]);
 
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();

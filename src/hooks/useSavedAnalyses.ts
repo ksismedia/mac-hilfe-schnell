@@ -111,15 +111,24 @@ export const useSavedAnalyses = () => {
 
   const loadAnalysesFromLocalStorage = () => {
     try {
+      console.log('Loading analyses from localStorage...');
       const stored = localStorage.getItem(STORAGE_KEY);
+      console.log('Raw localStorage data:', stored);
+      
       if (stored) {
         const analyses = JSON.parse(stored);
+        console.log('Parsed analyses from localStorage:', analyses);
+        
         if (Array.isArray(analyses)) {
+          console.log('Setting analyses state with', analyses.length, 'analyses');
           setSavedAnalyses(analyses);
         } else {
           console.error('Gespeicherte Analysen sind kein Array:', analyses);
           setSavedAnalyses([]);
         }
+      } else {
+        console.log('No stored analyses found in localStorage');
+        setSavedAnalyses([]);
       }
     } catch (error) {
       console.error('Fehler beim Laden der gespeicherten Analysen:', error);
@@ -258,7 +267,13 @@ export const useSavedAnalyses = () => {
 
   // Lade eine Analyse
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
-    return savedAnalyses.find(analysis => analysis.id === id) || null;
+    console.log('Loading analysis with ID:', id);
+    console.log('Available analyses:', savedAnalyses.map(a => ({ id: a.id, name: a.name })));
+    
+    const found = savedAnalyses.find(analysis => analysis.id === id) || null;
+    console.log('Found analysis:', found ? found.name : 'Not found');
+    
+    return found;
   }, [savedAnalyses]);
 
   // Exportiere eine Analyse als JSON
