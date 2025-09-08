@@ -223,7 +223,6 @@ export const useSavedAnalyses = () => {
       setSavedAnalyses([]);
     }
   };
-  };
 
   const saveAnalysis = useCallback(async (
     name: string,
