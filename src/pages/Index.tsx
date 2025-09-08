@@ -202,14 +202,9 @@ const Index = () => {
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
   const handleLoadSavedAnalysis = (analysis: SavedAnalysis) => {
-    console.log('=== HANDLE LOAD SAVED ANALYSIS START ===');
-    console.log('Current step:', step);
-    console.log('Current loadedAnalysisId:', loadedAnalysisId);
-    console.log('Analysis to load:', analysis);
-    console.log('Analysis ID:', analysis.id);
-    console.log('Business data:', analysis.businessData);
+    console.log('=== DIRECT ANALYSIS LOADING ===');
+    console.log('Loading analysis directly:', analysis.name);
     
-    // Validate analysis structure
     if (!analysis || !analysis.id || !analysis.businessData) {
       console.error('Invalid analysis structure:', analysis);
       toast({
@@ -220,32 +215,30 @@ const Index = () => {
       return;
     }
     
-    // Prevent state updates if we're already in results with the same analysis
+    // Prevent duplicate loading
     if (step === 'results' && loadedAnalysisId === analysis.id) {
-      console.log('Already in results with same analysis ID, skipping');
+      console.log('Already loaded this analysis, skipping');
       return;
     }
     
     console.log('Setting business data and analysis ID...');
     
     try {
-      // Set business data and analysis ID
       setBusinessData(analysis.businessData);
       setLoadedAnalysisId(analysis.id);
       setStep('results');
       
-      console.log('State updated - new step: results, new loadedAnalysisId:', analysis.id);
+      console.log('Direct load completed - step: results, loadedAnalysisId:', analysis.id);
       
       toast({
         title: "Analyse geladen",
         description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
       });
       
-      console.log('=== HANDLE LOAD SAVED ANALYSIS COMPLETED ===');
     } catch (error) {
       console.error('Error loading analysis:', error);
       toast({
-        title: "Analysefehler",
+        title: "Analysefehler", 
         description: "Fehler beim Laden der Analyse. Bitte versuchen Sie es erneut.",
         variant: "destructive"
       });
