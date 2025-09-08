@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -32,16 +31,101 @@ export interface SavedAnalysis {
     manualContentData?: ManualContentData;
     manualAccessibilityData?: ManualAccessibilityData;
     manualBacklinkData?: ManualBacklinkData;
-    privacyData?: any; // Datenschutz-Analysedaten
-    accessibilityData?: any; // Barrierefreiheits-Analysedaten
+    privacyData?: any;
+    accessibilityData?: any;
   };
 }
 
 const STORAGE_KEY = 'saved_analyses';
 
+// Vollständige Default-RealData-Struktur basierend auf der tatsächlichen Interface
+const createDefaultRealData = (): RealBusinessData => ({
+  company: {
+    name: 'Demo Unternehmen',
+    address: 'Musterstraße 1, 12345 Berlin',
+    url: 'https://example.com',
+    industry: 'shk',
+    phone: '',
+    email: ''
+  },
+  seo: {
+    titleTag: 'Demo Titel',
+    metaDescription: 'Demo Beschreibung',
+    headings: { h1: [], h2: [], h3: [] },
+    altTags: { total: 0, withAlt: 0 },
+    score: 75
+  },
+  performance: {
+    loadTime: 2.5,
+    lcp: 2.0,
+    fid: 100,
+    cls: 0.1,
+    score: 80
+  },
+  reviews: {
+    google: {
+      rating: 0,
+      count: 0,
+      recent: []
+    }
+  },
+  competitors: [],
+  keywords: [],
+  imprint: {
+    found: true,
+    completeness: 80,
+    missingElements: [],
+    foundElements: [],
+    score: 80
+  },
+  socialMedia: {
+    facebook: {
+      found: false,
+      followers: 0,
+      lastPost: '',
+      engagement: ''
+    },
+    instagram: {
+      found: false,
+      followers: 0,
+      lastPost: '',
+      engagement: ''
+    },
+    overallScore: 65
+  },
+  workplace: {
+    kununu: {
+      found: false,
+      rating: 0,
+      reviews: 0
+    },
+    glassdoor: {
+      found: false,
+      rating: 0,
+      reviews: 0
+    },
+    overallScore: 0
+  },
+  socialProof: {
+    testimonials: 0,
+    certifications: [],
+    awards: [],
+    overallScore: 65
+  },
+  mobile: {
+    responsive: true,
+    touchFriendly: true,
+    pageSpeedMobile: 75,
+    pageSpeedDesktop: 80,
+    overallScore: 85,
+    issues: []
+  }
+});
+
 export const useSavedAnalyses = () => {
   const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
   const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Auth state management
   useEffect(() => {
@@ -56,150 +140,132 @@ export const useSavedAnalyses = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Lade gespeicherte Analysen beim Start
+  // Load analyses when user state changes
   useEffect(() => {
-    console.log('useSavedAnalyses: User state changed:', user?.id || 'no user');
-    
-    if (user) {
-      console.log('User authenticated, loading from database');
-      loadAnalysesFromDatabase();
-    } else {
-      console.log('No user, loading from localStorage');
+    const loadAnalyses = async () => {
+      setIsLoading(true);
+      console.log('Loading analyses for user:', user?.id || 'anonymous');
       
-      // Test: Erstelle eine Demo-Analyse wenn keine vorhanden
-      const existingData = localStorage.getItem(STORAGE_KEY);
-      if (!existingData || existingData === 'null') {
-        console.log('Creating demo analysis for testing...');
-        const demoAnalysis = {
-          id: 'demo-123',
-          name: 'Demo Analyse',
-          savedAt: new Date().toISOString(),
-          businessData: {
-            address: 'Musterstraße 1, Berlin',
-            url: 'https://example.com',
-            industry: 'shk' as const
-          },
-          realData: {
-            keywords: [],
-            seo: { score: 75 },
-            imprint: { score: 80 },
-            social: { facebook: { found: false }, instagram: { found: false } },
-            socialMedia: { facebook: { found: false, followers: 0 }, instagram: { found: false, followers: 0 } },
-            socialProof: { overallScore: 65 },
-            workplace: { 
-              glassdoor: { found: false, rating: 0, reviews: 0 }, 
-              kununu: { found: false, rating: 0, reviews: 0 } 
-            },
-            performance: { score: 80 },
-            mobile: { overallScore: 85 },
-            accessibility: { score: 70 },
-            reviews: { google: { found: false, count: 0, rating: 0 } }
-          },
-          manualData: {}
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([demoAnalysis]));
-        console.log('Demo analysis created');
+      if (user) {
+        await loadAnalysesFromDatabase();
+      } else {
+        loadAnalysesFromLocalStorage();
       }
       
-      // Kurze Verzögerung für localStorage-Initialisierung
-      setTimeout(() => {
-        loadAnalysesFromLocalStorage();
-      }, 100);
-    }
+      setIsLoading(false);
+    };
+
+    loadAnalyses();
   }, [user]);
 
   const loadAnalysesFromDatabase = async () => {
     try {
-      console.log('Loading analyses from database for user:', user?.id);
+      console.log('Loading from Supabase database...');
       
-      if (!user) {
-        console.log('No user found, skipping database load');
-        return;
-      }
-
       const { data, error } = await supabase
         .from('saved_analyses')
         .select('*')
         .order('saved_at', { ascending: false });
 
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
-      }
-
-      console.log('Database query successful, data:', data);
+      if (error) throw error;
 
       const analyses: SavedAnalysis[] = data.map(item => ({
         id: item.id,
         name: item.name,
         savedAt: item.saved_at,
         businessData: item.business_data as SavedAnalysis['businessData'],
-        realData: item.real_data as unknown as RealBusinessData,
-        manualData: item.manual_data as unknown as SavedAnalysis['manualData']
+        realData: { ...createDefaultRealData(), ...(item.real_data as any) },
+        manualData: { competitors: [], competitorServices: {}, removedMissingServices: [], ...(item.manual_data as any) }
       }));
 
-      console.log('Mapped analyses:', analyses);
+      console.log(`Loaded ${analyses.length} analyses from database`);
       setSavedAnalyses(analyses);
     } catch (error) {
-      console.error('Fehler beim Laden der Analysen aus der Datenbank:', error);
-      // Fallback auf localStorage
+      console.error('Database error:', error);
       loadAnalysesFromLocalStorage();
     }
   };
 
   const loadAnalysesFromLocalStorage = () => {
     try {
-      console.log('Loading analyses from localStorage...');
-      
-      // Teste localStorage direkt
-      const keys = Object.keys(localStorage);
-      console.log('All localStorage keys:', keys);
+      console.log('Loading from localStorage...');
       
       const stored = localStorage.getItem(STORAGE_KEY);
-      console.log('Raw localStorage data for key "saved_analyses":', stored);
       
       if (stored && stored !== 'null' && stored !== 'undefined') {
-        const analyses = JSON.parse(stored);
-        console.log('Parsed analyses from localStorage:', analyses);
+        const parsed = JSON.parse(stored);
         
-        if (Array.isArray(analyses) && analyses.length > 0) {
-          console.log('Setting analyses state with', analyses.length, 'analyses');
+        if (Array.isArray(parsed)) {
+          // Ensure all analyses have complete data structures
+          const analyses = parsed.map(analysis => ({
+            ...analysis,
+            realData: { ...createDefaultRealData(), ...analysis.realData },
+            manualData: { 
+              competitors: [], 
+              competitorServices: {}, 
+              removedMissingServices: [], 
+              ...analysis.manualData 
+            }
+          }));
+          
+          console.log(`Loaded ${analyses.length} analyses from localStorage`);
           setSavedAnalyses(analyses);
-        } else {
-          console.log('Empty or invalid analyses array in localStorage');
-          setSavedAnalyses([]);
+          return;
         }
-      } else {
-        console.log('No valid stored analyses found in localStorage');
-        // Teste ob es andere Keys mit Analysen gibt
-        const alternativeKeys = keys.filter(key => key.includes('analys') || key.includes('saved'));
-        console.log('Alternative analysis keys found:', alternativeKeys);
-        setSavedAnalyses([]);
       }
+      
+      // Create demo analysis if no data exists
+      console.log('No existing data, creating demo analysis...');
+      const demoAnalysis: SavedAnalysis = {
+        id: 'demo-123',
+        name: 'Demo Analyse - Muster GmbH',
+        savedAt: new Date().toISOString(),
+        businessData: {
+          address: 'Musterstraße 1, 12345 Berlin',
+          url: 'https://beispiel-handwerk.de',
+          industry: 'shk'
+        },
+        realData: createDefaultRealData(),
+        manualData: {
+          competitors: [],
+          competitorServices: {},
+          removedMissingServices: []
+        }
+      };
+      
+      setSavedAnalyses([demoAnalysis]);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([demoAnalysis]));
+      console.log('Demo analysis created');
+      
     } catch (error) {
-      console.error('Fehler beim Laden der gespeicherten Analysen:', error);
-      localStorage.removeItem(STORAGE_KEY);
+      console.error('localStorage error:', error);
       setSavedAnalyses([]);
     }
   };
 
-  // Speichere eine Analyse
   const saveAnalysis = useCallback(async (
     name: string,
     businessData: SavedAnalysis['businessData'],
     realData: RealBusinessData,
     manualData: SavedAnalysis['manualData']
   ) => {
+    const completeRealData = { ...createDefaultRealData(), ...realData };
+    const completeManualData = { 
+      competitors: [], 
+      competitorServices: {}, 
+      removedMissingServices: [], 
+      ...manualData 
+    };
+
     if (user) {
-      // Speichere in Datenbank
       try {
         const { data, error } = await supabase
           .from('saved_analyses')
           .insert({
             name,
             business_data: businessData as any,
-            real_data: realData as any,
-            manual_data: manualData as any,
+            real_data: completeRealData as any,
+            manual_data: completeManualData as any,
             user_id: user.id
           })
           .select()
@@ -212,28 +278,27 @@ export const useSavedAnalyses = () => {
           name: data.name,
           savedAt: data.saved_at,
           businessData: data.business_data as SavedAnalysis['businessData'],
-          realData: data.real_data as unknown as RealBusinessData,
-          manualData: data.manual_data as unknown as SavedAnalysis['manualData']
+          realData: completeRealData,
+          manualData: completeManualData
         };
 
-        setSavedAnalyses(prev => [...prev, newAnalysis]);
+        setSavedAnalyses(prev => [newAnalysis, ...prev]);
         return newAnalysis.id;
       } catch (error) {
-        console.error('Fehler beim Speichern in der Datenbank:', error);
+        console.error('Database save error:', error);
         throw error;
       }
     } else {
-      // Fallback auf localStorage
       const newAnalysis: SavedAnalysis = {
         id: Date.now().toString(),
         name,
         savedAt: new Date().toISOString(),
         businessData,
-        realData,
-        manualData
+        realData: completeRealData,
+        manualData: completeManualData
       };
 
-      const updatedAnalyses = [...savedAnalyses, newAnalysis];
+      const updatedAnalyses = [newAnalysis, ...savedAnalyses];
       setSavedAnalyses(updatedAnalyses);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
       
@@ -241,7 +306,6 @@ export const useSavedAnalyses = () => {
     }
   }, [savedAnalyses, user]);
 
-  // Aktualisiere eine bestehende Analyse
   const updateAnalysis = useCallback(async (
     id: string,
     name: string,
@@ -249,16 +313,23 @@ export const useSavedAnalyses = () => {
     realData: RealBusinessData,
     manualData: SavedAnalysis['manualData']
   ) => {
+    const completeRealData = { ...createDefaultRealData(), ...realData };
+    const completeManualData = { 
+      competitors: [], 
+      competitorServices: {}, 
+      removedMissingServices: [], 
+      ...manualData 
+    };
+
     if (user) {
-      // Aktualisiere in Datenbank
       try {
         const { error } = await supabase
           .from('saved_analyses')
           .update({
             name,
             business_data: businessData as any,
-            real_data: realData as any,
-            manual_data: manualData as any
+            real_data: completeRealData as any,
+            manual_data: completeManualData as any
           })
           .eq('id', id);
 
@@ -266,18 +337,17 @@ export const useSavedAnalyses = () => {
 
         setSavedAnalyses(prev => prev.map(analysis => 
           analysis.id === id 
-            ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
+            ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
             : analysis
         ));
       } catch (error) {
-        console.error('Fehler beim Aktualisieren in der Datenbank:', error);
+        console.error('Database update error:', error);
         throw error;
       }
     } else {
-      // Fallback auf localStorage
       const updatedAnalyses = savedAnalyses.map(analysis => 
         analysis.id === id 
-          ? { ...analysis, name, businessData, realData, manualData, savedAt: new Date().toISOString() }
+          ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
           : analysis
       );
       
@@ -286,10 +356,8 @@ export const useSavedAnalyses = () => {
     }
   }, [savedAnalyses, user]);
 
-  // Lösche eine Analyse
   const deleteAnalysis = useCallback(async (id: string) => {
     if (user) {
-      // Lösche aus Datenbank
       try {
         const { error } = await supabase
           .from('saved_analyses')
@@ -300,29 +368,40 @@ export const useSavedAnalyses = () => {
 
         setSavedAnalyses(prev => prev.filter(analysis => analysis.id !== id));
       } catch (error) {
-        console.error('Fehler beim Löschen aus der Datenbank:', error);
+        console.error('Database delete error:', error);
         throw error;
       }
     } else {
-      // Fallback auf localStorage
       const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id);
       setSavedAnalyses(updatedAnalyses);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
     }
   }, [savedAnalyses, user]);
 
-  // Lade eine Analyse
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
     console.log('Loading analysis with ID:', id);
-    console.log('Available analyses:', savedAnalyses.map(a => ({ id: a.id, name: a.name })));
-    
     const found = savedAnalyses.find(analysis => analysis.id === id) || null;
-    console.log('Found analysis:', found ? found.name : 'Not found');
     
-    return found;
+    if (found) {
+      // Ensure complete data structure
+      const completeAnalysis = {
+        ...found,
+        realData: { ...createDefaultRealData(), ...found.realData },
+        manualData: { 
+          competitors: [], 
+          competitorServices: {}, 
+          removedMissingServices: [], 
+          ...found.manualData 
+        }
+      };
+      console.log('Found and completed analysis:', completeAnalysis.name);
+      return completeAnalysis;
+    }
+    
+    console.log('Analysis not found');
+    return null;
   }, [savedAnalyses]);
 
-  // Exportiere eine Analyse als JSON
   const exportAnalysis = useCallback((id: string) => {
     const analysis = loadAnalysis(id);
     if (!analysis) return;
@@ -346,6 +425,7 @@ export const useSavedAnalyses = () => {
     deleteAnalysis,
     loadAnalysis,
     exportAnalysis,
-    user
+    user,
+    isLoading
   };
 };
