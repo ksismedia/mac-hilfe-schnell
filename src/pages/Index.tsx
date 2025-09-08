@@ -43,8 +43,7 @@ const Index = () => {
   // Extension Data Hook
   const { extensionData, isFromExtension, clearExtensionData, hasExtensionData } = useExtensionData();
   
-  // Saved Analyses Hook
-  const { loadAnalysis, savedAnalyses } = useSavedAnalyses();
+  // Removed useSavedAnalyses dependency - using direct context approach
 
   // Authentication useEffect
   useEffect(() => {
@@ -202,47 +201,29 @@ const Index = () => {
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
 
   const handleLoadSavedAnalysis = (analysis: SavedAnalysis) => {
-    console.log('=== DIRECT ANALYSIS LOADING ===');
-    console.log('Loading analysis directly:', analysis.name);
+    console.log('=== CONTEXT-BASED ANALYSIS LOADING ===');
+    console.log('Loading analysis via context:', analysis.name);
     
     if (!analysis || !analysis.id || !analysis.businessData) {
-      console.error('Invalid analysis structure:', analysis);
       toast({
         title: "Analysefehler",
-        description: "Die Analyse-Daten sind ungültig oder beschädigt.",
+        description: "Die Analyse-Daten sind ungültig.",
         variant: "destructive"
       });
       return;
     }
     
-    // Prevent duplicate loading
-    if (step === 'results' && loadedAnalysisId === analysis.id) {
-      console.log('Already loaded this analysis, skipping');
-      return;
-    }
+    // Set business data and step directly
+    setBusinessData(analysis.businessData);
+    setLoadedAnalysisId(analysis.id);
+    setStep('results');
     
-    console.log('Setting business data and analysis ID...');
+    console.log('Context-based load completed');
     
-    try {
-      setBusinessData(analysis.businessData);
-      setLoadedAnalysisId(analysis.id);
-      setStep('results');
-      
-      console.log('Direct load completed - step: results, loadedAnalysisId:', analysis.id);
-      
-      toast({
-        title: "Analyse geladen",
-        description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
-      });
-      
-    } catch (error) {
-      console.error('Error loading analysis:', error);
-      toast({
-        title: "Analysefehler", 
-        description: "Fehler beim Laden der Analyse. Bitte versuchen Sie es erneut.",
-        variant: "destructive"
-      });
-    }
+    toast({
+      title: "Analyse geladen",
+      description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
+    });
   };
 
   const resetToStart = () => {
