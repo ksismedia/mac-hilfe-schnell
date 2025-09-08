@@ -22,7 +22,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
-import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
+import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 import { calculateSEOContentScore, calculatePerformanceMobileScore, calculateSocialMediaCategoryScore, calculateStaffServiceScore } from './analysis/export/scoreCalculations';
 
@@ -35,7 +35,7 @@ interface BusinessData {
 interface SimpleAnalysisDashboardProps {
   businessData: BusinessData;
   onReset: () => void;
-  loadedAnalysisId?: string;
+  analysisData?: SavedAnalysis | null;  // Direct analysis data
 }
 
 const industryNames = {
@@ -50,7 +50,7 @@ const industryNames = {
 const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({ 
   businessData, 
   onReset, 
-  loadedAnalysisId 
+  analysisData 
 }) => {
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,118 +114,77 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Access saved analyses hook
   const { loadAnalysis } = useSavedAnalyses();
 
-  // Load analysis data or load saved analysis
+  // Load analysis data or use direct analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
-      // Prevent re-loading if we already have data and it's not a new analysis
-      if (realData && !loadedAnalysisId) {
-        return;
-      }
-      
-      if (loadedAnalysisId) {
-        console.log('=== LOADING SAVED ANALYSIS ===');
-        console.log('LoadedAnalysisId:', loadedAnalysisId);
+      if (analysisData) {
+        console.log('=== LOADING DIRECT ANALYSIS DATA ===');
+        console.log('Analysis data:', analysisData);
         
         setIsLoadingFromStorage(true);
         
-        try {
-          let savedAnalysis = loadAnalysis(loadedAnalysisId);
-          console.log('Loaded analysis from storage:', savedAnalysis);
-          
-          // Fallback: Direkt aus localStorage lesen wenn Hook noch nicht ready ist
-          if (!savedAnalysis) {
-            console.log('Hook returned null, trying direct localStorage access...');
-            try {
-              const stored = localStorage.getItem('saved_analyses');
-              if (stored) {
-                const analyses = JSON.parse(stored);
-                savedAnalysis = analyses.find((a: any) => a.id === loadedAnalysisId);
-                console.log('Direct localStorage result:', savedAnalysis);
-              }
-            } catch (error) {
-              console.error('Direct localStorage access failed:', error);
-            }
-          }
-          
-          if (savedAnalysis) {
-            console.log('Setting real data from saved analysis...');
-            setRealData(savedAnalysis.realData);
-            
-            if (savedAnalysis.manualData?.keywordData) {
-              setManualKeywordData(savedAnalysis.manualData.keywordData);
-            }
-            if (savedAnalysis.manualData?.keywordScore !== undefined) {
-              setKeywordsScore(savedAnalysis.manualData.keywordScore);
-            }
-            if (savedAnalysis.manualData?.privacyData) {
-              setPrivacyData(savedAnalysis.manualData.privacyData);
-            }
-            if (savedAnalysis.manualData?.accessibilityData) {
-              setAccessibilityData(savedAnalysis.manualData.accessibilityData);
-            }
-            
-            // Lade die manuellen Daten für Staff/Service-Bereich
-            if (savedAnalysis.manualData?.staffQualificationData) {
-              updateStaffQualificationData(savedAnalysis.manualData.staffQualificationData);
-            }
-            if (savedAnalysis.manualData?.hourlyRateData) {
-              updateHourlyRateData(savedAnalysis.manualData.hourlyRateData);
-            }
-            if (savedAnalysis.manualData?.quoteResponseData) {
-              updateQuoteResponseData(savedAnalysis.manualData.quoteResponseData);
-            }
-            if (savedAnalysis.manualData?.manualContentData) {
-              updateManualContentData(savedAnalysis.manualData.manualContentData);
-            }
-            if (savedAnalysis.manualData?.manualAccessibilityData) {
-              updateManualAccessibilityData(savedAnalysis.manualData.manualAccessibilityData);
-            }
-            if (savedAnalysis.manualData?.manualBacklinkData) {
-              updateManualBacklinkData(savedAnalysis.manualData.manualBacklinkData);
-            }
-            
-            loadSavedAnalysisData(
-              savedAnalysis,
-              updateImprintData,
-              updateSocialData,
-              updateWorkplaceData,
-              updateCorporateIdentityData,
-              updateCompetitors,
-              updateCompetitorServices,
-              updateCompanyServices,
-              setManualKeywordData
-            );
-            
-            console.log('=== SAVED ANALYSIS LOADED SUCCESSFULLY ===');
-            setIsLoadingFromStorage(false);
-            return;
-          } else {
-            console.error('Saved analysis not found in storage for ID:', loadedAnalysisId);
-            setIsLoadingFromStorage(false);
-            toast({
-              title: "Fehler beim Laden",
-              description: "Die gespeicherte Analyse konnte nicht gefunden werden.",
-              variant: "destructive",
-            });
-            return;
-          }
-        } catch (error) {
-          console.error('Error loading saved analysis:', error);
-          setIsLoadingFromStorage(false);
-          toast({
-            title: "Fehler beim Laden", 
-            description: "Beim Laden der Analyse ist ein Fehler aufgetreten.",
-            variant: "destructive",
-          });
-          return;
+        // Set real data directly from analysisData
+        setRealData(analysisData.realData);
+        
+        // Load all manual data directly
+        if (analysisData.manualData?.keywordData) {
+          setManualKeywordData(analysisData.manualData.keywordData);
         }
-      } else if (!realData) {
+        if (analysisData.manualData?.keywordScore !== undefined) {
+          setKeywordsScore(analysisData.manualData.keywordScore);
+        }
+        if (analysisData.manualData?.privacyData) {
+          setPrivacyData(analysisData.manualData.privacyData);
+        }
+        if (analysisData.manualData?.accessibilityData) {
+          setAccessibilityData(analysisData.manualData.accessibilityData);
+        }
+        
+        // Load manual data for Staff/Service section
+        if (analysisData.manualData?.staffQualificationData) {
+          updateStaffQualificationData(analysisData.manualData.staffQualificationData);
+        }
+        if (analysisData.manualData?.hourlyRateData) {
+          updateHourlyRateData(analysisData.manualData.hourlyRateData);
+        }
+        if (analysisData.manualData?.quoteResponseData) {
+          updateQuoteResponseData(analysisData.manualData.quoteResponseData);
+        }
+        if (analysisData.manualData?.manualContentData) {
+          updateManualContentData(analysisData.manualData.manualContentData);
+        }
+        if (analysisData.manualData?.manualAccessibilityData) {
+          updateManualAccessibilityData(analysisData.manualData.manualAccessibilityData);
+        }
+        if (analysisData.manualData?.manualBacklinkData) {
+          updateManualBacklinkData(analysisData.manualData.manualBacklinkData);
+        }
+        
+        // Load saved analysis data using utility function
+        loadSavedAnalysisData(
+          analysisData,
+          updateImprintData,
+          updateSocialData,
+          updateWorkplaceData,
+          updateCorporateIdentityData,
+          updateCompetitors,
+          updateCompetitorServices,
+          updateCompanyServices,
+          setManualKeywordData
+        );
+        
+        console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
+        setIsLoadingFromStorage(false);
+        return;
+      } 
+      
+      if (!realData) {
         // Only load new analysis if we don't have real data yet
         setIsLoading(true);
         
         try {
-          const analysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-          setRealData(analysisData);
+          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+          setRealData(newAnalysisData);
         } catch (error) {
           console.error('Analysis error:', error);
           toast({
@@ -241,7 +200,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [loadedAnalysisId]); // Only depend on loadedAnalysisId to prevent re-triggering
+  }, [analysisData]); // Depend on analysisData instead of loadedAnalysisId
 
   if (isLoading || isLoadingFromStorage) {
     return (
@@ -463,7 +422,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualKeywordData={manualKeywordData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
-              currentAnalysisId={loadedAnalysisId}
+              currentAnalysisId={analysisData?.id}
             />
           </div>
         </div>
