@@ -8,7 +8,7 @@ interface IndustryFeaturesProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
   };
 }
 
@@ -190,6 +190,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           { name: "Klimaanlagenwartung", found: false, importance: "mittel" }
         ]
       }
+    ],
+    holzverarbeitung: [
+      {
+        group: "Handwerkliche Kompetenz",
+        features: [
+          { name: "Maßanfertigungen", found: true, importance: "hoch" },
+          { name: "Massivholzverarbeitung", found: true, importance: "hoch" },
+          { name: "Oberflächenbehandlung", found: true, importance: "mittel" },
+          { name: "Antike Restaurierung", found: false, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Leistungsspektrum",
+        features: [
+          { name: "Möbelbau", found: true, importance: "hoch" },
+          { name: "Küchenbau", found: true, importance: "hoch" },
+          { name: "Einbauschränke", found: true, importance: "hoch" },
+          { name: "Treppen", found: false, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Beratung & Service",
+        features: [
+          { name: "Beratung vor Ort", found: true, importance: "hoch" },
+          { name: "3D-Planung", found: false, importance: "mittel" },
+          { name: "Aufmaß-Service", found: true, importance: "mittel" },
+          { name: "Montage-Service", found: true, importance: "hoch" }
+        ]
+      }
     ]
   };
 
@@ -227,7 +256,8 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
     dachdecker: 'Dachdecker',
     stukateur: 'Stukateure',
     planungsbuero: 'Planungsbüro Versorgungstechnik',
-    'facility-management': 'Facility-Management & Gebäudereinigung'
+    'facility-management': 'Facility-Management & Gebäudereinigung',
+    holzverarbeitung: 'Holzverarbeitung (Schreiner/Tischler)'
   };
 
   return (
@@ -404,13 +434,33 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
                         <span className="text-yellow-600">!</span>
                         <span><strong>Empfehlung:</strong> Industriereinigung als Zusatzservice</span>
                       </div>
-                      <div className="flex items-start gap-2">
-                        <span className="text-yellow-600">!</span>
-                        <span><strong>Potenzial:</strong> Sicherheitsdienste für Komplettlösungen</span>
-                      </div>
-                    </>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Potenzial:</strong> Sicherheitsdienste für Komplettlösungen</span>
+                       </div>
+                     </>
+                    )}
+                   {businessData.industry === 'holzverarbeitung' && (
+                     <>
+                       <div className="flex items-start gap-2">
+                         <span className="text-green-600">✓</span>
+                         <span><strong>Positiv:</strong> Maßanfertigungen werden hervorgehoben</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-red-600">×</span>
+                         <span><strong>Kritisch:</strong> 3D-Planung fehlt - wichtiger Trend in der Holzverarbeitung</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Empfehlung:</strong> Treppen-Kompetenz ergänzen für breiteres Leistungsspektrum</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Trend:</strong> Antike Restaurierung als Differenzierungsmerkmal</span>
+                       </div>
+                     </>
                    )}
-                </div>
+                 </div>
               </CardContent>
             </Card>
           </div>

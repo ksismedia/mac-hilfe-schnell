@@ -7,7 +7,7 @@ import { Target, Phone, Mail, Calendar, MousePointer, CreditCard, TrendingUp, Us
 
 interface ConversionOptimizationProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
 }
 
 const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, industry }) => {

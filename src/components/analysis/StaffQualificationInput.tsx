@@ -43,7 +43,7 @@ export interface StaffQualificationData {
 
 interface StaffQualificationInputProps {
   businessData: {
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
   };
   data: StaffQualificationData | null;
   onUpdate: (data: StaffQualificationData | null) => void;

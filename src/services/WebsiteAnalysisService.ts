@@ -589,6 +589,17 @@ export class WebsiteAnalysisService {
         'schulreinigung', 'universitätsreinigung', 'hotelreinigung', 'einzelhandel',
         'logistik', 'bankreinigung', 'versicherungsreinigung', 'behördenreinigung',
         'justizreinigung', 'flughafenreinigung', 'bahnhofsreinigung'
+      ],
+      
+      'holzverarbeitung': [
+        'schreiner', 'tischler', 'holz', 'möbel', 'küche',
+        'einbauschrank', 'massivholz', 'furnierte', 'holzbearbeitung',
+        'maßanfertigung', 'innenausbau', 'treppen', 'parkett',
+        'fenster', 'türen', 'holzfenster', 'holztüren',
+        'restaurierung', 'antike möbel', 'reparatur', 'oberflächenbehandlung',
+        'lackierung', 'beizen', 'ölen', 'wachsen', 'hobeln',
+        'sägen', 'fräsen', 'verbindungen', 'holzverbindungen',
+        'schreinerei', 'tischlerei', 'handwerk', 'möbelbau'
       ]
     };
     

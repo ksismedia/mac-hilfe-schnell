@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
   extensionData?: any;
 }
 
@@ -530,7 +530,7 @@ const Index = () => {
                 </Label>
                 <Select 
                   value={businessData.industry} 
-                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management') => 
+                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung') => 
                     setBusinessData({...businessData, industry: value})
                   }
                 >
@@ -545,6 +545,7 @@ const Index = () => {
                     <SelectItem value="stukateur">Stukateure</SelectItem>
                     <SelectItem value="planungsbuero">Planungsbüro Versorgungstechnik</SelectItem>
                     <SelectItem value="facility-management">Facility-Management & Gebäudereinigung</SelectItem>
+                    <SelectItem value="holzverarbeitung">Holzverarbeitung (Schreiner/Tischler)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
