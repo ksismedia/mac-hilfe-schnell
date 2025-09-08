@@ -381,9 +381,37 @@ export const useSavedAnalyses = () => {
       return completeAnalysis;
     }
     
-    console.log('Analysis not found');
+    // Fallback: Try to load from localStorage if not found in current savedAnalyses
+    if (!user) {
+      try {
+        console.log('Analysis not found in current list, checking localStorage...');
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const localAnalyses = JSON.parse(stored);
+          const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
+          if (localFound) {
+            console.log('Found analysis in localStorage:', localFound.name);
+            const completeAnalysis = {
+              ...localFound,
+              realData: { ...createDefaultRealData(), ...localFound.realData },
+              manualData: { 
+                competitors: [], 
+                competitorServices: {}, 
+                removedMissingServices: [], 
+                ...localFound.manualData 
+              }
+            };
+            return completeAnalysis;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading from localStorage:', error);
+      }
+    }
+    
+    console.log('Analysis not found in database or localStorage');
     return null;
-  }, [savedAnalyses]);
+  }, [savedAnalyses, user]);
 
   const exportAnalysis = useCallback((id: string) => {
     const analysis = loadAnalysis(id);
