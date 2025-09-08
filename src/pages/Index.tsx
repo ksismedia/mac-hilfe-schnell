@@ -70,7 +70,7 @@ const Index = () => {
         console.log('=== URL PARAMETER ANALYSIS LOADING ===');
         console.log('Loading analysis from URL parameter:', analysisIdFromUrl);
         
-        // Prüfe ob die Analyse im localStorage existiert
+        // Versuche Analyse aus localStorage zu laden
         try {
           const stored = localStorage.getItem('saved_analyses');
           console.log('Raw localStorage data:', stored);
@@ -87,14 +87,34 @@ const Index = () => {
               setLoadedAnalysisId(analysisIdFromUrl);
               setStep('results');
               console.log('States set, moving to results step');
+              
+              toast({
+                title: "Analyse geladen",
+                description: `Die Analyse "${foundAnalysis.name}" wurde erfolgreich geladen.`,
+              });
             } else {
               console.error('Analysis not found in localStorage for ID:', analysisIdFromUrl);
+              toast({
+                title: "Analysefehler",
+                description: "Die angeforderte Analyse konnte nicht gefunden werden.",
+                variant: "destructive"
+              });
             }
           } else {
             console.error('No saved analyses found in localStorage');
+            toast({
+              title: "Analysefehler", 
+              description: "Keine gespeicherten Analysen gefunden.",
+              variant: "destructive"
+            });
           }
         } catch (error) {
           console.error('Error loading analysis from localStorage:', error);
+          toast({
+            title: "Analysefehler",
+            description: "Die Website konnte nicht analysiert werden.",
+            variant: "destructive"
+          });
         }
         
         // Clean URL
@@ -236,6 +256,17 @@ const Index = () => {
     console.log('Analysis ID:', analysis.id);
     console.log('Business data:', analysis.businessData);
     
+    // Validate analysis structure
+    if (!analysis || !analysis.id || !analysis.businessData) {
+      console.error('Invalid analysis structure:', analysis);
+      toast({
+        title: "Analysefehler",
+        description: "Die Analyse-Daten sind ungültig oder beschädigt.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Prevent state updates if we're already in results with the same analysis
     if (step === 'results' && loadedAnalysisId === analysis.id) {
       console.log('Already in results with same analysis ID, skipping');
@@ -250,17 +281,26 @@ const Index = () => {
     
     console.log('Setting business data and analysis ID...');
     
-    // Set business data and analysis ID
-    setBusinessData(analysis.businessData);
-    setLoadedAnalysisId(analysis.id);
-    setStep('results');
-    
-    console.log('State updated - new step: results, new loadedAnalysisId:', analysis.id);
-    
-    toast({
-      title: "Analyse geladen",
-      description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
-    });
+    try {
+      // Set business data and analysis ID
+      setBusinessData(analysis.businessData);
+      setLoadedAnalysisId(analysis.id);
+      setStep('results');
+      
+      console.log('State updated - new step: results, new loadedAnalysisId:', analysis.id);
+      
+      toast({
+        title: "Analyse geladen",
+        description: `Die Analyse "${analysis.name}" wurde erfolgreich geladen.`,
+      });
+    } catch (error) {
+      console.error('Error loading analysis:', error);
+      toast({
+        title: "Analysefehler",
+        description: "Die Website konnte nicht analysiert werden.",
+        variant: "destructive"
+      });
+    }
     
     console.log('=== HANDLE LOAD SAVED ANALYSIS COMPLETED ===');
   };

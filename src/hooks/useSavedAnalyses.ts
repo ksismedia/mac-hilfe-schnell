@@ -58,9 +58,13 @@ export const useSavedAnalyses = () => {
 
   // Lade gespeicherte Analysen beim Start
   useEffect(() => {
+    console.log('useSavedAnalyses: User state changed:', user?.id || 'no user');
+    
     if (user) {
+      console.log('User authenticated, loading from database');
       loadAnalysesFromDatabase();
     } else {
+      console.log('No user, loading from localStorage');
       // Fallback auf localStorage wenn nicht angemeldet
       loadAnalysesFromLocalStorage();
     }
@@ -68,12 +72,24 @@ export const useSavedAnalyses = () => {
 
   const loadAnalysesFromDatabase = async () => {
     try {
+      console.log('Loading analyses from database for user:', user?.id);
+      
+      if (!user) {
+        console.log('No user found, skipping database load');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('saved_analyses')
         .select('*')
         .order('saved_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Database query successful, data:', data);
 
       const analyses: SavedAnalysis[] = data.map(item => ({
         id: item.id,
@@ -84,6 +100,7 @@ export const useSavedAnalyses = () => {
         manualData: item.manual_data as unknown as SavedAnalysis['manualData']
       }));
 
+      console.log('Mapped analyses:', analyses);
       setSavedAnalyses(analyses);
     } catch (error) {
       console.error('Fehler beim Laden der Analysen aus der Datenbank:', error);
