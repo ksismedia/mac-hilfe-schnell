@@ -20,7 +20,10 @@ export const loadSavedAnalysisData = (
   updateCompetitors: (competitors: ManualCompetitor[]) => void,
   updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void,
   updateCompanyServices?: (services: string[]) => void,
-  setManualKeywordData?: (data: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void
+  setManualKeywordData?: (data: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void,
+  updateStaffQualificationData?: (data: any) => void,
+  updateHourlyRateData?: (data: any) => void,
+  updateQuoteResponseData?: (data: any) => void
 ) => {
   console.log('Loading saved analysis data:', savedAnalysis.id);
   
@@ -66,6 +69,22 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.keywordData && setManualKeywordData) {
     console.log('Loading keyword data:', savedAnalysis.manualData.keywordData.length, 'keywords');
     setManualKeywordData(savedAnalysis.manualData.keywordData);
+  }
+  
+  // Load Staff/Service data if available
+  if (savedAnalysis.manualData?.staffQualificationData && updateStaffQualificationData) {
+    console.log('Loading staff qualification data');
+    updateStaffQualificationData(savedAnalysis.manualData.staffQualificationData);
+  }
+  
+  if (savedAnalysis.manualData?.hourlyRateData && updateHourlyRateData) {
+    console.log('Loading hourly rate data');
+    updateHourlyRateData(savedAnalysis.manualData.hourlyRateData);
+  }
+  
+  if (savedAnalysis.manualData?.quoteResponseData && updateQuoteResponseData) {
+    console.log('Loading quote response data');
+    updateQuoteResponseData(savedAnalysis.manualData.quoteResponseData);
   }
   
   console.log('Saved analysis data loaded successfully');

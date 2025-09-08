@@ -170,7 +170,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           updateCompetitors,
           updateCompetitorServices,
           updateCompanyServices,
-          setManualKeywordData
+          setManualKeywordData,
+          updateStaffQualificationData,
+          updateHourlyRateData,
+          updateQuoteResponseData
         );
         
         console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
