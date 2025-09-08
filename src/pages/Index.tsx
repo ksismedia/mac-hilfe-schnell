@@ -71,10 +71,9 @@ const Index = () => {
   }, [isInitialized]);
 
   // Separate effect for loading analysis from URL parameter
-  // This runs after savedAnalyses are loaded
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const analysisIdFromUrl = urlParams.get('loadAnalysis');
+    const analysisIdFromUrl = urlParams.get('loadAnalysis') || urlParams.get('load');
     
     if (analysisIdFromUrl) {
       console.log('=== URL PARAMETER ANALYSIS LOADING ===');
@@ -82,24 +81,10 @@ const Index = () => {
       console.log('Available saved analyses:', savedAnalyses.length);
       console.log('All saved analysis IDs:', savedAnalyses.map(a => ({ id: a.id, name: a.name })));
       
-      // Wait for savedAnalyses to be loaded if we don't have any and no user is logged in
-      if (savedAnalyses.length === 0 && !user) {
+      // Warte auf savedAnalyses laden wenn wir keine haben
+      if (savedAnalyses.length === 0) {
         console.log('Waiting for savedAnalyses to load...');
-        // Set a small timeout to allow localStorage to load
-        const timeout = setTimeout(() => {
-          console.log('Timeout reached, checking again...');
-          const foundAnalysis = loadAnalysis(analysisIdFromUrl);
-          if (!foundAnalysis) {
-            console.error('Analysis still not found after timeout:', analysisIdFromUrl);
-            toast({
-              title: "Analysefehler", 
-              description: "Die angeforderte Analyse konnte nicht gefunden werden.",
-              variant: "destructive"
-            });
-          }
-        }, 1000);
-        
-        return () => clearTimeout(timeout);
+        return; // Warten bis savedAnalyses geladen sind
       }
       
       const foundAnalysis = loadAnalysis(analysisIdFromUrl);
@@ -129,6 +114,7 @@ const Index = () => {
       // Clean URL
       const url = new URL(window.location.href);
       url.searchParams.delete('loadAnalysis');
+      url.searchParams.delete('load');
       window.history.replaceState({}, '', url.toString());
       console.log('URL cleaned');
     }

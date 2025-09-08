@@ -42,7 +42,7 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
   };
 
   const handleLoadAnalysis = (analysis: SavedAnalysis) => {
-    console.log('SavedAnalysesManager: Loading analysis:', analysis);
+    console.log('SavedAnalysesManager: Loading analysis:', analysis.name, 'ID:', analysis.id);
     onLoadAnalysis(analysis);
     setIsOpen(false);
   };

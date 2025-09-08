@@ -214,33 +214,15 @@ export const useSavedAnalyses = () => {
         }
       }
       
-      // Create demo analysis if no data exists
-      console.log('No existing data, creating demo analysis...');
-      const demoAnalysis: SavedAnalysis = {
-        id: 'demo-123',
-        name: 'Demo Analyse - Muster GmbH',
-        savedAt: new Date().toISOString(),
-        businessData: {
-          address: 'Musterstraße 1, 12345 Berlin',
-          url: 'https://beispiel-handwerk.de',
-          industry: 'shk'
-        },
-        realData: createDefaultRealData(),
-        manualData: {
-          competitors: [],
-          competitorServices: {},
-          removedMissingServices: []
-        }
-      };
-      
-      setSavedAnalyses([demoAnalysis]);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([demoAnalysis]));
-      console.log('Demo analysis created');
+      // Nur leeres Array setzen - keine Demo-Analyse erstellen
+      console.log('No existing data found, setting empty array');
+      setSavedAnalyses([]);
       
     } catch (error) {
       console.error('localStorage error:', error);
       setSavedAnalyses([]);
     }
+  };
   };
 
   const saveAnalysis = useCallback(async (
