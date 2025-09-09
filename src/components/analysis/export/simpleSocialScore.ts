@@ -61,12 +61,12 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(30, platformScore);
   }
   
-  // LinkedIn (max 30 Punkte)
+  // LinkedIn (max 30 Punkte) - Ursprüngliche Bewertungslogik beibehalten
   if (manualData.linkedinUrl && manualData.linkedinUrl.trim() !== '') {
-    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
+    let platformScore = 15; // Basis für Präsenz
     const followers = parseInt(manualData.linkedinFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
+    // Follower-Bewertung (max 15 Punkte) - ursprüngliche Anforderungen
     if (followers >= 2000) platformScore += 15;
     else if (followers >= 1000) platformScore += 12;
     else if (followers >= 500) platformScore += 10;
@@ -89,12 +89,12 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(30, platformScore);
   }
   
-  // Twitter (max 20 Punkte)
+  // Twitter (max 20 Punkte) - Ursprüngliche Bewertungslogik beibehalten
   if (manualData.twitterUrl && manualData.twitterUrl.trim() !== '') {
-    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
+    let platformScore = 8; // Basis für Präsenz
     const followers = parseInt(manualData.twitterFollowers || '0');
     
-    // Follower-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
+    // Follower-Bewertung (max 12 Punkte) - ursprüngliche Anforderungen
     if (followers >= 5000) platformScore += 12;
     else if (followers >= 2000) platformScore += 10;
     else if (followers >= 1000) platformScore += 8;
