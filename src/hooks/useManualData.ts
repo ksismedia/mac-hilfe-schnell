@@ -81,6 +81,7 @@ export interface StaffQualificationData {
   apprentices: number;
   skilled_workers: number;
   masters: number;
+  office_workers: number; // Neue Rubrik: Bürokräfte
   unskilled_workers: number;
   certifications: {
     welding_certificates: boolean;

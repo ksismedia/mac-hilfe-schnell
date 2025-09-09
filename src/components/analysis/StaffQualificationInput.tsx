@@ -16,6 +16,7 @@ export interface StaffQualificationData {
   apprentices: number;
   skilled_workers: number;
   masters: number;
+  office_workers: number; // Neue Rubrik: Bürokräfte
   unskilled_workers: number;
   
   // Zertifizierungen
@@ -116,6 +117,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     apprentices: 0,
     skilled_workers: 0,
     masters: 0,
+    office_workers: 0, // Neue Rubrik initialisieren
     unskilled_workers: 0,
     certifications: {
       welding_certificates: false,
@@ -213,7 +215,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
               <Users className="h-4 w-4" />
               Mitarbeiterstruktur ({data.totalEmployees} Gesamt)
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="text-center p-3 bg-gray-700 rounded-lg">
                 <div className="text-lg font-bold text-yellow-400">{data.masters}</div>
                 <div className="text-sm text-gray-300">Meister</div>
@@ -221,6 +223,10 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
               <div className="text-center p-3 bg-gray-700 rounded-lg">
                 <div className="text-lg font-bold text-green-400">{data.skilled_workers}</div>
                 <div className="text-sm text-gray-300">Gesellen</div>
+              </div>
+              <div className="text-center p-3 bg-gray-700 rounded-lg">
+                <div className="text-lg font-bold text-purple-400">{data.office_workers}</div>
+                <div className="text-sm text-gray-300">Bürokräfte</div>
               </div>
               <div className="text-center p-3 bg-gray-700 rounded-lg">
                 <div className="text-lg font-bold text-blue-400">{data.apprentices}</div>
@@ -340,6 +346,17 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
                   min="0"
                   value={formData.skilled_workers}
                   onChange={(e) => setFormData(prev => ({ ...prev, skilled_workers: parseInt(e.target.value) || 0 }))}
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="office_workers" className="text-gray-200">Bürokräfte</Label>
+                <Input
+                  id="office_workers"
+                  type="number"
+                  min="0"
+                  value={formData.office_workers}
+                  onChange={(e) => setFormData(prev => ({ ...prev, office_workers: parseInt(e.target.value) || 0 }))}
                   className="bg-gray-700 border-gray-600 text-white"
                 />
               </div>
