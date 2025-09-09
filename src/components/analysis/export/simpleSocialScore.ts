@@ -173,10 +173,29 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(20, platformScore);
   }
   
-  // Normalisierung auf 100 Punkte (Gesamtmaximum: 150 Punkte)
-  const normalizedScore = Math.round((totalScore / 150) * 100);
+  // Bonus für mehrere Plattformen
+  let platformCount = 0;
+  if (manualData?.facebookUrl && manualData.facebookUrl.trim() !== '') platformCount++;
+  if (manualData?.instagramUrl && manualData.instagramUrl.trim() !== '') platformCount++;
+  if (manualData?.linkedinUrl && manualData.linkedinUrl.trim() !== '') platformCount++;
+  if (manualData?.twitterUrl && manualData.twitterUrl.trim() !== '') platformCount++;
+  if (manualData?.youtubeUrl && manualData.youtubeUrl.trim() !== '') platformCount++;
+  if (manualData?.tiktokUrl && manualData.tiktokUrl.trim() !== '') platformCount++;
   
-  console.log(`Social Media Score: ${normalizedScore}/100 (${totalScore}/150 Rohpunkte)`);
+  // Plattform-Bonus: 2 Plattformen = +10%, 3+ Plattformen = +25%
+  let platformBonus = 0;
+  if (platformCount >= 3) {
+    platformBonus = totalScore * 0.25; // 25% Bonus für 3+ Plattformen
+  } else if (platformCount === 2) {
+    platformBonus = totalScore * 0.10; // 10% Bonus für 2 Plattformen
+  }
+  
+  const finalScore = totalScore + platformBonus;
+  
+  // Normalisierung auf 100 Punkte (Gesamtmaximum mit Bonus: ca. 187.5 Punkte)
+  const normalizedScore = Math.round((finalScore / 187.5) * 100);
+  
+  console.log(`Social Media Score: ${normalizedScore}/100 (${finalScore}/187.5 Rohpunkte, ${platformCount} Plattformen)`);
   
   return Math.min(100, normalizedScore);
 };
