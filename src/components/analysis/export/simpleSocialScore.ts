@@ -25,8 +25,9 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.facebookLastPost) {
       const post = manualData.facebookLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
-      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 3;
-      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 2;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 4; // Erhöht von 3 auf 4
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 3; // Erhöht von 2 auf 3
+      else if (post.includes('2 woche') || post.includes('3 woche')) platformScore += 2; // Neu hinzugefügt
       else if (post.includes('woche')) platformScore += 1.5;
       else if (post.includes('monat')) platformScore += 0.5;
     }
@@ -54,8 +55,9 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.instagramLastPost) {
       const post = manualData.instagramLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
-      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 3;
-      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 2;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 4; // Erhöht von 3 auf 4
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 3; // Erhöht von 2 auf 3
+      else if (post.includes('2 woche') || post.includes('3 woche')) platformScore += 2; // Neu hinzugefügt
       else if (post.includes('woche')) platformScore += 1.5;
       else if (post.includes('monat')) platformScore += 0.5;
     }
@@ -192,8 +194,8 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   const finalScore = totalScore + platformBonus;
   
-  // Normalisierung auf 100 Punkte (Gesamtmaximum mit Bonus: ca. 187.5 Punkte)
-  const normalizedScore = Math.round((finalScore / 187.5) * 100);
+  // Normalisierung auf 100 Punkte - großzügigere Bewertung für aktive Social Media Präsenz
+  const normalizedScore = Math.round((finalScore / 120) * 100); // Reduziert von 187.5 auf 120 für großzügigere Bewertung
   
   console.log(`Social Media Score: ${normalizedScore}/100 (${finalScore}/187.5 Rohpunkte, ${platformCount} Plattformen)`);
   
