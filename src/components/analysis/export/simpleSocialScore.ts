@@ -5,59 +5,57 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
   
   let totalScore = 0;
   
-  // Facebook (max 30 Punkte)
+  // Facebook (max 30 Punkte) - Neue Bewertungslogik: 50% + 20% für 100+ Follower + 15% für Aktualität + 15% für sehr hohe Followerzahlen
   if (manualData.facebookUrl && manualData.facebookUrl.trim() !== '') {
-    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
+    let platformScore = 15; // Basis 50% = 15 Punkte
     const followers = parseInt(manualData.facebookFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
-    if (followers >= 5000) platformScore += 15;
-    else if (followers >= 2000) platformScore += 12;
-    else if (followers >= 1000) platformScore += 10;
-    else if (followers >= 500) platformScore += 8;
-    else if (followers >= 200) platformScore += 6;
-    else if (followers >= 100) platformScore += 5;
-    else if (followers >= 50) platformScore += 4;
-    else if (followers >= 20) platformScore += 3;
-    else if (followers >= 10) platformScore += 2;
-    else if (followers >= 1) platformScore += 1;
+    // Follower-Bewertung: +20% für 100+ Follower, weitere +15% für hohe Zahlen
+    if (followers >= 100) {
+      platformScore += 6; // +20% = 6 Punkte (70% erreicht)
+      
+      // Zusätzliche Punkte für sehr hohe Followerzahlen (max +9 Punkte = 15%)
+      if (followers >= 5000) platformScore += 9;
+      else if (followers >= 2000) platformScore += 7;
+      else if (followers >= 1000) platformScore += 5;
+      else if (followers >= 500) platformScore += 3;
+    }
     
-    // Post-Aktivität (max 5 Punkte)
+    // Post-Aktivität: +15% für aktuelle Posts = max 4.5 Punkte
     if (manualData.facebookLastPost) {
       const post = manualData.facebookLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 5;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 4;
-      else if (post.includes('woche')) platformScore += 3;
-      else if (post.includes('monat')) platformScore += 1;
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 3;
+      else if (post.includes('woche')) platformScore += 1.5;
+      else if (post.includes('monat')) platformScore += 0.5;
     }
     
     totalScore += Math.min(30, platformScore);
   }
   
-  // Instagram (max 30 Punkte)
+  // Instagram (max 30 Punkte) - Neue Bewertungslogik: 50% + 20% für 100+ Follower + 15% für Aktualität + 15% für sehr hohe Followerzahlen
   if (manualData.instagramUrl && manualData.instagramUrl.trim() !== '') {
-    let platformScore = 15; // Basis für Präsenz (erhöht von 10)
+    let platformScore = 15; // Basis 50% = 15 Punkte
     const followers = parseInt(manualData.instagramFollowers || '0');
     
-    // Follower-Bewertung (max 15 Punkte) - weniger strenge Anforderungen
-    if (followers >= 5000) platformScore += 15;
-    else if (followers >= 2000) platformScore += 12;
-    else if (followers >= 1000) platformScore += 10;
-    else if (followers >= 500) platformScore += 8;
-    else if (followers >= 200) platformScore += 6;
-    else if (followers >= 100) platformScore += 5;
-    else if (followers >= 50) platformScore += 4;
-    else if (followers >= 20) platformScore += 3;
-    else if (followers >= 10) platformScore += 2;
-    else if (followers >= 1) platformScore += 1;
+    // Follower-Bewertung: +20% für 100+ Follower, weitere +15% für hohe Zahlen
+    if (followers >= 100) {
+      platformScore += 6; // +20% = 6 Punkte (70% erreicht)
+      
+      // Zusätzliche Punkte für sehr hohe Followerzahlen (max +9 Punkte = 15%)
+      if (followers >= 5000) platformScore += 9;
+      else if (followers >= 2000) platformScore += 7;
+      else if (followers >= 1000) platformScore += 5;
+      else if (followers >= 500) platformScore += 3;
+    }
     
-    // Post-Aktivität (max 5 Punkte)
+    // Post-Aktivität: +15% für aktuelle Posts = max 4.5 Punkte
     if (manualData.instagramLastPost) {
       const post = manualData.instagramLastPost.toLowerCase();
-      if (post.includes('heute') || post.includes('1 tag')) platformScore += 5;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 4;
-      else if (post.includes('woche')) platformScore += 3;
-      else if (post.includes('monat')) platformScore += 1;
+      if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
+      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 3;
+      else if (post.includes('woche')) platformScore += 1.5;
+      else if (post.includes('monat')) platformScore += 0.5;
     }
     
     totalScore += Math.min(30, platformScore);
@@ -118,23 +116,22 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(20, platformScore);
   }
   
-  // YouTube (max 20 Punkte)
+  // YouTube (max 20 Punkte) - Neue Bewertungslogik: 50% + 20% für 100+ Abonnenten + 15% für Aktualität + 15% für hohe Zahlen
   if (manualData.youtubeUrl && manualData.youtubeUrl.trim() !== '') {
-    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
+    let platformScore = 10; // Basis 50% = 10 Punkte
     const subscribers = parseInt(manualData.youtubeSubscribers || '0');
     
-    // Abonnenten-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
-    if (subscribers >= 2000) platformScore += 12;
-    else if (subscribers >= 1000) platformScore += 10;
-    else if (subscribers >= 500) platformScore += 8;
-    else if (subscribers >= 200) platformScore += 6;
-    else if (subscribers >= 100) platformScore += 5;
-    else if (subscribers >= 50) platformScore += 4;
-    else if (subscribers >= 20) platformScore += 3;
-    else if (subscribers >= 10) platformScore += 2;
-    else if (subscribers >= 1) platformScore += 1;
+    // Abonnenten-Bewertung: +20% für 100+ Abonnenten, weitere +15% für hohe Zahlen
+    if (subscribers >= 100) {
+      platformScore += 4; // +20% = 4 Punkte (70% erreicht)
+      
+      // Zusätzliche Punkte für sehr hohe Abonnentenzahlen (max +6 Punkte = 15%)
+      if (subscribers >= 2000) platformScore += 6;
+      else if (subscribers >= 1000) platformScore += 4;
+      else if (subscribers >= 500) platformScore += 2;
+    }
     
-    // Video-Aktivität (max 3 Punkte)
+    // Video-Aktivität: +15% für aktuelle Videos = max 3 Punkte
     if (manualData.youtubeLastPost) {
       const post = manualData.youtubeLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
@@ -145,23 +142,23 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     totalScore += Math.min(20, platformScore);
   }
   
-  // TikTok (max 20 Punkte)
+  // TikTok (max 20 Punkte) - Neue Bewertungslogik: 50% + 20% für 100+ Follower + 15% für Aktualität + 15% für hohe Zahlen
   if (manualData.tiktokUrl && manualData.tiktokUrl.trim() !== '') {
-    let platformScore = 8; // Basis für Präsenz (erhöht von 5)
+    let platformScore = 10; // Basis 50% = 10 Punkte
     const followers = parseInt(manualData.tiktokFollowers || '0');
     
-    // Follower-Bewertung (max 12 Punkte) - weniger strenge Anforderungen
-    if (followers >= 5000) platformScore += 12;
-    else if (followers >= 2000) platformScore += 10;
-    else if (followers >= 1000) platformScore += 8;
-    else if (followers >= 500) platformScore += 6;
-    else if (followers >= 200) platformScore += 5;
-    else if (followers >= 100) platformScore += 4;
-    else if (followers >= 50) platformScore += 3;
-    else if (followers >= 20) platformScore += 2;
-    else if (followers >= 1) platformScore += 1;
+    // Follower-Bewertung: +20% für 100+ Follower, weitere +15% für hohe Zahlen
+    if (followers >= 100) {
+      platformScore += 4; // +20% = 4 Punkte (70% erreicht)
+      
+      // Zusätzliche Punkte für sehr hohe Followerzahlen (max +6 Punkte = 15%)
+      if (followers >= 5000) platformScore += 6;
+      else if (followers >= 2000) platformScore += 4;
+      else if (followers >= 1000) platformScore += 3;
+      else if (followers >= 500) platformScore += 2;
+    }
     
-    // Video-Aktivität (max 3 Punkte)
+    // Video-Aktivität: +15% für aktuelle Videos = max 3 Punkte
     if (manualData.tiktokLastPost) {
       const post = manualData.tiktokLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
