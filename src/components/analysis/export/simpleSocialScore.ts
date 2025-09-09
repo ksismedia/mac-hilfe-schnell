@@ -25,7 +25,8 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.facebookLastPost) {
       const post = manualData.facebookLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 3;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 3;
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 2;
       else if (post.includes('woche')) platformScore += 1.5;
       else if (post.includes('monat')) platformScore += 0.5;
     }
@@ -53,7 +54,8 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.instagramLastPost) {
       const post = manualData.instagramLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 4.5;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 3;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 3;
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 2;
       else if (post.includes('woche')) platformScore += 1.5;
       else if (post.includes('monat')) platformScore += 0.5;
     }
@@ -135,7 +137,8 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.youtubeLastPost) {
       const post = manualData.youtubeLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 2;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 2;
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 1.5;
       else if (post.includes('woche')) platformScore += 1;
     }
     
@@ -162,7 +165,8 @@ export const calculateSimpleSocialScore = (manualData?: ManualSocialData | null)
     if (manualData.tiktokLastPost) {
       const post = manualData.tiktokLastPost.toLowerCase();
       if (post.includes('heute') || post.includes('1 tag')) platformScore += 3;
-      else if (post.includes('2 tag') || post.includes('3 tag')) platformScore += 2;
+      else if (post.includes('2 tag') || post.includes('3 tag') || post.includes('4 tag') || post.includes('5 tag')) platformScore += 2;
+      else if (post.includes('6 tag') || post.includes('7 tag') || post.includes('1 woche')) platformScore += 1.5;
       else if (post.includes('woche')) platformScore += 1;
     }
     
