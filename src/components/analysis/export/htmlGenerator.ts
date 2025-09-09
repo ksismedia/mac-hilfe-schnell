@@ -2947,8 +2947,9 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</div>
             <div class="score-details">
               <p><strong>Gesamt-Mitarbeiter:</strong> ${staffQualificationData?.totalEmployees || 0}</p>
-              <p><strong>Fachkräfte:</strong> ${(staffQualificationData?.skilled_workers || 0) + (staffQualificationData?.masters || 0)} von ${staffQualificationData?.totalEmployees || 0}</p>
+              <p><strong>Qualifizierte Kräfte:</strong> ${(staffQualificationData?.skilled_workers || 0) + (staffQualificationData?.masters || 0) + (staffQualificationData?.office_workers || 0)} von ${staffQualificationData?.totalEmployees || 0}</p>
               <p><strong>Meister-Quote:</strong> ${staffQualificationData?.masters || 0} Meister</p>
+              <p><strong>Facharbeiter & Bürokräfte:</strong> ${(staffQualificationData?.skilled_workers || 0) + (staffQualificationData?.office_workers || 0)} qualifizierte Mitarbeiter</p>
             </div>
           </div>
           ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? `
@@ -2976,6 +2977,10 @@ export const generateCustomerHTML = ({
               <div style="text-align: center; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px;">
                 <div style="font-size: 1.5em; font-weight: bold; color: #22c55e;">${staffQualificationData.skilled_workers || 0}</div>
                 <div style="font-size: 0.8em; color: #6b7280;">Gesellen</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(168, 85, 247, 0.1); border-radius: 6px;">
+                <div style="font-size: 1.5em; font-weight: bold; color: #a855f7;">${staffQualificationData.office_workers || 0}</div>
+                <div style="font-size: 0.8em; color: #6b7280;">Bürokräfte</div>
               </div>
               <div style="text-align: center; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px;">
                 <div style="font-size: 1.5em; font-weight: bold; color: #3b82f6;">${staffQualificationData.apprentices || 0}</div>
