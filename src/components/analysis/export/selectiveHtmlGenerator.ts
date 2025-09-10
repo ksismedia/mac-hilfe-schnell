@@ -415,14 +415,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     if (seoContentHtml) {
       sectionsHtml += `
-        <section class="section">
+        <div class="section">
           <div class="section-header">🔍 SEO & Content Analyse</div>
           <div class="section-content">
             <div class="metric-grid">
               ${seoContentHtml}
             </div>
           </div>
-        </section>
+        </div>
       `;
     }
   }
@@ -463,14 +463,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     if (performanceTechHtml) {
       sectionsHtml += `
-        <section class="section">
+        <div class="section">
           <div class="section-header">⚡ Performance & Technik</div>
           <div class="section-content">
             <div class="metric-grid">
               ${performanceTechHtml}
             </div>
           </div>
-        </section>
+        </div>
       `;
     }
   }
@@ -596,14 +596,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     if (socialMediaHtml) {
       sectionsHtml += `
-        <section class="section">
+        <div class="section">
           <div class="section-header">📱 Social Media</div>
           <div class="section-content">
             <div class="metric-grid">
               ${socialMediaHtml}
             </div>
           </div>
-        </section>
+        </div>
       `;
     }
   }
@@ -791,14 +791,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     if (staffServiceHtml) {
       sectionsHtml += `
-        <section class="section">
+        <div class="section">
           <div class="section-header">👥 Personal & Kundenservice</div>
           <div class="section-content">
             <div class="metric-grid">
               ${staffServiceHtml}
             </div>
           </div>
-        </section>
+        </div>
       `;
     }
   }
