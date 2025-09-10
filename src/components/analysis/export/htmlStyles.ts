@@ -102,7 +102,9 @@ body {
   overflow: hidden !important;
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
+  width: 100% !important;
   max-width: 100% !important;
+  min-width: 100% !important;
   box-sizing: border-box !important;
   contain: layout style !important;
   position: relative;
@@ -113,7 +115,9 @@ body {
   padding: 25px 30px; 
   font-size: 1.5em; 
   font-weight: 700;
-  max-width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   overflow-x: hidden;
 }
 .header-score-circle {
@@ -139,6 +143,7 @@ body {
 .header-score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 81-100% */
 .section-content { 
   padding: 30px; 
+  width: 100% !important;
   max-width: 100% !important;
   overflow-x: hidden !important;
   word-wrap: break-word;
