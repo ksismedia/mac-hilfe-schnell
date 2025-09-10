@@ -5,6 +5,8 @@ export interface HourlyRateData {
   facharbeiterRate: number;
   azubiRate: number;
   helferRate: number;
+  serviceRate: number;
+  installationRate: number;
 }
 
 interface HourlyRateContextType {
@@ -33,7 +35,7 @@ export const HourlyRateProvider: React.FC<HourlyRateProviderProps> = ({ children
     console.log('Hourly Rate Data Cleared');
   }, []);
 
-  const hasHourlyRateData = hourlyRateData !== null && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0);
+  const hasHourlyRateData = hourlyRateData !== null && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0);
 
   const value: HourlyRateContextType = {
     hourlyRateData,

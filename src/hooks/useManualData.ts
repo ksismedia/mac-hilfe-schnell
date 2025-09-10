@@ -102,6 +102,8 @@ export interface HourlyRateData {
   facharbeiterRate: number;
   azubiRate: number;
   helferRate: number;
+  serviceRate: number;
+  installationRate: number;
 }
 
 export interface QuoteResponseData {

@@ -12,6 +12,8 @@ interface HourlyRateData {
   facharbeiterRate: number;
   azubiRate: number;
   helferRate: number;
+  serviceRate: number;
+  installationRate: number;
 }
 
 interface HourlyRateInputProps {
@@ -24,18 +26,24 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
   const [facharbeiterRate, setFacharbeiterRate] = React.useState(data?.facharbeiterRate?.toString() || '');
   const [azubiRate, setAzubiRate] = React.useState(data?.azubiRate?.toString() || '');
   const [helferRate, setHelferRate] = React.useState(data?.helferRate?.toString() || '');
+  const [serviceRate, setServiceRate] = React.useState(data?.serviceRate?.toString() || '');
+  const [installationRate, setInstallationRate] = React.useState(data?.installationRate?.toString() || '');
 
   const handleSave = () => {
     const meisterRateNum = parseFloat(meisterRate) || 0;
     const facharbeiterRateNum = parseFloat(facharbeiterRate) || 0;
     const azubiRateNum = parseFloat(azubiRate) || 0;
     const helferRateNum = parseFloat(helferRate) || 0;
+    const serviceRateNum = parseFloat(serviceRate) || 0;
+    const installationRateNum = parseFloat(installationRate) || 0;
     
     onDataChange({
       meisterRate: meisterRateNum,
       facharbeiterRate: facharbeiterRateNum,
       azubiRate: azubiRateNum,
-      helferRate: helferRateNum
+      helferRate: helferRateNum,
+      serviceRate: serviceRateNum,
+      installationRate: installationRateNum
     });
   };
 
@@ -44,7 +52,9 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
       parseFloat(meisterRate) || 0,
       parseFloat(facharbeiterRate) || 0,
       parseFloat(azubiRate) || 0,
-      parseFloat(helferRate) || 0
+      parseFloat(helferRate) || 0,
+      parseFloat(serviceRate) || 0,
+      parseFloat(installationRate) || 0
     ].filter(rate => rate > 0);
     
     if (rates.length === 0) return 0;
@@ -113,6 +123,30 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
               onChange={(e) => setHelferRate(e.target.value)}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="serviceRate">Stundensatz Service (€)</Label>
+            <Input
+              id="serviceRate"
+              type="number"
+              step="0.01"
+              placeholder="95.00"
+              value={serviceRate}
+              onChange={(e) => setServiceRate(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="installationRate">Stundensatz Installation (€)</Label>
+            <Input
+              id="installationRate"
+              type="number"
+              step="0.01"
+              placeholder="75.00"
+              value={installationRate}
+              onChange={(e) => setInstallationRate(e.target.value)}
+            />
+          </div>
         </div>
 
         {averageRate > 0 && (
@@ -140,6 +174,12 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
                 )}
                 {parseFloat(helferRate) > 0 && (
                   <p><span className="font-medium">Helfer:</span> {helferRate} €</p>
+                )}
+                {parseFloat(serviceRate) > 0 && (
+                  <p><span className="font-medium">Service:</span> {serviceRate} €</p>
+                )}
+                {parseFloat(installationRate) > 0 && (
+                  <p><span className="font-medium">Installation:</span> {installationRate} €</p>
                 )}
               </div>
             </div>

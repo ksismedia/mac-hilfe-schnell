@@ -20,7 +20,7 @@ interface CustomerReportData {
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
   removedMissingServices?: string[];
-  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number; serviceRate: number; installationRate: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
@@ -420,7 +420,7 @@ export const generateCustomerHTML = ({
   const getPricingAnalysis = () => {
     if (!hourlyRateData) return '<p>Keine Preisdaten verfügbar</p>';
     
-    const averageRate = ((hourlyRateData.meisterRate || 0) + (hourlyRateData.facharbeiterRate || 0) + (hourlyRateData.azubiRate || 0) + (hourlyRateData.helferRate || 0)) / 4;
+    const averageRate = ((hourlyRateData.meisterRate || 0) + (hourlyRateData.facharbeiterRate || 0) + (hourlyRateData.azubiRate || 0) + (hourlyRateData.helferRate || 0) + (hourlyRateData.serviceRate || 0) + (hourlyRateData.installationRate || 0)) / 6;
     const pricingScore = 75; // Default score for structured pricing
     return `
       <div class="metric-card good">
@@ -432,6 +432,8 @@ export const generateCustomerHTML = ({
             <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
             <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate || 0}€/h</p>
             <p><strong>Helfer:</strong> ${hourlyRateData.helferRate || 0}€/h</p>
+            <p><strong>Service:</strong> ${hourlyRateData.serviceRate || 0}€/h</p>
+            <p><strong>Installation:</strong> ${hourlyRateData.installationRate || 0}€/h</p>
             <p><strong>Durchschnitt:</strong> ${averageRate.toFixed(2)}€/h</p>
           </div>
           </div>

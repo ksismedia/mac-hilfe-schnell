@@ -225,7 +225,14 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       competitorServices: competitorServices || {},
       companyServices,
       deletedCompetitors,
-      hourlyRateData,
+      hourlyRateData: hourlyRateData ? {
+        meisterRate: hourlyRateData.meisterRate || 0,
+        facharbeiterRate: hourlyRateData.facharbeiterRate || 0,
+        azubiRate: hourlyRateData.azubiRate || 0,
+        helferRate: hourlyRateData.helferRate || 0,
+        serviceRate: (hourlyRateData as any).serviceRate || 0,
+        installationRate: (hourlyRateData as any).installationRate || 0
+      } : undefined,
       missingImprintElements: [],
       manualSocialData,
       manualWorkplaceData,
