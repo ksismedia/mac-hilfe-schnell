@@ -1563,11 +1563,36 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Strategische Handlungsempfehlungen:</h4>
           <ul>
-            <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Wettbewerber durchführen</li>
-            <li>Eigene Alleinstellungsmerkmale gegenüber ${manualCompetitors.length} Mitbewerbern entwickeln</li>
-            <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Wettbewerbern überprüfen</li>
-            <li>Service-Portfolio basierend auf Wettbewerbsanalyse optimieren</li>
-            <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Wettbewerber</li>
+            ${(() => {
+              // Check if own company is better than all competitors
+              const ownScore = (window as any).globalOwnCompanyScore || 0;
+              const allOtherCompetitors = manualCompetitors.filter(c => c.name !== realData.company.name);
+              // Calculate competitor scores in HTML export context
+              const competitorScores = allOtherCompetitors.map(c => {
+                const rating = c.rating || 0;
+                const reviews = c.reviews || 0;
+                const services = c.services?.length || 0;
+                // Simple scoring for HTML export
+                return (rating / 5 * 40) + Math.min(reviews / 50 * 30, 30) + Math.min(services * 2, 30);
+              });
+              const bestCompetitorScore = competitorScores.length > 0 ? Math.max(...competitorScores) : 0;
+              const isDominant = ownScore > bestCompetitorScore && allOtherCompetitors.length > 0;
+              
+              if (isDominant) {
+                return `
+                  <li>Dominierende Marktposition</li>
+                  <li>Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
+                `;
+              } else {
+                return `
+                  <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Wettbewerber durchführen</li>
+                  <li>Eigene Alleinstellungsmerkmale gegenüber ${manualCompetitors.length} Mitbewerbern entwickeln</li>
+                  <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Wettbewerbern überprüfen</li>
+                  <li>Service-Portfolio basierend auf Wettbewerbsanalyse optimieren</li>
+                  <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Wettbewerber</li>
+                `;
+              }
+            })()}
           </ul>
         </div>
       </div>
