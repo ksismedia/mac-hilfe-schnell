@@ -281,23 +281,147 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
           ) : (
             <>
               {!displayData.kununu.found && !displayData.glassdoor.found ? (
-                <div className="text-center py-8">
-                  <div className="mb-4">
-                    <AlertCircle className="h-12 w-12 mx-auto text-amber-500" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                    Keine Arbeitgeberbewertungen gefunden
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Bei der automatischen Suche konnten keine Bewertungen auf kununu oder Glassdoor gefunden werden.
-                  </p>
-                  
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">Handlungsempfehlung:</h4>
-                    <ul className="text-sm text-blue-800 text-left space-y-1">
-                      <li>• Keine Bewertungen vorhanden</li>
-                      <li>• Bitte Registrierung in den Portalen vornehmen und Mitarbeiter animieren Bewertungen abzugeben</li>
-                    </ul>
+                <div className="space-y-6">
+                  {/* Arbeitsplatz & Arbeitgeber-Bewertung Section */}
+                  <div className="bg-[#1a1a1a] text-white rounded-lg p-6 space-y-4">
+                    <h3 className="text-xl font-semibold text-yellow-300 mb-4">
+                      Arbeitsplatz & Arbeitgeber-Bewertung
+                    </h3>
+                    
+                    <div className="space-y-2">
+                      <p className="text-yellow-300">
+                        <span className="font-semibold">Arbeitgeber-Bewertung:</span> Verbesserungsbedarf
+                      </p>
+                      <p className="text-yellow-300">
+                        <span className="font-semibold">Empfehlung:</span> Employer Branding stärken
+                      </p>
+                    </div>
+
+                    <div className="bg-gray-800 rounded-md p-1 mb-4">
+                      <div className="bg-gray-600 h-4 rounded-sm w-[5%]"></div>
+                    </div>
+
+                    <div className="bg-yellow-600 rounded-lg p-4">
+                      <p className="text-white font-medium flex items-center gap-2">
+                        <span>▼</span> Arbeitsplatz-Details anzeigen
+                      </p>
+                    </div>
+
+                    {/* Detaillierte Arbeitgeber-Bewertung */}
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold flex items-center gap-2">
+                        🏢 Detaillierte Arbeitgeber-Bewertung
+                      </h4>
+
+                      <div className="bg-yellow-900/30 border border-yellow-600 rounded-lg p-4">
+                        <div className="flex items-center gap-2 text-yellow-300 mb-2">
+                          <AlertCircle className="h-5 w-5" />
+                          <span className="font-semibold">Arbeitsplatz-Bewertungen nicht vorhanden</span>
+                        </div>
+                        <p className="text-gray-300 text-sm">
+                          Es sind keine Bewertungen auf den Portalen Kununu und Glassdoor ersichtlich.
+                        </p>
+                      </div>
+
+                      {/* Handlungsempfehlungen */}
+                      <div className="bg-yellow-600/20 border border-yellow-500 rounded-lg p-4">
+                        <h5 className="text-yellow-300 font-semibold mb-3">Handlungsempfehlungen:</h5>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-400">⭐</span>
+                            <span>Registrierung in den Portalen vornehmen</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-400">⭐</span>
+                            <span>Mitarbeiter zu Bewertungen animieren</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-400">⭐</span>
+                            <span>Mitarbeiterzufriedenheit regelmäßig messen</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-400">⭐</span>
+                            <span>Positive Arbeitgeber-Bewertungen fördern</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Kununu & Glassdoor Bewertungen */}
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <h6 className="text-sm font-medium mb-2">Kununu Rating:</h6>
+                        <p className="text-gray-400 text-sm mb-2">Nicht erfasst</p>
+                        <div className="bg-gray-700 rounded-full h-2">
+                          <div className="bg-red-500 h-2 rounded-full w-[20%]"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <h6 className="text-sm font-medium mb-2">Glassdoor Rating:</h6>
+                        <p className="text-gray-400 text-sm mb-2">Nicht erfasst</p>
+                        <div className="bg-gray-700 rounded-full h-2">
+                          <div className="bg-red-500 h-2 rounded-full w-[20%]"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <h6 className="text-sm font-medium mb-2">Arbeitsklima:</h6>
+                        <p className="text-gray-400 text-sm mb-2">Ausbaufähig</p>
+                        <div className="bg-gray-700 rounded-full h-2">
+                          <div className="bg-red-500 h-2 rounded-full w-[40%]"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fachkräfte-Attraktivität */}
+                    <div className="space-y-4">
+                      <h5 className="text-lg font-semibold">Fachkräfte-Attraktivität</h5>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <h6 className="text-sm font-medium mb-2">Ausbildungsplätze:</h6>
+                          <p className="text-gray-300 text-sm mb-2">Verfügbar</p>
+                          <div className="bg-gray-700 rounded-full h-2">
+                            <div className="bg-yellow-400 h-2 rounded-full w-[70%]"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h6 className="text-sm font-medium mb-2">Weiterbildung:</h6>
+                          <p className="text-gray-300 text-sm mb-2">Standardprogramm</p>
+                          <div className="bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-[60%]"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <h6 className="text-sm font-medium mb-2">Benefits:</h6>
+                          <p className="text-gray-300 text-sm mb-2">Branchenüblich</p>
+                          <div className="bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-[65%]"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Arbeitsplatz-Empfehlungen */}
+                    <div className="bg-yellow-600/20 border border-yellow-500 rounded-lg p-4">
+                      <h5 className="text-yellow-300 font-semibold mb-3">Arbeitsplatz-Empfehlungen:</h5>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">⭐</span>
+                          <span>Mitarbeiterbewertungen auf Kununu und Glassdoor aktiv unterstützen</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">⭐</span>
+                          <span>Employer Branding durch authentische Einblicke stärken</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">⭐</span>
+                          <span>Ausbildungs- und Karrierewege transparent kommunizieren</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">⭐</span>
+                          <span>Moderne Benefits und flexible Arbeitszeiten anbieten</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
