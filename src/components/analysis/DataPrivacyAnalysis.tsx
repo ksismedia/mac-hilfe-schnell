@@ -74,6 +74,52 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     }
   };
 
+  // Calculate effective score considering manual overrides and violation changes
+  const getEffectiveScore = () => {
+    // If manual score override is set, use it
+    if (manualDataPrivacyData?.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData?.score) {
+      return manualDataPrivacyData.overallScore;
+    }
+    
+    // Otherwise calculate dynamic score based on violations
+    if (!privacyData) return 0;
+    
+    let baseScore = privacyData.score;
+    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
+    const customViolations = manualDataPrivacyData?.customViolations || [];
+    
+    // Add points for deselected violations (removing violations improves score)
+    const deselectedCount = deselectedViolations.length;
+    const scoreBonus = deselectedCount * 8; // 8 points per deselected violation
+    
+    // Subtract points for custom violations (adding violations worsens score)
+    let violationPenalty = 0;
+    customViolations.forEach(violation => {
+      if (violation.severity === 'high') violationPenalty += 15;
+      else if (violation.severity === 'medium') violationPenalty += 10;
+      else violationPenalty += 5;
+    });
+    
+    // Calculate adjusted score
+    const adjustedScore = Math.max(0, Math.min(100, baseScore + scoreBonus - violationPenalty));
+    return Math.round(adjustedScore);
+  };
+
+  // Update score when violations change
+  useEffect(() => {
+    if (privacyData && onDataChange) {
+      const effectiveScore = getEffectiveScore();
+      // Only update if score actually changed
+      if (effectiveScore !== privacyData.score) {
+        const updatedData = {
+          ...privacyData,
+          score: effectiveScore
+        };
+        onDataChange(updatedData);
+      }
+    }
+  }, [manualDataPrivacyData?.deselectedViolations, manualDataPrivacyData?.customViolations, manualDataPrivacyData?.overallScore]);
+
   // DSGVO-konforme Score-Darstellung
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'score-text-medium';    
@@ -124,14 +170,6 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     return privacyData.violations.filter((_, index) => 
       !deselected.includes(`auto-${index}`)
     );
-  };
-
-  // Calculate effective score considering manual overrides
-  const getEffectiveScore = () => {
-    if (manualDataPrivacyData?.overallScore !== undefined) {
-      return manualDataPrivacyData.overallScore;
-    }
-    return privacyData?.score || 0;
   };
 
   // Get all violations including custom ones
