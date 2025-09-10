@@ -505,15 +505,8 @@ export const calculateCorporateIdentityScore = (data: any): number => {
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
-  console.log('🔍 calculateDataPrivacyScore called with:', { 
-    privacyData: privacyData, 
-    manualDataPrivacyData: manualDataPrivacyData,
-    manualOverallScore: manualDataPrivacyData?.overallScore 
-  });
-  
   // Verwende den echten Score aus privacyData falls vorhanden
   if (!privacyData?.score) {
-    console.log('🔍 No privacyData.score, returning fallback');
     return 26; // Fallback-Score
   }
   
@@ -521,7 +514,6 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   if (manualDataPrivacyData) {
     // If manual score override is set, use it
     if (manualDataPrivacyData.overallScore !== undefined) {
-      console.log('🔍 Using manual overall score:', manualDataPrivacyData.overallScore);
       return manualDataPrivacyData.overallScore;
     }
     
