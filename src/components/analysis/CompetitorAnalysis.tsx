@@ -361,9 +361,6 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   console.log('CompetitorAnalysis - serviceRemovalBonus:', serviceRemovalBonus.toFixed(1));
   console.log('CompetitorAnalysis - finalOwnCompanyScore:', ownCompanyScore);
   
-  // WICHTIG: Score für CustomerHTMLExport verfügbar machen
-  (window as any).globalOwnCompanyScore = ownCompanyScore;
-  
   // WICHTIG: Score an Parent-Komponente weiterleiten
   if (onCompanyScoreChange) {
     onCompanyScoreChange(ownCompanyScore);
@@ -380,6 +377,11 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     },
     ...allCompetitors
   ].sort((a, b) => b.score - a.score);
+
+  // WICHTIG: Score und Konkurrenten-Daten für CustomerHTMLExport verfügbar machen
+  (window as any).globalOwnCompanyScore = ownCompanyScore;
+  (window as any).globalCompetitorData = allCompetitors;
+  (window as any).globalSortedCompetitors = sortedCompetitors;
 
   // Gelöschte Konkurrenten für Wiederherstellung - SICHER
   const deletedGoogleCompetitors = realData?.competitors?.filter(comp => 

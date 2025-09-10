@@ -259,7 +259,8 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Competitor Analysis section
     if (selections.subSections.competitorAnalysis) {
-      const competitorScore = data.manualCompetitors && data.manualCompetitors.length > 0 ? 75 : 45;
+      // Verwende den bereits berechneten Competitor-Score aus dem globalen Context
+      const competitorScore = (window as any).globalOwnCompanyScore || (data.manualCompetitors && data.manualCompetitors.length > 0 ? 75 : 45);
       
       // Calculate if company is dominant in market
       const ownRating = data.realData?.reviews?.google?.rating || 0;
@@ -302,9 +303,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       const serviceRemovalBonus = Math.min(removedServices * 1.5, baseOwnScore * 0.15);
       const ownScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
       
-      // Calculate all competitor scores properly
-      const allCompetitors = [...(data.manualCompetitors || [])];
-      if (data.realData?.competitors) {
+      // VERWENDE BEREITS BERECHNETE KONKURRENTEN-DATEN AUS COMPETITORANALYSIS
+      const globalCompetitorData = (window as any).globalCompetitorData;
+      const allCompetitors = globalCompetitorData || [...(data.manualCompetitors || [])];
+      if (!globalCompetitorData && data.realData?.competitors) {
         data.realData.competitors.forEach((autoCompetitor: any) => {
           const exists = data.manualCompetitors?.some((manual: any) => 
             manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()
@@ -322,6 +324,12 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       }
       
       const competitorScores = allCompetitors.map((c: any) => {
+        // Verwende bereits berechneten Score wenn verfügbar
+        if (c.score !== undefined) {
+          return c.score;
+        }
+        
+        // Fallback: Berechne Score wenn nicht vorhanden
         const rating = c.rating || 0;
         const reviews = c.reviews || 0;
         const services = c.services?.length || 0;

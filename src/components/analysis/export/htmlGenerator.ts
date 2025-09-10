@@ -235,8 +235,9 @@ export const generateCustomerHTML = ({
   const finalOwnScore = Math.min(ownDynamicScore + serviceRemovalBonus, 96);
   
   // VERWENDE DIE DYNAMISCH BERECHNETE EIGENE SCORE BASIEREND AUF SERVICES + BONUS
-  const competitorComparisonScore = finalOwnScore; // Dynamischer Wert basierend auf Services + Bonus
-  const marketComparisonScore = finalOwnScore;
+  // Verwende den bereits berechneten Competitor-Score aus dem globalen Context
+  const competitorComparisonScore = (window as any).globalOwnCompanyScore || finalOwnScore; // Dynamischer Wert basierend auf Services + Bonus
+  const marketComparisonScore = (window as any).globalOwnCompanyScore || finalOwnScore;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
@@ -1332,8 +1333,9 @@ export const generateCustomerHTML = ({
     console.log('manualCompetitors:', manualCompetitors);
     console.log('competitorServices:', competitorServices);
     
-    // Kombiniere manuelle und automatische Wettbewerber, filtere gelöschte aus
-    const allCompetitors = [...(manualCompetitors || [])]
+    // VERWENDE BEREITS BERECHNETE KONKURRENTEN-DATEN AUS COMPETITORANALYSIS
+    const globalCompetitorData = (window as any).globalCompetitorData;
+    const allCompetitors = globalCompetitorData || [...(manualCompetitors || [])]
       .filter(competitor => !deletedCompetitors.has(competitor.name))
       .map(competitor => {
         // Verwende Services aus competitorServices wenn vorhanden, sonst aus competitor
@@ -1472,9 +1474,9 @@ export const generateCustomerHTML = ({
                 
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
                 
-                // VERWENDE DIREKTEN RATING-WERT AUS EINGABE (NICHT BERECHNET!)
-                // Rating von 1-5 in Prozentscore umwandeln (20% pro Stern)
-                const estimatedScore = Math.round(rating * 20);
+                // VERWENDE BEREITS BERECHNETEN SCORE AUS COMPETITORANALYSIS
+                // Verwende bereits berechneten Score wenn verfügbar, sonst fallback
+                const estimatedScore = (competitor as any).score || Math.round(rating * 20);
                 const serviceCount = services.length;
                 
                 return `
