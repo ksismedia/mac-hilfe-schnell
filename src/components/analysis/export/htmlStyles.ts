@@ -40,7 +40,6 @@ body {
   overflow: hidden !important;
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
-  width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   contain: layout style !important;
