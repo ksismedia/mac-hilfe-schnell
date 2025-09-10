@@ -304,12 +304,12 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
               <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
                 ${isDominant ? `
                   <li><strong>⭐ Dominierende Marktposition im unmittelbaren Marktumfeld</strong></li>
-                  <li><strong>✅ Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</strong></li>
+                  <li><strong>⭐ Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</strong></li>
                 ` : `
-                  <li><strong>📊 Benchmarking:</strong> Regelmäßige Analyse der Hauptkonkurrenten</li>
-                  <li><strong>🎯 Differenzierung:</strong> Alleinstellungsmerkmale entwickeln</li>
-                  <li><strong>💰 Preispositionierung:</strong> Wettbewerbsfähige Preise festlegen</li>
-                  <li><strong>🔄 Monitoring:</strong> Kontinuierliche Marktbeobachtung</li>
+                  <li><strong>⭐ Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</strong></li>
+                  <li><strong>⭐ Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</strong></li>
+                  <li><strong>⭐ Kommunizieren Sie vorhandene Services besser</strong></li>
+                  <li><strong>⭐ Partnerschaften für fehlende Services erwägen</strong></li>
                 `}
               </ul>
             </div>

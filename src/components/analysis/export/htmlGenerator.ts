@@ -1717,16 +1717,15 @@ export const generateCustomerHTML = ({
               
               if (isDominant) {
                 return `
-                  <li>Dominierende Marktposition im unmittelbaren Marktumfeld</li>
-                  <li>Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
+                  <li>⭐ Dominierende Marktposition im unmittelbaren Marktumfeld</li>
+                  <li>⭐ Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
                 `;
               } else {
                 return `
-                  <li>Benchmarking gegen die ${manualCompetitors.filter(c => c.rating >= 4).length} stärksten Wettbewerber durchführen</li>
-                  <li>Eigene Alleinstellungsmerkmale gegenüber ${manualCompetitors.length} Mitbewerbern entwickeln</li>
-                  <li>Preispositionierung im Vergleich zu ${manualCompetitors.length} Wettbewerbern überprüfen</li>
-                  <li>Service-Portfolio basierend auf Wettbewerbsanalyse optimieren</li>
-                  <li>Kontinuierliches Monitoring der ${manualCompetitors.length} erfassten Wettbewerber</li>
+                  <li>⭐ Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</li>
+                  <li>⭐ Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</li>
+                  <li>⭐ Kommunizieren Sie vorhandene Services besser</li>
+                  <li>⭐ Partnerschaften für fehlende Services erwägen</li>
                 `;
               }
             })()}
