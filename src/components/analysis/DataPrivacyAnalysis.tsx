@@ -77,7 +77,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   // Calculate effective score considering manual overrides and violation changes
   const getEffectiveScore = () => {
     // If manual score override is set, use it
-    if (manualDataPrivacyData?.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData?.score) {
+    if (manualDataPrivacyData?.overallScore !== undefined) {
       return manualDataPrivacyData.overallScore;
     }
     
