@@ -81,12 +81,23 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       return manualDataPrivacyData.overallScore;
     }
     
-    // Otherwise calculate dynamic score based on violations
+    // Otherwise calculate dynamic score based on violations AND manual parameters
     if (!privacyData) return 0;
     
     let baseScore = privacyData.score;
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
+    
+    // Add bonus points for manual positive settings
+    let manualBonus = 0;
+    if (manualDataPrivacyData?.hasSSL) manualBonus += 5;
+    if (manualDataPrivacyData?.privacyPolicy) manualBonus += 10;
+    if (manualDataPrivacyData?.cookiePolicy) manualBonus += 8;
+    if (manualDataPrivacyData?.legalImprint) manualBonus += 10;
+    if (manualDataPrivacyData?.gdprCompliant) manualBonus += 15;
+    if (manualDataPrivacyData?.cookieConsent) manualBonus += 12;
+    if (manualDataPrivacyData?.dataProcessingAgreement) manualBonus += 8;
+    if (manualDataPrivacyData?.dataSubjectRights) manualBonus += 7;
     
     // Add points for deselected violations (removing violations improves score)
     const deselectedCount = deselectedViolations.length;
@@ -100,8 +111,8 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       else violationPenalty += 5;
     });
     
-    // Calculate adjusted score
-    const adjustedScore = Math.max(0, Math.min(100, baseScore + scoreBonus - violationPenalty));
+    // Calculate adjusted score including manual parameters
+    const adjustedScore = Math.max(0, Math.min(100, baseScore + manualBonus + scoreBonus - violationPenalty));
     return Math.round(adjustedScore);
   };
 
@@ -116,7 +127,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       };
       onDataChange(updatedData);
     }
-  }, [manualDataPrivacyData?.deselectedViolations, manualDataPrivacyData?.customViolations, manualDataPrivacyData?.overallScore]);
+  }, [manualDataPrivacyData?.deselectedViolations, manualDataPrivacyData?.customViolations, manualDataPrivacyData?.overallScore, manualDataPrivacyData?.hasSSL, manualDataPrivacyData?.privacyPolicy, manualDataPrivacyData?.cookiePolicy, manualDataPrivacyData?.legalImprint, manualDataPrivacyData?.gdprCompliant, manualDataPrivacyData?.cookieConsent, manualDataPrivacyData?.dataProcessingAgreement, manualDataPrivacyData?.dataSubjectRights]);
 
   // DSGVO-konforme Score-Darstellung
   const getScoreColor = (score: number) => {
