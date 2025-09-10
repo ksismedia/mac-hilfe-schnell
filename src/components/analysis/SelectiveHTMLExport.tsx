@@ -23,7 +23,7 @@ interface SelectiveHTMLExportProps {
   competitorServices?: CompetitorServices;
   companyServices?: CompanyServices;
   deletedCompetitors?: Set<string>;
-  hourlyRateData?: { ownRate: number; regionAverage: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
   staffQualificationData?: StaffQualificationData | null;
   quoteResponseData?: QuoteResponseData | null;
   manualContentData?: ManualContentData | null;

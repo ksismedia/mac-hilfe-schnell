@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 export interface HourlyRateData {
-  ownRate: number;
-  regionAverage: number;
+  meisterRate: number;
+  facharbeiterRate: number;
+  azubiRate: number;
+  helferRate: number;
 }
 
 interface HourlyRateContextType {
@@ -31,7 +33,7 @@ export const HourlyRateProvider: React.FC<HourlyRateProviderProps> = ({ children
     console.log('Hourly Rate Data Cleared');
   }, []);
 
-  const hasHourlyRateData = hourlyRateData !== null && hourlyRateData.ownRate > 0;
+  const hasHourlyRateData = hourlyRateData !== null && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0);
 
   const value: HourlyRateContextType = {
     hourlyRateData,

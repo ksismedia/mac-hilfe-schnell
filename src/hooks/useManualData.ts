@@ -98,8 +98,10 @@ export interface StaffQualificationData {
 }
 
 export interface HourlyRateData {
-  ownRate: number;
-  regionAverage: number;
+  meisterRate: number;
+  facharbeiterRate: number;
+  azubiRate: number;
+  helferRate: number;
 }
 
 export interface QuoteResponseData {

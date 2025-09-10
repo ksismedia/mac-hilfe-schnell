@@ -23,7 +23,7 @@ interface CustomerHTMLExportProps {
   companyServices?: CompanyServices;
   deletedCompetitors?: Set<string>;
   removedMissingServices?: string[];
-  hourlyRateData?: { ownRate: number; regionAverage: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
   staffQualificationData?: any;
   quoteResponseData?: any;
   manualContentData?: ManualContentData | null;

@@ -50,7 +50,7 @@ const HourlyRateTab: React.FC<HourlyRateTabProps> = ({ hourlyRateData, updateHou
                 <span className="font-semibold">Stundensatz konfiguriert</span>
               </div>
               <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                Ihr Stundensatz von {hourlyRateData.ownRate}€/h wurde gespeichert. 
+                Stundensätze wurden konfiguriert. 
                 Reports und Bewertungen können jetzt vollständig generiert werden.
               </p>
             </div>

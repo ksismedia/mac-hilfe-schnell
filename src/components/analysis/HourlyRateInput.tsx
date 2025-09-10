@@ -8,8 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Euro, TrendingUp, Calculator } from 'lucide-react';
 
 interface HourlyRateData {
-  ownRate: number;
-  regionAverage: number;
+  meisterRate: number;
+  facharbeiterRate: number;
+  azubiRate: number;
+  helferRate: number;
 }
 
 interface HourlyRateInputProps {
@@ -18,29 +20,38 @@ interface HourlyRateInputProps {
 }
 
 const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange }) => {
-  const [ownRate, setOwnRate] = React.useState(data?.ownRate?.toString() || '');
-  const [regionAverage, setRegionAverage] = React.useState(data?.regionAverage?.toString() || '');
+  const [meisterRate, setMeisterRate] = React.useState(data?.meisterRate?.toString() || '');
+  const [facharbeiterRate, setFacharbeiterRate] = React.useState(data?.facharbeiterRate?.toString() || '');
+  const [azubiRate, setAzubiRate] = React.useState(data?.azubiRate?.toString() || '');
+  const [helferRate, setHelferRate] = React.useState(data?.helferRate?.toString() || '');
 
   const handleSave = () => {
-    const ownRateNum = parseFloat(ownRate) || 0;
-    const regionAverageNum = parseFloat(regionAverage) || 0;
+    const meisterRateNum = parseFloat(meisterRate) || 0;
+    const facharbeiterRateNum = parseFloat(facharbeiterRate) || 0;
+    const azubiRateNum = parseFloat(azubiRate) || 0;
+    const helferRateNum = parseFloat(helferRate) || 0;
     
     onDataChange({
-      ownRate: ownRateNum,
-      regionAverage: regionAverageNum
+      meisterRate: meisterRateNum,
+      facharbeiterRate: facharbeiterRateNum,
+      azubiRate: azubiRateNum,
+      helferRate: helferRateNum
     });
   };
 
-  const calculateComparison = () => {
-    const own = parseFloat(ownRate) || 0;
-    const avg = parseFloat(regionAverage) || 0;
-    if (avg === 0) return null;
+  const calculateAverageRate = () => {
+    const rates = [
+      parseFloat(meisterRate) || 0,
+      parseFloat(facharbeiterRate) || 0,
+      parseFloat(azubiRate) || 0,
+      parseFloat(helferRate) || 0
+    ].filter(rate => rate > 0);
     
-    const difference = ((own - avg) / avg) * 100;
-    return difference;
+    if (rates.length === 0) return 0;
+    return rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
   };
 
-  const comparison = calculateComparison();
+  const averageRate = calculateAverageRate();
 
   return (
     <Card>
@@ -56,54 +67,81 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="ownRate">Ihr Stundensatz (€)</Label>
+            <Label htmlFor="meisterRate">Stundensatz Meister (€)</Label>
             <Input
-              id="ownRate"
+              id="meisterRate"
               type="number"
               step="0.01"
-              placeholder="75.00"
-              value={ownRate}
-              onChange={(e) => setOwnRate(e.target.value)}
+              placeholder="85.00"
+              value={meisterRate}
+              onChange={(e) => setMeisterRate(e.target.value)}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="regionAverage">Regionaler Durchschnitt (€)</Label>
+            <Label htmlFor="facharbeiterRate">Stundensatz Facharbeiter (€)</Label>
             <Input
-              id="regionAverage"
+              id="facharbeiterRate"
               type="number"
               step="0.01"
               placeholder="65.00"
-              value={regionAverage}
-              onChange={(e) => setRegionAverage(e.target.value)}
+              value={facharbeiterRate}
+              onChange={(e) => setFacharbeiterRate(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="azubiRate">Stundensatz Azubi (€)</Label>
+            <Input
+              id="azubiRate"
+              type="number"
+              step="0.01"
+              placeholder="25.00"
+              value={azubiRate}
+              onChange={(e) => setAzubiRate(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="helferRate">Stundensatz Helfer (€)</Label>
+            <Input
+              id="helferRate"
+              type="number"
+              step="0.01"
+              placeholder="35.00"
+              value={helferRate}
+              onChange={(e) => setHelferRate(e.target.value)}
             />
           </div>
         </div>
 
-        {comparison !== null && (
+        {averageRate > 0 && (
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <Calculator className="h-4 w-4 text-blue-600" />
-              <span className="font-semibold text-blue-800">Vergleichsanalyse</span>
+              <span className="font-semibold text-blue-800">Stundensatz-Übersicht</span>
             </div>
-            <div className="text-sm text-blue-700">
+            <div className="text-sm text-blue-700 space-y-2">
               <p>
-                Ihr Stundensatz liegt{' '}
-                <Badge variant={comparison > 0 ? "default" : comparison < -10 ? "destructive" : "secondary"}>
-                  {comparison > 0 ? '+' : ''}{comparison.toFixed(1)}%
-                </Badge>{' '}
-                {comparison > 0 ? 'über' : 'unter'} dem regionalen Durchschnitt
+                <strong>Durchschnittlicher Stundensatz:</strong>{' '}
+                <Badge variant="default">
+                  {averageRate.toFixed(2)} €
+                </Badge>
               </p>
-              {comparison > 15 && (
-                <p className="mt-1 text-amber-700">
-                  ⚠️ Möglicherweise zu hoch - könnte Kunden abschrecken
-                </p>
-              )}
-              {comparison < -15 && (
-                <p className="mt-1 text-red-700">
-                  ⚠️ Deutlich unter Durchschnitt - Preissteigerung prüfen
-                </p>
-              )}
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                {parseFloat(meisterRate) > 0 && (
+                  <p><span className="font-medium">Meister:</span> {meisterRate} €</p>
+                )}
+                {parseFloat(facharbeiterRate) > 0 && (
+                  <p><span className="font-medium">Facharbeiter:</span> {facharbeiterRate} €</p>
+                )}
+                {parseFloat(azubiRate) > 0 && (
+                  <p><span className="font-medium">Azubi:</span> {azubiRate} €</p>
+                )}
+                {parseFloat(helferRate) > 0 && (
+                  <p><span className="font-medium">Helfer:</span> {helferRate} €</p>
+                )}
+              </div>
             </div>
           </div>
         )}

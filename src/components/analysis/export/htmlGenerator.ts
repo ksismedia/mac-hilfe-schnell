@@ -20,7 +20,7 @@ interface CustomerReportData {
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
   removedMissingServices?: string[];
-  hourlyRateData?: { ownRate: number; regionAverage: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
@@ -255,7 +255,7 @@ export const generateCustomerHTML = ({
   const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
   
   // Calculate additional scores
-  const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
+  const pricingScore = hourlyRateData ? 75 : 65; // Use a default score for multiple rates
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   const reputationScore = realData.reviews.google.rating * 20;
   
@@ -395,16 +395,20 @@ export const generateCustomerHTML = ({
   const getPricingAnalysis = () => {
     if (!hourlyRateData) return '<p>Keine Preisdaten verfügbar</p>';
     
-    const pricingScore = Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100);
+    const averageRate = ((hourlyRateData.meisterRate || 0) + (hourlyRateData.facharbeiterRate || 0) + (hourlyRateData.azubiRate || 0) + (hourlyRateData.helferRate || 0)) / 4;
+    const pricingScore = 75; // Default score for structured pricing
     return `
       <div class="metric-card good">
         <h3>Stundensatz-Analyse</h3>
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
           <div class="score-details">
-            <p><strong>Ihr Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
-            <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
-            <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
+            <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
+            <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
+            <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate || 0}€/h</p>
+            <p><strong>Helfer:</strong> ${hourlyRateData.helferRate || 0}€/h</p>
+            <p><strong>Durchschnitt:</strong> ${averageRate.toFixed(2)}€/h</p>
+          </div>
           </div>
         </div>
           <div class="progress-container">
@@ -2937,16 +2941,16 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>💰 Preispositionierung</span>
-        <div class="header-score-circle ${getScoreColorClass(Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100))}">${hourlyRateData.ownRate}€</div>
+        <div class="header-score-circle ${getScoreColorClass(75)}">75%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Preispositionierung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
+            <div class="score-circle ${getScoreColorClass(75)}">75%</div>
             <div class="score-details">
-              <p><strong>Stundensatz:</strong> ${hourlyRateData.ownRate}€/h</p>
-              <p><strong>Regionaler Durchschnitt:</strong> ${hourlyRateData.regionAverage}€/h</p>
+              <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
+              <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
               <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
             </div>
           </div>

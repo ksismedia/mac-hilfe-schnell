@@ -22,7 +22,7 @@ interface HTMLExportProps {
   competitorServices?: CompetitorServices;
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
-  hourlyRateData?: { ownRate: number; regionAverage: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
 }
@@ -685,20 +685,20 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 ${hourlyRateData ? `
                     <div class="metric-grid">
                         <div class="metric-item">
-                            <div class="metric-title">Eigener Stundensatz</div>
-                            <div class="metric-value">${hourlyRateData.ownRate} €</div>
+                            <div class="metric-title">Stundensatz Meister</div>
+                            <div class="metric-value">${hourlyRateData.meisterRate || 0} €</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-title">Regionaler Durchschnitt</div>
-                            <div class="metric-value">${hourlyRateData.regionAverage} €</div>
+                            <div class="metric-title">Stundensatz Facharbeiter</div>
+                            <div class="metric-value">${hourlyRateData.facharbeiterRate || 0} €</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-title">Differenz</div>
-                            <div class="metric-value">${hourlyRateData.ownRate - hourlyRateData.regionAverage} €</div>
+                            <div class="metric-title">Stundensatz Azubi</div>
+                            <div class="metric-value">${hourlyRateData.azubiRate || 0} €</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-title">Positionierung</div>
-                            <div class="metric-value">${hourlyRateData.ownRate > hourlyRateData.regionAverage ? 'Über Durchschnitt' : 'Unter Durchschnitt'}</div>
+                            <div class="metric-title">Stundensatz Helfer</div>
+                            <div class="metric-value">${hourlyRateData.helferRate || 0} €</div>
                         </div>
                     </div>
                 ` : '<p>Keine Stundensatzdaten verfügbar.</p>'}
