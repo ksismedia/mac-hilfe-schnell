@@ -398,32 +398,43 @@ const Index = () => {
         )}
 
         {/* Authentication and Saved Analyses */}
-        <div className="mb-6 text-center">
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
-            <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
-            {user ? (
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="flex items-center gap-2">
-                  <User className="h-3 w-3" />
-                  {user.email}
-                </Badge>
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Abmelden
-                </Button>
-              </div>
-            ) : (
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
-                <LogIn className="h-4 w-4 mr-2" />
-                Anmelden für globale Speicherung
-              </Button>
-            )}
-          </div>
+        <div className="mb-6">
+          {/* Auth Status Banner */}
           {!user && (
-            <p className="text-sm text-gray-400">
-              💾 Ohne Anmeldung werden Analysen nur lokal im Browser gespeichert
-            </p>
+            <div className="mb-4 p-4 bg-yellow-400/10 border border-yellow-400/30 rounded-lg text-center">
+              <h3 className="text-yellow-400 font-semibold mb-2">⚠️ Analysen werden nur lokal gespeichert</h3>
+              <p className="text-gray-300 text-sm mb-3">
+                Ohne Anmeldung gehen Ihre Analysen beim Schließen des Browsers verloren.
+              </p>
+              <Button variant="outline" onClick={() => navigate('/auth')} className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black">
+                <LogIn className="h-4 w-4 mr-2" />
+                Jetzt anmelden für dauerhafte Speicherung
+              </Button>
+            </div>
           )}
+          
+          <div className="text-center">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
+              <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="flex items-center gap-2 bg-green-500/20 border-green-500 text-green-400">
+                    <User className="h-3 w-3" />
+                    ✅ Angemeldet: {user.email}
+                  </Badge>
+                  <Button variant="outline" size="sm" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Abmelden
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Anmelden
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
 
         <Card className="mb-8 bg-gray-800 border-yellow-400/30">
