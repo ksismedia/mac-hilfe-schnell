@@ -1564,17 +1564,86 @@ export const generateCustomerHTML = ({
           <h4>Strategische Handlungsempfehlungen:</h4>
           <ul>
             ${(() => {
-              // Check if own company is better than all competitors
-              const ownScore = (window as any).globalOwnCompanyScore || 0;
+              // Calculate own company score
+              const ownRating = realData.reviews.google.rating || 0;
+              const ownReviews = realData.reviews.google.count || 0;
+              const ownServices = (companyServices?.services || []).length;
+              const removedServices = (removedMissingServices || []).length;
+              const totalOwnServices = ownServices + removedServices;
+              
+              // Own company score calculation (similar to component logic)
+              const ownRatingScore = ownRating >= 4.5 
+                ? 80 + ((ownRating - 4.5) / 0.5) * 15
+                : ownRating >= 3.5 
+                  ? 60 + ((ownRating - 3.5) * 20)
+                  : ownRating >= 2.5 
+                    ? 40 + ((ownRating - 2.5) * 20)
+                    : ownRating * 16;
+              
+              const ownReviewScore = ownReviews <= 25 
+                ? Math.min(50 + ownReviews * 1.6, 90)
+                : Math.min(95, 90 + Math.log10(ownReviews / 25) * 5);
+              
+              let ownServiceScore;
+              if (totalOwnServices === 0) {
+                ownServiceScore = 15;
+              } else if (totalOwnServices <= 3) {
+                ownServiceScore = 30 + (totalOwnServices * 15);
+              } else if (totalOwnServices <= 8) {
+                ownServiceScore = 75 + ((totalOwnServices - 3) * 2);
+              } else if (totalOwnServices <= 15) {
+                ownServiceScore = 85 + ((totalOwnServices - 8) * 0.7);
+              } else {
+                ownServiceScore = Math.min(90 + ((totalOwnServices - 15) * 0.3), 93);
+              }
+              
+              const ownRatingWeight = Math.min(0.30 + (totalOwnServices * 0.015), 0.55);
+              const ownServiceWeight = Math.max(0.40 - (totalOwnServices * 0.01), 0.25);
+              const ownReviewWeight = 1 - ownRatingWeight - ownServiceWeight;
+              
+              const baseOwnScore = (ownRatingScore * ownRatingWeight) + (ownReviewScore * ownReviewWeight) + (ownServiceScore * ownServiceWeight);
+              const serviceRemovalBonus = Math.min(removedServices * 1.5, baseOwnScore * 0.15);
+              const ownScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
+              
+              // Calculate competitor scores
               const allOtherCompetitors = manualCompetitors.filter(c => c.name !== realData.company.name);
-              // Calculate competitor scores in HTML export context
               const competitorScores = allOtherCompetitors.map(c => {
                 const rating = c.rating || 0;
                 const reviews = c.reviews || 0;
                 const services = c.services?.length || 0;
-                // Simple scoring for HTML export
-                return (rating / 5 * 40) + Math.min(reviews / 50 * 30, 30) + Math.min(services * 2, 30);
+                
+                const ratingScore = rating >= 4.5 
+                  ? 80 + ((rating - 4.5) / 0.5) * 15
+                  : rating >= 3.5 
+                    ? 60 + ((rating - 3.5) * 20)
+                    : rating >= 2.5 
+                      ? 40 + ((rating - 2.5) * 20)
+                      : rating * 16;
+                
+                const reviewScore = reviews <= 25 
+                  ? Math.min(50 + reviews * 1.6, 90)
+                  : Math.min(95, 90 + Math.log10(reviews / 25) * 5);
+                
+                let serviceScore;
+                if (services === 0) {
+                  serviceScore = 15;
+                } else if (services <= 3) {
+                  serviceScore = 30 + (services * 15);
+                } else if (services <= 8) {
+                  serviceScore = 75 + ((services - 3) * 2);
+                } else if (services <= 15) {
+                  serviceScore = 85 + ((services - 8) * 0.7);
+                } else {
+                  serviceScore = Math.min(90 + ((services - 15) * 0.3), 93);
+                }
+                
+                const ratingWeight = Math.min(0.30 + (services * 0.015), 0.55);
+                const serviceWeight = Math.max(0.40 - (services * 0.01), 0.25);
+                const reviewWeight = 1 - ratingWeight - serviceWeight;
+                
+                return (ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight);
               });
+              
               const bestCompetitorScore = competitorScores.length > 0 ? Math.max(...competitorScores) : 0;
               const isDominant = ownScore > bestCompetitorScore && allOtherCompetitors.length > 0;
               
