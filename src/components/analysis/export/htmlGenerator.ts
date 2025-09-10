@@ -1455,7 +1455,7 @@ export const generateCustomerHTML = ({
                 </td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
-                  <span style="font-weight: bold; font-size: 1.2em;">${competitorComparisonScore}</span>
+                  <span style="font-weight: bold; font-size: 1.2em;">${Math.round(competitorComparisonScore)}</span>
                     <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 1.5}% Bonus)` : ""}</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
@@ -1496,7 +1496,7 @@ export const generateCustomerHTML = ({
                   </td>
                   <td class="table-text" style="padding: 12px; text-align: center;">${competitor.reviews}</td>
                   <td class="table-text" style="padding: 12px; text-align: center;">
-                    <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}" style="color: ${estimatedScore >= 80 ? '#FFD700' : estimatedScore >= 60 ? '#22c55e' : '#FF0000'} !important; font-weight: bold;">${estimatedScore}</span>
+                    <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}" style="color: ${estimatedScore >= 80 ? '#FFD700' : estimatedScore >= 60 ? '#22c55e' : '#FF0000'} !important; font-weight: bold;">${Math.round(estimatedScore)}</span>
                     <br><small class="secondary-text">${serviceCount} Services</small>
                     <br><small class="secondary-text">Services: ${serviceCount}</small>
                   </td>
