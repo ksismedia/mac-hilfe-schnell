@@ -46,17 +46,32 @@ body {
   contain: layout style !important;
   position: relative;
 }
-/* Force all sections to have same width regardless of content */
+/* CRITICAL: Force all sections to have same width - overrides ALL inline styles */
 .section,
 div[class*="section"],
 section[class*="section"],
 .metric-card,
 .company-info,
-.recommendations {
+.recommendations,
+.collapsible,
+.progress-container,
+.score-overview,
+.header {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 100% !important;
   box-sizing: border-box !important;
+}
+/* FORCE consistent container behavior */
+* {
+  box-sizing: border-box !important;
+}
+/* Ensure no element exceeds container width */
+html, body, .container, .section, .section-content, .metric-card, .score-overview, .header, 
+div, section, article, p, h1, h2, h3, h4, h5, h6 {
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
 }
 .header { 
   text-align: center; 
