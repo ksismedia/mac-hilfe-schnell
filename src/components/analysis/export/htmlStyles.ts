@@ -95,49 +95,50 @@ body {
 }
 .score-label { color: #d1d5db; font-weight: 600; font-size: 1.0em; }
 
-/* NEW GRID SYSTEM */
+/* === FIXED GRID SYSTEM v2.1 === */
 .report-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 30px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 30px !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
 }
 
 .section { 
-  display: grid;
-  grid-template-rows: auto 1fr;
-  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-  overflow: hidden;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  page-break-inside: avoid;
-  width: 100%;
-  box-sizing: border-box;
+  display: grid !important;
+  grid-template-rows: auto 1fr !important;
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%) !important; 
+  border-radius: 16px !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important; 
+  overflow: hidden !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+  page-break-inside: avoid !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .section-header { 
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 15px;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #000000; 
-  padding: 25px 30px; 
-  font-size: 1.5em; 
-  font-weight: 700;
-  width: 100%;
-  box-sizing: border-box;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 15px !important;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #000000 !important; 
+  padding: 25px 30px !important; 
+  font-size: 1.5em !important; 
+  font-weight: 700 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .section-content { 
-  padding: 30px; 
-  width: 100%;
-  box-sizing: border-box;
+  padding: 30px !important; 
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 .header-score-circle {
   display: flex;
