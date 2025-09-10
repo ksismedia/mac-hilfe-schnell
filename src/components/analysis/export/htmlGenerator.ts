@@ -3044,11 +3044,11 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit -->
     <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Rechtssicherheit</span>
+      <div class="section-header collapsible" onclick="toggleSection('rechtssicherheit-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Rechtssicherheit</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
-      <div class="section-content">
+      <div id="rechtssicherheit-content" class="section-content" style="display: none;">
         <div class="metric-card">
           <h3>Rechtssicherheit</h3>
           <div class="score-display">
@@ -3073,7 +3073,6 @@ export const generateCustomerHTML = ({
           ${getLegalAnalysis()}
         </div>
       </div>
-    </div>
 
     ${generateDataPrivacySection(actualDataPrivacyScore)}
 
