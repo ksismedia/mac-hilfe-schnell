@@ -1472,18 +1472,9 @@ export const generateCustomerHTML = ({
                 
                 const services = Array.isArray(competitor.services) ? competitor.services : [];
                 
-                // BERECHNE SCORE BASIEREND AUF KONKURRENTEN-SERVICES
-                const competitorServiceCount = services.length;
-                let estimatedScore = 85; // Basis-Score
-                if (competitorServiceCount <= 3) {
-                  estimatedScore = 75 + (competitorServiceCount * 5);
-                } else if (competitorServiceCount <= 8) {
-                  estimatedScore = 85 + ((competitorServiceCount - 3) * 1);
-                } else if (competitorServiceCount <= 15) {
-                  estimatedScore = 88 + ((competitorServiceCount - 8) * 0.3);
-                } else {
-                  estimatedScore = Math.min(90 + ((competitorServiceCount - 15) * 0.2), 93);
-                }
+                // VERWENDE DIREKTEN RATING-WERT AUS EINGABE (NICHT BERECHNET!)
+                // Rating von 1-5 in Prozentscore umwandeln (20% pro Stern)
+                const estimatedScore = Math.round(rating * 20);
                 const serviceCount = services.length;
                 
                 return `
