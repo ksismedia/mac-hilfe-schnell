@@ -94,34 +94,53 @@ body {
   /* Inline-Farben haben Vorrang */
 }
 .score-label { color: #d1d5db; font-weight: 600; font-size: 1.0em; }
+
+/* NEW GRID SYSTEM */
+.report-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 .section { 
+  display: grid;
+  grid-template-rows: auto 1fr;
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
-  margin-bottom: 30px; 
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-  overflow: hidden !important;
+  overflow: hidden;
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 100% !important;
-  box-sizing: border-box !important;
-  contain: layout style !important;
-  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .section-header { 
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 15px;
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   color: #000000; 
   padding: 25px 30px; 
   font-size: 1.5em; 
   font-weight: 700;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-content { 
+  padding: 30px; 
+  width: 100%;
+  box-sizing: border-box;
 }
 .header-score-circle {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 55px;
@@ -130,27 +149,33 @@ body {
   font-size: 0.8em;
   font-weight: 700;
   font-family: 'Arial', 'Helvetica', sans-serif;
-  font-variant-numeric: tabular-nums;
-  text-rendering: optimizeLegibility;
-  margin-left: auto;
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
-.header-score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
-.header-score-circle.red { background: #FF0000 !important; color: white !important; }      /* 0-60% */
-.header-score-circle.orange { background: #FF0000 !important; color: white !important; }   /* 0-60% */
-.header-score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-80% */
-.header-score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 81-100% */
-.section-content { 
-  padding: 30px; 
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-  word-wrap: break-word;
-  box-sizing: border-box !important;
-  contain: layout style !important;
-  position: relative;
+
+.header-score-circle.dark-red, 
+.header-score-circle.red, 
+.header-score-circle.orange { 
+  background: #FF0000 !important; 
+  color: white !important; 
 }
+
+.header-score-circle.green { 
+  background: #22c55e !important; 
+  color: white !important; 
+}
+
+.header-score-circle.yellow { 
+  background: #FFD700 !important; 
+  color: black !important; 
+}
+
+.header-score-circle.neutral { 
+  background: #6b7280 !important; 
+  color: white !important; 
+}
+
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
   padding: 25px; 
@@ -158,38 +183,9 @@ body {
   border-left: 5px solid #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.2);
   margin-bottom: 20px;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
-  word-wrap: break-word;
-  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
-.metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
-.score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-
-/* Score Tile - rechteckige Kachel statt Kreis */
-.score-tile { 
-  min-width: 120px; 
-  height: 80px; 
-  border-radius: 12px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 1.4em; 
-  font-weight: bold; 
-  flex-shrink: 0;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  border: 2px solid rgba(255,255,255,0.1);
-  text-align: center;
-  line-height: 1;
-}
-
-/* Score-Tile Farben basierend auf einheitlichem Schema */
-.score-tile.red { background: #FF0000 !important; color: white !important; }     /* 0-60% */
-.score-tile.orange { background: #FF0000 !important; color: white !important; }  /* 0-60% */
-.score-tile.dark-red { background: #FF0000 !important; color: white !important; } /* 0-60% */
-.score-tile.green { background: #22c55e !important; color: white !important; }   /* 61-80% */
-.score-tile.yellow { background: #FFD700 !important; color: black !important; }  /* 81-100% */
 .score-details { flex: 1; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }

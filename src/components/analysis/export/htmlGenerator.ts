@@ -1952,7 +1952,7 @@ export const generateCustomerHTML = ({
   </script>
 </head>
 <body>
-  <div class="container">
+  <div class="report-container">
     <div class="header">
       ${getLogoHTML()}
       <h1>UNNA - die Unternehmensanalyse</h1>
@@ -3335,7 +3335,7 @@ export const generateCustomerHTML = ({
         <p style="margin: 5px 0 0 0; font-size: 0.8em;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
       </div>
     </div>
-  </div>
+  </div> <!-- End report-container -->
 </body>
 </html>`;
 };
