@@ -1,0 +1,312 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
+import { Plus, Trash2, Shield, AlertTriangle } from 'lucide-react';
+import { ManualDataPrivacyData } from '@/hooks/useManualData';
+
+interface ManualDataPrivacyInputProps {
+  data: ManualDataPrivacyData | null;
+  onDataChange: (data: ManualDataPrivacyData) => void;
+}
+
+const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange }) => {
+  const [newViolation, setNewViolation] = useState({
+    description: '',
+    severity: 'medium' as 'high' | 'medium' | 'low',
+    category: '',
+    article: '',
+    recommendation: ''
+  });
+
+  const currentData: ManualDataPrivacyData = data || {
+    hasSSL: true,
+    cookiePolicy: false,
+    privacyPolicy: false,
+    legalImprint: false,
+    gdprCompliant: false,
+    cookieConsent: false,
+    dataProcessingAgreement: false,
+    dataSubjectRights: false,
+    deselectedViolations: [],
+    customViolations: [],
+    overallScore: 50,
+    notes: ''
+  };
+
+  const updateData = (updates: Partial<ManualDataPrivacyData>) => {
+    onDataChange({ ...currentData, ...updates });
+  };
+
+  const addCustomViolation = () => {
+    if (newViolation.description && newViolation.category) {
+      const violation = {
+        id: `custom-${Date.now()}`,
+        ...newViolation
+      };
+      
+      updateData({
+        customViolations: [...currentData.customViolations, violation]
+      });
+      
+      setNewViolation({
+        description: '',
+        severity: 'medium',
+        category: '',
+        article: '',
+        recommendation: ''
+      });
+    }
+  };
+
+  const removeCustomViolation = (id: string) => {
+    updateData({
+      customViolations: currentData.customViolations.filter(v => v.id !== id)
+    });
+  };
+
+  return (
+    <Card className="border-accent">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-accent">
+          <Shield className="h-5 w-5" />
+          Manuelle Datenschutz-Eingabe
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* DSGVO Compliance Checkboxes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <h4 className="font-semibold text-foreground">DSGVO-Grundlagen</h4>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ssl">SSL-Verschlüsselung</Label>
+              <Switch
+                id="ssl"
+                checked={currentData.hasSSL}
+                onCheckedChange={(checked) => updateData({ hasSSL: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="privacy-policy">Datenschutzerklärung vorhanden</Label>
+              <Switch
+                id="privacy-policy"
+                checked={currentData.privacyPolicy}
+                onCheckedChange={(checked) => updateData({ privacyPolicy: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="cookie-policy">Cookie-Richtlinie</Label>
+              <Switch
+                id="cookie-policy"
+                checked={currentData.cookiePolicy}
+                onCheckedChange={(checked) => updateData({ cookiePolicy: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="imprint">Impressum vollständig</Label>
+              <Switch
+                id="imprint"
+                checked={currentData.legalImprint}
+                onCheckedChange={(checked) => updateData({ legalImprint: checked })}
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h4 className="font-semibold text-foreground">Erweiterte Compliance</h4>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="gdpr-compliant">DSGVO-konform</Label>
+              <Switch
+                id="gdpr-compliant"
+                checked={currentData.gdprCompliant}
+                onCheckedChange={(checked) => updateData({ gdprCompliant: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="cookie-consent">Cookie-Consent</Label>
+              <Switch
+                id="cookie-consent"
+                checked={currentData.cookieConsent}
+                onCheckedChange={(checked) => updateData({ cookieConsent: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="data-processing">Auftragsverarbeitung</Label>
+              <Switch
+                id="data-processing"
+                checked={currentData.dataProcessingAgreement}
+                onCheckedChange={(checked) => updateData({ dataProcessingAgreement: checked })}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="subject-rights">Betroffenenrechte</Label>
+              <Switch
+                id="subject-rights"
+                checked={currentData.dataSubjectRights}
+                onCheckedChange={(checked) => updateData({ dataSubjectRights: checked })}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Overall Score Slider */}
+        <div className="space-y-2">
+          <Label htmlFor="overall-score">Gesamt-Score überschreiben (0-100)</Label>
+          <div className="px-2">
+            <Slider
+              id="overall-score"
+              value={[currentData.overallScore]}
+              onValueChange={(value) => updateData({ overallScore: value[0] })}
+              max={100}
+              min={0}
+              step={1}
+              className="w-full"
+            />
+          </div>
+          <div className="text-center text-sm text-muted-foreground">
+            Aktueller Score: {currentData.overallScore}/100
+          </div>
+        </div>
+
+        {/* Custom Violations */}
+        <div className="space-y-4">
+          <h4 className="font-semibold text-foreground flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            Eigene Datenschutz-Verstöße hinzufügen
+          </h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="violation-category">Kategorie</Label>
+              <Input
+                id="violation-category"
+                placeholder="z.B. Cookie-Tracking"
+                value={newViolation.category}
+                onChange={(e) => setNewViolation(prev => ({ ...prev, category: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="violation-severity">Schweregrad</Label>
+              <Select 
+                value={newViolation.severity} 
+                onValueChange={(value: 'high' | 'medium' | 'low') => 
+                  setNewViolation(prev => ({ ...prev, severity: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">Kritisch</SelectItem>
+                  <SelectItem value="medium">Wichtig</SelectItem>
+                  <SelectItem value="low">Info</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="violation-description">Beschreibung</Label>
+            <Textarea
+              id="violation-description"
+              placeholder="Beschreibung des Datenschutz-Verstoßes..."
+              value={newViolation.description}
+              onChange={(e) => setNewViolation(prev => ({ ...prev, description: e.target.value }))}
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="violation-article">Rechtsgrundlage (optional)</Label>
+              <Input
+                id="violation-article"
+                placeholder="z.B. Art. 6 DSGVO"
+                value={newViolation.article}
+                onChange={(e) => setNewViolation(prev => ({ ...prev, article: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="violation-recommendation">Empfehlung (optional)</Label>
+              <Input
+                id="violation-recommendation"
+                placeholder="Lösungsvorschlag..."
+                value={newViolation.recommendation}
+                onChange={(e) => setNewViolation(prev => ({ ...prev, recommendation: e.target.value }))}
+              />
+            </div>
+          </div>
+          
+          <Button 
+            onClick={addCustomViolation}
+            disabled={!newViolation.description || !newViolation.category}
+            className="w-full"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Verstoß hinzufügen
+          </Button>
+        </div>
+
+        {/* Display Custom Violations */}
+        {currentData.customViolations.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="font-semibold text-foreground">Eigene Verstöße</h4>
+            {currentData.customViolations.map((violation) => (
+              <div key={violation.id} className="flex items-start gap-3 p-3 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant={
+                      violation.severity === 'high' ? 'destructive' : 
+                      violation.severity === 'medium' ? 'secondary' : 'outline'
+                    }>
+                      {violation.severity === 'high' ? 'Kritisch' : 
+                       violation.severity === 'medium' ? 'Wichtig' : 'Info'}
+                    </Badge>
+                    <span className="font-medium text-sm">{violation.category}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{violation.description}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeCustomViolation(violation.id)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Notes */}
+        <div className="space-y-2">
+          <Label htmlFor="privacy-notes">Zusätzliche Notizen</Label>
+          <Textarea
+            id="privacy-notes"
+            placeholder="Weitere Anmerkungen zum Datenschutz..."
+            value={currentData.notes || ''}
+            onChange={(e) => updateData({ notes: e.target.value })}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ManualDataPrivacyInput;

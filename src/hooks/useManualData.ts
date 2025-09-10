@@ -158,6 +158,28 @@ export interface ManualBacklinkData {
   notes?: string;
 }
 
+export interface ManualDataPrivacyData {
+  hasSSL: boolean;
+  cookiePolicy: boolean;
+  privacyPolicy: boolean;
+  legalImprint: boolean;
+  gdprCompliant: boolean;
+  cookieConsent: boolean;
+  dataProcessingAgreement: boolean;
+  dataSubjectRights: boolean;
+  deselectedViolations: string[]; // IDs of violations that were manually deselected
+  customViolations: Array<{
+    id: string;
+    description: string;
+    severity: 'high' | 'medium' | 'low';
+    category: string;
+    article?: string;
+    recommendation?: string;
+  }>;
+  overallScore: number; // Manual override score
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -174,6 +196,7 @@ export const useManualData = () => {
   const [manualContentData, setManualContentData] = useState<ManualContentData | null>(null);
   const [manualAccessibilityData, setManualAccessibilityData] = useState<ManualAccessibilityData | null>(null);
   const [manualBacklinkData, setManualBacklinkData] = useState<ManualBacklinkData | null>(null);
+  const [manualDataPrivacyData, setManualDataPrivacyData] = useState<ManualDataPrivacyData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -275,6 +298,11 @@ export const useManualData = () => {
     console.log('Manual Backlink Data Updated:', data);
   }, []);
 
+  const updateManualDataPrivacyData = useCallback((data: ManualDataPrivacyData | null) => {
+    setManualDataPrivacyData(data);
+    console.log('Manual Data Privacy Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -291,6 +319,7 @@ export const useManualData = () => {
     manualContentData,
     manualAccessibilityData,
     manualBacklinkData,
+    manualDataPrivacyData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -307,6 +336,7 @@ export const useManualData = () => {
     updateQuoteResponseData,
     updateManualContentData,
     updateManualAccessibilityData,
-    updateManualBacklinkData
+    updateManualBacklinkData,
+    updateManualDataPrivacyData
   };
 };

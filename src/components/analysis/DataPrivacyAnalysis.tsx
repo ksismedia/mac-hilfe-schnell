@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Shield, 
   Cookie, 
@@ -18,10 +20,14 @@ import {
   Scale,
   BookOpen,
   AlertCircle,
-  Info
+  Info,
+  Settings,
+  Edit
 } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { DataPrivacyService, DataPrivacyResult, GDPRViolation } from '@/services/DataPrivacyService';
+import { ManualDataPrivacyData } from '@/hooks/useManualData';
+import ManualDataPrivacyInput from './ManualDataPrivacyInput';
 
 interface DataPrivacyAnalysisProps {
   businessData: {
@@ -30,13 +36,17 @@ interface DataPrivacyAnalysisProps {
   realData?: RealBusinessData;
   savedData?: DataPrivacyResult;
   onDataChange?: (data: DataPrivacyResult) => void;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
+  onManualDataChange?: (data: ManualDataPrivacyData) => void;
 }
 
 const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({ 
   businessData, 
   realData, 
   savedData, 
-  onDataChange 
+  onDataChange,
+  manualDataPrivacyData,
+  onManualDataChange
 }) => {
   const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
@@ -75,6 +85,60 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     if (score >= 80) return 'default';              
     if (score >= 60) return 'secondary';            
     return 'destructive';                           
+  };
+
+  // Handle violation deselection
+  const toggleViolationSelection = (violationIndex: number) => {
+    if (!onManualDataChange) return;
+    
+    const violationId = `auto-${violationIndex}`;
+    const currentDeselected = manualDataPrivacyData?.deselectedViolations || [];
+    
+    const newDeselected = currentDeselected.includes(violationId)
+      ? currentDeselected.filter(id => id !== violationId)
+      : [...currentDeselected, violationId];
+    
+    const updatedManualData: ManualDataPrivacyData = {
+      ...manualDataPrivacyData,
+      hasSSL: manualDataPrivacyData?.hasSSL ?? true,
+      cookiePolicy: manualDataPrivacyData?.cookiePolicy ?? false,
+      privacyPolicy: manualDataPrivacyData?.privacyPolicy ?? false,
+      legalImprint: manualDataPrivacyData?.legalImprint ?? false,
+      gdprCompliant: manualDataPrivacyData?.gdprCompliant ?? false,
+      cookieConsent: manualDataPrivacyData?.cookieConsent ?? false,
+      dataProcessingAgreement: manualDataPrivacyData?.dataProcessingAgreement ?? false,
+      dataSubjectRights: manualDataPrivacyData?.dataSubjectRights ?? false,
+      customViolations: manualDataPrivacyData?.customViolations ?? [],
+      overallScore: manualDataPrivacyData?.overallScore ?? 50,
+      deselectedViolations: newDeselected
+    };
+    
+    onManualDataChange(updatedManualData);
+  };
+
+  // Get filtered violations (excluding deselected ones)
+  const getActiveViolations = () => {
+    if (!privacyData?.violations) return [];
+    
+    const deselected = manualDataPrivacyData?.deselectedViolations || [];
+    return privacyData.violations.filter((_, index) => 
+      !deselected.includes(`auto-${index}`)
+    );
+  };
+
+  // Calculate effective score considering manual overrides
+  const getEffectiveScore = () => {
+    if (manualDataPrivacyData?.overallScore !== undefined) {
+      return manualDataPrivacyData.overallScore;
+    }
+    return privacyData?.score || 0;
+  };
+
+  // Get all violations including custom ones
+  const getAllViolations = () => {
+    const autoViolations = getActiveViolations();
+    const customViolations = manualDataPrivacyData?.customViolations || [];
+    return [...autoViolations, ...customViolations];
   };
 
   return (
@@ -132,34 +196,45 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
           )}
 
           {privacyData && (
-            <div className="space-y-6">
-              {/* Legal Warning for Data Privacy Issues */}
-              {(privacyData.violations.length > 0 || privacyData.score < 90) && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
-                    <Scale className="h-5 w-5" />
-                    Rechtlicher Hinweis: DSGVO-Verstöße erkannt
+            <Tabs defaultValue="analysis" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="analysis">Automatische Analyse</TabsTrigger>
+                <TabsTrigger value="manual">Manuelle Eingabe</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="analysis" className="space-y-6">
+                {/* Legal Warning for Data Privacy Issues */}
+                {(getAllViolations().length > 0 || getEffectiveScore() < 90) && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                      <Scale className="h-5 w-5" />
+                      Rechtlicher Hinweis: DSGVO-Verstöße erkannt
+                    </div>
+                    <p className="text-red-700 text-sm mb-3">
+                      Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
+                      Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+                    </p>
+                    <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                      <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Datenschutz-Anwalt 
+                      für eine rechtssichere Bewertung und zur Vermeidung von Bußgeldern.
+                    </div>
                   </div>
-                  <p className="text-red-700 text-sm mb-3">
-                    Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
-                    Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
-                  </p>
-                  <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
-                    <strong>⚠️ Empfehlung:</strong> Konsultieren Sie umgehend einen spezialisierten Datenschutz-Anwalt 
-                    für eine rechtssichere Bewertung und zur Vermeidung von Bußgeldern.
-                  </div>
-                </div>
-              )}
+                )}
 
               {/* Score Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="border-accent">
                   <CardContent className="p-6 text-center">
-                    <div className={`text-5xl font-bold ${getScoreColor(privacyData.score)} mb-2`}>
-                      {privacyData.score}
+                    <div className={`text-5xl font-bold ${getScoreColor(getEffectiveScore())} mb-2`}>
+                      {getEffectiveScore()}
                     </div>
-                    <div className="text-sm text-muted-foreground">DSGVO-Score</div>
-                    <Badge variant={getScoreBadge(privacyData.score)} className="mt-2">
+                    <div className="text-sm text-muted-foreground">
+                      DSGVO-Score
+                      {manualDataPrivacyData?.overallScore !== undefined && (
+                        <span className="text-accent ml-1">(manuell)</span>
+                      )}
+                    </div>
+                    <Badge variant={getScoreBadge(getEffectiveScore())} className="mt-2">
                       {privacyData.gdprComplianceLevel}
                     </Badge>
                   </CardContent>
@@ -180,9 +255,16 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 <Card className="border-destructive">
                   <CardContent className="p-6 text-center">
                     <div className="text-5xl font-bold text-destructive mb-2">
-                      {privacyData.violations.length}
+                      {getAllViolations().length}
                     </div>
-                    <div className="text-sm text-muted-foreground">DSGVO-Verstöße</div>
+                    <div className="text-sm text-muted-foreground">
+                      DSGVO-Verstöße
+                      {(manualDataPrivacyData?.customViolations?.length || 0) > 0 && (
+                        <span className="text-accent ml-1">
+                          (+{manualDataPrivacyData?.customViolations?.length} manuell)
+                        </span>
+                      )}
+                    </div>
                     <div className="text-xs text-destructive mt-1">
                       Rechtliches Risiko
                     </div>
@@ -201,91 +283,175 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
               </div>
 
               {/* Progress Bar */}
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>DSGVO-Konformität</span>
-                  <span className={getScoreColor(privacyData.score)}>
-                    {privacyData.score}/100 - Bußgeldrisiko: {privacyData.legalRisk.potentialFine}
-                  </span>
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>DSGVO-Konformität</span>
+                    <span className={getScoreColor(getEffectiveScore())}>
+                      {getEffectiveScore()}/100 - Bußgeldrisiko: {privacyData.legalRisk.potentialFine}
+                    </span>
+                  </div>
+                  <Progress value={getEffectiveScore()} className="h-3" />
                 </div>
-                <Progress value={privacyData.score} className="h-3" />
-              </div>
 
-              {/* DSGVO Violations Detail */}
-              {privacyData.violations && privacyData.violations.length > 0 && (
-                <Card className="border-red-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-red-600 flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      Gefundene DSGVO-Verstöße ({privacyData.violations.length})
-                    </CardTitle>
-                    <CardDescription>
-                      Diese Punkte sollten umgehend behoben werden, um Bußgelder zu vermeiden
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {privacyData.violations.map((violation: GDPRViolation, index: number) => (
-                        <div 
-                          key={index} 
-                          className={`p-4 rounded-lg border-l-4 ${
-                            violation.severity === 'high' ? 'border-red-500 bg-red-50' :
-                            violation.severity === 'medium' ? 'border-yellow-500 bg-yellow-50' :
-                            'border-blue-500 bg-blue-50'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {violation.severity === 'high' ? 
-                              <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
-                              violation.severity === 'medium' ?
-                              <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
-                              <Info className="h-4 w-4 text-blue-500 mt-1" />
-                            }
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge variant={
-                                  violation.severity === 'high' ? 'destructive' : 
-                                  violation.severity === 'medium' ? 'secondary' : 'outline'
-                                }>
-                                  {violation.severity === 'high' ? 'Kritisch' : 
-                                   violation.severity === 'medium' ? 'Wichtig' : 'Info'}
-                                </Badge>
-                                <span className="text-sm font-medium">{violation.category}: {violation.description.split('.')[0]}</span>
-                              </div>
-                              <p className="text-sm text-gray-600 mb-2">{violation.description}</p>
-                              {violation.article && (
-                                <p className="text-xs text-gray-500">
-                                  <strong>Rechtsgrundlage:</strong> {violation.article}
-                                </p>
-                              )}
-                              {violation.recommendation && (
-                                <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
-                                  <p className="text-sm text-blue-800">
-                                    <strong>Lösung:</strong> {violation.recommendation}
-                                  </p>
+                {/* DSGVO Violations Detail */}
+                {getAllViolations().length > 0 && (
+                  <Card className="border-red-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-red-600 flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        DSGVO-Verstöße ({getAllViolations().length})
+                        {onManualDataChange && (
+                          <span className="text-sm text-muted-foreground ml-2">
+                            - Klicken zum Ab-/Auswählen
+                          </span>
+                        )}
+                      </CardTitle>
+                      <CardDescription>
+                        Diese Punkte sollten umgehend behoben werden, um Bußgelder zu vermeiden
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Auto-detected violations */}
+                        {privacyData.violations.map((violation: GDPRViolation, index: number) => {
+                          const isDeselected = manualDataPrivacyData?.deselectedViolations?.includes(`auto-${index}`);
+                          return (
+                            <div 
+                              key={`auto-${index}`}
+                              className={`p-4 rounded-lg border-l-4 transition-opacity ${
+                                isDeselected ? 'opacity-50' : ''
+                              } ${
+                                violation.severity === 'high' ? 'border-red-500 bg-red-50' :
+                                violation.severity === 'medium' ? 'border-yellow-500 bg-yellow-50' :
+                                'border-blue-500 bg-blue-50'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                {onManualDataChange && (
+                                  <Checkbox
+                                    checked={!isDeselected}
+                                    onCheckedChange={() => toggleViolationSelection(index)}
+                                    className="mt-1"
+                                  />
+                                )}
+                                {violation.severity === 'high' ? 
+                                  <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
+                                  violation.severity === 'medium' ?
+                                  <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
+                                  <Info className="h-4 w-4 text-blue-500 mt-1" />
+                                }
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Badge variant={
+                                      violation.severity === 'high' ? 'destructive' : 
+                                      violation.severity === 'medium' ? 'secondary' : 'outline'
+                                    }>
+                                      {violation.severity === 'high' ? 'Kritisch' : 
+                                       violation.severity === 'medium' ? 'Wichtig' : 'Info'}
+                                    </Badge>
+                                    <span className="text-sm font-medium">
+                                      {violation.category}: {violation.description.split('.')[0]}
+                                    </span>
+                                    <Badge variant="outline" className="text-xs">
+                                      Automatisch erkannt
+                                    </Badge>
+                                  </div>
+                                  <p className="text-sm text-gray-600 mb-2">{violation.description}</p>
+                                  {violation.article && (
+                                    <p className="text-xs text-gray-500">
+                                      <strong>Rechtsgrundlage:</strong> {violation.article}
+                                    </p>
+                                  )}
+                                  {violation.recommendation && (
+                                    <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
+                                      <p className="text-sm text-blue-800">
+                                        <strong>Lösung:</strong> {violation.recommendation}
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        
+                        {/* Custom violations */}
+                        {manualDataPrivacyData?.customViolations?.map((violation) => (
+                          <div 
+                            key={violation.id}
+                            className={`p-4 rounded-lg border-l-4 ${
+                              violation.severity === 'high' ? 'border-red-500 bg-red-50' :
+                              violation.severity === 'medium' ? 'border-yellow-500 bg-yellow-50' :
+                              'border-blue-500 bg-blue-50'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              {violation.severity === 'high' ? 
+                                <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
+                                violation.severity === 'medium' ?
+                                <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
+                                <Info className="h-4 w-4 text-blue-500 mt-1" />
+                              }
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge variant={
+                                    violation.severity === 'high' ? 'destructive' : 
+                                    violation.severity === 'medium' ? 'secondary' : 'outline'
+                                  }>
+                                    {violation.severity === 'high' ? 'Kritisch' : 
+                                     violation.severity === 'medium' ? 'Wichtig' : 'Info'}
+                                  </Badge>
+                                  <span className="text-sm font-medium">
+                                    {violation.category}: {violation.description.split('.')[0]}
+                                  </span>
+                                  <Badge variant="secondary" className="text-xs">
+                                    Manuell hinzugefügt
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-2">{violation.description}</p>
+                                {violation.article && (
+                                  <p className="text-xs text-gray-500">
+                                    <strong>Rechtsgrundlage:</strong> {violation.article}
+                                  </p>
+                                )}
+                                {violation.recommendation && (
+                                  <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
+                                    <p className="text-sm text-blue-800">
+                                      <strong>Lösung:</strong> {violation.recommendation}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
-              {/* Action Button */}
-              <div className="flex gap-3">
-                <Button 
-                  onClick={runPrivacyAnalysis}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <Shield className="h-4 w-4" />
-                  Erneut prüfen
-                </Button>
-              </div>
-            </div>
+                {/* Action Button */}
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={runPrivacyAnalysis}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Shield className="h-4 w-4" />
+                    Erneut prüfen
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="manual" className="space-y-6">
+                {onManualDataChange && (
+                  <ManualDataPrivacyInput
+                    data={manualDataPrivacyData}
+                    onDataChange={onManualDataChange}
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>

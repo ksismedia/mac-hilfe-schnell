@@ -94,6 +94,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualContentData,
     manualAccessibilityData,
     manualBacklinkData,
+    manualDataPrivacyData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -106,7 +107,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     removeDeletedCompetitor,
     updateStaffQualificationData,
     updateHourlyRateData,
-    updateQuoteResponseData
+    updateQuoteResponseData,
+    updateManualDataPrivacyData
   } = useManualData();
 
   // Access saved analyses hook
@@ -304,6 +306,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             addDeletedCompetitor={addDeletedCompetitor}
             removeDeletedCompetitor={removeDeletedCompetitor}
             onCompanyScoreChange={handleCompanyScoreChange}
+            manualDataPrivacyData={manualDataPrivacyData}
+            updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
       case 'performance-mobile':

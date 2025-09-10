@@ -93,6 +93,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualContentData,
     manualAccessibilityData,
     manualBacklinkData,
+    manualDataPrivacyData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -108,7 +109,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateQuoteResponseData,
     updateManualContentData,
     updateManualAccessibilityData,
-    updateManualBacklinkData
+    updateManualBacklinkData,
+    updateManualDataPrivacyData
   } = useManualData();
 
   // Access saved analyses hook
@@ -322,6 +324,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             removeDeletedCompetitor={removeDeletedCompetitor}
             onCompanyScoreChange={handleCompanyScoreChange}
             onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
+            manualDataPrivacyData={manualDataPrivacyData}
+            updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
       case 'performance-mobile':
