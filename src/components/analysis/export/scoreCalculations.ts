@@ -167,12 +167,20 @@ export const calculateWorkplaceScore = (
     score += 10; // One platform
   }
 
-  // If no data found, return 0 (no rating)
+  // If no data found, return -1 to indicate no data (for display purposes)
   if (platformsWithData === 0) {
-    score = 0; // No rating when no data is provided
+    score = -1; // Special value to indicate no data found
   }
 
-  return Math.min(score, maxPoints);
+  return score === -1 ? -1 : Math.min(score, maxPoints);
+};
+
+// Helper function to check if workplace score should show dash
+export const hasWorkplaceData = (
+  realData: RealBusinessData,
+  manualWorkplaceData?: ManualWorkplaceData | null
+): boolean => {
+  return calculateWorkplaceScore(realData, manualWorkplaceData) !== -1;
 };
 
 export const calculateSEOContentScore = (

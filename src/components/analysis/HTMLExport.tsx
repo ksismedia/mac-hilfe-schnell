@@ -2,7 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, CompetitorServices } from '@/hooks/useManualData';
+import { ManualCompetitor, CompetitorServices, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { calculateWorkplaceScore } from './export/scoreCalculations';
 import { FileText, Download, Printer } from 'lucide-react';
 import { getHTMLStyles } from './export/htmlStyles';
 import { getLogoHTML } from './export/logoData';
@@ -15,7 +16,8 @@ interface HTMLExportProps {
   };
   realData: RealBusinessData;
   manualImprintData?: any;
-  manualSocialData?: any;
+  manualSocialData?: ManualSocialData;
+  manualWorkplaceData?: ManualWorkplaceData;
   manualCompetitors?: ManualCompetitor[];
   competitorServices?: CompetitorServices;
   companyServices?: { services: string[] };
@@ -30,6 +32,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   realData, 
   manualImprintData, 
   manualSocialData,
+  manualWorkplaceData,
   manualCompetitors = [],
   competitorServices = {},
   deletedCompetitors = new Set(),
@@ -94,7 +97,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   // Calculate workplace scores based on actual data structure
   const workplaceKununuRating = realData.workplace?.kununu?.rating || 0;
   const workplaceGlassdoorRating = realData.workplace?.glassdoor?.rating || 0;
-  const workplaceScore = workplaceKununuRating > 0 ? Math.round((workplaceKununuRating / 5) * 100) : 0;
+  const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
+  const workplaceScore = workplaceScoreRaw === -1 ? 0 : workplaceScoreRaw; // Use 0 for calculation but display logic in templates
   const kununuScore = workplaceKununuRating > 0 ? Math.round((workplaceKununuRating / 5) * 100) : 0;
 
   // Enhanced Social Media Score calculation including last post timing
@@ -349,10 +353,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mitarbeiterzufriedenheit</span>
-                                <span>${workplaceScore}%</span>
+                                <span>${workplaceScoreRaw === -1 ? '–' : workplaceScore + '%'}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${workplaceScore}%" data-value="${workplaceScore}"></div>
+                                <div class="progress-fill" style="width: ${workplaceScoreRaw === -1 ? '0' : workplaceScore + '%'}" data-value="${workplaceScore}"></div>
                             </div>
                         </div>
                     </div>
@@ -375,10 +379,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Betriebsklima</span>
-                                <span>${Math.max(workplaceScore - 5, 0)}%</span>
+                                <span>${workplaceScoreRaw === -1 ? '–' : Math.max(workplaceScore - 5, 0) + '%'}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.max(workplaceScore - 5, 0)}%" data-value="${Math.max(workplaceScore - 5, 0)}"></div>
+                                <div class="progress-fill" style="width: ${workplaceScoreRaw === -1 ? '0' : Math.max(workplaceScore - 5, 0) + '%'}" data-value="${Math.max(workplaceScore - 5, 0)}"></div>
                             </div>
                         </div>
                     </div>
@@ -388,10 +392,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Recruiting-Potenzial</span>
-                                <span>${Math.max(workplaceScore - 10, 0)}%</span>
+                                <span>${workplaceScoreRaw === -1 ? '–' : Math.max(workplaceScore - 10, 0) + '%'}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${Math.max(workplaceScore - 10, 0)}%" data-value="${Math.max(workplaceScore - 10, 0)}"></div>
+                                <div class="progress-fill" style="width: ${workplaceScoreRaw === -1 ? '0' : Math.max(workplaceScore - 10, 0) + '%'}" data-value="${Math.max(workplaceScore - 10, 0)}"></div>
                             </div>
                         </div>
                     </div>
@@ -933,10 +937,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Mitarbeiterzufriedenheit</span>
-                                <span>${workplaceScore}%</span>
+                                <span>${workplaceScoreRaw === -1 ? '–' : workplaceScore + '%'}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${workplaceScore}%" data-value="${workplaceScore}"></div>
+                                <div class="progress-fill" style="width: ${workplaceScoreRaw === -1 ? '0' : workplaceScore + '%'}" data-value="${workplaceScore}"></div>
                             </div>
                         </div>
                     </div>

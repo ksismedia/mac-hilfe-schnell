@@ -4,7 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { getLogoHTML } from './logoData';
 
@@ -256,7 +256,7 @@ export const generateCustomerHTML = ({
   
   // Calculate additional scores
   const pricingScore = hourlyRateData ? Math.min(100, (hourlyRateData.ownRate / hourlyRateData.regionAverage) * 100) : 65;
-  const workplaceScore = realData.workplace ? Math.round(realData.workplace.overallScore) : 65;
+  const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   const reputationScore = realData.reviews.google.rating * 20;
   
   const legalScore = impressumScore;
@@ -308,32 +308,8 @@ export const generateCustomerHTML = ({
   const getWorkplaceAnalysis = () => {
     console.log('getWorkplaceAnalysis called with manualWorkplaceData:', manualWorkplaceData);
     
-    // Berechne Workplace Score basierend auf manuellen Daten oder Defaults
-    let workplaceScore = 65; // Default
-    
-    if (manualWorkplaceData) {
-      // Wenn manuelle Daten vorhanden sind, berechne Score daraus
-      let score = 0;
-      let factors = 0;
-      
-      if (manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating) {
-        const kununuNum = parseFloat(manualWorkplaceData.kununuRating.replace(',', '.'));
-        score += (kununuNum / 5) * 100;
-        factors++;
-      }
-      
-      if (manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating) {
-        const glassdoorNum = parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.'));
-        score += (glassdoorNum / 5) * 100;
-        factors++;
-      }
-      
-      if (factors > 0) {
-        workplaceScore = Math.round(score / factors);
-      }
-    } else if (realData.workplace) {
-      workplaceScore = Math.round(realData.workplace.overallScore);
-    }
+    // Berechne Workplace Score basierend auf korrigierter Logik
+    const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
     
     return `
       <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
@@ -1904,7 +1880,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Kundenservice</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
             <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
           </div>
         </div>
@@ -2496,21 +2472,21 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
-        <div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
+        <div class="header-score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Arbeitsplatz & Arbeitgeber-Bewertung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>
+            <div class="score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
             <div class="score-details">
-              <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-              <p><strong>Empfehlung:</strong> ${workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+              <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore === -1 ? 'Keine Daten verfügbar' : workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Empfehlung:</strong> ${workplaceScore === -1 ? 'Arbeitgeberbewertungen einrichten' : workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
+              <div class="progress-fill" data-score="${workplaceScore === -1 ? 'none' : getScoreRange(workplaceScore)}" style="width: ${workplaceScore === -1 ? '0' : workplaceScore + '%'}"></div>
             </div>
           </div>
         </div>
@@ -2523,7 +2499,7 @@ export const generateCustomerHTML = ({
           ${getWorkplaceAnalysis()}
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(workplaceScore)}" style="width: ${workplaceScore}%"></div>
+              <div class="progress-fill" data-score="${workplaceScore === -1 ? 'none' : getScoreRange(workplaceScore)}" style="width: ${workplaceScore === -1 ? '0' : workplaceScore + '%'}"></div>
             </div>
           </div>
           
