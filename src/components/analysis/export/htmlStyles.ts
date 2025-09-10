@@ -46,32 +46,32 @@ body {
   contain: layout style !important;
   position: relative;
 }
-/* CRITICAL: Force all sections to have same width - overrides ALL inline styles */
-.section,
-div[class*="section"],
-section[class*="section"],
-.metric-card,
-.company-info,
-.recommendations,
-.collapsible,
-.progress-container,
-.score-overview,
-.header {
+/* CRITICAL: Force sections to have consistent width but preserve grid layouts */
+.section {
   width: 100% !important;
   max-width: 100% !important;
-  min-width: 100% !important;
   box-sizing: border-box !important;
 }
-/* FORCE consistent container behavior */
-* {
-  box-sizing: border-box !important;
-}
-/* Ensure no element exceeds container width */
-html, body, .container, .section, .section-content, .metric-card, .score-overview, .header, 
-div, section, article, p, h1, h2, h3, h4, h5, h6 {
+.section-content {
+  width: 100% !important;
   max-width: 100% !important;
-  overflow-wrap: break-word !important;
-  word-break: break-word !important;
+  box-sizing: border-box !important;
+}
+/* Preserve responsive grid for score cards */
+.score-overview {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 25px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.score-card {
+  width: auto !important;
+  max-width: none !important;
+  min-width: 200px !important;
+  flex: 1 !important;
+  box-sizing: border-box !important;
 }
 .header { 
   text-align: center; 
