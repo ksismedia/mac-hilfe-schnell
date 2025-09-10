@@ -234,10 +234,9 @@ export const generateCustomerHTML = ({
   // FINALER SCORE inklusive Bonus
   const finalOwnScore = Math.min(ownDynamicScore + serviceRemovalBonus, 96);
   
-  // VERWENDE DIE DYNAMISCH BERECHNETE EIGENE SCORE BASIEREND AUF SERVICES + BONUS
-  // Verwende den bereits berechneten Competitor-Score aus dem globalen Context
-  const competitorComparisonScore = (window as any).globalOwnCompanyScore || finalOwnScore; // Dynamischer Wert basierend auf Services + Bonus
-  const marketComparisonScore = (window as any).globalOwnCompanyScore || finalOwnScore;
+  // VERWENDE NUR DIE BEREITS BERECHNETEN GLOBALEN WERTE AUS COMPETITORANALYSIS
+  const competitorComparisonScore = (window as any).globalOwnCompanyScore || 75;
+  const marketComparisonScore = (window as any).globalOwnCompanyScore || 75;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
@@ -1333,51 +1332,8 @@ export const generateCustomerHTML = ({
     console.log('manualCompetitors:', manualCompetitors);
     console.log('competitorServices:', competitorServices);
     
-    // VERWENDE BEREITS BERECHNETE KONKURRENTEN-DATEN AUS COMPETITORANALYSIS
-    const globalCompetitorData = (window as any).globalCompetitorData;
-    const allCompetitors = globalCompetitorData || [...(manualCompetitors || [])]
-      .filter(competitor => !deletedCompetitors.has(competitor.name))
-      .map(competitor => {
-        // Verwende Services aus competitorServices wenn vorhanden, sonst aus competitor
-        const services = (competitorServices && competitorServices[competitor.name]) 
-          ? competitorServices[competitor.name].services 
-          : competitor.services || [];
-        
-        return {
-          ...competitor,
-          services: services
-        };
-      });
-    
-    // Füge automatisch ermittelte Wettbewerber aus realData hinzu falls vorhanden
-    if (realData?.competitors) {
-      realData.competitors.forEach(autoCompetitor => {
-        // Überspringe gelöschte Konkurrenten
-        if (deletedCompetitors.has(autoCompetitor.name)) {
-          return;
-        }
-        
-        // Prüfe ob dieser Wettbewerber nicht bereits manuell erfasst wurde
-        const exists = manualCompetitors?.some(manual => 
-          manual.name.toLowerCase() === autoCompetitor.name.toLowerCase()
-        );
-        if (!exists) {
-          // Verwende Services aus competitorServices wenn vorhanden, sonst aus autoCompetitor
-          const services = (competitorServices && competitorServices[autoCompetitor.name]) 
-            ? competitorServices[autoCompetitor.name].services 
-            : ((autoCompetitor as any).services || []);
-          
-          allCompetitors.push({
-            name: autoCompetitor.name,
-            rating: autoCompetitor.rating || 0,
-            reviews: autoCompetitor.reviews || 0,
-            distance: autoCompetitor.distance || 'Unbekannt',
-            services: services,
-            website: (autoCompetitor as any).website
-          });
-        }
-      });
-    }
+    // VERWENDE NUR BEREITS BERECHNETE GLOBALE KONKURRENTEN-DATEN
+    const allCompetitors = (window as any).globalAllCompetitors || [];
     
     console.log('allCompetitors after processing:', allCompetitors);
     
