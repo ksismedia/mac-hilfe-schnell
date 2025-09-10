@@ -46,11 +46,18 @@ body {
   contain: layout style !important;
   position: relative;
 }
-/* CRITICAL: Force sections to have consistent, limited width */
-.section {
+/* CRITICAL: Force ALL sections to have consistent, limited width */
+.section,
+div[class*="section"],
+section[class*="section"],
+.metric-card,
+.company-info,
+.recommendations,
+.collapsible {
   width: 95% !important;
   max-width: 1100px !important;
-  margin: 0 auto 30px auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   box-sizing: border-box !important;
 }
 .section-content {
