@@ -292,23 +292,11 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                     Bei der automatischen Suche konnten keine Bewertungen auf kununu oder Glassdoor gefunden werden.
                   </p>
                   
-                  <div className="bg-amber-50 rounded-lg p-4 mb-4">
-                    <h4 className="font-semibold text-amber-900 mb-2">Mögliche Gründe:</h4>
-                    <ul className="text-sm text-amber-800 text-left space-y-1">
-                      <li>• Unternehmen noch nicht auf Bewertungsplattformen registriert</li>
-                      <li>• Kleine Betriebsgröße (weniger als 5 Mitarbeiter)</li>
-                      <li>• Keine ehemaligen Mitarbeiter haben bewertet</li>
-                      <li>• Fehlende API-Integration zu Bewertungsplattformen</li>
-                    </ul>
-                  </div>
-
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen als Arbeitgeber:</h4>
+                    <h4 className="font-semibold text-blue-900 mb-2">Handlungsempfehlung:</h4>
                     <ul className="text-sm text-blue-800 text-left space-y-1">
-                      <li>• Mitarbeiterzufriedenheit regelmäßig erfragen</li>
-                      <li>• Positive Arbeitskultur schaffen</li>
-                      <li>• Faire Vergütung und Arbeitsbedingungen</li>
-                      <li>• Bei Wachstum: kununu/Glassdoor Profile erstellen</li>
+                      <li>• Keine Bewertungen vorhanden</li>
+                      <li>• Bitte Registrierung in den Portalen vornehmen und Mitarbeiter animieren Bewertungen abzugeben</li>
                     </ul>
                   </div>
                 </div>
