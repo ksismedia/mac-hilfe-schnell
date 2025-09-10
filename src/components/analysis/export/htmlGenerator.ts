@@ -124,8 +124,9 @@ export const generateCustomerHTML = ({
   const displayAccessibilityScore = accessibilityScore > 0 
     ? `${Math.round(accessibilityScore)}%` 
     : '–';
-  const displayDataPrivacyScore = dataPrivacyScore > 0 
-    ? `${Math.round(dataPrivacyScore)}%` 
+  const actualDataPrivacyScore = dataPrivacyScore;
+  const displayDataPrivacyScore = actualDataPrivacyScore > 0 
+    ? `${Math.round(actualDataPrivacyScore)}%` 
     : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
@@ -133,7 +134,6 @@ export const generateCustomerHTML = ({
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
-  const actualDataPrivacyScore = dataPrivacyScore;
   
   // Use actual company services if available, otherwise fall back to industry defaults
   console.log('CompanyServices received:', companyServices);
