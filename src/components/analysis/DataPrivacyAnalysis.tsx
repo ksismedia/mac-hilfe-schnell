@@ -155,7 +155,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       dataProcessingAgreement: manualDataPrivacyData?.dataProcessingAgreement ?? false,
       dataSubjectRights: manualDataPrivacyData?.dataSubjectRights ?? false,
       customViolations: manualDataPrivacyData?.customViolations ?? [],
-      overallScore: manualDataPrivacyData?.overallScore ?? 50,
+      overallScore: manualDataPrivacyData?.overallScore,
       deselectedViolations: newDeselected
     };
     
