@@ -109,14 +109,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   useEffect(() => {
     if (privacyData && onDataChange) {
       const effectiveScore = getEffectiveScore();
-      // Only update if score actually changed
-      if (effectiveScore !== privacyData.score) {
-        const updatedData = {
-          ...privacyData,
-          score: effectiveScore
-        };
-        onDataChange(updatedData);
-      }
+      // Always update when manual data changes to ensure export gets correct score
+      const updatedData = {
+        ...privacyData,
+        score: effectiveScore
+      };
+      onDataChange(updatedData);
     }
   }, [manualDataPrivacyData?.deselectedViolations, manualDataPrivacyData?.customViolations, manualDataPrivacyData?.overallScore]);
 
