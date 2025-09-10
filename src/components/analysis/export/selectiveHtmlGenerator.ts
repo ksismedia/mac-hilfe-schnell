@@ -854,7 +854,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       </style>
     </head>
     <body>
-      <div class="container">
+      <div class="report-container">
         <header class="header">
           <div class="header-content">
             <div class="logo-section">
@@ -889,9 +889,9 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
             </div>
           </div>
         </footer>
-      </div>
+      </div> <!-- End report-container -->
     </body>
-    </html>
+  </html>
   `;
 };
 
