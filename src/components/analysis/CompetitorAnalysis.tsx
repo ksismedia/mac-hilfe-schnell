@@ -620,10 +620,30 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                     <div className="mt-4 p-4 bg-orange-50 rounded-lg">
                       <h4 className="font-semibold text-orange-900 mb-2">Strategische Empfehlungen:</h4>
                       <ul className="text-sm text-orange-800 space-y-1">
-                        <li>• Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</li>
-                        <li>• Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</li>
-                        <li>• Kommunizieren Sie vorhandene Services besser</li>
-                        <li>• Partnerschaften für fehlende Services erwägen</li>
+                        {(() => {
+                          // Check if own company is better than all competitors
+                          const allOtherCompetitors = sortedCompetitors.filter(c => c.source !== 'own');
+                          const bestCompetitorScore = allOtherCompetitors.length > 0 ? Math.max(...allOtherCompetitors.map(c => c.score)) : 0;
+                          const isDominant = ownCompanyScore > bestCompetitorScore && allOtherCompetitors.length > 0;
+                          
+                          if (isDominant) {
+                            return (
+                              <>
+                                <li>• Dominierende Marktposition</li>
+                                <li>• Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
+                              </>
+                            );
+                          } else {
+                            return (
+                              <>
+                                <li>• Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</li>
+                                <li>• Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</li>
+                                <li>• Kommunizieren Sie vorhandene Services besser</li>
+                                <li>• Partnerschaften für fehlende Services erwägen</li>
+                              </>
+                            );
+                          }
+                        })()}
                       </ul>
                     </div>
                   </CardContent>
