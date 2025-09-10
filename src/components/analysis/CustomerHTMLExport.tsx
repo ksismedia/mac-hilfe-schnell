@@ -187,7 +187,13 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
+      dataPrivacyScore: (() => {
+        const calculatedScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
+        console.log('🔍 DEBUG CustomerHTMLExport - calculated dataPrivacyScore:', calculatedScore);
+        console.log('🔍 DEBUG CustomerHTMLExport - privacyData:', privacyData);
+        console.log('🔍 DEBUG CustomerHTMLExport - manualDataPrivacyData:', manualDataPrivacyData);
+        return calculatedScore;
+      })(),
       manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData,

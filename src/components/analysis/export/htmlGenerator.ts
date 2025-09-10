@@ -133,6 +133,7 @@ export const generateCustomerHTML = ({
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
+  console.log('🔍 DEBUG dataPrivacyScore received in htmlGenerator:', dataPrivacyScore);
   const actualDataPrivacyScore = dataPrivacyScore;
   
   // Use actual company services if available, otherwise fall back to industry defaults
