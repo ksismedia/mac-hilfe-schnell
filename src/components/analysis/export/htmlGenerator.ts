@@ -2481,7 +2481,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
             <div class="score-details">
               <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore === -1 ? 'Keine Daten verfügbar' : workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-              <p><strong>Empfehlung:</strong> ${workplaceScore === -1 ? 'Arbeitgeberbewertungen einrichten' : workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
+              <p><strong>Empfehlung:</strong> ${workplaceScore === -1 ? 'Keine Bewertungen vorhanden - Bitte Registrierung in den Portalen vornehmen und Mitarbeiter animieren Bewertungen abzugeben' : workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
             </div>
           </div>
           <div class="progress-container">
