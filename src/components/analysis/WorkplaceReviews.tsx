@@ -365,7 +365,7 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                       </div>
                       <div>
                         <h6 className="text-sm font-medium mb-2">Arbeitsklima:</h6>
-                        <p className="text-gray-400 text-sm mb-2">Ausbaufähig</p>
+                        <p className="text-gray-400 text-sm mb-2">Nicht erfasst</p>
                         <div className="bg-gray-700 rounded-full h-2">
                           <div className="bg-red-500 h-2 rounded-full w-[40%]"></div>
                         </div>

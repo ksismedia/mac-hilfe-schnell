@@ -375,7 +375,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Arbeitsklima</div>
-                        <div class="metric-value">${workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : workplaceScore > 0 ? 'Verbesserungsbedarf' : 'Keine Daten'}</div>
+                        <div class="metric-value">${workplaceScoreRaw === -1 ? 'Nicht erfasst' : workplaceScore >= 90 ? 'Sehr gut' : workplaceScore >= 70 ? 'Gut' : 'Verbesserungsbedarf'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Betriebsklima</span>

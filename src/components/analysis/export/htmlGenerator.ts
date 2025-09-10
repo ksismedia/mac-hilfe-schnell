@@ -2641,7 +2641,7 @@ export const generateCustomerHTML = ({
           <div class="score-display">
             <div class="score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
             <div class="score-details">
-              <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore === -1 ? 'Keine Daten verfügbar' : workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore === -1 ? 'Nicht erfasst' : workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${workplaceScore === -1 ? 'Keine Bewertungen vorhanden - Bitte Registrierung in den Portalen vornehmen und Mitarbeiter animieren Bewertungen abzugeben' : workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
             </div>
           </div>
@@ -2721,7 +2721,14 @@ export const generateCustomerHTML = ({
                 </div>
               </div>
               <div>
-                <p><strong>Arbeitsklima:</strong> ${realData.workplace?.kununu?.rating >= 4 ? 'Sehr gut' : realData.workplace?.kununu?.rating >= 3 ? 'Gut' : 'Ausbaufähig'}</p>
+                <p><strong>Arbeitsklima:</strong> ${
+                  (realData.workplace?.kununu?.rating > 0 || realData.workplace?.glassdoor?.rating > 0 || 
+                   (manualWorkplaceData && (manualWorkplaceData.kununuRating !== '' || manualWorkplaceData.glassdoorRating !== '')))
+                    ? (realData.workplace?.kununu?.rating >= 4 || (manualWorkplaceData?.kununuRating && parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) >= 4) ? 'Sehr gut' 
+                       : realData.workplace?.kununu?.rating >= 3 || (manualWorkplaceData?.kununuRating && parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) >= 3) ? 'Gut' 
+                       : 'Ausbaufähig')
+                    : 'Nicht erfasst'
+                }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50)}" style="width: ${realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50}%"></div>
