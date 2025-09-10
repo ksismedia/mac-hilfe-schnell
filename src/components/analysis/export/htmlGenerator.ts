@@ -1332,13 +1332,12 @@ export const generateCustomerHTML = ({
     console.log('manualCompetitors:', manualCompetitors);
     console.log('competitorServices:', competitorServices);
     
-    // VERWENDE NUR BEREITS BERECHNETE GLOBALE KONKURRENTEN-DATEN
+    // VERWENDE GLOBALE DATEN ODER FALLBACK AUF MANUELLE DATEN
     console.log('=== COMPETITOR EXPORT DEBUG ===');
     console.log('globalAllCompetitors from window:', (window as any).globalAllCompetitors);
-    console.log('globalOwnCompanyScore from window:', (window as any).globalOwnCompanyScore);
     console.log('manualCompetitors passed to function:', manualCompetitors);
     
-    const allCompetitors = (window as any).globalAllCompetitors || [];
+    const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
     
     console.log('allCompetitors after processing:', allCompetitors);
     console.log('allCompetitors.length:', allCompetitors.length);

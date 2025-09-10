@@ -259,9 +259,9 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Competitor Analysis section
     if (selections.subSections.competitorAnalysis) {
-      // VERWENDE NUR BEREITS BERECHNETE GLOBALE WERTE
+      // VERWENDE GLOBALE DATEN ODER FALLBACK AUF MANUELLE DATEN  
       const competitorScore = (window as any).globalOwnCompanyScore || 75;
-      const allCompetitors = (window as any).globalAllCompetitors || [];
+      const allCompetitors = (window as any).globalAllCompetitors || data.manualCompetitors || [];
       const sortedCompetitors = (window as any).globalSortedCompetitors || [];
       const isDominant = allCompetitors.length > 0;
       
