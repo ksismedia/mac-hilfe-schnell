@@ -36,7 +36,7 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     dataSubjectRights: false,
     deselectedViolations: [],
     customViolations: [],
-    overallScore: 50,
+    overallScore: undefined,
     notes: ''
   };
 
@@ -169,7 +169,7 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
           <div className="px-2">
             <Slider
               id="overall-score"
-              value={[currentData.overallScore]}
+              value={[currentData.overallScore ?? 50]}
               onValueChange={(value) => updateData({ overallScore: value[0] })}
               max={100}
               min={0}
@@ -178,7 +178,7 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
             />
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            Aktueller Score: {currentData.overallScore}/100
+            Aktueller Score: {currentData.overallScore ?? 'Automatisch berechnet'}/100
           </div>
         </div>
 
