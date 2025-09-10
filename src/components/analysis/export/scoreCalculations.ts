@@ -513,7 +513,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // Calculate dynamic score based on manual changes (same logic as in DataPrivacyAnalysis)
   if (manualDataPrivacyData) {
     // If manual score override is set, use it
-    if (manualDataPrivacyData.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData.score) {
+    if (manualDataPrivacyData.overallScore !== undefined) {
       return manualDataPrivacyData.overallScore;
     }
     
