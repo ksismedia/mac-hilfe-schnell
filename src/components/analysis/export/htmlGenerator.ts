@@ -344,9 +344,34 @@ export const generateCustomerHTML = ({
         </div>
         
         ` : `
-        <div class="warning-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-          <h4>⚠️ Arbeitsplatz-Bewertung nicht erfasst</h4>
-          <p style="margin-top: 10px;">Die Arbeitsplatz-Bewertung wurde noch nicht manuell erfasst. Empfehlung: Kununu und Glassdoor Profile prüfen und bewerten lassen.</p>
+        <div style="background: #2d3748; color: #fbbf24; padding: 20px; border-radius: 8px; border: 2px solid #fbbf24; margin-top: 15px;">
+          <h4 style="color: #fbbf24; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+            ⭐ Arbeitsplatz-Bewertungen nicht vorhanden
+          </h4>
+          <p style="margin: 10px 0; font-size: 14px;">
+            Derzeit liegen noch keine Arbeitgeber-Bewertungen vor. Eine Registrierung bei relevanten Bewertungsportalen wird empfohlen, um die Attraktivität als Arbeitgeber zu steigern.
+          </p>
+        </div>
+        
+        <!-- Fachkräfte-Attraktivität -->
+        <div style="background: #2d3748; color: #fbbf24; padding: 20px; border-radius: 8px; border: 2px solid #fbbf24; margin-top: 15px;">
+          <h4 style="color: #fbbf24; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+            ⭐ Fachkräfte-Attraktivität
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div>
+              <p style="margin: 0; font-size: 14px;"><strong>Bewertungsportale:</strong> Nicht registriert</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Kununu, Glassdoor etc.</p>
+            </div>
+            <div>
+              <p style="margin: 0; font-size: 14px;"><strong>Employer Branding:</strong> Ausbau empfohlen</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Sichtbarkeit als Arbeitgeber</p>
+            </div>
+            <div>
+              <p style="margin: 0; font-size: 14px;"><strong>Fachkräfte-Gewinnung:</strong> Potenzial nicht genutzt</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Arbeitgebermarke stärken</p>
+            </div>
+          </div>
         </div>
         `}
         

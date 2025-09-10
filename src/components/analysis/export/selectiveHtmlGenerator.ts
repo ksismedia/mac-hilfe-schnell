@@ -256,6 +256,68 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       `;
     }
 
+    // Competitor Analysis section
+    if (selections.subSections.competitorAnalysis) {
+      const competitorScore = data.manualCompetitors && data.manualCompetitors.length > 0 ? 75 : 45;
+      
+      // Calculate if company is dominant in market
+      const ownScore = 85; // Placeholder - this would be calculated based on actual metrics
+      const competitorScores = data.manualCompetitors?.map((comp: any) => comp.rating * 20) || [];
+      const bestCompetitorScore = competitorScores.length > 0 ? Math.max(...competitorScores) : 0;
+      const isDominant = ownScore > bestCompetitorScore && data.manualCompetitors?.length > 0;
+      
+      seoContentHtml += `
+        <div class="metric-card competitor-detailed">
+          <div class="competitor-header" style="background: linear-gradient(135deg, #e91e63, #ad1457); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              🎯 Wettbewerbsanalyse
+              <div class="score-circle" style="background: white; color: #e91e63; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${competitorScore}%
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            ${data.manualCompetitors && data.manualCompetitors.length > 0 ? `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+              ${data.manualCompetitors.slice(0, 3).map((comp: any, index: number) => `
+                <div style="background: #fce4ec; padding: 15px; border-radius: 8px; border-left: 4px solid #e91e63;">
+                  <h4 style="color: #ad1457; margin: 0 0 10px 0;">🏢 ${comp.name || `Konkurrent ${index + 1}`}</h4>
+                  <p style="margin: 0; font-size: 14px;"><strong>Bewertung:</strong> ${comp.rating}/5 (${comp.reviewCount} Bewertungen)</p>
+                  <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Services:</strong> ${comp.services?.length || 0} Leistungen</p>
+                </div>
+              `).join('')}
+            </div>
+            ` : `
+            <div style="background: #fce4ec; padding: 20px; border-radius: 8px; border-left: 4px solid #e91e63; text-align: center;">
+              <h4 style="color: #ad1457; margin: 0 0 10px 0;">⚠️ Keine Wettbewerber-Daten erfasst</h4>
+              <p style="margin: 0; color: #333;">
+                Für eine vollständige Wettbewerbsanalyse sollten mindestens 3-5 Hauptkonkurrenten erfasst werden.
+              </p>
+            </div>
+            `}
+            
+            <div style="background: #fce4ec; padding: 20px; border-radius: 8px; border-left: 4px solid #e91e63; margin-top: 20px;">
+              <h4 style="color: #ad1457; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ Strategische Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                ${isDominant ? `
+                  <li><strong>⭐ Dominierende Marktposition im unmittelbaren Marktumfeld</strong></li>
+                  <li><strong>✅ Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</strong></li>
+                ` : `
+                  <li><strong>📊 Benchmarking:</strong> Regelmäßige Analyse der Hauptkonkurrenten</li>
+                  <li><strong>🎯 Differenzierung:</strong> Alleinstellungsmerkmale entwickeln</li>
+                  <li><strong>💰 Preispositionierung:</strong> Wettbewerbsfähige Preise festlegen</li>
+                  <li><strong>🔄 Monitoring:</strong> Kontinuierliche Marktbeobachtung</li>
+                `}
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     if (seoContentHtml) {
       sectionsHtml += `
         <section class="section">
@@ -318,7 +380,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
     }
   }
 
-  // Social Media Section
+    // Social Media Section
   if (selections.sections.socialMedia) {
     let socialMediaHtml = '';
 
@@ -345,6 +407,91 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
                 <li><strong>💬 Community Management:</strong> Auf Kommentare und Nachrichten antworten</li>
                 <li><strong>📈 Analytics nutzen:</strong> Erfolg messen und optimieren</li>
                 <li><strong>🎯 Zielgruppen-Targeting:</strong> Relevante Inhalte für die Zielgruppe</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Workplace Reviews section
+    if (selections.subSections.workplaceReviews) {
+      const workplaceScore = data.manualWorkplaceData ? 
+        ((data.manualWorkplaceData.kununuFound && data.manualWorkplaceData.kununuRating ? (parseFloat(data.manualWorkplaceData.kununuRating.replace(',', '.')) * 20) : 0) +
+         (data.manualWorkplaceData.glassdoorFound && data.manualWorkplaceData.glassdoorRating ? (parseFloat(data.manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20) : 0)) / 2 
+        : -1;
+      
+      socialMediaHtml += `
+        <div class="metric-card workplace-detailed">
+          <div class="workplace-header" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
+            <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+              💼 Arbeitsplatz & Arbeitgeber-Bewertung
+              <div class="score-circle" style="background: white; color: #9c27b0; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
+                ${workplaceScore === -1 ? '–' : Math.round(workplaceScore) + '%'}
+              </div>
+            </h3>
+          </div>
+          
+          <div style="padding: 20px; background: white;">
+            ${data.manualWorkplaceData ? `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Kununu Bewertung:</strong> ${
+                  data.manualWorkplaceData.kununuFound && data.manualWorkplaceData.kununuRating
+                    ? `✅ ${data.manualWorkplaceData.kununuRating}/5 (${data.manualWorkplaceData.kununuReviews || 0} Bewertungen)`
+                    : '❌ Nicht gefunden'
+                }</p>
+              </div>
+              <div>
+                <p><strong>Glassdoor Bewertung:</strong> ${
+                  data.manualWorkplaceData.glassdoorFound && data.manualWorkplaceData.glassdoorRating
+                    ? `✅ ${data.manualWorkplaceData.glassdoorRating}/5 (${data.manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`
+                    : '❌ Nicht gefunden'
+                }</p>
+              </div>
+            </div>
+            ` : `
+            <div style="background: #2d3748; color: #fbbf24; padding: 20px; border-radius: 8px; border: 2px solid #fbbf24; margin-top: 15px;">
+              <h4 style="color: #fbbf24; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+                ⭐ Arbeitsplatz-Bewertungen nicht vorhanden
+              </h4>
+              <p style="margin: 10px 0; font-size: 14px;">
+                Derzeit liegen noch keine Arbeitgeber-Bewertungen vor. Eine Registrierung bei relevanten Bewertungsportalen wird empfohlen, um die Attraktivität als Arbeitgeber zu steigern.
+              </p>
+            </div>
+            
+            <!-- Fachkräfte-Attraktivität -->
+            <div style="background: #2d3748; color: #fbbf24; padding: 20px; border-radius: 8px; border: 2px solid #fbbf24; margin-top: 15px;">
+              <h4 style="color: #fbbf24; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
+                ⭐ Fachkräfte-Attraktivität
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div>
+                  <p style="margin: 0; font-size: 14px;"><strong>Bewertungsportale:</strong> Nicht registriert</p>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Kununu, Glassdoor etc.</p>
+                </div>
+                <div>
+                  <p style="margin: 0; font-size: 14px;"><strong>Employer Branding:</strong> Ausbau empfohlen</p>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Sichtbarkeit als Arbeitgeber</p>
+                </div>
+                <div>
+                  <p style="margin: 0; font-size: 14px;"><strong>Fachkräfte-Gewinnung:</strong> Potenzial nicht genutzt</p>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Arbeitgebermarke stärken</p>
+                </div>
+              </div>
+            </div>
+            `}
+            
+            <div style="background: #f3e8ff; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0; margin-top: 20px;">
+              <h4 style="color: #6b21a8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                ✨ Arbeitsplatz-Empfehlungen
+              </h4>
+              <ul style="margin: 0; padding-left: 20px; color: #333; line-height: 1.6;">
+                <li><strong>📊 Portale nutzen:</strong> Bei Kununu und Glassdoor registrieren</li>
+                <li><strong>👥 Mitarbeiter aktivieren:</strong> Positive Bewertungen fördern</li>
+                <li><strong>🏢 Employer Branding:</strong> Attraktivität als Arbeitgeber steigern</li>
+                <li><strong>📱 Digitale Präsenz:</strong> Karriereseite optimieren</li>
+                <li><strong>🎯 Recruiting:</strong> Zielgruppengerechte Ansprache</li>
               </ul>
             </div>
           </div>
