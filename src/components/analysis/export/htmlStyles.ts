@@ -46,10 +46,11 @@ body {
   contain: layout style !important;
   position: relative;
 }
-/* CRITICAL: Force sections to have consistent width but preserve grid layouts */
+/* CRITICAL: Force sections to have consistent, limited width */
 .section {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 95% !important;
+  max-width: 1100px !important;
+  margin: 0 auto 30px auto !important;
   box-sizing: border-box !important;
 }
 .section-content {
