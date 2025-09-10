@@ -1649,7 +1649,7 @@ export const generateCustomerHTML = ({
               
               if (isDominant) {
                 return `
-                  <li>Dominierende Marktposition</li>
+                  <li>Dominierende Marktposition im unmittelbaren Marktumfeld</li>
                   <li>Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
                 `;
               } else {

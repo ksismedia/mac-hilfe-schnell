@@ -617,9 +617,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                         </Badge>
                       ))}
                     </div>
-                    <div className="mt-4 p-4 bg-orange-50 rounded-lg">
-                      <h4 className="font-semibold text-orange-900 mb-2">Strategische Empfehlungen:</h4>
-                      <ul className="text-sm text-orange-800 space-y-1">
+                    <div className="mt-4 p-4 bg-gray-800 text-white rounded-lg">
+                      <h4 className="font-semibold text-yellow-300 mb-3">Strategische Handlungsempfehlungen:</h4>
+                      <div className="space-y-2">
                         {(() => {
                           // Check if own company is better than all competitors
                           const allOtherCompetitors = sortedCompetitors.filter(c => c.source !== 'own');
@@ -629,22 +629,40 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                           if (isDominant) {
                             return (
                               <>
-                                <li>• Dominierende Marktposition</li>
-                                <li>• Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</li>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Dominierende Marktposition im unmittelbaren Marktumfeld</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Keine unmittelbaren Maßnahmen zur Steigerung der Wettbewerbsfähigkeit notwendig</span>
+                                </div>
                               </>
                             );
                           } else {
                             return (
                               <>
-                                <li>• Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</li>
-                                <li>• Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</li>
-                                <li>• Kommunizieren Sie vorhandene Services besser</li>
-                                <li>• Partnerschaften für fehlende Services erwägen</li>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Prüfen Sie, welche Services für Ihr Unternehmen relevant sind</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Erwägen Sie eine Erweiterung Ihres Leistungsspektrums</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Kommunizieren Sie vorhandene Services besser</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">⭐</span>
+                                  <span>Partnerschaften für fehlende Services erwägen</span>
+                                </div>
                               </>
                             );
                           }
                         })()}
-                      </ul>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
