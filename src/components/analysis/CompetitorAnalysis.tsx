@@ -379,9 +379,18 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   ].sort((a, b) => b.score - a.score);
 
   // WICHTIG: Score und Konkurrenten-Daten für CustomerHTMLExport verfügbar machen
+  console.log('=== SETTING GLOBAL COMPETITOR DATA ===');
+  console.log('ownCompanyScore:', ownCompanyScore);
+  console.log('allCompetitors being set:', allCompetitors);
+  console.log('sortedCompetitors being set:', sortedCompetitors);
+  
   (window as any).globalOwnCompanyScore = ownCompanyScore;
   (window as any).globalAllCompetitors = allCompetitors;
   (window as any).globalSortedCompetitors = sortedCompetitors;
+  
+  console.log('=== GLOBAL DATA SET CONFIRMATION ===');
+  console.log('window.globalAllCompetitors after setting:', (window as any).globalAllCompetitors);
+  console.log('window.globalOwnCompanyScore after setting:', (window as any).globalOwnCompanyScore);
 
   // Gelöschte Konkurrenten für Wiederherstellung - SICHER
   const deletedGoogleCompetitors = realData?.competitors?.filter(comp => 

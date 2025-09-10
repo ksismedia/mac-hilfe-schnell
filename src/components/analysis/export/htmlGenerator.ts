@@ -1333,9 +1333,15 @@ export const generateCustomerHTML = ({
     console.log('competitorServices:', competitorServices);
     
     // VERWENDE NUR BEREITS BERECHNETE GLOBALE KONKURRENTEN-DATEN
+    console.log('=== COMPETITOR EXPORT DEBUG ===');
+    console.log('globalAllCompetitors from window:', (window as any).globalAllCompetitors);
+    console.log('globalOwnCompanyScore from window:', (window as any).globalOwnCompanyScore);
+    console.log('manualCompetitors passed to function:', manualCompetitors);
+    
     const allCompetitors = (window as any).globalAllCompetitors || [];
     
     console.log('allCompetitors after processing:', allCompetitors);
+    console.log('allCompetitors.length:', allCompetitors.length);
     
     if (allCompetitors.length === 0) {
       return `
