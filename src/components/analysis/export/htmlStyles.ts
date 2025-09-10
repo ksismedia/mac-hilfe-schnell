@@ -32,6 +32,20 @@ body {
   overflow-x: hidden !important;
   position: relative;
 }
+.section { 
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
+  margin-bottom: 30px; 
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+  overflow: hidden !important;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  page-break-inside: avoid;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  contain: layout style !important;
+  position: relative;
+}
 .header { 
   text-align: center; 
   margin-bottom: 40px; 
