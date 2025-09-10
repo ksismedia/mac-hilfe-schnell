@@ -891,7 +891,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         </footer>
       </div>
     </body>
-  </html>
+    </html>
   `;
 };
 

@@ -2072,11 +2072,11 @@ export const generateCustomerHTML = ({
 
     <!-- Website Performance -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('performance-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Website Performance</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Website Performance</span>
         <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
       </div>
-      <div id="performance-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Performance Analyse</h3>
           <div class="score-display">
@@ -2164,11 +2164,11 @@ export const generateCustomerHTML = ({
 
     <!-- SEO-Bestandsanalyse -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('seo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ SEO-Bestandsanalyse</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>SEO-Bestandsanalyse</span>
         <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
       </div>
-      <div id="seo-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>SEO-Bestandsanalyse</h3>
           <div class="score-display">
@@ -2423,11 +2423,11 @@ export const generateCustomerHTML = ({
 
     <!-- Lokale SEO & Regionale Sichtbarkeit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('local-seo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Lokale SEO & Regionale Sichtbarkeit</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Lokale SEO & Regionale Sichtbarkeit</span>
         <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
       </div>
-      <div id="local-seo-content" class="section-content" style="display: none;">
+      <div class="section-content">
         ${getLocalSEOAnalysis()}
       </div>
     </div>
@@ -2475,11 +2475,11 @@ export const generateCustomerHTML = ({
 
     <!-- Mobile Optimierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('mobile-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Mobile Optimierung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Mobile Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
       </div>
-      <div id="mobile-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Mobile Optimierung</h3>
           <div class="score-display">
@@ -2510,11 +2510,11 @@ export const generateCustomerHTML = ({
 
     <!-- Corporate Identity -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('corporate-design-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Corporate Design</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Corporate Design</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${corporateIdentityScore}%</div>
       </div>
-      <div id="corporate-design-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Corporate Design Konsistenz</h3>
           <div class="score-display">
@@ -2631,11 +2631,11 @@ export const generateCustomerHTML = ({
 
     <!-- Arbeitsplatz & Arbeitgeber-Bewertung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('workplace-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Arbeitsplatz & Arbeitgeber-Bewertung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
         <div class="header-score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
       </div>
-      <div id="workplace-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Arbeitsplatz & Arbeitgeber-Bewertung</h3>
           <div class="score-display">
@@ -2786,11 +2786,11 @@ export const generateCustomerHTML = ({
 
     <!-- Online Reputation -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('reputation-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Online Reputation</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Online Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
       </div>
-      <div id="reputation-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Online Reputation</h3>
           <div class="score-display">
@@ -2819,11 +2819,11 @@ export const generateCustomerHTML = ({
 
     <!-- Barrierefreiheit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('accessibility-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Barrierefreiheit & Zugänglichkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
-      </div>
-      <div id="accessibility-content" class="section-content" style="display: none;">
+        <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+          <span>Barrierefreiheit & Zugänglichkeit</span>
+          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
+        </div>
+      <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
         <div class="metric-card">
           <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
@@ -3009,11 +3009,11 @@ export const generateCustomerHTML = ({
     ${hourlyRateData ? `
     <!-- Preispositionierung -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('preispositionierung-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ 💰 Preispositionierung</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>💰 Preispositionierung</span>
         <div class="header-score-circle ${getScoreColorClass(75)}">75%</div>
       </div>
-      <div id="preispositionierung-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Preispositionierung</h3>
           <div class="score-display">
@@ -3044,11 +3044,11 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('rechtssicherheit-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
-        <span>▶ Rechtssicherheit</span>
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Rechtssicherheit</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
-      <div id="rechtssicherheit-content" class="section-content" style="display: none;">
+      <div class="section-content">
         <div class="metric-card">
           <h3>Rechtssicherheit</h3>
           <div class="score-display">
