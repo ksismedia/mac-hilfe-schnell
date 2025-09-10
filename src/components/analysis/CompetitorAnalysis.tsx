@@ -380,7 +380,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   // WICHTIG: Score und Konkurrenten-Daten für CustomerHTMLExport verfügbar machen
   (window as any).globalOwnCompanyScore = ownCompanyScore;
-  (window as any).globalCompetitorData = allCompetitors;
+  (window as any).globalAllCompetitors = allCompetitors;
   (window as any).globalSortedCompetitors = sortedCompetitors;
 
   // Gelöschte Konkurrenten für Wiederherstellung - SICHER
