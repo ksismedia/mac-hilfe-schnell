@@ -2,10 +2,11 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
+import { calculateDataPrivacyScore } from './export/scoreCalculations';
 
 interface CustomerHTMLExportProps {
   businessData: {
@@ -29,6 +30,7 @@ interface CustomerHTMLExportProps {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   privacyData?: any;
@@ -54,6 +56,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualContentData,
   manualAccessibilityData,
   manualBacklinkData,
+  manualDataPrivacyData,
   manualKeywordData,
   keywordScore,
   privacyData,
@@ -184,7 +187,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: privacyData?.score || 75,
+      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData,
@@ -248,7 +251,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: privacyData?.score || 75,
+      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData,

@@ -400,6 +400,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualContentData={manualContentData}
                   manualAccessibilityData={manualAccessibilityData}
                   manualBacklinkData={manualBacklinkData}
+                  manualDataPrivacyData={manualDataPrivacyData}
                   calculatedOwnCompanyScore={currentOwnCompanyScore}
                 />
                 <SelectiveHTMLExport

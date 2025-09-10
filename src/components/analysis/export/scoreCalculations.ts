@@ -504,10 +504,39 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   return Math.round(score);
 };
 
-export const calculateDataPrivacyScore = (realData: any, privacyData: any): number => {
+export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
   // Verwende den echten Score aus privacyData falls vorhanden
-  if (privacyData?.score !== undefined) {
-    return privacyData.score;
+  if (!privacyData?.score) {
+    return 26; // Fallback-Score
   }
-  return 26; // Verwende den aus der Analyse erkannten Score (wie im Bild gezeigt)
+  
+  // Calculate dynamic score based on manual changes (same logic as in DataPrivacyAnalysis)
+  if (manualDataPrivacyData) {
+    // If manual score override is set, use it
+    if (manualDataPrivacyData.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData.score) {
+      return manualDataPrivacyData.overallScore;
+    }
+    
+    let baseScore = privacyData.score;
+    const deselectedViolations = manualDataPrivacyData.deselectedViolations || [];
+    const customViolations = manualDataPrivacyData.customViolations || [];
+    
+    // Add points for deselected violations (removing violations improves score)
+    const deselectedCount = deselectedViolations.length;
+    const scoreBonus = deselectedCount * 8; // 8 points per deselected violation
+    
+    // Subtract points for custom violations (adding violations worsens score)
+    let violationPenalty = 0;
+    customViolations.forEach((violation: any) => {
+      if (violation.severity === 'high') violationPenalty += 15;
+      else if (violation.severity === 'medium') violationPenalty += 10;
+      else violationPenalty += 5;
+    });
+    
+    // Calculate adjusted score
+    const adjustedScore = Math.max(0, Math.min(100, baseScore + scoreBonus - violationPenalty));
+    return Math.round(adjustedScore);
+  }
+  
+  return privacyData.score;
 };

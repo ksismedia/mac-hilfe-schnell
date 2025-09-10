@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
 import { FileText, Download, Printer, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 import { generateSelectiveCustomerHTML, generateSelectiveCustomerHTMLForBrowser } from './export/selectiveHtmlGenerator';
+import { calculateDataPrivacyScore } from './export/scoreCalculations';
 
 interface SelectiveHTMLExportProps {
   businessData: {
@@ -29,6 +30,7 @@ interface SelectiveHTMLExportProps {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   privacyData?: any;
@@ -87,6 +89,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   manualContentData,
   manualAccessibilityData,
   manualBacklinkData,
+  manualDataPrivacyData,
   manualKeywordData,
   keywordScore,
   privacyData,
@@ -206,7 +209,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: privacyData?.score || 75,
+      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       calculatedOwnCompanyScore: undefined
     });
 
@@ -253,7 +256,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       quoteResponseData,
       privacyData,
       accessibilityData,
-      dataPrivacyScore: privacyData?.score || 75,
+      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       selections: {
         sections: sectionSelections,
         subSections: subSectionSelections
