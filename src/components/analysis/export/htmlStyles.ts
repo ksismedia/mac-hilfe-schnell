@@ -41,9 +41,22 @@ body {
   border: 1px solid rgba(251, 191, 36, 0.3);
   page-break-inside: avoid;
   max-width: 100% !important;
+  width: 100% !important;
   box-sizing: border-box !important;
   contain: layout style !important;
   position: relative;
+}
+/* Force all sections to have same width regardless of content */
+.section,
+div[class*="section"],
+section[class*="section"],
+.metric-card,
+.company-info,
+.recommendations {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
 }
 .header { 
   text-align: center; 
