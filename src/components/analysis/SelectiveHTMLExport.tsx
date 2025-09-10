@@ -231,7 +231,13 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
         azubiRate: hourlyRateData.azubiRate || 0,
         helferRate: hourlyRateData.helferRate || 0,
         serviceRate: (hourlyRateData as any).serviceRate || 0,
-        installationRate: (hourlyRateData as any).installationRate || 0
+        installationRate: (hourlyRateData as any).installationRate || 0,
+        regionalMeisterRate: (hourlyRateData as any).regionalMeisterRate || 0,
+        regionalFacharbeiterRate: (hourlyRateData as any).regionalFacharbeiterRate || 0,
+        regionalAzubiRate: (hourlyRateData as any).regionalAzubiRate || 0,
+        regionalHelferRate: (hourlyRateData as any).regionalHelferRate || 0,
+        regionalServiceRate: (hourlyRateData as any).regionalServiceRate || 0,
+        regionalInstallationRate: (hourlyRateData as any).regionalInstallationRate || 0
       } : undefined,
       missingImprintElements: [],
       manualSocialData,

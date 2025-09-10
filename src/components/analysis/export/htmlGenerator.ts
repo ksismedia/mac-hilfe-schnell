@@ -20,7 +20,7 @@ interface CustomerReportData {
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
   removedMissingServices?: string[];
-  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number; serviceRate: number; installationRate: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number; serviceRate: number; installationRate: number; regionalMeisterRate: number; regionalFacharbeiterRate: number; regionalAzubiRate: number; regionalHelferRate: number; regionalServiceRate: number; regionalInstallationRate: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
@@ -420,21 +420,58 @@ export const generateCustomerHTML = ({
   const getPricingAnalysis = () => {
     if (!hourlyRateData) return '<p>Keine Preisdaten verfügbar</p>';
     
-    const averageRate = ((hourlyRateData.meisterRate || 0) + (hourlyRateData.facharbeiterRate || 0) + (hourlyRateData.azubiRate || 0) + (hourlyRateData.helferRate || 0) + (hourlyRateData.serviceRate || 0) + (hourlyRateData.installationRate || 0)) / 6;
-    const pricingScore = 75; // Default score for structured pricing
+    const companyRates = [hourlyRateData.meisterRate, hourlyRateData.facharbeiterRate, hourlyRateData.azubiRate, hourlyRateData.helferRate, hourlyRateData.serviceRate, hourlyRateData.installationRate].filter(rate => rate > 0);
+    const regionalRates = [hourlyRateData.regionalMeisterRate, hourlyRateData.regionalFacharbeiterRate, hourlyRateData.regionalAzubiRate, hourlyRateData.regionalHelferRate, hourlyRateData.regionalServiceRate, hourlyRateData.regionalInstallationRate].filter(rate => rate > 0);
+    
+    const companyAvg = companyRates.length > 0 ? companyRates.reduce((sum, rate) => sum + rate, 0) / companyRates.length : 0;
+    const regionalAvg = regionalRates.length > 0 ? regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length : 0;
+    
+    // Calculate competitive score if both company and regional data available
+    let pricingScore = 75; // Default score
+    if (companyAvg > 0 && regionalAvg > 0) {
+      const ratio = companyAvg / regionalAvg;
+      if (ratio >= 0.9 && ratio <= 1.1) {
+        pricingScore = 100; // Within 10% of regional average = perfect score
+      } else if (ratio < 0.9) {
+        pricingScore = Math.max(20, 100 - ((0.9 - ratio) * 400)); // Too low = reduced score
+      } else {
+        pricingScore = Math.max(20, 100 - ((ratio - 1.1) * 200)); // Too high = reduced score
+      }
+      pricingScore = Math.round(pricingScore);
+    }
     return `
       <div class="metric-card good">
-        <h3>Stundensatz-Analyse</h3>
+        <h3>Stundensatz-Analyse & Wettbewerbsvergleich</h3>
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
           <div class="score-details">
+            <h4>Ihre Stundensätze:</h4>
             <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
             <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
             <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate || 0}€/h</p>
             <p><strong>Helfer:</strong> ${hourlyRateData.helferRate || 0}€/h</p>
             <p><strong>Service:</strong> ${hourlyRateData.serviceRate || 0}€/h</p>
             <p><strong>Installation:</strong> ${hourlyRateData.installationRate || 0}€/h</p>
-            <p><strong>Durchschnitt:</strong> ${averageRate.toFixed(2)}€/h</p>
+            ${companyAvg > 0 ? `<p><strong>Ihr Durchschnitt:</strong> ${companyAvg.toFixed(2)}€/h</p>` : ''}
+            
+            ${regionalAvg > 0 ? `
+            <h4 style="margin-top: 15px;">Regional üblich:</h4>
+            <p><strong>Regional Meister:</strong> ${hourlyRateData.regionalMeisterRate || 0}€/h</p>
+            <p><strong>Regional Facharbeiter:</strong> ${hourlyRateData.regionalFacharbeiterRate || 0}€/h</p>
+            <p><strong>Regional Azubi:</strong> ${hourlyRateData.regionalAzubiRate || 0}€/h</p>
+            <p><strong>Regional Helfer:</strong> ${hourlyRateData.regionalHelferRate || 0}€/h</p>
+            <p><strong>Regional Service:</strong> ${hourlyRateData.regionalServiceRate || 0}€/h</p>
+            <p><strong>Regional Installation:</strong> ${hourlyRateData.regionalInstallationRate || 0}€/h</p>
+            <p><strong>Regional Durchschnitt:</strong> ${regionalAvg.toFixed(2)}€/h</p>
+            
+            <div style="margin-top: 15px; padding: 10px; background: ${pricingScore >= 80 ? '#e8f5e8' : pricingScore >= 60 ? '#fff3cd' : '#f8d7da'}; border-radius: 5px;">
+              <strong>Bewertung:</strong> ${
+                pricingScore >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
+                pricingScore >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
+                'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
+              }
+            </div>
+            ` : ''}
           </div>
           </div>
         </div>

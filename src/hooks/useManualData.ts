@@ -104,6 +104,13 @@ export interface HourlyRateData {
   helferRate: number;
   serviceRate: number;
   installationRate: number;
+  // Regional rates for comparison
+  regionalMeisterRate: number;
+  regionalFacharbeiterRate: number;
+  regionalAzubiRate: number;
+  regionalHelferRate: number;
+  regionalServiceRate: number;
+  regionalInstallationRate: number;
 }
 
 export interface QuoteResponseData {

@@ -71,7 +71,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   }
   
   // Stundensatz - nur bewerten wenn tatsächlich eingegeben
-  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0)) {
+  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0)) {
     const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
     metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 4, maxScore: 100 });
   }

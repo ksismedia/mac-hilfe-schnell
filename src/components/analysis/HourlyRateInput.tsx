@@ -14,6 +14,13 @@ interface HourlyRateData {
   helferRate: number;
   serviceRate: number;
   installationRate: number;
+  // Regional rates for comparison
+  regionalMeisterRate: number;
+  regionalFacharbeiterRate: number;
+  regionalAzubiRate: number;
+  regionalHelferRate: number;
+  regionalServiceRate: number;
+  regionalInstallationRate: number;
 }
 
 interface HourlyRateInputProps {
@@ -28,6 +35,14 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
   const [helferRate, setHelferRate] = React.useState(data?.helferRate?.toString() || '');
   const [serviceRate, setServiceRate] = React.useState(data?.serviceRate?.toString() || '');
   const [installationRate, setInstallationRate] = React.useState(data?.installationRate?.toString() || '');
+  
+  // Regional rates
+  const [regionalMeisterRate, setRegionalMeisterRate] = React.useState(data?.regionalMeisterRate?.toString() || '');
+  const [regionalFacharbeiterRate, setRegionalFacharbeiterRate] = React.useState(data?.regionalFacharbeiterRate?.toString() || '');
+  const [regionalAzubiRate, setRegionalAzubiRate] = React.useState(data?.regionalAzubiRate?.toString() || '');
+  const [regionalHelferRate, setRegionalHelferRate] = React.useState(data?.regionalHelferRate?.toString() || '');
+  const [regionalServiceRate, setRegionalServiceRate] = React.useState(data?.regionalServiceRate?.toString() || '');
+  const [regionalInstallationRate, setRegionalInstallationRate] = React.useState(data?.regionalInstallationRate?.toString() || '');
 
   const handleSave = () => {
     const meisterRateNum = parseFloat(meisterRate) || 0;
@@ -37,158 +52,276 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
     const serviceRateNum = parseFloat(serviceRate) || 0;
     const installationRateNum = parseFloat(installationRate) || 0;
     
+    const regionalMeisterRateNum = parseFloat(regionalMeisterRate) || 0;
+    const regionalFacharbeiterRateNum = parseFloat(regionalFacharbeiterRate) || 0;
+    const regionalAzubiRateNum = parseFloat(regionalAzubiRate) || 0;
+    const regionalHelferRateNum = parseFloat(regionalHelferRate) || 0;
+    const regionalServiceRateNum = parseFloat(regionalServiceRate) || 0;
+    const regionalInstallationRateNum = parseFloat(regionalInstallationRate) || 0;
+    
     onDataChange({
       meisterRate: meisterRateNum,
       facharbeiterRate: facharbeiterRateNum,
       azubiRate: azubiRateNum,
       helferRate: helferRateNum,
       serviceRate: serviceRateNum,
-      installationRate: installationRateNum
+      installationRate: installationRateNum,
+      regionalMeisterRate: regionalMeisterRateNum,
+      regionalFacharbeiterRate: regionalFacharbeiterRateNum,
+      regionalAzubiRate: regionalAzubiRateNum,
+      regionalHelferRate: regionalHelferRateNum,
+      regionalServiceRate: regionalServiceRateNum,
+      regionalInstallationRate: regionalInstallationRateNum
     });
   };
 
-  const calculateAverageRate = () => {
-    const rates = [
-      parseFloat(meisterRate) || 0,
-      parseFloat(facharbeiterRate) || 0,
-      parseFloat(azubiRate) || 0,
-      parseFloat(helferRate) || 0,
-      parseFloat(serviceRate) || 0,
-      parseFloat(installationRate) || 0
-    ].filter(rate => rate > 0);
+  const calculateComparisonScore = () => {
+    const companyRates = [meisterRate, facharbeiterRate, azubiRate, helferRate, serviceRate, installationRate]
+      .map(rate => parseFloat(rate) || 0).filter(rate => rate > 0);
+    const regionalRates = [regionalMeisterRate, regionalFacharbeiterRate, regionalAzubiRate, regionalHelferRate, regionalServiceRate, regionalInstallationRate]
+      .map(rate => parseFloat(rate) || 0).filter(rate => rate > 0);
     
-    if (rates.length === 0) return 0;
-    return rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
+    if (companyRates.length === 0 || regionalRates.length === 0) return null;
+    
+    const companyAvg = companyRates.reduce((sum, rate) => sum + rate, 0) / companyRates.length;
+    const regionalAvg = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
+    
+    // Score calculation: 100% = exactly regional average, higher/lower rates adjust score
+    const ratio = companyAvg / regionalAvg;
+    let score;
+    if (ratio >= 0.9 && ratio <= 1.1) {
+      score = 100; // Within 10% of regional average = perfect score
+    } else if (ratio < 0.9) {
+      score = Math.max(20, 100 - ((0.9 - ratio) * 400)); // Too low = reduced score
+    } else {
+      score = Math.max(20, 100 - ((ratio - 1.1) * 200)); // Too high = reduced score
+    }
+    
+    return {
+      score: Math.round(score),
+      companyAvg,
+      regionalAvg,
+      ratio
+    };
   };
 
-  const averageRate = calculateAverageRate();
+  const comparisonResult = calculateComparisonScore();
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Euro className="h-5 w-5" />
-          Stundensatz-Analyse
+          Stundensatz-Analyse & Wettbewerbsvergleich
         </CardTitle>
         <CardDescription>
-          Vergleichen Sie Ihren Stundensatz mit dem regionalen Durchschnitt
+          Vergleichen Sie Ihren Stundensatz mit dem regionalen Durchschnitt und erhalten Sie eine Bewertung Ihrer Preispositionierung
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="meisterRate">Stundensatz Meister (€)</Label>
-            <Input
-              id="meisterRate"
-              type="number"
-              step="0.01"
-              placeholder="85.00"
-              value={meisterRate}
-              onChange={(e) => setMeisterRate(e.target.value)}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="facharbeiterRate">Stundensatz Facharbeiter (€)</Label>
-            <Input
-              id="facharbeiterRate"
-              type="number"
-              step="0.01"
-              placeholder="65.00"
-              value={facharbeiterRate}
-              onChange={(e) => setFacharbeiterRate(e.target.value)}
-            />
-          </div>
+      <CardContent className="space-y-6">
+        {/* Company Rates Section */}
+        <div>
+          <h4 className="font-semibold text-lg mb-4 flex items-center gap-2">
+            🏢 Ihre Stundensätze
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="meisterRate">Stundensatz Meister (€)</Label>
+              <Input
+                id="meisterRate"
+                type="number"
+                step="0.01"
+                placeholder="85.00"
+                value={meisterRate}
+                onChange={(e) => setMeisterRate(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="facharbeiterRate">Stundensatz Facharbeiter (€)</Label>
+              <Input
+                id="facharbeiterRate"
+                type="number"
+                step="0.01"
+                placeholder="65.00"
+                value={facharbeiterRate}
+                onChange={(e) => setFacharbeiterRate(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="azubiRate">Stundensatz Azubi (€)</Label>
-            <Input
-              id="azubiRate"
-              type="number"
-              step="0.01"
-              placeholder="25.00"
-              value={azubiRate}
-              onChange={(e) => setAzubiRate(e.target.value)}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="azubiRate">Stundensatz Azubi (€)</Label>
+              <Input
+                id="azubiRate"
+                type="number"
+                step="0.01"
+                placeholder="25.00"
+                value={azubiRate}
+                onChange={(e) => setAzubiRate(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="helferRate">Stundensatz Helfer (€)</Label>
-            <Input
-              id="helferRate"
-              type="number"
-              step="0.01"
-              placeholder="35.00"
-              value={helferRate}
-              onChange={(e) => setHelferRate(e.target.value)}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="helferRate">Stundensatz Helfer (€)</Label>
+              <Input
+                id="helferRate"
+                type="number"
+                step="0.01"
+                placeholder="35.00"
+                value={helferRate}
+                onChange={(e) => setHelferRate(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="serviceRate">Stundensatz Service (€)</Label>
-            <Input
-              id="serviceRate"
-              type="number"
-              step="0.01"
-              placeholder="95.00"
-              value={serviceRate}
-              onChange={(e) => setServiceRate(e.target.value)}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="serviceRate">Stundensatz Service (€)</Label>
+              <Input
+                id="serviceRate"
+                type="number"
+                step="0.01"
+                placeholder="95.00"
+                value={serviceRate}
+                onChange={(e) => setServiceRate(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="installationRate">Stundensatz Installation (€)</Label>
-            <Input
-              id="installationRate"
-              type="number"
-              step="0.01"
-              placeholder="75.00"
-              value={installationRate}
-              onChange={(e) => setInstallationRate(e.target.value)}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="installationRate">Stundensatz Installation (€)</Label>
+              <Input
+                id="installationRate"
+                type="number"
+                step="0.01"
+                placeholder="75.00"
+                value={installationRate}
+                onChange={(e) => setInstallationRate(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
-        {averageRate > 0 && (
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <Calculator className="h-4 w-4 text-blue-600" />
-              <span className="font-semibold text-blue-800">Stundensatz-Übersicht</span>
+        {/* Regional Rates Section */}
+        <div>
+          <h4 className="font-semibold text-lg mb-4 flex items-center gap-2">
+            📍 Regional üblicher Stundensatz
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="regionalMeisterRate">Regional Meister (€)</Label>
+              <Input
+                id="regionalMeisterRate"
+                type="number"
+                step="0.01"
+                placeholder="80.00"
+                value={regionalMeisterRate}
+                onChange={(e) => setRegionalMeisterRate(e.target.value)}
+              />
             </div>
-            <div className="text-sm text-blue-700 space-y-2">
-              <p>
-                <strong>Durchschnittlicher Stundensatz:</strong>{' '}
-                <Badge variant="default">
-                  {averageRate.toFixed(2)} €
-                </Badge>
-              </p>
-              <div className="grid grid-cols-2 gap-2 mt-3">
-                {parseFloat(meisterRate) > 0 && (
-                  <p><span className="font-medium">Meister:</span> {meisterRate} €</p>
-                )}
-                {parseFloat(facharbeiterRate) > 0 && (
-                  <p><span className="font-medium">Facharbeiter:</span> {facharbeiterRate} €</p>
-                )}
-                {parseFloat(azubiRate) > 0 && (
-                  <p><span className="font-medium">Azubi:</span> {azubiRate} €</p>
-                )}
-                {parseFloat(helferRate) > 0 && (
-                  <p><span className="font-medium">Helfer:</span> {helferRate} €</p>
-                )}
-                {parseFloat(serviceRate) > 0 && (
-                  <p><span className="font-medium">Service:</span> {serviceRate} €</p>
-                )}
-                {parseFloat(installationRate) > 0 && (
-                  <p><span className="font-medium">Installation:</span> {installationRate} €</p>
-                )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="regionalFacharbeiterRate">Regional Facharbeiter (€)</Label>
+              <Input
+                id="regionalFacharbeiterRate"
+                type="number"
+                step="0.01"
+                placeholder="60.00"
+                value={regionalFacharbeiterRate}
+                onChange={(e) => setRegionalFacharbeiterRate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regionalAzubiRate">Regional Azubi (€)</Label>
+              <Input
+                id="regionalAzubiRate"
+                type="number"
+                step="0.01"
+                placeholder="22.00"
+                value={regionalAzubiRate}
+                onChange={(e) => setRegionalAzubiRate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regionalHelferRate">Regional Helfer (€)</Label>
+              <Input
+                id="regionalHelferRate"
+                type="number"
+                step="0.01"
+                placeholder="30.00"
+                value={regionalHelferRate}
+                onChange={(e) => setRegionalHelferRate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regionalServiceRate">Regional Service (€)</Label>
+              <Input
+                id="regionalServiceRate"
+                type="number"
+                step="0.01"
+                placeholder="90.00"
+                value={regionalServiceRate}
+                onChange={(e) => setRegionalServiceRate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regionalInstallationRate">Regional Installation (€)</Label>
+              <Input
+                id="regionalInstallationRate"
+                type="number"
+                step="0.01"
+                placeholder="70.00"
+                value={regionalInstallationRate}
+                onChange={(e) => setRegionalInstallationRate(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Comparison Results */}
+        {comparisonResult && (
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Calculator className="h-5 w-5 text-blue-600" />
+              <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
+              <Badge variant={comparisonResult.score >= 80 ? "default" : comparisonResult.score >= 60 ? "secondary" : "destructive"}>
+                {comparisonResult.score}/100 Punkte
+              </Badge>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-1">Ihr Durchschnitt</p>
+                <p className="text-xl font-bold text-blue-600">{comparisonResult.companyAvg.toFixed(2)} €</p>
               </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-1">Regional üblich</p>
+                <p className="text-xl font-bold text-green-600">{comparisonResult.regionalAvg.toFixed(2)} €</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-1">Positionierung</p>
+                <p className={`text-xl font-bold ${comparisonResult.ratio > 1.1 ? 'text-red-600' : comparisonResult.ratio < 0.9 ? 'text-orange-600' : 'text-green-600'}`}>
+                  {comparisonResult.ratio > 1.1 ? 'Überdurchschnittlich' : comparisonResult.ratio < 0.9 ? 'Unterdurchschnittlich' : 'Marktkonform'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-4 p-3 bg-white rounded border-l-4 border-blue-500">
+              <p className="text-sm">
+                <strong>Bewertung:</strong> {
+                  comparisonResult.score >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
+                  comparisonResult.score >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
+                  'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
+                }
+              </p>
             </div>
           </div>
         )}
 
         <Button onClick={handleSave} className="w-full">
           <TrendingUp className="h-4 w-4 mr-2" />
-          Stundensatz-Daten speichern
+          Stundensatz-Analyse speichern
         </Button>
       </CardContent>
     </Card>

@@ -51,7 +51,7 @@ interface SelectiveReportData {
   competitorServices?: { [competitorName: string]: { services: string[]; source: 'auto' | 'manual' } };
   companyServices?: { services: string[] };
   deletedCompetitors?: Set<string>;
-  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number; serviceRate: number; installationRate: number };
+  hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number; serviceRate: number; installationRate: number; regionalMeisterRate: number; regionalFacharbeiterRate: number; regionalAzubiRate: number; regionalHelferRate: number; regionalServiceRate: number; regionalInstallationRate: number };
   missingImprintElements?: string[];
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;

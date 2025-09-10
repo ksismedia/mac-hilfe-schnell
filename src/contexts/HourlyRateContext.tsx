@@ -7,6 +7,13 @@ export interface HourlyRateData {
   helferRate: number;
   serviceRate: number;
   installationRate: number;
+  // Regional rates for comparison
+  regionalMeisterRate: number;
+  regionalFacharbeiterRate: number;
+  regionalAzubiRate: number;
+  regionalHelferRate: number;
+  regionalServiceRate: number;
+  regionalInstallationRate: number;
 }
 
 interface HourlyRateContextType {
@@ -35,7 +42,7 @@ export const HourlyRateProvider: React.FC<HourlyRateProviderProps> = ({ children
     console.log('Hourly Rate Data Cleared');
   }, []);
 
-  const hasHourlyRateData = hourlyRateData !== null && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0);
+  const hasHourlyRateData = hourlyRateData !== null && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0);
 
   const value: HourlyRateContextType = {
     hourlyRateData,
