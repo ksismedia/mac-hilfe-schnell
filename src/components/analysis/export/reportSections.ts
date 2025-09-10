@@ -268,7 +268,9 @@ export const generateMobileSection = (realData: RealBusinessData) => `
         </div>
 `;
 
-export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
+export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => {
+  console.log('🔍 generateDataPrivacySection called with score:', dataPrivacyScore);
+  return `
         <!-- Datenschutz-Analyse -->
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
@@ -408,3 +410,4 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
             </div>
         </div>
 `;
+};
