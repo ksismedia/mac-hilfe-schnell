@@ -1673,8 +1673,8 @@ export const generateCustomerHTML = ({
               const serviceRemovalBonus = Math.min(removedServices * 1.5, baseOwnScore * 0.15);
               const ownScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
               
-              // Calculate competitor scores
-              const allOtherCompetitors = manualCompetitors.filter(c => c.name !== realData.company.name);
+              // Calculate competitor scores - use all competitors, not just manual ones
+              const allOtherCompetitors = allCompetitors; // Use allCompetitors array that includes all competitors
               const competitorScores = allOtherCompetitors.map(c => {
                 const rating = c.rating || 0;
                 const reviews = c.reviews || 0;
