@@ -153,26 +153,68 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     
     let score = 0;
     const totalEmployees = data.totalEmployees || 1;
+    const masters = data.masters || 0;
+    const skilledWorkers = data.skilled_workers || 0;
+    const officeWorkers = data.office_workers || 0;
     
-    // Meister-Quote (35% der Bewertung - erhöht von 20%)
-    const masterRatio = data.masters / totalEmployees;
-    score += masterRatio * 35;
+    // Meister-Quote (35% der Bewertung) - Progressives Bewertungssystem
+    const masterRatio = masters / totalEmployees;
+    let masterScore = 0;
+    if (masterRatio >= 0.2) {
+      masterScore = 35; // Volle Punkte ab 20% Meister
+    } else if (masterRatio >= 0.1) {
+      masterScore = (masterRatio - 0.1) * (35 / 0.1); // Linear zwischen 10% und 20%
+    } else if (masterRatio > 0) {
+      masterScore = masterRatio * (35 / 0.1) * 0.5; // Reduzierte Punkte unter 10%
+    }
     
-    // Facharbeiter-Quote (25% der Bewertung - erhöht von anteilig 40%)
-    const skilledWorkerRatio = data.skilled_workers / totalEmployees;
-    score += skilledWorkerRatio * 25;
+    // Bonus für sehr hohe Meisterquote
+    if (masterRatio >= 0.4) {
+      masterScore += 5; // Extra 5 Punkte für >40% Meister
+    }
+    score += Math.min(masterScore, 40); // Maximal 40 Punkte für Meister
     
-    // Zertifizierungen (20% der Bewertung - reduziert von 25%)
-    const certCount = Object.values(data.certifications).filter(Boolean).length;
-    score += (certCount / 6) * 20;
+    // Facharbeiter-Quote + Bürokräfte (25% der Bewertung)
+    const totalQualifiedWorkers = skilledWorkers + officeWorkers;
+    const qualifiedWorkerRatio = totalQualifiedWorkers / totalEmployees;
+    let skilledScore = 0;
+    if (qualifiedWorkerRatio >= 0.3) {
+      skilledScore = 25; // Volle Punkte ab 30% qualifizierte Arbeiter
+    } else if (qualifiedWorkerRatio >= 0.15) {
+      skilledScore = (qualifiedWorkerRatio - 0.15) * (25 / 0.15); // Linear zwischen 15% und 30%
+    } else if (qualifiedWorkerRatio > 0) {
+      skilledScore = qualifiedWorkerRatio * (25 / 0.15) * 0.6; // Reduzierte Punkte unter 15%
+    }
     
-    // Branchenspezifische Qualifikationen (20% der Bewertung - erhöht von 15%)
-    const industrySpecificCount = data.industry_specific.length;
-    const availableQualifications = industrySpecificQualifications[businessData.industry];
-    const maxIndustrySpecific = availableQualifications ? availableQualifications.length : 1;
-    score += (industrySpecificCount / maxIndustrySpecific) * 20;
+    // Bonus für sehr hohe Qualifiziertenquote
+    if (qualifiedWorkerRatio >= 0.6) {
+      skilledScore += 5; // Extra 5 Punkte für >60% qualifizierte Arbeiter
+    }
+    score += Math.min(skilledScore, 30); // Maximal 30 Punkte für qualifizierte Arbeiter
     
-    return Math.round(score);
+    // Kombinationsbonus für hohe Gesamt-Qualifikationsquote
+    const totalQualifiedRatio = (masters + skilledWorkers + officeWorkers) / totalEmployees;
+    if (totalQualifiedRatio >= 0.8) {
+      score += 10; // Bonus für >80% qualifizierte Mitarbeiter
+    } else if (totalQualifiedRatio >= 0.6) {
+      score += 5; // Bonus für >60% qualifizierte Mitarbeiter
+    }
+    
+    // Zertifizierungen (20% der Bewertung)
+    let certificationPoints = 0;
+    if (data.certifications?.welding_certificates) certificationPoints += 1;
+    if (data.certifications?.safety_training) certificationPoints += 1;
+    if (data.certifications?.first_aid) certificationPoints += 1;
+    if (data.certifications?.digital_skills) certificationPoints += 1;
+    if (data.certifications?.instructor_qualification) certificationPoints += 1;
+    if (data.certifications?.business_qualification) certificationPoints += 1;
+    score += (certificationPoints / 6) * 20;
+    
+    // Branchenspezifische Qualifikationen (20% der Bewertung)
+    const industrySpecificCount = data.industry_specific?.length || 0;
+    score += (industrySpecificCount / 6) * 20;
+    
+    return Math.min(Math.round(score), 100);
   };
 
   const getScoreColor = (score: number) => {
