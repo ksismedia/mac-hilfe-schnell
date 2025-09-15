@@ -1924,7 +1924,7 @@ export const generateCustomerHTML = ({
            <div class="score-display">
              <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-               <p><strong>Digitale Marktposition:</strong> ${overallCompanyScore >= 80 ? 'Sehr stark' : overallCompanyScore >= 60 ? 'Gut positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Online-Auftritt Gesamtscore:</strong> ${overallCompanyScore >= 80 ? 'Sehr stark' : overallCompanyScore >= 60 ? 'Gut positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
                <p><strong>Priorität:</strong> ${overallCompanyScore >= 80 ? 'Optimierung' : overallCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
             </div>
           </div>
