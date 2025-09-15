@@ -2685,7 +2685,16 @@ export const generateCustomerHTML = ({
                 }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50)}" style="width: ${realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) : 50}%"></div>
+                    <div class="progress-fill" data-score="${
+                      // Berechnung der Arbeitsklima-Bewertung basierend auf verfügbaren Bewertungen
+                      realData.workplace?.kununu?.rating ? getScoreRange(realData.workplace.kununu.rating * 20) 
+                      : manualWorkplaceData?.kununuRating ? getScoreRange(parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
+                      : getScoreRange(30) // Fallback für "nicht erfasst"
+                    }" style="width: ${
+                      realData.workplace?.kununu?.rating ? Math.max(40, realData.workplace.kununu.rating * 20) 
+                      : manualWorkplaceData?.kununuRating ? Math.max(40, parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
+                      : 30 // Fallback für "nicht erfasst" - niedriger Wert für roten Balken
+                    }%"></div>
                   </div>
                 </div>
               </div>
