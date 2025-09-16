@@ -142,10 +142,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
             ? 40 + ((rating - 2.5) * 20)    // 40-60% für 2.5-3.5
             : rating * 16;                  // 0-40% für unter 2.5
       
-      // Review-Score: Moderater als vorher
+      // Review-Score: Basiert auf geschätzten positiven Bewertungen (Rating 4+ von 5)
+      const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0; // Schätzt Anteil positiver Bewertungen
+      const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+      
       const reviewScore = reviews <= 25 
-        ? Math.min(50 + reviews * 1.6, 90)  // Start bei 50%, max 90% bei 25 Reviews
-        : Math.min(95, 90 + Math.log10(reviews / 25) * 5); // Max 95%
+        ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)  // Basiert auf positiven Reviews
+        : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5); // Max 95%
       
       const services = Array.isArray(competitor.services) ? competitor.services : [];
       const serviceCount = services.length;
@@ -222,12 +225,14 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
       
       console.log(`Score calculation for ${competitor.name || 'Competitor'}:`, {
         rating, ratingScore: ratingScore.toFixed(1), 
-        reviews, reviewScore: reviewScore.toFixed(1), 
+        reviews, reviewScore: reviewScore.toFixed(1),
+        positiveReviewsRatio: (positiveReviewsRatio * 100).toFixed(1) + '%',
+        estimatedPositiveReviews, 
         serviceCount, 
         industryServices: industrySpecificServices.length,
         nonIndustryServices: nonIndustryServices.length,
         specializationRatio: (specializationRatio * 100).toFixed(1) + '%',
-        baseServiceScore: baseServiceScore.toFixed(1), 
+        baseServiceScore: baseServiceScore.toFixed(1),
         specializationBonus: specializationBonus.toFixed(1),
         industryRelevanceScore: industryRelevanceScore.toFixed(1),
         dilutionPenalty: dilutionPenalty.toFixed(1),
