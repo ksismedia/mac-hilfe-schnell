@@ -358,7 +358,7 @@ export const useSavedAnalyses = () => {
       }
     } else {
       const newAnalysis: SavedAnalysis = {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         name,
         savedAt: new Date().toISOString(),
         businessData,
