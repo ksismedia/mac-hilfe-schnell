@@ -1491,10 +1491,13 @@ export const generateCustomerHTML = ({
                             ? 40 + ((rating - 2.5) * 20)    // 40-60% für 2.5-3.5
                             : rating * 16;                  // 0-40% für unter 2.5
                       
-                      // Review-Score: Gleiche Logik wie in CompetitorAnalysis
-                      const reviewScore = reviews <= 25 
-                        ? Math.min(50 + reviews * 1.6, 90)  // Start bei 50%, max 90% bei 25 Reviews
-                        : Math.min(95, 90 + Math.log10(reviews / 25) * 5); // Max 95%
+                       // Review-Score: Basiert auf geschätzten positiven Bewertungen (Rating 4+ von 5)
+                       const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0;
+                       const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+                       
+                       const reviewScore = reviews <= 25 
+                         ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)  // Basiert auf positiven Reviews
+                         : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5); // Max 95%
                       
                       // Service-Score: Vereinfacht für HTML (nur Basis)
                       const compServices = Array.isArray(comp.services) ? comp.services : [];
