@@ -1602,9 +1602,13 @@ export const generateCustomerHTML = ({
                     ? 40 + ((ownRating - 2.5) * 20)
                     : ownRating * 16;
               
+              // Review-Score: Basiert auf geschätzten positiven Bewertungen (Rating 4+ von 5)
+              const ownPositiveReviewsRatio = ownRating > 0 ? Math.min((ownRating - 1) / 4, 1) : 0;
+              const ownEstimatedPositiveReviews = Math.round(ownReviews * ownPositiveReviewsRatio);
+              
               const ownReviewScore = ownReviews <= 25 
-                ? Math.min(50 + ownReviews * 1.6, 90)
-                : Math.min(95, 90 + Math.log10(ownReviews / 25) * 5);
+                ? Math.min(50 + ownEstimatedPositiveReviews * 1.6, 90)
+                : Math.min(95, 90 + Math.log10(ownEstimatedPositiveReviews / 25) * 5);
               
               let ownServiceScore;
               if (totalOwnServices === 0) {
@@ -1642,9 +1646,13 @@ export const generateCustomerHTML = ({
                       ? 40 + ((rating - 2.5) * 20)
                       : rating * 16;
                 
+                // Review-Score: Basiert auf geschätzten positiven Bewertungen (Rating 4+ von 5)
+                const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0;
+                const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+                
                 const reviewScore = reviews <= 25 
-                  ? Math.min(50 + reviews * 1.6, 90)
-                  : Math.min(95, 90 + Math.log10(reviews / 25) * 5);
+                  ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)
+                  : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5);
                 
                 let serviceScore;
                 if (services === 0) {
