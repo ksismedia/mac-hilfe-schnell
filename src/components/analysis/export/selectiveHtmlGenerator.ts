@@ -772,7 +772,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
             <div class="overall-score">
               <div class="score-circle-large">
                 <span class="score-number">${overallScore}</span>
-                <span class="score-label">Gesamt-Score</span>
+                <span class="score-label">Online-Auftritt</span>
               </div>
             </div>
           </div>

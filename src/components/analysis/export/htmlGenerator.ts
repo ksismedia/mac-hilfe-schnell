@@ -1929,14 +1929,37 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">Executive Summary</div>
       <div class="section-content">
-        <!-- Gesamt-Score -->
-         <div class="metric-card ${overallCompanyScore >= 80 ? 'excellent' : overallCompanyScore >= 60 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
-           <h3>Gesamtbewertung</h3>
+         <!-- Gesamt-Score -->
+          <div class="metric-card ${overallCompanyScore >= 80 ? 'excellent' : overallCompanyScore >= 60 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
+           <h3>Online-Auftritt</h3>
            <div class="score-display">
              <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit) ${overallCompanyScore >= 80 ? 'Sehr stark' : overallCompanyScore >= 60 ? 'Gut positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
-               <p><strong>Priorität:</strong> ${overallCompanyScore >= 80 ? 'Optimierung' : overallCompanyScore >= 60 ? 'Mittlerer Handlungsbedarf' : 'Hoher Handlungsbedarf'}</p>
+               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit) ${overallCompanyScore >= 80 ? 'Sehr stark positioniert' : overallCompanyScore >= 60 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Priorität:</strong> ${
+                 // Erstelle Array aller Bereiche unter 50%
+                 (() => {
+                   const lowScoreAreas = [];
+                   if (realData.seo.score < 50) lowScoreAreas.push('SEO');
+                   if (realData.performance.score < 50) lowScoreAreas.push('Performance');
+                   if (realData.mobile.overallScore < 50) lowScoreAreas.push('Mobile Optimierung');
+                   if (socialMediaScore < 50) lowScoreAreas.push('Social Media');
+                   if (reputationScore < 50) lowScoreAreas.push('Online Reputation');
+                   if (impressumScore < 50) lowScoreAreas.push('Rechtssicherheit');
+                   if (accessibilityScore < 50) lowScoreAreas.push('Barrierefreiheit');
+                   if (actualDataPrivacyScore < 50) lowScoreAreas.push('Datenschutz');
+                   
+                   if (lowScoreAreas.length > 0) {
+                     return `Handlungsbedarf bei ${lowScoreAreas.join(', ')}`;
+                   } else if (overallCompanyScore >= 80) {
+                     return 'Optimierung und Ausbau des Vorsprungs';
+                   } else if (overallCompanyScore >= 60) {
+                     return 'Mittlerer Handlungsbedarf bei weniger kritischen Bereichen';
+                   } else {
+                     return 'Hoher Handlungsbedarf bei mehreren Bereichen';
+                   }
+                 })()
+               }</p>
             </div>
           </div>
           <div class="progress-container">
