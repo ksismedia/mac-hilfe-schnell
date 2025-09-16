@@ -15,14 +15,14 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
   const mobileData = realData.mobile;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "score-text-high";  // 80-100% gelb
-    if (score >= 60) return "score-text-medium";   // 60-80% grün
-    return "score-text-low";                      // 0-60% rot
+    if (score >= 90) return "score-text-high";   // 90-100% gold
+    if (score >= 61) return "score-text-medium"; // 61-89% grün
+    return "score-text-low";                     // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return "secondary";        // gelb (80-100%)
-    if (score >= 60) return "default";          // grün (60-80%)
+    if (score >= 90) return "secondary";        // gold (90-100%)
+    if (score >= 61) return "default";          // grün (61-89%)
     return "destructive";                       // rot (0-60%)
   };
 

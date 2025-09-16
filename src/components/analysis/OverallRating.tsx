@@ -82,14 +82,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const overallScore = Math.round(weightedScore / totalWeight);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'score-text-high';
-    if (score >= 60) return 'score-text-medium';
-    return 'score-text-low';
+    if (score >= 90) return 'score-text-high';   // 90-100% gold
+    if (score >= 61) return 'score-text-medium'; // 61-89% grün
+    return 'score-text-low';                     // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return 'secondary'; // gelb
-    if (score >= 60) return 'default'; // grün
+    if (score >= 90) return 'secondary'; // gold
+    if (score >= 61) return 'default'; // grün
     return 'destructive'; // rot
   };
 

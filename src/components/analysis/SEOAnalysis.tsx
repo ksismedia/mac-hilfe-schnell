@@ -89,14 +89,14 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
   };
 
   const getStatusIcon = (score: number) => {
-    if (score >= 80) return <CheckCircle className="h-5 w-5 text-green-500" />;
-    if (score >= 60) return <AlertCircle className="h-5 w-5 text-yellow-500" />;
-    return <XCircle className="h-5 w-5 text-red-500" />;
+    if (score >= 90) return <CheckCircle className="h-5 w-5 text-yellow-500" />;  // 90-100% gold
+    if (score >= 61) return <AlertCircle className="h-5 w-5 text-green-500" />;   // 61-89% green
+    return <XCircle className="h-5 w-5 text-red-500" />;                         // 0-60% red
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-yellow-600";  // 80-100% gelb
-    if (score >= 60) return "text-green-600";   // 60-80% grün
+    if (score >= 90) return "text-yellow-600";  // 90-100% gold
+    if (score >= 61) return "text-green-600";   // 61-89% grün
     return "text-red-600";                      // 0-60% rot
   };
 

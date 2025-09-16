@@ -289,9 +289,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   ];
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return '#facc15';
-    if (score >= 60) return '#10b981';
-    return '#ef4444';
+    if (score >= 90) return '#facc15';  // 90-100% gold
+    if (score >= 61) return '#10b981';  // 61-89% green
+    return '#ef4444';                   // 0-60% red
   };
 
   const renderActiveCategory = () => {

@@ -84,15 +84,15 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 75) return 'text-green-600';
-    if (score >= 50) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-yellow-600';  // 90-100% gold
+    if (score >= 61) return 'text-green-600';   // 61-89% green
+    return 'text-red-600';                      // 0-60% red
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 75) return 'default';
-    if (score >= 50) return 'secondary';
-    return 'destructive';
+    if (score >= 90) return 'secondary';        // gold
+    if (score >= 61) return 'default';          // grün
+    return 'destructive';                       // rot
   };
 
   const score = calculateScore();

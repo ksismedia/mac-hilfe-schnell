@@ -40,23 +40,23 @@ interface CustomerReportData {
 
 // Function to get score range for data attribute
 const getScoreRange = (score: number) => {
-  if (score < 60) return "0-60";
-  if (score < 80) return "60-80";
-  return "80-100";
+  if (score < 61) return "0-60";
+  if (score < 90) return "61-89";
+  return "90-100";
 };
 
 // Function to get score color class
 const getScoreColorClass = (score: number) => {
-  if (score < 60) return "red";       // 0-60% rot
-  if (score < 80) return "green";     // 60-80% grün
-  return "yellow";                    // 80-100% gelb
+  if (score < 61) return "red";       // 0-60% rot
+  if (score < 90) return "green";     // 61-89% grün
+  return "yellow";                    // 90-100% gold
 };
 
 // Function to get score color (hex value for inline styles)
 const getScoreColor = (score: number) => {
-  if (score <= 60) return '#FF0000';   // 0-60% rot (consistent with CSS)
-  if (score <= 80) return '#22c55e';   // 61-80% grün (consistent with CSS)
-  return '#FFD700';                    // 81-100% gelb (consistent with CSS)
+  if (score <= 60) return '#FF0000';   // 0-60% rot
+  if (score <= 89) return '#22c55e';   // 61-89% grün
+  return '#FFD700';                    // 90-100% gold
 };
 
 // Spezielle Farbfunktionen für Barrierefreiheit Compliance (nur für diesen einen Balken)
@@ -1930,12 +1930,12 @@ export const generateCustomerHTML = ({
       <div class="section-header">Executive Summary</div>
       <div class="section-content">
          <!-- Gesamt-Score -->
-          <div class="metric-card ${overallCompanyScore >= 80 ? 'excellent' : overallCompanyScore >= 60 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
+          <div class="metric-card ${overallCompanyScore >= 90 ? 'excellent' : overallCompanyScore >= 61 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
            <h3>Online-Auftritt</h3>
            <div class="score-display">
              <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit) ${overallCompanyScore >= 80 ? 'Sehr stark positioniert' : overallCompanyScore >= 60 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
                <p><strong>Priorität:</strong> ${
                  // Erstelle Array aller Bereiche unter 50%
                  (() => {

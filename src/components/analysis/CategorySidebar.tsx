@@ -48,16 +48,16 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ onCategoryChange, act
   ];
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-yellow-400';
-    if (score >= 60) return 'text-green-400';
-    return 'text-red-400';
+    if (score >= 90) return 'text-yellow-400';  // 90-100% gold
+    if (score >= 61) return 'text-green-400';   // 61-89% green
+    return 'text-red-400';                      // 0-60% red
   };
 
   const getScoreBg = (score: number, isActive: boolean) => {
     const baseClasses = isActive ? 'bg-gray-700' : 'hover:bg-gray-800/50';
-    if (score >= 80) return `${baseClasses} border-l-4 border-yellow-400`;
-    if (score >= 60) return `${baseClasses} border-l-4 border-green-400`;
-    return `${baseClasses} border-l-4 border-red-400`;
+    if (score >= 90) return `${baseClasses} border-l-4 border-yellow-400`;  // 90-100% gold
+    if (score >= 61) return `${baseClasses} border-l-4 border-green-400`;   // 61-89% green
+    return `${baseClasses} border-l-4 border-red-400`;                      // 0-60% red
   };
 
   return (

@@ -314,14 +314,14 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "score-text-high";  // 80-100% gelb
-    if (score >= 60) return "score-text-medium";   // 60-80% grün
-    return "score-text-low";                      // 0-60% rot
+    if (score >= 90) return "score-text-high";   // 90-100% gold
+    if (score >= 61) return "score-text-medium"; // 61-89% grün
+    return "score-text-low";                     // 0-60% rot
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return "secondary";        // gelb
-    if (score >= 60) return "default";          // grün
+    if (score >= 90) return "secondary";        // gold
+    if (score >= 61) return "default";          // grün
     return "destructive";                       // rot
   };
 

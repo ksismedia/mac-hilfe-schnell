@@ -266,9 +266,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   ];
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-yellow-400';
-    if (score >= 60) return 'text-green-400';
-    return 'text-red-400';
+    if (score >= 90) return 'text-yellow-400';  // 90-100% gold
+    if (score >= 61) return 'text-green-400';   // 61-89% green
+    return 'text-red-400';                      // 0-60% red
   };
 
   const getScoreBorder = (score: number) => {
