@@ -294,7 +294,8 @@ export const generateCustomerHTML = ({
     actualPricingScore === 100 ? 'Sehr wettbewerbsfähig' : 
     actualPricingScore === 85 ? 'Wettbewerbsfähig' : 
     actualPricingScore === 70 ? 'Marktgerecht' : 
-    actualPricingScore === 50 ? 'Über Marktdurchschnitt' : `${actualPricingScore}/100`;
+    actualPricingScore === 50 ? 'Über Marktdurchschnitt' : 
+    actualPricingScore === 30 ? 'Ausbaufähig' : `${actualPricingScore}/100`;
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   const reputationScore = realData.reviews.google.rating * 20;
   
