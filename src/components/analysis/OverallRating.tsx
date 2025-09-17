@@ -21,9 +21,10 @@ interface OverallRatingProps {
   quoteResponseData?: QuoteResponseData | null;
   hourlyRateData?: HourlyRateData | null;
   manualWorkplaceData?: any;
+  competitorScore?: number | null;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -56,7 +57,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
     { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 4, maxScore: 100 },
     { name: 'Arbeitsplatz', score: workplaceScore, weight: workplaceScoreRaw === -1 ? 0 : 2, maxScore: 100 }, // Don't count in overall if no data
-    { name: 'Konkurrenz', score: realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30, weight: 1, maxScore: 100 }
+    { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 1, maxScore: 100 }
   ];
 
   // Füge nur bewertete Bereiche hinzu

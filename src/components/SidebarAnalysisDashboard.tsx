@@ -480,6 +480,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             quoteResponseData={quoteResponseData}
             hourlyRateData={hourlyRateData}
             manualWorkplaceData={manualWorkplaceData}
+            competitorScore={currentOwnCompanyScore}
           />
         </div>
 
