@@ -296,8 +296,10 @@ section[class*="section"],
 
 /* Progress-Fill Farben basierend auf korrekten Wert-Bereichen */
 .progress-fill[data-score="0-60"] { background: #FF0000 !important; } /* Rot 0-60% */
-.progress-fill[data-score="61-89"] { background: #22c55e !important; } /* Grün 61-89% */
-.progress-fill[data-score="90-100"] { background: #FFD700 !important; } /* Gelb 90-100% */
+.progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün 60-80% */
+.progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb 80-100% */
+.progress-fill[data-score="61-89"] { background: #22c55e !important; } /* Grün 61-89% (fallback) */
+.progress-fill[data-score="90-100"] { background: #FFD700 !important; } /* Gelb 90-100% (fallback) */
 
 /* Progress-Fill CSS-Klassen für bessere Kontrolle */
 .progress-red { background: #FF0000 !important; }
@@ -391,6 +393,8 @@ section[class*="section"],
 .percentage-btn[data-score="0-60"] { background: #FF0000; color: white !important; }
 .percentage-btn[data-score="60-80"] { background: #22c55e; color: white !important; }
 .percentage-btn[data-score="80-100"] { background: #FFD700; color: black !important; }
+.percentage-btn[data-score="61-89"] { background: #22c55e; color: white !important; }
+.percentage-btn[data-score="90-100"] { background: #FFD700; color: black !important; }
 
 .percentage-btn:hover {
   transform: translateY(-1px);
