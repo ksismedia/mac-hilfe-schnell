@@ -316,6 +316,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   const renderActiveCategory = () => {
+    console.log('🔄 Rendering category:', activeCategory);
     switch (activeCategory) {
       case 'online-quality-authority':
         return (
@@ -367,6 +368,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           />
         );
       case 'market-environment':
+        console.log('📊 Rendering market-environment section');
         return (
           <div className="space-y-6">
             <div>
@@ -388,6 +390,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           </div>
         );
       case 'corporate-appearance':
+        console.log('🎨 Rendering corporate-appearance section');
         return (
           <div className="space-y-6">
             <div>
@@ -407,6 +410,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           </div>
         );
       case 'service-quality':
+        console.log('⭐ Rendering service-quality section');
         return (
           <div className="space-y-6">
             <div>
@@ -542,7 +546,11 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               return (
                 <button
                   key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => {
+                    console.log('🎯 Category clicked:', category.id, 'Current active:', activeCategory);
+                    setActiveCategory(category.id);
+                    console.log('✅ Set active category to:', category.id);
+                  }}
                   className={`w-full p-4 rounded-lg border-2 transition-all ${
                     activeCategory === category.id 
                       ? 'bg-yellow-400 text-black border-yellow-400 shadow-lg' 
