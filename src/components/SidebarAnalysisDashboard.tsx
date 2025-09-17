@@ -237,6 +237,16 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
 
   // Calculate new 6-category scores
+  console.log('🚀 Calculating scores with parameters:', {
+    realData: realData ? 'present' : 'null',
+    keywordsScore,
+    businessData,
+    privacyData: privacyData ? 'present' : 'null',
+    accessibilityData: accessibilityData ? 'present' : 'null',
+    manualContentData: manualContentData ? 'present' : 'null',
+    manualBacklinkData: manualBacklinkData ? 'present' : 'null'
+  });
+  
   const scores = {
     onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
@@ -250,6 +260,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
     serviceQuality: calculateServiceQualityScore(quoteResponseData)
   };
+  
+  console.log('🚀 Calculated scores:', scores);
 
   const categories = [
     { 

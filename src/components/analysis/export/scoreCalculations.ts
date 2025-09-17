@@ -379,8 +379,11 @@ export const calculateStaffServiceScore = (
 
 // Add missing function stubs for exported functions that are expected by other files
 export const calculateLocalSEOScore = (businessData: any, realData: any): number => {
+  console.log('📍 calculateLocalSEOScore called');
   // Verwende echte SEO-Daten falls vorhanden
-  return realData?.seo?.score || 75; // Verwende den echten SEO-Score
+  const result = realData?.seo?.score || 75;
+  console.log('📍 Local SEO score:', result);
+  return isNaN(result) ? 75 : result;
 };
 
 export const calculateStaffQualificationScore = (data: any): number => {
@@ -583,11 +586,21 @@ export const calculateContentQualityScore = (realData: any, manualKeywordData: a
 };
 
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
+  console.log('🔗 calculateBacklinksScore called with:', {
+    realData: realData ? 'present' : 'null',
+    manualBacklinkData: manualBacklinkData ? 'present' : 'null'
+  });
+  
   // Verwende manuelle Backlink-Daten falls vorhanden
   if (manualBacklinkData) {
-    return manualBacklinkData.overallScore || 75;
+    const result = manualBacklinkData.overallScore || 75;
+    console.log('🔗 Using manual backlink score:', result);
+    return isNaN(result) ? 75 : result;
   }
-  return realData?.backlinks?.score || 75; // Fallback auf echte Daten oder Default
+  
+  const result = realData?.backlinks?.score || 75;
+  console.log('🔗 Using fallback backlink score:', result);
+  return isNaN(result) ? 75 : result;
 };
 
 // Helper function stub for Corporate Identity (actual implementation is above)
@@ -621,14 +634,12 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
                        !manualAccessibilityData.textScaling;
     
     const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
-    console.log('🎯 Calculated accessibility score:', {
-      featuresScore,
-      baseScore,
-      hasProblems,
-      finalScore
-    });
+    console.log('🎯 Calculated accessibility score (number):', finalScore);
     
-    return finalScore;
+    // Ensure we return a valid number
+    const result = isNaN(finalScore) ? 40 : finalScore;
+    console.log('🎯 Final accessibility score returned:', result);
+    return result;
   }
   
   // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger
