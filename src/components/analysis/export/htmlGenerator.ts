@@ -482,12 +482,15 @@ export const generateCustomerHTML = ({
         localPricingText = 'Marktgerecht';
       } else if (ratio >= 0.5 && ratio < 0.7) {
         localPricingScore = 50;
-        localPricingText = 'Über Marktdurchschnitt';
+        localPricingText = 'Ausbaufähig';
+      } else if (ratio > 1.1) {
+        // Company rates are significantly higher than regional average
+        localPricingScore = Math.max(30, 100 - (ratio - 1) * 100);
+        localPricingText = ratio > 1.5 ? 'Deutlich über Marktdurchschnitt' : 'Über Marktdurchschnitt';
       } else {
-        localPricingScore = Math.max(30, 100 - Math.abs(ratio - 1) * 100);
-        localPricingText = localPricingScore <= 30 ? 'Ausbaufähig' : 
-                          localPricingScore <= 40 ? 'Deutlich über Marktdurchschnitt' :
-                          'Weit über Marktdurchschnitt';
+        // Company rates are significantly lower than regional average (ratio < 0.5)
+        localPricingScore = Math.max(30, ratio * 100);
+        localPricingText = 'Ausbaufähig';
       }
     }
     return `
