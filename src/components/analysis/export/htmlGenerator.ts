@@ -2101,7 +2101,22 @@ export const generateCustomerHTML = ({
             <div class="category-header" onclick="toggleCategory('design-branding')">
               <h3>🎨 Außendarstellung & Erscheinungsbild</h3>
               <span class="toggle-icon">▼</span>
+          <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('staff-service')">
+              <h3>👥 Qualität · Service · Kundenorientierung</h3>
+              <span class="toggle-icon">▼</span>
             </div>
+            <div class="category-content" id="staff-service">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
+                  <div class="score-label">Kundenservice</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
             <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
