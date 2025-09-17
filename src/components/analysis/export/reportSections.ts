@@ -42,7 +42,12 @@ export const generateHeaderSection = (
                 <div class="score-label">Mobile Optimierung</div>
             </div>
             <div class="score-card">
-                <button class="percentage-btn score-big" data-score="${hourlyRateScore < 60 ? '0-60' : hourlyRateScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${hourlyRateScore}%</button>
+                <button class="percentage-btn score-big" data-score="${hourlyRateScore < 60 ? '0-60' : hourlyRateScore < 80 ? '60-80' : '80-100'}" style="font-size: 2em; padding: 10px 15px;">${
+                  hourlyRateScore === 100 ? 'Sehr wettbewerbsfähig' : 
+                  hourlyRateScore === 85 ? 'Wettbewerbsfähig' : 
+                  hourlyRateScore === 70 ? 'Marktgerecht' : 
+                  hourlyRateScore === 50 ? 'Über Marktdurchschnitt' : `${hourlyRateScore}/100`
+                }</button>
                 <div class="score-label">Preisstrategie</div>
             </div>
             <div class="score-card">

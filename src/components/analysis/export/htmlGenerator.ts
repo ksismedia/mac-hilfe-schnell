@@ -254,8 +254,14 @@ export const generateCustomerHTML = ({
     
   const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
   
-  // Calculate additional scores
-  const pricingScore = hourlyRateData ? 75 : 65; // Use a default score for multiple rates
+  // Calculate additional scores - use proper calculation
+  const actualPricingScore = calculateHourlyRateScore(hourlyRateData);
+  const pricingScore = actualPricingScore;
+  const pricingText = 
+    actualPricingScore === 100 ? 'Sehr wettbewerbsfähig' : 
+    actualPricingScore === 85 ? 'Wettbewerbsfähig' : 
+    actualPricingScore === 70 ? 'Marktgerecht' : 
+    actualPricingScore === 50 ? 'Über Marktdurchschnitt' : `${actualPricingScore}/100`;
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   const reputationScore = realData.reviews.google.rating * 20;
   
@@ -428,22 +434,31 @@ export const generateCustomerHTML = ({
     
     // Calculate competitive score if both company and regional data available
     let pricingScore = 75; // Default score
+    let pricingText = 'Marktgerecht';
     if (companyAvg > 0 && regionalAvg > 0) {
       const ratio = companyAvg / regionalAvg;
       if (ratio >= 0.9 && ratio <= 1.1) {
-        pricingScore = 100; // Within 10% of regional average = perfect score
-      } else if (ratio < 0.9) {
-        pricingScore = Math.max(20, 100 - ((0.9 - ratio) * 400)); // Too low = reduced score
+        pricingScore = 100;
+        pricingText = 'Sehr wettbewerbsfähig';
+      } else if (ratio >= 0.85 && ratio < 0.9) {
+        pricingScore = 85;
+        pricingText = 'Wettbewerbsfähig';
+      } else if (ratio >= 0.7 && ratio < 0.85) {
+        pricingScore = 70;
+        pricingText = 'Marktgerecht';
+      } else if (ratio >= 0.5 && ratio < 0.7) {
+        pricingScore = 50;
+        pricingText = 'Über Marktdurchschnitt';
       } else {
-        pricingScore = Math.max(20, 100 - ((ratio - 1.1) * 200)); // Too high = reduced score
+        pricingScore = Math.max(30, 100 - Math.abs(ratio - 1) * 100);
+        pricingText = `${pricingScore}/100`;
       }
-      pricingScore = Math.round(pricingScore);
     }
     return `
       <div class="metric-card good">
         <h3>Stundensatz-Analyse & Wettbewerbsvergleich</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(pricingScore)}">${pricingScore}%</div>
+          <div class="score-tile ${getScoreColorClass(pricingScore)}">${pricingText}</div>
           <div class="score-details">
             <h4>Ihre Stundensätze:</h4>
             <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
@@ -2020,7 +2035,7 @@ export const generateCustomerHTML = ({
           </div>
           ${hourlyRateData ? `
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingScore}%</span></div>
+            <div class="score-big"><span class="score-tile ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
             <div class="score-label">Preispositionierung</div>
           </div>
           ` : ''}
