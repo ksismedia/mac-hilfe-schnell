@@ -204,12 +204,13 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData,
+      manualDataPrivacyData,
+      privacyData,
       manualKeywordData,
       keywordScore,
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       calculatedOwnCompanyScore: undefined
     });
 
@@ -249,6 +250,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData,
+      manualDataPrivacyData,
       manualKeywordData,
       keywordScore,
       manualImprintData,
@@ -256,7 +258,6 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       quoteResponseData,
       privacyData,
       accessibilityData,
-      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       selections: {
         sections: sectionSelections,
         subSections: subSectionSelections

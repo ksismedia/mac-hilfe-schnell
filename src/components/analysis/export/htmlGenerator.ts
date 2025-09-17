@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
@@ -28,12 +28,13 @@ interface CustomerReportData {
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   manualImprintData?: { elements: string[] } | null;
-  dataPrivacyScore?: number;
   staffQualificationData?: StaffQualificationData | null;
   quoteResponseData?: QuoteResponseData | null;
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
+  privacyData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
   calculatedOwnCompanyScore?: number;
 }
@@ -86,7 +87,8 @@ export const generateCustomerHTML = ({
   manualKeywordData,
   keywordScore,
   manualImprintData,
-  dataPrivacyScore = 75,
+  manualDataPrivacyData,
+  privacyData,
   staffQualificationData,
   quoteResponseData,
   manualContentData,
@@ -124,7 +126,9 @@ export const generateCustomerHTML = ({
   const displayAccessibilityScore = accessibilityScore > 0 
     ? `${Math.round(accessibilityScore)}%` 
     : '–';
-  const actualDataPrivacyScore = dataPrivacyScore;
+  
+  // Calculate data privacy score using manual data if available
+  const actualDataPrivacyScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
   const displayDataPrivacyScore = actualDataPrivacyScore > 0 
     ? `${Math.round(actualDataPrivacyScore)}%` 
     : '–';
@@ -1899,7 +1903,7 @@ export const generateCustomerHTML = ({
     googleReviewScore,
     impressumScore,
     accessibilityScore,
-    dataPrivacyScore,
+    actualDataPrivacyScore,
     corporateIdentityScore
   ].filter(score => score !== undefined && score !== null);
   
@@ -2022,7 +2026,7 @@ export const generateCustomerHTML = ({
             <div class="score-label">Barrierefreiheit</div>
           </div>
           <div class="score-card">
-            <div class="score-big"><span class="score-tile ${dataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
+            <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
             <div class="score-label">Datenschutz</div>
           </div>
           <div class="score-card">

@@ -187,10 +187,11 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData,
+      manualDataPrivacyData,
+      privacyData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
     });
     console.log('=== HTML CONTENT GENERATED ===');
@@ -251,10 +252,11 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      dataPrivacyScore: calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData),
       manualContentData,
       manualAccessibilityData,
       manualBacklinkData,
+      manualDataPrivacyData,
+      privacyData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
     });
 

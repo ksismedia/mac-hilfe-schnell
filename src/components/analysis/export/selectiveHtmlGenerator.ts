@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompetitorServices, CompanyServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompetitorServices, CompanyServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { getLogoHTML } from './logoData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
@@ -59,6 +59,7 @@ interface SelectiveReportData {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
   dataPrivacyScore?: number;
   accessibilityData?: any;
   staffQualificationData?: StaffQualificationData | null;
@@ -209,9 +210,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
     if (selections.subSections.dataPrivacy) {
       console.log('=== DATA PRIVACY DEBUG ===');
       console.log('privacyData:', privacyData);
-      // Use manual data privacy score if provided, otherwise fallback to calculated
-      const dataPrivacyScore = privacyData?.score || data.dataPrivacyScore || calculateDataPrivacyScore(realData, privacyData);
-      console.log('Using data privacy score:', dataPrivacyScore);
+      console.log('manualDataPrivacyData:', data.manualDataPrivacyData);
+      // Use calculateDataPrivacyScore with all required parameters
+      const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData, data.manualDataPrivacyData);
+      console.log('Using calculated data privacy score:', dataPrivacyScore);
       const hasDataPrivacyIssues = dataPrivacyScore < 90;
       
       seoContentHtml += `
