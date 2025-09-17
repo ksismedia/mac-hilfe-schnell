@@ -246,6 +246,10 @@ section[class*="section"],
   font-weight: bold;
 }
 
+.score-tile.pricing-text.ausbaufaehig {
+  background-color: #ef4444; /* Rot */
+}
+
 .score-tile.pricing-text.sehr-wettbewerbsfaehig {
   background-color: #fbbf24; /* Gold */
 }

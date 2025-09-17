@@ -428,7 +428,9 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   const rateDifference = avgOwnRate - avgRegionalRate;
   let rateScore = 0;
 
-  if (rateDifference <= 0) {
+  if (rateDifference < -10) {
+    rateScore = 30; // Ausbaufähig
+  } else if (rateDifference <= 0) {
     rateScore = 100;
   } else if (rateDifference <= 10) {
     rateScore = 85;
