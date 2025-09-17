@@ -1,15 +1,17 @@
 import React from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { Search, Zap, Smartphone, Share2, Users, Headphones } from 'lucide-react';
+import { Search, Zap, Share2, TrendingUp, Eye, Headphones } from 'lucide-react';
 
 interface CategorySidebarProps {
   onCategoryChange: (category: string) => void;
   activeCategory: string;
   scores: {
-    seoAndContent: number;
-    performanceAndMobile: number;
-    socialMedia: number;
-    staffAndService: number;
+    onlineQualityAuthority: number;
+    websitePerformanceTech: number;
+    socialMediaPerformance: number;
+    marketEnvironment: number;
+    corporateAppearance: number;
+    serviceQuality: number;
   };
 }
 
@@ -18,32 +20,46 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ onCategoryChange, act
 
   const categories = [
     { 
-      id: 'seo-content', 
-      title: 'SEO & Content', 
+      id: 'online-quality-authority', 
+      title: 'Online-Qualität · Relevanz · Autorität', 
       icon: Search, 
-      score: scores.seoAndContent,
-      description: collapsed ? '' : 'Suchmaschinenoptimierung & Inhalte'
+      score: scores.onlineQualityAuthority,
+      description: collapsed ? '' : 'SEO, Keywords, Content, Backlinks'
     },
     { 
-      id: 'performance-mobile', 
-      title: 'Performance & Technik', 
+      id: 'website-performance-tech', 
+      title: 'Webseiten-Performance & Technik', 
       icon: Zap, 
-      score: scores.performanceAndMobile,
-      description: collapsed ? '' : 'Website-Performance & Mobile'
+      score: scores.websitePerformanceTech,
+      description: collapsed ? '' : 'Performance, Mobile, Conversion'
     },
     { 
-      id: 'social-media', 
-      title: 'Social Media', 
+      id: 'social-media-performance', 
+      title: 'Online-/Web-/Social-Media Performance', 
       icon: Share2, 
-      score: scores.socialMedia,
-      description: collapsed ? '' : 'Social Media Präsenz'
+      score: scores.socialMediaPerformance,
+      description: collapsed ? '' : 'Social Media, Bewertungen, Social Proof'
     },
     { 
-      id: 'staff-service', 
-      title: 'Personal & Service', 
-      icon: Users, 
-      score: scores.staffAndService,
-      description: collapsed ? '' : 'Mitarbeiter & Kundenservice'
+      id: 'market-environment', 
+      title: 'Markt & Marktumfeld', 
+      icon: TrendingUp, 
+      score: scores.marketEnvironment,
+      description: collapsed ? '' : 'Stundensatz, Personal, Konkurrenz'
+    },
+    { 
+      id: 'corporate-appearance', 
+      title: 'Außendarstellung & Erscheinungsbild', 
+      icon: Eye, 
+      score: scores.corporateAppearance,
+      description: collapsed ? '' : 'Unternehmensidentität'
+    },
+    { 
+      id: 'service-quality', 
+      title: 'Qualität · Service · Kundenorientierung', 
+      icon: Headphones, 
+      score: scores.serviceQuality,
+      description: collapsed ? '' : 'Kundenservice'
     }
   ];
 

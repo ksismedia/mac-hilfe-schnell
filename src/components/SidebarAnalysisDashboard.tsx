@@ -23,7 +23,9 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
-import { calculateSEOContentScore, calculatePerformanceMobileScore, calculateSocialMediaCategoryScore, calculateStaffServiceScore } from './analysis/export/scoreCalculations';
+import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
+import CorporateIdentityAnalysis from './analysis/CorporateIdentityAnalysis';
+import QuoteResponseInput from './analysis/QuoteResponseInput';
 
 interface BusinessData {
   address: string;
@@ -59,7 +61,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('seo-content');
+  const [activeCategory, setActiveCategory] = useState('online-quality-authority');
   const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75); // Score aus CompetitorAnalysis
   
   const handleKeywordsScoreChange = (score: number | null) => {
@@ -230,38 +232,63 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     );
   }
 
-  // Calculate category scores
+  // Get competitor score from competitors analysis
+  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
+    Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
+
+  // Get competitor score from competitors analysis
+  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
+    Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
   const scores = {
-    seoAndContent: calculateSEOContentScore(realData, keywordsScore, businessData, privacyData, accessibilityData),
-    performanceAndMobile: calculatePerformanceMobileScore(realData),
-    socialMedia: calculateSocialMediaCategoryScore(realData, manualSocialData, manualWorkplaceData),
-    staffAndService: calculateStaffServiceScore(staffQualificationData, quoteResponseData, manualCorporateIdentityData, hourlyRateData)
+    onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
+      realData, keywordsScore, businessData, privacyData, accessibilityData, 
+      manualContentData, manualBacklinkData
+    ),
+    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
+    socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
+    marketEnvironment: calculateMarketEnvironmentScore(
+      realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
+    ),
+    corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
+    serviceQuality: calculateServiceQualityScore(quoteResponseData)
   };
 
   const categories = [
     { 
-      id: 'seo-content', 
-      title: 'SEO & Content', 
+      id: 'online-quality-authority', 
+      title: 'Online-Qualität · Relevanz · Autorität', 
       icon: Search, 
-      score: scores.seoAndContent
+      score: scores.onlineQualityAuthority
     },
     { 
-      id: 'performance-mobile', 
-      title: 'Performance & Technik', 
+      id: 'website-performance-tech', 
+      title: 'Webseiten-Performance & Technik', 
       icon: Zap, 
-      score: scores.performanceAndMobile
+      score: scores.websitePerformanceTech
     },
     { 
-      id: 'social-media', 
-      title: 'Social Listening', 
+      id: 'social-media-performance', 
+      title: 'Online-/Web-/Social-Media Performance', 
       icon: Share2, 
-      score: scores.socialMedia
+      score: scores.socialMediaPerformance
     },
     { 
-      id: 'staff-service', 
-      title: 'Personal & Service', 
-      icon: Users, 
-      score: scores.staffAndService
+      id: 'market-environment', 
+      title: 'Markt & Marktumfeld', 
+      icon: TrendingUp, 
+      score: scores.marketEnvironment
+    },
+    { 
+      id: 'corporate-appearance', 
+      title: 'Außendarstellung & Erscheinungsbild', 
+      icon: Eye, 
+      score: scores.corporateAppearance
+    },
+    { 
+      id: 'service-quality', 
+      title: 'Qualität · Service · Kundenorientierung', 
+      icon: Headphones, 
+      score: scores.serviceQuality
     }
   ];
 

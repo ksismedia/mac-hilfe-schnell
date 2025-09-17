@@ -76,25 +76,7 @@ export const calculateSocialMediaCategoryScore = (
   manualSocialData?: ManualSocialData | null,
   manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
-  // Use the same logic as in OverallRating component for consistent results
-  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
-  const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
-  
-  // Google Reviews Score
-  const googleReviewsScore = (realData.reviews?.google?.count || 0) > 0 ? 
-    Math.min(100, (realData.reviews?.google?.rating || 0) * 20) : 0;
-  
-  const metrics = [
-    { score: socialMediaScore, weight: 6 }, // Social Media
-    { score: googleReviewsScore, weight: 7 }, // Bewertungen
-    { score: realData.socialProof?.overallScore || 0, weight: 4 }, // Social Proof
-    { score: workplaceScore, weight: 2 }, // Arbeitsplatz
-  ];
-  
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
-  
-  return Math.round(weightedScore / totalWeight);
+  return calculateSocialMediaPerformanceScore(realData, manualSocialData);
 };
 
 export const calculateWorkplaceScore = (
@@ -183,29 +165,37 @@ export const hasWorkplaceData = (
   return calculateWorkplaceScore(realData, manualWorkplaceData) !== -1;
 };
 
-export const calculateSEOContentScore = (
+// New 6-category scoring functions
+
+export const calculateOnlineQualityAuthorityScore = (
   realData: RealBusinessData,
   keywordsScore: number | null,
   businessData: { address: string; url: string; industry: string },
   privacyData: any,
-  accessibilityData: any
+  accessibilityData: any,
+  manualContentData: any,
+  manualBacklinkData: any
 ): number => {
-  // Use the same logic as in OverallRating component for consistent results
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
   const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
   const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
   
   const localSEOScore = calculateLocalSEOScore(businessData, realData);
+  const contentQualityScore = calculateContentQualityScore(realData, null, businessData, manualContentData);
+  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
+  const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+  const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData);
   
-  // Weighted calculation based on the same weights as in OverallRating
-  const seoScore = realData.seo?.score || 0;
-  const imprintScore = realData.imprint?.score || 0;
   const metrics = [
-    { score: localSEOScore, weight: 24 }, // Local SEO - highest weight
-    { score: seoScore, weight: 14 }, // SEO
-    { score: imprintScore, weight: 9 }, // Impressum
-    { score: currentKeywordsScore, weight: 8 }, // Keywords
+    { score: realData.seo?.score || 0, weight: 20 }, // SEO-Auswertung
+    { score: currentKeywordsScore, weight: 15 }, // Keywords
+    { score: localSEOScore, weight: 20 }, // Lokale SEO
+    { score: contentQualityScore, weight: 12 }, // Content-Qualität
+    { score: backlinksScore, weight: 10 }, // Backlinks
+    { score: accessibilityScore, weight: 8 }, // Barrierefreiheit
+    { score: dataPrivacyScore, weight: 8 }, // Datenschutz
+    { score: realData.imprint?.score || 0, weight: 7 }, // Impressum
   ];
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
@@ -214,19 +204,103 @@ export const calculateSEOContentScore = (
   return Math.round(weightedScore / totalWeight);
 };
 
-export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
-  // Use the same logic as in OverallRating component for consistent results
-  const performanceScore = realData.performance?.score || 0;
-  const mobileScore = realData.mobile?.overallScore || 0;
+export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData): number => {
   const metrics = [
-    { score: performanceScore, weight: 11 }, // Performance
-    { score: mobileScore, weight: 6 }, // Mobile
+    { score: realData.performance?.score || 0, weight: 50 }, // Website-Performance
+    { score: realData.mobile?.overallScore || 0, weight: 35 }, // Mobile-Optimierung
+    { score: 75, weight: 15 }, // Conversion-Optimierung (placeholder)
   ];
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
   return Math.round(weightedScore / totalWeight);
+};
+
+export const calculateSocialMediaPerformanceScore = (
+  realData: RealBusinessData,
+  manualSocialData?: ManualSocialData | null
+): number => {
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  const googleReviewsScore = (realData.reviews?.google?.count || 0) > 0 ? 
+    Math.min(100, (realData.reviews?.google?.rating || 0) * 20) : 0;
+  
+  const metrics = [
+    { score: socialMediaScore, weight: 40 }, // Social Media
+    { score: realData.socialProof?.overallScore || 0, weight: 25 }, // Social Proof
+    { score: socialMediaScore, weight: 20 }, // Social Media Analyse (same as Social Media for now)
+    { score: googleReviewsScore, weight: 15 }, // Google-Bewertungen
+  ];
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
+};
+
+export const calculateMarketEnvironmentScore = (
+  realData: RealBusinessData,
+  hourlyRateData: any,
+  staffQualificationData: any,
+  competitorScore: number | null,
+  manualWorkplaceData: any
+): number => {
+  const metrics = [];
+  
+  // Stundensatzanalyse
+  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0)) {
+    const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+    metrics.push({ score: hourlyRateScore, weight: 30 });
+  }
+  
+  // Mitarbeiterqualifikation
+  if (staffQualificationData && staffQualificationData.totalEmployees > 0) {
+    const staffScore = calculateStaffQualificationScore(staffQualificationData);
+    metrics.push({ score: staffScore, weight: 35 });
+  }
+  
+  // Konkurrenz in Wettbewerbsanalyse
+  const competitorAnalysisScore = competitorScore !== null && competitorScore !== undefined ? 
+    competitorScore : (realData.competitors?.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30);
+  metrics.push({ score: competitorAnalysisScore, weight: 20 });
+  
+  // Arbeitsplatz-Bewertungen
+  const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
+  if (workplaceScore !== -1) {
+    metrics.push({ score: workplaceScore, weight: 15 });
+  }
+  
+  if (metrics.length === 0) return 0;
+  
+  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
+  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  
+  return Math.round(weightedScore / totalWeight);
+};
+
+export const calculateCorporateAppearanceScore = (manualCorporateIdentityData: any): number => {
+  if (!manualCorporateIdentityData) return 0;
+  return calculateCorporateIdentityScore(manualCorporateIdentityData);
+};
+
+export const calculateServiceQualityScore = (quoteResponseData: any): number => {
+  if (!quoteResponseData || !quoteResponseData.responseTime) return 0;
+  return calculateQuoteResponseScore(quoteResponseData);
+};
+
+// Keep existing functions for backward compatibility
+export const calculateSEOContentScore = (
+  realData: RealBusinessData,
+  keywordsScore: number | null,
+  businessData: { address: string; url: string; industry: string },
+  privacyData: any,
+  accessibilityData: any
+): number => {
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null);
+};
+
+export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
+  return calculateWebsitePerformanceTechScore(realData);
 };
 
 export const calculateStaffServiceScore = (
@@ -235,37 +309,31 @@ export const calculateStaffServiceScore = (
   manualCorporateIdentityData: any,
   hourlyRateData: any
 ): number => {
+  // This function is kept for backward compatibility
+  // Market & Environment category now handles staff and hourly rate
+  // Service Quality category handles quote response
+  // Corporate Appearance category handles corporate identity
+  
+  // For backward compatibility, combine all scores
   const metrics = [];
   
-  // Nur eingegebene Daten bewerten - keine Default-Scores für fehlende Eingaben
-  
-  // Personal-Qualifikation (nur wenn tatsächlich eingegeben)
   if (staffQualificationData && staffQualificationData.totalEmployees > 0) {
     const staffScore = calculateStaffQualificationScore(staffQualificationData);
-    metrics.push({ score: staffScore, weight: 40 }); // Höhere Gewichtung für vorhandene Daten
+    metrics.push({ score: staffScore, weight: 30 });
   }
   
-  // Kundenservice/Angebotsbearbeitung (nur wenn tatsächlich eingegeben)
   if (quoteResponseData && quoteResponseData.responseTime) {
     const quoteScore = calculateQuoteResponseScore(quoteResponseData);
-    metrics.push({ score: quoteScore, weight: 35 }); // Höhere Gewichtung für vorhandene Daten
+    metrics.push({ score: quoteScore, weight: 35 });
   }
   
-  // Unternehmensidentität (nur wenn tatsächlich eingegeben)
   if (manualCorporateIdentityData) {
     const corporateScore = calculateCorporateIdentityScore(manualCorporateIdentityData);
-    metrics.push({ score: corporateScore, weight: 25 }); // Geringere Gewichtung
+    metrics.push({ score: corporateScore, weight: 35 });
   }
   
-  // Stundensatz NICHT bewerten wenn nicht eingegeben
-  // (wird separat behandelt wo benötigt)
+  if (metrics.length === 0) return 0;
   
-  // Wenn gar keine Daten eingegeben wurden, keine Bewertung abgeben
-  if (metrics.length === 0) {
-    return 0; // Zeigt an, dass keine Bewertung möglich ist
-  }
-  
-  // Nur die tatsächlich vorhandenen Daten gewichten
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
@@ -459,6 +527,8 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
   }
   return realData?.backlinks?.score || 75; // Fallback auf echte Daten oder Default
 };
+
+// Helper function stub for Corporate Identity (actual implementation is above)
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
   console.log('🎯 calculateAccessibilityScore called with:', {
