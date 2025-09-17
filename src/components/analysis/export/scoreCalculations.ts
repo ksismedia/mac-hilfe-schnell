@@ -176,6 +176,14 @@ export const calculateOnlineQualityAuthorityScore = (
   manualContentData: any,
   manualBacklinkData: any
 ): number => {
+  console.log('🔍 calculateOnlineQualityAuthorityScore called with:', {
+    realData: realData ? 'present' : 'null',
+    keywordsScore,
+    businessData,
+    privacyData: privacyData ? 'present' : 'null',
+    accessibilityData: accessibilityData ? 'present' : 'null'
+  });
+
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
   const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
@@ -186,6 +194,17 @@ export const calculateOnlineQualityAuthorityScore = (
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
   const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
   const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData);
+  
+  console.log('🔍 Individual scores calculated:', {
+    seoScore: realData.seo?.score || 0,
+    currentKeywordsScore,
+    localSEOScore,
+    contentQualityScore,
+    backlinksScore,
+    accessibilityScore,
+    dataPrivacyScore,
+    imprintScore: realData.imprint?.score || 0
+  });
   
   const metrics = [
     { score: realData.seo?.score || 0, weight: 20 }, // SEO-Auswertung
@@ -198,10 +217,28 @@ export const calculateOnlineQualityAuthorityScore = (
     { score: realData.imprint?.score || 0, weight: 7 }, // Impressum
   ];
   
+  // Check for NaN values in metrics
+  const nanCheck = metrics.find(metric => isNaN(metric.score));
+  if (nanCheck) {
+    console.error('🚨 NaN detected in metric:', nanCheck);
+  }
+  
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
-  return Math.round(weightedScore / totalWeight);
+  console.log('🔍 Final calculation:', {
+    totalWeight,
+    weightedScore,
+    result: Math.round(weightedScore / totalWeight)
+  });
+  
+  const result = Math.round(weightedScore / totalWeight);
+  if (isNaN(result)) {
+    console.error('🚨 Final result is NaN! Returning 0 as fallback');
+    return 0;
+  }
+  
+  return result;
 };
 
 export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData): number => {
@@ -512,12 +549,37 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
 };
 
 export const calculateContentQualityScore = (realData: any, manualKeywordData: any, businessData: any, manualContentData: any): number => {
+  console.log('📝 calculateContentQualityScore called with:', {
+    realData: realData ? 'present' : 'null',
+    manualContentData: manualContentData ? 'present' : 'null'
+  });
+  
   // Verwende manuelle Content-Daten falls vorhanden
   if (manualContentData) {
-    return Math.round((manualContentData.textQuality + manualContentData.contentRelevance + 
-                      manualContentData.expertiseLevel + manualContentData.contentFreshness) / 4);
+    const scores = [
+      manualContentData.textQuality,
+      manualContentData.contentRelevance,
+      manualContentData.expertiseLevel,
+      manualContentData.contentFreshness
+    ];
+    
+    console.log('📝 Manual content scores:', scores);
+    
+    // Check for NaN values
+    const hasNaN = scores.some(score => isNaN(score));
+    if (hasNaN) {
+      console.error('🚨 NaN detected in manual content scores:', scores);
+      return 75; // Fallback
+    }
+    
+    const result = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+    console.log('📝 Calculated content quality score:', result);
+    return result;
   }
-  return realData?.content?.qualityScore || 75; // Fallback auf echte Daten oder Default
+  
+  const fallbackScore = realData?.content?.qualityScore || 75;
+  console.log('📝 Using fallback content score:', fallbackScore);
+  return fallbackScore;
 };
 
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
