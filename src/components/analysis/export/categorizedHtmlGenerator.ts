@@ -85,8 +85,8 @@ const generateCategorizedHTML = (data: CategorizedReportData): string => {
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   const accessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
   const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
-  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData);
-  const backlinksScore = calculateBacklinksScore(realData);
+  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, data.manualContentData);
+  const backlinksScore = calculateBacklinksScore(realData, data.manualBacklinkData);
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   
   // Impressum Analysis
