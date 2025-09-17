@@ -623,7 +623,18 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       manualAccessibilityData.textScaling
     ].filter(Boolean).length * 10;
     
-    const baseScore = Math.round((featuresScore + manualAccessibilityData.overallScore) / 2);
+    console.log('🎯 Features score:', featuresScore);
+    console.log('🎯 Manual overall score:', manualAccessibilityData.overallScore, typeof manualAccessibilityData.overallScore);
+    
+    // Ensure overallScore is a number
+    const overallScore = typeof manualAccessibilityData.overallScore === 'number' 
+      ? manualAccessibilityData.overallScore 
+      : parseInt(manualAccessibilityData.overallScore) || 0;
+    
+    console.log('🎯 Converted overall score:', overallScore);
+    
+    const baseScore = Math.round((featuresScore + overallScore) / 2);
+    console.log('🎯 Base score:', baseScore);
     
     // Neue Bewertungslogik: Bei Problemen sofort 59% oder weniger
     const hasProblems = !manualAccessibilityData.keyboardNavigation || 
@@ -634,11 +645,11 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
                        !manualAccessibilityData.textScaling;
     
     const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
-    console.log('🎯 Calculated accessibility score (number):', finalScore);
+    console.log('🎯 Final score before NaN check:', finalScore, typeof finalScore);
     
     // Ensure we return a valid number
     const result = isNaN(finalScore) ? 40 : finalScore;
-    console.log('🎯 Final accessibility score returned:', result);
+    console.log('🎯 Final accessibility score returned:', result, typeof result);
     return result;
   }
   
