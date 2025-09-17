@@ -156,21 +156,21 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
               <div className="text-center">
                 <div className="text-2xl font-bold score-text-high">
-                  {metrics.filter(m => m.score >= 80).length}
+                  {metrics.filter(m => m.score >= 90).length}
                 </div>
-                <div className="text-sm text-gray-600">Sehr gut (≥80%)</div>
+                <div className="text-sm text-gray-600">Sehr gut (≥90%)</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold score-text-medium">
-                  {metrics.filter(m => m.score >= 60 && m.score < 80).length}
+                  {metrics.filter(m => m.score >= 61 && m.score < 90).length}
                 </div>
-                <div className="text-sm text-gray-600">Gut (60-79%)</div>
+                <div className="text-sm text-gray-600">Gut (61-89%)</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold score-text-low">
-                  {metrics.filter(m => m.score < 60).length}
+                  {metrics.filter(m => m.score < 61).length}
                 </div>
-                <div className="text-sm text-gray-600">Verbesserung nötig (&lt;60%)</div>
+                <div className="text-sm text-gray-600">Verbesserung nötig (&lt;61%)</div>
               </div>
             </div>
           </div>

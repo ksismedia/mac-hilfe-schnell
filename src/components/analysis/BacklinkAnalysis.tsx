@@ -58,7 +58,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
       return {
         ...baseData,
         overallScore: Math.round(finalScore),
-        linkQuality: finalScore >= 80 ? 'sehr gut' : finalScore >= 60 ? 'gut' : 'verbesserungsfähig',
+        linkQuality: finalScore >= 90 ? 'sehr gut' : finalScore >= 61 ? 'gut' : 'verbesserungsfähig',
         totalBacklinks: manualBacklinkData.totalBacklinks,
         spamLinks: manualBacklinkData.spamLinks,
         domainAuthority: manualBacklinkData.domainAuthority,
@@ -105,7 +105,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                   📝 Manuell bewertet
                 </Badge>
               )}
-              <Badge variant={backlinkData.overallScore >= 80 ? "secondary" : backlinkData.overallScore >= 60 ? "default" : "destructive"}>
+              <Badge variant={backlinkData.overallScore >= 90 ? "secondary" : backlinkData.overallScore >= 61 ? "default" : "destructive"}>
                 {backlinkData.overallScore > 0 ? `${backlinkData.overallScore}/100 Punkte` : '—/100 Punkte'}
               </Badge>
             </div>

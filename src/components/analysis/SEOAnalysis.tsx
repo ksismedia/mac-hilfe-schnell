@@ -124,7 +124,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             SEO-Auswertung
-            <Badge variant={seoData.overallScore >= 80 ? "secondary" : seoData.overallScore >= 60 ? "default" : "destructive"}>
+            <Badge variant={seoData.overallScore >= 90 ? "secondary" : seoData.overallScore >= 61 ? "default" : "destructive"}>
               {seoData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>

@@ -64,7 +64,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
         },
         { 
           keyword: `${businessData.industry} in der Nähe`, 
-          position: realData.seo.score >= 80 ? 3 : realData.seo.score >= 60 ? 8 : 15, 
+          position: realData.seo.score >= 90 ? 3 : realData.seo.score >= 61 ? 8 : 15, 
           volume: realData.seo.score >= 70 ? "hoch" : "mittel" 
         }
       ]
@@ -73,8 +73,8 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
       score: Math.max(25, Math.min(90, overallScore)),
       addressVisible: realData.seo.metaDescription ? realData.seo.metaDescription.includes(businessData.address.split(',')[1]?.trim() || '') : false,
       phoneVisible: realData.seo.score >= 50,
-      openingHours: realData.seo.score >= 60,
-      localSchema: realData.seo.score >= 80 && realData.seo.headings.h1.length > 0,
+      openingHours: realData.seo.score >= 61,
+      localSchema: realData.seo.score >= 90 && realData.seo.headings.h1.length > 0,
       localContent: Math.max(20, Math.min(85, realData.seo.score - 15)) // Strenger lokaler Content-Score
     }
   };

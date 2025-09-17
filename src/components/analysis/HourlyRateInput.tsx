@@ -285,7 +285,7 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
             <div className="flex items-center gap-2 mb-4">
               <Calculator className="h-5 w-5 text-blue-600" />
               <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
-              <Badge variant={comparisonResult.score >= 80 ? "default" : comparisonResult.score >= 60 ? "secondary" : "destructive"}>
+              <Badge variant={comparisonResult.score >= 90 ? "secondary" : comparisonResult.score >= 61 ? "default" : "destructive"}>
                 {comparisonResult.score}/100 Punkte
               </Badge>
             </div>
@@ -310,8 +310,8 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
             <div className="mt-4 p-3 bg-white rounded border-l-4 border-blue-500">
               <p className="text-sm">
                 <strong>Bewertung:</strong> {
-                  comparisonResult.score >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
-                  comparisonResult.score >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
+                  comparisonResult.score >= 90 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
+                  comparisonResult.score >= 61 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
                   'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
                 }
               </p>

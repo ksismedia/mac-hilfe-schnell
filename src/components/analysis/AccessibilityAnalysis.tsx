@@ -47,12 +47,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
       
       return {
         score: finalScore,
-        wcagLevel: finalScore >= 80 ? 'AA' : finalScore >= 60 ? 'A' : 'none',
+        wcagLevel: finalScore >= 90 ? 'AA' : finalScore >= 61 ? 'A' : 'none',
         violations: [],
         passes: [],
         incomplete: [],
         legalRisk: {
-          level: (finalScore >= 80 ? 'very-low' : finalScore >= 60 ? 'low' : hasProblems ? 'high' : 'low') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
+          level: (finalScore >= 90 ? 'very-low' : finalScore >= 61 ? 'low' : hasProblems ? 'high' : 'low') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
           score: finalScore,
           factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
           recommendations: ['Kontinuierliche Überwachung empfohlen']

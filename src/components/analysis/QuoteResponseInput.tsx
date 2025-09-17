@@ -114,8 +114,8 @@ const QuoteResponseInput: React.FC<QuoteResponseInputProps> = ({ data, onDataCha
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 80) return 'Ausgezeichnet';
-    if (score >= 60) return 'Gut';
+    if (score >= 90) return 'Ausgezeichnet';
+    if (score >= 61) return 'Gut';
     if (score >= 40) return 'Verbesserungsbedarf';
     return 'Kritisch';
   };

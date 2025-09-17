@@ -315,7 +315,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Rechtliche Sicherheit</div>
-                        <div class="metric-value">${legalComplianceScore >= 80 ? 'Hoch' : legalComplianceScore >= 60 ? 'Mittel' : 'Niedrig'}</div>
+                        <div class="metric-value">${legalComplianceScore >= 90 ? 'Hoch' : legalComplianceScore >= 61 ? 'Mittel' : 'Niedrig'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Gesamt-Compliance</span>
@@ -388,7 +388,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                     </div>
                     <div class="metric-item">
                         <div class="metric-title">Fachkräfte-Attraktivität</div>
-                        <div class="metric-value">${workplaceScore >= 80 ? 'Sehr attraktiv' : workplaceScore >= 60 ? 'Attraktiv' : workplaceScore > 0 ? 'Wenig attraktiv' : 'Keine Daten'}</div>
+                        <div class="metric-value">${workplaceScore >= 90 ? 'Sehr attraktiv' : workplaceScore >= 61 ? 'Attraktiv' : workplaceScore > 0 ? 'Wenig attraktiv' : 'Keine Daten'}</div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Recruiting-Potenzial</span>

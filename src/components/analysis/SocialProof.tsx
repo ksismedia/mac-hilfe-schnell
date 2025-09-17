@@ -18,8 +18,8 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
   const socialProofData = realData.socialProof;
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return "secondary";        // gelb (80-100%)
-    if (score >= 60) return "default";          // grün (60-80%)
+    if (score >= 90) return "secondary";        // gelb (90-100%)
+    if (score >= 61) return "default";          // grün (61-89%)
     return "destructive";                       // rot (0-60%)
   };
 
