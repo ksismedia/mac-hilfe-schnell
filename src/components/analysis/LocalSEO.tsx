@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { MapPin, Star, Clock, Phone, Globe } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 import { calculateLocalSEOScore } from './export/scoreCalculations';
 
 interface LocalSEOProps {
@@ -150,7 +151,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
           <CardTitle className="flex items-center justify-between">
             Lokale SEO-Faktoren
             <Badge variant={getScoreBadge(localSEOData.overallScore)}>
-              {localSEOData.overallScore}/100 Punkte
+              {getScoreTextDescription(localSEOData.overallScore, 'seo')}
             </Badge>
           </CardTitle>
           <CardDescription>

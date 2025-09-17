@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface PerformanceAnalysisProps {
   url: string;
@@ -32,7 +33,7 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
           <CardTitle className="flex items-center justify-between">
             Performance-Analyse (Live-Messung)
             <Badge variant={getScoreBadge(performanceData.score)}>
-              {performanceData.score}/100 Punkte
+              {getScoreTextDescription(performanceData.score, 'performance')}
             </Badge>
           </CardTitle>
           <CardDescription>
@@ -77,7 +78,7 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
                     <div className={`text-4xl font-bold mb-2 ${getScoreColor(performanceData.score)}`}>
                       {performanceData.score}
                     </div>
-                    <div className="text-sm text-gray-600 mb-4">von 100 Punkten</div>
+                    <div className="text-sm text-gray-600 mb-4">Bewertung</div>
                     <Progress value={performanceData.score} className="h-3" />
                   </div>
                 </CardContent>

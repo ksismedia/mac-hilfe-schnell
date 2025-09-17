@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Smartphone, Tablet, Monitor, AlertTriangle } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface MobileOptimizationProps {
   url: string;
@@ -41,7 +42,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
           <CardTitle className="flex items-center justify-between">
             Mobile-Optimierung Check (Echte Daten)
             <Badge variant={getScoreBadge(mobileData.overallScore)}>
-              {mobileData.overallScore}/100 Punkte
+              {getScoreTextDescription(mobileData.overallScore, 'mobile')}
             </Badge>
           </CardTitle>
           <CardDescription>

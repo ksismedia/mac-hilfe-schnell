@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface SEOAnalysisProps {
   url: string;
@@ -125,7 +126,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
           <CardTitle className="flex items-center justify-between">
             SEO-Auswertung
             <Badge variant={seoData.overallScore >= 90 ? "secondary" : seoData.overallScore >= 61 ? "default" : "destructive"}>
-              {seoData.overallScore}/100 Punkte
+              {getScoreTextDescription(seoData.overallScore, 'seo')}
             </Badge>
           </CardTitle>
           <CardDescription>

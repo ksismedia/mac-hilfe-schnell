@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExternalLink, Link, AlertCircle, CheckCircle, Edit } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface BacklinkAnalysisProps {
   url: string;
@@ -106,7 +107,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                 </Badge>
               )}
               <Badge variant={backlinkData.overallScore >= 90 ? "secondary" : backlinkData.overallScore >= 61 ? "default" : "destructive"}>
-                {backlinkData.overallScore > 0 ? `${backlinkData.overallScore}/100 Punkte` : '—/100 Punkte'}
+                {backlinkData.overallScore > 0 ? getScoreTextDescription(backlinkData.overallScore, 'general') : '—'}
               </Badge>
             </div>
           </CardTitle>
