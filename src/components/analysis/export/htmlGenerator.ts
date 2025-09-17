@@ -1997,8 +1997,8 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- Kategorisierte Score-Übersicht -->
-        <div class="categorized-scores">
-          <!-- Kategorie 1: SEO & Performance -->
+         <div class="categorized-scores">
+          <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('seo-performance')">
               <h3>🔍 Online-Qualität · Relevanz · Autorität</h3>
@@ -2008,21 +2008,29 @@ export const generateCustomerHTML = ({
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
-                  <div class="score-label">SEO-Bestandsanalyse</div>
-                </div>
-                <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
-                  <div class="score-label">Website Performance</div>
+                  <div class="score-label">SEO-Auswertung</div>
                 </div>
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
-                  <div class="score-label">Lokal-SEO</div>
+                  <div class="score-label">Lokale SEO</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
+                  <div class="score-label">Barrierefreiheit</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
+                  <div class="score-label">Datenschutz</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
+                  <div class="score-label">Impressum</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Kategorie 2: Mobile & Accessibility -->
+          <!-- Kategorie 2: Webseiten-Performance & Technik -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
               <h3>📱 Webseiten-Performance & Technik</h3>
@@ -2031,18 +2039,18 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
-                  <div class="score-label">Mobile Optimierung</div>
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+                  <div class="score-label">Website Performance</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
-                  <div class="score-label">Barrierefreiheit</div>
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+                  <div class="score-label">Mobile Optimierung</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Kategorie 3: Social Media & Reputation -->
+          <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('social-reputation')">
               <h3>📢 Online-/Web-/Social-Media Performance</h3>
@@ -2052,53 +2060,55 @@ export const generateCustomerHTML = ({
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
-                  <div class="score-label">Social Media Präsenz</div>
+                  <div class="score-label">Social Media</div>
                 </div>
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
-                  <div class="score-label">Online Reputation</div>
+                  <div class="score-label">Google Bewertungen</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Kategorie 4: Rechtliches & Datenschutz -->
+          <!-- Kategorie 4: Markt & Marktumfeld -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('legal-privacy')">
-              <h3>⚖️ Außendarstellung & Erscheinungsbild</h3>
+              <h3>💼 Markt & Marktumfeld</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="legal-privacy">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
-                  <div class="score-label">Rechtssicherheit</div>
+                  <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
+                  <div class="score-label">Mitarbeiterqualifikation</div>
                 </div>
+                ${hourlyRateData ? `
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
-                  <div class="score-label">Datenschutz</div>
+                  <div class="score-big"><span class="score-tile pricing-text ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
+                  <div class="score-label">Stundensatzanalyse</div>
                 </div>
+                ` : ''}
               </div>
             </div>
           </div>
 
-          <!-- Kategorie 5: Design & Branding -->
+          <!-- Kategorie 5: Außendarstellung & Erscheinungsbild -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('design-branding')">
-              <h3>🎨 Markt & Marktumfeld</h3>
+              <h3>🎨 Außendarstellung & Erscheinungsbild</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
-                  <div class="score-label">Corporate Design</div>
+                  <div class="score-label">Unternehmensidentität</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Kategorie 6: Personal & Service -->
+          <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('staff-service')">
               <h3>👥 Qualität · Service · Kundenorientierung</h3>
@@ -2107,17 +2117,13 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="staff-service">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
-                  <div class="score-label">Mitarbeiterqualifizierung</div>
-                </div>
-                ${hourlyRateData ? `
-                <div class="score-card">
-                  <div class="score-big"><span class="score-tile pricing-text ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
-                  <div class="score-label">Preispositionierung</div>
-                </div>
-                ` : ''}
-                <div class="score-card">
                   <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${displayQuoteScore}</span></div>
+                  <div class="score-label">Kundenservice</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
                   <div class="score-label">Kundenservice</div>
                 </div>
                 <div class="score-card">
