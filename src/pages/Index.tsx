@@ -529,13 +529,13 @@ const Index = () => {
         {/* Feature Grid nach neuer Kategoriestruktur */}
         <div className="space-y-8">
           <h2 className="text-2xl font-bold text-yellow-400 text-center mb-6">
-            Umfassende Analyse in 4 Hauptkategorien
+            Umfassende Analyse in 6 Hauptkategorien
           </h2>
           
-          {/* SEO & Content Kategorie */}
+          {/* Online-Qualität · Relevanz · Autorität */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
-              🔍 SEO & Content Analyse
+              🔍 Online-Qualität · Relevanz · Autorität
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {[
@@ -547,7 +547,6 @@ const Index = () => {
                 { title: "Barrierefreiheit", icon: "♿", desc: "Zugänglichkeit und WCAG-Standards" },
                 { title: "Datenschutz", icon: "🔒", desc: "DSGVO-Konformität und Cookies" },
                 { title: "Impressum", icon: "📄", desc: "Rechtliche Vollständigkeit" },
-                { title: "Konkurrenz", icon: "⚔️", desc: "Vergleich mit lokalen Mitbewerbern" },
                 { title: "Branche", icon: "🏗️", desc: "Spezifische Inhaltsanalyse" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-yellow-400/20 hover:border-yellow-400/40 transition-colors">
@@ -561,10 +560,10 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Performance & Technik Kategorie */}
+          {/* Webseiten-Performance & Technik */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
-              ⚡ Performance & Technik
+              ⚡ Webseiten-Performance & Technik
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
@@ -583,18 +582,17 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Social Media & Online-Präsenz Kategorie */}
+          {/* Online-/Web-/Social-Media Performance */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
-              📱 Social Media & Online-Präsenz
+              📱 Online-/Web-/Social-Media Performance
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { title: "Social Media", icon: "📲", desc: "Facebook, Instagram, LinkedIn Profile" },
-                { title: "Google-Bewertungen", icon: "⭐", desc: "Bewertungen und Rezensionen" },
                 { title: "Social Proof", icon: "👥", desc: "Testimonials und Vertrauenssignale" },
-                { title: "Arbeitsplatz-Bewertungen", icon: "💼", desc: "Kununu und andere HR-Plattformen" },
-                { title: "Social Media Analyse", icon: "📊", desc: "Detaillierte Social Media Auswertung" }
+                { title: "Social Media Analyse", icon: "📊", desc: "Detaillierte Social Media Auswertung" },
+                { title: "Google-Bewertungen", icon: "⭐", desc: "Bewertungen und Rezensionen" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-blue-400/20 hover:border-blue-400/40 transition-colors">
                   <CardContent className="p-4 text-center">
@@ -607,16 +605,56 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Personal & Service Kategorie */}
+          {/* Markt & Marktumfeld */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
-              👥 Personal & Kundenservice
+              📈 Markt & Marktumfeld
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
+                { title: "Stundensatzanalyse", icon: "💰", desc: "Marktvergleich und Positionierung" },
                 { title: "Mitarbeiterqualifikation", icon: "🎓", desc: "Ausbildung, Zertifikate, Weiterbildung" },
-                { title: "Stundensatz-Analyse", icon: "💰", desc: "Marktvergleich und Positionierung" },
-                { title: "Unternehmensidentität", icon: "🏢", desc: "Corporate Design und Branding" },
+                { title: "Wettbewerbsanalyse", icon: "⚔️", desc: "Vergleich mit lokalen Mitbewerbern" },
+                { title: "Arbeitsplatz-Bewertungen", icon: "💼", desc: "Kununu und andere HR-Plattformen" }
+              ].map((feature, index) => (
+                <Card key={index} className="bg-gray-800 border-orange-400/20 hover:border-orange-400/40 transition-colors">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl mb-2">{feature.icon}</div>
+                    <h3 className="font-semibold text-orange-400 text-sm mb-1">{feature.title}</h3>
+                    <p className="text-xs text-gray-400">{feature.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Außendarstellung & Erscheinungsbild */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
+              🎨 Außendarstellung & Erscheinungsbild
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+              {[
+                { title: "Unternehmensidentität", icon: "🏢", desc: "Corporate Design und Branding" }
+              ].map((feature, index) => (
+                <Card key={index} className="bg-gray-800 border-pink-400/20 hover:border-pink-400/40 transition-colors">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl mb-2">{feature.icon}</div>
+                    <h3 className="font-semibold text-pink-400 text-sm mb-1">{feature.title}</h3>
+                    <p className="text-xs text-gray-400">{feature.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Qualität · Service · Kundenorientierung */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
+              📞 Qualität · Service · Kundenorientierung
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+              {[
                 { title: "Kundenservice", icon: "📞", desc: "Reaktionszeit auf Anfragen" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-purple-400/20 hover:border-purple-400/40 transition-colors">
