@@ -47,11 +47,16 @@ const Index = () => {
 
   // Authentication useEffect
   useEffect(() => {
+    console.log('Setting up auth listeners...');
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, 'Session exists:', !!session, 'User ID:', session?.user?.id);
       setUser(session?.user ?? null);
     });
 
+    // Immediate session check
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check - Session exists:', !!session, 'User ID:', session?.user?.id);
       setUser(session?.user ?? null);
     });
 

@@ -134,6 +134,7 @@ export const useSavedAnalyses = () => {
       setUser(session?.user ?? null);
     });
 
+    // Get initial session immediately
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session loaded. User:', session?.user?.id || 'anonymous');
       setUser(session?.user ?? null);
