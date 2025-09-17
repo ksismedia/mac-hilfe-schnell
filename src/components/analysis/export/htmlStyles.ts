@@ -233,15 +233,29 @@ section[class*="section"],
 
 /* Spezielle Pricing Text Tile */
 .score-tile.pricing-text { 
-  font-size: 0.75em; 
-  line-height: 1.1;
-  padding: 6px 4px;
+  font-size: 0.55em; 
+  line-height: 1.0;
+  padding: 8px 6px;
   word-wrap: break-word;
   hyphens: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  color: white;
+  font-weight: bold;
+}
+
+.score-tile.pricing-text.excellent {
+  background-color: #10b981;
+}
+
+.score-tile.pricing-text.good {
+  background-color: #f59e0b;
+}
+
+.score-tile.pricing-text.critical {
+  background-color: #ef4444;
 }
 
 /* Score-Tile Farben basierend auf einheitlichem Schema */
