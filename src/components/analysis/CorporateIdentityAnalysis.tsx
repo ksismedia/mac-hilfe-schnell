@@ -427,3 +427,5 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
     </Card>
   );
 }
+
+export default CorporateIdentityAnalysis;

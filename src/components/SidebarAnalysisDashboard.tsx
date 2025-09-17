@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users } from 'lucide-react';
+import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users, TrendingUp, Eye, Headphones } from 'lucide-react';
 
 // Category Components
 import SEOContentCategory from './analysis/categories/SEOContentCategory';
@@ -232,13 +232,11 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     );
   }
 
-  // Get competitor score from competitors analysis
-  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
+  // Get competitor score from competitors analysis once
+  const currentCompetitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
     Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
 
-  // Get competitor score from competitors analysis
-  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
-    Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
+  // Calculate new 6-category scores
   const scores = {
     onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
@@ -247,7 +245,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
     socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
     marketEnvironment: calculateMarketEnvironmentScore(
-      realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
+      realData, hourlyRateData, staffQualificationData, currentCompetitorScore, manualWorkplaceData
     ),
     corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
     serviceQuality: calculateServiceQualityScore(quoteResponseData)

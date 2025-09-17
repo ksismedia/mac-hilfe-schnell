@@ -24,7 +24,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
-import { calculateSEOContentScore, calculatePerformanceMobileScore, calculateSocialMediaCategoryScore, calculateStaffServiceScore } from './analysis/export/scoreCalculations';
+import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
 
 interface BusinessData {
   address: string;
@@ -60,7 +60,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('seo-content');
+  const [activeCategory, setActiveCategory] = useState('online-quality-authority');
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -254,37 +254,61 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   }
 
   // Calculate category scores
+  // Get competitor score from competitors analysis
+  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
+    Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
+
+  // Calculate new 6-category scores
   const scores = {
-    seoAndContent: calculateSEOContentScore(realData, keywordsScore, businessData, privacyData, accessibilityData),
-    performanceAndMobile: calculatePerformanceMobileScore(realData),
-    socialMedia: calculateSocialMediaCategoryScore(realData, manualSocialData, manualWorkplaceData),
-    staffAndService: calculateStaffServiceScore(staffQualificationData, quoteResponseData, manualCorporateIdentityData, hourlyRateData)
+    onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
+      realData, keywordsScore, businessData, privacyData, accessibilityData, 
+      manualContentData, manualBacklinkData
+    ),
+    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
+    socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
+    marketEnvironment: calculateMarketEnvironmentScore(
+      realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
+    ),
+    corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
+    serviceQuality: calculateServiceQualityScore(quoteResponseData)
   };
 
   const categories = [
     { 
-      id: 'seo-content', 
-      title: 'SEO & Content', 
+      id: 'online-quality-authority', 
+      title: 'Online-Qualität · Relevanz · Autorität', 
       icon: Search, 
-      score: scores.seoAndContent
+      score: scores.onlineQualityAuthority
     },
     { 
-      id: 'performance-mobile', 
-      title: 'Performance & Technik', 
+      id: 'website-performance-tech', 
+      title: 'Webseiten-Performance & Technik', 
       icon: Zap, 
-      score: scores.performanceAndMobile
+      score: scores.websitePerformanceTech
     },
     { 
-      id: 'social-media', 
-      title: 'Social Listening', 
+      id: 'social-media-performance', 
+      title: 'Online-/Web-/Social-Media Performance', 
       icon: Share2, 
-      score: scores.socialMedia
+      score: scores.socialMediaPerformance
     },
     { 
-      id: 'staff-service', 
-      title: 'Personal & Service', 
+      id: 'market-environment', 
+      title: 'Markt & Marktumfeld', 
       icon: Users, 
-      score: scores.staffAndService
+      score: scores.marketEnvironment
+    },
+    { 
+      id: 'corporate-appearance', 
+      title: 'Außendarstellung & Erscheinungsbild', 
+      icon: Users, 
+      score: scores.corporateAppearance
+    },
+    { 
+      id: 'service-quality', 
+      title: 'Qualität · Service · Kundenorientierung', 
+      icon: Users, 
+      score: scores.serviceQuality
     }
   ];
 
@@ -296,7 +320,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
   const renderActiveCategory = () => {
     switch (activeCategory) {
-      case 'seo-content':
+      case 'online-quality-authority':
         return (
           <SEOContentCategory
             businessData={businessData}
@@ -328,14 +352,14 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
-      case 'performance-mobile':
+      case 'website-performance-tech':
         return (
           <PerformanceMobileCategory
             realData={realData}
             businessData={businessData}
           />
         );
-      case 'social-media':
+      case 'social-media-performance':
         return (
           <SocialMediaCategory
             realData={realData}
