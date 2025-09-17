@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Target, Phone, Mail, Calendar, MousePointer, CreditCard, TrendingUp, Users, Eye, Clock, MessageSquare } from 'lucide-react';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface ConversionOptimizationProps {
   url: string;
@@ -364,7 +363,7 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
           <CardTitle className="flex items-center justify-between">
             Conversion-Optimierung für {industry.toUpperCase()}
             <Badge variant={getScoreBadge(conversionData.overallScore)}>
-              {getScoreTextDescription(conversionData.overallScore, 'general')}
+              {conversionData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>

@@ -135,7 +135,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                 {(overallScore/20).toFixed(1)}/5
               </div>
               <Badge variant={getScoreBadge(overallScore)}>
-                {getScoreTextDescription(overallScore, 'general')}
+                {overallScore}/100 Punkte
               </Badge>
               <div className="mt-2 text-sm text-gray-600">
                 Basierend auf {metrics.length} Analysebereichen
@@ -149,7 +149,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{metric.name}</span>
               <Badge variant="outline" className="text-xs">
-                Bewertung
+                {metric.weight}% Gewichtung
               </Badge>
                       {metric.name === 'Social Media' && (
                         <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
@@ -159,7 +159,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                        {getScoreTextDescriptionLocal(metric.score, metric.name)}
+                        {metric.name === 'Preispositionierung' ? getScoreTextDescription(metric.score, 'hourlyRate') : (metric.score > 0 ? `${Math.round(metric.score)}/100` : '—')}
                       </span>
                     </div>
                   </div>

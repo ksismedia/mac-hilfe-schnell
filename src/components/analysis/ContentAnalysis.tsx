@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit } from 'lucide-react';
 import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface ContentAnalysisProps {
   url: string;
@@ -230,7 +229,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                 </Badge>
               )}
               <Badge variant={getScoreBadge(contentData.overallScore)}>
-                {getScoreTextDescription(contentData.overallScore, 'content')}
+                {contentData.overallScore}/100 Punkte
               </Badge>
             </div>
           </CardTitle>

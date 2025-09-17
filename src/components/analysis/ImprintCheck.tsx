@@ -9,7 +9,6 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 import { ManualImprintData } from '@/hooks/useManualData';
 
 interface ImprintCheckProps {
@@ -103,7 +102,7 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
                 {manualData ? "✓ Manuell geprüft" : "Automatisch erkannt"}
               </Badge>
               <Badge variant={imprintData.score >= 90 ? "secondary" : imprintData.score >= 61 ? "default" : "destructive"}>
-                {getScoreTextDescription(imprintData.score, 'imprint')}
+                {imprintData.score}/100 Punkte
               </Badge>
               <Button
                 variant={showManualInput ? "secondary" : "outline"}

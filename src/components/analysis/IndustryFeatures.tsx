@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface IndustryFeaturesProps {
   businessData: {
@@ -268,7 +267,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           <CardTitle className="flex items-center justify-between">
             Branchenspezifische Merkmale
             <Badge variant={overallScore >= 90 ? "secondary" : overallScore >= 61 ? "default" : "destructive"}>
-              {getScoreTextDescription(overallScore, 'general')}
+              {overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>

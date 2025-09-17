@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Star, Award, Users, MessageSquare, Camera, ThumbsUp } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface SocialProofProps {
   businessData: {
@@ -42,7 +41,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
           <CardTitle className="flex items-center justify-between">
             Social Proof Analyse (Echte Daten)
             <Badge variant={getScoreBadge(socialProofData.overallScore)}>
-              {getScoreTextDescription(socialProofData.overallScore, 'social')}
+              {socialProofData.overallScore}/100 Punkte
             </Badge>
           </CardTitle>
           <CardDescription>

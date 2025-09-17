@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 import ManualKeywordInput from './ManualKeywordInput';
 
 interface KeywordAnalysisProps {
@@ -195,7 +194,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                 <Badge variant="destructive">Keine Keywords gefunden</Badge>
               )}
               <Badge variant={keywordData.overallScore >= 90 ? "secondary" : keywordData.overallScore >= 61 ? "default" : "destructive"}>
-                {getScoreTextDescription(keywordData.overallScore, 'seo')}
+                {keywordData.overallScore}/100 Punkte
               </Badge>
             </div>
           </CardTitle>
