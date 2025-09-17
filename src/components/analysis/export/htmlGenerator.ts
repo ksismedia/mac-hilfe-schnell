@@ -2112,18 +2112,6 @@ export const generateCustomerHTML = ({
             </div>
           </div>
 
-          <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
-          <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('staff-service')">
-              <h3>👥 Qualität · Service · Kundenorientierung</h3>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="category-content" id="staff-service">
-              <div class="score-overview">
-                <!-- Kundenservice entfernt -->
-              </div>
-            </div>
-          </div>
         </div>
                   <div class="score-label">Kundenservice</div>
                 </div>
