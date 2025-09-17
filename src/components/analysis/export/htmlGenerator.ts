@@ -2128,16 +2128,6 @@ export const generateCustomerHTML = ({
           </div>
 
         </div>
-                  <div class="score-label">Kundenservice</div>
-                </div>
-                <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
-                  <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
