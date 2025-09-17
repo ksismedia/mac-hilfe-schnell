@@ -2111,7 +2111,7 @@ export const generateCustomerHTML = ({
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
-                  <div class="score-label">Kundenservice</div>
+                  <div class="score-label">Reaktionszeit auf Anfragen</div>
                 </div>
               </div>
             </div>
