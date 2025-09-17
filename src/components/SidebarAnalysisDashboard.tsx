@@ -317,7 +317,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
 
   const renderActiveCategory = () => {
     switch (activeCategory) {
-      case 'seo-content':
+      case 'online-quality-authority':
         return (
           <SEOContentCategory
             businessData={businessData}
@@ -348,7 +348,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
-      case 'performance-mobile':
+      case 'website-performance-tech':
         return (
           <PerformanceMobileCategory
             realData={realData}
