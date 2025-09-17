@@ -401,7 +401,31 @@ export const calculateOverallScore = (scores: any): number => {
 export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   if (!hourlyRateData) return 75;
   
-  const rateDifference = hourlyRateData.ownRate - hourlyRateData.regionAverage;
+  // Calculate average own rate and regional average from all available rates
+  const ownRates = [
+    hourlyRateData.meisterRate,
+    hourlyRateData.facharbeiterRate,
+    hourlyRateData.azubiRate,
+    hourlyRateData.helferRate,
+    hourlyRateData.serviceRate,
+    hourlyRateData.installationRate
+  ].filter(rate => rate > 0);
+  
+  const regionalRates = [
+    hourlyRateData.regionalMeisterRate,
+    hourlyRateData.regionalFacharbeiterRate,
+    hourlyRateData.regionalAzubiRate,
+    hourlyRateData.regionalHelferRate,
+    hourlyRateData.regionalServiceRate,
+    hourlyRateData.regionalInstallationRate
+  ].filter(rate => rate > 0);
+  
+  if (ownRates.length === 0 || regionalRates.length === 0) return 75;
+  
+  const avgOwnRate = ownRates.reduce((sum, rate) => sum + rate, 0) / ownRates.length;
+  const avgRegionalRate = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
+  
+  const rateDifference = avgOwnRate - avgRegionalRate;
   let rateScore = 0;
 
   if (rateDifference <= 0) {
