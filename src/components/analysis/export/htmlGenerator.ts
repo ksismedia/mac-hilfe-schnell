@@ -3209,6 +3209,243 @@ export const generateCustomerHTML = ({
 
     ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [])}
 
+    ${quoteResponseData && quoteResponseData.responseTime ? `
+    <!-- Kundenservice & Anfragebearbeitung -->
+    <div class="section">
+      <div class="section-header collapsible" onclick="toggleSection('customer-service-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Kundenservice & Anfragebearbeitung</span>
+        <div class="header-score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>
+      </div>
+      <div id="customer-service-content" class="section-content" style="display: none;">
+        <div class="metric-card">
+          <h3>Kundenservice-Qualität</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>
+            <div class="score-details">
+              <p><strong>Reaktionszeit:</strong> ${
+                quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde (Ausgezeichnet)' :
+                quoteResponseData.responseTime === '2-4-hours' ? '2-4 Stunden (Sehr gut)' :
+                quoteResponseData.responseTime === '4-8-hours' ? '4-8 Stunden (Gut)' :
+                quoteResponseData.responseTime === '1-day' ? '1 Tag (Durchschnittlich)' :
+                quoteResponseData.responseTime === '2-3-days' ? '2-3 Tage (Verbesserungsbedarf)' :
+                'Über 3 Tage (Kritisch)'
+              }</p>
+              <p><strong>Antwortqualität:</strong> ${
+                quoteResponseData.responseQuality === 'excellent' ? 'Ausgezeichnet' :
+                quoteResponseData.responseQuality === 'good' ? 'Gut' :
+                quoteResponseData.responseQuality === 'average' ? 'Durchschnittlich' :
+                'Verbesserungsbedarf'
+              }</p>
+              <p><strong>Verfügbare Kontaktkanäle:</strong> ${Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length} von 5</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(quoteResponseScore)}" style="width: ${quoteResponseScore}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Detailanalyse Kundenservice -->
+        <div class="detail-grid" style="margin-top: 20px;">
+          <div class="detail-item">
+            <h4>📞 Kontaktmöglichkeiten</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+              ${Object.entries(quoteResponseData.contactMethods || {}).map(([method, available]) => {
+                const methodLabels = {
+                  phone: 'Telefon',
+                  email: 'E-Mail', 
+                  contactForm: 'Kontaktformular',
+                  whatsapp: 'WhatsApp',
+                  messenger: 'Messenger'
+                };
+                const methodIcons = {
+                  phone: '📞',
+                  email: '📧',
+                  contactForm: '📝',
+                  whatsapp: '💬',
+                  messenger: '💭'
+                };
+                return `
+                  <div style="text-align: center; padding: 10px; background: ${available ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)'}; border-radius: 6px; border: 2px ${available ? 'solid rgba(34, 197, 94, 0.3)' : 'dashed rgba(107, 114, 128, 0.3)'};">
+                    <div style="font-size: 1.5em; margin-bottom: 5px;">${methodIcons[method] || '📋'}</div>
+                    <div style="font-size: 0.9em; font-weight: bold; color: ${available ? '#22c55e' : '#6b7280'};">${methodLabels[method] || method}</div>
+                    <div style="font-size: 0.7em; color: ${available ? '#22c55e' : '#6b7280'};">${available ? 'Verfügbar' : 'Nicht verfügbar'}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          
+          <div class="detail-item">
+            <h4>⏰ Service-Zeiten & Erreichbarkeit</h4>
+            <div style="padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+              <p><strong>Erreichbarkeit:</strong> ${
+                quoteResponseData.availabilityHours === '24-7' ? '24/7 Verfügbar (Optimal)' :
+                quoteResponseData.availabilityHours === 'extended-hours' ? 'Erweiterte Zeiten Mo-Sa (Sehr gut)' :
+                quoteResponseData.availabilityHours === 'business-hours' ? 'Geschäftszeiten Mo-Fr (Standard)' :
+                'Nicht angegeben'
+              }</p>
+              <p><strong>Reaktionszeit-Bewertung:</strong> 
+                <span style="color: ${
+                  quoteResponseData.responseTime === '1-hour' || quoteResponseData.responseTime === '2-4-hours' ? '#22c55e' :
+                  quoteResponseData.responseTime === '4-8-hours' || quoteResponseData.responseTime === '1-day' ? '#f59e0b' :
+                  '#ef4444'
+                }; font-weight: bold;">
+                  ${quoteResponseData.responseTime === '1-hour' ? 'Branchenführend schnell' :
+                    quoteResponseData.responseTime === '2-4-hours' ? 'Überdurchschnittlich schnell' :
+                    quoteResponseData.responseTime === '4-8-hours' ? 'Angemessen' :
+                    quoteResponseData.responseTime === '1-day' ? 'Akzeptabel' :
+                    'Verbesserung dringend empfohlen'}
+                </span>
+              </p>
+            </div>
+          </div>
+          
+          <div class="detail-item">
+            <h4>🎯 Service-Features & Prozesse</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+              <div style="padding: 10px; background: ${quoteResponseData.automaticConfirmation ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)'}; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
+                  <span style="color: ${quoteResponseData.automaticConfirmation ? '#22c55e' : '#6b7280'};">${quoteResponseData.automaticConfirmation ? '✅' : '❌'}</span>
+                  <strong>Eingangsbestätigung</strong>
+                </div>
+                <p style="font-size: 0.8em; color: #6b7280; margin: 0;">
+                  ${quoteResponseData.automaticConfirmation ? 'Automatische Bestätigung aktiv' : 'Keine automatische Bestätigung'}
+                </p>
+              </div>
+              
+              <div style="padding: 10px; background: ${quoteResponseData.followUpProcess ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)'}; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
+                  <span style="color: ${quoteResponseData.followUpProcess ? '#22c55e' : '#6b7280'};">${quoteResponseData.followUpProcess ? '✅' : '❌'}</span>
+                  <strong>Nachfass-Prozess</strong>
+                </div>
+                <p style="font-size: 0.8em; color: #6b7280; margin: 0;">
+                  ${quoteResponseData.followUpProcess ? 'Strukturierte Nachfassung' : 'Kein systematisches Nachfassen'}
+                </p>
+              </div>
+              
+              <div style="padding: 10px; background: ${quoteResponseData.personalContact ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)'}; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
+                  <span style="color: ${quoteResponseData.personalContact ? '#22c55e' : '#6b7280'};">${quoteResponseData.personalContact ? '✅' : '❌'}</span>
+                  <strong>Persönlicher Kontakt</strong>
+                </div>
+                <p style="font-size: 0.8em; color: #6b7280; margin: 0;">
+                  ${quoteResponseData.personalContact ? 'Fester Ansprechpartner' : 'Kein fester Ansprechpartner'}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          ${quoteResponseData.notes ? `
+          <div class="detail-item">
+            <h4>📝 Zusätzliche Informationen</h4>
+            <div style="padding: 15px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; border-left: 4px solid #9ca3af;">
+              <p style="margin: 0; font-style: italic; color: #374151;">"${quoteResponseData.notes}"</p>
+            </div>
+          </div>
+          ` : ''}
+          
+          <div class="detail-item">
+            <h4>📊 Bewertungskomponenten</h4>
+            <div style="background: rgba(239, 246, 255, 1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 15px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.9em;">Reaktionszeit</span>
+                    <span style="font-weight: bold; color: #3b82f6;">40% Gewichtung</span>
+                  </div>
+                  <div class="progress-container" style="height: 8px;">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: ${
+                        quoteResponseData.responseTime === '1-hour' ? '100' :
+                        quoteResponseData.responseTime === '2-4-hours' ? '87' :
+                        quoteResponseData.responseTime === '4-8-hours' ? '75' :
+                        quoteResponseData.responseTime === '1-day' ? '50' :
+                        quoteResponseData.responseTime === '2-3-days' ? '25' : '12'
+                      }%; background-color: #3b82f6;"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.9em;">Kontaktkanäle</span>
+                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
+                  </div>
+                  <div class="progress-container" style="height: 8px;">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: ${Math.min(100, Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length * 20)}%; background-color: #3b82f6;"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.9em;">Antwortqualität</span>
+                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
+                  </div>
+                  <div class="progress-container" style="height: 8px;">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: ${
+                        quoteResponseData.responseQuality === 'excellent' ? '100' :
+                        quoteResponseData.responseQuality === 'good' ? '75' :
+                        quoteResponseData.responseQuality === 'average' ? '50' : '25'
+                      }%; background-color: #3b82f6;"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 0.9em;">Service-Features</span>
+                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
+                  </div>
+                  <div class="progress-container" style="height: 8px;">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: ${
+                        ([quoteResponseData.automaticConfirmation, quoteResponseData.followUpProcess, quoteResponseData.personalContact].filter(Boolean).length * 25) + 
+                        (quoteResponseData.availabilityHours === '24-7' ? 25 : quoteResponseData.availabilityHours === 'extended-hours' ? 15 : 10)
+                      }%; background-color: #3b82f6;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('customer-service-recommendations')" style="cursor: pointer; margin-top: 20px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
+          <h4 style="color: #22c55e; margin: 0;">▶ Verbesserungsempfehlungen</h4>
+        </div>
+        
+        <div id="customer-service-recommendations" style="display: none;">
+          <div class="recommendations">
+            <h4>Handlungsempfehlungen für besseren Kundenservice:</h4>
+            <ul>
+              ${quoteResponseData.responseTime === 'over-3-days' || quoteResponseData.responseTime === '2-3-days' ? 
+                '<li><strong>Priorität HOCH:</strong> Reaktionszeit drastisch verkürzen - Ziel: unter 24 Stunden</li>' : ''}
+              ${Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length < 3 ? 
+                '<li><strong>Empfehlung:</strong> Zusätzliche Kontaktkanäle einrichten (WhatsApp Business, Kontaktformular)</li>' : ''}
+              ${!quoteResponseData.automaticConfirmation ? 
+                '<li><strong>Quick Win:</strong> Automatische Eingangsbestätigung implementieren</li>' : ''}
+              ${!quoteResponseData.followUpProcess ? 
+                '<li><strong>Prozessoptimierung:</strong> Strukturierten Nachfass-Prozess etablieren</li>' : ''}
+              ${!quoteResponseData.personalContact ? 
+                '<li><strong>Kundenbeziehung:</strong> Feste Ansprechpartner zuweisen für bessere Betreuung</li>' : ''}
+              ${quoteResponseData.responseQuality === 'poor' || quoteResponseData.responseQuality === 'average' ? 
+                '<li><strong>Qualitätssteigerung:</strong> Antwortvorlagen entwickeln und Mitarbeiter schulen</li>' : ''}
+              ${quoteResponseData.availabilityHours === 'business-hours' ? 
+                '<li><strong>Erreichbarkeit:</strong> Erweiterte Servicezeiten prüfen (Samstag, Abendstunden)</li>' : ''}
+              <li><strong>Monitoring:</strong> Regelmäßige Messung der Reaktionszeiten und Kundenzufriedenheit</li>
+              <li><strong>Digitalisierung:</strong> CRM-System für bessere Anfragenverfolgung implementieren</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
     ${staffQualificationScore !== null ? `
     <!-- Mitarbeiterqualifizierung -->
     <div class="section">
