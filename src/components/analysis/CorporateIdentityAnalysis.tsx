@@ -236,7 +236,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Einheitliche Beschilderung</span>
+                  <span>Einheitliche Außenwerbung</span>
                   {(manualData.uniformSignage ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
@@ -244,7 +244,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Einheitliche Verpackung</span>
+                  <span>Eigene Werbemittel (Hauszeitung, Newsletter, etc.)</span>
                   {(manualData.uniformPackaging ?? false) ? (
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
                   ) : (
@@ -393,7 +393,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                   }
                 />
                 <Label htmlFor="uniformSignage">
-                  Einheitliche Beschilderung (Firmenschild, Schilder vor Ort)
+                  Einheitliche Außenwerbung (Plakate, Banner, Werbetafeln)
                 </Label>
               </div>
 
@@ -406,7 +406,7 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                   }
                 />
                 <Label htmlFor="uniformPackaging">
-                  Einheitliche Verpackung/Materialien (falls zutreffend)
+                  Eigene Werbemittel (Hauszeitung, Newsletter, Flyer, etc.)
                 </Label>
               </div>
             </div>
