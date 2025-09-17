@@ -246,16 +246,20 @@ section[class*="section"],
   font-weight: bold;
 }
 
-.score-tile.pricing-text.excellent {
-  background-color: #10b981;
+.score-tile.pricing-text.sehr-wettbewerbsfaehig {
+  background-color: #fbbf24; /* Gold */
 }
 
-.score-tile.pricing-text.good {
-  background-color: #f59e0b;
+.score-tile.pricing-text.wettbewerbsfaehig {
+  background-color: #10b981; /* Grün */
 }
 
-.score-tile.pricing-text.critical {
-  background-color: #ef4444;
+.score-tile.pricing-text.marktgerecht {
+  background-color: #10b981; /* Grün */
+}
+
+.score-tile.pricing-text.ueber-marktdurchschnitt {
+  background-color: #ef4444; /* Rot */
 }
 
 /* Score-Tile Farben basierend auf einheitlichem Schema */
