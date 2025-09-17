@@ -133,6 +133,35 @@ export const generateCustomerHTML = ({
     ? `${Math.round(actualDataPrivacyScore)}%` 
     : '–';
   
+  // Calculate DSGVO score - red if there are critical violations
+  const calculateDSGVOScore = () => {
+    if (!privacyData) return 75; // Default score
+    
+    const violations = privacyData.violations || [];
+    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
+    const customViolations = manualDataPrivacyData?.customViolations || [];
+    
+    // Filter out deselected violations to get active violations
+    const activeViolations = violations.filter((violation: any) => 
+      !deselectedViolations.includes(violation.id)
+    );
+    
+    // Count critical violations (high severity)
+    const criticalViolations = [...activeViolations, ...customViolations]
+      .filter((violation: any) => violation.severity === 'high');
+    
+    // If there's 1 or more critical violations, score should be in red range (under 60%)
+    if (criticalViolations.length >= 1) {
+      return Math.max(25, 55 - (criticalViolations.length * 10)); // 25-55% range
+    }
+    
+    // Otherwise use the regular data privacy score
+    return actualDataPrivacyScore;
+  };
+  
+  const dsgvoScore = calculateDSGVOScore();
+  const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
+  
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
@@ -2021,6 +2050,10 @@ export const generateCustomerHTML = ({
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
                   <div class="score-label">Datenschutz</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${dsgvoScore > 0 ? getScoreColorClass(dsgvoScore) : 'neutral'}">${displayDSGVOScore}</span></div>
+                  <div class="score-label">DSGVO</div>
                 </div>
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
