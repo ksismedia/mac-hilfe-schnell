@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Euro, TrendingUp, Calculator } from 'lucide-react';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface HourlyRateData {
   meisterRate: number;
@@ -286,7 +287,7 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
               <Calculator className="h-5 w-5 text-blue-600" />
               <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
               <Badge variant={comparisonResult.score >= 90 ? "secondary" : comparisonResult.score >= 61 ? "default" : "destructive"}>
-                {comparisonResult.score}/100 Punkte
+                {getScoreTextDescription(comparisonResult.score, 'hourlyRate')}
               </Badge>
             </div>
             

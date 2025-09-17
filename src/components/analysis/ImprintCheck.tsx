@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 import { ManualImprintData } from '@/hooks/useManualData';
 
 interface ImprintCheckProps {

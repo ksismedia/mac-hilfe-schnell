@@ -7,6 +7,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
+import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface OverallRatingProps {
   businessData: {
@@ -94,12 +95,17 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive'; // rot
   };
 
-  const getPricePositionText = (score: number) => {
-    if (score === 100) return 'Sehr wettbewerbsfähig';
-    if (score === 85) return 'Wettbewerbsfähig';
-    if (score === 70) return 'Marktgerecht';
-    if (score === 50) return 'Über Marktdurchschnitt';
-    return `${score}/100`;
+  const getScoreTextDescriptionLocal = (score: number, metricName: string) => {
+    return getScoreTextDescription(score, 
+      metricName === 'Preispositionierung' ? 'hourlyRate' :
+      metricName === 'SEO' ? 'seo' :
+      metricName === 'Performance' ? 'performance' :
+      metricName === 'Mobile' ? 'mobile' :
+      metricName === 'Impressum' ? 'imprint' :
+      metricName === 'Social Media' ? 'social' :
+      metricName === 'Arbeitsplatz' ? 'workplace' :
+      'general'
+    );
   };
 
   // Prüfung ob Social Media Daten vorhanden
@@ -129,7 +135,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                 {(overallScore/20).toFixed(1)}/5
               </div>
               <Badge variant={getScoreBadge(overallScore)}>
-                {overallScore}/100 Punkte
+                {getScoreTextDescription(overallScore, 'general')}
               </Badge>
               <div className="mt-2 text-sm text-gray-600">
                 Basierend auf {metrics.length} Analysebereichen
@@ -142,9 +148,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{metric.name}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {metric.weight}% Gewichtung
-                      </Badge>
+              <Badge variant="outline" className="text-xs">
+                Bewertung
+              </Badge>
                       {metric.name === 'Social Media' && (
                         <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
                           {hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten'}
@@ -153,7 +159,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                        {metric.name === 'Preispositionierung' ? getPricePositionText(metric.score) : (metric.score > 0 ? `${Math.round(metric.score)}/100` : '—')}
+                        {getScoreTextDescriptionLocal(metric.score, metric.name)}
                       </span>
                     </div>
                   </div>
