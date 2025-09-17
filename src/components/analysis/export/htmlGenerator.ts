@@ -3018,18 +3018,18 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${hourlyRateData ? `
-    <!-- Preispositionierung -->
-    <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>💰 Preispositionierung</span>
-        <div class="header-score-circle ${getScoreColorClass(75)}">75%</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Preispositionierung</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(75)}">75%</div>
+     ${hourlyRateData ? `
+     <!-- Preispositionierung -->
+     <div class="section">
+       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+         <span>💰 Preispositionierung</span>
+         <div class="header-score-circle ${getScoreColorClass(pricingScore)}">${pricingText}</div>
+       </div>
+       <div class="section-content">
+         <div class="metric-card">
+           <h3>Preispositionierung</h3>
+           <div class="score-display">
+             <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingText}</div>
             <div class="score-details">
               <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
               <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
