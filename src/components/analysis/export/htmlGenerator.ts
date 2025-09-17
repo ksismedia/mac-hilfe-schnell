@@ -1988,68 +1988,144 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-        <div class="score-overview">
-          <div class="score-card">
+        <!-- Gesamtscore separat -->
+        <div class="score-overview" style="margin-bottom: 30px;">
+          <div class="score-card" style="max-width: 300px; margin: 0 auto;">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
-            <div class="score-label">SEO-Bestandsanalyse</div>
+        </div>
+
+        <!-- Kategorisierte Score-Übersicht -->
+        <div class="categorized-scores">
+          <!-- Kategorie 1: SEO & Performance -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('seo-performance')">
+              <h3>🔍 SEO & Performance</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="seo-performance">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
+                  <div class="score-label">SEO-Bestandsanalyse</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+                  <div class="score-label">Website Performance</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
+                  <div class="score-label">Lokal-SEO</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
-            <div class="score-label">Website Performance</div>
+
+          <!-- Kategorie 2: Mobile & Accessibility -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
+              <h3>📱 Mobile & Barrierefreiheit</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="mobile-accessibility">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+                  <div class="score-label">Mobile Optimierung</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
+                  <div class="score-label">Barrierefreiheit</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
-            <div class="score-label">Mobile Optimierung</div>
+
+          <!-- Kategorie 3: Social Media & Reputation -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('social-reputation')">
+              <h3>📢 Social Media & Reputation</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="social-reputation">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
+                  <div class="score-label">Social Media Präsenz</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
+                  <div class="score-label">Online Reputation</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
-            <div class="score-label">Lokal-SEO</div>
+
+          <!-- Kategorie 4: Rechtliches & Datenschutz -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('legal-privacy')">
+              <h3>⚖️ Rechtliches & Datenschutz</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="legal-privacy">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
+                  <div class="score-label">Rechtssicherheit</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
+                  <div class="score-label">Datenschutz</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
-            <div class="score-label">Social Media Präsenz</div>
+
+          <!-- Kategorie 5: Design & Branding -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('design-branding')">
+              <h3>🎨 Design & Branding</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="design-branding">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
+                  <div class="score-label">Corporate Design</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
-            <div class="score-label">Online Reputation</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
-            <div class="score-label">Rechtssicherheit</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
-            <div class="score-label">Barrierefreiheit</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
-            <div class="score-label">Datenschutz</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
-            <div class="score-label">Corporate Design</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
-            <div class="score-label">Mitarbeiterqualifizierung</div>
-          </div>
-          ${hourlyRateData ? `
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile pricing-text ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
-            <div class="score-label">Preispositionierung</div>
-          </div>
-          ` : ''}
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${displayQuoteScore}</span></div>
-            <div class="score-label">Kundenservice</div>
-          </div>
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
-            <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
+
+          <!-- Kategorie 6: Personal & Service -->
+          <div class="score-category">
+            <div class="category-header" onclick="toggleCategory('staff-service')">
+              <h3>👥 Personal & Service</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="staff-service">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
+                  <div class="score-label">Mitarbeiterqualifizierung</div>
+                </div>
+                ${hourlyRateData ? `
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile pricing-text ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
+                  <div class="score-label">Preispositionierung</div>
+                </div>
+                ` : ''}
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${displayQuoteScore}</span></div>
+                  <div class="score-label">Kundenservice</div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
+                  <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -3351,6 +3427,32 @@ export const generateCustomerHTML = ({
         <p style="margin: 5px 0 0 0; font-size: 0.8em;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
       </div>
     </div>
+
+    <script>
+      function toggleCategory(categoryId) {
+        const content = document.getElementById(categoryId);
+        const header = content.previousElementSibling;
+        
+        if (content.classList.contains('collapsed')) {
+          content.classList.remove('collapsed');
+          header.classList.remove('collapsed');
+        } else {
+          content.classList.add('collapsed');
+          header.classList.add('collapsed');
+        }
+      }
+
+      // Initialize all categories as expanded
+      document.addEventListener('DOMContentLoaded', function() {
+        const categories = ['seo-performance', 'mobile-accessibility', 'social-reputation', 'legal-privacy', 'design-branding', 'staff-service'];
+        categories.forEach(categoryId => {
+          const content = document.getElementById(categoryId);
+          if (content) {
+            content.classList.remove('collapsed');
+          }
+        });
+      });
+    </script>
   </div>
 </body>
 </html>`;

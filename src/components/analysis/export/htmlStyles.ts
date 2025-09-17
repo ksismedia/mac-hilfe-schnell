@@ -801,6 +801,68 @@ table tr {
     color: #d1d5db !important;
   }
   
+  /* Categorized Scores Styles */
+  .categorized-scores {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .score-category {
+    margin-bottom: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .category-header {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1));
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+  }
+
+  .category-header:hover {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.2));
+  }
+
+  .category-header h3 {
+    margin: 0;
+    color: #fbbf24;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+
+  .toggle-icon {
+    color: #fbbf24;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+  }
+
+  .category-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+  }
+
+  .category-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0;
+  }
+
+  .category-content.collapsed {
+    max-height: 0;
+  }
+
+  .category-content .score-overview {
+    padding: 20px;
+    margin: 0;
+  }
+
   /* Score Badge Farben für Wettbewerber */
   .score-badge.red { color: #FF0000 !important; font-weight: bold; }
   .score-badge.green { color: #22c55e !important; font-weight: bold; }  
