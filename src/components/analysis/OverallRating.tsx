@@ -94,6 +94,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive'; // rot
   };
 
+  const getPricePositionText = (score: number) => {
+    if (score === 100) return 'Sehr wettbewerbsfähig';
+    if (score === 85) return 'Wettbewerbsfähig';
+    if (score === 70) return 'Marktgerecht';
+    if (score === 50) return 'Über Marktdurchschnitt';
+    return `${score}/100`;
+  };
+
   // Prüfung ob Social Media Daten vorhanden
   const hasSocialData = Boolean(manualSocialData && (
     manualSocialData.facebookUrl || manualSocialData.instagramUrl || 
@@ -145,7 +153,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                        {metric.score > 0 ? `${Math.round(metric.score)}/100` : '—'}
+                        {metric.name === 'Preispositionierung' ? getPricePositionText(metric.score) : (metric.score > 0 ? `${Math.round(metric.score)}/100` : '—')}
                       </span>
                     </div>
                   </div>
