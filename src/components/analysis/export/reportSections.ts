@@ -273,12 +273,15 @@ export const generateMobileSection = (realData: RealBusinessData) => `
         </div>
 `;
 
-export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
+export const generateDataPrivacySection = (
+  dataPrivacyScore: number = 75, 
+  activeViolations: any[] = []
+) => `
         <!-- Datenschutz-Analyse -->
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
-                ${dataPrivacyScore < 90 ? `
+                ${activeViolations.length > 0 && dataPrivacyScore < 90 ? `
                     <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
                         <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
                             ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
@@ -307,35 +310,36 @@ export const generateDataPrivacySection = (dataPrivacyScore: number = 75) => `
                         </div>
                     </div>
                     
-                    ${dataPrivacyScore < 90 ? `
+                    ${activeViolations.length > 0 ? `
                       <div class="metric-item" style="grid-column: 1 / -1;">
                         <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                          🚨 Identifizierte DSGVO-Verstöße
+                          🚨 Identifizierte DSGVO-Verstöße (${activeViolations.length})
                         </h4>
                         <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
                           <div style="display: grid; gap: 15px;">
-                            <div style="border-left: 4px solid #dc2626; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                              <strong style="color: #dc2626; display: block; margin-bottom: 5px;">🔴 Kritisch: Fehlende Einwilligung</strong>
-                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Tracking-Cookies werden ohne explizite Einwilligung gesetzt</p>
-                              <p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 6 DSGVO</p>
-                            </div>
-                            <div style="border-left: 4px solid #d97706; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                              <strong style="color: #d97706; display: block; margin-bottom: 5px;">🟡 Wichtig: Unvollständige Datenschutzerklärung</strong>
-                              <p style="margin: 0; color: #92400e; font-size: 14px;">Informationspflichten nicht vollständig erfüllt</p>
-                              <p style="margin: 5px 0 0 0; color: #a16207; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 13/14 DSGVO</p>
-                            </div>
-                            <div style="border-left: 4px solid #dc2626; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                              <strong style="color: #dc2626; display: block; margin-bottom: 5px;">🔴 Kritisch: Drittlandtransfer ohne Schutzmaßnahmen</strong>
-                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">Datenübertragung ohne angemessene Schutzmaßnahmen</p>
-                              <p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> Art. 44-49 DSGVO</p>
-                            </div>
+                            ${activeViolations.map(violation => `
+                              <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                                <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; display: block; margin-bottom: 5px;">
+                                  ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🔵 Info'}: ${violation.category}
+                                </strong>
+                                <p style="margin: 0; color: #7f1d1d; font-size: 14px;">${violation.description}</p>
+                                ${violation.article ? `<p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
+                                ${violation.recommendation ? `
+                                  <div style="margin-top: 8px; padding: 8px; background: #e0f2fe; border-radius: 4px;">
+                                    <p style="margin: 0; color: #0277bd; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
+                                  </div>
+                                ` : ''}
+                              </div>
+                            `).join('')}
                           </div>
-                          <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
-                            <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
-                            <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
-                              Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
-                            </p>
-                          </div>
+                          ${activeViolations.filter(v => v.severity === 'high').length > 0 ? `
+                            <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
+                              <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
+                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
+                                Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
+                              </p>
+                            </div>
+                          ` : ''}
                         </div>
                       </div>
                     ` : `

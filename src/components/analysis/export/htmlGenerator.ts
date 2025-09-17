@@ -3168,7 +3168,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(actualDataPrivacyScore)}
+    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [])}
 
     ${staffQualificationScore !== null ? `
     <!-- Mitarbeiterqualifizierung -->

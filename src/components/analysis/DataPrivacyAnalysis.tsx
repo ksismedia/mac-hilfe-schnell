@@ -116,18 +116,48 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     return Math.round(adjustedScore);
   };
 
-  // Update score when violations change
   useEffect(() => {
     if (privacyData && onDataChange) {
       const effectiveScore = getEffectiveScore();
-      // Always update when manual data changes to ensure export gets correct score
+      const activeViolations = getAllViolations();
+      
+      // Always update when manual data changes to ensure export gets correct score and violations
       const updatedData = {
         ...privacyData,
-        score: effectiveScore
+        score: effectiveScore,
+        activeViolations: activeViolations // Add active violations for export
       };
       onDataChange(updatedData);
     }
-  }, [manualDataPrivacyData?.deselectedViolations, manualDataPrivacyData?.customViolations, manualDataPrivacyData?.overallScore, manualDataPrivacyData?.hasSSL, manualDataPrivacyData?.privacyPolicy, manualDataPrivacyData?.cookiePolicy, manualDataPrivacyData?.legalImprint, manualDataPrivacyData?.gdprCompliant, manualDataPrivacyData?.cookieConsent, manualDataPrivacyData?.dataProcessingAgreement, manualDataPrivacyData?.dataSubjectRights]);
+  }, [
+    manualDataPrivacyData?.deselectedViolations, 
+    manualDataPrivacyData?.customViolations, 
+    manualDataPrivacyData?.overallScore, 
+    manualDataPrivacyData?.hasSSL, 
+    manualDataPrivacyData?.privacyPolicy, 
+    manualDataPrivacyData?.cookiePolicy, 
+    manualDataPrivacyData?.legalImprint, 
+    manualDataPrivacyData?.gdprCompliant, 
+    manualDataPrivacyData?.cookieConsent, 
+    manualDataPrivacyData?.dataProcessingAgreement, 
+    manualDataPrivacyData?.dataSubjectRights, 
+    privacyData?.violations
+  ]);
+
+  // Initial update when privacyData is first loaded
+  useEffect(() => {
+    if (privacyData && onDataChange && !manualDataPrivacyData?.overallScore) {
+      const effectiveScore = getEffectiveScore();
+      const activeViolations = getAllViolations();
+      
+      const updatedData = {
+        ...privacyData,
+        score: effectiveScore,
+        activeViolations: activeViolations
+      };
+      onDataChange(updatedData);
+    }
+  }, [privacyData]);
 
   // DSGVO-konforme Score-Darstellung
   const getScoreColor = (score: number) => {
