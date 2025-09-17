@@ -9,6 +9,7 @@ import SEOContentCategory from './analysis/categories/SEOContentCategory';
 import PerformanceMobileCategory from './analysis/categories/PerformanceMobileCategory';
 import SocialMediaCategory from './analysis/categories/SocialMediaCategory';
 import StaffServiceCategory from './analysis/categories/StaffServiceCategory';
+import { CorporateIdentityInput } from './analysis/CorporateIdentityInput';
 
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
@@ -364,6 +365,72 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             manualWorkplaceData={manualWorkplaceData}
             updateWorkplaceData={updateWorkplaceData}
           />
+        );
+      case 'social-media-performance':
+        return (
+          <SocialMediaCategory
+            realData={realData}
+            businessData={businessData}
+            manualSocialData={manualSocialData}
+            updateSocialData={updateSocialData}
+            manualWorkplaceData={manualWorkplaceData}
+            updateWorkplaceData={updateWorkplaceData}
+          />
+        );
+      case 'market-environment':
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Markt & Marktumfeld</h2>
+              <p className="text-gray-300">Stundensatz, Personal und Wettbewerbsumfeld</p>
+            </div>
+            <StaffServiceCategory 
+              businessData={businessData}
+              realData={realData}
+              staffQualificationData={staffQualificationData}
+              updateStaffQualificationData={updateStaffQualificationData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              updateCorporateIdentityData={updateCorporateIdentityData}
+              quoteResponseData={quoteResponseData}
+              updateQuoteResponseData={updateQuoteResponseData}
+              hourlyRateData={hourlyRateData}
+              updateHourlyRateData={updateHourlyRateData}
+            />
+          </div>
+        );
+      case 'corporate-appearance':
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
+              <p className="text-gray-300">Corporate Design und Unternehmensidentität</p>
+            </div>
+            <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
+              <CorporateIdentityInput 
+                businessData={{
+                  companyName: realData.company.name,
+                  url: businessData.url
+                }}
+                manualCorporateIdentityData={manualCorporateIdentityData}
+                onUpdate={updateCorporateIdentityData}
+              />
+            </div>
+          </div>
+        );
+      case 'service-quality':
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Qualität · Service · Kundenorientierung</h2>
+              <p className="text-gray-300">Kundenservice und Angebotserstellung</p>
+            </div>
+            <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
+              <QuoteResponseInput 
+                data={quoteResponseData}
+                onDataChange={updateQuoteResponseData}
+              />
+            </div>
+          </div>
         );
       case 'staff-service':
         return (
