@@ -485,7 +485,9 @@ export const generateCustomerHTML = ({
         localPricingText = 'Über Marktdurchschnitt';
       } else {
         localPricingScore = Math.max(30, 100 - Math.abs(ratio - 1) * 100);
-        localPricingText = `${localPricingScore}/100`;
+        localPricingText = localPricingScore <= 30 ? 'Ausbaufähig' : 
+                          localPricingScore <= 40 ? 'Deutlich über Marktdurchschnitt' :
+                          'Weit über Marktdurchschnitt';
       }
     }
     return `
