@@ -2001,7 +2001,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 1: SEO & Performance -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('seo-performance')">
-              <h3>🔍 SEO & Performance</h3>
+              <h3>🔍 Online-Qualität · Relevanz · Autorität</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="seo-performance">
@@ -2025,7 +2025,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 2: Mobile & Accessibility -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
-              <h3>📱 Mobile & Barrierefreiheit</h3>
+              <h3>📱 Webseiten-Performance & Technik</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="mobile-accessibility">
@@ -2045,7 +2045,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 3: Social Media & Reputation -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('social-reputation')">
-              <h3>📢 Social Media & Reputation</h3>
+              <h3>📢 Online-/Web-/Social-Media Performance</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="social-reputation">
@@ -2065,7 +2065,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 4: Rechtliches & Datenschutz -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('legal-privacy')">
-              <h3>⚖️ Rechtliches & Datenschutz</h3>
+              <h3>⚖️ Außendarstellung & Erscheinungsbild</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="legal-privacy">
@@ -2085,7 +2085,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 5: Design & Branding -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('design-branding')">
-              <h3>🎨 Design & Branding</h3>
+              <h3>🎨 Markt & Marktumfeld</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="design-branding">
@@ -2101,7 +2101,7 @@ export const generateCustomerHTML = ({
           <!-- Kategorie 6: Personal & Service -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('staff-service')">
-              <h3>👥 Personal & Service</h3>
+              <h3>👥 Qualität · Service · Kundenorientierung</h3>
               <span class="toggle-icon">▼</span>
             </div>
             <div class="category-content" id="staff-service">
