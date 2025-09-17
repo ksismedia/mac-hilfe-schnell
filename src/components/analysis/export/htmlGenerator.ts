@@ -2101,6 +2101,17 @@ export const generateCustomerHTML = ({
             <div class="category-header" onclick="toggleCategory('design-branding')">
               <h3>🎨 Außendarstellung & Erscheinungsbild</h3>
               <span class="toggle-icon">▼</span>
+            </div>
+            <div class="category-content" id="design-branding">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
+                  <div class="score-label">Unternehmensidentität</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('staff-service')">
@@ -2112,16 +2123,6 @@ export const generateCustomerHTML = ({
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
                   <div class="score-label">Reaktionszeit auf Anfragen</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-            <div class="category-content" id="design-branding">
-              <div class="score-overview">
-                <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
-                  <div class="score-label">Unternehmensidentität</div>
                 </div>
               </div>
             </div>
