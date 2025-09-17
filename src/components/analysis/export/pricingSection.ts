@@ -25,9 +25,10 @@ export const generatePricingSection = (
                     <div class="metric-item">
                         <div class="metric-title">Marktpositionierung</div>
                         <div class="metric-value ${calculateHourlyRateScore() >= 80 ? 'excellent' : calculateHourlyRateScore() >= 60 ? 'good' : 'warning'}">
-                            ${calculateHourlyRateScore() >= 90 ? 'Optimal positioniert' : 
-                              calculateHourlyRateScore() >= 70 ? 'Gut positioniert' : 
-                              calculateHourlyRateScore() >= 50 ? 'Anpassung empfohlen' : 'Überprüfung erforderlich'}
+                            ${calculateHourlyRateScore() === 100 ? 'Sehr wettbewerbsfähig' : 
+                              calculateHourlyRateScore() === 85 ? 'Wettbewerbsfähig' : 
+                              calculateHourlyRateScore() === 70 ? 'Marktgerecht' : 
+                              calculateHourlyRateScore() === 50 ? 'Über Marktdurchschnitt' : `${calculateHourlyRateScore()}/100`}
                         </div>
                         <div class="progress-container">
                             <div class="progress-bar">
