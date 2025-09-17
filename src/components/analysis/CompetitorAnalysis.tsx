@@ -350,9 +350,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
     ? allCompetitors.reduce((sum, comp) => sum + (comp.services?.length || 0), 0) / allCompetitors.length 
     : ownServicesForScore.length;
     
-  // Bonus-Berechnung: Pro abgewähltem Service 0.5 Punkte, aber maximal 10% des Basis-Scores
+  // Bonus-Berechnung: Pro abgewähltem Service 0.3 Punkte, aber maximal 10% des Basis-Scores
   const serviceRemovalBonus = Math.min(
-    removedMissingServices.length * 0.5, 
+    removedMissingServices.length * 0.3, 
     baseOwnScore * 0.10
   );
   

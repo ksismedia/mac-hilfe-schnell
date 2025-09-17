@@ -228,7 +228,7 @@ export const generateCustomerHTML = ({
   
   // BONUS für abgewählte Services (gleiche Logik wie in CompetitorAnalysis)
   const serviceRemovalBonus = removedMissingServices?.length > 0 
-    ? Math.min(removedMissingServices.length * 0.5, ownDynamicScore * 0.10)
+    ? Math.min(removedMissingServices.length * 0.3, ownDynamicScore * 0.10)
     : 0;
   
   // FINALER SCORE inklusive Bonus
@@ -1419,7 +1419,7 @@ export const generateCustomerHTML = ({
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
                   <span style="font-weight: bold; font-size: 1.2em;">${Math.round(competitorComparisonScore)}</span>
-                    <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 0.5}% Bonus)` : ""}</small>
+                    <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 0.3}% Bonus)` : ""}</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
@@ -1631,7 +1631,7 @@ export const generateCustomerHTML = ({
               const ownReviewWeight = 1 - ownRatingWeight - ownServiceWeight;
               
               const baseOwnScore = (ownRatingScore * ownRatingWeight) + (ownReviewScore * ownReviewWeight) + (ownServiceScore * ownServiceWeight);
-              const serviceRemovalBonus = Math.min(removedServices * 0.5, baseOwnScore * 0.10);
+              const serviceRemovalBonus = Math.min(removedServices * 0.3, baseOwnScore * 0.10);
               const ownScore = Math.min(baseOwnScore + serviceRemovalBonus, 96);
               
               // Calculate competitor scores - use all competitors, not just manual ones
