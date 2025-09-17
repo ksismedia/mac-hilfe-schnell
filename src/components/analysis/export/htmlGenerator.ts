@@ -437,32 +437,32 @@ export const generateCustomerHTML = ({
     const regionalAvg = regionalRates.length > 0 ? regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length : 0;
     
     // Calculate competitive score if both company and regional data available
-    let pricingScore = 75; // Default score
-    let pricingText = 'Marktgerecht';
+    let localPricingScore = 75; // Default score
+    let localPricingText = 'Marktgerecht';
     if (companyAvg > 0 && regionalAvg > 0) {
       const ratio = companyAvg / regionalAvg;
       if (ratio >= 0.9 && ratio <= 1.1) {
-        pricingScore = 100;
-        pricingText = 'Sehr wettbewerbsfähig';
+        localPricingScore = 100;
+        localPricingText = 'Sehr wettbewerbsfähig';
       } else if (ratio >= 0.85 && ratio < 0.9) {
-        pricingScore = 85;
-        pricingText = 'Wettbewerbsfähig';
+        localPricingScore = 85;
+        localPricingText = 'Wettbewerbsfähig';
       } else if (ratio >= 0.7 && ratio < 0.85) {
-        pricingScore = 70;
-        pricingText = 'Marktgerecht';
+        localPricingScore = 70;
+        localPricingText = 'Marktgerecht';
       } else if (ratio >= 0.5 && ratio < 0.7) {
-        pricingScore = 50;
-        pricingText = 'Über Marktdurchschnitt';
+        localPricingScore = 50;
+        localPricingText = 'Über Marktdurchschnitt';
       } else {
-        pricingScore = Math.max(30, 100 - Math.abs(ratio - 1) * 100);
-        pricingText = `${pricingScore}/100`;
+        localPricingScore = Math.max(30, 100 - Math.abs(ratio - 1) * 100);
+        localPricingText = `${localPricingScore}/100`;
       }
     }
     return `
       <div class="metric-card good">
         <h3>Stundensatz-Analyse & Wettbewerbsvergleich</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(pricingScore)}">${pricingText}</div>
+          <div class="score-tile ${getScoreColorClass(localPricingScore)}">${localPricingText}</div>
           <div class="score-details">
             <h4>Ihre Stundensätze:</h4>
             <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
@@ -483,10 +483,10 @@ export const generateCustomerHTML = ({
             <p><strong>Regional Installation:</strong> ${hourlyRateData.regionalInstallationRate || 0}€/h</p>
             <p><strong>Regional Durchschnitt:</strong> ${regionalAvg.toFixed(2)}€/h</p>
             
-            <div style="margin-top: 15px; padding: 10px; background: ${pricingScore >= 80 ? '#e8f5e8' : pricingScore >= 60 ? '#fff3cd' : '#f8d7da'}; border-radius: 5px;">
+            <div style="margin-top: 15px; padding: 10px; background: ${localPricingScore >= 80 ? '#e8f5e8' : localPricingScore >= 60 ? '#fff3cd' : '#f8d7da'}; border-radius: 5px;">
               <strong>Bewertung:</strong> ${
-                pricingScore >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
-                pricingScore >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
+                localPricingScore >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
+                localPricingScore >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
                 'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
               }
             </div>
@@ -496,10 +496,10 @@ export const generateCustomerHTML = ({
         </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${pricingScore}%; background-color: ${
-                pricingScore < 20 ? '#CD0000' :
-                pricingScore <= 60 ? '#dc2626' :
-                pricingScore <= 80 ? '#16a34a' :
+              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${
+                localPricingScore < 20 ? '#CD0000' :
+                localPricingScore <= 60 ? '#dc2626' :
+                localPricingScore <= 80 ? '#16a34a' :
                 '#eab308'
               };"></div>
             </div>
