@@ -8,17 +8,16 @@ const Progress = React.forwardRef<
 >(({ className, value = 0, ...props }, ref) => {
   const percentage = Math.max(0, Math.min(100, Number(value) || 0));
   
-  // Definitive color logic - 0% MUSS rot sein!
   const getBarColor = (val: number): string => {
     if (val <= 60) return 'bg-red-500'; // ROT für 0-60%
-    if (val <= 80) return 'bg-green-500'; // GRÜN für 61-80%  
-    return 'bg-yellow-500'; // GELB für 81-100%
+    if (val <= 89) return 'bg-green-500'; // GRÜN für 61-89%  
+    return 'bg-yellow-500'; // GELB für 90-100%
   };
 
   // Text color for contrast
   const getTextColor = (val: number): string => {
     if (val <= 60) return 'text-white'; // Weiß auf rot
-    if (val <= 80) return 'text-white'; // Weiß auf grün
+    if (val <= 89) return 'text-white'; // Weiß auf grün
     return 'text-white'; // Weiß auf gelb für besseren Kontrast
   };
 
