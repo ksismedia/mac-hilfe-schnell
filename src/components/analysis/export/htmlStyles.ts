@@ -231,6 +231,19 @@ section[class*="section"],
   hyphens: auto;
 }
 
+/* Spezielle Pricing Text Tile */
+.score-tile.pricing-text { 
+  font-size: 0.75em; 
+  line-height: 1.1;
+  padding: 6px 4px;
+  word-wrap: break-word;
+  hyphens: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 /* Score-Tile Farben basierend auf einheitlichem Schema */
 .score-tile.red { background: #FF0000 !important; color: white !important; }     /* 0-60% */
 .score-tile.orange { background: #FF0000 !important; color: white !important; }  /* 0-60% */
