@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
-import { generateCategorizedHTML } from './export/categorizedHtmlGenerator';
+import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateDataPrivacyScore } from './export/scoreCalculations';
 
@@ -156,7 +156,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('🔴 currentManualAccessibilityData from hook:', currentManualAccessibilityData);
     
     console.log('=== STARTING HTML GENERATION ===');
-    const htmlContent = generateCategorizedHTML({
+    const htmlContent = generateCustomerHTML({
       businessData,
       realData,
       manualCompetitors,
@@ -221,7 +221,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     console.log('Passing missingImprintElements to HTML generator for download:', missingImprintElements);
     
-    const htmlContent = generateCategorizedHTML({
+    const htmlContent = generateCustomerHTML({
       businessData,
       realData,
       manualCompetitors,
@@ -365,14 +365,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <FileText className="h-4 w-4" />
-              🌐 UNNA-Report (Kategorisiert) im Browser
+              UNNA-Report im Browser öffnen
             </Button>
             <Button 
               onClick={downloadCustomerReport}
-              className="flex items-center gap-2 bg-green-600 hover:green-700"
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
             >
               <Download className="h-4 w-4" />
-              Kategorisierter Report herunterladen
+              Als HTML-Datei herunterladen
             </Button>
             <Button 
               variant="outline"

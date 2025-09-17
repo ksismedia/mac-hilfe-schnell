@@ -7,7 +7,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
 import { FileText, Download, Printer, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 import { generateSelectiveCustomerHTML, generateSelectiveCustomerHTMLForBrowser } from './export/selectiveHtmlGenerator';
-import { generateSelectiveHTML } from './export/selectiveHtmlGenerator';
+import { calculateDataPrivacyScore } from './export/scoreCalculations';
 
 interface SelectiveHTMLExportProps {
   businessData: {
