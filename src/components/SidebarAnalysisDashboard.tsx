@@ -542,6 +542,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {categories.map((category) => {
+              console.log('🔍 Rendering button for category:', category.id, category.title);
               const IconComponent = category.icon;
               return (
                 <button
