@@ -355,17 +355,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             businessData={businessData}
           />
         );
-      case 'social-media':
-        return (
-          <SocialMediaCategory
-            realData={realData}
-            businessData={businessData}
-            manualSocialData={manualSocialData}
-            updateSocialData={updateSocialData}
-            manualWorkplaceData={manualWorkplaceData}
-            updateWorkplaceData={updateWorkplaceData}
-          />
-        );
       case 'social-media-performance':
         return (
           <SocialMediaCategory
