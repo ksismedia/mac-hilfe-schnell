@@ -861,20 +861,23 @@ table tr {
   }
 
   .category-content {
-    max-height: 1000px;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: all 0.3s ease;
     padding: 0;
   }
 
   .category-content.collapsed {
-    max-height: 0;
+    display: none !important;
   }
 
   .category-content .score-overview {
     padding: 20px;
     margin: 0;
     justify-content: center;
+  }
+
+  .category-content.collapsed .score-overview {
+    display: none !important;
   }
   
   .category-content .score-card {
