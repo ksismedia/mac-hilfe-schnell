@@ -955,7 +955,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         }
 
         .category-header-styled {
-          margin-bottom: 40px;
+          margin-bottom: 30px;
         }
 
         .category-title-box {

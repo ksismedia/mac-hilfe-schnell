@@ -825,7 +825,7 @@ table tr {
   }
 
   .category-header-styled {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 
   .category-title-box {
