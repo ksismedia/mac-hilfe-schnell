@@ -83,7 +83,124 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const staffQualificationScore = 75; // Fallback value
   
-  let sectionsHtml = '';
+  // Calculate scores for Executive Summary
+  const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
+  const dataPrivacyScore = calculateDataPrivacyScore(realData, data.manualDataPrivacyData);
+  const workplaceScore = calculateWorkplaceScore(realData, data.manualWorkplaceData);
+  
+  // Calculate overall score
+  const overallScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + accessibilityScore + dataPrivacyScore) / 6);
+  
+  // Add Executive Summary at the beginning
+  let sectionsHtml = `
+    <!-- Executive Summary -->
+    <section class="executive-summary">
+      <h2 class="section-title">Executive Summary</h2>
+      
+      <!-- Gesamtscore -->
+      <div class="overall-score-section" style="text-align: center; margin-bottom: 40px;">
+        <div class="score-card-large" style="max-width: 300px; margin: 0 auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);">
+          <div class="score-big" style="font-size: 3em; font-weight: bold; color: #2563eb; margin-bottom: 10px;">${overallScore}%</div>
+          <div class="score-label" style="font-size: 1.2em; color: #64748b; font-weight: 500;">Gesamtscore</div>
+        </div>
+      </div>
+
+      <!-- Kategorisierte Score-Übersicht -->
+      <div class="categorized-scores">
+        <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
+        <div class="score-category">
+          <div class="category-header" onclick="toggleCategory('seo-performance')">
+            <h3>Online-Qualität · Relevanz · Autorität</h3>
+            <span class="toggle-icon">▶</span>
+          </div>
+          <div class="category-content collapsed" id="seo-performance">
+            <div class="score-overview">
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
+                <div class="score-label">SEO-Auswertung</div>
+              </div>
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
+                <div class="score-label">Lokale SEO</div>
+              </div>
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${accessibilityScore > 0 ? accessibilityScore + '%' : '—'}</span></div>
+                <div class="score-label">Barrierefreiheit</div>
+              </div>
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${dataPrivacyScore > 0 ? getScoreColorClass(dataPrivacyScore) : 'neutral'}">${dataPrivacyScore > 0 ? dataPrivacyScore + '%' : '—'}</span></div>
+                <div class="score-label">Datenschutz</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategorie 2: Webseiten-Performance & Technik -->
+        <div class="score-category">
+          <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
+            <h3>Webseiten-Performance & Technik</h3>
+            <span class="toggle-icon">▶</span>
+          </div>
+          <div class="category-content collapsed" id="mobile-accessibility">
+            <div class="score-overview">
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+                <div class="score-label">Website Performance</div>
+              </div>
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+                <div class="score-label">Mobile Optimierung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
+        <div class="score-category">
+          <div class="category-header" onclick="toggleCategory('social-reputation')">
+            <h3>Online-/Web-/Social-Media Performance</h3>
+            <span class="toggle-icon">▶</span>
+          </div>
+          <div class="category-content collapsed" id="social-reputation">
+            <div class="score-overview">
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${socialMediaScore > 0 ? socialMediaScore + '%' : '—'}</span></div>
+                <div class="score-label">Social Media</div>
+              </div>
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${getScoreColorClass(100)}">100%</span></div>
+                <div class="score-label">Google Bewertungen</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategorie 4: Markt & Marktumfeld -->
+        <div class="score-category">
+          <div class="category-header" onclick="toggleCategory('legal-privacy')">
+            <h3>Markt & Marktumfeld</h3>
+            <span class="toggle-icon">▶</span>
+          </div>
+          <div class="category-content collapsed" id="legal-privacy">
+            <div class="score-overview">
+              <div class="score-card">
+                <div class="score-big"><span class="score-tile ${workplaceScore > 0 ? getScoreColorClass(workplaceScore) : 'neutral'}">${workplaceScore > 0 ? workplaceScore + '%' : '—'}</span></div>
+                <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+  
+  // Helper function for score colors
+  function getScoreColorClass(score: number): string {
+    if (score >= 80) return 'excellent';
+    if (score >= 60) return 'good';
+    if (score >= 40) return 'warning';
+    return 'critical';
+  }
 
   // SEO & Content Section
   if (selections.sections.seoContent) {
@@ -748,8 +865,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
     }
   }
 
-  // Calculate overall score based on included sections
-  let overallScore = 75; // Default fallback
+  // Use the overall score calculated at the beginning of the function
 
   return `
     <!DOCTYPE html>
@@ -796,6 +912,128 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           background: #fef2f2;
           border: 2px solid #fecaca;
         }
+
+        /* Executive Summary Styles */
+        .executive-summary {
+          background: white;
+          border-radius: 15px;
+          padding: 30px;
+          margin-bottom: 30px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+          font-size: 2.5em;
+          font-weight: bold;
+          color: #1f2937;
+          text-align: center;
+          margin-bottom: 40px;
+          border-bottom: 3px solid #3b82f6;
+          padding-bottom: 15px;
+        }
+
+        .categorized-scores {
+          display: grid;
+          gap: 25px;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .score-category {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .category-header {
+          padding: 20px 25px;
+          background: linear-gradient(135deg, #1e293b, #334155);
+          color: white;
+          cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: background 0.3s ease;
+        }
+
+        .category-header:hover {
+          background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+
+        .category-header h3 {
+          margin: 0;
+          font-size: 1.3em;
+          font-weight: 600;
+        }
+
+        .toggle-icon {
+          color: #fbbf24;
+          font-size: 1.2em;
+          transition: transform 0.3s ease;
+          user-select: none;
+        }
+
+        .category-header.collapsed .toggle-icon {
+          transform: rotate(-90deg);
+        }
+
+        .category-content {
+          max-height: 1000px;
+          overflow: hidden;
+          transition: max-height 0.3s ease;
+          padding: 0;
+        }
+
+        .category-content.collapsed {
+          max-height: 0;
+        }
+
+        .category-content .score-overview {
+          padding: 25px;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+        
+        .category-content .score-card {
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          text-align: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          min-width: 180px;
+          border: 1px solid #e5e7eb;
+        }
+
+        .score-card .score-big {
+          font-size: 2.2em;
+          font-weight: bold;
+          margin-bottom: 8px;
+          display: block;
+        }
+
+        .score-card .score-label {
+          font-size: 0.95em;
+          color: #64748b;
+          font-weight: 500;
+        }
+
+        .score-tile {
+          padding: 8px 16px;
+          border-radius: 8px;
+          color: white;
+          font-weight: bold;
+        }
+
+        .score-tile.excellent { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .score-tile.good { background: linear-gradient(135deg, #eab308, #ca8a04); }
+        .score-tile.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .score-tile.critical { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .score-tile.neutral { background: #6b7280; }
       </style>
     </head>
     <body>
@@ -835,6 +1073,39 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           </div>
         </footer>
       </div>
+
+      <script>
+        function toggleCategory(categoryId) {
+          const content = document.getElementById(categoryId);
+          const header = content.previousElementSibling;
+          const toggleIcon = header.querySelector('.toggle-icon');
+          
+          if (content.classList.contains('collapsed')) {
+            content.classList.remove('collapsed');
+            header.classList.remove('collapsed');
+            if (toggleIcon) toggleIcon.textContent = '▼';
+          } else {
+            content.classList.add('collapsed');
+            header.classList.add('collapsed');
+            if (toggleIcon) toggleIcon.textContent = '▶';
+          }
+        }
+
+        // Initialize all categories as collapsed (dropdown style)
+        document.addEventListener('DOMContentLoaded', function() {
+          const categories = ['seo-performance', 'mobile-accessibility', 'social-reputation', 'legal-privacy'];
+          categories.forEach(categoryId => {
+            const content = document.getElementById(categoryId);
+            const header = content ? content.previousElementSibling : null;
+            const toggleIcon = header ? header.querySelector('.toggle-icon') : null;
+            if (content && header) {
+              content.classList.add('collapsed');
+              header.classList.add('collapsed');
+              if (toggleIcon) toggleIcon.textContent = '▶';
+            }
+          });
+        });
+      </script>
     </body>
     </html>
   `;
