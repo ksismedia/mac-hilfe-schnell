@@ -43,6 +43,8 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
   accessibilityData = null,
   manualCorporateIdentityData = null
 }) => {
+  console.log('AccordionExecutiveSummary RENDERING:', { businessData, realData });
+  
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
