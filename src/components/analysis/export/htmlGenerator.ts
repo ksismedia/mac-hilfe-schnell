@@ -689,16 +689,16 @@ export const generateCustomerHTML = ({
     return `
       <div class="metric-card ${scoreClass}">
         ${violations.length > 0 || accessibilityScore < 90 ? `
-          <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
-            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+          <div class="legal-notice-frame" style="text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 30px 25px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.3);">
+            <h4 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 1.2em; display: flex; align-items: center; justify-content: center; gap: 8px;">
               ⚖️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
             </h4>
-            <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
-              <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+            <p style="color: #f5f5f5; margin: 0 0 15px 0; font-size: 14px;">
+              <strong style="color: #fbbf24;">Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
             </p>
-            <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-              <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 15px; color: #f5f5f5; font-size: 13px;">
+              <strong style="color: #fbbf24;">⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
             </div>
           </div>
         ` : ''}
@@ -804,14 +804,14 @@ export const generateCustomerHTML = ({
             </div>
             
             ${accessibilityScore < 90 ? `
-            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
-              <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
+            <div class="legal-notice-frame" style="text-align: center; margin-top: 20px; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 25px 20px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.3);">
+              <h4 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 1.1em;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+              <p style="color: #f5f5f5; margin: 0 0 10px 0; font-weight: bold;">
                 Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
                 Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
               </p>
-              <p class="error-text" style="margin: 0; font-size: 14px;">
-                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+              <p style="color: #f5f5f5; margin: 0; font-size: 14px;">
+                <strong style="color: #fbbf24;">⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
                 Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
                 Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
               </p>
@@ -3048,16 +3048,16 @@ export const generateCustomerHTML = ({
         
         ${actualAccessibilityScore < 90 ? `
         <!-- Warnung direkt sichtbar -->
-        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+        <div class="legal-notice-frame" style="text-align: center; margin-top: 20px; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 25px 20px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
             ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
           </h4>
-          <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+          <p style="color: #f5f5f5; margin: 0 0 15px 0; font-weight: bold;">
             Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
             Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
           </p>
-          <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-            <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+          <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 15px; color: #f5f5f5; font-size: 13px;">
+            <strong style="color: #fbbf24;">⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
             Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
             Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
           </div>
@@ -3122,14 +3122,14 @@ export const generateCustomerHTML = ({
             </div>
             
             ${actualAccessibilityScore < 90 ? `
-            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+            <div class="legal-notice-frame" style="text-align: center; margin-top: 20px; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 25px 20px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.3);">
+              <h4 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 1.1em;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+              <p style="color: #f5f5f5; margin: 0 0 15px 0; font-weight: bold;">
                 Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
                 Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
               </p>
-              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+              <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 15px; color: #f5f5f5; font-size: 13px;">
+                <strong style="color: #fbbf24;">⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
                 Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
                 Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
               </div>
@@ -3719,12 +3719,12 @@ export const generateCustomerHTML = ({
     </script>
     
     <!-- Rechtlicher Disclaimer -->
-    <div class="disclaimer">
-      <h4>⚖️ Rechtlicher Hinweis</h4>
-      <p><strong>Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
-      <p><strong>Keine Gewähr:</strong> Wir übernehmen keine Gewähr für die Vollständigkeit, Richtigkeit oder Aktualität der Analyseergebnisse. Rechtliche und technische Standards können sich ändern.</p>
-      <p><strong>Individuelle Prüfung erforderlich:</strong> Für rechtsverbindliche Aussagen, insbesondere zu DSGVO-Compliance, Barrierefreiheit oder anderen rechtlichen Aspekten, empfehlen wir die Konsultation entsprechender Fachexperten.</p>
-      <div class="disclaimer-date">Analyse erstellt am: ${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+    <div class="legal-notice-frame" style="text-align: center; margin: 50px auto 0; max-width: 800px; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(251, 191, 36, 0.3);">
+      <h4 style="color: #fbbf24; margin: 0 0 20px 0; font-size: 1.3em;">⚖️ Rechtlicher Hinweis</h4>
+      <p style="color: #f5f5f5; margin: 0 0 15px 0;"><strong style="color: #fbbf24;">Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
+      <p style="color: #f5f5f5; margin: 0 0 15px 0;"><strong style="color: #fbbf24;">Keine Gewähr:</strong> Wir übernehmen keine Gewähr für die Vollständigkeit, Richtigkeit oder Aktualität der Analyseergebnisse. Rechtliche und technische Standards können sich ändern.</p>
+      <p style="color: #f5f5f5; margin: 0 0 20px 0;"><strong style="color: #fbbf24;">Individuelle Prüfung erforderlich:</strong> Für rechtsverbindliche Aussagen, insbesondere zu DSGVO-Compliance, Barrierefreiheit oder anderen rechtlichen Aspekten, empfehlen wir die Konsultation entsprechender Fachexperten.</p>
+      <div style="color: #9ca3af; font-size: 0.9em;">Analyse erstellt am: ${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
     </div>
   </div>
 </body>
