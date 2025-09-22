@@ -1,5 +1,4 @@
-import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -8,7 +7,7 @@ import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRate
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
-import { Search, Zap, Share2, Users, Building2, HeartHandshake } from 'lucide-react';
+import { Search, Zap, Share2, Users, Building2, HeartHandshake, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface OverallRatingProps {
   businessData: {
@@ -27,6 +26,16 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
+  // State für Aufklappen/Zuklappen
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
+
+  const toggleCategory = (categoryId: string) => {
+    setOpenCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -222,52 +231,61 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
         </CardContent>
       </Card>
 
-      {/* TEST: Einfaches Accordion */}
-      <div className="mb-6">
-        <h3 className="text-yellow-400 text-lg mb-4">🔧 TEST: Einfaches Accordion</h3>
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="test-1" className="border border-yellow-400 rounded">
-            <AccordionTrigger className="px-4 py-2 text-white">
-              TEST 1 - Klick hier zum Öffnen
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 text-gray-300">
-              ✅ Accordion funktioniert! Das ist der Inhalt von Test 1.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
-
-      {/* Original Accordion Categories */}
-      <Accordion type="multiple" className="w-full space-y-4">
+      {/* Custom Accordion Categories mit useState */}
+      <div className="w-full space-y-4">
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
+          const isOpen = openCategories[category.id] || false;
           
           return (
-            <AccordionItem 
+            <div 
               key={category.id} 
-              value={category.id} 
               className="border border-gray-700 rounded-lg bg-gray-800/50"
             >
-              <AccordionTrigger className="px-4 py-3 text-yellow-400 hover:text-yellow-300">
-                {category.title}
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {category.metrics.map((metric, index) => (
-                    <ScoreCard
-                      key={index}
-                      title={metric.name}
-                      score={metric.score}
-                      subtitle={metric.subtitle}
-                      weight={metric.weight}
-                    />
-                  ))}
+              {/* Klickbarer Header */}
+              <div 
+                className="px-4 py-3 text-yellow-400 hover:text-yellow-300 cursor-pointer flex items-center justify-between"
+                onClick={() => toggleCategory(category.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <IconComponent className="h-5 w-5" />
+                  <span className="font-semibold">{category.title}</span>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-yellow-400 border-yellow-400">
+                    {category.metrics.length} Bereiche
+                  </Badge>
+                  <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(category.score)}`}>
+                    {Math.round(category.score)}%
+                  </div>
+                  {isOpen ? (
+                    <ChevronDown className="h-4 w-4 text-yellow-400" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-yellow-400" />
+                  )}
+                </div>
+              </div>
+              
+              {/* Aufklappbarer Inhalt */}
+              {isOpen && (
+                <div className="px-4 pb-4 border-t border-gray-700">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    {category.metrics.map((metric, index) => (
+                      <ScoreCard
+                        key={index}
+                        title={metric.name}
+                        score={metric.score}
+                        subtitle={metric.subtitle}
+                        weight={metric.weight}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           );
         })}
-      </Accordion>
+      </div>
     </div>
   );
 };
