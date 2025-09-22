@@ -17,7 +17,6 @@ interface AnalysisDashboardProps {
 }
 
 const AnalysisDashboard: React.FC<AnalysisDashboardProps> = (props) => {
-  console.log('🔥 AnalysisDashboard: Weiterleitung zu SimpleAnalysisDashboard');
   // Weiterleitung zur neuen stabilen Version
   return <SimpleAnalysisDashboard {...props} />;
 };

@@ -221,7 +221,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* Executive Summary mit Accordions */}
+        {/* Overall Rating mit Accordions */}
         <div className="w-full">
           <OverallRating 
             businessData={businessData}
