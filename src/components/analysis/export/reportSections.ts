@@ -404,10 +404,9 @@ export const generateDataPrivacySection = (
                 
                 ${activeViolations.length > 0 && dataPrivacyScore < 90 ? `
                     <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 20px; background: #fef2f2; border: 2px solid #fecaca;">
-                        <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
-                          <h4 style="color: #FFD700; margin: 0 0 10px 0; text-align: center; font-weight: bold;">
-                              ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
-                          </h4>
+                        <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                            ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
+                        </h4>
                         <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
                             <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Datenschutz-Probleme identifiziert. 
                             Bei DSGVO-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.

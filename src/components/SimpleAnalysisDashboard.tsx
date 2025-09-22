@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -63,8 +62,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('');
-  const [showCategoryNav, setShowCategoryNav] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('online-quality-authority');
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -323,11 +321,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   };
 
   const renderActiveCategory = () => {
-    // Nur rendern wenn die Navigation aktiviert ist
-    if (!showCategoryNav) {
-      return null;
-    }
-    
     switch (activeCategory) {
       case 'online-quality-authority':
         return (
@@ -612,96 +605,54 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
-        </div>
-        </div>
-
-        {/* Executive Summary mit Accordions */}
-        <div style={{ marginBottom: '40px' }}>
-          <h3 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
-            Executive Summary
-          </h3>
-          
-          {/* Category Tiles */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {categories.map((category) => {
-              const IconComponent = category.icon;
-              return (
-                <div 
-                  key={category.id}
-                  className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:bg-gray-800/70 transition-colors cursor-pointer"
-                  onClick={() => {
-                    setActiveCategory(category.id);
-                    setShowCategoryNav(true);
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <IconComponent className="h-5 w-5 text-yellow-400" />
-                    <div 
-                      className="px-3 py-1 rounded-full text-white text-sm font-bold"
-                      style={{ backgroundColor: getScoreColor(category.score) }}
-                    >
-                      {Math.round(category.score)}%
-                    </div>
-                  </div>
-                  <h3 className="text-white font-medium text-sm mb-2">{category.title}</h3>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{ 
-                        width: `${Math.min(100, category.score)}%`,
-                        backgroundColor: getScoreColor(category.score)
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
           </div>
-          
-          <Accordion type="multiple" className="w-full space-y-4">
-            {categories.map((category) => {
-              const IconComponent = category.icon;
-              return (
-                <AccordionItem 
-                  key={category.id} 
-                  value={category.id} 
-                  className="border border-gray-700 rounded-lg bg-gray-800/50"
-                >
-                  <AccordionTrigger className="px-4 py-3 text-yellow-400 hover:text-yellow-300">
-                    <div className="flex items-center justify-between w-full mr-4">
-                      <div className="flex items-center gap-3">
-                        <IconComponent className="h-6 w-6" />
-                        <span className="font-semibold text-lg">{category.title}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={`px-4 py-2 rounded-full text-white text-lg font-bold ${
-                            category.score >= 90 ? 'bg-yellow-500' : 
-                            category.score >= 61 ? 'bg-green-500' : 'bg-red-500'
-                          }`}
-                        >
-                          {Math.round(category.score)} Punkte
-                        </div>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4">
-                    <div className="mt-4">
-                      {/* Hier wird der Category Content gerendert */}
-                      {renderActiveCategory && category.id === 'online-quality-authority' && (
-                        <div onClick={() => setActiveCategory(category.id)}>
-                          {renderActiveCategory()}
-                        </div>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
         </div>
 
-        {/* Overall Rating mit Accordions */}
+        {/* Category Navigation */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          marginBottom: '40px'
+        }}>
+          {categories.map((category) => {
+            const IconComponent = category.icon;
+            const isActive = activeCategory === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                style={{
+                  background: isActive ? '#facc15' : 'rgba(31, 41, 55, 0.8)',
+                  color: isActive ? '#000' : '#d1d5db',
+                  border: isActive ? '3px solid #facc15' : '2px solid rgba(75, 85, 99, 0.5)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                <div style={{ marginBottom: '12px' }}>
+                  <IconComponent style={{ width: '28px', height: '28px', margin: '0 auto' }} />
+                </div>
+                <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px' }}>
+                  {category.title}
+                </div>
+                <div style={{ 
+                  fontWeight: 'bold', 
+                  fontSize: '20px',
+                  color: isActive ? '#000' : getScoreColor(category.score)
+                }}>
+                  {Math.round(category.score)} Punkte
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Overall Rating */}
         <div style={{ marginBottom: '40px' }}>
           <OverallRating 
             businessData={businessData}
@@ -716,12 +667,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
-        {showCategoryNav && (
-          <div>
-            {renderActiveCategory()}
-          </div>
-        )}
+        {/* Active Category Content */}
+        <div>
+          {renderActiveCategory()}
+        </div>
       </div>
     </div>
   );
