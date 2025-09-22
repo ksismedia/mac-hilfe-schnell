@@ -56,6 +56,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   onBusinessDataChange,
   loadedAnalysisId 
 }) => {
+  console.log('🔵 SidebarAnalysisDashboard.tsx loaded!');
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
