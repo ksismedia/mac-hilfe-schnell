@@ -27,6 +27,23 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
+  console.log('🟢 OverallRating geladen! Daten:', { realData: !!realData, businessData: !!businessData });
+  
+  // SICHTBARER DEBUG TEST
+  if (!realData) {
+    return (
+      <div style={{ 
+        background: 'red', 
+        color: 'white', 
+        padding: '20px', 
+        fontSize: '24px', 
+        textAlign: 'center',
+        border: '5px solid yellow'
+      }}>
+        🚨 OverallRating: KEINE REALDATA! 🚨
+      </div>
+    );
+  }
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
