@@ -833,10 +833,12 @@ table tr {
     align-items: center;
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    user-select: none;
   }
 
   .category-header:hover {
     background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.2));
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
   }
 
   .category-header h3 {
@@ -844,12 +846,14 @@ table tr {
     color: #fbbf24;
     font-size: 1.1em;
     font-weight: 600;
+    cursor: pointer;
   }
 
   .toggle-icon {
     color: #fbbf24;
     font-size: 1.2em;
     transition: transform 0.3s ease;
+    user-select: none;
   }
 
   .category-header.collapsed .toggle-icon {
