@@ -103,8 +103,11 @@ export const calculateWorkplaceScore = (
   let kununuReviews = '';
   
   if (kununuDisabled) {
-    // Only use manual data if auto is disabled
-    kununuFound = manualWorkplaceData!.kununuFound;
+    // Only use manual data if auto is disabled - if no manual data entered, treat as not found
+    kununuFound = manualWorkplaceData!.kununuFound && (
+      manualWorkplaceData!.kununuRating !== '' || 
+      manualWorkplaceData!.kununuReviews !== ''
+    );
     kununuRating = manualWorkplaceData!.kununuRating;
     kununuReviews = manualWorkplaceData!.kununuReviews;
   } else if (isManualData) {
@@ -144,8 +147,11 @@ export const calculateWorkplaceScore = (
   let glassdoorReviews = '';
   
   if (glassdoorDisabled) {
-    // Only use manual data if auto is disabled
-    glassdoorFound = manualWorkplaceData!.glassdoorFound;
+    // Only use manual data if auto is disabled - if no manual data entered, treat as not found
+    glassdoorFound = manualWorkplaceData!.glassdoorFound && (
+      manualWorkplaceData!.glassdoorRating !== '' || 
+      manualWorkplaceData!.glassdoorReviews !== ''
+    );
     glassdoorRating = manualWorkplaceData!.glassdoorRating;
     glassdoorReviews = manualWorkplaceData!.glassdoorReviews;
   } else if (isManualData) {
