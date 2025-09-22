@@ -3722,7 +3722,7 @@ export const generateCustomerHTML = ({
       });
     </script>
     
-    <!-- Rechtlicher Disclaimer -->
+    <!-- Rechtlicher Disclaimer - UNNA Style Design v2.0 -->
     <div class="disclaimer">
       <h4>⚖️ Rechtlicher Hinweis</h4>
       <div class="disclaimer-content">

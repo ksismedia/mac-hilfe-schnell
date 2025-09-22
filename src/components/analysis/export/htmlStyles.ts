@@ -906,7 +906,7 @@ table tr {
     font-weight: normal !important;
   }
 
-  /* Disclaimer Styles - UNNA Style Design */
+  /* Disclaimer Styles - UNNA Style Design v2.0 */
   .disclaimer {
     background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.98) 100%);
     border: 1px solid rgba(251, 191, 36, 0.4);
