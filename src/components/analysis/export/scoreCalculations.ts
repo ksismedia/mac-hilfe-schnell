@@ -105,16 +105,8 @@ export const calculateWorkplaceScore = (
   
   if (kununuDisabled) {
     // Only use manual data if auto is disabled - if no manual data entered, treat as not found
-    kununuFound = manualWorkplaceData!.kununuFound && (
-      manualWorkplaceData!.kununuRating !== '' || 
-      manualWorkplaceData!.kununuReviews !== ''
-    );
-    console.log('🏢 Kununu disabled, checking manual data:', { 
-      kununuFound: manualWorkplaceData!.kununuFound, 
-      hasRating: manualWorkplaceData!.kununuRating !== '', 
-      hasReviews: manualWorkplaceData!.kununuReviews !== '',
-      finalKununuFound: kununuFound 
-    });
+    const hasManualKununuData = manualWorkplaceData!.kununuRating !== '' || manualWorkplaceData!.kununuReviews !== '';
+    kununuFound = manualWorkplaceData!.kununuFound && hasManualKununuData;
     kununuRating = manualWorkplaceData!.kununuRating;
     kununuReviews = manualWorkplaceData!.kununuReviews;
   } else if (isManualData) {
@@ -155,16 +147,8 @@ export const calculateWorkplaceScore = (
   
   if (glassdoorDisabled) {
     // Only use manual data if auto is disabled - if no manual data entered, treat as not found
-    glassdoorFound = manualWorkplaceData!.glassdoorFound && (
-      manualWorkplaceData!.glassdoorRating !== '' || 
-      manualWorkplaceData!.glassdoorReviews !== ''
-    );
-    console.log('🏢 Glassdoor disabled, checking manual data:', { 
-      glassdoorFound: manualWorkplaceData!.glassdoorFound, 
-      hasRating: manualWorkplaceData!.glassdoorRating !== '', 
-      hasReviews: manualWorkplaceData!.glassdoorReviews !== '',
-      finalGlassdoorFound: glassdoorFound 
-    });
+    const hasManualGlassdoorData = manualWorkplaceData!.glassdoorRating !== '' || manualWorkplaceData!.glassdoorReviews !== '';
+    glassdoorFound = manualWorkplaceData!.glassdoorFound && hasManualGlassdoorData;
     glassdoorRating = manualWorkplaceData!.glassdoorRating;
     glassdoorReviews = manualWorkplaceData!.glassdoorReviews;
   } else if (isManualData) {
