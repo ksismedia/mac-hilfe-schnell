@@ -1,13 +1,11 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
-import { getScoreTextDescription } from '@/utils/scoreTextUtils';
-import { Search, Zap, Share2, Users, Building2, HeartHandshake } from 'lucide-react';
+import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './export/scoreCalculations';
+import { Search, Zap, Share2, Users } from 'lucide-react';
 
 interface AccordionExecutiveSummaryProps {
   businessData: {
@@ -42,97 +40,63 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
   accessibilityData,
   manualCorporateIdentityData
 }) => {
-  // Calculate individual scores like in OverallRating
-  const keywords = realData.keywords || [];
-  const keywordsFoundCount = keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
-  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
+  // Calculate all category scores
+  const scores = {
+    onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
+      realData, keywordsScore, businessData, privacyData, accessibilityData, null, null
+    ),
+    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
+    socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
+    marketEnvironment: calculateMarketEnvironmentScore(
+      realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
+    ),
+    corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
+    serviceQuality: calculateServiceQualityScore(quoteResponseData)
+  };
 
-  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
-  const localSEOScore = calculateLocalSEOScore(businessData, realData);
-  const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
-  const workplaceScore = workplaceScoreRaw === -1 ? 0 : workplaceScoreRaw;
-  const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
-  const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
-
-  // Define 6 categories with their individual metrics (tiles)
   const categories = [
-    {
-      id: 'online-quality-authority',
-      title: 'Online-Qualität · Relevanz · Autorität',
-      icon: Search,
-      metrics: [
-        { name: 'SEO-Auswertung', score: realData.seo.score, subtitle: 'Suchmaschinenoptimierung' },
-        { name: 'Lokale SEO', score: localSEOScore, subtitle: 'Lokale Sichtbarkeit' },
-        { name: 'Keywords', score: currentKeywordsScore, subtitle: 'Keyword-Optimierung' },
-        { name: 'Barrierefreiheit', score: accessibilityData?.score || 0, subtitle: 'Accessibility Score' },
-        { name: 'Datenschutz', score: privacyData?.score || 0, subtitle: 'Privacy Compliance' },
-        { name: 'DSGVO', score: privacyData?.gdprScore || 0, subtitle: 'GDPR Compliance' },
-        { name: 'Impressum', score: realData.imprint.score, subtitle: 'Rechtssicherheit' }
-      ]
+    { 
+      id: 'online-quality-authority', 
+      title: 'Online-Qualität · Relevanz · Autorität', 
+      icon: Search, 
+      score: scores.onlineQualityAuthority
     },
-    {
-      id: 'website-performance-tech',
-      title: 'Webseiten-Performance & Technik',
-      icon: Zap,
-      metrics: [
-        { name: 'Performance', score: realData.performance.score, subtitle: `Ladezeit: ${realData.performance.loadTime || 'N/A'}` },
-        { name: 'Mobile', score: realData.mobile.overallScore, subtitle: 'Mobilfreundlichkeit' }
-      ]
+    { 
+      id: 'website-performance-tech', 
+      title: 'Webseiten-Performance & Technik', 
+      icon: Zap, 
+      score: scores.websitePerformanceTech
     },
-    {
-      id: 'social-media-performance',
-      title: 'Online-/Web-/Social-Media Performance',
-      icon: Share2,
-      metrics: [
-        { name: 'Social Media', score: socialMediaScore, subtitle: 'Social Media Präsenz' },
-        { name: 'Social Proof', score: realData.socialProof.overallScore, subtitle: 'Soziale Bestätigung' }
-      ]
+    { 
+      id: 'social-media-performance', 
+      title: 'Online-/Web-/Social-Media Performance', 
+      icon: Share2, 
+      score: scores.socialMediaPerformance
     },
-    {
-      id: 'market-environment',
-      title: 'Markt & Marktumfeld',
-      icon: Users,
-      metrics: [
-        { name: 'Google Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, subtitle: `${realData.reviews.google.rating || 0}/5 (${realData.reviews.google.count || 0} Bewertungen)` },
-        { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), subtitle: 'Wettbewerbsposition' },
-        ...(workplaceScoreRaw !== -1 ? [{ name: 'Arbeitsplatz-Bewertungen', score: workplaceScore, subtitle: 'Kununu/Glassdoor Bewertungen' }] : [])
-      ]
+    { 
+      id: 'market-environment', 
+      title: 'Markt & Marktumfeld', 
+      icon: Users, 
+      score: scores.marketEnvironment
     },
-    {
-      id: 'corporate-appearance',
-      title: 'Außendarstellung & Erscheinungsbild',
-      icon: Building2,
-      metrics: [
-        // Corporate Identity metrics would go here if available
-      ]
+    { 
+      id: 'corporate-appearance', 
+      title: 'Außendarstellung & Erscheinungsbild', 
+      icon: Users, 
+      score: scores.corporateAppearance
     },
-    {
-      id: 'service-quality',
-      title: 'Qualität · Service · Kundenorientierung',
-      icon: HeartHandshake,
-      metrics: [
-        ...(staffQualificationScore !== null ? [{ name: 'Personal-Qualifikation', score: staffQualificationScore, subtitle: 'Mitarbeiterqualifikation' }] : []),
-        ...(quoteResponseData && quoteResponseData.responseTime ? [{ name: 'Angebotsbearbeitung', score: quoteResponseScore, subtitle: 'Reaktionszeit auf Anfragen' }] : []),
-        ...(hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0) ? [{ name: 'Preispositionierung', score: calculateHourlyRateScore(hourlyRateData), subtitle: getScoreTextDescription(calculateHourlyRateScore(hourlyRateData), 'hourlyRate') }] : [])
-      ]
+    { 
+      id: 'service-quality', 
+      title: 'Qualität · Service · Kundenorientierung', 
+      icon: Users, 
+      score: scores.serviceQuality
     }
   ];
 
-  // Calculate category scores
-  const categoriesWithScores = categories.map(category => {
-    if (category.metrics.length === 0) return { ...category, score: 0 };
-    const totalMetrics = category.metrics.length;
-    const scoreSum = category.metrics.reduce((sum, metric) => sum + metric.score, 0);
-    const score = totalMetrics > 0 ? Math.round(scoreSum / totalMetrics) : 0;
-    return { ...category, score };
-  });
-
-  // Calculate overall score
-  const validCategories = categoriesWithScores.filter(cat => cat.metrics.length > 0);
-  const overallScore = validCategories.length > 0 
-    ? Math.round(validCategories.reduce((sum, cat) => sum + cat.score, 0) / validCategories.length) 
-    : 0;
+  // Calculate overall score using the same logic as OverallRating
+  const totalWeight = Object.values(scores).reduce((sum, score) => sum + (score > 0 ? 1 : 0), 0);
+  const weightedSum = Object.values(scores).reduce((sum, score) => sum + score, 0);
+  const overallScore = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-yellow-400';
@@ -145,22 +109,6 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
     if (score >= 61) return 'bg-green-500';
     return 'bg-red-500';
   };
-
-  // Score Card Component - Individual metric tiles
-  const ScoreCard = ({ title, score, subtitle }: { title: string; score: number; subtitle?: string }) => (
-    <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-white font-medium text-sm">{title}</h4>
-        <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(score)}`}>
-          {score > 0 ? `${Math.round(score)}%` : '—'}
-        </div>
-      </div>
-      {subtitle && (
-        <p className="text-gray-400 text-xs mb-2">{subtitle}</p>
-      )}
-      <Progress value={score > 0 ? score : 0} className="h-2" />
-    </div>
-  );
 
   return (
     <div className="w-full">
@@ -180,10 +128,8 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
 
       {/* Accordion Sections */}
       <Accordion type="multiple" className="w-full space-y-4">
-        {categoriesWithScores.map((category) => {
+        {categories.map((category) => {
           const IconComponent = category.icon;
-          if (category.metrics.length === 0) return null; // Skip empty categories
-          
           return (
             <AccordionItem 
               key={category.id} 
@@ -202,15 +148,22 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {category.metrics.map((metric, index) => (
-                    <ScoreCard
-                      key={index}
-                      title={metric.name}
-                      score={metric.score}
-                      subtitle={metric.subtitle}
+                <div className="p-4 bg-gray-900/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-white font-medium">{category.title}</h4>
+                    <div className={`text-2xl font-bold ${getScoreColor(category.score)}`}>
+                      {Math.round(category.score)} Punkte
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-3">
+                    <div 
+                      className={`h-3 rounded-full transition-all duration-500 ${getScoreBg(category.score)}`}
+                      style={{ width: `${Math.min(100, category.score)}%` }}
                     />
-                  ))}
+                  </div>
+                  <div className="mt-2 text-gray-400 text-sm">
+                    Bewertung: {category.score >= 90 ? 'Sehr gut' : category.score >= 61 ? 'Gut' : 'Verbesserung erforderlich'}
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
