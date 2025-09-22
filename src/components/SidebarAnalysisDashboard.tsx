@@ -78,6 +78,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     console.log('SidebarAnalysisDashboard - Received score from CompetitorAnalysis:', score);
   };
   
+  const [showCategoryDetails, setShowCategoryDetails] = useState(false);
   const { toast } = useToast();
 
   // Manual data management
@@ -316,6 +317,11 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   const renderActiveCategory = () => {
+    // Nur rendern wenn Details aktiviert sind
+    if (!showCategoryDetails) {
+      return null;
+    }
+    
     console.log('🔄 Rendering category:', activeCategory);
     switch (activeCategory) {
       case 'online-quality-authority':
@@ -590,10 +596,22 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Active Category Content */}
-        <div className="w-full">
-          {renderActiveCategory()}
+        {/* Category Details Toggle */}
+        <div className="w-full mb-6 text-center">
+          <button
+            onClick={() => setShowCategoryDetails(!showCategoryDetails)}
+            className="bg-gray-800 text-yellow-400 border-2 border-yellow-400 rounded-lg px-6 py-3 font-semibold hover:bg-gray-700 transition-colors"
+          >
+            {showCategoryDetails ? '📊 Details ausblenden' : '📊 Detailanalyse anzeigen'}
+          </button>
         </div>
+
+        {/* Active Category Content */}
+        {showCategoryDetails && (
+          <div className="w-full">
+            {renderActiveCategory()}
+          </div>
+        )}
       </div>
     </div>
   );
