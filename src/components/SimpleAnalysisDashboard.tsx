@@ -617,24 +617,29 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
         </div>
 
-        {/* Executive Summary mit Accordions */}
-        <div style={{ marginBottom: '40px' }}>
+        {/* 🔥 EXECUTIVE SUMMARY TEST 🔥 */}
+        <div className="mb-8 p-6 bg-red-500 border-4 border-yellow-400 rounded-lg">
+          <h2 className="text-2xl font-bold text-white mb-4">🔥 TEST: EXECUTIVE SUMMARY BEREICH</h2>
+          <p className="text-white">Dieser rote Kasten sollte sichtbar sein!</p>
+          <p className="text-gray-200">RealData vorhanden: {realData ? '✅ JA' : '❌ NEIN'}</p>
           {realData ? (
-            <OverallRating 
-              businessData={businessData}
-              realData={realData}
-              manualSocialData={manualSocialData}
-              keywordsScore={keywordsScore}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              hourlyRateData={hourlyRateData}
-              manualWorkplaceData={manualWorkplaceData}
-              competitorScore={currentOwnCompanyScore}
-            />
+            <div className="mt-4 p-4 bg-green-600 rounded">
+              <h3 className="text-white font-bold">OverallRating WIRD GERENDERT:</h3>
+              <OverallRating 
+                businessData={businessData}
+                realData={realData}
+                manualSocialData={manualSocialData}
+                keywordsScore={keywordsScore}
+                staffQualificationData={staffQualificationData}
+                quoteResponseData={quoteResponseData}
+                hourlyRateData={hourlyRateData}
+                manualWorkplaceData={manualWorkplaceData}
+                competitorScore={currentOwnCompanyScore}
+              />
+            </div>
           ) : (
-            <div className="text-white text-center p-8">
-              <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-              Lade Daten für Executive Summary...
+            <div className="mt-4 p-4 bg-orange-600 rounded text-white">
+              Warten auf RealData... (Analyse noch nicht gestartet)
             </div>
           )}
         </div>
