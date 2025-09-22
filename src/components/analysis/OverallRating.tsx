@@ -252,8 +252,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               className="border border-gray-700 rounded-lg bg-gray-800/50 p-6"
             >
               {/* Category Header */}
-              <div className="mb-16">
-                <div className="bg-gray-800 border-2 border-yellow-400/80 rounded-lg p-4 mb-12">
+              <div className="mb-[70px]">
+                <div className="bg-gray-800 border-2 border-yellow-400/80 rounded-lg p-4 mb-[70px]">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-black bg-yellow-400 px-4 py-2 rounded tracking-wide">{category.title}</h3>
                     <div className="flex items-center gap-2">
