@@ -75,11 +75,12 @@ section[class*="section"],
   box-sizing: border-box !important;
 }
 .score-card {
-  width: auto !important;
-  max-width: none !important;
+  width: 200px !important;
+  max-width: 200px !important;
   min-width: 200px !important;
-  flex: 1 !important;
+  flex: none !important;
   box-sizing: border-box !important;
+  margin: 0 auto !important;
 }
 .header { 
   text-align: center; 
@@ -121,6 +122,7 @@ section[class*="section"],
   margin-bottom: 40px; 
   max-width: 100%;
   overflow-x: hidden;
+  justify-content: center;
 }
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
@@ -130,8 +132,11 @@ section[class*="section"],
   text-align: center;
   transition: transform 0.3s ease;
   border: 1px solid rgba(251, 191, 36, 0.3);
-  max-width: 100%;
+  width: 200px;
+  max-width: 200px;
+  min-width: 200px;
   overflow-x: hidden;
+  margin: 0 auto;
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
@@ -865,6 +870,14 @@ table tr {
   .category-content .score-overview {
     padding: 20px;
     margin: 0;
+    justify-content: center;
+  }
+  
+  .category-content .score-card {
+    width: 200px !important;
+    max-width: 200px !important;
+    min-width: 200px !important;
+    margin: 0 auto !important;
   }
 
   /* Score Badge Farben für Wettbewerber */
