@@ -162,7 +162,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           updateSocialData,
           updateWorkplaceData,
           updateCorporateIdentityData,
-          setCurrentOwnCompanyScore
+          () => {}, // updateCompetitors - not used in this version
+          () => {}, // updateCompetitorServices - not used in this version
+          undefined, // updateCompanyServices - not used
+          undefined, // setManualKeywordData - not used
+          updateStaffQualificationData,
+          updateHourlyRateData,
+          updateQuoteResponseData
         );
         
         setIsLoadingFromStorage(false);
@@ -311,17 +317,29 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           <SEOContentCategory
             businessData={businessData}
             realData={realData}
-            manualSocialData={manualSocialData}
             keywordsScore={keywordsScore}
             onKeywordsScoreChange={handleKeywordsScoreChange}
+            onKeywordDataChange={handleKeywordDataChange}
             manualKeywordData={manualKeywordData}
-            handleKeywordDataChange={handleKeywordDataChange}
             privacyData={privacyData}
+            setPrivacyData={setPrivacyData}
             accessibilityData={accessibilityData}
-            manualContentData={manualContentData}
-            manualAccessibilityData={manualAccessibilityData}
-            manualBacklinkData={manualBacklinkData}
+            setAccessibilityData={setAccessibilityData}
+            manualImprintData={manualImprintData}
+            updateImprintData={updateImprintData}
+            manualCompetitors={[]}
+            competitorServices={{}}
+            removedMissingServices={[]}
+            companyServices={[]}
+            deletedCompetitors={new Set()}
+            updateCompetitors={() => {}}
+            updateCompetitorServices={() => {}}
+            addRemovedMissingService={() => {}}
+            updateCompanyServices={() => {}}
+            addDeletedCompetitor={() => {}}
+            removeDeletedCompetitor={() => {}}
             manualDataPrivacyData={manualDataPrivacyData}
+            updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
       case 'website-performance-tech':
@@ -337,6 +355,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             businessData={businessData}
             realData={realData}
             manualSocialData={manualSocialData}
+            updateSocialData={updateSocialData}
+            manualWorkplaceData={manualWorkplaceData}
+            updateWorkplaceData={updateWorkplaceData}
           />
         );
       case 'market-environment':
@@ -347,11 +368,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             businessData={businessData}
             realData={realData}
             staffQualificationData={staffQualificationData}
-            hourlyRateData={hourlyRateData}
+            updateStaffQualificationData={updateStaffQualificationData}
+            manualCorporateIdentityData={manualCorporateIdentityData}
+            updateCorporateIdentityData={updateCorporateIdentityData}
             quoteResponseData={quoteResponseData}
-            manualWorkplaceData={manualWorkplaceData}
-            competitorScore={currentOwnCompanyScore}
-            onCompetitorScoreChange={handleCompanyScoreChange}
+            updateQuoteResponseData={updateQuoteResponseData}
+            hourlyRateData={hourlyRateData}
+            updateHourlyRateData={updateHourlyRateData}
           />
         );
       default:
@@ -382,7 +405,21 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               businessData={businessData}
               realData={realData}
               manualCompetitors={[]}
-              competitorServices={[]}
+              competitorServices={{}}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              staffQualificationData={staffQualificationData}
+              hourlyRateData={hourlyRateData}
+              quoteResponseData={quoteResponseData}
+              manualContentData={manualContentData}
+              manualAccessibilityData={manualAccessibilityData}
+              manualBacklinkData={manualBacklinkData}
+              keywordScore={keywordsScore}
+              manualKeywordData={manualKeywordData}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
             />
             <SelectiveHTMLExport 
               businessData={businessData}
@@ -487,17 +524,29 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                           <SEOContentCategory
                             businessData={businessData}
                             realData={realData}
-                            manualSocialData={manualSocialData}
                             keywordsScore={keywordsScore}
                             onKeywordsScoreChange={handleKeywordsScoreChange}
+                            onKeywordDataChange={handleKeywordDataChange}
                             manualKeywordData={manualKeywordData}
-                            handleKeywordDataChange={handleKeywordDataChange}
                             privacyData={privacyData}
+                            setPrivacyData={setPrivacyData}
                             accessibilityData={accessibilityData}
-                            manualContentData={manualContentData}
-                            manualAccessibilityData={manualAccessibilityData}
-                            manualBacklinkData={manualBacklinkData}
+                            setAccessibilityData={setAccessibilityData}
+                            manualImprintData={manualImprintData}
+                            updateImprintData={updateImprintData}
+                            manualCompetitors={[]}
+                            competitorServices={{}}
+                            removedMissingServices={[]}
+                            companyServices={[]}
+                            deletedCompetitors={new Set()}
+                            updateCompetitors={() => {}}
+                            updateCompetitorServices={() => {}}
+                            addRemovedMissingService={() => {}}
+                            updateCompanyServices={() => {}}
+                            addDeletedCompetitor={() => {}}
+                            removeDeletedCompetitor={() => {}}
                             manualDataPrivacyData={manualDataPrivacyData}
+                            updateManualDataPrivacyData={updateManualDataPrivacyData}
                           />
                         )}
                         {category.id === 'website-performance-tech' && (
@@ -511,6 +560,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                             businessData={businessData}
                             realData={realData}
                             manualSocialData={manualSocialData}
+                            updateSocialData={updateSocialData}
+                            manualWorkplaceData={manualWorkplaceData}
+                            updateWorkplaceData={updateWorkplaceData}
                           />
                         )}
                         {(category.id === 'market-environment' || category.id === 'corporate-appearance' || category.id === 'service-quality') && (
@@ -518,11 +570,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                             businessData={businessData}
                             realData={realData}
                             staffQualificationData={staffQualificationData}
-                            hourlyRateData={hourlyRateData}
+                            updateStaffQualificationData={updateStaffQualificationData}
+                            manualCorporateIdentityData={manualCorporateIdentityData}
+                            updateCorporateIdentityData={updateCorporateIdentityData}
                             quoteResponseData={quoteResponseData}
-                            manualWorkplaceData={manualWorkplaceData}
-                            competitorScore={currentOwnCompanyScore}
-                            onCompetitorScoreChange={handleCompanyScoreChange}
+                            updateQuoteResponseData={updateQuoteResponseData}
+                            hourlyRateData={hourlyRateData}
+                            updateHourlyRateData={updateHourlyRateData}
                           />
                         )}
                       </div>
