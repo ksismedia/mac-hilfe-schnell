@@ -316,9 +316,16 @@ export const generateDataPrivacySection = (
                                 <span>DSGVO-Verstöße</span>
                                 <button class="percentage-btn" style="background-color: ${activeViolations.length === 0 ? '#10b981' : activeViolations.length <= 2 ? '#f59e0b' : '#ef4444'};">${activeViolations.length}</button>
                             </div>
+                            ${activeViolations.length > 0 ? `
+                            <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
+                                <strong>Erkannte Verstöße:</strong><br>
+                                ${activeViolations.map(v => `• ${v.category}: ${v.description.substring(0, 50)}...`).join('<br>')}
+                            </div>
+                            ` : `
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Kategorien:</strong> Einwilligung, Drittlandtransfer, Informationspflichten, Datenschutz, Sicherheit
                             </div>
+                            `}
                         </div>
                     </div>
 
@@ -345,20 +352,28 @@ export const generateDataPrivacySection = (
                 ${activeViolations.length > 0 ? `
                   <div class="metric-item" style="grid-column: 1 / -1;">
                     <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                      🚨 Identifizierte DSGVO-Verstöße (${activeViolations.length})
+                      🚨 Detaillierte DSGVO-Verstöße
                     </h4>
                     <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
                       <div style="display: grid; gap: 15px;">
-                        ${activeViolations.map(violation => `
+                        ${activeViolations.map((violation, index) => `
                           <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; display: block; margin-bottom: 5px;">
+                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; display: block; margin-bottom: 8px; font-size: 16px;">
                               ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🟢 Info'}: ${violation.category}
                             </strong>
-                            <p style="margin: 0; color: #374151; font-size: 14px;">${violation.description}</p>
-                            ${violation.article ? `<p style="margin: 5px 0 0 0; color: #6b7280; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
+                            <div style="margin-bottom: 8px; padding: 8px; background: #f8fafc; border-radius: 4px;">
+                              <strong style="color: #374151; font-size: 14px;">Problem:</strong>
+                              <p style="margin: 4px 0 0 0; color: #374151; font-size: 14px;">${violation.description}</p>
+                            </div>
+                            ${violation.article ? `
+                              <div style="margin-bottom: 8px; padding: 8px; background: #fef3c7; border-radius: 4px; border: 1px solid #f59e0b;">
+                                <p style="margin: 0; color: #92400e; font-size: 12px;"><strong>⚖️ Rechtsgrundlage:</strong> ${violation.article}</p>
+                              </div>
+                            ` : ''}
                             ${violation.recommendation ? `
-                              <div style="margin-top: 8px; padding: 8px; background: #f0f9ff; border-radius: 4px;">
-                                <p style="margin: 0; color: #047857; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
+                              <div style="margin-top: 8px; padding: 8px; background: #f0f9ff; border-radius: 4px; border: 1px solid #059669;">
+                                <strong style="color: #047857; font-size: 12px;">💡 Empfohlene Lösung:</strong>
+                                <p style="margin: 4px 0 0 0; color: #047857; font-size: 12px;">${violation.recommendation}</p>
                               </div>
                             ` : ''}
                           </div>
