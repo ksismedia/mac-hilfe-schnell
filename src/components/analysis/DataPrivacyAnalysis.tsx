@@ -396,7 +396,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
               {/* Datenschutz Section */}
               <Card className="border-blue-200">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-600">
+                  <CardTitle className="flex items-center gap-2 text-green-600">
                     <Shield className="h-5 w-5" />
                     Datenschutz & Technische Sicherheit
                   </CardTitle>
@@ -407,11 +407,11 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-blue-600 mb-2">
+                      <div className="text-3xl font-bold text-green-600 mb-2">
                         {privacyData.sslRating}
                       </div>
                       <div className="text-sm text-muted-foreground">SSL-Rating</div>
-                      <Lock className="h-4 w-4 mx-auto text-blue-600 mt-1" />
+                      <Lock className="h-4 w-4 mx-auto text-green-600 mt-1" />
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-warning mb-2">
@@ -433,7 +433,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>Cookie-Compliance (TTDSG)</span>
-                      <span className="text-blue-600">
+                      <span className="text-green-600">
                         {Math.round((privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100)}%
                       </span>
                     </div>
@@ -448,7 +448,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
 
                   {/* Technical Parameters */}
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-blue-700">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-700">
                       <Settings className="h-4 w-4" />
                       Untersuchte Datenschutz-Parameter
                     </h4>
@@ -543,7 +543,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                                   <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
                                   violation.severity === 'medium' ?
                                   <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
-                                  <Info className="h-4 w-4 text-blue-500 mt-1" />
+                                  <Info className="h-4 w-4 text-gray-500 mt-1" />
                                 }
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-2">
@@ -569,7 +569,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                                   )}
                                   {violation.recommendation && (
                                     <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
-                                      <p className="text-sm text-blue-800">
+                                      <p className="text-sm text-gray-600">
                                         <strong>Lösung:</strong> {violation.recommendation}
                                       </p>
                                     </div>
@@ -595,7 +595,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                                 <AlertTriangle className="h-4 w-4 text-red-500 mt-1" /> :
                                 violation.severity === 'medium' ?
                                 <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" /> :
-                                <Info className="h-4 w-4 text-blue-500 mt-1" />
+                                <Info className="h-4 w-4 text-gray-500 mt-1" />
                               }
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
@@ -621,7 +621,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                                 )}
                                 {violation.recommendation && (
                                   <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
-                                    <p className="text-sm text-blue-800">
+                                    <p className="text-sm text-gray-600">
                                       <strong>Lösung:</strong> {violation.recommendation}
                                     </p>
                                   </div>

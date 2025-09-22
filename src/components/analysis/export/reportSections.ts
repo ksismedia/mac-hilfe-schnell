@@ -350,15 +350,15 @@ export const generateDataPrivacySection = (
                     <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
                       <div style="display: grid; gap: 15px;">
                         ${activeViolations.map(violation => `
-                          <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; display: block; margin-bottom: 5px;">
-                              ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🔵 Info'}: ${violation.category}
+                          <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; display: block; margin-bottom: 5px;">
+                              ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🟢 Info'}: ${violation.category}
                             </strong>
-                            <p style="margin: 0; color: #7f1d1d; font-size: 14px;">${violation.description}</p>
-                            ${violation.article ? `<p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
+                            <p style="margin: 0; color: #374151; font-size: 14px;">${violation.description}</p>
+                            ${violation.article ? `<p style="margin: 5px 0 0 0; color: #6b7280; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
                             ${violation.recommendation ? `
-                              <div style="margin-top: 8px; padding: 8px; background: #e0f2fe; border-radius: 4px;">
-                                <p style="margin: 0; color: #0277bd; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
+                              <div style="margin-top: 8px; padding: 8px; background: #f0f9ff; border-radius: 4px;">
+                                <p style="margin: 0; color: #047857; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
                               </div>
                             ` : ''}
                           </div>
@@ -366,8 +366,8 @@ export const generateDataPrivacySection = (
                       </div>
                       ${activeViolations.filter(v => v.severity === 'high').length > 0 ? `
                         <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
-                          <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
-                          <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
+                          <strong style="color: #374151; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
+                          <p style="margin: 0; color: #374151; font-size: 14px;">
                             Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
                           </p>
                         </div>
