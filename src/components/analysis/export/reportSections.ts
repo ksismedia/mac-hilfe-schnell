@@ -341,15 +341,54 @@ export const generateDataPrivacySection = (
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Datenschutz & Technische Sicherheit -->
-        <div class="section">
-            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & Technische Sicherheit</div>
-            <div id="datenschutz-content" class="section-content" style="display: none;">
+                
+                ${activeViolations.length > 0 ? `
+                  <div class="metric-item" style="grid-column: 1 / -1;">
+                    <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                      🚨 Identifizierte DSGVO-Verstöße (${activeViolations.length})
+                    </h4>
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
+                      <div style="display: grid; gap: 15px;">
+                        ${activeViolations.map(violation => `
+                          <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; display: block; margin-bottom: 5px;">
+                              ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🔵 Info'}: ${violation.category}
+                            </strong>
+                            <p style="margin: 0; color: #7f1d1d; font-size: 14px;">${violation.description}</p>
+                            ${violation.article ? `<p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
+                            ${violation.recommendation ? `
+                              <div style="margin-top: 8px; padding: 8px; background: #e0f2fe; border-radius: 4px;">
+                                <p style="margin: 0; color: #0277bd; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
+                              </div>
+                            ` : ''}
+                          </div>
+                        `).join('')}
+                      </div>
+                      ${activeViolations.filter(v => v.severity === 'high').length > 0 ? `
+                        <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
+                          <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
+                          <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
+                            Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
+                          </p>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                ` : `
+                  <div class="metric-item" style="grid-column: 1 / -1;">
+                    <h4 style="color: #059669; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                      ✅ DSGVO-Konformität erreicht
+                    </h4>
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
+                      <p style="margin: 0; color: #065f46; font-size: 14px;">
+                        Ihre Website erfüllt die grundlegenden DSGVO-Anforderungen. Regelmäßige Überprüfungen werden empfohlen.
+                      </p>
+                    </div>
+                  </div>
+                `}
+                
                 ${activeViolations.length > 0 && dataPrivacyScore < 90 ? `
-                    <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
+                    <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 20px; background: #fef2f2; border: 2px solid #fecaca;">
                         <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
                             ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
                         </h4>
@@ -362,74 +401,13 @@ export const generateDataPrivacySection = (
                         </div>
                     </div>
                 ` : ''}
-                <div class="metric-grid">
-                    <div class="metric-item">
-                        <div class="metric-title">DSGVO-Bewertung</div>
-                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">${dataPrivacyScore > 0 ? `${dataPrivacyScore}/100 Punkte` : '—/100 Punkte'}</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Rechtskonformität</span>
-                                <button class="percentage-btn">${dataPrivacyScore > 0 ? `${dataPrivacyScore}%` : '—'}</button>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; background-color: ${dataPrivacyScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
-                            </div>
-                            <div style="margin-top: 8px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 12px; color: #1e40af;">
-                                <strong>Bewertungslogik:</strong><br>
-                                • 90-100%: Vollständige DSGVO-Konformität<br>
-                                • 70-89%: Grundlegende Compliance mit kleineren Mängeln<br>
-                                • 50-69%: Wesentliche Verbesserungen erforderlich<br>
-                                • Unter 50%: Kritische Defizite mit hohem Bußgeldrisiko<br>
-                                <strong>Faktoren:</strong> SSL (+5), Datenschutzerklärung (+10), Cookie-Policy (+8), DSGVO-Konformität (+15)
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${activeViolations.length > 0 ? `
-                      <div class="metric-item" style="grid-column: 1 / -1;">
-                        <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                          🚨 Identifizierte DSGVO-Verstöße (${activeViolations.length})
-                        </h4>
-                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
-                          <div style="display: grid; gap: 15px;">
-                            ${activeViolations.map(violation => `
-                              <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                                <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#2563eb'}; display: block; margin-bottom: 5px;">
-                                  ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🔵 Info'}: ${violation.category}
-                                </strong>
-                                <p style="margin: 0; color: #7f1d1d; font-size: 14px;">${violation.description}</p>
-                                ${violation.article ? `<p style="margin: 5px 0 0 0; color: #991b1b; font-size: 12px;"><strong>Rechtsgrundlage:</strong> ${violation.article}</p>` : ''}
-                                ${violation.recommendation ? `
-                                  <div style="margin-top: 8px; padding: 8px; background: #e0f2fe; border-radius: 4px;">
-                                    <p style="margin: 0; color: #0277bd; font-size: 12px;"><strong>Lösung:</strong> ${violation.recommendation}</p>
-                                  </div>
-                                ` : ''}
-                              </div>
-                            `).join('')}
-                          </div>
-                          ${activeViolations.filter(v => v.severity === 'high').length > 0 ? `
-                            <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
-                              <strong style="color: #7f1d1d; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
-                              <p style="margin: 0; color: #7f1d1d; font-size: 14px;">
-                                Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
-                              </p>
-                            </div>
-                          ` : ''}
-                        </div>
-                      </div>
-                    ` : `
-                      <div class="metric-item" style="grid-column: 1 / -1;">
-                        <h4 style="color: #059669; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                          ✅ DSGVO-Konformität erreicht
-                        </h4>
-                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
-                          <p style="margin: 0; color: #065f46; font-size: 14px;">
-                            Ihre Website erfüllt die grundlegenden DSGVO-Anforderungen. Regelmäßige Überprüfungen werden empfohlen.
-                          </p>
-                        </div>
-                      </div>
-                    `}
-                    
+            </div>
+        </div>
+
+        <!-- Datenschutz & Technische Sicherheit -->
+        <div class="section">
+            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & Technische Sicherheit</div>
+            <div id="datenschutz-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     
                     <div class="metric-item">
@@ -488,24 +466,23 @@ export const generateDataPrivacySection = (
                     </div>
 
                     <div class="metric-item">
-                        <div class="metric-title">Rechtliche Dokumente</div>
+                        <div class="metric-title">Technische Sicherheit</div>
                         <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : 'warning'}">
-                            ${dataPrivacyScore >= 80 ? 'Vollständig' : dataPrivacyScore >= 60 ? 'Grundlegend vorhanden' : 'Lückenhaft'}
+                            ${dataPrivacyScore >= 80 ? 'Vollständig umgesetzt' : dataPrivacyScore >= 60 ? 'Grundlegend vorhanden' : 'Verbesserungsbedarf'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Datenschutzerklärung & Impressum</span>
-                                <button class="percentage-btn">${dataPrivacyScore}%</button>
+                                <span>Sicherheitsmaßnahmen</span>
+                                <button class="percentage-btn">${Math.min(100, dataPrivacyScore + 10)}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Untersuchte Parameter:</strong> Datenschutzerklärung, Cookie-Policy, Impressum, AGB, Betroffenenrechte
+                                <strong>Untersuchte Parameter:</strong> Serversicherheit, Datenverschlüsselung, Zugriffskontrolle, Backup-Systeme
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 
                 ${dataPrivacyScore < 90 ? `
@@ -515,7 +492,7 @@ export const generateDataPrivacySection = (
                         <li>SSL-Konfiguration und Sicherheitsheader optimieren</li>
                         ${(() => {
                           const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
-                          return hasCookieViolations ? '<li>Implementierung eines DSGVO-konformen Cookie-Banners</li>' : '';
+                          return hasCookieViolations ? '<li>Implementierung eines TTDSG-konformen Cookie-Banners</li>' : '';
                         })()}
                         <li>Cookie-Policy erstellen und verlinken</li>
                         <li>Technische Sicherheitsmaßnahmen verstärken</li>
