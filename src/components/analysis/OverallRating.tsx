@@ -252,16 +252,18 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               className="border border-gray-700 rounded-lg bg-gray-800/50 p-6"
             >
               {/* Category Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-2xl font-bold text-yellow-400 tracking-wide">{category.title}</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-yellow-400 border-yellow-400">
-                    {category.metrics.length} Bereiche
-                  </Badge>
-                  <div className={`px-4 py-2 rounded-full text-white text-lg font-bold ${getScoreBg(category.score)}`}>
-                    {Math.round(category.score)}%
+              <div className="mb-8">
+                <div className="bg-gray-800 border-2 border-yellow-400/80 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-black bg-yellow-400 px-4 py-2 rounded tracking-wide">{category.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-yellow-400 border-yellow-400">
+                        {category.metrics.length} Bereiche
+                      </Badge>
+                      <div className={`px-4 py-2 rounded-full text-white text-lg font-bold ${getScoreBg(category.score)}`}>
+                        {Math.round(category.score)}%
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
