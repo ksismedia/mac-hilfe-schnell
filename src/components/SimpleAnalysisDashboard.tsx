@@ -691,7 +691,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Active Category Content */}
+        {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
         {showCategoryNav && (
           <div>
             {renderActiveCategory()}
