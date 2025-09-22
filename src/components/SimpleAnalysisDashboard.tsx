@@ -617,17 +617,24 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
         {/* Executive Summary mit Accordions */}
         <div style={{ marginBottom: '40px' }}>
-          <AccordionExecutiveSummary 
-            businessData={businessData}
-            realData={realData}
-            manualSocialData={manualSocialData}
-            keywordsScore={keywordsScore}
-            staffQualificationData={staffQualificationData}
-            quoteResponseData={quoteResponseData}
-            hourlyRateData={hourlyRateData}
-            manualWorkplaceData={manualWorkplaceData}
-            competitorScore={currentOwnCompanyScore}
-          />
+          {realData ? (
+            <AccordionExecutiveSummary 
+              businessData={businessData}
+              realData={realData}
+              manualSocialData={manualSocialData}
+              keywordsScore={keywordsScore}
+              staffQualificationData={staffQualificationData}
+              quoteResponseData={quoteResponseData}
+              hourlyRateData={hourlyRateData}
+              manualWorkplaceData={manualWorkplaceData}
+              competitorScore={currentOwnCompanyScore}
+            />
+          ) : (
+            <div className="text-white text-center p-8">
+              <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+              Lade Daten für Executive Summary...
+            </div>
+          )}
         </div>
 
         {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
