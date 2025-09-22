@@ -49,41 +49,15 @@ const Index = () => {
   useEffect(() => {
     console.log('Setting up auth listeners...');
     
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, 'Session exists:', !!session, 'User ID:', session?.user?.id);
       setUser(session?.user ?? null);
-      
-      // Test database connection when user changes
-      if (session?.user) {
-        try {
-          const { data: testData, error: testError } = await supabase
-            .from('saved_analyses')
-            .select('COUNT(*)')
-            .limit(1);
-          console.log('Database connection test:', { data: testData, error: testError });
-        } catch (error) {
-          console.error('Database connection test failed:', error);
-        }
-      }
     });
 
     // Immediate session check
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session check - Session exists:', !!session, 'User ID:', session?.user?.id);
       setUser(session?.user ?? null);
-      
-      // Test database connection on initial load
-      if (session?.user) {
-        try {
-          const { data: testData, error: testError } = await supabase
-            .from('saved_analyses')
-            .select('COUNT(*)')
-            .limit(1);
-          console.log('Initial database connection test:', { data: testData, error: testError });
-        } catch (error) {
-          console.error('Initial database connection test failed:', error);
-        }
-      }
     });
 
     return () => subscription.unsubscribe();

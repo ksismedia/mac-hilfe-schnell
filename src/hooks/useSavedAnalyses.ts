@@ -164,23 +164,13 @@ export const useSavedAnalyses = () => {
   const loadAnalysesFromDatabase = async () => {
     try {
       console.log('Loading from Supabase database...');
-      console.log('Current user ID for database query:', user?.id);
       
       const { data, error } = await supabase
         .from('saved_analyses')
         .select('*')
         .order('saved_at', { ascending: false });
 
-      console.log('Database query result:', { 
-        data: data ? `${data.length} analyses` : 'null', 
-        error: error ? error.message : 'none',
-        userExists: !!user
-      });
-
-      if (error) {
-        console.error('Database error details:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       const analyses: SavedAnalysis[] = data.map(item => ({
         id: item.id,
@@ -199,7 +189,6 @@ export const useSavedAnalyses = () => {
       setSavedAnalyses(analyses);
     } catch (error) {
       console.error('Database error:', error);
-      console.log('Falling back to localStorage due to database error');
       loadAnalysesFromLocalStorage();
     }
   };
@@ -344,16 +333,6 @@ export const useSavedAnalyses = () => {
     if (user) {
       try {
         console.log('Inserting into Supabase database...');
-        console.log('User session info:', { id: user.id, email: user.email });
-        
-        // Test auth status before inserting
-        const { data: authTest, error: authError } = await supabase
-          .from('saved_analyses')
-          .select('count')
-          .limit(1);
-        
-        console.log('Auth test before insert:', { authTest, authError });
-        
         const { data, error } = await supabase
           .from('saved_analyses')
           .insert({
@@ -369,12 +348,6 @@ export const useSavedAnalyses = () => {
         console.log('Database insert result:', { data, error });
         if (error) {
           console.error('Database insert error:', error);
-          console.error('Error details:', {
-            message: error.message,
-            code: error.code,
-            hint: error.hint,
-            details: error.details
-          });
           throw error;
         }
 

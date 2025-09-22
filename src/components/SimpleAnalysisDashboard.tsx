@@ -621,6 +621,43 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             Executive Summary
           </h3>
           
+          {/* Category Tiles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <div 
+                  key={category.id}
+                  className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:bg-gray-800/70 transition-colors cursor-pointer"
+                  onClick={() => {
+                    setActiveCategory(category.id);
+                    setShowCategoryNav(true);
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <IconComponent className="h-5 w-5 text-yellow-400" />
+                    <div 
+                      className="px-3 py-1 rounded-full text-white text-sm font-bold"
+                      style={{ backgroundColor: getScoreColor(category.score) }}
+                    >
+                      {Math.round(category.score)}%
+                    </div>
+                  </div>
+                  <h3 className="text-white font-medium text-sm mb-2">{category.title}</h3>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.min(100, category.score)}%`,
+                        backgroundColor: getScoreColor(category.score)
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
           <Accordion type="multiple" className="w-full space-y-4">
             {categories.map((category) => {
               const IconComponent = category.icon;
@@ -650,137 +687,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-4">
                     <div className="mt-4">
-                      {/* Render category-specific tiles based on category type */}
-                      {category.id === 'online-quality-authority' && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${keywordsScore >= 70 ? 'text-green-400' : keywordsScore >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {keywordsScore || 0}%
-                            </div>
-                            <div className="text-white text-sm">SEO-Auswertung</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${realData?.seo?.score >= 70 ? 'text-green-400' : realData?.seo?.score >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {realData?.seo?.score || 0}%
-                            </div>
-                            <div className="text-white text-sm">Lokale SEO</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(accessibilityData?.overallScore || 0) >= 70 ? 'text-green-400' : (accessibilityData?.overallScore || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(accessibilityData?.overallScore || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Barrierefreiheit</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(privacyData?.overallScore || 0) >= 70 ? 'text-green-400' : (privacyData?.overallScore || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(privacyData?.overallScore || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Datenschutz</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${75 >= 70 ? 'text-green-400' : 75 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              75%
-                            </div>
-                            <div className="text-white text-sm">DSGVO</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(realData?.imprint?.score || 0) >= 70 ? 'text-green-400' : (realData?.imprint?.score || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(realData?.imprint?.score || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Impressum</div>
-                          </div>
-                        </div>
-                      )}
-                      {category.id === 'website-performance-tech' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(realData?.performance?.score || 0) >= 70 ? 'text-green-400' : (realData?.performance?.score || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(realData?.performance?.score || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Website Performance</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(realData?.mobile?.overallScore || 0) >= 70 ? 'text-green-400' : (realData?.mobile?.overallScore || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(realData?.mobile?.overallScore || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Mobile Optimierung</div>
-                          </div>
-                        </div>
-                      )}
-                      {category.id === 'social-media-performance' && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(realData?.socialMedia?.overallScore || 0) >= 70 ? 'text-green-400' : (realData?.socialMedia?.overallScore || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(realData?.socialMedia?.overallScore || 0)}%
-                            </div>
-                            <div className="text-white text-sm">Social Media Gesamt</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${50 >= 70 ? 'text-green-400' : 50 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              50%
-                            </div>
-                            <div className="text-white text-sm">Facebook</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${40 >= 70 ? 'text-green-400' : 40 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              40%
-                            </div>
-                            <div className="text-white text-sm">Instagram</div>
-                          </div>
-                        </div>
-                      )}
-                      {category.id === 'market-environment' && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${80 >= 70 ? 'text-green-400' : 80 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              80%
-                            </div>
-                            <div className="text-white text-sm">Stundensatz</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${75 >= 70 ? 'text-green-400' : 75 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              75%
-                            </div>
-                            <div className="text-white text-sm">Personal Qualifikation</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${(competitorScore || 65) >= 70 ? 'text-green-400' : (competitorScore || 65) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {Math.round(competitorScore || 65)}%
-                            </div>
-                            <div className="text-white text-sm">Wettbewerb</div>
-                          </div>
-                        </div>
-                      )}
-                      {category.id === 'corporate-appearance' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${70 >= 70 ? 'text-green-400' : 70 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              70%
-                            </div>
-                            <div className="text-white text-sm">Corporate Identity</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className="text-3xl font-bold mb-2 text-gray-400">
-                              -
-                            </div>
-                            <div className="text-white text-sm">Markenwahrnehmung</div>
-                          </div>
-                        </div>
-                      )}
-                      {category.id === 'service-quality' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className={`text-3xl font-bold mb-2 ${85 >= 70 ? 'text-green-400' : 85 >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-                              85%
-                            </div>
-                            <div className="text-white text-sm">Angebotserstellung</div>
-                          </div>
-                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4">
-                            <div className="text-3xl font-bold mb-2 text-gray-400">
-                              -
-                            </div>
-                            <div className="text-white text-sm">Kundenzufriedenheit</div>
-                          </div>
+                      {/* Hier wird der Category Content gerendert */}
+                      {renderActiveCategory && category.id === 'online-quality-authority' && (
+                        <div onClick={() => setActiveCategory(category.id)}>
+                          {renderActiveCategory()}
                         </div>
                       )}
                     </div>
