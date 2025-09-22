@@ -73,6 +73,7 @@ section[class*="section"],
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+  justify-content: flex-start !important;
 }
 .score-card {
   width: 200px !important;
@@ -80,7 +81,7 @@ section[class*="section"],
   min-width: 200px !important;
   flex: none !important;
   box-sizing: border-box !important;
-  margin: 0 auto !important;
+  margin: 0 !important;
 }
 .header { 
   text-align: center; 
@@ -122,7 +123,7 @@ section[class*="section"],
   margin-bottom: 40px; 
   max-width: 100%;
   overflow-x: hidden;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
@@ -136,7 +137,7 @@ section[class*="section"],
   max-width: 200px;
   min-width: 200px;
   overflow-x: hidden;
-  margin: 0 auto;
+  margin: 0;
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
