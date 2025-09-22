@@ -55,6 +55,28 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
+  // SUPER SICHTBARER TEST
+  return (
+    <div style={{ 
+      background: 'red', 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      border: '20px solid yellow'
+    }}>
+      <h1 style={{ 
+        color: 'white', 
+        fontSize: '72px', 
+        textAlign: 'center',
+        backgroundColor: 'blue',
+        padding: '50px',
+        border: '10px solid green'
+      }}>
+        🚨🚨🚨 SIMPLE ANALYSIS DASHBOARD! 🚨🚨🚨
+      </h1>
+    </div>
+  );
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
