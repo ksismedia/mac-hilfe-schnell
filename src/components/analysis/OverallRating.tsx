@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -7,7 +7,7 @@ import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRate
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
-import { Search, Zap, Share2, Users, Building2, HeartHandshake, ChevronRight, ChevronDown } from 'lucide-react';
+import { Search, Zap, Share2, Users, Building2, HeartHandshake } from 'lucide-react';
 
 interface OverallRatingProps {
   businessData: {
@@ -26,8 +26,6 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
-  // State für Accordion-Funktionalität
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -201,14 +199,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return { ...category, score };
   });
 
-  // Toggle function für Accordion
-  const toggleCategory = (categoryId: string) => {
-    setOpenCategories(prev => ({
-      ...prev,
-      [categoryId]: !prev[categoryId]
-    }));
-  };
-
   return (
     <div className="w-full">
       {/* Overall Score Header */}
@@ -251,28 +241,19 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
         </CardContent>
       </Card>
 
-      {/* Categories mit Accordion-Funktionalität */}
+      {/* Categories - Permanent sichtbar */}
       <div className="w-full space-y-6">
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
-          const isOpen = openCategories[category.id] || false;
           
           return (
             <div 
               key={category.id} 
-              className="border border-gray-700 rounded-lg bg-gray-800/50 overflow-hidden"
+              className="border border-gray-700 rounded-lg bg-gray-800/50 p-6"
             >
-              {/* Category Header - Clickable */}
-              <div 
-                className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-700/50 transition-colors"
-                onClick={() => toggleCategory(category.id)}
-              >
+              {/* Category Header */}
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  {isOpen ? (
-                    <ChevronDown className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <ChevronRight className="h-5 w-5 text-yellow-400" />
-                  )}
                   <IconComponent className="h-6 w-6 text-yellow-400" />
                   <h3 className="text-xl font-semibold text-yellow-400">{category.title}</h3>
                 </div>
@@ -286,20 +267,18 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                 </div>
               </div>
               
-              {/* Category Content - Conditional */}
-              {isOpen && (
-                <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {category.metrics.map((metric, index) => (
-                    <ScoreCard
-                      key={index}
-                      title={metric.name}
-                      score={metric.score}
-                      subtitle={metric.subtitle}
-                      weight={metric.weight}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Category Content - Always visible */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {category.metrics.map((metric, index) => (
+                  <ScoreCard
+                    key={index}
+                    title={metric.name}
+                    score={metric.score}
+                    subtitle={metric.subtitle}
+                    weight={metric.weight}
+                  />
+                ))}
+              </div>
             </div>
           );
         })}
