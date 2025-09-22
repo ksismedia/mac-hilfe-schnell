@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -7,7 +7,7 @@ import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRate
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
-import { Search, Zap, Share2, Users, Building2, HeartHandshake, ChevronRight, ChevronDown } from 'lucide-react';
+import { Search, Zap, Share2, Users, Building2, HeartHandshake } from 'lucide-react';
 
 interface OverallRatingProps {
   businessData: {
@@ -26,8 +26,6 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
-  // State für Accordion-Funktionalität
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -101,38 +99,26 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return 'destructive';
   };
 
-  // Toggle function für Kategorien
-  const toggleCategory = (categoryId: string) => {
-    console.log('toggleCategory called with:', categoryId);
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      console.log('Current expanded categories:', Array.from(prev));
-      if (newSet.has(categoryId)) {
-        newSet.delete(categoryId);
-        console.log('Removing category:', categoryId);
-      } else {
-        newSet.add(categoryId);
-        console.log('Adding category:', categoryId);
-      }
-      console.log('New expanded categories:', Array.from(newSet));
-      return newSet;
-    });
-  };
-
-  // Score Card Component - kompakte Kacheln wie im Bild
-  const ScoreCard = ({ title, score, subtitle }: { title: string; score: number; subtitle?: string }) => (
-    <div className={`p-4 rounded-lg border-2 ${getScoreBg(score)} text-center min-h-[100px] flex flex-col justify-center`}>
-      <div className={`text-2xl font-bold text-white mb-1`}>
-        {score > 0 ? `${Math.round(score)}%` : '—'}
-      </div>
-      <div className="text-white text-sm font-medium leading-tight">
-        {title}
+  // Score Card Component
+  const ScoreCard = ({ title, score, subtitle, weight }: { title: string; score: number; subtitle?: string; weight?: number }) => (
+    <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <h4 className="text-white font-medium text-sm">{title}</h4>
+          {weight && (
+            <Badge variant="outline" className="text-xs">
+              {weight}% Gewichtung
+            </Badge>
+          )}
+        </div>
+        <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(score)}`}>
+          {score > 0 ? `${Math.round(score)}%` : '—'}
+        </div>
       </div>
       {subtitle && (
-        <div className="text-white/80 text-xs mt-1">
-          {subtitle}
-        </div>
+        <p className="text-gray-400 text-xs">{subtitle}</p>
       )}
+      <Progress value={score > 0 ? score : 0} className="h-2 mt-2" />
     </div>
   );
 
@@ -213,8 +199,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return { ...category, score };
   });
 
-  console.log('OverallRating is rendering');
-  
   return (
     <div className="w-full">
       {/* Overall Score Header */}
@@ -257,57 +241,44 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
         </CardContent>
       </Card>
 
-      {/* Categories - Accordion Style */}
-      <div className="w-full space-y-2">
+      {/* Categories - Permanent sichtbar */}
+      <div className="w-full space-y-6">
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
-          const isExpanded = expandedCategories.has(category.id);
-          console.log(`Category ${category.id} - isExpanded:`, isExpanded);
           
           return (
             <div 
               key={category.id} 
-              className="border border-gray-700 rounded-lg bg-gray-800/50 overflow-hidden"
+              className="border border-gray-700 rounded-lg bg-gray-800/50 p-6"
             >
-              {/* Category Header - Clickable */}
-              <div 
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-700/30 transition-colors"
-                onClick={() => toggleCategory(category.id)}
-              >
+              {/* Category Header */}
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  {isExpanded ? (
-                    <ChevronDown className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <ChevronRight className="h-5 w-5 text-yellow-400" />
-                  )}
                   <IconComponent className="h-6 w-6 text-yellow-400" />
-                  <h3 className="text-lg font-semibold text-yellow-400">{category.title}</h3>
+                  <h3 className="text-xl font-semibold text-yellow-400">{category.title}</h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-yellow-400 border-yellow-400 text-xs">
+                  <Badge variant="outline" className="text-yellow-400 border-yellow-400">
                     {category.metrics.length} Bereiche
                   </Badge>
-                  <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(category.score)}`}>
+                  <div className={`px-4 py-2 rounded-full text-white text-lg font-bold ${getScoreBg(category.score)}`}>
                     {Math.round(category.score)}%
                   </div>
                 </div>
               </div>
               
-              {/* Category Content - Collapsible */}
-              {isExpanded && (
-                <div className="px-4 pb-4">
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {category.metrics.map((metric, index) => (
-                      <ScoreCard
-                        key={index}
-                        title={metric.name}
-                        score={metric.score}
-                        subtitle={metric.subtitle}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Category Content - Always visible */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {category.metrics.map((metric, index) => (
+                  <ScoreCard
+                    key={index}
+                    title={metric.name}
+                    score={metric.score}
+                    subtitle={metric.subtitle}
+                    weight={metric.weight}
+                  />
+                ))}
+              </div>
             </div>
           );
         })}
