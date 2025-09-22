@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -7,7 +7,7 @@ import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRate
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
-import { Search, Zap, Share2, Users, Building2, HeartHandshake, ChevronDown, ChevronRight } from 'lucide-react';
+import { Search, Zap, Share2, Users, Building2, HeartHandshake } from 'lucide-react';
 
 interface OverallRatingProps {
   businessData: {
@@ -26,16 +26,6 @@ interface OverallRatingProps {
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
-  // State für Aufklappen/Zuklappen
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
-
-  const toggleCategory = (categoryId: string) => {
-    setOpenCategories(prev => ({
-      ...prev,
-      [categoryId]: !prev[categoryId]
-    }));
-  };
-
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -227,61 +217,68 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
             <Badge variant={getScoreBadge(overallScore)} className="text-lg px-4 py-2">
               {overallScore}/100 Punkte
             </Badge>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-700">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-400">
+                  {metrics.filter(m => m.score >= 90).length}
+                </div>
+                <div className="text-sm text-gray-400">Sehr gut (≥90%)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-500">
+                  {metrics.filter(m => m.score >= 61 && m.score < 90).length}
+                </div>
+                <div className="text-sm text-gray-400">Gut (61-89%)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-500">
+                  {metrics.filter(m => m.score < 61).length}
+                </div>
+                <div className="text-sm text-gray-400">Verbesserung nötig (&lt;61%)</div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Custom Accordion Categories mit useState */}
-      <div className="w-full space-y-4">
+      {/* Categories - Permanent sichtbar */}
+      <div className="w-full space-y-6">
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
-          const isOpen = openCategories[category.id] || false;
           
           return (
             <div 
               key={category.id} 
-              className="border border-gray-700 rounded-lg bg-gray-800/50"
+              className="border border-gray-700 rounded-lg bg-gray-800/50 p-6"
             >
-              {/* Klickbarer Header */}
-              <div 
-                className="px-4 py-3 text-yellow-400 hover:text-yellow-300 cursor-pointer flex items-center justify-between"
-                onClick={() => toggleCategory(category.id)}
-              >
+              {/* Category Header */}
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <IconComponent className="h-5 w-5" />
-                  <span className="font-semibold">{category.title}</span>
+                  <IconComponent className="h-6 w-6 text-yellow-400" />
+                  <h3 className="text-xl font-semibold text-yellow-400">{category.title}</h3>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="text-yellow-400 border-yellow-400">
                     {category.metrics.length} Bereiche
                   </Badge>
-                  <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(category.score)}`}>
+                  <div className={`px-4 py-2 rounded-full text-white text-lg font-bold ${getScoreBg(category.score)}`}>
                     {Math.round(category.score)}%
                   </div>
-                  {isOpen ? (
-                    <ChevronDown className="h-4 w-4 text-yellow-400" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-yellow-400" />
-                  )}
                 </div>
               </div>
               
-              {/* Aufklappbarer Inhalt */}
-              {isOpen && (
-                <div className="px-4 pb-4 border-t border-gray-700">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    {category.metrics.map((metric, index) => (
-                      <ScoreCard
-                        key={index}
-                        title={metric.name}
-                        score={metric.score}
-                        subtitle={metric.subtitle}
-                        weight={metric.weight}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Category Content - Always visible */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {category.metrics.map((metric, index) => (
+                  <ScoreCard
+                    key={index}
+                    title={metric.name}
+                    score={metric.score}
+                    subtitle={metric.subtitle}
+                    weight={metric.weight}
+                  />
+                ))}
+              </div>
             </div>
           );
         })}
