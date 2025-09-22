@@ -139,9 +139,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       title: 'Online-Qualität · Relevanz · Autorität',
       icon: Search,
       metrics: [
-        { name: 'Local SEO', score: localSEOScore, weight: 24, subtitle: 'Lokale Sichtbarkeit' },
-        { name: 'SEO', score: realData.seo.score, weight: 14, subtitle: 'Suchmaschinenoptimierung' },
-        { name: 'Keywords', score: currentKeywordsScore, weight: 8, subtitle: 'Keyword-Optimierung' },
+        { name: 'SEO-Auswertung', score: realData.seo.score, weight: 14, subtitle: 'Suchmaschinenoptimierung' },
+        { name: 'Lokale SEO', score: localSEOScore, weight: 24, subtitle: 'Lokale Sichtbarkeit' },
+        { name: 'Barrierefreiheit', score: 40, weight: 0, subtitle: 'Zugänglichkeit' },
+        { name: 'Datenschutz', score: 26, weight: 0, subtitle: 'DSGVO-Konformität' },
+        { name: 'DSGVO', score: 75, weight: 0, subtitle: 'Datenschutz-Grundverordnung' },
         { name: 'Impressum', score: realData.imprint.score, weight: 9, subtitle: 'Rechtssicherheit' }
       ]
     },
@@ -150,8 +152,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       title: 'Webseiten-Performance & Technik',
       icon: Zap,
       metrics: [
-        { name: 'Performance', score: realData.performance.score, weight: 11, subtitle: `Ladezeit: ${realData.performance.loadTime || 'N/A'}` },
-        { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, subtitle: 'Mobilfreundlichkeit' }
+        { name: 'Website Performance', score: realData.performance.score, weight: 11, subtitle: `Ladezeit: ${realData.performance.loadTime || 'N/A'}` },
+        { name: 'Mobile Optimierung', score: realData.mobile.overallScore, weight: 6, subtitle: 'Mobilfreundlichkeit' }
       ]
     },
     {
@@ -160,7 +162,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       icon: Share2,
       metrics: [
         { name: 'Social Media', score: socialMediaScore, weight: 6, subtitle: hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten' },
-        { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 4, subtitle: 'Soziale Bestätigung' }
+        { name: 'Google Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 100, weight: 7, subtitle: `Google: ${realData.reviews.google.rating || 0}/5 (${realData.reviews.google.count || 0} Bewertungen)` }
       ]
     },
     {
@@ -168,9 +170,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       title: 'Markt & Marktumfeld',
       icon: Users,
       metrics: [
-        { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 7, subtitle: `Google: ${realData.reviews.google.rating || 0}/5 (${realData.reviews.google.count || 0} Bewertungen)` },
-        { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 1, subtitle: 'Wettbewerbsposition' },
-        ...(workplaceScoreRaw !== -1 ? [{ name: 'Arbeitsplatz', score: workplaceScore, weight: 2, subtitle: 'Kununu/Glassdoor Bewertungen' }] : [])
+        { name: 'Mitarbeiterqualifikation', score: staffQualificationScore || 0, weight: staffQualificationScore ? 8 : 0, subtitle: staffQualificationScore ? 'Mitarbeiterqualifikation' : 'Keine Daten eingegeben' },
+        { name: 'Arbeitsplatz- und Arbeitgeber-Bewertung', score: workplaceScoreRaw !== -1 ? workplaceScore : 0, weight: workplaceScoreRaw !== -1 ? 2 : 0, subtitle: workplaceScoreRaw !== -1 ? 'Kununu/Glassdoor Bewertungen' : 'Keine Daten verfügbar' }
       ]
     },
     {
@@ -178,7 +179,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       title: 'Außendarstellung & Erscheinungsbild',
       icon: Building2,
       metrics: [
-        // Hier würden Corporate Identity Metriken stehen, falls vorhanden
+        { name: 'Unternehmensidentität', score: 50, weight: 0, subtitle: 'Corporate Identity' }
       ]
     },
     {
@@ -186,16 +187,13 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       title: 'Qualität · Service · Kundenorientierung',
       icon: HeartHandshake,
       metrics: [
-        ...(staffQualificationScore !== null ? [{ name: 'Personal', score: staffQualificationScore, weight: 8, subtitle: 'Mitarbeiterqualifikation' }] : []),
-        ...(quoteResponseData && quoteResponseData.responseTime ? [{ name: 'Angebotsbearbeitung', score: quoteResponseScore, weight: 6, subtitle: 'Reaktionszeit auf Anfragen' }] : []),
-        ...(hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0) ? [{ name: 'Preispositionierung', score: calculateHourlyRateScore(hourlyRateData), weight: 4, subtitle: getScoreTextDescription(calculateHourlyRateScore(hourlyRateData), 'hourlyRate') }] : [])
+        { name: 'Reaktionszeit auf Anfragen', score: quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0, weight: quoteResponseData && quoteResponseData.responseTime ? 6 : 0, subtitle: quoteResponseData && quoteResponseData.responseTime ? 'Reaktionszeit auf Anfragen' : 'Keine Daten eingegeben' }
       ]
     }
   ];
 
   // Calculate category scores
   const categoriesWithScores = categories.map(category => {
-    if (category.metrics.length === 0) return { ...category, score: 0 };
     const totalWeight = category.metrics.reduce((sum, metric) => sum + metric.weight, 0);
     const weightedSum = category.metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
     const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
@@ -248,7 +246,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       <Accordion type="multiple" className="w-full space-y-4">
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
-          if (category.metrics.length === 0) return null; // Skip empty categories
           
           return (
             <AccordionItem 
