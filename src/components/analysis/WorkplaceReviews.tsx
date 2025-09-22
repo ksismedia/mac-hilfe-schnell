@@ -39,7 +39,9 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
       kununuReviews: manualData?.kununuReviews || '',
       glassdoorFound: manualData?.glassdoorFound || false,
       glassdoorRating: manualData?.glassdoorRating || '',
-      glassdoorReviews: manualData?.glassdoorReviews || ''
+      glassdoorReviews: manualData?.glassdoorReviews || '',
+      disableAutoKununu: manualData?.disableAutoKununu || false,
+      disableAutoGlassdoor: manualData?.disableAutoGlassdoor || false
     }
   });
 
@@ -70,7 +72,9 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
       kununuReviews: '',
       glassdoorFound: false,
       glassdoorRating: '',
-      glassdoorReviews: ''
+      glassdoorReviews: '',
+      disableAutoKununu: false,
+      disableAutoGlassdoor: false
     };
     form.reset(emptyData);
     if (onManualDataChange) {
@@ -108,22 +112,39 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
   // Helper function to get display data (manual or automatic)
   const getDisplayData = () => {
     if (hasManualData && manualData) {
+      // Check if auto reviews should be disabled
+      const kununuData = manualData.disableAutoKununu ? 
+        { found: manualData.kununuFound, rating: manualData.kununuRating, reviews: manualData.kununuReviews } :
+        (manualData.kununuFound || manualData.kununuRating !== '' ? 
+          { found: manualData.kununuFound, rating: manualData.kununuRating, reviews: manualData.kununuReviews } :
+          workplaceData.kununu);
+      
+      const glassdoorData = manualData.disableAutoGlassdoor ? 
+        { found: manualData.glassdoorFound, rating: manualData.glassdoorRating, reviews: manualData.glassdoorReviews } :
+        (manualData.glassdoorFound || manualData.glassdoorRating !== '' ? 
+          { found: manualData.glassdoorFound, rating: manualData.glassdoorRating, reviews: manualData.glassdoorReviews } :
+          workplaceData.glassdoor);
+      
       return {
         kununu: {
-          found: manualData.kununuFound,
-          rating: manualData.kununuRating,
-          reviews: manualData.kununuReviews
+          ...kununuData,
+          disabled: manualData.disableAutoKununu
         },
         glassdoor: {
-          found: manualData.glassdoorFound,
-          rating: manualData.glassdoorRating,
-          reviews: manualData.glassdoorReviews
+          ...glassdoorData,
+          disabled: manualData.disableAutoGlassdoor
         }
       };
     }
     return {
-      kununu: workplaceData.kununu,
-      glassdoor: workplaceData.glassdoor
+      kununu: {
+        ...workplaceData.kununu,
+        disabled: false
+      },
+      glassdoor: {
+        ...workplaceData.glassdoor,
+        disabled: false
+      }
     };
   };
 
@@ -178,6 +199,47 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                   Tragen Sie hier Ihre Bewertungen von kununu und Glassdoor ein:
                 </p>
               </div>
+
+              {/* Auto-found reviews disable options */}
+              {(workplaceData.kununu.found || workplaceData.glassdoor.found) && (
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-orange-900 mb-3">Automatisch gefundene Bewertungen deaktivieren</h4>
+                  <div className="space-y-3">
+                    {workplaceData.kununu.found && (
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="disableAutoKununu"
+                          {...form.register('disableAutoKununu')}
+                          className="rounded border-gray-300"
+                        />
+                        <Label htmlFor="disableAutoKununu" className="flex-1">
+                          <span className="font-medium">Automatisch gefundene kununu-Bewertung ignorieren</span>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Aktuell gefunden: {workplaceData.kununu.rating}/5 ({workplaceData.kununu.reviews} Bewertungen)
+                          </div>
+                        </Label>
+                      </div>
+                    )}
+                    {workplaceData.glassdoor.found && (
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="disableAutoGlassdoor"
+                          {...form.register('disableAutoGlassdoor')}
+                          className="rounded border-gray-300"
+                        />
+                        <Label htmlFor="disableAutoGlassdoor" className="flex-1">
+                          <span className="font-medium">Automatisch gefundene Glassdoor-Bewertung ignorieren</span>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Aktuell gefunden: {workplaceData.glassdoor.rating}/5 ({workplaceData.glassdoor.reviews} Bewertungen)
+                          </div>
+                        </Label>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               
               <div className="grid grid-cols-1 gap-6">
                 {/* kununu Section */}
@@ -426,17 +488,25 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
+                  <Card className={displayData.kununu.disabled ? "opacity-50 border-gray-300" : ""}>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         kununu
-                        <Badge variant={displayData.kununu.found ? "default" : "destructive"}>
-                          {displayData.kununu.found ? "Gefunden" : "Nicht gefunden"}
-                        </Badge>
+                        {displayData.kununu.disabled ? (
+                          <Badge variant="secondary">Deaktiviert</Badge>
+                        ) : (
+                          <Badge variant={displayData.kununu.found ? "default" : "destructive"}>
+                            {displayData.kununu.found ? "Gefunden" : "Nicht gefunden"}
+                          </Badge>
+                        )}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {displayData.kununu.found ? (
+                      {displayData.kununu.disabled ? (
+                        <p className="text-sm text-gray-500">
+                          Automatisch gefundene Bewertungen wurden manuell deaktiviert
+                        </p>
+                      ) : displayData.kununu.found ? (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-2xl font-bold">
@@ -458,17 +528,25 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className={displayData.glassdoor.disabled ? "opacity-50 border-gray-300" : ""}>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         Glassdoor
-                        <Badge variant={displayData.glassdoor.found ? "default" : "destructive"}>
-                          {displayData.glassdoor.found ? "Gefunden" : "Nicht gefunden"}
-                        </Badge>
+                        {displayData.glassdoor.disabled ? (
+                          <Badge variant="secondary">Deaktiviert</Badge>
+                        ) : (
+                          <Badge variant={displayData.glassdoor.found ? "default" : "destructive"}>
+                            {displayData.glassdoor.found ? "Gefunden" : "Nicht gefunden"}
+                          </Badge>
+                        )}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {displayData.glassdoor.found ? (
+                      {displayData.glassdoor.disabled ? (
+                        <p className="text-sm text-gray-500">
+                          Automatisch gefundene Bewertungen wurden manuell deaktiviert
+                        </p>
+                      ) : displayData.glassdoor.found ? (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-2xl font-bold">

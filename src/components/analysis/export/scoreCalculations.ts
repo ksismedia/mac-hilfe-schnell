@@ -97,11 +97,18 @@ export const calculateWorkplaceScore = (
   let platformsWithData = 0;
 
   // kununu evaluation
-  const kununuFound = isManualData ? manualWorkplaceData!.kununuFound : realData.workplace?.kununu?.found || false;
-  const kununuRating = isManualData ? manualWorkplaceData!.kununuRating : (realData.workplace?.kununu?.rating || 0).toString();
-  const kununuReviews = isManualData ? manualWorkplaceData!.kununuReviews : (realData.workplace?.kununu?.reviews || 0).toString();
+  const kununuDisabled = isManualData && manualWorkplaceData!.disableAutoKununu;
+  const kununuFound = isManualData ? 
+    (kununuDisabled ? manualWorkplaceData!.kununuFound : (manualWorkplaceData!.kununuFound || realData.workplace?.kununu?.found || false)) :
+    (realData.workplace?.kununu?.found || false);
+  const kununuRating = isManualData ? 
+    (kununuDisabled ? manualWorkplaceData!.kununuRating : (manualWorkplaceData!.kununuRating || (realData.workplace?.kununu?.rating || 0).toString())) :
+    (realData.workplace?.kununu?.rating || 0).toString();
+  const kununuReviews = isManualData ? 
+    (kununuDisabled ? manualWorkplaceData!.kununuReviews : (manualWorkplaceData!.kununuReviews || (realData.workplace?.kununu?.reviews || 0).toString())) :
+    (realData.workplace?.kununu?.reviews || 0).toString();
 
-  if (kununuFound) {
+  if (kununuFound && !(isManualData && kununuDisabled && !manualWorkplaceData!.kununuFound)) {
     platformsWithData++;
     const rating = parseFloat(kununuRating.toString());
     const reviews = parseInt(kununuReviews.toString());
@@ -120,11 +127,18 @@ export const calculateWorkplaceScore = (
   }
 
   // Glassdoor evaluation
-  const glassdoorFound = isManualData ? manualWorkplaceData!.glassdoorFound : realData.workplace?.glassdoor?.found || false;
-  const glassdoorRating = isManualData ? manualWorkplaceData!.glassdoorRating : (realData.workplace?.glassdoor?.rating || 0).toString();
-  const glassdoorReviews = isManualData ? manualWorkplaceData!.glassdoorReviews : (realData.workplace?.glassdoor?.reviews || 0).toString();
+  const glassdoorDisabled = isManualData && manualWorkplaceData!.disableAutoGlassdoor;
+  const glassdoorFound = isManualData ? 
+    (glassdoorDisabled ? manualWorkplaceData!.glassdoorFound : (manualWorkplaceData!.glassdoorFound || realData.workplace?.glassdoor?.found || false)) :
+    (realData.workplace?.glassdoor?.found || false);
+  const glassdoorRating = isManualData ? 
+    (glassdoorDisabled ? manualWorkplaceData!.glassdoorRating : (manualWorkplaceData!.glassdoorRating || (realData.workplace?.glassdoor?.rating || 0).toString())) :
+    (realData.workplace?.glassdoor?.rating || 0).toString();
+  const glassdoorReviews = isManualData ? 
+    (glassdoorDisabled ? manualWorkplaceData!.glassdoorReviews : (manualWorkplaceData!.glassdoorReviews || (realData.workplace?.glassdoor?.reviews || 0).toString())) :
+    (realData.workplace?.glassdoor?.reviews || 0).toString();
 
-  if (glassdoorFound) {
+  if (glassdoorFound && !(isManualData && glassdoorDisabled && !manualWorkplaceData!.glassdoorFound)) {
     platformsWithData++;
     const rating = parseFloat(glassdoorRating.toString());
     const reviews = parseInt(glassdoorReviews.toString());

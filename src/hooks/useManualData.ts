@@ -34,6 +34,9 @@ export interface ManualWorkplaceData {
   glassdoorFound: boolean;
   glassdoorRating: string;
   glassdoorReviews: string;
+  // New fields for disabling automatically found reviews
+  disableAutoKununu: boolean;
+  disableAutoGlassdoor: boolean;
 }
 
 export interface ManualCorporateIdentityData {

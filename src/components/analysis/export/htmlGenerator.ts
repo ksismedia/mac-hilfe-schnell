@@ -2791,7 +2791,11 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
                 <p><strong>Kununu Rating:</strong> ${
-                  manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                  manualWorkplaceData?.disableAutoKununu ? 
+                    (manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                      ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
+                      : 'Manuell deaktiviert')
+                    : manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
                     ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
                     : realData.workplace?.kununu?.rating 
                       ? `${realData.workplace.kununu.rating}/5`
@@ -2800,12 +2804,14 @@ export const generateCustomerHTML = ({
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(
+                      manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound ? 30 :
                       manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
                         ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
                         : realData.workplace?.kununu?.rating 
                           ? (realData.workplace.kununu.rating * 20) 
                           : 30
                     )}" style="width: ${
+                      manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound ? 30 :
                       manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
                         ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
                         : realData.workplace?.kununu?.rating 
@@ -2817,7 +2823,11 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>Glassdoor Rating:</strong> ${
-                  manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                  manualWorkplaceData?.disableAutoGlassdoor ? 
+                    (manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                      ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
+                      : 'Manuell deaktiviert')
+                    : manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
                     ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
                     : realData.workplace?.glassdoor?.rating 
                       ? `${realData.workplace.glassdoor.rating}/5`
@@ -2826,12 +2836,14 @@ export const generateCustomerHTML = ({
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(
+                      manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound ? 25 :
                       manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
                         ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
                         : realData.workplace?.glassdoor?.rating 
                           ? (realData.workplace.glassdoor.rating * 20) 
                           : 25
                     )}" style="width: ${
+                      manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound ? 25 :
                       manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
                         ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
                         : realData.workplace?.glassdoor?.rating 
