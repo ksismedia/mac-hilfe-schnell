@@ -83,6 +83,7 @@ export const calculateWorkplaceScore = (
   realData: RealBusinessData,
   manualWorkplaceData?: ManualWorkplaceData | null
 ): number => {
+  console.log('🏢 calculateWorkplaceScore called with:', { realData: realData.workplace, manualWorkplaceData });
   let score = 0;
   const maxPoints = 100;
 
@@ -193,9 +194,11 @@ export const calculateWorkplaceScore = (
 
   // If no data found, return -1 to indicate no data (for display purposes)
   if (platformsWithData === 0) {
+    console.log('🏢 No workplace platforms found, returning -1');
     score = -1; // Special value to indicate no data found
   }
 
+  console.log('🏢 Final workplace score:', score === -1 ? -1 : Math.min(score, maxPoints));
   return score === -1 ? -1 : Math.min(score, maxPoints);
 };
 
