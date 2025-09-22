@@ -58,6 +58,7 @@ export const getScoreTextDescription = (
       return 'Inaktiv';
       
     case 'workplace':
+      if (score <= 0) return '—';
       if (score >= 70) return 'Sehr gute Bewertungen';
       if (score >= 50) return 'Gute Bewertungen';
       return 'Verbesserungsbedarf';
