@@ -837,6 +837,10 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Handwerk Stars - Interne Analyse ${businessData.address}</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="generator" content="Handwerk Stars Analysis Tool v${Date.now()}">
     <style>${getHTMLStyles()}</style>
 </head>
 <body>
@@ -1016,6 +1020,17 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
                 </div>
             </div>
         </section>
+
+        <!-- Rechtlicher Disclaimer - UNNA Style Design -->
+        <div class="disclaimer">
+          <h4>⚖️ Rechtlicher Hinweis</h4>
+          <div class="disclaimer-content">
+            <p><strong>Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
+            <p><strong>Keine Gewähr:</strong> Wir übernehmen keine Gewähr für die Vollständigkeit, Richtigkeit oder Aktualität der Analyseergebnisse. Rechtliche und technische Standards können sich ändern.</p>
+            <p><strong>Individuelle Prüfung erforderlich:</strong> Für rechtsverbindliche Aussagen, insbesondere zu DSGVO-Compliance, Barrierefreiheit oder anderen rechtlichen Aspekten, empfehlen wir die Konsultation entsprechender Fachexperten.</p>
+            <div class="disclaimer-date">Analyse erstellt am: ${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+          </div>
+        </div>
 
         <footer style="text-align: center; margin: 40px auto 0 auto; padding: 20px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3); max-width: 800px; color: #9ca3af; font-size: 0.9em;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;">
