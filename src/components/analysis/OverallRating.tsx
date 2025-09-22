@@ -213,6 +213,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
     return { ...category, score };
   });
 
+  console.log('OverallRating is rendering');
+  
   return (
     <div className="w-full">
       {/* Overall Score Header */}
