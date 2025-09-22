@@ -254,7 +254,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               {/* Category Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <IconComponent className="h-6 w-6 text-yellow-400" />
                   <h3 className="text-2xl font-bold text-yellow-400 tracking-wide">{category.title}</h3>
                 </div>
                 <div className="flex items-center gap-2">
