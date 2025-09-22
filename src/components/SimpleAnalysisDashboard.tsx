@@ -55,6 +55,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
+  console.log('🔥 SimpleAnalysisDashboard RENDERED!', { url: businessData?.url });
+  
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
