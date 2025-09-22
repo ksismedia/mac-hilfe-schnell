@@ -2078,7 +2078,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('seo-performance')">
               <h3>Online-Qualität · Relevanz · Autorität</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="seo-performance">
               <div class="score-overview">
@@ -2114,7 +2113,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
               <h3>Webseiten-Performance & Technik</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="mobile-accessibility">
               <div class="score-overview">
@@ -2134,7 +2132,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('social-reputation')">
               <h3>Online-/Web-/Social-Media Performance</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="social-reputation">
               <div class="score-overview">
@@ -2154,7 +2151,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('legal-privacy')">
               <h3>Markt & Marktumfeld</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="legal-privacy">
               <div class="score-overview">
@@ -2180,7 +2176,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('design-branding')">
               <h3>Außendarstellung & Erscheinungsbild</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="design-branding">
               <div class="score-overview">
@@ -2196,7 +2191,6 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header" onclick="toggleCategory('staff-service')">
               <h3>Qualität · Service · Kundenorientierung</h3>
-              <span class="toggle-icon">▶</span>
             </div>
             <div class="category-content collapsed" id="staff-service">
               <div class="score-overview">
