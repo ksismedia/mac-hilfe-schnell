@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -614,85 +615,54 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
         </div>
 
-        {/* Category Navigation Toggle */}
-        <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <h3 style={{ color: '#facc15', marginBottom: '15px', fontSize: '18px' }}>
+        {/* Executive Summary mit Accordions */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
             Executive Summary
           </h3>
-          <button
-            onClick={() => {
-              const newShowState = !showCategoryNav;
-              console.log('Toggle clicked! Current showCategoryNav:', showCategoryNav, '-> New state:', newShowState);
-              console.log('Current activeCategory:', activeCategory);
-              setShowCategoryNav(newShowState);
-              // Setze die erste Kategorie als aktiv, wenn Details angezeigt werden
-              if (newShowState && !activeCategory) {
-                console.log('Setting active category to online-quality-authority');
-                setActiveCategory('online-quality-authority');
-              }
-            }}
-            style={{
-              background: 'rgba(31, 41, 55, 0.8)',
-              color: '#facc15',
-              border: '2px solid #facc15',
-              borderRadius: '12px',
-              padding: '16px 24px',
-              cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
-            }}
-          >
-            {showCategoryNav ? '📊 Übersicht ausblenden' : '📊 Detailanalyse anzeigen'}
-          </button>
+          
+          <Accordion type="multiple" className="w-full space-y-4">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <AccordionItem 
+                  key={category.id} 
+                  value={category.id} 
+                  className="border border-gray-700 rounded-lg bg-gray-800/50"
+                >
+                  <AccordionTrigger className="px-4 py-3 text-yellow-400 hover:text-yellow-300">
+                    <div className="flex items-center justify-between w-full mr-4">
+                      <div className="flex items-center gap-3">
+                        <IconComponent className="h-6 w-6" />
+                        <span className="font-semibold text-lg">{category.title}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className={`px-4 py-2 rounded-full text-white text-lg font-bold ${
+                            category.score >= 90 ? 'bg-yellow-500' : 
+                            category.score >= 61 ? 'bg-green-500' : 'bg-red-500'
+                          }`}
+                        >
+                          {Math.round(category.score)} Punkte
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <div className="mt-4">
+                      {/* Hier wird der Category Content gerendert */}
+                      {renderActiveCategory && category.id === 'online-quality-authority' && (
+                        <div onClick={() => setActiveCategory(category.id)}>
+                          {renderActiveCategory()}
+                        </div>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </div>
-
-        {/* Category Navigation */}
-        {showCategoryNav && (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px'
-          }}>
-          {categories.map((category) => {
-            const IconComponent = category.icon;
-            const isActive = activeCategory === category.id;
-            return (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                style={{
-                  background: isActive ? '#facc15' : 'rgba(31, 41, 55, 0.8)',
-                  color: isActive ? '#000' : '#d1d5db',
-                  border: isActive ? '3px solid #facc15' : '2px solid rgba(75, 85, 99, 0.5)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)'
-                }}
-              >
-                <div style={{ marginBottom: '12px' }}>
-                  <IconComponent style={{ width: '28px', height: '28px', margin: '0 auto' }} />
-                </div>
-                <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px' }}>
-                  {category.title}
-                </div>
-                <div style={{ 
-                  fontWeight: 'bold', 
-                  fontSize: '20px',
-                  color: isActive ? '#000' : getScoreColor(category.score)
-                }}>
-                  {Math.round(category.score)} Punkte
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        )}
 
         {/* Overall Rating mit Accordions */}
         <div style={{ marginBottom: '40px' }}>
