@@ -351,24 +351,65 @@ export const generateCustomerHTML = ({
     // Berechne Workplace Score basierend auf korrigierter Logik
     const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
     
+    // Check if there is any meaningful workplace data (either manual or automatic)
+    const hasWorkplaceData = workplaceScore !== -1;
+    
     return `
       <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
         <h4>💼 Detaillierte Arbeitgeber-Bewertung</h4>
         
-        ${manualWorkplaceData ? `
+        ${hasWorkplaceData ? `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
           <div>
             <p><strong>Kununu Bewertung:</strong> ${
-              manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating
-                ? `✅ ${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`
-                : '❌ Nicht gefunden'
+              (() => {
+                const isManualData = manualWorkplaceData && (
+                  manualWorkplaceData.kununuFound || 
+                  manualWorkplaceData.kununuRating !== '' || 
+                  manualWorkplaceData.disableAutoKununu
+                );
+                
+                if (isManualData) {
+                  const disabled = manualWorkplaceData.disableAutoKununu;
+                  if (disabled && !manualWorkplaceData.kununuFound) {
+                    return '❌ Nicht gefunden';
+                  } else if (manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating) {
+                    return `✅ ${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`;
+                  } else {
+                    return '❌ Nicht gefunden';
+                  }
+                } else {
+                  return realData.workplace?.kununu?.found && realData.workplace?.kununu?.rating
+                    ? `✅ ${realData.workplace.kununu.rating}/5 (${realData.workplace.kununu.reviews || 0} Bewertungen)`
+                    : '❌ Nicht gefunden';
+                }
+              })()
             }</p>
           </div>
           <div>
             <p><strong>Glassdoor Bewertung:</strong> ${
-              manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating
-                ? `✅ ${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`
-                : '❌ Nicht gefunden'
+              (() => {
+                const isManualData = manualWorkplaceData && (
+                  manualWorkplaceData.glassdoorFound || 
+                  manualWorkplaceData.glassdoorRating !== '' || 
+                  manualWorkplaceData.disableAutoGlassdoor
+                );
+                
+                if (isManualData) {
+                  const disabled = manualWorkplaceData.disableAutoGlassdoor;
+                  if (disabled && !manualWorkplaceData.glassdoorFound) {
+                    return '❌ Nicht gefunden';
+                  } else if (manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating) {
+                    return `✅ ${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`;
+                  } else {
+                    return '❌ Nicht gefunden';
+                  }
+                } else {
+                  return realData.workplace?.glassdoor?.found && realData.workplace?.glassdoor?.rating
+                    ? `✅ ${realData.workplace.glassdoor.rating}/5 (${realData.workplace.glassdoor.reviews || 0} Bewertungen)`
+                    : '❌ Nicht gefunden';
+                }
+              })()
             }</p>
           </div>
           <div>
@@ -2791,64 +2832,86 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
               <div>
                 <p><strong>Kununu Rating:</strong> ${
-                  manualWorkplaceData?.disableAutoKununu ? 
-                    (manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
-                      ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
-                      : 'Manuell deaktiviert')
-                    : manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
-                    ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
-                    : realData.workplace?.kununu?.rating 
-                      ? `${realData.workplace.kununu.rating}/5`
-                      : 'Nicht erfasst'
+                  (() => {
+                    // Check if manual data disables auto kununu
+                    if (manualWorkplaceData?.disableAutoKununu) {
+                      return manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
+                        ? `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`
+                        : 'Nicht erfasst';
+                    }
+                    
+                    // Check if manual data has kununu info
+                    if (manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating) {
+                      return `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews} Bewertungen)`;
+                    }
+                    
+                    // Fall back to real data
+                    return realData.workplace?.kununu?.found && realData.workplace?.kununu?.rating 
+                      ? `${realData.workplace.kununu.rating}/5 (${realData.workplace.kununu.reviews || 0} Bewertungen)`
+                      : 'Nicht erfasst';
+                  })()
                 }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(
-                      manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound ? 30 :
-                      manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
-                        ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
-                        : realData.workplace?.kununu?.rating 
-                          ? (realData.workplace.kununu.rating * 20) 
-                          : 30
+                      (() => {
+                        if (manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound) return 30;
+                        if (manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating) {
+                          return parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20;
+                        }
+                        return realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating * 20) : 30;
+                      })()
                     )}" style="width: ${
-                      manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound ? 30 :
-                      manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating
-                        ? (parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20)
-                        : realData.workplace?.kununu?.rating 
-                          ? (realData.workplace.kununu.rating * 20) 
-                          : 30
+                      (() => {
+                        if (manualWorkplaceData?.disableAutoKununu && !manualWorkplaceData?.kununuFound) return 30;
+                        if (manualWorkplaceData?.kununuFound && manualWorkplaceData?.kununuRating) {
+                          return parseFloat(manualWorkplaceData.kununuRating.replace(',', '.')) * 20;
+                        }
+                        return realData.workplace?.kununu?.rating ? (realData.workplace.kununu.rating * 20) : 30;
+                      })()
                     }%"></div>
                   </div>
                 </div>
               </div>
               <div>
                 <p><strong>Glassdoor Rating:</strong> ${
-                  manualWorkplaceData?.disableAutoGlassdoor ? 
-                    (manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
-                      ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
-                      : 'Manuell deaktiviert')
-                    : manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
-                    ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
-                    : realData.workplace?.glassdoor?.rating 
-                      ? `${realData.workplace.glassdoor.rating}/5`
-                      : 'Nicht erfasst'
+                  (() => {
+                    // Check if manual data disables auto glassdoor
+                    if (manualWorkplaceData?.disableAutoGlassdoor) {
+                      return manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
+                        ? `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`
+                        : 'Nicht erfasst';
+                    }
+                    
+                    // Check if manual data has glassdoor info
+                    if (manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating) {
+                      return `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews} Bewertungen)`;
+                    }
+                    
+                    // Fall back to real data
+                    return realData.workplace?.glassdoor?.found && realData.workplace?.glassdoor?.rating 
+                      ? `${realData.workplace.glassdoor.rating}/5 (${realData.workplace.glassdoor.reviews || 0} Bewertungen)`
+                      : 'Nicht erfasst';
+                  })()
                 }</p>
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill" data-score="${getScoreRange(
-                      manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound ? 25 :
-                      manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
-                        ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
-                        : realData.workplace?.glassdoor?.rating 
-                          ? (realData.workplace.glassdoor.rating * 20) 
-                          : 25
+                      (() => {
+                        if (manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound) return 25;
+                        if (manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating) {
+                          return parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20;
+                        }
+                        return realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating * 20) : 25;
+                      })()
                     )}" style="width: ${
-                      manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound ? 25 :
-                      manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating
-                        ? (parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20)
-                        : realData.workplace?.glassdoor?.rating 
-                          ? (realData.workplace.glassdoor.rating * 20) 
-                          : 25
+                      (() => {
+                        if (manualWorkplaceData?.disableAutoGlassdoor && !manualWorkplaceData?.glassdoorFound) return 25;
+                        if (manualWorkplaceData?.glassdoorFound && manualWorkplaceData?.glassdoorRating) {
+                          return parseFloat(manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20;
+                        }
+                        return realData.workplace?.glassdoor?.rating ? (realData.workplace.glassdoor.rating * 20) : 25;
+                      })()
                     }%"></div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporat
 import { getHTMLStyles } from './htmlStyles';
 import { getLogoHTML } from './logoData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateAccessibilityScore, calculateDataPrivacyScore } from './scoreCalculations';
+import { calculateAccessibilityScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
 
 interface SectionSelections {
   seoContent: boolean;
@@ -417,10 +417,11 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
     // Workplace Reviews section
     if (selections.subSections.workplaceReviews) {
-      const workplaceScore = data.manualWorkplaceData ? 
-        ((data.manualWorkplaceData.kununuFound && data.manualWorkplaceData.kununuRating ? (parseFloat(data.manualWorkplaceData.kununuRating.replace(',', '.')) * 20) : 0) +
-         (data.manualWorkplaceData.glassdoorFound && data.manualWorkplaceData.glassdoorRating ? (parseFloat(data.manualWorkplaceData.glassdoorRating.replace(',', '.')) * 20) : 0)) / 2 
-        : -1;
+      // Use the same workplace score calculation as the main generator
+      const workplaceScore = calculateWorkplaceScore(data.realData, data.manualWorkplaceData);
+      
+      // Check if there is any meaningful workplace data (either manual or automatic)
+      const hasWorkplaceData = workplaceScore !== -1;
       
       socialMediaHtml += `
         <div class="metric-card workplace-detailed">
@@ -434,20 +435,58 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           </div>
           
           <div style="padding: 20px; background: white;">
-            ${data.manualWorkplaceData ? `
+            ${hasWorkplaceData ? `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Kununu Bewertung:</strong> ${
-                  data.manualWorkplaceData.kununuFound && data.manualWorkplaceData.kununuRating
-                    ? `✅ ${data.manualWorkplaceData.kununuRating}/5 (${data.manualWorkplaceData.kununuReviews || 0} Bewertungen)`
-                    : '❌ Nicht gefunden'
+                  (() => {
+                    const isManualData = data.manualWorkplaceData && (
+                      data.manualWorkplaceData.kununuFound || 
+                      data.manualWorkplaceData.kununuRating !== '' || 
+                      data.manualWorkplaceData.disableAutoKununu
+                    );
+                    
+                    if (isManualData) {
+                      const disabled = data.manualWorkplaceData.disableAutoKununu;
+                      if (disabled && !data.manualWorkplaceData.kununuFound) {
+                        return '❌ Nicht gefunden';
+                      } else if (data.manualWorkplaceData.kununuFound && data.manualWorkplaceData.kununuRating) {
+                        return `✅ ${data.manualWorkplaceData.kununuRating}/5 (${data.manualWorkplaceData.kununuReviews || 0} Bewertungen)`;
+                      } else {
+                        return '❌ Nicht gefunden';
+                      }
+                    } else {
+                      return data.realData.workplace?.kununu?.found && data.realData.workplace?.kununu?.rating
+                        ? `✅ ${data.realData.workplace.kununu.rating}/5 (${data.realData.workplace.kununu.reviews || 0} Bewertungen)`
+                        : '❌ Nicht gefunden';
+                    }
+                  })()
                 }</p>
               </div>
               <div>
                 <p><strong>Glassdoor Bewertung:</strong> ${
-                  data.manualWorkplaceData.glassdoorFound && data.manualWorkplaceData.glassdoorRating
-                    ? `✅ ${data.manualWorkplaceData.glassdoorRating}/5 (${data.manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`
-                    : '❌ Nicht gefunden'
+                  (() => {
+                    const isManualData = data.manualWorkplaceData && (
+                      data.manualWorkplaceData.glassdoorFound || 
+                      data.manualWorkplaceData.glassdoorRating !== '' || 
+                      data.manualWorkplaceData.disableAutoGlassdoor
+                    );
+                    
+                    if (isManualData) {
+                      const disabled = data.manualWorkplaceData.disableAutoGlassdoor;
+                      if (disabled && !data.manualWorkplaceData.glassdoorFound) {
+                        return '❌ Nicht gefunden';
+                      } else if (data.manualWorkplaceData.glassdoorFound && data.manualWorkplaceData.glassdoorRating) {
+                        return `✅ ${data.manualWorkplaceData.glassdoorRating}/5 (${data.manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`;
+                      } else {
+                        return '❌ Nicht gefunden';
+                      }
+                    } else {
+                      return data.realData.workplace?.glassdoor?.found && data.realData.workplace?.glassdoor?.rating
+                        ? `✅ ${data.realData.workplace.glassdoor.rating}/5 (${data.realData.workplace.glassdoor.reviews || 0} Bewertungen)`
+                        : '❌ Nicht gefunden';
+                    }
+                  })()
                 }</p>
               </div>
             </div>
