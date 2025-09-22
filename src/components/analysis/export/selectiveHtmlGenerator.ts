@@ -109,8 +109,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       <div class="categorized-scores">
         <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
         <div class="score-category">
-          <div class="category-header" onclick="toggleCategory('seo-performance')">
-            <h3>Online-Qualität · Relevanz · Autorität</h3>
+          <div class="category-header-styled">
+            <div class="category-title-box" onclick="toggleCategory('seo-performance')">
+              <h3>Online-Qualität · Relevanz · Autorität</h3>
+            </div>
           </div>
           <div class="category-content collapsed" id="seo-performance">
             <div class="score-overview">
@@ -136,8 +138,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
         <!-- Kategorie 2: Webseiten-Performance & Technik -->
         <div class="score-category">
-          <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
-            <h3>Webseiten-Performance & Technik</h3>
+          <div class="category-header-styled">
+            <div class="category-title-box" onclick="toggleCategory('mobile-accessibility')">
+              <h3>Webseiten-Performance & Technik</h3>
+            </div>
           </div>
           <div class="category-content collapsed" id="mobile-accessibility">
             <div class="score-overview">
@@ -155,8 +159,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
         <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
         <div class="score-category">
-          <div class="category-header" onclick="toggleCategory('social-reputation')">
-            <h3>Online-/Web-/Social-Media Performance</h3>
+          <div class="category-header-styled">
+            <div class="category-title-box" onclick="toggleCategory('social-reputation')">
+              <h3>Online-/Web-/Social-Media Performance</h3>
+            </div>
           </div>
           <div class="category-content collapsed" id="social-reputation">
             <div class="score-overview">
@@ -174,8 +180,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
 
         <!-- Kategorie 4: Markt & Marktumfeld -->
         <div class="score-category">
-          <div class="category-header" onclick="toggleCategory('legal-privacy')">
-            <h3>Markt & Marktumfeld</h3>
+          <div class="category-header-styled">
+            <div class="category-title-box" onclick="toggleCategory('legal-privacy')">
+              <h3>Markt & Marktumfeld</h3>
+            </div>
           </div>
           <div class="category-content collapsed" id="legal-privacy">
             <div class="score-overview">
@@ -946,36 +954,36 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        .category-header {
-          padding: 20px 25px;
-          background: linear-gradient(135deg, #1e293b, #334155);
-          color: white;
+        .category-header-styled {
+          margin-bottom: 30px;
+        }
+
+        .category-title-box {
+          background: #374151;
+          border: 2px solid rgba(251, 191, 36, 0.8);
+          border-radius: 8px;
+          padding: 15px 20px;
           cursor: pointer;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          transition: background 0.3s ease;
+          transition: all 0.3s ease;
         }
 
-        .category-header:hover {
-          background: linear-gradient(135deg, #0f172a, #1e293b);
+        .category-title-box:hover {
+          border-color: rgba(251, 191, 36, 1);
+          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
         }
 
-        .category-header h3 {
+        .category-title-box h3 {
           margin: 0;
-          font-size: 1.3em;
+          background: #fbbf24;
+          color: #000;
+          font-size: 1.1em;
           font-weight: 600;
-        }
-
-        .toggle-icon {
-          color: #fbbf24;
-          font-size: 1.2em;
-          transition: transform 0.3s ease;
-          user-select: none;
-        }
-
-        .category-header.collapsed .toggle-icon {
-          transform: rotate(-90deg);
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
         }
 
         .category-content {

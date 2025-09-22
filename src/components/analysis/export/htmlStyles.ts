@@ -824,40 +824,36 @@ table tr {
     background: rgba(255, 255, 255, 0.05);
   }
 
-  .category-header {
+  .category-header-styled {
+    margin-bottom: 30px;
+  }
+
+  .category-title-box {
+    background: rgba(55, 65, 81, 1);
+    border: 2px solid rgba(251, 191, 36, 0.8);
+    border-radius: 8px;
     padding: 15px 20px;
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1));
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
-    user-select: none;
   }
 
-  .category-header:hover {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.2));
+  .category-title-box:hover {
+    border-color: rgba(251, 191, 36, 1);
     box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
   }
 
-  .category-header h3 {
+  .category-title-box h3 {
     margin: 0;
-    color: #fbbf24;
+    background: #fbbf24;
+    color: #000;
     font-size: 1.1em;
     font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 4px;
     cursor: pointer;
-  }
-
-  .toggle-icon {
-    color: #fbbf24;
-    font-size: 1.2em;
-    transition: transform 0.3s ease;
-    user-select: none;
-  }
-
-  .category-header.collapsed .toggle-icon {
-    transform: rotate(-90deg);
   }
 
   .category-content {
