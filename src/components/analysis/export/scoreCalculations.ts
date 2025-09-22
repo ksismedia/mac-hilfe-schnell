@@ -1,6 +1,7 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
+import { calculateWorkplaceScore as newCalculateWorkplaceScore } from '@/utils/workplaceScoreCalculation';
 
 const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
   const reviews = realData.reviews?.google?.count || 0;
@@ -79,124 +80,7 @@ export const calculateSocialMediaCategoryScore = (
   return calculateSocialMediaPerformanceScore(realData, manualSocialData);
 };
 
-export const calculateWorkplaceScore = (
-  realData: RealBusinessData,
-  manualWorkplaceData?: ManualWorkplaceData | null
-): number => {
-  console.log('🏢 calculateWorkplaceScore called with:', { realData: realData.workplace, manualWorkplaceData });
-  let score = 0;
-  const maxPoints = 100;
-
-  // Check if we're using manual data
-  const isManualData = manualWorkplaceData && (
-    manualWorkplaceData.kununuFound || 
-    manualWorkplaceData.glassdoorFound || 
-    manualWorkplaceData.kununuRating !== '' || 
-    manualWorkplaceData.glassdoorRating !== ''
-  );
-
-  let platformsWithData = 0;
-
-  // kununu evaluation
-  const kununuDisabled = isManualData && manualWorkplaceData!.disableAutoKununu;
-  let kununuFound = false;
-  let kununuRating = '';
-  let kununuReviews = '';
-  
-  if (kununuDisabled) {
-    // Only use manual data if auto is disabled - if no manual data entered, treat as not found
-    const hasManualKununuData = manualWorkplaceData!.kununuRating !== '' || manualWorkplaceData!.kununuReviews !== '';
-    kununuFound = manualWorkplaceData!.kununuFound && hasManualKununuData;
-    kununuRating = manualWorkplaceData!.kununuRating;
-    kununuReviews = manualWorkplaceData!.kununuReviews;
-  } else if (isManualData) {
-    // Use manual data if available, otherwise real data
-    kununuFound = manualWorkplaceData!.kununuFound || realData.workplace?.kununu?.found || false;
-    kununuRating = manualWorkplaceData!.kununuRating || (realData.workplace?.kununu?.rating || 0).toString();
-    kununuReviews = manualWorkplaceData!.kununuReviews || (realData.workplace?.kununu?.reviews || 0).toString();
-  } else {
-    // Use real data
-    kununuFound = realData.workplace?.kununu?.found || false;
-    kununuRating = (realData.workplace?.kununu?.rating || 0).toString();
-    kununuReviews = (realData.workplace?.kununu?.reviews || 0).toString();
-  }
-
-  if (kununuFound) {
-    platformsWithData++;
-    const rating = parseFloat(kununuRating.toString());
-    const reviews = parseInt(kununuReviews.toString());
-    
-    if (!isNaN(rating) && rating > 0) {
-      // Rating points (0-25 points)
-      score += (rating / 5) * 25;
-      
-      // Review count points (0-15 points)
-      if (reviews >= 50) score += 15;
-      else if (reviews >= 20) score += 12;
-      else if (reviews >= 10) score += 8;
-      else if (reviews >= 5) score += 5;
-      else if (reviews >= 1) score += 2;
-    }
-  }
-
-  // Glassdoor evaluation
-  const glassdoorDisabled = isManualData && manualWorkplaceData!.disableAutoGlassdoor;
-  let glassdoorFound = false;
-  let glassdoorRating = '';
-  let glassdoorReviews = '';
-  
-  if (glassdoorDisabled) {
-    // Only use manual data if auto is disabled - if no manual data entered, treat as not found
-    const hasManualGlassdoorData = manualWorkplaceData!.glassdoorRating !== '' || manualWorkplaceData!.glassdoorReviews !== '';
-    glassdoorFound = manualWorkplaceData!.glassdoorFound && hasManualGlassdoorData;
-    glassdoorRating = manualWorkplaceData!.glassdoorRating;
-    glassdoorReviews = manualWorkplaceData!.glassdoorReviews;
-  } else if (isManualData) {
-    // Use manual data if available, otherwise real data
-    glassdoorFound = manualWorkplaceData!.glassdoorFound || realData.workplace?.glassdoor?.found || false;
-    glassdoorRating = manualWorkplaceData!.glassdoorRating || (realData.workplace?.glassdoor?.rating || 0).toString();
-    glassdoorReviews = manualWorkplaceData!.glassdoorReviews || (realData.workplace?.glassdoor?.reviews || 0).toString();
-  } else {
-    // Use real data
-    glassdoorFound = realData.workplace?.glassdoor?.found || false;
-    glassdoorRating = (realData.workplace?.glassdoor?.rating || 0).toString();
-    glassdoorReviews = (realData.workplace?.glassdoor?.reviews || 0).toString();
-  }
-
-  if (glassdoorFound) {
-    platformsWithData++;
-    const rating = parseFloat(glassdoorRating.toString());
-    const reviews = parseInt(glassdoorReviews.toString());
-    
-    if (!isNaN(rating) && rating > 0) {
-      // Rating points (0-25 points)
-      score += (rating / 5) * 25;
-      
-      // Review count points (0-15 points)
-      if (reviews >= 50) score += 15;
-      else if (reviews >= 20) score += 12;
-      else if (reviews >= 10) score += 8;
-      else if (reviews >= 5) score += 5;
-      else if (reviews >= 1) score += 2;
-    }
-  }
-
-  // Platform presence bonus (0-20 points)
-  if (platformsWithData >= 2) {
-    score += 20; // Both platforms
-  } else if (platformsWithData === 1) {
-    score += 10; // One platform
-  }
-
-  // If no data found, return -1 to indicate no data (for display purposes)
-  if (platformsWithData === 0) {
-    console.log('🏢 No workplace platforms found, returning -1');
-    score = -1; // Special value to indicate no data found
-  }
-
-  console.log('🏢 Final workplace score:', score === -1 ? -1 : Math.min(score, maxPoints));
-  return score === -1 ? -1 : Math.min(score, maxPoints);
-};
+export const calculateWorkplaceScore = newCalculateWorkplaceScore;
 
 // Helper function to check if workplace score should show dash
 export const hasWorkplaceData = (
