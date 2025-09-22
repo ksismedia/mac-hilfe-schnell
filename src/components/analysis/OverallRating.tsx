@@ -218,32 +218,28 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
             <Badge variant={getScoreBadge(overallScore)} className="text-lg px-4 py-2">
               {overallScore}/100 Punkte
             </Badge>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-700">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-400">
-                  {metrics.filter(m => m.score >= 90).length}
-                </div>
-                <div className="text-sm text-gray-400">Sehr gut (≥90%)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-500">
-                  {metrics.filter(m => m.score >= 61 && m.score < 90).length}
-                </div>
-                <div className="text-sm text-gray-400">Gut (61-89%)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-500">
-                  {metrics.filter(m => m.score < 61).length}
-                </div>
-                <div className="text-sm text-gray-400">Verbesserung nötig (&lt;61%)</div>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Accordion Categories */}
-      <Accordion type="multiple" className="w-full space-y-4">{categoriesWithScores.map((category) => {
+      {/* TEST: Einfaches Accordion */}
+      <div className="mb-6">
+        <h3 className="text-yellow-400 text-lg mb-4">🔧 TEST: Einfaches Accordion</h3>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="test-1" className="border border-yellow-400 rounded">
+            <AccordionTrigger className="px-4 py-2 text-white">
+              TEST 1 - Klick hier zum Öffnen
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4 text-gray-300">
+              ✅ Accordion funktioniert! Das ist der Inhalt von Test 1.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      {/* Original Accordion Categories */}
+      <Accordion type="multiple" className="w-full space-y-4">
+        {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
           
           return (
