@@ -611,6 +611,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
         {/* Category Navigation Toggle */}
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <h3 style={{ color: '#facc15', marginBottom: '15px', fontSize: '18px' }}>
+            Executive Summary
+          </h3>
           <button
             onClick={() => setShowCategoryNav(!showCategoryNav)}
             style={{
