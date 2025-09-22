@@ -249,20 +249,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               className="border border-gray-700 rounded-lg bg-gray-800/50"
             >
               <AccordionTrigger className="px-4 py-3 text-yellow-400 hover:text-yellow-300">
-                <div className="flex items-center justify-between w-full mr-4">
-                  <div className="flex items-center gap-3">
-                    <IconComponent className="h-5 w-5" />
-                    <span className="font-semibold">{category.title}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-yellow-400 border-yellow-400">
-                      {category.metrics.length} Bereiche  
-                    </Badge>
-                    <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(category.score)}`}>
-                      {Math.round(category.score)}%
-                    </div>
-                  </div>
-                </div>
+                {category.title}
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
