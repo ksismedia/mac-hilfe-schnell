@@ -632,7 +632,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               competitorScore={currentOwnCompanyScore}
             />
           </div>
-        }
+        )}
 
         {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
         {showCategoryNav && (
