@@ -621,6 +621,43 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             Executive Summary
           </h3>
           
+          {/* Category Tiles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <div 
+                  key={category.id}
+                  className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:bg-gray-800/70 transition-colors cursor-pointer"
+                  onClick={() => {
+                    setActiveCategory(category.id);
+                    setShowCategoryNav(true);
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <IconComponent className="h-5 w-5 text-yellow-400" />
+                    <div 
+                      className="px-3 py-1 rounded-full text-white text-sm font-bold"
+                      style={{ backgroundColor: getScoreColor(category.score) }}
+                    >
+                      {Math.round(category.score)}%
+                    </div>
+                  </div>
+                  <h3 className="text-white font-medium text-sm mb-2">{category.title}</h3>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.min(100, category.score)}%`,
+                        backgroundColor: getScoreColor(category.score)
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
           <Accordion type="multiple" className="w-full space-y-4">
             {categories.map((category) => {
               const IconComponent = category.icon;
