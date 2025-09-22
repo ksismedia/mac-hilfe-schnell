@@ -63,6 +63,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('online-quality-authority');
+  const [showCategoryNav, setShowCategoryNav] = useState(false);
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -608,13 +609,35 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           </div>
         </div>
 
+        {/* Category Navigation Toggle */}
+        <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <button
+            onClick={() => setShowCategoryNav(!showCategoryNav)}
+            style={{
+              background: 'rgba(31, 41, 55, 0.8)',
+              color: '#facc15',
+              border: '2px solid #facc15',
+              borderRadius: '12px',
+              padding: '16px 24px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+            }}
+          >
+            {showCategoryNav ? '📊 Übersicht ausblenden' : '📊 Detailanalyse anzeigen'}
+          </button>
+        </div>
+
         {/* Category Navigation */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px',
-          marginBottom: '40px'
-        }}>
+        {showCategoryNav && (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px'
+          }}>
           {categories.map((category) => {
             const IconComponent = category.icon;
             const isActive = activeCategory === category.id;
@@ -651,6 +674,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             );
           })}
         </div>
+        )}
 
         {/* Overall Rating */}
         <div style={{ marginBottom: '40px' }}>
@@ -668,9 +692,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
 
         {/* Active Category Content */}
-        <div>
-          {renderActiveCategory()}
-        </div>
+        {showCategoryNav && (
+          <div>
+            {renderActiveCategory()}
+          </div>
+        )}
       </div>
     </div>
   );
