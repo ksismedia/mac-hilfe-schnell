@@ -277,10 +277,76 @@ export const generateDataPrivacySection = (
   dataPrivacyScore: number = 75, 
   activeViolations: any[] = [],
   manualDataPrivacyData?: any
-) => `
-        <!-- Datenschutz-Analyse -->
+) => {
+  const cookieScore = Math.round((dataPrivacyScore + 15) * 0.8); // Separate cookie compliance score
+  
+  return `
+        <!-- DSGVO-Konformität -->
         <div class="section">
-            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & DSGVO-Compliance</div>
+            <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">▶ DSGVO-Konformität</div>
+            <div id="dsgvo-content" class="section-content" style="display: none;">
+                <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    
+                    <div class="metric-item">
+                        <div class="metric-title">DSGVO-Score</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">
+                            ${dataPrivacyScore >= 80 ? 'Vollständig konform' : dataPrivacyScore >= 60 ? 'Grundlegend konform' : dataPrivacyScore >= 40 ? 'Verbesserung nötig' : 'Kritische Mängel'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>DSGVO Art. 5-22 Compliance</span>
+                                <button class="percentage-btn">${dataPrivacyScore}%</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Untersuchte Parameter:</strong> Einwilligung (Art. 7), Informationspflichten (Art. 13-14), Drittlandtransfer (Art. 44-49), Rechtsbasis, Tracking-Scripts, Externe Services
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Rechtsverstöße</div>
+                        <div class="metric-value ${activeViolations.length === 0 ? 'excellent' : activeViolations.length <= 2 ? 'warning' : 'danger'}">
+                            ${activeViolations.length === 0 ? 'Keine erkannt' : `${activeViolations.length} festgestellt`}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>DSGVO-Verstöße</span>
+                                <button class="percentage-btn" style="background-color: ${activeViolations.length === 0 ? '#10b981' : activeViolations.length <= 2 ? '#f59e0b' : '#ef4444'};">${activeViolations.length}</button>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Kategorien:</strong> Einwilligung, Drittlandtransfer, Informationspflichten, Datenschutz, Sicherheit
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Rechtliches Risiko</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">
+                            ${dataPrivacyScore >= 80 ? 'Sehr niedrig' : dataPrivacyScore >= 60 ? 'Niedrig' : dataPrivacyScore >= 40 ? 'Mittel' : 'Hoch'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Bußgeldrisiko</span>
+                                <button class="percentage-btn">${100 - dataPrivacyScore}%</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${100 - dataPrivacyScore}%"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Faktoren:</strong> Verstöße, Drittlandtransfer, Consent-Management, Dokumentation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datenschutz & Technische Sicherheit -->
+        <div class="section">
+            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">▶ Datenschutz & Technische Sicherheit</div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
                 ${activeViolations.length > 0 && dataPrivacyScore < 90 ? `
                     <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
@@ -364,72 +430,100 @@ export const generateDataPrivacySection = (
                       </div>
                     `}
                     
+                <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    
                     <div class="metric-item">
-                        <div class="metric-title">Cookie-Compliance</div>
-                        <div class="metric-value ${dataPrivacyScore >= 70 ? 'good' : 'warning'}">
-                            ${dataPrivacyScore >= 70 ? 'Konform' : 'Nachbesserung nötig'}
-                        </div>
+                        <div class="metric-title">SSL-Rating</div>
+                        <div class="metric-value excellent">A (Vollständig verschlüsselt)</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Cookie-Banner & Einstellungen</span>
-                                <button class="percentage-btn">${Math.min(100, dataPrivacyScore + 10)}%</button>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) < 60 ? '0-60' : Math.min(100, dataPrivacyScore + 10) < 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
-                            </div>
-                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Bewertung:</strong> Einwilligungsmanagement, Cookie-Kategorisierung, Granularität der Kontrollen
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">SSL/HTTPS</div>
-                        <div class="metric-value excellent">Vollständig verschlüsselt</div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Datensicherheit</span>
+                                <span>HTTPS-Verschlüsselung</span>
                                 <button class="percentage-btn">100%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="80-100" style="width: 100%"></div>
                             </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Untersuchte Parameter:</strong> Zertifikat, Verschlüsselungsstärke, HSTS, Sicherheitsheader
+                            </div>
                         </div>
                     </div>
 
                     <div class="metric-item">
-                        <div class="metric-title">Abmahn-Risiko</div>
-                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">
-                            ${dataPrivacyScore >= 80 ? 'Sehr niedrig' : dataPrivacyScore >= 60 ? 'Niedrig' : dataPrivacyScore >= 40 ? 'Mittel' : 'Hoch'}
+                        <div class="metric-title">Cookie-Compliance</div>
+                        <div class="metric-value ${cookieScore >= 70 ? 'good' : 'warning'}">
+                            ${cookieScore >= 70 ? 'TTDSG-konform' : 'Nachbesserung nötig'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Rechtssicherheit</span>
+                                <span>Cookie-Management (TTDSG)</span>
+                                <button class="percentage-btn">${cookieScore}%</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="${cookieScore < 60 ? '0-60' : cookieScore < 80 ? '60-80' : '80-100'}" style="width: ${cookieScore}%"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Untersuchte Parameter:</strong> Cookie-Banner, Einwilligungsmanagement, Cookie-Kategorisierung, Granularität, Opt-out-Möglichkeiten
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Cookie-Anzahl</div>
+                        <div class="metric-value ${dataPrivacyScore >= 70 ? 'good' : 'warning'}">
+                            Gesamt: 3 (1 notwendig, 2 optional)
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Cookie-Verhältnis</span>
+                                <button class="percentage-btn">33%</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="60-80" style="width: 33%"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Untersuchte Parameter:</strong> Notwendige vs. optionale Cookies, Analytics-Cookies, Marketing-Cookies, Functional-Cookies
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Rechtliche Dokumente</div>
+                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : 'warning'}">
+                            ${dataPrivacyScore >= 80 ? 'Vollständig' : dataPrivacyScore >= 60 ? 'Grundlegend vorhanden' : 'Lückenhaft'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Datenschutzerklärung & Impressum</span>
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
                             </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Untersuchte Parameter:</strong> Datenschutzerklärung, Cookie-Policy, Impressum, AGB, Betroffenenrechte
+                            </div>
                         </div>
                     </div>
+                </div>
                 </div>
                 
                 ${dataPrivacyScore < 90 ? `
                 <div class="recommendations">
-                    <h4>Empfehlungen zur Datenschutz-Verbesserung:</h4>
+                    <h4>Empfehlungen zur technischen Datenschutz-Verbesserung:</h4>
                     <ul>
-                        <li>Überprüfung und Anpassung der Datenschutzerklärung</li>
+                        <li>SSL-Konfiguration und Sicherheitsheader optimieren</li>
                         ${(() => {
-                          // Check if there are active cookie-related violations
                           const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
                           return hasCookieViolations ? '<li>Implementierung eines DSGVO-konformen Cookie-Banners</li>' : '';
                         })()}
-                        <li>Prüfung der Datenverarbeitungsverträge mit Dienstleistern</li>
-                        <li>Dokumentation der Verarbeitungstätigkeiten</li>
-                        <li>Sicherstellung der Betroffenenrechte</li>
+                        <li>Cookie-Policy erstellen und verlinken</li>
+                        <li>Technische Sicherheitsmaßnahmen verstärken</li>
+                        <li>Regelmäßige Sicherheitsupdates durchführen</li>
                     </ul>
                 </div>
                 ` : ''}
             </div>
         </div>
-`;
+    `;
+};

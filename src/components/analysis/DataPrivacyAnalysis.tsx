@@ -298,90 +298,205 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   </div>
                 )}
 
-              {/* Score Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="border-accent">
-                  <CardContent className="p-6 text-center">
-                    <div className={`text-5xl font-bold ${getScoreColor(getEffectiveScore())} mb-2`}>
-                      {getEffectiveScore()}
+              {/* DSGVO Section */}
+              <Card className="border-destructive">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-destructive">
+                    <Scale className="h-5 w-5" />
+                    DSGVO-Konformität
+                  </CardTitle>
+                  <CardDescription>
+                    Bewertung nach DSGVO Art. 5-22, ePrivacy-VO und TTDSG
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className={`text-4xl font-bold ${getScoreColor(getEffectiveScore())} mb-2`}>
+                        {getEffectiveScore()}%
+                      </div>
+                      <Badge variant={getScoreBadge(getEffectiveScore())}>
+                        {privacyData.gdprComplianceLevel}
+                      </Badge>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      DSGVO-Score
-                      {manualDataPrivacyData?.overallScore !== undefined && (
-                        <span className="text-accent ml-1">(manuell)</span>
-                      )}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>DSGVO-Verstöße:</span>
+                        <span className="text-destructive font-semibold">{getAllViolations().length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Bußgeldrisiko:</span>
+                        <span className="text-warning">{privacyData.legalRisk.level}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Rechtliches Risiko:</span>
+                        <span>{privacyData.legalRisk.potentialFine}</span>
+                      </div>
                     </div>
-                    <Badge variant={getScoreBadge(getEffectiveScore())} className="mt-2">
-                      {privacyData.gdprComplianceLevel}
-                    </Badge>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-warning">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-5xl font-bold text-warning mb-2">
-                      {privacyData.cookieCount}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Cookies</div>
-                    <div className="text-xs text-warning mt-1">
-                      TTDSG-Prüfung
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-destructive">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-5xl font-bold text-destructive mb-2">
-                      {getAllViolations().length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      DSGVO-Verstöße
-                      {(manualDataPrivacyData?.customViolations?.length || 0) > 0 && (
-                        <span className="text-accent ml-1">
-                          (+{manualDataPrivacyData?.customViolations?.length} manuell)
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs text-destructive mt-1">
-                      Rechtliches Risiko
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-accent">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-5xl font-bold text-accent mb-2">
-                      {privacyData.sslRating}
-                    </div>
-                    <div className="text-sm text-muted-foreground">SSL-Rating</div>
-                    <Lock className="h-4 w-4 mx-auto text-accent mt-1" />
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Progress Bar with detailed explanation */}
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>DSGVO-Konformität</span>
-                    <span className={getScoreColor(getEffectiveScore())}>
-                      {getEffectiveScore()}/100 - Bußgeldrisiko: {privacyData.legalRisk.potentialFine}
-                    </span>
                   </div>
-                  <Progress value={getEffectiveScore()} className="h-3" />
-                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <p><strong>Bewertungslogik:</strong></p>
-                    <ul className="space-y-1 ml-4">
-                      <li>• 90-100%: Vollständige DSGVO-Konformität erreicht</li>
-                      <li>• 70-89%: Grundlegende Compliance mit kleineren Mängeln</li>
-                      <li>• 50-69%: Wesentliche Verbesserungen erforderlich</li>
-                      <li>• Unter 50%: Kritische Defizite mit hohem Bußgeldrisiko</li>
-                    </ul>
-                    <p className="mt-2"><strong>Einflussfaktoren:</strong> SSL-Verschlüsselung (+5), Datenschutzerklärung (+10), Cookie-Policy (+8), DSGVO-Konformität (+15), Einwilligungsmanagement (+12)</p>
-                    {(manualDataPrivacyData?.deselectedViolations?.length || 0) > 0 && (
-                      <p className="text-accent"><strong>Manuelle Anpassung:</strong> {manualDataPrivacyData?.deselectedViolations?.length} Verstöße als nicht zutreffend markiert (+{(manualDataPrivacyData?.deselectedViolations?.length || 0) * 8} Punkte)</p>
-                    )}
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>DSGVO-Konformität</span>
+                      <span className={getScoreColor(getEffectiveScore())}>
+                        {getEffectiveScore()}/100
+                      </span>
+                    </div>
+                    <Progress value={getEffectiveScore()} className="h-3" />
                   </div>
-                </div>
+
+                  {/* DSGVO Parameters */}
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      Untersuchte DSGVO-Parameter
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span>Art. 7 - Einwilligung</span>
+                          <span className={`${privacyData.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.hasConsentBanner ? 'Vorhanden' : 'Fehlend'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Art. 13-14 - Informationspflichten</span>
+                          <span className={`${privacyData.hasPrivacyPolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.hasPrivacyPolicy ? 'Erfüllt' : 'Mangelhaft'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Art. 44-49 - Drittlandtransfer</span>
+                          <span className={`${privacyData.trackingScripts.some(s => s.thirdCountryTransfer) ? 'text-red-600' : 'text-green-600'} font-semibold`}>
+                            {privacyData.trackingScripts.some(s => s.thirdCountryTransfer) ? 'Risiko erkannt' : 'Konform'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span>Tracking-Scripts</span>
+                          <span className="font-semibold">{privacyData.trackingScripts.length} erkannt</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Externe Services</span>
+                          <span className="font-semibold">{privacyData.externalServices.length} geprüft</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Rechtsbasis</span>
+                          <span className={`${getAllViolations().some(v => v.category === 'consent') ? 'text-red-600' : 'text-green-600'} font-semibold`}>
+                            {getAllViolations().some(v => v.category === 'consent') ? 'Lückenhaft' : 'Dokumentiert'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Datenschutz Section */}
+              <Card className="border-blue-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-600">
+                    <Shield className="h-5 w-5" />
+                    Datenschutz & Technische Sicherheit
+                  </CardTitle>
+                  <CardDescription>
+                    Technische Sicherheitsmaßnahmen und Cookie-Compliance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600 mb-2">
+                        {privacyData.sslRating}
+                      </div>
+                      <div className="text-sm text-muted-foreground">SSL-Rating</div>
+                      <Lock className="h-4 w-4 mx-auto text-blue-600 mt-1" />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-warning mb-2">
+                        {privacyData.cookieCount}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Cookies gefunden</div>
+                      <Cookie className="h-4 w-4 mx-auto text-warning mt-1" />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600 mb-2">
+                        {privacyData.cookies.filter(c => c.category === 'strictly-necessary').length}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Notwendige Cookies</div>
+                      <CheckCircle className="h-4 w-4 mx-auto text-green-600 mt-1" />
+                    </div>
+                  </div>
+
+                  {/* Cookie Compliance Bar */}
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Cookie-Compliance (TTDSG)</span>
+                      <span className="text-blue-600">
+                        {Math.round((privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100)}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100} 
+                      className="h-3" 
+                    />
+                    <div className="text-xs text-muted-foreground mt-2">
+                      <p><strong>Bewertung:</strong> Anteil technisch notwendiger Cookies vs. Tracking-Cookies</p>
+                    </div>
+                  </div>
+
+                  {/* Technical Parameters */}
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-blue-700">
+                      <Settings className="h-4 w-4" />
+                      Untersuchte Datenschutz-Parameter
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span>SSL-Verschlüsselung</span>
+                          <span className={`${privacyData.sslRating !== 'F' ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.sslRating}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Cookie-Banner</span>
+                          <span className={`${privacyData.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.hasConsentBanner ? 'Implementiert' : 'Nicht vorhanden'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Cookie-Policy</span>
+                          <span className={`${privacyData.hasCookiePolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.hasCookiePolicy ? 'Vorhanden' : 'Fehlend'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span>Analytics-Cookies</span>
+                          <span className="font-semibold text-orange-600">
+                            {privacyData.cookies.filter(c => c.category === 'analytics').length}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Marketing-Cookies</span>
+                          <span className="font-semibold text-red-600">
+                            {privacyData.cookies.filter(c => c.category === 'marketing').length}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Impressum</span>
+                          <span className={`${privacyData.hasImprint ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData.hasImprint ? 'Vorhanden' : 'Fehlend'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
                 {/* DSGVO Violations Detail */}
                 {getAllViolations().length > 0 && (
