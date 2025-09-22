@@ -69,7 +69,7 @@ section[class*="section"],
 .score-overview {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  gap: 20px 25px !important;
+  gap: 20px 20px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -119,7 +119,7 @@ section[class*="section"],
 .score-overview { 
   display: grid; 
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-  gap: 20px 25px; 
+  gap: 20px 20px; 
   margin-bottom: 40px; 
   max-width: 100%;
   overflow-x: hidden;
