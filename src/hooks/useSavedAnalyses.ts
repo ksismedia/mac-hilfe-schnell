@@ -326,8 +326,13 @@ export const useSavedAnalyses = () => {
       ...manualData 
     };
 
+    console.log('=== SAVE ANALYSIS TO DATABASE ===');
+    console.log('User logged in:', !!user, 'User ID:', user?.id);
+    console.log('Analysis name:', name);
+    
     if (user) {
       try {
+        console.log('Inserting into Supabase database...');
         const { data, error } = await supabase
           .from('saved_analyses')
           .insert({
@@ -340,7 +345,11 @@ export const useSavedAnalyses = () => {
           .select()
           .single();
 
-        if (error) throw error;
+        console.log('Database insert result:', { data, error });
+        if (error) {
+          console.error('Database insert error:', error);
+          throw error;
+        }
 
         const newAnalysis: SavedAnalysis = {
           id: data.id,

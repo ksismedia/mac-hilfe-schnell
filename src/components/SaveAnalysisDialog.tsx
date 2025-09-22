@@ -110,14 +110,23 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         accessibilityData: accessibilityData || undefined
       };
 
+      console.log('=== SAVE ANALYSIS DEBUG ===');
+      console.log('Current Analysis ID:', currentAnalysisId);
+      console.log('Analysis Name:', analysisName);
+      console.log('Business Data:', businessData);
+      console.log('Manual Data:', manualData);
+
       if (currentAnalysisId) {
-        updateAnalysis(currentAnalysisId, analysisName, businessData, realData, manualData);
+        console.log('Updating existing analysis...');
+        await updateAnalysis(currentAnalysisId, analysisName, businessData, realData, manualData);
         toast({
           title: "Analyse aktualisiert",
           description: `Die Analyse "${analysisName}" wurde erfolgreich aktualisiert.`,
         });
       } else {
-        const newId = saveAnalysis(analysisName, businessData, realData, manualData);
+        console.log('Creating new analysis...');
+        const newId = await saveAnalysis(analysisName, businessData, realData, manualData);
+        console.log('New analysis ID:', newId);
         toast({
           title: "Analyse gespeichert",
           description: `Die Analyse "${analysisName}" wurde erfolgreich gespeichert.`,
