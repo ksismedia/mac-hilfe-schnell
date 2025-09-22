@@ -322,6 +322,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   };
 
   const renderActiveCategory = () => {
+    // Nur rendern wenn die Navigation aktiviert ist
+    if (!showCategoryNav) {
+      return null;
+    }
+    
     switch (activeCategory) {
       case 'online-quality-authority':
         return (
