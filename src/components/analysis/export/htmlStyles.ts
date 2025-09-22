@@ -906,38 +906,60 @@ table tr {
     font-weight: normal !important;
   }
 
-  /* Disclaimer Styles */
+  /* Disclaimer Styles - UNNA Style Design */
   .disclaimer {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: 8px;
-    padding: 20px;
-    margin: 30px 0;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.98) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 16px;
+    padding: 0;
+    margin: 60px 0 30px 0;
     font-size: 14px;
     line-height: 1.6;
     color: #d1d5db;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    overflow: hidden;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .disclaimer h4 {
-    color: #60a5fa;
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    font-weight: bold;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #000000;
+    margin: 0;
+    padding: 25px 30px;
+    font-size: 1.5em;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 8px;
+    border-bottom: none;
+  }
+  
+  .disclaimer-content {
+    padding: 30px;
   }
   
   .disclaimer p {
-    margin: 8px 0;
-    text-align: justify;
+    margin: 18px 0;
+    text-align: left;
+    line-height: 1.8;
+    color: #d1d5db;
+    font-size: 0.95em;
+  }
+  
+  .disclaimer strong {
+    color: #fbbf24;
+    font-weight: 600;
   }
   
   .disclaimer .disclaimer-date {
     text-align: right;
     font-size: 12px;
     color: #9ca3af;
-    margin-top: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
     font-style: italic;
   }
 }
