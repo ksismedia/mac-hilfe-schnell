@@ -32,6 +32,7 @@ export interface GDPRViolation {
   recommendation: string;
   fineRisk: string;
   legalReference: string;
+  cookieRelated?: boolean;
 }
 
 export interface DataPrivacyResult {
@@ -207,9 +208,10 @@ export class DataPrivacyService {
         severity: 'critical',
         category: 'consent',
         description: 'Cookies ohne vorherige Einwilligung gesetzt',
-        recommendation: 'Consent-Management-System implementieren',
+        recommendation: 'Consent-Management-System implementieren. Cookie-Banner mit granularen Einstellungen einrichten.',
         fineRisk: 'Bis zu 4% des Jahresumsatzes',
-        legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_7'
+        legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_7',
+        cookieRelated: true // Flag to identify cookie-related violations
       });
     }
     

@@ -359,7 +359,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 </Card>
               </div>
 
-              {/* Progress Bar */}
+              {/* Progress Bar with detailed explanation */}
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>DSGVO-Konformität</span>
@@ -368,6 +368,19 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     </span>
                   </div>
                   <Progress value={getEffectiveScore()} className="h-3" />
+                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <p><strong>Bewertungslogik:</strong></p>
+                    <ul className="space-y-1 ml-4">
+                      <li>• 90-100%: Vollständige DSGVO-Konformität erreicht</li>
+                      <li>• 70-89%: Grundlegende Compliance mit kleineren Mängeln</li>
+                      <li>• 50-69%: Wesentliche Verbesserungen erforderlich</li>
+                      <li>• Unter 50%: Kritische Defizite mit hohem Bußgeldrisiko</li>
+                    </ul>
+                    <p className="mt-2"><strong>Einflussfaktoren:</strong> SSL-Verschlüsselung (+5), Datenschutzerklärung (+10), Cookie-Policy (+8), DSGVO-Konformität (+15), Einwilligungsmanagement (+12)</p>
+                    {(manualDataPrivacyData?.deselectedViolations?.length || 0) > 0 && (
+                      <p className="text-accent"><strong>Manuelle Anpassung:</strong> {manualDataPrivacyData?.deselectedViolations?.length} Verstöße als nicht zutreffend markiert (+{(manualDataPrivacyData?.deselectedViolations?.length || 0) * 8} Punkte)</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* DSGVO Violations Detail */}

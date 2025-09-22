@@ -275,7 +275,8 @@ export const generateMobileSection = (realData: RealBusinessData) => `
 
 export const generateDataPrivacySection = (
   dataPrivacyScore: number = 75, 
-  activeViolations: any[] = []
+  activeViolations: any[] = [],
+  manualDataPrivacyData?: any
 ) => `
         <!-- Datenschutz-Analyse -->
         <div class="section">
@@ -306,6 +307,14 @@ export const generateDataPrivacySection = (
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; background-color: ${dataPrivacyScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
+                            </div>
+                            <div style="margin-top: 8px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 12px; color: #1e40af;">
+                                <strong>Bewertungslogik:</strong><br>
+                                • 90-100%: Vollständige DSGVO-Konformität<br>
+                                • 70-89%: Grundlegende Compliance mit kleineren Mängeln<br>
+                                • 50-69%: Wesentliche Verbesserungen erforderlich<br>
+                                • Unter 50%: Kritische Defizite mit hohem Bußgeldrisiko<br>
+                                <strong>Faktoren:</strong> SSL (+5), Datenschutzerklärung (+10), Cookie-Policy (+8), DSGVO-Konformität (+15)
                             </div>
                         </div>
                     </div>
@@ -368,6 +377,9 @@ export const generateDataPrivacySection = (
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${Math.min(100, dataPrivacyScore + 10) < 60 ? '0-60' : Math.min(100, dataPrivacyScore + 10) < 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
                             </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Bewertung:</strong> Einwilligungsmanagement, Cookie-Kategorisierung, Granularität der Kontrollen
+                            </div>
                         </div>
                     </div>
 
@@ -407,7 +419,11 @@ export const generateDataPrivacySection = (
                     <h4>Empfehlungen zur Datenschutz-Verbesserung:</h4>
                     <ul>
                         <li>Überprüfung und Anpassung der Datenschutzerklärung</li>
-                        <li>Implementierung eines DSGVO-konformen Cookie-Banners</li>
+                        ${(() => {
+                          // Check if there are active cookie-related violations
+                          const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+                          return hasCookieViolations ? '<li>Implementierung eines DSGVO-konformen Cookie-Banners</li>' : '';
+                        })()}
                         <li>Prüfung der Datenverarbeitungsverträge mit Dienstleistern</li>
                         <li>Dokumentation der Verarbeitungstätigkeiten</li>
                         <li>Sicherstellung der Betroffenenrechte</li>
