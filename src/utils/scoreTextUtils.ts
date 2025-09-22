@@ -8,11 +8,12 @@ export const getScoreTextDescription = (
 ): string => {
   switch (category) {
     case 'hourlyRate':
+      // Neue Bewertungslogik basierend auf Differenz zum regionalen Durchschnitt
       if (score === 30) return 'Ausbaufähig';
-      if (score === 50) return 'Über Marktdurchschnitt';
-      if (score === 70) return 'Marktgerecht';
-      if (score === 85) return 'Wettbewerbsfähig';
-      if (score === 100) return 'Sehr wettbewerbsfähig';
+      if (score === 50) return 'wettbewerbsfähig';
+      if (score === 70) return 'Sehr wettbewerbsfähig';
+      if (score === 85) return 'gut positioniert';
+      if (score === 100) return 'sehr gut positioniert';
       break;
       
     case 'seo':
@@ -84,10 +85,10 @@ export const getScoreTextDescription = (
   
   // Fallback for specific hourly rate scores that don't match exact values
   if (category === 'hourlyRate') {
-    if (score >= 85) return 'Sehr wettbewerbsfähig';
-    if (score >= 70) return 'Wettbewerbsfähig';
-    if (score >= 60) return 'Marktgerecht';
-    if (score >= 40) return 'Über Marktdurchschnitt';
+    if (score >= 85) return 'sehr gut positioniert';
+    if (score >= 70) return 'gut positioniert';
+    if (score >= 60) return 'Sehr wettbewerbsfähig';
+    if (score >= 40) return 'wettbewerbsfähig';
     return 'Ausbaufähig';
   }
   
@@ -95,7 +96,7 @@ export const getScoreTextDescription = (
 };
 
 export const getScoreVariant = (score: number): 'default' | 'secondary' | 'destructive' => {
-  if (score >= 90) return 'secondary'; // gold/best
-  if (score >= 61) return 'default'; // green/good  
+  if (score >= 70) return 'secondary'; // gold/best (sehr wettbewerbsfähig, gut positioniert, sehr gut positioniert)
+  if (score >= 50) return 'default'; // green/good (wettbewerbsfähig)
   return 'destructive'; // red/poor
 };

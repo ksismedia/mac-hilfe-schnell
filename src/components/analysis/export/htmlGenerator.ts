@@ -470,26 +470,24 @@ export const generateCustomerHTML = ({
     let localPricingScore = 75; // Default score
     let localPricingText = 'Marktgerecht';
     if (companyAvg > 0 && regionalAvg > 0) {
-      const ratio = companyAvg / regionalAvg;
-      if (ratio >= 0.9 && ratio <= 1.1) {
-        localPricingScore = 100;
-        localPricingText = 'Sehr wettbewerbsfähig';
-      } else if (ratio >= 0.85 && ratio < 0.9) {
-        localPricingScore = 85;
-        localPricingText = 'Wettbewerbsfähig';
-      } else if (ratio >= 0.7 && ratio < 0.85) {
-        localPricingScore = 70;
-        localPricingText = 'Marktgerecht';
-      } else if (ratio >= 0.5 && ratio < 0.7) {
+      const difference = companyAvg - regionalAvg;
+      
+      // Neue Bewertungslogik basierend auf der Differenz
+      if (difference >= -10 && difference < 0) {
         localPricingScore = 50;
-        localPricingText = 'Ausbaufähig';
-      } else if (ratio > 1.1) {
-        // Company rates are significantly higher than regional average
-        localPricingScore = Math.max(30, 100 - (ratio - 1) * 100);
-        localPricingText = ratio > 1.5 ? 'Deutlich über Marktdurchschnitt' : 'Über Marktdurchschnitt';
+        localPricingText = 'wettbewerbsfähig';
+      } else if (difference >= 0 && difference <= 10) {
+        localPricingScore = 70;
+        localPricingText = 'Sehr wettbewerbsfähig';
+      } else if (difference > 10 && difference <= 20) {
+        localPricingScore = 85;
+        localPricingText = 'gut positioniert';
+      } else if (difference > 20) {
+        localPricingScore = 100;
+        localPricingText = 'sehr gut positioniert';
       } else {
-        // Company rates are significantly lower than regional average (ratio < 0.5)
-        localPricingScore = Math.max(30, ratio * 100);
+        // Difference < -10
+        localPricingScore = 30;
         localPricingText = 'Ausbaufähig';
       }
     }
@@ -518,10 +516,10 @@ export const generateCustomerHTML = ({
             <p><strong>Regional Installation:</strong> ${hourlyRateData.regionalInstallationRate || 0}€/h</p>
             <p><strong>Regional Durchschnitt:</strong> ${regionalAvg.toFixed(2)}€/h</p>
             
-            <div style="margin-top: 15px; padding: 10px; background: ${localPricingScore >= 80 ? '#e8f5e8' : localPricingScore >= 60 ? '#fff3cd' : '#f8d7da'}; border-radius: 5px;">
+            <div style="margin-top: 15px; padding: 10px; background: ${localPricingScore >= 60 ? (localPricingScore >= 70 ? '#ffd700' : '#e8f5e8') : '#f8d7da'}; border-radius: 5px;">
               <strong>Bewertung:</strong> ${
-                localPricingScore >= 80 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
-                localPricingScore >= 60 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
+                localPricingScore >= 70 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
+                localPricingScore >= 50 ? 'Ihre Preise sind wettbewerbsfähig.' :
                 'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
               }
             </div>
@@ -532,10 +530,10 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${
-                localPricingScore < 20 ? '#CD0000' :
-                localPricingScore <= 60 ? '#dc2626' :
-                localPricingScore <= 80 ? '#16a34a' :
-                '#eab308'
+                localPricingScore < 40 ? '#CD0000' :
+                localPricingScore < 60 ? '#dc2626' :
+                localPricingScore < 70 ? '#16a34a' :
+                '#ffd700'
               };"></div>
             </div>
           </div>
