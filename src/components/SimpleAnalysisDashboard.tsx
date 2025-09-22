@@ -12,6 +12,7 @@ import SocialMediaCategory from './analysis/categories/SocialMediaCategory';
 import StaffServiceCategory from './analysis/categories/StaffServiceCategory';
 import { CorporateIdentityInput } from './analysis/CorporateIdentityInput';
 import QuoteResponseInput from './analysis/QuoteResponseInput';
+import { calculateLocalSEOScore } from './analysis/export/scoreCalculations';
 
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
@@ -605,6 +606,191 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
+          </div>
+        </div>
+
+        {/* Executive Summary */}
+        <div style={{ marginBottom: '40px' }}>
+          <h2 style={{ 
+            color: '#facc15', 
+            fontSize: '24px', 
+            fontWeight: 'bold', 
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            Executive Summary
+          </h2>
+          
+          {/* Online-Qualität Section */}
+          <div style={{ marginBottom: '30px' }}>
+            <div style={{
+              background: '#facc15',
+              color: '#000',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              marginBottom: '16px',
+              textAlign: 'center'
+            }}>
+              Online-Qualität • Relevanz • Autorität
+            </div>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '12px'
+            }}>
+              <div style={{
+                background: realData.seo.score >= 80 ? '#22c55e' : realData.seo.score >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(realData.seo.score)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  SEO-Auswertung
+                </div>
+              </div>
+              
+              <div style={{
+                background: calculateLocalSEOScore(businessData, realData) >= 80 ? '#22c55e' : calculateLocalSEOScore(businessData, realData) >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(calculateLocalSEOScore(businessData, realData))}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Lokale SEO
+                </div>
+              </div>
+              
+              <div style={{
+                background: (accessibilityData?.overallScore || 0) >= 80 ? '#22c55e' : (accessibilityData?.overallScore || 0) >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(accessibilityData?.overallScore || 0)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Barrierefreiheit
+                </div>
+              </div>
+              
+              <div style={{
+                background: (privacyData?.overallScore || 0) >= 80 ? '#22c55e' : (privacyData?.overallScore || 0) >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(privacyData?.overallScore || 0)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Datenschutz
+                </div>
+              </div>
+              
+              <div style={{
+                background: (privacyData?.gdprScore || 0) >= 80 ? '#22c55e' : (privacyData?.gdprScore || 0) >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(privacyData?.gdprScore || 0)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  DSGVO
+                </div>
+              </div>
+              
+              <div style={{
+                background: realData.imprint.score >= 80 ? '#22c55e' : realData.imprint.score >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(realData.imprint.score)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Impressum
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Webseiten-Performance Section */}
+          <div style={{ marginBottom: '30px' }}>
+            <div style={{
+              background: '#facc15',
+              color: '#000',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              marginBottom: '16px',
+              textAlign: 'center'
+            }}>
+              Webseiten-Performance & Technik
+            </div>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '12px'
+            }}>
+              <div style={{
+                background: realData.performance.score >= 80 ? '#22c55e' : realData.performance.score >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(realData.performance.score)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Website Performance
+                </div>
+              </div>
+              
+              <div style={{
+                background: realData.mobile.overallScore >= 80 ? '#22c55e' : realData.mobile.overallScore >= 60 ? '#eab308' : '#ef4444',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  {Math.round(realData.mobile.overallScore)}%
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                  Mobile Optimierung
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
