@@ -103,13 +103,18 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
 
   // Toggle function für Kategorien
   const toggleCategory = (categoryId: string) => {
+    console.log('toggleCategory called with:', categoryId);
     setExpandedCategories(prev => {
       const newSet = new Set(prev);
+      console.log('Current expanded categories:', Array.from(prev));
       if (newSet.has(categoryId)) {
         newSet.delete(categoryId);
+        console.log('Removing category:', categoryId);
       } else {
         newSet.add(categoryId);
+        console.log('Adding category:', categoryId);
       }
+      console.log('New expanded categories:', Array.from(newSet));
       return newSet;
     });
   };
@@ -255,6 +260,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
         {categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
           const isExpanded = expandedCategories.has(category.id);
+          console.log(`Category ${category.id} - isExpanded:`, isExpanded);
           
           return (
             <div 
