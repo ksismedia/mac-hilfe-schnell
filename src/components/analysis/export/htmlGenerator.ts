@@ -96,6 +96,7 @@ export const generateCustomerHTML = ({
   manualBacklinkData,
   calculatedOwnCompanyScore
 }: CustomerReportData): string => {
+  console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   console.log('HTML Generator received competitorServices:', competitorServices);

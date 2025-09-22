@@ -136,6 +136,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const exportAsCustomerReport = () => {
+    console.log('🔵 CustomerHTMLExport exportAsCustomerReport called - THIS OPENS IN BROWSER');
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
     const missingImprintElements = getMissingImprintElements();

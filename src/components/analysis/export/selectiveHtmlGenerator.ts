@@ -76,6 +76,7 @@ interface SelectiveReportData {
 }
 
 export const generateSelectiveHTML = (data: SelectiveReportData): string => {
+  console.log('🟡 generateSelectiveHTML called - SELECTIVE HTML GENERATOR');
   console.log('=== SELECTIVE HTML GENERATOR DEBUG ===');
   console.log('Received data:', data);
   const { businessData, realData, manualSocialData, accessibilityData, privacyData, selections } = data;

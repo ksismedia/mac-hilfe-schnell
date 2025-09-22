@@ -133,6 +133,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   };
 
   const generateInternalReport = () => {
+    console.log('🔴 HTMLExport.tsx generateInternalReport called - INTERNAL HTML GENERATOR');
     const overallScore = calculateOverallScore();
     const visibilityScore = calculateVisibilityScore();
     const performanceScore = realData.performance.score;
@@ -818,6 +819,7 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   };
 
   const downloadHTMLReport = () => {
+    console.log('🔴 HTMLExport.tsx downloadHTMLReport called - INTERNAL HTML GENERATOR DOWNLOAD');
     const overallScore = calculateOverallScore();
     const visibilityScore = calculateVisibilityScore();
     const performanceScore = realData.performance.score;
