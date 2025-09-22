@@ -983,11 +983,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           overflow: hidden;
           transition: all 0.3s ease;
           padding: 0;
-          display: block;
         }
 
         .category-content.collapsed {
-          display: none;
+          display: none !important;
         }
 
         .category-content .score-overview {
@@ -997,6 +996,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           justify-content: center;
           gap: 20px;
           flex-wrap: wrap;
+        }
+
+        .category-content.collapsed .score-overview {
+          display: none !important;
         }
         
         .category-content .score-card {
@@ -1091,17 +1094,23 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           }
         }
 
+        // Debug logging
+        console.log('Initializing collapsible categories...');
+        
         // Initialize all categories as collapsed (dropdown style)
         document.addEventListener('DOMContentLoaded', function() {
+          console.log('DOM loaded, setting up categories...');
           const categories = ['seo-performance', 'mobile-accessibility', 'social-reputation', 'legal-privacy'];
           categories.forEach(categoryId => {
             const content = document.getElementById(categoryId);
             const header = content ? content.previousElementSibling : null;
             const toggleIcon = header ? header.querySelector('.toggle-icon') : null;
+            console.log('Processing category:', categoryId, 'content:', !!content, 'header:', !!header);
             if (content && header) {
               content.classList.add('collapsed');
               header.classList.add('collapsed');
               if (toggleIcon) toggleIcon.textContent = '▶';
+              console.log('Category', categoryId, 'initialized as collapsed');
             }
           });
         });
