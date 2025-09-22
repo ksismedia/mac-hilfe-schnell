@@ -54,6 +54,16 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
+  console.log('🟡 SimpleAnalysisDashboard geladen mit:', { businessData, analysisData: !!analysisData });
+  
+  // SICHTBARER DEBUG TEST
+  if (!businessData) {
+    return (
+      <div style={{ background: 'orange', color: 'white', padding: '20px', fontSize: '24px', textAlign: 'center' }}>
+        🟡 SimpleAnalysisDashboard: KEINE BUSINESS DATA! 🟡
+      </div>
+    );
+  }
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);

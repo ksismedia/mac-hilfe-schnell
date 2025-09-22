@@ -56,6 +56,14 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   onBusinessDataChange,
   loadedAnalysisId 
 }) => {
+  console.log('🟣 SidebarAnalysisDashboard geladen mit:', { businessData, loadedAnalysisId });
+  
+  // SICHTBARER DEBUG TEST  
+  return (
+    <div style={{ background: 'purple', color: 'white', padding: '20px', fontSize: '24px', textAlign: 'center' }}>
+      🟣 SIDEBAR ANALYSIS DASHBOARD GELADEN! 🟣
+    </div>
+  );
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
