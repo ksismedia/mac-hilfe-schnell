@@ -2136,7 +2136,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-styled">
               <div class="category-title-box" onclick="toggleCategory('social-reputation')">
-                <h3>Online-/Web-/Social-Media Performance</h3>
+                <h3 style="background: #fbbf24 !important; color: #000 !important; padding: 8px 16px !important; border-radius: 4px !important; margin: 0 !important;">Online-/Web-/Social-Media Performance</h3>
               </div>
             </div>
             <div class="category-content collapsed" id="social-reputation">
@@ -2157,7 +2157,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-styled">
               <div class="category-title-box" onclick="toggleCategory('legal-privacy')">
-                <h3>Markt & Marktumfeld</h3>
+                <h3 style="background: #fbbf24 !important; color: #000 !important; padding: 8px 16px !important; border-radius: 4px !important; margin: 0 !important;">Markt & Marktumfeld</h3>
               </div>
             </div>
             <div class="category-content collapsed" id="legal-privacy">
@@ -2184,7 +2184,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-styled">
               <div class="category-title-box" onclick="toggleCategory('design-branding')">
-                <h3>Außendarstellung & Erscheinungsbild</h3>
+                <h3 style="background: #fbbf24 !important; color: #000 !important; padding: 8px 16px !important; border-radius: 4px !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h3>
               </div>
             </div>
             <div class="category-content collapsed" id="design-branding">
@@ -2201,7 +2201,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-styled">
               <div class="category-title-box" onclick="toggleCategory('staff-service')">
-                <h3>Qualität · Service · Kundenorientierung</h3>
+                <h3 style="background: #fbbf24 !important; color: #000 !important; padding: 8px 16px !important; border-radius: 4px !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h3>
               </div>
             </div>
             <div class="category-content collapsed" id="staff-service">
