@@ -68,7 +68,7 @@ section[class*="section"],
 /* Preserve responsive grid for score cards */
 .score-overview {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 200px)) !important;
   gap: 20px 20px !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -118,7 +118,7 @@ section[class*="section"],
 }
 .score-overview { 
   display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 200px)); 
   gap: 20px 20px; 
   margin-bottom: 40px; 
   max-width: 100%;
