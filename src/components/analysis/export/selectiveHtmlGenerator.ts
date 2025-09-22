@@ -976,14 +976,15 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         }
 
         .category-title-box h3 {
-          margin: 0;
-          background: #fbbf24;
-          color: #000;
-          font-size: 1.1em;
-          font-weight: 600;
-          padding: 8px 16px;
-          border-radius: 4px;
-          cursor: pointer;
+          margin: 0 !important;
+          background: #fbbf24 !important;
+          color: #000 !important;
+          font-size: 1.1em !important;
+          font-weight: 600 !important;
+          padding: 8px 16px !important;
+          border-radius: 4px !important;
+          cursor: pointer !important;
+          border: 2px solid #000 !important;
         }
 
         .category-content {
