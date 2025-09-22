@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users } from 'lucide-react';
+import { ArrowLeft, Globe, Building, Search, Zap, Share2, Users, TrendingUp, Eye, Headphones } from 'lucide-react';
 import handwerkStarsLogo from '/lovable-uploads/a9346d0f-f4c9-4697-8b95-78dd3609ddd4.png';
 
 // Category Components
@@ -55,28 +55,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
-  // SUPER SICHTBARER TEST
-  return (
-    <div style={{ 
-      background: 'red', 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      border: '20px solid yellow'
-    }}>
-      <h1 style={{ 
-        color: 'white', 
-        fontSize: '72px', 
-        textAlign: 'center',
-        backgroundColor: 'blue',
-        padding: '50px',
-        border: '10px solid green'
-      }}>
-        🚨🚨🚨 SIMPLE ANALYSIS DASHBOARD! 🚨🚨🚨
-      </h1>
-    </div>
-  );
   const [realData, setRealData] = useState<RealBusinessData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
@@ -108,11 +86,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualSocialData,
     manualWorkplaceData,
     manualCorporateIdentityData,
-    manualCompetitors,
-    competitorServices,
-    removedMissingServices,
-    companyServices,
-    deletedCompetitors,
     staffQualificationData,
     hourlyRateData,
     quoteResponseData,
@@ -124,12 +97,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateSocialData,
     updateWorkplaceData,
     updateCorporateIdentityData,
-    updateCompetitors,
-    updateCompetitorServices,
-    addRemovedMissingService,
-    updateCompanyServices,
-    addDeletedCompetitor,
-    removeDeletedCompetitor,
     updateStaffQualificationData,
     updateHourlyRateData,
     updateQuoteResponseData,
@@ -139,7 +106,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateManualDataPrivacyData
   } = useManualData();
 
-  // Access saved analyses hook
+  const { saveAnalysis, deleteAnalysis } = useSavedAnalyses();
   const { loadAnalysis } = useSavedAnalyses();
 
   // Load analysis data or use direct analysis data
@@ -195,21 +162,15 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           updateSocialData,
           updateWorkplaceData,
           updateCorporateIdentityData,
-          updateCompetitors,
-          updateCompetitorServices,
-          updateCompanyServices,
-          setManualKeywordData,
-          updateStaffQualificationData,
-          updateHourlyRateData,
-          updateQuoteResponseData
+          setCurrentOwnCompanyScore
         );
         
-        console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
         setIsLoadingFromStorage(false);
-        return;
-      } 
-      
-      if (!realData) {
+        
+      } else {
+        console.log('=== LOADING FRESH ANALYSIS ===');
+        console.log('Business data:', businessData);
+        
         // Only load new analysis if we don't have real data yet
         setIsLoading(true);
         
@@ -220,12 +181,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           console.error('Analysis error:', error);
           toast({
             title: "Analysefehler",
-            description: "Die Website-Analyse konnte nicht durchgeführt werden.",
+            description: "Die Webseite konnte nicht analysiert werden. Bitte versuchen Sie es erneut.",
             variant: "destructive",
           });
         } finally {
           setIsLoading(false);
-          setIsLoadingFromStorage(false);
         }
       }
     };
@@ -251,9 +211,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             margin: '0 auto 20px'
           }}></div>
           <h2 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
-            Website wird analysiert...
+            {isLoadingFromStorage ? 'Lade gespeicherte Analyse...' : 'Analysiere Webseite...'}
           </h2>
-          <p style={{ color: '#d1d5db' }}>Dies kann einige Sekunden dauern</p>
+          <p style={{ color: '#888', fontSize: '16px' }}>
+            {isLoadingFromStorage ? 'Daten werden aus dem Speicher geladen' : 'Bitte warten, dies kann einige Sekunden dauern'}
+          </p>
         </div>
       </div>
     );
@@ -267,33 +229,26 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         padding: '20px'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', paddingTop: '100px' }}>
-          <h2 style={{ color: '#ef4444', fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
-            Analysefehler
+          <h2 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
+            Keine Daten verfügbar
           </h2>
-          <p style={{ color: '#d1d5db', marginBottom: '20px' }}>
-            Die Website konnte nicht analysiert werden
-          </p>
-          <Button onClick={onReset} variant="outline">Zurück zur Eingabe</Button>
+          <Button onClick={onReset} style={{ marginTop: '20px' }}>
+            Neue Analyse starten
+          </Button>
         </div>
       </div>
     );
   }
 
   // Calculate category scores
-  // Get competitor score from competitors analysis
-  const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
-    Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
-
-  // Calculate new 6-category scores
   const scores = {
     onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
-      realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData
+      realData, keywordsScore, businessData, privacyData, accessibilityData, manualContentData, manualBacklinkData
     ),
     websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
     socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
     marketEnvironment: calculateMarketEnvironmentScore(
-      realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
+      realData, hourlyRateData, staffQualificationData, currentOwnCompanyScore, manualWorkplaceData
     ),
     corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
     serviceQuality: calculateServiceQualityScore(quoteResponseData)
@@ -356,120 +311,47 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           <SEOContentCategory
             businessData={businessData}
             realData={realData}
-            onKeywordsScoreChange={handleKeywordsScoreChange}
-            onKeywordDataChange={handleKeywordDataChange}
+            manualSocialData={manualSocialData}
             keywordsScore={keywordsScore}
+            onKeywordsScoreChange={handleKeywordsScoreChange}
             manualKeywordData={manualKeywordData}
+            handleKeywordDataChange={handleKeywordDataChange}
             privacyData={privacyData}
-            setPrivacyData={setPrivacyData}
             accessibilityData={accessibilityData}
-            setAccessibilityData={setAccessibilityData}
-            manualImprintData={manualImprintData}
-            updateImprintData={updateImprintData}
-            manualCompetitors={manualCompetitors}
-            competitorServices={competitorServices}
-            removedMissingServices={removedMissingServices}
-            companyServices={companyServices}
-            deletedCompetitors={deletedCompetitors}
-            updateCompetitors={updateCompetitors}
-            updateCompetitorServices={updateCompetitorServices}
-            addRemovedMissingService={addRemovedMissingService}
-            updateCompanyServices={updateCompanyServices}
-            addDeletedCompetitor={addDeletedCompetitor}
-            removeDeletedCompetitor={removeDeletedCompetitor}
-            onCompanyScoreChange={handleCompanyScoreChange}
-            onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
+            manualContentData={manualContentData}
+            manualAccessibilityData={manualAccessibilityData}
+            manualBacklinkData={manualBacklinkData}
             manualDataPrivacyData={manualDataPrivacyData}
-            updateManualDataPrivacyData={updateManualDataPrivacyData}
           />
         );
       case 'website-performance-tech':
         return (
           <PerformanceMobileCategory
-            realData={realData}
             businessData={businessData}
+            realData={realData}
           />
         );
       case 'social-media-performance':
         return (
           <SocialMediaCategory
-            realData={realData}
             businessData={businessData}
+            realData={realData}
             manualSocialData={manualSocialData}
-            updateSocialData={updateSocialData}
-            manualWorkplaceData={manualWorkplaceData}
-            updateWorkplaceData={updateWorkplaceData}
           />
         );
       case 'market-environment':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Markt & Marktumfeld</h2>
-              <p className="text-gray-300">Stundensatz, Personal und Wettbewerbsumfeld</p>
-            </div>
-            <StaffServiceCategory 
-              businessData={businessData}
-              realData={realData}
-              staffQualificationData={staffQualificationData}
-              updateStaffQualificationData={updateStaffQualificationData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              updateCorporateIdentityData={updateCorporateIdentityData}
-              quoteResponseData={quoteResponseData}
-              updateQuoteResponseData={updateQuoteResponseData}
-              hourlyRateData={hourlyRateData}
-              updateHourlyRateData={updateHourlyRateData}
-            />
-          </div>
-        );
       case 'corporate-appearance':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
-              <p className="text-gray-300">Corporate Design und Unternehmensidentität</p>
-            </div>
-            <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
-              <CorporateIdentityInput 
-                businessData={{
-                  companyName: realData?.company?.name || businessData.url,
-                  url: businessData.url
-                }}
-                manualCorporateIdentityData={manualCorporateIdentityData}
-                onUpdate={updateCorporateIdentityData}
-              />
-            </div>
-          </div>
-        );
       case 'service-quality':
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Qualität · Service · Kundenorientierung</h2>
-              <p className="text-gray-300">Kundenservice und Angebotserstellung</p>
-            </div>
-            <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
-              <QuoteResponseInput 
-                data={quoteResponseData}
-                onDataChange={updateQuoteResponseData}
-              />
-            </div>
-          </div>
-        );
-      case 'staff-service':
-      case 'staff-service':
-        return (
-          <StaffServiceCategory 
+          <StaffServiceCategory
             businessData={businessData}
             realData={realData}
             staffQualificationData={staffQualificationData}
-            updateStaffQualificationData={updateStaffQualificationData}
-            manualCorporateIdentityData={manualCorporateIdentityData}
-            updateCorporateIdentityData={updateCorporateIdentityData}
-            quoteResponseData={quoteResponseData}
-            updateQuoteResponseData={updateQuoteResponseData}
             hourlyRateData={hourlyRateData}
-            updateHourlyRateData={updateHourlyRateData}
+            quoteResponseData={quoteResponseData}
+            manualWorkplaceData={manualWorkplaceData}
+            competitorScore={currentOwnCompanyScore}
+            onCompetitorScoreChange={handleCompanyScoreChange}
           />
         );
       default:
@@ -478,169 +360,81 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: '#000000',
-      padding: '20px'
-    }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        
-        {/* Logo Section */}
-        <div style={{ 
-          textAlign: 'center',
-          marginBottom: '48px',
-          paddingTop: '40px'
-        }}>
-          <img 
-            src={handwerkStarsLogo} 
-            alt="Handwerk Stars Logo" 
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #000000 0%, #1f2937 50%, #000000 100%)', padding: '20px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
+          <Button 
+            onClick={onReset}
+            variant="outline"
             style={{ 
-              height: '120px', 
-              maxWidth: '400px',
-              objectFit: 'contain',
-              margin: '0 auto'
+              background: 'rgba(31, 41, 55, 0.8)', 
+              border: '2px solid #facc15', 
+              color: '#facc15' 
             }}
-          />
-        </div>
-
-        {/* Button Section */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '32px'
-        }}>
-          <div style={{ 
-            display: 'inline-flex',
-            gap: '16px',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
-          }}>
-            <Button onClick={onReset} variant="outline" size="lg">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Neue Analyse
-            </Button>
-            <SaveAnalysisDialog 
+          >
+            <ArrowLeft style={{ marginRight: '8px', width: '16px', height: '16px' }} />
+            Neue Analyse
+          </Button>
+          
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <SaveAnalysisDialog
               businessData={businessData}
               realData={realData}
-              manualImprintData={manualImprintData}
+              manualCompetitors={[]}
+              competitorServices={[]}
+            />
+            <SelectiveHTMLExport 
+              businessData={businessData}
+              realData={realData}
               manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              removedMissingServices={removedMissingServices}
-              hourlyRateData={hourlyRateData}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              manualContentData={manualContentData}
-              manualAccessibilityData={manualAccessibilityData}
-              manualBacklinkData={manualBacklinkData}
+              manualImprintData={manualImprintData}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
-              currentAnalysisId={analysisData?.id}
             />
           </div>
         </div>
 
-        {/* Title Section */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '32px'
-        }}>
-          <h1 style={{ 
-            color: '#facc15', 
-            fontSize: '32px', 
-            fontWeight: 'bold', 
-            margin: '0 0 16px 0' 
-          }}>
-            Analyse-Ergebnisse
-          </h1>
-          
-          {/* Website Info */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
-            justifyContent: 'center',
-            flexWrap: 'wrap' 
-          }}>
-            <Globe className="h-4 w-4" style={{ color: '#9ca3af' }} />
-            <span style={{ color: '#d1d5db', fontSize: '16px' }}>{businessData.url}</span>
-            <Badge variant="secondary">
-              <Building className="h-3 w-3 mr-1" />
-              {industryNames[businessData.industry]}
+        {/* Company Info */}
+        <div style={{ marginBottom: '30px', padding: '20px', background: 'rgba(31, 41, 55, 0.9)', borderRadius: '16px', border: '2px solid rgba(250, 204, 21, 0.3)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+            <Globe style={{ color: '#facc15', width: '24px', height: '24px' }} />
+            <h2 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
+              {realData.company.name}
+            </h2>
+          </div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Building style={{ color: '#d1d5db', width: '16px', height: '16px' }} />
+              <span style={{ color: '#d1d5db' }}>{businessData.address}</span>
+            </div>
+            <Badge variant="secondary" style={{ background: '#facc15', color: '#000' }}>
+              {industryNames[businessData.industry] || businessData.industry}
             </Badge>
           </div>
         </div>
 
-        {/* Export Buttons Section */}
-        <div style={{
-          marginBottom: '40px'
-        }}>
-          <div style={{ 
-            display: 'flex',
-            gap: '20px',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}>
-            <CustomerHTMLExport 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              removedMissingServices={removedMissingServices}
-              hourlyRateData={hourlyRateData}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              manualContentData={manualContentData}
-              manualAccessibilityData={manualAccessibilityData}
-              manualBacklinkData={manualBacklinkData}
-              manualDataPrivacyData={manualDataPrivacyData}
-              calculatedOwnCompanyScore={currentOwnCompanyScore}
-              keywordScore={keywordsScore}
-              manualKeywordData={manualKeywordData}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-            />
-            <SelectiveHTMLExport
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              hourlyRateData={hourlyRateData}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              manualContentData={manualContentData}
-              manualAccessibilityData={manualAccessibilityData}
-              manualBacklinkData={manualBacklinkData}
-              manualDataPrivacyData={manualDataPrivacyData}
-              manualKeywordData={manualKeywordData}
-              keywordScore={keywordsScore}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-            />
-        </div>
+        {/* Overall Rating */}
+        <div style={{ marginBottom: '40px' }}>
+          <OverallRating 
+            businessData={businessData}
+            realData={realData}
+            manualSocialData={manualSocialData}
+            keywordsScore={keywordsScore}
+            staffQualificationData={staffQualificationData}
+            quoteResponseData={quoteResponseData}
+            hourlyRateData={hourlyRateData}
+            manualWorkplaceData={manualWorkplaceData}
+            competitorScore={currentOwnCompanyScore}
+          />
         </div>
 
-        {/* Executive Summary mit Accordions */}
+        {/* Executive Summary als Accordions */}
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
-            Executive Summary
+            Executive Summary - Kategorien
           </h3>
           
           <Accordion type="multiple" className="w-full space-y-4">
@@ -660,10 +454,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                       </div>
                       <div className="flex items-center gap-2">
                         <div 
-                          className={`px-4 py-2 rounded-full text-white text-lg font-bold ${
-                            category.score >= 90 ? 'bg-yellow-500' : 
-                            category.score >= 61 ? 'bg-green-500' : 'bg-red-500'
-                          }`}
+                          className={`px-4 py-2 rounded-full text-white text-lg font-bold`}
+                          style={{ 
+                            backgroundColor: category.score >= 90 ? '#facc15' : 
+                                           category.score >= 61 ? '#10b981' : '#ef4444'
+                          }}
                         >
                           {Math.round(category.score)} Punkte
                         </div>
@@ -671,13 +466,67 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-4">
-                    <div className="mt-4">
-                      {/* Hier wird der Category Content gerendert */}
-                      {renderActiveCategory && category.id === 'online-quality-authority' && (
-                        <div onClick={() => setActiveCategory(category.id)}>
-                          {renderActiveCategory()}
-                        </div>
-                      )}
+                    <div className="p-4 bg-gray-900/50 rounded-lg">
+                      <h4 className="text-white font-medium mb-4">{category.title}</h4>
+                      <div className="w-full bg-gray-700 rounded-full h-3 mb-4">
+                        <div 
+                          className="h-3 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${Math.min(100, category.score)}%`,
+                            backgroundColor: getScoreColor(category.score)
+                          }}
+                        />
+                      </div>
+                      <div className="text-gray-400 text-sm">
+                        Bewertung: {category.score >= 90 ? 'Sehr gut' : category.score >= 61 ? 'Gut' : 'Verbesserung erforderlich'}
+                      </div>
+                      
+                      {/* Category specific content */}
+                      <div className="mt-4" onClick={() => setActiveCategory(category.id)}>
+                        {category.id === 'online-quality-authority' && (
+                          <SEOContentCategory
+                            businessData={businessData}
+                            realData={realData}
+                            manualSocialData={manualSocialData}
+                            keywordsScore={keywordsScore}
+                            onKeywordsScoreChange={handleKeywordsScoreChange}
+                            manualKeywordData={manualKeywordData}
+                            handleKeywordDataChange={handleKeywordDataChange}
+                            privacyData={privacyData}
+                            accessibilityData={accessibilityData}
+                            manualContentData={manualContentData}
+                            manualAccessibilityData={manualAccessibilityData}
+                            manualBacklinkData={manualBacklinkData}
+                            manualDataPrivacyData={manualDataPrivacyData}
+                          />
+                        )}
+                        {category.id === 'website-performance-tech' && (
+                          <PerformanceMobileCategory
+                            businessData={businessData}
+                            realData={realData}
+                          />
+                        )}
+                        {category.id === 'social-media-performance' && (
+                          <SocialMediaCategory
+                            businessData={businessData}
+                            realData={realData}
+                            manualSocialData={manualSocialData}
+                          />
+                        )}
+                        {(category.id === 'market-environment' || category.id === 'corporate-appearance' || category.id === 'service-quality') && (
+                          <StaffServiceCategory
+                            businessData={businessData}
+                            realData={realData}
+                            staffQualificationData={staffQualificationData}
+                            hourlyRateData={hourlyRateData}
+                            quoteResponseData={quoteResponseData}
+                            manualWorkplaceData={manualWorkplaceData}
+                            competitorScore={currentOwnCompanyScore}
+                            onCompetitorScoreChange={handleCompanyScoreChange}
+                          />
+                        )}
+                      </div>
+                      
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -685,28 +534,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             })}
           </Accordion>
         </div>
-
-        {/* Overall Rating mit Accordions */}
-        <div style={{ marginBottom: '40px' }}>
-          <OverallRating 
-            businessData={businessData}
-            realData={realData}
-            manualSocialData={manualSocialData}
-            keywordsScore={keywordsScore}
-            staffQualificationData={staffQualificationData}
-            quoteResponseData={quoteResponseData}
-            hourlyRateData={hourlyRateData}
-            manualWorkplaceData={manualWorkplaceData}
-            competitorScore={currentOwnCompanyScore}
-          />
-        </div>
-
-        {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
-        {showCategoryNav && (
-          <div>
-            {renderActiveCategory()}
-          </div>
-        )}
       </div>
     </div>
   );
