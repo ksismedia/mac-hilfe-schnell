@@ -980,14 +980,14 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         }
 
         .category-content {
-          max-height: 1000px;
           overflow: hidden;
-          transition: max-height 0.3s ease;
+          transition: all 0.3s ease;
           padding: 0;
+          display: block;
         }
 
         .category-content.collapsed {
-          max-height: 0;
+          display: none;
         }
 
         .category-content .score-overview {
