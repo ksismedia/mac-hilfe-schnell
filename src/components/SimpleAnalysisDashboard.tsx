@@ -65,9 +65,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [activeCategory, setActiveCategory] = useState('');
   const [showCategoryNav, setShowCategoryNav] = useState(false);
   
-  // Debug logging for state
-  console.log('SimpleAnalysisDashboard render - showCategoryNav:', showCategoryNav, 'activeCategory:', activeCategory);
-  
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
   };
@@ -619,8 +616,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
         {/* Category Navigation Toggle */}
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <h3 style={{ color: '#ff0000', marginBottom: '15px', fontSize: '24px', background: '#ffff00' }}>
-            🔴 TEST: SIMPLE DASHBOARD LOADED 🔴
+          <h3 style={{ color: '#facc15', marginBottom: '15px', fontSize: '18px' }}>
+            Executive Summary
           </h3>
           <button
             onClick={() => {
