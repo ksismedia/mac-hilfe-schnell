@@ -905,6 +905,41 @@ table tr {
     font-size: 1.2em !important;
     font-weight: normal !important;
   }
+
+  /* Disclaimer Styles */
+  .disclaimer {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d1d5db;
+  }
+  
+  .disclaimer h4 {
+    color: #60a5fa;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .disclaimer p {
+    margin: 8px 0;
+    text-align: justify;
+  }
+  
+  .disclaimer .disclaimer-date {
+    text-align: right;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 15px;
+    font-style: italic;
+  }
 }
 `;
 };

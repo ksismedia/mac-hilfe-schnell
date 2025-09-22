@@ -3717,6 +3717,15 @@ export const generateCustomerHTML = ({
         });
       });
     </script>
+    
+    <!-- Rechtlicher Disclaimer -->
+    <div class="disclaimer">
+      <h4>⚖️ Rechtlicher Hinweis</h4>
+      <p><strong>Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
+      <p><strong>Keine Gewähr:</strong> Wir übernehmen keine Gewähr für die Vollständigkeit, Richtigkeit oder Aktualität der Analyseergebnisse. Rechtliche und technische Standards können sich ändern.</p>
+      <p><strong>Individuelle Prüfung erforderlich:</strong> Für rechtsverbindliche Aussagen, insbesondere zu DSGVO-Compliance, Barrierefreiheit oder anderen rechtlichen Aspekten, empfehlen wir die Konsultation entsprechender Fachexperten.</p>
+      <div class="disclaimer-date">Analyse erstellt am: ${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+    </div>
   </div>
 </body>
 </html>`;
