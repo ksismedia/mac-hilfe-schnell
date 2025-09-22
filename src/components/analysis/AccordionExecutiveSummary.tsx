@@ -38,7 +38,10 @@ const AccordionExecutiveSummary: React.FC<AccordionExecutiveSummaryProps> = ({
   quoteResponseData,
   hourlyRateData,
   manualWorkplaceData,
-  competitorScore
+  competitorScore,
+  privacyData = null,
+  accessibilityData = null,
+  manualCorporateIdentityData = null
 }) => {
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
