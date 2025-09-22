@@ -874,6 +874,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Website-Analyse für ${businessData.url}</title>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+      <meta name="generator" content="Handwerk Stars Analysis Tool v${Date.now()}">
       <style>
         ${getHTMLStyles()}
         
