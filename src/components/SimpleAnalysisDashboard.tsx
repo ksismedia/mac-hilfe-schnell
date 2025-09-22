@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -12,7 +13,6 @@ import SocialMediaCategory from './analysis/categories/SocialMediaCategory';
 import StaffServiceCategory from './analysis/categories/StaffServiceCategory';
 import { CorporateIdentityInput } from './analysis/CorporateIdentityInput';
 import QuoteResponseInput from './analysis/QuoteResponseInput';
-import { calculateLocalSEOScore } from './analysis/export/scoreCalculations';
 
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
@@ -63,7 +63,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('online-quality-authority');
+  const [activeCategory, setActiveCategory] = useState('');
+  const [showCategoryNav, setShowCategoryNav] = useState(false);
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -322,6 +323,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   };
 
   const renderActiveCategory = () => {
+    // Nur rendern wenn die Navigation aktiviert ist
+    if (!showCategoryNav) {
+      return null;
+    }
+    
     switch (activeCategory) {
       case 'online-quality-authority':
         return (
@@ -606,239 +612,96 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
-          </div>
+        </div>
         </div>
 
-        {/* Executive Summary */}
+        {/* Executive Summary mit Accordions */}
         <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ 
-            color: '#facc15', 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            marginBottom: '24px',
-            textAlign: 'center'
-          }}>
+          <h3 style={{ color: '#facc15', fontSize: '24px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
             Executive Summary
-          </h2>
+          </h3>
           
-          {/* Online-Qualität Section */}
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{
-              background: '#facc15',
-              color: '#000',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              marginBottom: '16px',
-              textAlign: 'center'
-            }}>
-              Online-Qualität • Relevanz • Autorität
-            </div>
-            
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-              gap: '12px'
-            }}>
-              <div style={{
-                background: realData.seo.score >= 80 ? '#22c55e' : realData.seo.score >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(realData.seo.score)}%
+          {/* Category Tiles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <div 
+                  key={category.id}
+                  className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:bg-gray-800/70 transition-colors cursor-pointer"
+                  onClick={() => {
+                    setActiveCategory(category.id);
+                    setShowCategoryNav(true);
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <IconComponent className="h-5 w-5 text-yellow-400" />
+                    <div 
+                      className="px-3 py-1 rounded-full text-white text-sm font-bold"
+                      style={{ backgroundColor: getScoreColor(category.score) }}
+                    >
+                      {Math.round(category.score)}%
+                    </div>
+                  </div>
+                  <h3 className="text-white font-medium text-sm mb-2">{category.title}</h3>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.min(100, category.score)}%`,
+                        backgroundColor: getScoreColor(category.score)
+                      }}
+                    />
+                  </div>
                 </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  SEO-Auswertung
-                </div>
-              </div>
-              
-              <div style={{
-                background: calculateLocalSEOScore(businessData, realData) >= 80 ? '#22c55e' : calculateLocalSEOScore(businessData, realData) >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(calculateLocalSEOScore(businessData, realData))}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Lokale SEO
-                </div>
-              </div>
-              
-              <div style={{
-                background: (accessibilityData?.overallScore || 0) >= 80 ? '#22c55e' : (accessibilityData?.overallScore || 0) >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(accessibilityData?.overallScore || 0)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Barrierefreiheit
-                </div>
-              </div>
-              
-              <div style={{
-                background: (privacyData?.overallScore || 0) >= 80 ? '#22c55e' : (privacyData?.overallScore || 0) >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(privacyData?.overallScore || 0)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Datenschutz
-                </div>
-              </div>
-              
-              <div style={{
-                background: (privacyData?.gdprScore || 0) >= 80 ? '#22c55e' : (privacyData?.gdprScore || 0) >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(privacyData?.gdprScore || 0)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  DSGVO
-                </div>
-              </div>
-              
-              <div style={{
-                background: realData.imprint.score >= 80 ? '#22c55e' : realData.imprint.score >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(realData.imprint.score)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Impressum
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
           
-          {/* Webseiten-Performance Section */}
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{
-              background: '#facc15',
-              color: '#000',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              marginBottom: '16px',
-              textAlign: 'center'
-            }}>
-              Webseiten-Performance & Technik
-            </div>
-            
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '12px'
-            }}>
-              <div style={{
-                background: realData.performance.score >= 80 ? '#22c55e' : realData.performance.score >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(realData.performance.score)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Website Performance
-                </div>
-              </div>
-              
-              <div style={{
-                background: realData.mobile.overallScore >= 80 ? '#22c55e' : realData.mobile.overallScore >= 60 ? '#eab308' : '#ef4444',
-                color: '#fff',
-                padding: '16px',
-                borderRadius: '12px',
-                textAlign: 'center',
-                border: '2px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  {Math.round(realData.mobile.overallScore)}%
-                </div>
-                <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                  Mobile Optimierung
-                </div>
-              </div>
-            </div>
-          </div>
+          <Accordion type="multiple" className="w-full space-y-4">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <AccordionItem 
+                  key={category.id} 
+                  value={category.id} 
+                  className="border border-gray-700 rounded-lg bg-gray-800/50"
+                >
+                  <AccordionTrigger className="px-4 py-3 text-yellow-400 hover:text-yellow-300">
+                    <div className="flex items-center justify-between w-full mr-4">
+                      <div className="flex items-center gap-3">
+                        <IconComponent className="h-6 w-6" />
+                        <span className="font-semibold text-lg">{category.title}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className={`px-4 py-2 rounded-full text-white text-lg font-bold ${
+                            category.score >= 90 ? 'bg-yellow-500' : 
+                            category.score >= 61 ? 'bg-green-500' : 'bg-red-500'
+                          }`}
+                        >
+                          {Math.round(category.score)} Punkte
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <div className="mt-4">
+                      {/* Hier wird der Category Content gerendert */}
+                      {renderActiveCategory && category.id === 'online-quality-authority' && (
+                        <div onClick={() => setActiveCategory(category.id)}>
+                          {renderActiveCategory()}
+                        </div>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </div>
 
-        {/* Category Navigation */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px',
-          marginBottom: '40px'
-        }}>
-          {categories.map((category) => {
-            const IconComponent = category.icon;
-            const isActive = activeCategory === category.id;
-            return (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                style={{
-                  background: isActive ? '#facc15' : 'rgba(31, 41, 55, 0.8)',
-                  color: isActive ? '#000' : '#d1d5db',
-                  border: isActive ? '3px solid #facc15' : '2px solid rgba(75, 85, 99, 0.5)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)'
-                }}
-              >
-                <div style={{ marginBottom: '12px' }}>
-                  <IconComponent style={{ width: '28px', height: '28px', margin: '0 auto' }} />
-                </div>
-                <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px' }}>
-                  {category.title}
-                </div>
-                <div style={{ 
-                  fontWeight: 'bold', 
-                  fontSize: '20px',
-                  color: isActive ? '#000' : getScoreColor(category.score)
-                }}>
-                  {Math.round(category.score)} Punkte
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Overall Rating */}
+        {/* Overall Rating mit Accordions */}
         <div style={{ marginBottom: '40px' }}>
           <OverallRating 
             businessData={businessData}
@@ -853,10 +716,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           />
         </div>
 
-        {/* Active Category Content */}
-        <div>
-          {renderActiveCategory()}
-        </div>
+        {/* Active Category Content - nur anzeigen wenn Navigation aktiv ist */}
+        {showCategoryNav && (
+          <div>
+            {renderActiveCategory()}
+          </div>
+        )}
       </div>
     </div>
   );

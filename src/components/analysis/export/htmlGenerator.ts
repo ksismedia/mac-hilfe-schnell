@@ -690,9 +690,10 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         ${violations.length > 0 || accessibilityScore < 90 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
-            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-              ⚖️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
-            </h4>
+            <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
+              <h4 style="color: #FFD700; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; text-align: center; font-weight: bold;">
+                ⚖️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
+              </h4>
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
               <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
@@ -805,7 +806,8 @@ export const generateCustomerHTML = ({
             
             ${accessibilityScore < 90 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+              <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
+                <h4 style="color: #FFD700; margin: 0 0 10px 0; text-align: center; font-weight: bold;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
                 Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
                 Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
@@ -3049,9 +3051,10 @@ export const generateCustomerHTML = ({
         ${actualAccessibilityScore < 90 ? `
         <!-- Warnung direkt sichtbar -->
         <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-            ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
-          </h4>
+          <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
+            <h4 style="color: #FFD700; margin: 0 0 10px 0; text-align: center; font-weight: bold;">
+              ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
+            </h4>
           <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
             Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
             Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
@@ -3122,8 +3125,8 @@ export const generateCustomerHTML = ({
             </div>
             
             ${actualAccessibilityScore < 90 ? `
-            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+            <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
+              <h4 style="color: #FFD700; margin: 0 0 10px 0; text-align: center; font-weight: bold;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
                 Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
                 Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
@@ -3719,9 +3722,9 @@ export const generateCustomerHTML = ({
     </script>
     
     <!-- Rechtlicher Disclaimer -->
-    <div class="disclaimer">
-      <h4>⚖️ Rechtlicher Hinweis</h4>
-      <p><strong>Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
+    <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #FFD700; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);">
+      <h4 style="color: #FFD700; margin: 0 0 15px 0; text-align: center; font-weight: bold;">⚖️ Rechtlicher Hinweis</h4>
+      <p style="color: #ffffff; margin: 0;"><strong>Haftungsausschluss:</strong> Diese Analyse wurde automatisiert erstellt und dient ausschließlich informativen Zwecken. Die Bewertungen und Empfehlungen basieren auf technischen Messungen und stellen keine Rechtsberatung dar.</p>
       <p><strong>Keine Gewähr:</strong> Wir übernehmen keine Gewähr für die Vollständigkeit, Richtigkeit oder Aktualität der Analyseergebnisse. Rechtliche und technische Standards können sich ändern.</p>
       <p><strong>Individuelle Prüfung erforderlich:</strong> Für rechtsverbindliche Aussagen, insbesondere zu DSGVO-Compliance, Barrierefreiheit oder anderen rechtlichen Aspekten, empfehlen wir die Konsultation entsprechender Fachexperten.</p>
       <div class="disclaimer-date">Analyse erstellt am: ${new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
