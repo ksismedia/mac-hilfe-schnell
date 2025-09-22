@@ -908,7 +908,7 @@ table tr {
 
   /* Disclaimer Styles - UNNA Style Design v2.0 */
   .disclaimer {
-    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.98) 100%);
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.98) 100%) !important;
     border: 1px solid rgba(251, 191, 36, 0.4);
     border-radius: 16px;
     padding: 0;
@@ -924,7 +924,7 @@ table tr {
   }
   
   .disclaimer h4 {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
     color: #000000;
     margin: 0;
     padding: 25px 30px;
