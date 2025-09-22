@@ -18,6 +18,7 @@ import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
 import OverallRating from './analysis/OverallRating';
+import AccordionExecutiveSummary from './analysis/AccordionExecutiveSummary';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -694,9 +695,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
         )}
 
-        {/* Overall Rating */}
+        {/* Accordion Executive Summary */}
         <div style={{ marginBottom: '40px' }}>
-          <OverallRating 
+          <AccordionExecutiveSummary 
             businessData={businessData}
             realData={realData}
             manualSocialData={manualSocialData}
@@ -706,6 +707,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             hourlyRateData={hourlyRateData}
             manualWorkplaceData={manualWorkplaceData}
             competitorScore={currentOwnCompanyScore}
+            privacyData={privacyData}
+            accessibilityData={accessibilityData}
           />
         </div>
 
