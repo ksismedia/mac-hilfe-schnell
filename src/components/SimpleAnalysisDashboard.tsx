@@ -62,7 +62,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
-  const [activeCategory, setActiveCategory] = useState('online-quality-authority');
+  const [activeCategory, setActiveCategory] = useState('');
   const [showCategoryNav, setShowCategoryNav] = useState(false);
   
   const handleKeywordsScoreChange = (score: number | null) => {
@@ -611,7 +611,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
-          </div>
+        </div>
         </div>
 
         {/* Category Navigation Toggle */}
@@ -620,7 +620,14 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             Executive Summary
           </h3>
           <button
-            onClick={() => setShowCategoryNav(!showCategoryNav)}
+            onClick={() => {
+              const newShowState = !showCategoryNav;
+              setShowCategoryNav(newShowState);
+              // Setze die erste Kategorie als aktiv, wenn Details angezeigt werden
+              if (newShowState && !activeCategory) {
+                setActiveCategory('online-quality-authority');
+              }
+            }}
             style={{
               background: 'rgba(31, 41, 55, 0.8)',
               color: '#facc15',
