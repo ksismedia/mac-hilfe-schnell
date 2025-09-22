@@ -243,8 +243,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
       </Card>
 
       {/* Accordion Categories */}
-      <Accordion type="multiple" className="w-full space-y-4">
-        {categoriesWithScores.map((category) => {
+      <Accordion type="multiple" className="w-full space-y-4">{categoriesWithScores.map((category) => {
           const IconComponent = category.icon;
           
           return (
@@ -261,7 +260,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-yellow-400 border-yellow-400">
-                      {category.metrics.length} Bereiche
+                      {category.metrics.length} Bereiche  
                     </Badge>
                     <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getScoreBg(category.score)}`}>
                       {Math.round(category.score)}%
