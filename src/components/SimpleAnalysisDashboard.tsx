@@ -619,8 +619,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
         {/* Category Navigation Toggle */}
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <h3 style={{ color: '#facc15', marginBottom: '15px', fontSize: '18px' }}>
-            Executive Summary - DEBUG: showCategoryNav={String(showCategoryNav)}
+          <h3 style={{ color: '#ff0000', marginBottom: '15px', fontSize: '24px', background: '#ffff00' }}>
+            🔴 TEST: SIMPLE DASHBOARD LOADED 🔴
           </h3>
           <button
             onClick={() => {
