@@ -1983,7 +1983,15 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">Executive Summary</div>
       <div class="section-content">
-         <!-- Gesamt-Score -->
+        <!-- Gesamtscore als erstes -->
+        <div class="score-overview" style="margin-bottom: 30px;">
+          <div class="score-card" style="max-width: 300px; margin: 0 auto;">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
+            <div class="score-label">Gesamtscore</div>
+          </div>
+        </div>
+
+         <!-- Online-Auftritt als zweites -->
           <div class="metric-card ${overallCompanyScore >= 90 ? 'excellent' : overallCompanyScore >= 61 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
            <h3>Online-Auftritt</h3>
            <div class="score-display">
@@ -2020,14 +2028,6 @@ export const generateCustomerHTML = ({
             <div class="progress-bar">
               <div class="progress-fill" data-score="${getScoreRange(overallCompanyScore)}" style="width: ${overallCompanyScore}%"></div>
             </div>
-          </div>
-        </div>
-
-        <!-- Gesamtscore separat -->
-        <div class="score-overview" style="margin-bottom: 30px;">
-          <div class="score-card" style="max-width: 300px; margin: 0 auto;">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
-            <div class="score-label">Gesamtscore</div>
           </div>
         </div>
 
