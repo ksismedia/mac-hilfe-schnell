@@ -622,9 +622,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           <button
             onClick={() => {
               const newShowState = !showCategoryNav;
+              console.log('Toggle clicked! Current showCategoryNav:', showCategoryNav, '-> New state:', newShowState);
+              console.log('Current activeCategory:', activeCategory);
               setShowCategoryNav(newShowState);
               // Setze die erste Kategorie als aktiv, wenn Details angezeigt werden
               if (newShowState && !activeCategory) {
+                console.log('Setting active category to online-quality-authority');
                 setActiveCategory('online-quality-authority');
               }
             }}
