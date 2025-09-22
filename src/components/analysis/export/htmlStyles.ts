@@ -125,6 +125,18 @@ section[class*="section"],
   overflow-x: hidden;
   justify-content: flex-start;
 }
+/* Executive Summary Category Headers */
+.category-header-executive {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #000000;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 25px 0 15px 0;
+  font-weight: 600;
+  font-size: 1.1em;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  border: 1px solid #f59e0b;
+}
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
   padding: 20px 15px; 

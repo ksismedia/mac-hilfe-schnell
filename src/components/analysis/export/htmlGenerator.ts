@@ -2079,11 +2079,10 @@ export const generateCustomerHTML = ({
          <div class="categorized-scores">
           <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('seo-performance')">
-              <h3>Online-Qualität · Relevanz · Autorität</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Online-Qualität · Relevanz · Autorität</h3>
             </div>
-            <div class="category-content collapsed" id="seo-performance">
+            <div class="category-content" id="seo-performance">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
@@ -2115,11 +2114,10 @@ export const generateCustomerHTML = ({
 
           <!-- Kategorie 2: Webseiten-Performance & Technik -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('mobile-accessibility')">
-              <h3>Webseiten-Performance & Technik</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
             </div>
-            <div class="category-content collapsed" id="mobile-accessibility">
+            <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
@@ -2135,11 +2133,10 @@ export const generateCustomerHTML = ({
 
           <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('social-reputation')">
-              <h3>Online-/Web-/Social-Media Performance</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
             </div>
-            <div class="category-content collapsed" id="social-reputation">
+            <div class="category-content" id="social-reputation">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
@@ -2155,11 +2152,10 @@ export const generateCustomerHTML = ({
 
           <!-- Kategorie 4: Markt & Marktumfeld -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('legal-privacy')">
-              <h3>Markt & Marktumfeld</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Markt & Marktumfeld</h3>
             </div>
-            <div class="category-content collapsed" id="legal-privacy">
+            <div class="category-content" id="legal-privacy">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
@@ -2181,11 +2177,10 @@ export const generateCustomerHTML = ({
 
           <!-- Kategorie 5: Außendarstellung & Erscheinungsbild -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('design-branding')">
-              <h3>Außendarstellung & Erscheinungsbild</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
             </div>
-            <div class="category-content collapsed" id="design-branding">
+            <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
@@ -2197,11 +2192,10 @@ export const generateCustomerHTML = ({
 
           <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
           <div class="score-category">
-            <div class="category-header" onclick="toggleCategory('staff-service')">
-              <h3>Qualität · Service · Kundenorientierung</h3>
-              <span class="toggle-icon">▶</span>
+            <div class="category-header-executive">
+              <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
             </div>
-            <div class="category-content collapsed" id="staff-service">
+            <div class="category-content" id="staff-service">
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
