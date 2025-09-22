@@ -695,9 +695,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         </div>
         )}
 
-        {/* DEBUG: Accordion Executive Summary */}
-        <div style={{ marginBottom: '40px', border: '5px solid red', padding: '20px' }}>
-          <h1 style={{ color: 'red', fontSize: '32px' }}>🔴 ACCORDION TEST 🔴</h1>
+        {/* Accordion Executive Summary */}
+        <div style={{ marginBottom: '40px' }}>
           <AccordionExecutiveSummary 
             businessData={businessData}
             realData={realData}

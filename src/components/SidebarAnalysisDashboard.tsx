@@ -582,9 +582,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* DEBUG: Accordion Executive Summary */}
-        <div className="w-full" style={{ border: '5px solid red', padding: '20px', marginBottom: '20px' }}>
-          <h1 style={{ color: 'red', fontSize: '32px' }}>🔵 SIDEBAR ACCORDION TEST 🔵</h1>
+        {/* Accordion Executive Summary */}
+        <div className="w-full">
           <AccordionExecutiveSummary 
             businessData={businessData}
             realData={realData}
