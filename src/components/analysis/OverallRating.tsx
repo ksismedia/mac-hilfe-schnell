@@ -255,7 +255,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <IconComponent className="h-6 w-6 text-yellow-400" />
-                  <h3 className="text-xl font-semibold text-yellow-400">{category.title}</h3>
+                  <h3 className="text-2xl font-bold text-yellow-400 tracking-wide">{category.title}</h3>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="text-yellow-400 border-yellow-400">
