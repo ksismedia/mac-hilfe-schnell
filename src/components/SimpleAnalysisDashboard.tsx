@@ -18,7 +18,7 @@ import QuoteResponseInput from './analysis/QuoteResponseInput';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
-import OverallRating from './analysis/OverallRating';
+import AccordionExecutiveSummary from './analysis/AccordionExecutiveSummary';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -701,9 +701,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           </Accordion>
         </div>
 
-        {/* Overall Rating mit Accordions */}
+        {/* Executive Summary mit Accordions */}
         <div style={{ marginBottom: '40px' }}>
-          <OverallRating 
+          <AccordionExecutiveSummary 
             businessData={businessData}
             realData={realData}
             manualSocialData={manualSocialData}

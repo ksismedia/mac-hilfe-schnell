@@ -15,7 +15,7 @@ import { CorporateIdentityInput } from './analysis/CorporateIdentityInput';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
-import OverallRating from './analysis/OverallRating';
+import AccordionExecutiveSummary from './analysis/AccordionExecutiveSummary';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -221,9 +221,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           </div>
         </div>
 
-        {/* Overall Rating mit Accordions */}
+        {/* Executive Summary mit Accordions */}
         <div className="w-full">
-          <OverallRating 
+          <AccordionExecutiveSummary 
             businessData={businessData}
             realData={realData}
             manualSocialData={manualSocialData}
