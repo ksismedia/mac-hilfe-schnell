@@ -310,6 +310,28 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Legal Warning for GDPR Violations specifically in GDPR section */}
+                  {getAllViolations().some(v => v.severity === 'high' || v.severity === 'critical') && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
+                      </div>
+                      <p className="text-red-700 text-sm mb-3">
+                        <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante DSGVO-Probleme identifiziert.
+                      </p>
+                      <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                        <AlertTriangle className="h-4 w-4 inline mr-2" />
+                        <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+                      </div>
+                      <div className="mt-3 text-red-800 text-sm font-semibold">
+                        <strong>Bußgeldrisiko</strong>
+                      </div>
+                      <p className="text-red-700 text-sm">
+                        Bei den identifizierten Verstößen drohen Bußgelder bis zu <strong>20 Millionen Euro</strong> oder <strong>4% des Jahresumsatzes</strong>.
+                      </p>
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className={`text-4xl font-bold ${getScoreColor(getEffectiveScore())} mb-2`}>
