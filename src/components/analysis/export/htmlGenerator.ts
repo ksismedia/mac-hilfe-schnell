@@ -2041,7 +2041,7 @@ export const generateCustomerHTML = ({
            <div class="score-display">
              <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Reputation, Rechtliches, Barrierefreiheit, DSGVO) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
                <p><strong>Priorität:</strong> ${
                  // Erstelle Array aller Bereiche unter 50%
                  (() => {
@@ -2053,7 +2053,7 @@ export const generateCustomerHTML = ({
                    if (reputationScore < 50) lowScoreAreas.push('Online Reputation');
                    if (impressumScore < 50) lowScoreAreas.push('Rechtssicherheit');
                    if (accessibilityScore < 50) lowScoreAreas.push('Barrierefreiheit');
-                   if (actualDataPrivacyScore < 50) lowScoreAreas.push('Datenschutz');
+                   if (actualDataPrivacyScore < 50) lowScoreAreas.push('DSGVO');
                    
                    if (lowScoreAreas.length > 0) {
                      return `Handlungsbedarf bei ${lowScoreAreas.join(', ')}`;
