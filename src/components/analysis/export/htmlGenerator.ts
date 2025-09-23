@@ -1978,11 +1978,10 @@ export const generateCustomerHTML = ({
     googleReviewScore,
     impressumScore,
     accessibilityScore,
-    actualDataPrivacyScore,
-    corporateIdentityScore
+    actualDataPrivacyScore
   ].filter(score => score !== undefined && score !== null);
   
-  // Calculate overall score as true average of all sections
+  // Calculate overall score as true average of all sections (excluding Corporate Identity)
   const overallCompanyScore = Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
 
   // Generate the comprehensive HTML report
@@ -2041,7 +2040,7 @@ export const generateCustomerHTML = ({
            <div class="score-display">
              <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
             <div class="score-details">
-               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Google Reviews, Rechtssicherheit, Barrierefreiheit, DSGVO, Corporate Identity) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
+               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Google Reviews, Rechtssicherheit, Barrierefreiheit, DSGVO) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
                <p><strong>Priorität:</strong> ${
                  // Erstelle Array aller Bereiche unter 50%
                  (() => {
