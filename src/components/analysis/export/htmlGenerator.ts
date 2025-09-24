@@ -71,6 +71,21 @@ const getAccessibilityComplianceColor = (score: number) => {
   return "#FFD700";                    // über 95% gelb
 };
 
+// Spezielle Farbfunktionen für Wettbewerbsanalyse
+const getCompetitorAnalysisColorClass = (ownScore: number, avgCompetitorScore: number) => {
+  const difference = ownScore - avgCompetitorScore;
+  if (difference <= -5) return "red";     // 5 Punkte unter Durchschnitt: rot
+  if (difference <= 1) return "green";    // 4 Punkte unter bis 1 Punkt über Durchschnitt: grün
+  return "yellow";                        // Mehr als 1 Punkt über Durchschnitt: gold
+};
+
+const getCompetitorAnalysisColor = (ownScore: number, avgCompetitorScore: number) => {
+  const difference = ownScore - avgCompetitorScore;
+  if (difference <= -5) return "#FF0000";  // 5 Punkte unter Durchschnitt: rot
+  if (difference <= 1) return "#22c55e";   // 4 Punkte unter bis 1 Punkt über Durchschnitt: grün
+  return "#FFD700";                        // Mehr als 1 Punkt über Durchschnitt: gold
+};
+
 export const generateCustomerHTML = ({
   businessData,
   realData,
@@ -2156,6 +2171,68 @@ export const generateCustomerHTML = ({
             </div>
             <div class="category-content" id="legal-privacy">
               <div class="score-overview">
+                ${(() => {
+                  // Definiere allCompetitors für die Executive Summary
+                  const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                  
+                  // Berechne Wettbewerber-Durchschnitt für die Executive Summary
+                  const avgCompetitorScore = allCompetitors.length > 0 
+                    ? allCompetitors.reduce((acc, comp) => {
+                        const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
+                        const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
+                        
+                        const ratingScore = rating >= 4.5 
+                          ? 80 + ((rating - 4.5) / 0.5) * 15
+                          : rating >= 3.5 
+                            ? 60 + ((rating - 3.5) * 20)
+                            : rating >= 2.5 
+                              ? 40 + ((rating - 2.5) * 20)
+                              : rating * 16;
+                        
+                        const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0;
+                        const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+                        
+                        const reviewScore = reviews <= 25 
+                          ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)
+                          : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5);
+                        
+                        const compServices = Array.isArray(comp.services) ? comp.services : [];
+                        const serviceCount = compServices.length;
+                        let serviceScore;
+                        if (serviceCount === 0) {
+                          serviceScore = 15;
+                        } else if (serviceCount <= 3) {
+                          serviceScore = 30 + (serviceCount * 15);
+                        } else if (serviceCount <= 8) {
+                          serviceScore = 75 + ((serviceCount - 3) * 2);
+                        } else if (serviceCount <= 15) {
+                          serviceScore = 85 + ((serviceCount - 8) * 0.7);
+                        } else {
+                          serviceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);
+                        }
+                        
+                        const ratingWeight = Math.min(0.40 + (serviceCount * 0.020), 0.65);
+                        const serviceWeight = Math.max(0.30 - (serviceCount * 0.015), 0.15);
+                        const reviewWeight = 1 - ratingWeight - serviceWeight;
+                        
+                        const totalScore = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight), 96);
+                        
+                        return acc + totalScore;
+                      }, 0) / allCompetitors.length
+                    : 0;
+                  
+                  return allCompetitors.length > 0 ? `
+                    <div class="score-card">
+                      <div class="score-big">
+                        <span class="score-tile ${getCompetitorAnalysisColorClass(marketComparisonScore, avgCompetitorScore)}">${Math.round(marketComparisonScore)}%</span>
+                      </div>
+                      <div class="score-label">Wettbewerbsanalyse</div>
+                      <div class="score-sublabel" style="font-size: 0.7em; margin-top: 2px; color: #666;">
+                        Eigene: ${Math.round(marketComparisonScore)}% | Ø Wettb.: ${Math.round(avgCompetitorScore)}%
+                      </div>
+                    </div>
+                  ` : '';
+                })()}
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
                   <div class="score-label">Mitarbeiterqualifikation</div>
