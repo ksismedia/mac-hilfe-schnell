@@ -52,7 +52,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ onCategoryChange, act
       title: 'Außendarstellung & Erscheinungsbild', 
       icon: Eye, 
       score: scores.corporateAppearance,
-      description: collapsed ? '' : 'Unternehmensidentität'
+      description: collapsed ? '' : 'Corporate Design'
     },
     { 
       id: 'service-quality', 

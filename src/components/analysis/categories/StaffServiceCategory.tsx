@@ -104,7 +104,7 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-yellow-400 mb-2">Personal & Kundenservice</h2>
-        <p className="text-gray-300">Mitarbeiterqualifikationen, Unternehmensidentität und Kundenbetreuung</p>
+        <p className="text-gray-300">Mitarbeiterqualifikationen, Corporate Design und Kundenbetreuung</p>
       </div>
       
       {/* Wettbewerbsanalyse Metrikkachel */}

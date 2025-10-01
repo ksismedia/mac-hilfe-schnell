@@ -398,7 +398,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
-              <p className="text-gray-300">Corporate Design und Unternehmensidentität</p>
+              <p className="text-gray-300">Corporate Design</p>
             </div>
             <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
               <CorporateIdentityInput 

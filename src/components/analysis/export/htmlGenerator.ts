@@ -2260,7 +2260,7 @@ export const generateCustomerHTML = ({
               <div class="score-overview">
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
-                  <div class="score-label">Unternehmensidentität</div>
+                  <div class="score-label">Corporate Design</div>
                 </div>
               </div>
             </div>

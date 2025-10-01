@@ -635,7 +635,7 @@ const Index = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
               {[
-                { title: "Unternehmensidentität", icon: "🏢", desc: "Corporate Design und Branding" }
+                { title: "Corporate Design", icon: "🏢", desc: "Corporate Design und Branding" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-pink-400/20 hover:border-pink-400/40 transition-colors">
                   <CardContent className="p-4 text-center">
