@@ -2239,7 +2239,7 @@ export const generateCustomerHTML = ({
                 </div>
                 ${hourlyRateData ? `
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile pricing-text ${pricingScore <= 60 ? 'critical' : pricingScore <= 80 ? 'good' : 'excellent'}">${pricingText}</span></div>
+                  <div class="score-big"><span class="score-tile ${getScoreColorClass(pricingScore)}">${Math.round(pricingScore)}%</span></div>
                   <div class="score-label">Stundensatzanalyse</div>
                 </div>
                 ` : ''}

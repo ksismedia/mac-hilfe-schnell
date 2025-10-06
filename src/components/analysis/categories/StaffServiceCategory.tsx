@@ -8,6 +8,8 @@ import QuoteResponseInput from '../QuoteResponseInput';
 import { CorporateIdentityAnalysis } from '../CorporateIdentityAnalysis';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { StaffQualificationData, ManualCorporateIdentityData, QuoteResponseData, HourlyRateData, ManualCompetitor } from '@/hooks/useManualData';
+import { calculateHourlyRateScore } from '../export/scoreCalculations';
+import { getScoreVariant } from '@/utils/scoreTextUtils';
 
 interface StaffServiceCategoryProps {
   businessData: any;
@@ -99,6 +101,15 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
   };
 
   const competitorAnalysis = calculateCompetitorAnalysis();
+  
+  // Berechne Stundensatz-Score
+  const hourlyRateScore = hourlyRateData ? calculateHourlyRateScore(hourlyRateData) : null;
+  
+  const getHourlyRateVariant = (score: number): "default" | "secondary" | "destructive" => {
+    if (score >= 85) return "secondary";  // gold
+    if (score >= 70) return "default";     // grün
+    return "destructive";                  // rot
+  };
 
   return (
     <div className="space-y-6">
@@ -106,6 +117,38 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
         <h2 className="text-2xl font-bold text-yellow-400 mb-2">Personal & Kundenservice</h2>
         <p className="text-gray-300">Mitarbeiterqualifikationen, Corporate Design und Kundenbetreuung</p>
       </div>
+      
+      {/* Stundensatzanalyse Metrikkachel */}
+      {hourlyRateScore !== null && (
+        <Card className="bg-gray-800 border-yellow-400/30">
+          <CardHeader>
+            <CardTitle className="text-yellow-400 flex items-center gap-2">
+              💰 Stundensatzanalyse
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-400 mb-1">
+                  {Math.round(hourlyRateScore)}%
+                </div>
+                <div className="text-sm text-gray-400">Score</div>
+              </div>
+              <div className="text-center">
+                <Badge 
+                  variant={getHourlyRateVariant(hourlyRateScore)}
+                  className="text-sm px-3 py-1"
+                >
+                  {hourlyRateScore >= 85 ? 'Sehr wettbewerbsfähig' : hourlyRateScore >= 70 ? 'Marktgerecht' : hourlyRateScore >= 50 ? 'Über Marktdurchschnitt' : 'Ausbaufähig'}
+                </Badge>
+                <div className="text-xs text-gray-400 mt-1">
+                  Marktpositionierung
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Wettbewerbsanalyse Metrikkachel */}
       {competitorAnalysis && (
