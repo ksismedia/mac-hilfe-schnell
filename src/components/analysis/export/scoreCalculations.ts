@@ -604,9 +604,7 @@ export const calculateCorporateIdentityScore = (data: any): number => {
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
-  // EXAKTE KOPIE DER LOGIK AUS DataPrivacyAnalysis.tsx getEffectiveScore()
-  
-  // If manual score override is set, use it (NEUE PRIORITÄT)
+  // If manual score override is set, use it
   if (manualDataPrivacyData?.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData?.score) {
     return manualDataPrivacyData.overallScore;
   }
@@ -618,9 +616,9 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
+  const totalViolations = privacyData.violations || [];
   
   // Calculate active violations (not deselected)
-  const totalViolations = privacyData.violations || [];
   const activeViolations = totalViolations.filter(
     (v: any) => !deselectedViolations.includes(v.article)
   );
@@ -630,21 +628,19 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     return 100;
   }
   
-  let baseScore = privacyData.score;
+  // Calculate proportional score based on violations
+  const totalViolationCount = totalViolations.length + customViolations.length;
+  const activeViolationCount = activeViolations.length + customViolations.length;
   
-  // Add points for deselected violations (removing violations improves score)
-  const deselectedCount = deselectedViolations.length;
-  const scoreBonus = deselectedCount * 8; // 8 points per deselected violation
+  if (totalViolationCount === 0) {
+    return 100; // No violations at all
+  }
   
-  // Subtract points for custom violations (adding violations worsens score)
-  let violationPenalty = 0;
-  customViolations.forEach((violation: any) => {
-    if (violation.severity === 'high') violationPenalty += 15;
-    else if (violation.severity === 'medium') violationPenalty += 10;
-    else violationPenalty += 5;
-  });
+  // Calculate score proportionally
+  const baseScore = privacyData.score;
+  const scoreRange = 100 - baseScore; // Range from base to 100%
+  const resolvedRatio = 1 - (activeViolationCount / totalViolationCount); // Ratio of resolved violations
+  const proportionalScore = baseScore + (scoreRange * resolvedRatio);
   
-  // Calculate adjusted score
-  const adjustedScore = Math.max(0, Math.min(100, baseScore + scoreBonus - violationPenalty));
-  return Math.round(adjustedScore);
+  return Math.round(Math.max(0, Math.min(100, proportionalScore)));
 };

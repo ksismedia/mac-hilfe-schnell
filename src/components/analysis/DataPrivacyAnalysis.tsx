@@ -81,11 +81,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       return manualDataPrivacyData.overallScore;
     }
     
-    // Otherwise calculate dynamic score based on violations AND manual parameters
+    // Otherwise calculate dynamic score based on violations
     if (!privacyData) return 0;
     
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
+    const totalViolations = privacyData.violations || [];
     const activeViolations = getActiveViolations();
     
     // If no active violations and no custom violations, return 100%
@@ -93,34 +94,24 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       return 100;
     }
     
-    let baseScore = privacyData.score;
+    // Calculate proportional score based on violations
+    // Each violation represents an equal portion of the score gap to 100%
+    const totalViolationCount = totalViolations.length + customViolations.length;
+    const activeViolationCount = activeViolations.length + customViolations.length;
     
-    // Add bonus points for manual positive settings
-    let manualBonus = 0;
-    if (manualDataPrivacyData?.hasSSL) manualBonus += 5;
-    if (manualDataPrivacyData?.privacyPolicy) manualBonus += 10;
-    if (manualDataPrivacyData?.cookiePolicy) manualBonus += 8;
-    if (manualDataPrivacyData?.legalImprint) manualBonus += 10;
-    if (manualDataPrivacyData?.gdprCompliant) manualBonus += 15;
-    if (manualDataPrivacyData?.cookieConsent) manualBonus += 12;
-    if (manualDataPrivacyData?.dataProcessingAgreement) manualBonus += 8;
-    if (manualDataPrivacyData?.dataSubjectRights) manualBonus += 7;
+    if (totalViolationCount === 0) {
+      return 100; // No violations at all
+    }
     
-    // Add points for deselected violations (removing violations improves score)
-    const deselectedCount = deselectedViolations.length;
-    const scoreBonus = deselectedCount * 8; // 8 points per deselected violation
+    // Calculate score proportionally
+    // If all violations are resolved (deselected), score = 100%
+    // If all violations are active, score = base score
+    const baseScore = privacyData.score;
+    const scoreRange = 100 - baseScore; // Range from base to 100%
+    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount); // Ratio of resolved violations
+    const proportionalScore = baseScore + (scoreRange * resolvedRatio);
     
-    // Subtract points for custom violations (adding violations worsens score)
-    let violationPenalty = 0;
-    customViolations.forEach(violation => {
-      if (violation.severity === 'high') violationPenalty += 15;
-      else if (violation.severity === 'medium') violationPenalty += 10;
-      else violationPenalty += 5;
-    });
-    
-    // Calculate adjusted score including manual parameters
-    const adjustedScore = Math.max(0, Math.min(100, baseScore + manualBonus + scoreBonus - violationPenalty));
-    return Math.round(adjustedScore);
+    return Math.round(Math.max(0, Math.min(100, proportionalScore)));
   };
 
   useEffect(() => {
