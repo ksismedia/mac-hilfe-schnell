@@ -42,7 +42,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             Social Proof Analyse (Echte Daten)
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                socialProofData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                socialProofData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
                 socialProofData.overallScore >= 61 ? 'bg-green-500 text-white' : 
                 'bg-red-500 text-white'
               }`}

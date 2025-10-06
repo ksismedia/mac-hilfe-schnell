@@ -364,7 +364,7 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
             Conversion-Optimierung für {industry.toUpperCase()}
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                conversionData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                conversionData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
                 conversionData.overallScore >= 61 ? 'bg-green-500 text-white' : 
                 'bg-red-500 text-white'
               }`}

@@ -126,7 +126,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
             SEO-Auswertung
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                seoData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                seoData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
                 seoData.overallScore >= 61 ? 'bg-green-500 text-white' : 
                 'bg-red-500 text-white'
               }`}

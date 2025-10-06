@@ -230,7 +230,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
               )}
               <div 
                 className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                  contentData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                  contentData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
                   contentData.overallScore >= 61 ? 'bg-green-500 text-white' : 
                   'bg-red-500 text-white'
                 }`}
