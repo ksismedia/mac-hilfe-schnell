@@ -466,7 +466,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   {/* Cookie Compliance Bar */}
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Cookie-Compliance (TTDSG)</span>
+                      <span>Cookie-Management (TTDSG) <span className="text-xs text-muted-foreground">(Rechtskonformes Einholen und Verwalten von Cookie-Einwilligungen nach deutschem TTDSG, z. B. über Consent-Banner mit Auswahlmöglichkeit)</span></span>
                       <span className="text-green-600">
                         {Math.round((privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100)}%
                       </span>
@@ -489,7 +489,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span>SSL-Verschlüsselung</span>
+                          <span>HTTPS-Verschlüsselung <span className="text-xs text-muted-foreground">(Sichere SSL/TLS-Verbindung, die Datenübertragung vor unbefugtem Zugriff schützt und Voraussetzung für DSGVO-Konformität ist)</span></span>
                           <span className={`${privacyData.sslRating !== 'F' ? 'text-green-600' : 'text-red-600'} font-semibold`}>
                             {privacyData.sslRating}
                           </span>

@@ -297,7 +297,7 @@ export const generateDataPrivacySection = (
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>DSGVO Art. 5-22 Compliance</span>
+                                <span>DSGVO Art. 5-22 Compliance <span style="font-size: 11px; color: #6b7280;">(Einhaltung der Datenschutzgrundsätze und Nutzerrechte gemäß DSGVO, z. B. Rechtmäßigkeit, Transparenz, Löschung und Auskunftspflicht)</span></span>
                                 <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
@@ -436,7 +436,7 @@ export const generateDataPrivacySection = (
                         <div class="metric-value excellent">A (Vollständig verschlüsselt)</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>HTTPS-Verschlüsselung</span>
+                                <span>HTTPS-Verschlüsselung <span style="font-size: 11px; color: #6b7280;">(Sichere SSL/TLS-Verbindung, die Datenübertragung vor unbefugtem Zugriff schützt und Voraussetzung für DSGVO-Konformität ist)</span></span>
                                 <button class="percentage-btn">100%</button>
                             </div>
                             <div class="progress-bar">
@@ -455,7 +455,7 @@ export const generateDataPrivacySection = (
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Cookie-Management (TTDSG)</span>
+                                <span>Cookie-Management (TTDSG) <span style="font-size: 11px; color: #6b7280;">(Rechtskonformes Einholen und Verwalten von Cookie-Einwilligungen nach deutschem TTDSG, z. B. über Consent-Banner mit Auswahlmöglichkeit)</span></span>
                                 <button class="percentage-btn">${cookieScore}%</button>
                             </div>
                             <div class="progress-bar">
