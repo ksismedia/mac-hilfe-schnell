@@ -539,6 +539,22 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
   if (manualAccessibilityData) {
     console.log('🎯 Using manual accessibility data:', manualAccessibilityData);
     
+    // Check if all features are enabled (all checkboxes checked)
+    const allFeaturesEnabled = 
+      manualAccessibilityData.keyboardNavigation &&
+      manualAccessibilityData.screenReaderCompatible &&
+      manualAccessibilityData.colorContrast &&
+      manualAccessibilityData.altTextsPresent &&
+      manualAccessibilityData.focusVisibility &&
+      manualAccessibilityData.textScaling;
+    
+    // If all features are enabled, return 100%
+    if (allFeaturesEnabled) {
+      console.log('🎯 All accessibility features enabled - returning 100%');
+      return 100;
+    }
+    
+    // Otherwise calculate based on enabled features
     const featuresScore = [
       manualAccessibilityData.keyboardNavigation,
       manualAccessibilityData.screenReaderCompatible,
@@ -546,36 +562,14 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       manualAccessibilityData.altTextsPresent,
       manualAccessibilityData.focusVisibility,
       manualAccessibilityData.textScaling
-    ].filter(Boolean).length * 10;
+    ].filter(Boolean).length * (100 / 6); // Each feature is worth 16.67%
     
     console.log('🎯 Features score:', featuresScore);
-    console.log('🎯 Manual overall score:', manualAccessibilityData.overallScore, typeof manualAccessibilityData.overallScore);
     
-    // Ensure overallScore is a number
-    const overallScore = typeof manualAccessibilityData.overallScore === 'number' 
-      ? manualAccessibilityData.overallScore 
-      : parseInt(manualAccessibilityData.overallScore) || 0;
+    const finalScore = Math.round(featuresScore);
+    console.log('🎯 Final accessibility score:', finalScore);
     
-    console.log('🎯 Converted overall score:', overallScore);
-    
-    const baseScore = Math.round((featuresScore + overallScore) / 2);
-    console.log('🎯 Base score:', baseScore);
-    
-    // Neue Bewertungslogik: Bei Problemen sofort 59% oder weniger
-    const hasProblems = !manualAccessibilityData.keyboardNavigation || 
-                       !manualAccessibilityData.screenReaderCompatible || 
-                       !manualAccessibilityData.colorContrast || 
-                       !manualAccessibilityData.altTextsPresent || 
-                       !manualAccessibilityData.focusVisibility || 
-                       !manualAccessibilityData.textScaling;
-    
-    const finalScore = hasProblems ? Math.min(59, baseScore) : baseScore;
-    console.log('🎯 Final score before NaN check:', finalScore, typeof finalScore);
-    
-    // Ensure we return a valid number
-    const result = isNaN(finalScore) ? 40 : finalScore;
-    console.log('🎯 Final accessibility score returned:', result, typeof result);
-    return result;
+    return finalScore;
   }
   
   // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger

@@ -33,29 +33,31 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   // Helper function to merge manual and automatic accessibility data
   const getEffectiveAccessibilityData = () => {
     if (manualAccessibilityData) {
-      // Erzwinge neue Berechnung mit der korrigierten Logik
+      // Calculate score based on enabled features
       const finalScore = calculateAccessibilityScore(null, manualAccessibilityData);
       
-      const hasProblems = !manualAccessibilityData.keyboardNavigation || 
-                         !manualAccessibilityData.screenReaderCompatible || 
-                         !manualAccessibilityData.colorContrast || 
-                         !manualAccessibilityData.altTextsPresent || 
-                         !manualAccessibilityData.focusVisibility || 
-                         !manualAccessibilityData.textScaling;
+      // Check if all features are enabled
+      const allFeaturesEnabled = 
+        manualAccessibilityData.keyboardNavigation &&
+        manualAccessibilityData.screenReaderCompatible &&
+        manualAccessibilityData.colorContrast &&
+        manualAccessibilityData.altTextsPresent &&
+        manualAccessibilityData.focusVisibility &&
+        manualAccessibilityData.textScaling;
       
-      console.log('Manual Accessibility Score berechnet:', finalScore, 'Hat Probleme:', hasProblems);
+      console.log('Manual Accessibility Score berechnet:', finalScore, 'Alle Features aktiviert:', allFeaturesEnabled);
       
       return {
         score: finalScore,
-        wcagLevel: finalScore >= 90 ? 'AA' : finalScore >= 61 ? 'A' : 'none',
-        violations: [],
+        wcagLevel: finalScore >= 95 ? 'AA' : finalScore >= 70 ? 'A' : 'partial',
+        violations: allFeaturesEnabled ? [] : [], // No violations if manually assessed
         passes: [],
         incomplete: [],
         legalRisk: {
-          level: (finalScore >= 90 ? 'very-low' : finalScore >= 61 ? 'low' : hasProblems ? 'high' : 'low') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
+          level: (finalScore === 100 ? 'very-low' : finalScore >= 80 ? 'low' : finalScore >= 60 ? 'medium' : 'high') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
           score: finalScore,
           factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
-          recommendations: ['Kontinuierliche Überwachung empfohlen']
+          recommendations: finalScore === 100 ? ['Weiterhin alle Standards einhalten'] : ['Fehlende Features implementieren']
         },
         dataSource: "manual" as const,
         manualNotes: manualAccessibilityData.notes
