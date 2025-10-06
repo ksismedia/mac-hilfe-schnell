@@ -554,22 +554,27 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       return 100;
     }
     
-    // Otherwise calculate based on enabled features
-    const featuresScore = [
-      manualAccessibilityData.keyboardNavigation,
-      manualAccessibilityData.screenReaderCompatible,
-      manualAccessibilityData.colorContrast,
-      manualAccessibilityData.altTextsPresent,
-      manualAccessibilityData.focusVisibility,
-      manualAccessibilityData.textScaling
-    ].filter(Boolean).length * (100 / 6); // Each feature is worth 16.67%
+    // Count missing critical features (critical violations)
+    const missingFeatures = [
+      !manualAccessibilityData.keyboardNavigation,
+      !manualAccessibilityData.screenReaderCompatible,
+      !manualAccessibilityData.colorContrast,
+      !manualAccessibilityData.altTextsPresent,
+      !manualAccessibilityData.focusVisibility,
+      !manualAccessibilityData.textScaling
+    ].filter(Boolean).length;
     
-    console.log('🎯 Features score:', featuresScore);
+    // If there are missing features (critical issues), cap score at 50% for one, lower for more
+    if (missingFeatures > 0) {
+      const maxScore = Math.max(20, 50 - (missingFeatures - 1) * 8);
+      const enabledFeatures = 6 - missingFeatures;
+      const proportionalScore = (enabledFeatures / 6) * maxScore;
+      
+      console.log('🎯 Critical issues present, capped score:', Math.round(proportionalScore));
+      return Math.round(proportionalScore);
+    }
     
-    const finalScore = Math.round(featuresScore);
-    console.log('🎯 Final accessibility score:', finalScore);
-    
-    return finalScore;
+    return 100;
   }
   
   // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger
@@ -628,18 +633,37 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     return 100;
   }
   
-  // Calculate proportional score based on violations
+  // Check for critical/high severity violations in active violations
+  const activeCriticalViolations = [...activeViolations, ...customViolations].filter(
+    (v: any) => v.severity === 'critical' || v.severity === 'high'
+  );
+  
+  // If there are critical violations, cap score at 50% for one, lower for more
+  if (activeCriticalViolations.length > 0) {
+    const maxScore = Math.max(20, 50 - (activeCriticalViolations.length - 1) * 10);
+    
+    const totalViolationCount = totalViolations.length + customViolations.length;
+    const activeViolationCount = activeViolations.length + customViolations.length;
+    
+    if (totalViolationCount === 0) return 100;
+    
+    const baseScore = Math.min(privacyData.score, maxScore);
+    const scoreRange = maxScore - baseScore;
+    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
+    const proportionalScore = baseScore + (scoreRange * resolvedRatio);
+    
+    return Math.round(Math.max(0, Math.min(maxScore, proportionalScore)));
+  }
+  
+  // No critical violations - calculate normal proportional score
   const totalViolationCount = totalViolations.length + customViolations.length;
   const activeViolationCount = activeViolations.length + customViolations.length;
   
-  if (totalViolationCount === 0) {
-    return 100; // No violations at all
-  }
+  if (totalViolationCount === 0) return 100;
   
-  // Calculate score proportionally
   const baseScore = privacyData.score;
-  const scoreRange = 100 - baseScore; // Range from base to 100%
-  const resolvedRatio = 1 - (activeViolationCount / totalViolationCount); // Ratio of resolved violations
+  const scoreRange = 100 - baseScore;
+  const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
   const proportionalScore = baseScore + (scoreRange * resolvedRatio);
   
   return Math.round(Math.max(0, Math.min(100, proportionalScore)));

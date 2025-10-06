@@ -94,21 +94,38 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       return 100;
     }
     
-    // Calculate proportional score based on violations
-    // Each violation represents an equal portion of the score gap to 100%
+    // Check for critical/high severity violations in active violations
+    const activeCriticalViolations = [...activeViolations, ...customViolations].filter(
+      (v: any) => v.severity === 'critical' || v.severity === 'high'
+    );
+    
+    // If there are critical violations, cap score at 50% for one, lower for more
+    if (activeCriticalViolations.length > 0) {
+      const maxScore = Math.max(20, 50 - (activeCriticalViolations.length - 1) * 10);
+      
+      // Calculate proportional score within the limited range
+      const totalViolationCount = totalViolations.length + customViolations.length;
+      const activeViolationCount = activeViolations.length + customViolations.length;
+      
+      if (totalViolationCount === 0) return 100;
+      
+      const baseScore = Math.min(privacyData.score, maxScore);
+      const scoreRange = maxScore - baseScore;
+      const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
+      const proportionalScore = baseScore + (scoreRange * resolvedRatio);
+      
+      return Math.round(Math.max(0, Math.min(maxScore, proportionalScore)));
+    }
+    
+    // No critical violations - calculate normal proportional score
     const totalViolationCount = totalViolations.length + customViolations.length;
     const activeViolationCount = activeViolations.length + customViolations.length;
     
-    if (totalViolationCount === 0) {
-      return 100; // No violations at all
-    }
+    if (totalViolationCount === 0) return 100;
     
-    // Calculate score proportionally
-    // If all violations are resolved (deselected), score = 100%
-    // If all violations are active, score = base score
     const baseScore = privacyData.score;
-    const scoreRange = 100 - baseScore; // Range from base to 100%
-    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount); // Ratio of resolved violations
+    const scoreRange = 100 - baseScore;
+    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
     const proportionalScore = baseScore + (scoreRange * resolvedRatio);
     
     return Math.round(Math.max(0, Math.min(100, proportionalScore)));
