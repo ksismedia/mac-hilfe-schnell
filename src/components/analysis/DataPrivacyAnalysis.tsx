@@ -304,6 +304,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <CardTitle className="flex items-center gap-2 text-destructive">
                     <Scale className="h-5 w-5" />
                     DSGVO-Konformität
+                    <Badge 
+                      variant={getScoreBadge(getEffectiveScore())}
+                      className="ml-auto text-lg px-4 py-1"
+                    >
+                      {getEffectiveScore()}%
+                    </Badge>
                   </CardTitle>
                   <CardDescription>
                     Bewertung nach DSGVO Art. 5-22, ePrivacy-VO und TTDSG
@@ -421,6 +427,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <CardTitle className="flex items-center gap-2 text-green-600">
                     <Shield className="h-5 w-5" />
                     Datenschutz & Technische Sicherheit
+                    <Badge 
+                      variant={getScoreBadge(getEffectiveScore())}
+                      className="ml-auto text-lg px-4 py-1"
+                    >
+                      {getEffectiveScore()}%
+                    </Badge>
                   </CardTitle>
                   <CardDescription>
                     Technische Sicherheitsmaßnahmen und Cookie-Compliance
