@@ -473,16 +473,63 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>Cookie-Management (TTDSG) <span className="text-xs text-muted-foreground">(Rechtskonformes Einholen und Verwalten von Cookie-Einwilligungen nach deutschem TTDSG, z. B. über Consent-Banner mit Auswahlmöglichkeit)</span></span>
-                      <span className="text-green-600">
-                        {Math.round((privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100)}%
+                      <span className={`font-semibold ${(() => {
+                        const activeViolations = getActiveViolations();
+                        const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+                        let cookieScore: number;
+                        
+                        if (manualDataPrivacyData?.cookieConsent) {
+                          cookieScore = 90;
+                        } else if (!hasCookieViolations) {
+                          cookieScore = 85;
+                        } else {
+                          cookieScore = Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
+                        }
+                        
+                        return cookieScore >= 70 ? 'text-green-600' : cookieScore >= 50 ? 'text-yellow-600' : 'text-red-600';
+                      })()}`}>
+                        {(() => {
+                          const activeViolations = getActiveViolations();
+                          const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+                          
+                          if (manualDataPrivacyData?.cookieConsent) {
+                            return '90%';
+                          } else if (!hasCookieViolations) {
+                            return '85%';
+                          } else {
+                            return `${Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8))}%`;
+                          }
+                        })()}
                       </span>
                     </div>
                     <Progress 
-                      value={(privacyData.cookies.filter(c => c.category === 'strictly-necessary').length / privacyData.cookieCount) * 100} 
+                      value={(() => {
+                        const activeViolations = getActiveViolations();
+                        const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+                        
+                        if (manualDataPrivacyData?.cookieConsent) {
+                          return 90;
+                        } else if (!hasCookieViolations) {
+                          return 85;
+                        } else {
+                          return Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
+                        }
+                      })()} 
                       className="h-3" 
                     />
                     <div className="text-xs text-muted-foreground mt-2">
-                      <p><strong>Bewertung:</strong> Anteil technisch notwendiger Cookies vs. Tracking-Cookies</p>
+                      <p><strong>Bewertung:</strong> {(() => {
+                        const activeViolations = getActiveViolations();
+                        const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+                        
+                        if (manualDataPrivacyData?.cookieConsent) {
+                          return 'Cookie-Consent manuell bestätigt';
+                        } else if (!hasCookieViolations) {
+                          return 'Keine Cookie-Verstöße erkannt oder alle behoben';
+                        } else {
+                          return 'Anteil technisch notwendiger Cookies vs. Tracking-Cookies';
+                        }
+                      })()}</p>
                     </div>
                   </div>
 
