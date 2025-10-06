@@ -616,9 +616,21 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     return 26; // Fallback-Score
   }
   
-  let baseScore = privacyData.score;
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
+  
+  // Calculate active violations (not deselected)
+  const totalViolations = privacyData.violations || [];
+  const activeViolations = totalViolations.filter(
+    (v: any) => !deselectedViolations.includes(v.article)
+  );
+  
+  // If no active violations and no custom violations, return 100%
+  if (activeViolations.length === 0 && customViolations.length === 0) {
+    return 100;
+  }
+  
+  let baseScore = privacyData.score;
   
   // Add points for deselected violations (removing violations improves score)
   const deselectedCount = deselectedViolations.length;

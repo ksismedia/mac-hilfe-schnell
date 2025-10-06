@@ -84,9 +84,16 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     // Otherwise calculate dynamic score based on violations AND manual parameters
     if (!privacyData) return 0;
     
-    let baseScore = privacyData.score;
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
+    const activeViolations = getActiveViolations();
+    
+    // If no active violations and no custom violations, return 100%
+    if (activeViolations.length === 0 && customViolations.length === 0) {
+      return 100;
+    }
+    
+    let baseScore = privacyData.score;
     
     // Add bonus points for manual positive settings
     let manualBonus = 0;
