@@ -285,7 +285,7 @@ export const generateDataPrivacySection = (
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
               <span>▶ DSGVO-Konformität</span>
-              <button class="percentage-btn" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="font-size: 1.2em; padding: 5px 12px;">${dataPrivacyScore}%</button>
+              <div class="header-score-circle ${dataPrivacyScore >= 81 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
             </div>
             <div id="dsgvo-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
@@ -426,7 +426,7 @@ export const generateDataPrivacySection = (
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
               <span>▶ Datenschutz & Technische Sicherheit</span>
-              <button class="percentage-btn" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="font-size: 1.2em; padding: 5px 12px;">${dataPrivacyScore}%</button>
+              <div class="header-score-circle ${dataPrivacyScore >= 81 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
             </div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">

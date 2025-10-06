@@ -304,12 +304,15 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <CardTitle className="flex items-center gap-2 text-destructive">
                     <Scale className="h-5 w-5" />
                     DSGVO-Konformität
-                    <Badge 
-                      variant={getScoreBadge(getEffectiveScore())}
-                      className="ml-auto text-lg px-4 py-1"
+                    <div 
+                      className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                        getEffectiveScore() >= 81 ? 'bg-yellow-400 text-black' : 
+                        getEffectiveScore() >= 61 ? 'bg-green-500 text-white' : 
+                        'bg-red-500 text-white'
+                      }`}
                     >
                       {getEffectiveScore()}%
-                    </Badge>
+                    </div>
                   </CardTitle>
                   <CardDescription>
                     Bewertung nach DSGVO Art. 5-22, ePrivacy-VO und TTDSG
@@ -427,12 +430,15 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <CardTitle className="flex items-center gap-2 text-green-600">
                     <Shield className="h-5 w-5" />
                     Datenschutz & Technische Sicherheit
-                    <Badge 
-                      variant={getScoreBadge(getEffectiveScore())}
-                      className="ml-auto text-lg px-4 py-1"
+                    <div 
+                      className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                        getEffectiveScore() >= 81 ? 'bg-yellow-400 text-black' : 
+                        getEffectiveScore() >= 61 ? 'bg-green-500 text-white' : 
+                        'bg-red-500 text-white'
+                      }`}
                     >
                       {getEffectiveScore()}%
-                    </Badge>
+                    </div>
                   </CardTitle>
                   <CardDescription>
                     Technische Sicherheitsmaßnahmen und Cookie-Compliance
