@@ -278,7 +278,20 @@ export const generateDataPrivacySection = (
   activeViolations: any[] = [],
   manualDataPrivacyData?: any
 ) => {
-  const cookieScore = Math.round((dataPrivacyScore + 15) * 0.8); // Separate cookie compliance score
+  // Calculate cookie score based on whether cookie-related violations are active
+  const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
+  let cookieScore: number;
+  
+  if (manualDataPrivacyData?.cookieConsent) {
+    // If cookie consent is manually confirmed, give high score
+    cookieScore = 90;
+  } else if (!hasCookieViolations) {
+    // If no cookie violations are active (either none detected or deselected), give good score
+    cookieScore = 85;
+  } else {
+    // Cookie violations are active, calculate based on data privacy score
+    cookieScore = Math.max(30, Math.round((dataPrivacyScore + 15) * 0.8));
+  }
   
   return `
         <!-- DSGVO-Konformität -->
