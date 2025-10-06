@@ -40,9 +40,15 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Mobile-Optimierung Check (Echte Daten)
-            <Badge variant={getScoreBadge(mobileData.overallScore)}>
-              {mobileData.overallScore}/100 Punkte
-            </Badge>
+            <div 
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                mobileData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                mobileData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                'bg-red-500 text-white'
+              }`}
+            >
+              {mobileData.overallScore}%
+            </div>
           </CardTitle>
           <CardDescription>
             Live-Analyse der mobilen Benutzerfreundlichkeit für {url}

@@ -149,9 +149,15 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Lokale SEO-Faktoren
-            <Badge variant={getScoreBadge(localSEOData.overallScore)}>
-              {localSEOData.overallScore}/100 Punkte
-            </Badge>
+            <div 
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                localSEOData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                'bg-red-500 text-white'
+              }`}
+            >
+              {localSEOData.overallScore}%
+            </div>
           </CardTitle>
           <CardDescription>
             Analyse der lokalen Suchmaschinenoptimierung für {businessData.address}

@@ -228,9 +228,15 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                   📝 Manuell bewertet
                 </Badge>
               )}
-              <Badge variant={getScoreBadge(contentData.overallScore)}>
-                {contentData.overallScore}/100 Punkte
-              </Badge>
+              <div 
+                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                  contentData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                  contentData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                  'bg-red-500 text-white'
+                }`}
+              >
+                {contentData.overallScore}%
+              </div>
             </div>
           </CardTitle>
           <CardDescription>

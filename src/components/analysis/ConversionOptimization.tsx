@@ -362,9 +362,15 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, in
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Conversion-Optimierung für {industry.toUpperCase()}
-            <Badge variant={getScoreBadge(conversionData.overallScore)}>
-              {conversionData.overallScore}/100 Punkte
-            </Badge>
+            <div 
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                conversionData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                conversionData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                'bg-red-500 text-white'
+              }`}
+            >
+              {conversionData.overallScore}%
+            </div>
           </CardTitle>
           <CardDescription>
             Detaillierte Analyse der Konversionsrate und Optimierungspotentiale für {url}

@@ -105,9 +105,15 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                   📝 Manuell bewertet
                 </Badge>
               )}
-              <Badge variant={backlinkData.overallScore >= 90 ? "secondary" : backlinkData.overallScore >= 61 ? "default" : "destructive"}>
-                {backlinkData.overallScore > 0 ? `${backlinkData.overallScore}/100 Punkte` : '—/100 Punkte'}
-              </Badge>
+              <div 
+                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                  backlinkData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                  backlinkData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                  'bg-red-500 text-white'
+                }`}
+              >
+                {backlinkData.overallScore > 0 ? `${backlinkData.overallScore}%` : '—'}
+              </div>
             </div>
           </CardTitle>
           <CardDescription>

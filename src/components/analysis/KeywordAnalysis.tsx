@@ -193,9 +193,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               {keywordData.foundKeywords === 0 && (
                 <Badge variant="destructive">Keine Keywords gefunden</Badge>
               )}
-              <Badge variant={keywordData.overallScore >= 90 ? "secondary" : keywordData.overallScore >= 61 ? "default" : "destructive"}>
-                {keywordData.overallScore}/100 Punkte
-              </Badge>
+              <div 
+                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                  keywordData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                  keywordData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                  'bg-red-500 text-white'
+                }`}
+              >
+                {keywordData.overallScore}%
+              </div>
             </div>
           </CardTitle>
           <CardDescription>

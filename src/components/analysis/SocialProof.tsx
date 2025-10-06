@@ -40,9 +40,15 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Social Proof Analyse (Echte Daten)
-            <Badge variant={getScoreBadge(socialProofData.overallScore)}>
-              {socialProofData.overallScore}/100 Punkte
-            </Badge>
+            <div 
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                socialProofData.overallScore >= 81 ? 'bg-yellow-400 text-black' : 
+                socialProofData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                'bg-red-500 text-white'
+              }`}
+            >
+              {socialProofData.overallScore}%
+            </div>
           </CardTitle>
           <CardDescription>
             Live-Analyse der vertrauensbildenden Elemente auf {realData.company.url}

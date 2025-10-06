@@ -31,9 +31,15 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Performance-Analyse (Live-Messung)
-            <Badge variant={getScoreBadge(performanceData.score)}>
-              {performanceData.score}/100 Punkte
-            </Badge>
+            <div 
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                performanceData.score >= 81 ? 'bg-yellow-400 text-black' : 
+                performanceData.score >= 61 ? 'bg-green-500 text-white' : 
+                'bg-red-500 text-white'
+              }`}
+            >
+              {performanceData.score}%
+            </div>
           </CardTitle>
           <CardDescription>
             Echte Ladezeiten-Messung für {url}
