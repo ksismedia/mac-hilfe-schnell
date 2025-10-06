@@ -481,7 +481,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         if (manualDataPrivacyData?.cookieConsent) {
                           cookieScore = 90;
                         } else if (!hasCookieViolations) {
-                          cookieScore = 85;
+                          cookieScore = 100;
                         } else {
                           cookieScore = Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
                         }
@@ -495,7 +495,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                           if (manualDataPrivacyData?.cookieConsent) {
                             return '90%';
                           } else if (!hasCookieViolations) {
-                            return '85%';
+                            return '100%';
                           } else {
                             return `${Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8))}%`;
                           }
@@ -510,7 +510,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         if (manualDataPrivacyData?.cookieConsent) {
                           return 90;
                         } else if (!hasCookieViolations) {
-                          return 85;
+                          return 100;
                         } else {
                           return Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
                         }

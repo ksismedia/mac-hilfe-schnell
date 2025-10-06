@@ -286,8 +286,8 @@ export const generateDataPrivacySection = (
     // If cookie consent is manually confirmed, give high score
     cookieScore = 90;
   } else if (!hasCookieViolations) {
-    // If no cookie violations are active (either none detected or deselected), give good score
-    cookieScore = 85;
+    // If no cookie violations are active (either none detected or deselected), give perfect score
+    cookieScore = 100;
   } else {
     // Cookie violations are active, calculate based on data privacy score
     cookieScore = Math.max(30, Math.round((dataPrivacyScore + 15) * 0.8));
