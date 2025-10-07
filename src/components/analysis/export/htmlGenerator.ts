@@ -2835,13 +2835,13 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Arbeitsplatz & Arbeitgeber-Attraktivität</span>
-        <div class="header-score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
+        <div class="header-score-circle ${workplaceScore === -1 ? 'poor' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Arbeitsplatz & Arbeitgeber-Attraktivität</h3>
           <div class="score-display">
-            <div class="score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
+            <div class="score-circle ${workplaceScore === -1 ? 'poor' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
             <div class="score-details">
               <p><strong>Arbeitgeber-Bewertung:</strong> ${workplaceScore === -1 ? 'Nicht erfasst' : workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${workplaceScore === -1 ? 'Keine Bewertungen vorhanden - Bitte Registrierung in den Portalen vornehmen und Mitarbeiter animieren Bewertungen abzugeben' : workplaceScore >= 70 ? 'Attraktiver Arbeitgeber' : 'Employer Branding stärken'}</p>
