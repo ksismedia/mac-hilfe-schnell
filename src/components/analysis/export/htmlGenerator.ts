@@ -35,6 +35,7 @@ interface CustomerReportData {
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
   privacyData?: any;
+  accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
   calculatedOwnCompanyScore?: number;
 }
@@ -109,6 +110,7 @@ export const generateCustomerHTML = ({
   manualContentData,
   manualAccessibilityData,
   manualBacklinkData,
+  accessibilityData,
   calculatedOwnCompanyScore
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
@@ -686,19 +688,48 @@ export const generateCustomerHTML = ({
   const getAccessibilityAnalysis = () => {
     // Verwende den bereits berechneten Score mit manuellen Daten
     const accessibilityScore = actualAccessibilityScore;
-    const violations = [
-      { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
-      { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
-      { impact: 'moderate', description: 'Fehlerhafte Überschriftenstruktur', count: 2 },
-      { impact: 'minor', description: 'Fehlende Fokus-Indikatoren', count: 4 }
-    ];
     
-    const passes = [
-      'Dokument hat einen Titel',
-      'Hauptsprache ist definiert', 
-      'Navigation ist als Landmark markiert',
-      'Buttons haben aussagekräftige Labels'
-    ];
+    // Echte Violations aus accessibilityData verwenden, falls vorhanden
+    const realViolations = accessibilityData?.violations || [];
+    const hasRealData = accessibilityData?.checkedWithRealAPI || false;
+    const lighthouseVersion = accessibilityData?.lighthouseVersion;
+    
+    // Gruppiere Violations nach Impact
+    const violationsByImpact = realViolations.reduce((acc: any, v: any) => {
+      const impact = v.impact || 'moderate';
+      if (!acc[impact]) {
+        acc[impact] = [];
+      }
+      acc[impact].push(v);
+      return acc;
+    }, {});
+    
+    // Erstelle Violations-Array für die Anzeige
+    const violations = Object.entries(violationsByImpact).map(([impact, vList]: [string, any]) => ({
+      impact,
+      description: vList[0]?.description || `${impact} Probleme`,
+      count: vList.length
+    }));
+    
+    // Falls keine echten Daten, verwende Fallback
+    if (violations.length === 0 && !manualAccessibilityData) {
+      violations.push(
+        { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
+        { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
+        { impact: 'moderate', description: 'Fehlerhafte Überschriftenstruktur', count: 2 },
+        { impact: 'minor', description: 'Fehlende Fokus-Indikatoren', count: 4 }
+      );
+    }
+    
+    const realPasses = accessibilityData?.passes || [];
+    const passes = realPasses.length > 0 
+      ? realPasses.slice(0, 4).map((p: any) => p.description || p.id)
+      : [
+          'Dokument hat einen Titel',
+          'Hauptsprache ist definiert', 
+          'Navigation ist als Landmark markiert',
+          'Buttons haben aussagekräftige Labels'
+        ];
 
     const scoreClass = accessibilityScore >= 80 ? 'yellow' : accessibilityScore >= 60 ? 'green' : 'red';
 
@@ -719,7 +750,7 @@ export const generateCustomerHTML = ({
           </div>
         ` : ''}
         <h3 class="header-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-          <span>♿ Barrierefreiheit & Zugänglichkeit</span>
+          <span>♿ Barrierefreiheit & Zugänglichkeit ${hasRealData ? '✓ <span style="color: #10b981; font-size: 14px;">Echte PageSpeed Insights Prüfung</span>' : ''}</span>
           <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</span>
         </h3>
         <div class="score-display">
@@ -731,6 +762,7 @@ export const generateCustomerHTML = ({
                </span>
              </p>
             <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
+            ${hasRealData && lighthouseVersion ? `<p style="font-size: 12px; color: #6b7280;"><strong>Prüfung:</strong> Lighthouse ${lighthouseVersion}</p>` : ''}
           </div>
         </div>
         <div class="progress-container">

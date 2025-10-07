@@ -193,6 +193,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualBacklinkData,
       manualDataPrivacyData,
       privacyData,
+      accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
     });
     console.log('=== HTML CONTENT GENERATED ===');
@@ -258,6 +259,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualBacklinkData,
       manualDataPrivacyData,
       privacyData,
+      accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
     });
 
