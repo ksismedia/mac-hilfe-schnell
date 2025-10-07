@@ -497,6 +497,32 @@ export const generateDataPrivacySection = (
                     </div>
 
                     <div class="metric-item">
+                        <div class="metric-title">Cookie-Banner</div>
+                        ${(() => {
+                          const hasCookieBanner = privacyData?.hasConsentBanner || manualDataPrivacyData?.cookieConsent || false;
+                          const bannerScore = hasCookieBanner ? 100 : 0;
+                          
+                          return `
+                        <div class="metric-value ${hasCookieBanner ? 'excellent' : 'danger'}">
+                            ${hasCookieBanner ? 'Implementiert' : 'Nicht vorhanden'}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Cookie-Consent-Banner (TTDSG) <span style="font-size: 11px; color: #6b7280;">(Pflicht-Element für datenschutzkonformes Cookie-Management nach TTDSG § 25)</span></span>
+                                <button class="percentage-btn" style="background-color: ${hasCookieBanner ? '#10b981' : '#ef4444'};">${hasCookieBanner ? '✓' : '✗'}</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="${bannerScore >= 80 ? '80-100' : '0-60'}" style="width: ${bannerScore}%"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Prüfung:</strong> Einwilligungspflichtige Cookies, Opt-in/Opt-out-Mechanismus, Granularität der Einwilligung
+                            </div>
+                        </div>
+                          `;
+                        })()}
+                    </div>
+
+                    <div class="metric-item">
                         <div class="metric-title">Cookie-Compliance</div>
                         <div class="metric-value ${cookieScore >= 70 ? 'good' : 'warning'}">
                             ${cookieScore >= 70 ? 'TTDSG-konform' : 'Nachbesserung nötig'}
