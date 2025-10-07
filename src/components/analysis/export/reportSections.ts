@@ -276,7 +276,8 @@ export const generateMobileSection = (realData: RealBusinessData) => `
 export const generateDataPrivacySection = (
   dataPrivacyScore: number = 75, 
   activeViolations: any[] = [],
-  manualDataPrivacyData?: any
+  manualDataPrivacyData?: any,
+  privacyData?: any
 ) => {
   // Calculate cookie score based on whether cookie-related violations are active
   const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
@@ -446,19 +447,53 @@ export const generateDataPrivacySection = (
                     
                     <div class="metric-item">
                         <div class="metric-title">SSL-Rating</div>
-                        <div class="metric-value excellent">A (Vollständig verschlüsselt)</div>
+                        ${(() => {
+                          const sslData = privacyData?.realApiData?.ssl;
+                          const sslRating = privacyData?.sslRating || 'F';
+                          const hasRealData = privacyData?.realApiData?.checkedWithRealAPIs;
+                          
+                          let sslScore = 0;
+                          let sslStatus = 'Nicht verschlüsselt';
+                          let sslClass = 'danger';
+                          
+                          if (sslRating === 'A+' || sslRating === 'A') {
+                            sslScore = 100;
+                            sslStatus = `${sslRating} (Vollständig verschlüsselt)`;
+                            sslClass = 'excellent';
+                          } else if (sslRating === 'B') {
+                            sslScore = 80;
+                            sslStatus = `${sslRating} (Gut verschlüsselt)`;
+                            sslClass = 'good';
+                          } else if (sslRating === 'C') {
+                            sslScore = 60;
+                            sslStatus = `${sslRating} (Ausreichend)`;
+                            sslClass = 'warning';
+                          } else if (sslRating === 'D') {
+                            sslScore = 40;
+                            sslStatus = `${sslRating} (Schwach)`;
+                            sslClass = 'warning';
+                          } else {
+                            sslScore = 20;
+                            sslStatus = `${sslRating} (Mangelhaft)`;
+                            sslClass = 'danger';
+                          }
+                          
+                          return `
+                        <div class="metric-value ${sslClass}">${sslStatus}</div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>HTTPS-Verschlüsselung <span style="font-size: 11px; color: #6b7280;">(Sichere SSL/TLS-Verbindung, die Datenübertragung vor unbefugtem Zugriff schützt und Voraussetzung für DSGVO-Konformität ist)</span></span>
-                                <button class="percentage-btn">100%</button>
+                                <span>HTTPS-Verschlüsselung ${hasRealData ? '✓ <strong style="color: #10b981;">Echte SSL Labs Prüfung</strong>' : ''} <span style="font-size: 11px; color: #6b7280;">(Sichere SSL/TLS-Verbindung, die Datenübertragung vor unbefugtem Zugriff schützt und Voraussetzung für DSGVO-Konformität ist)</span></span>
+                                <button class="percentage-btn">${sslScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="80-100" style="width: 100%"></div>
+                                <div class="progress-fill" data-score="${sslScore < 60 ? '0-60' : sslScore < 80 ? '60-80' : '80-100'}" style="width: ${sslScore}%"></div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Untersuchte Parameter:</strong> Zertifikat, Verschlüsselungsstärke, HSTS, Sicherheitsheader
+                                <strong>Untersuchte Parameter:</strong> Zertifikat ${sslData?.hasCertificate ? '✓' : '✗'}, Verschlüsselungsstärke, HSTS ${sslData?.hasHSTS ? '✓' : '✗'}, Sicherheitslücken ${sslData?.vulnerabilities ? '⚠️' : '✓'}
                             </div>
                         </div>
+                          `;
+                        })()}
                     </div>
 
                     <div class="metric-item">
@@ -482,40 +517,70 @@ export const generateDataPrivacySection = (
 
                     <div class="metric-item">
                         <div class="metric-title">Cookie-Anzahl</div>
-                        <div class="metric-value ${dataPrivacyScore >= 70 ? 'good' : 'warning'}">
-                            Gesamt: 3 (1 notwendig, 2 optional)
+                        ${(() => {
+                          const cookieCount = privacyData?.cookieCount || 0;
+                          const cookies = privacyData?.cookies || [];
+                          const necessaryCookies = cookies.filter((c: any) => c.category === 'strictly-necessary').length;
+                          const optionalCookies = cookieCount - necessaryCookies;
+                          const cookieRatio = cookieCount > 0 ? Math.round((necessaryCookies / cookieCount) * 100) : 0;
+                          
+                          return `
+                        <div class="metric-value ${cookieCount <= 5 ? 'good' : cookieCount <= 10 ? 'warning' : 'danger'}">
+                            ${cookieCount === 0 ? 'Keine Cookies erkannt' : `Gesamt: ${cookieCount} (${necessaryCookies} notwendig, ${optionalCookies} optional)`}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Cookie-Verhältnis</span>
-                                <button class="percentage-btn">33%</button>
+                                <span>Cookie-Verhältnis ${cookieCount === 0 ? '(Manuelle Eingabe erforderlich)' : ''}</span>
+                                <button class="percentage-btn">${cookieRatio}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="60-80" style="width: 33%"></div>
+                                <div class="progress-fill" data-score="${cookieRatio < 50 ? '0-60' : cookieRatio < 80 ? '60-80' : '80-100'}" style="width: ${cookieRatio}%"></div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Notwendige vs. optionale Cookies, Analytics-Cookies, Marketing-Cookies, Functional-Cookies
                             </div>
                         </div>
+                          `;
+                        })()}
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Technische Sicherheit</div>
-                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : 'warning'}">
-                            ${dataPrivacyScore >= 80 ? 'Vollständig umgesetzt' : dataPrivacyScore >= 60 ? 'Grundlegend vorhanden' : 'Verbesserungsbedarf'}
+                        ${(() => {
+                          const securityHeaders = privacyData?.realApiData?.securityHeaders;
+                          const hasRealData = privacyData?.realApiData?.checkedWithRealAPIs;
+                          
+                          let securityScore = dataPrivacyScore;
+                          if (securityHeaders) {
+                            const headers = securityHeaders.headers || {};
+                            const presentHeaders = Object.values(headers).filter((h: any) => h.present).length;
+                            securityScore = Math.round((presentHeaders / 5) * 100);
+                          }
+                          
+                          const csp = securityHeaders?.headers?.['Content-Security-Policy']?.present;
+                          const xFrame = securityHeaders?.headers?.['X-Frame-Options']?.present;
+                          const xContent = securityHeaders?.headers?.['X-Content-Type-Options']?.present;
+                          const hsts = securityHeaders?.headers?.['Strict-Transport-Security']?.present;
+                          const referrer = securityHeaders?.headers?.['Referrer-Policy']?.present;
+                          
+                          return `
+                        <div class="metric-value ${securityScore >= 80 ? 'excellent' : securityScore >= 60 ? 'good' : 'warning'}">
+                            ${securityScore >= 80 ? 'Vollständig umgesetzt' : securityScore >= 60 ? 'Grundlegend vorhanden' : 'Verbesserungsbedarf'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Sicherheitsmaßnahmen</span>
-                                <button class="percentage-btn">${Math.min(100, dataPrivacyScore + 10)}%</button>
+                                <span>Sicherheitsmaßnahmen ${hasRealData ? '✓ <strong style="color: #10b981;">Echte Headerprüfung</strong>' : ''}</span>
+                                <button class="percentage-btn">${securityScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${Math.min(100, dataPrivacyScore + 10)}%"></div>
+                                <div class="progress-fill" data-score="${securityScore < 60 ? '0-60' : securityScore < 80 ? '60-80' : '80-100'}" style="width: ${securityScore}%"></div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Untersuchte Parameter:</strong> Serversicherheit, Datenverschlüsselung, Zugriffskontrolle, Backup-Systeme
+                                <strong>Untersuchte Parameter:</strong> CSP ${csp ? '✓' : '✗'}, X-Frame-Options ${xFrame ? '✓' : '✗'}, X-Content-Type ${xContent ? '✓' : '✗'}, HSTS ${hsts ? '✓' : '✗'}, Referrer-Policy ${referrer ? '✓' : '✗'}
                             </div>
                         </div>
+                          `;
+                        })()}
                     </div>
                 </div>
                 

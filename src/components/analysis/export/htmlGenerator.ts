@@ -3328,7 +3328,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData)}
+    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
 
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Kundenservice & Anfragebearbeitung -->
