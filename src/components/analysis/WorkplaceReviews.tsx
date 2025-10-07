@@ -347,7 +347,7 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
                   {/* Arbeitsplatz & Arbeitgeber-Bewertung Section */}
                   <div className="bg-[#1a1a1a] text-white rounded-lg p-6 space-y-4">
                     <h3 className="text-xl font-semibold text-yellow-300 mb-4">
-                      Arbeitsplatz & Arbeitgeber-Bewertung
+                      Arbeitsplatz & Arbeitgeber-Attraktivität
                     </h3>
                     
                     <div className="space-y-2">

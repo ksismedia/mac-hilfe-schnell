@@ -541,7 +541,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         <div class="metric-card workplace-detailed">
           <div class="workplace-header" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
             <h3 style="margin: 0; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
-              💼 Arbeitsplatz & Arbeitgeber-Bewertung
+              💼 Arbeitsplatz & Arbeitgeber-Attraktivität
               <div class="score-circle" style="background: white; color: #9c27b0; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;">
                 ${workplaceScore === -1 ? '–' : Math.round(workplaceScore) + '%'}
               </div>

@@ -2826,15 +2826,15 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Arbeitsplatz & Arbeitgeber-Bewertung -->
+    <!-- Arbeitsplatz & Arbeitgeber-Attraktivität -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Arbeitsplatz & Arbeitgeber-Bewertung</span>
+        <span>Arbeitsplatz & Arbeitgeber-Attraktivität</span>
         <div class="header-score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Arbeitsplatz & Arbeitgeber-Bewertung</h3>
+          <h3>Arbeitsplatz & Arbeitgeber-Attraktivität</h3>
           <div class="score-display">
             <div class="score-circle ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</div>
             <div class="score-details">
