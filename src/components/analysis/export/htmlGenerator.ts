@@ -3467,73 +3467,7 @@ export const generateCustomerHTML = ({
           </div>
           ` : ''}
           
-          <div class="detail-item">
-            <h4>📊 Bewertungskomponenten</h4>
-            <div style="background: rgba(239, 246, 255, 1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px; padding: 15px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.9em;">Reaktionszeit</span>
-                    <span style="font-weight: bold; color: #3b82f6;">40% Gewichtung</span>
-                  </div>
-                  <div class="progress-container" style="height: 8px;">
-                    <div class="progress-bar">
-                      <div class="progress-fill" style="width: ${
-                        quoteResponseData.responseTime === '1-hour' ? '100' :
-                        quoteResponseData.responseTime === '2-4-hours' ? '87' :
-                        quoteResponseData.responseTime === '4-8-hours' ? '75' :
-                        quoteResponseData.responseTime === '1-day' ? '50' :
-                        quoteResponseData.responseTime === '2-3-days' ? '25' : '12'
-                      }%; background-color: #3b82f6;"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.9em;">Kontaktkanäle</span>
-                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
-                  </div>
-                  <div class="progress-container" style="height: 8px;">
-                    <div class="progress-bar">
-                      <div class="progress-fill" style="width: ${Math.min(100, Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length * 20)}%; background-color: #3b82f6;"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.9em;">Antwortqualität</span>
-                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
-                  </div>
-                  <div class="progress-container" style="height: 8px;">
-                    <div class="progress-bar">
-                      <div class="progress-fill" style="width: ${
-                        quoteResponseData.responseQuality === 'excellent' ? '100' :
-                        quoteResponseData.responseQuality === 'good' ? '75' :
-                        quoteResponseData.responseQuality === 'average' ? '50' : '25'
-                      }%; background-color: #3b82f6;"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.9em;">Service-Features</span>
-                    <span style="font-weight: bold; color: #3b82f6;">20% Gewichtung</span>
-                  </div>
-                  <div class="progress-container" style="height: 8px;">
-                    <div class="progress-bar">
-                      <div class="progress-fill" style="width: ${
-                        ([quoteResponseData.automaticConfirmation, quoteResponseData.followUpProcess, quoteResponseData.personalContact].filter(Boolean).length * 25) + 
-                        (quoteResponseData.availabilityHours === '24-7' ? 25 : quoteResponseData.availabilityHours === 'extended-hours' ? 15 : 10)
-                      }%; background-color: #3b82f6;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
         </div>
         
         <div class="collapsible" onclick="toggleSection('customer-service-recommendations')" style="cursor: pointer; margin-top: 20px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
