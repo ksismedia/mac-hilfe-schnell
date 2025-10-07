@@ -37,6 +37,9 @@ export interface AccessibilityResult {
     factors: string[];
     recommendations: string[];
   };
+  checkedWithRealAPI?: boolean;
+  lighthouseVersion?: string;
+  fetchTime?: string;
 }
 
 /**
@@ -46,10 +49,57 @@ export interface AccessibilityResult {
 export class AccessibilityService {
   
   /**
-   * Simuliert eine echte axe-core Analyse mit realistischen Daten
+   * Führt eine echte Barrierefreiheitsprüfung mit Google Lighthouse durch
    */
   static async analyzeAccessibility(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
-    // Simuliere Analyse-Zeit
+    console.log('Starting real accessibility analysis with Lighthouse for:', url);
+    
+    try {
+      // Call edge function for real Lighthouse accessibility check
+      const response = await fetch(
+        `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/check-accessibility`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Accessibility check failed:', response.status);
+        // Fallback to simulated data
+        return this.generateFallbackAccessibilityData(url, realData);
+      }
+
+      const result = await response.json();
+      
+      if (!result.success || !result.data) {
+        console.error('Invalid accessibility check response');
+        return this.generateFallbackAccessibilityData(url, realData);
+      }
+
+      console.log('Real accessibility data received:', result.data);
+
+      // Calculate legal risk based on real violations
+      const legalRisk = this.assessLegalRisk(result.data.violations, result.data.score);
+
+      return {
+        ...result.data,
+        legalRisk,
+        checkedWithRealAPI: true
+      };
+    } catch (error) {
+      console.error('Error during accessibility check:', error);
+      // Fallback to simulated data if API fails
+      return this.generateFallbackAccessibilityData(url, realData);
+    }
+  }
+
+  /**
+   * Fallback: Simulierte Accessibility-Daten wenn API nicht verfügbar
+   */
+  private static async generateFallbackAccessibilityData(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
+    console.log('Using fallback simulated accessibility data');
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Extrahiere verfügbare Daten aus realData - verwende korrekte Properties
@@ -245,7 +295,8 @@ export class AccessibilityService {
       violations,
       passes,
       incomplete,
-      legalRisk
+      legalRisk,
+      checkedWithRealAPI: false
     };
   }
   

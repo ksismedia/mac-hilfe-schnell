@@ -2,3 +2,6 @@ project_id = "dfzuijskqjbtpckzzemh"
 
 [functions.check-ssl]
 verify_jwt = false
+
+[functions.check-accessibility]
+verify_jwt = false
