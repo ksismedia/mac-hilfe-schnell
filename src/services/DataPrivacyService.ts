@@ -122,7 +122,7 @@ export class DataPrivacyService {
     const externalServices: Array<{name: string; category: string; gdprCompliant: boolean; adequacyDecision: boolean}> = [];
     
     // Violations basierend auf ECHTEN Daten
-    const violations = this.analyzeRealViolations(sslResult, securityHeadersResult);
+    const violations = this.analyzeRealViolations(sslResult, securityHeadersResult, false);
     
     // Score berechnen basierend auf echten Prüfungen
     const score = this.calculateRealGDPRScore(sslResult, securityHeadersResult, violations);
@@ -243,9 +243,24 @@ export class DataPrivacyService {
    */
   private static analyzeRealViolations(
     sslResult: SSLCheckResult | null,
-    securityHeaders: SecurityHeadersResult | null
+    securityHeaders: SecurityHeadersResult | null,
+    hasConsentBanner: boolean = false
   ): GDPRViolation[] {
     const violations: GDPRViolation[] = [];
+
+    // Cookie-Banner Prüfung (TTDSG § 25)
+    if (!hasConsentBanner) {
+      violations.push({
+        article: 'TTDSG § 25 / Art. 7 DSGVO',
+        severity: 'high',
+        category: 'consent',
+        description: 'Kein Cookie-Consent-Banner implementiert',
+        recommendation: 'Cookie-Banner mit Einwilligungsmanagement implementieren (z.B. Cookiebot, Usercentrics)',
+        fineRisk: 'Bis zu 20 Mio. € oder 4% des Jahresumsatzes',
+        legalReference: 'https://www.gesetze-im-internet.de/ttdsg/__25.html',
+        cookieRelated: true
+      });
+    }
 
     // SSL/TLS Probleme
     if (!sslResult?.hasSSL || sslResult?.grade === 'F') {
