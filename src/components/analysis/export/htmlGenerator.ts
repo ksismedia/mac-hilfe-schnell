@@ -2049,46 +2049,6 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-         <!-- Online-Auftritt als zweites -->
-          <div class="metric-card ${overallCompanyScore >= 90 ? 'excellent' : overallCompanyScore >= 61 ? 'good' : overallCompanyScore >= 40 ? 'warning' : 'poor'}" style="margin-bottom: 30px;">
-           <h3>Online-Auftritt</h3>
-           <div class="score-display">
-             <div class="score-circle" data-score="${getScoreRange(overallCompanyScore)}">${overallCompanyScore}%</div>
-            <div class="score-details">
-               <p><strong>Online-Auftritt Gesamtscore:</strong> (SEO, Performance, Mobile, Social Media, Google Reviews, Rechtssicherheit, Barrierefreiheit, DSGVO) ${overallCompanyScore >= 90 ? 'Sehr stark positioniert' : overallCompanyScore >= 61 ? 'Befriedigend positioniert' : overallCompanyScore >= 40 ? 'Ausbaufähig' : 'Kritisch'}</p>
-               <p><strong>Priorität:</strong> ${
-                 // Erstelle Array aller Bereiche unter 50%
-                 (() => {
-                   const lowScoreAreas = [];
-                   if (realData.seo.score < 50) lowScoreAreas.push('SEO');
-                   if (realData.performance.score < 50) lowScoreAreas.push('Performance');
-                   if (realData.mobile.overallScore < 50) lowScoreAreas.push('Mobile Optimierung');
-                   if (socialMediaScore < 50) lowScoreAreas.push('Social Media');
-                   if (reputationScore < 50) lowScoreAreas.push('Online Reputation');
-                   if (impressumScore < 50) lowScoreAreas.push('Rechtssicherheit');
-                   if (accessibilityScore < 50) lowScoreAreas.push('Barrierefreiheit');
-                   if (actualDataPrivacyScore < 50) lowScoreAreas.push('DSGVO');
-                   
-                   if (lowScoreAreas.length > 0) {
-                     return `Handlungsbedarf bei ${lowScoreAreas.join(', ')}`;
-                   } else if (overallCompanyScore >= 80) {
-                     return 'Optimierung und Ausbau des Vorsprungs';
-                   } else if (overallCompanyScore >= 60) {
-                     return 'Mittlerer Handlungsbedarf bei weniger kritischen Bereichen';
-                   } else {
-                     return 'Hoher Handlungsbedarf bei mehreren Bereichen';
-                   }
-                 })()
-               }</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(overallCompanyScore)}" style="width: ${overallCompanyScore}%"></div>
-            </div>
-          </div>
-        </div>
-
         <!-- Kategorisierte Score-Übersicht -->
          <div class="categorized-scores">
           <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
