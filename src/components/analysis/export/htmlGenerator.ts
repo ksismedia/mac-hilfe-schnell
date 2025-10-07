@@ -1490,10 +1490,15 @@ export const generateCustomerHTML = ({
     };
 
     const maxRadius = getMaxRadius();
+    const ownScore = (window as any).globalOwnCompanyScore || 75;
+    const scoreColorClass = ownScore >= 90 ? 'excellent' : ownScore >= 61 ? 'good' : 'poor';
 
     return `
-      <div class="metric-card good">
-        <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
+      <div class="metric-card ${scoreColorClass}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="margin: 0;">👥 Wettbewerbsanalyse & Marktumfeld</h3>
+          <div class="score-circle ${scoreColorClass}" style="margin: 0;">${Math.round(ownScore)}%</div>
+        </div>
         <div style="margin-bottom: 20px;">
           <p class="light-gray-text" style="margin-bottom: 15px;">
             <strong>Anzahl analysierte Wettbewerber:</strong> ${allCompetitors.length}
@@ -3240,7 +3245,15 @@ export const generateCustomerHTML = ({
 
     <!-- Wettbewerbsanalyse -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('competitor-content')" style="cursor: pointer;">▶ Wettbewerbsanalyse & Marktumfeld</div>
+      <div class="section-header collapsible" onclick="toggleSection('competitor-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+        <span>▶ Wettbewerbsanalyse & Marktumfeld</span>
+        ${(() => {
+          const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+          const ownScore = (window as any).globalOwnCompanyScore || 75;
+          const scoreColorClass = ownScore >= 90 ? 'excellent' : ownScore >= 61 ? 'good' : 'poor';
+          return allCompetitors.length > 0 ? `<div class="header-score-circle ${scoreColorClass}">${Math.round(ownScore)}%</div>` : '';
+        })()}
+      </div>
       <div id="competitor-content" class="section-content" style="display: none;">
         ${getCompetitorAnalysis()}
       </div>
