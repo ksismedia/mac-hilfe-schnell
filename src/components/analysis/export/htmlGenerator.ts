@@ -307,11 +307,11 @@ export const generateCustomerHTML = ({
   const actualPricingScore = calculateHourlyRateScore(hourlyRateData);
   const pricingScore = actualPricingScore;
   const pricingText = 
-    actualPricingScore === 100 ? 'Sehr wettbewerbsfähig' : 
-    actualPricingScore === 85 ? 'Wettbewerbsfähig' : 
-    actualPricingScore === 70 ? 'Marktgerecht' : 
-    actualPricingScore === 50 ? 'Über Marktdurchschnitt' : 
-    actualPricingScore === 30 ? 'Ausbaufähig' : `${actualPricingScore}/100`;
+    actualPricingScore === 100 ? 'Region/Top-Niveau' : 
+    actualPricingScore === 85 ? 'Region/marktüblich' : 
+    actualPricingScore === 70 ? 'Über Marktniveau' : 
+    actualPricingScore === 50 ? 'Region/unterer Durchschnitt' : 
+    actualPricingScore === 30 ? 'Region/unterdurchschnittlich' : `${actualPricingScore}/100`;
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
   const reputationScore = realData.reviews.google.rating * 20;
   
@@ -525,27 +525,27 @@ export const generateCustomerHTML = ({
     
     // Calculate competitive score if both company and regional data available
     let localPricingScore = 75; // Default score
-    let localPricingText = 'Marktgerecht';
+    let localPricingText = 'Über Marktniveau';
     if (companyAvg > 0 && regionalAvg > 0) {
       const difference = companyAvg - regionalAvg;
       
       // Neue Bewertungslogik basierend auf der Differenz
       if (difference >= -10 && difference < 0) {
         localPricingScore = 50;
-        localPricingText = 'wettbewerbsfähig';
+        localPricingText = 'Region/unterer Durchschnitt';
       } else if (difference >= 0 && difference <= 10) {
-        localPricingScore = 70;
-        localPricingText = 'Sehr wettbewerbsfähig';
-      } else if (difference > 10 && difference <= 20) {
         localPricingScore = 85;
-        localPricingText = 'gut positioniert';
-      } else if (difference > 20) {
+        localPricingText = 'Region/marktüblich';
+      } else if (difference > 10 && difference <= 20) {
         localPricingScore = 100;
-        localPricingText = 'sehr gut positioniert';
+        localPricingText = 'Region/Top-Niveau';
+      } else if (difference > 20) {
+        localPricingScore = 70;
+        localPricingText = 'Über Marktniveau';
       } else {
         // Difference < -10
         localPricingScore = 30;
-        localPricingText = 'Ausbaufähig';
+        localPricingText = 'Region/unterdurchschnittlich';
       }
     }
     return `
@@ -3271,11 +3271,11 @@ export const generateCustomerHTML = ({
            <h3>Preispositionierung</h3>
            <div class="score-display">
              <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingText}</div>
-            <div class="score-details">
-              <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
-              <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
-              <p><strong>Positionierung:</strong> ${pricingScore >= 80 ? 'Über Durchschnitt' : pricingScore >= 60 ? 'Durchschnitt' : 'Unter Durchschnitt'}</p>
-            </div>
+             <div class="score-details">
+               <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
+               <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
+               <p><strong>Positionierung:</strong> ${pricingText}</p>
+             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
