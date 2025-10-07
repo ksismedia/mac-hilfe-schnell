@@ -462,15 +462,15 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   let rateScore = 0;
 
   if (rateDifference < -10) {
-    rateScore = 30; // Ausbaufähig
-  } else if (rateDifference <= 0) {
-    rateScore = 100;
-  } else if (rateDifference <= 10) {
-    rateScore = 85;
-  } else if (rateDifference <= 20) {
-    rateScore = 70;
+    rateScore = 30; // Region/unterdurchschnittlich
+  } else if (rateDifference >= -10 && rateDifference < 0) {
+    rateScore = 50; // Region/unterer Durchschnitt
+  } else if (rateDifference >= 0 && rateDifference <= 10) {
+    rateScore = 85; // Region/marktüblich
+  } else if (rateDifference > 10 && rateDifference <= 20) {
+    rateScore = 100; // Region/Top-Niveau
   } else {
-    rateScore = 50;
+    rateScore = 70; // Über 20€ teurer
   }
 
   return rateScore;

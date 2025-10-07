@@ -9,11 +9,11 @@ export const getScoreTextDescription = (
   switch (category) {
     case 'hourlyRate':
       // Neue Bewertungslogik basierend auf Differenz zum regionalen Durchschnitt
-      if (score === 30) return 'Ausbaufähig';
-      if (score === 50) return 'wettbewerbsfähig';
-      if (score === 70) return 'Sehr wettbewerbsfähig';
-      if (score === 85) return 'gut positioniert';
-      if (score === 100) return 'sehr gut positioniert';
+      if (score === 30) return 'Region/unterdurchschnittlich';
+      if (score === 50) return 'Region/unterer Durchschnitt';
+      if (score === 70) return 'Über Marktniveau';
+      if (score === 85) return 'Region/marktüblich';
+      if (score === 100) return 'Region/Top-Niveau';
       break;
       
     case 'seo':
@@ -86,18 +86,18 @@ export const getScoreTextDescription = (
   
   // Fallback for specific hourly rate scores that don't match exact values
   if (category === 'hourlyRate') {
-    if (score >= 85) return 'sehr gut positioniert';
-    if (score >= 70) return 'gut positioniert';
-    if (score >= 60) return 'Sehr wettbewerbsfähig';
-    if (score >= 40) return 'wettbewerbsfähig';
-    return 'Ausbaufähig';
+    if (score === 100) return 'Region/Top-Niveau';
+    if (score >= 85) return 'Region/marktüblich';
+    if (score >= 70) return 'Über Marktniveau';
+    if (score >= 50) return 'Region/unterer Durchschnitt';
+    return 'Region/unterdurchschnittlich';
   }
   
   return score > 0 ? getScoreTextDescription(score, 'general') : '—';
 };
 
 export const getScoreVariant = (score: number): 'default' | 'secondary' | 'destructive' => {
-  if (score >= 70) return 'secondary'; // gold/best (sehr wettbewerbsfähig, gut positioniert, sehr gut positioniert)
-  if (score >= 50) return 'default'; // green/good (wettbewerbsfähig)
-  return 'destructive'; // red/poor
+  if (score >= 85) return 'secondary'; // gold/best (Region/marktüblich, Region/Top-Niveau)
+  if (score >= 70) return 'default'; // green/good (Über Marktniveau)
+  return 'destructive'; // red/poor (Region/unterer Durchschnitt, Region/unterdurchschnittlich)
 };
