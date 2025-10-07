@@ -3263,7 +3263,7 @@ export const generateCustomerHTML = ({
      <!-- Preispositionierung -->
      <div class="section">
        <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-         <span>💰 Preispositionierung</span>
+         <span>Preispositionierung</span>
          <div class="header-score-circle ${getScoreColorClass(pricingScore)}">${pricingText}</div>
        </div>
        <div class="section-content">
