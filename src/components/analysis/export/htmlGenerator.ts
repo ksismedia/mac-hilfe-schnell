@@ -3201,7 +3201,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
         <span>▶ Social Media Listening & Monitoring</span>
-        <div class="header-score-circle ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</div>
+        <div class="header-score-circle ${socialMediaScore <= 0 ? 'red' : getScoreColorClass(socialMediaScore)}">${displaySocialScore}</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
         ${getSocialMediaAnalysis()}
