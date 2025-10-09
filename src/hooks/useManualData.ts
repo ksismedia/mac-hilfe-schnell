@@ -179,6 +179,12 @@ export interface ManualDataPrivacyData {
     article?: string;
     recommendation?: string;
   }>;
+  manualCookies?: Array<{
+    id: string;
+    name: string;
+    category: 'strictly-necessary' | 'analytics' | 'marketing' | 'functional';
+    purpose?: string;
+  }>;
   overallScore: number; // Manual override score
   notes?: string;
 }

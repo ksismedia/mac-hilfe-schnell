@@ -470,14 +470,22 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-warning mb-2">
-                        {privacyData.cookieCount}
+                        {privacyData.cookieCount + (manualDataPrivacyData?.manualCookies?.length || 0)}
                       </div>
-                      <div className="text-sm text-muted-foreground">Cookies gefunden</div>
+                      <div className="text-sm text-muted-foreground">
+                        Cookies gesamt
+                        {(manualDataPrivacyData?.manualCookies?.length || 0) > 0 && (
+                          <span className="block text-xs text-blue-600">
+                            ({manualDataPrivacyData?.manualCookies?.length || 0} manuell)
+                          </span>
+                        )}
+                      </div>
                       <Cookie className="h-4 w-4 mx-auto text-warning mt-1" />
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-600 mb-2">
-                        {privacyData.cookies.filter(c => c.category === 'strictly-necessary').length}
+                        {privacyData.cookies.filter(c => c.category === 'strictly-necessary').length + 
+                         (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'strictly-necessary').length || 0)}
                       </div>
                       <div className="text-sm text-muted-foreground">Notwendige Cookies</div>
                       <CheckCircle className="h-4 w-4 mx-auto text-green-600 mt-1" />
@@ -573,13 +581,15 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         <div className="flex items-center justify-between">
                           <span>Analytics-Cookies</span>
                           <span className="font-semibold text-orange-600">
-                            {privacyData.cookies.filter(c => c.category === 'analytics').length}
+                            {privacyData.cookies.filter(c => c.category === 'analytics').length + 
+                             (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'analytics').length || 0)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Marketing-Cookies</span>
                           <span className="font-semibold text-red-600">
-                            {privacyData.cookies.filter(c => c.category === 'marketing').length}
+                            {privacyData.cookies.filter(c => c.category === 'marketing').length + 
+                             (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'marketing').length || 0)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">

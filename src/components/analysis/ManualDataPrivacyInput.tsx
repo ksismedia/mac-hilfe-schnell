@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { Plus, Trash2, Shield, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Shield, AlertTriangle, Cookie } from 'lucide-react';
 import { ManualDataPrivacyData } from '@/hooks/useManualData';
 
 interface ManualDataPrivacyInputProps {
@@ -25,6 +25,12 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     recommendation: ''
   });
 
+  const [newCookie, setNewCookie] = useState({
+    name: '',
+    category: 'strictly-necessary' as 'strictly-necessary' | 'analytics' | 'marketing' | 'functional',
+    purpose: ''
+  });
+
   const currentData: ManualDataPrivacyData = data || {
     hasSSL: true,
     cookiePolicy: false,
@@ -36,6 +42,7 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     dataSubjectRights: false,
     deselectedViolations: [],
     customViolations: [],
+    manualCookies: [],
     overallScore: undefined,
     notes: ''
   };
@@ -69,6 +76,51 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     updateData({
       customViolations: currentData.customViolations.filter(v => v.id !== id)
     });
+  };
+
+  const addManualCookie = () => {
+    if (newCookie.name) {
+      const cookie = {
+        id: `manual-cookie-${Date.now()}`,
+        ...newCookie
+      };
+      
+      updateData({
+        manualCookies: [...(currentData.manualCookies || []), cookie]
+      });
+      
+      setNewCookie({
+        name: '',
+        category: 'strictly-necessary',
+        purpose: ''
+      });
+    }
+  };
+
+  const removeManualCookie = (id: string) => {
+    updateData({
+      manualCookies: (currentData.manualCookies || []).filter(c => c.id !== id)
+    });
+  };
+
+  const getCookieCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'strictly-necessary': return 'Notwendig';
+      case 'analytics': return 'Analytics';
+      case 'marketing': return 'Marketing';
+      case 'functional': return 'Funktional';
+      default: return category;
+    }
+  };
+
+  const getCookieCategoryColor = (category: string) => {
+    switch (category) {
+      case 'strictly-necessary': return 'default';
+      case 'analytics': return 'secondary';
+      case 'marketing': return 'destructive';
+      case 'functional': return 'outline';
+      default: return 'outline';
+    }
   };
 
   return (
@@ -181,6 +233,99 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
             Aktueller Score: {currentData.overallScore ?? 'Automatisch berechnet'}/100
           </div>
         </div>
+
+        {/* Manual Cookies Input */}
+        <div className="space-y-4 border-t pt-6">
+          <h4 className="font-semibold text-foreground flex items-center gap-2">
+            <Cookie className="h-4 w-4" />
+            Manuelle Cookie-Eingabe
+          </h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="cookie-name">Cookie-Name *</Label>
+              <Input
+                id="cookie-name"
+                placeholder="z.B. _ga, _fbp, session_id"
+                value={newCookie.name}
+                onChange={(e) => setNewCookie(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="cookie-category">Kategorie *</Label>
+              <Select 
+                value={newCookie.category} 
+                onValueChange={(value: 'strictly-necessary' | 'analytics' | 'marketing' | 'functional') => 
+                  setNewCookie(prev => ({ ...prev, category: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="strictly-necessary">Notwendig (ohne Einwilligung)</SelectItem>
+                  <SelectItem value="analytics">Analytics (Einwilligung erforderlich)</SelectItem>
+                  <SelectItem value="marketing">Marketing (Einwilligung erforderlich)</SelectItem>
+                  <SelectItem value="functional">Funktional (Einwilligung erforderlich)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="cookie-purpose">Zweck (optional)</Label>
+            <Input
+              id="cookie-purpose"
+              placeholder="z.B. Speichert Benutzer-Session, Tracking von Nutzerverhalten"
+              value={newCookie.purpose}
+              onChange={(e) => setNewCookie(prev => ({ ...prev, purpose: e.target.value }))}
+            />
+          </div>
+          
+          <Button 
+            onClick={addManualCookie}
+            disabled={!newCookie.name}
+            className="w-full"
+            variant="outline"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Cookie hinzufügen
+          </Button>
+        </div>
+
+        {/* Display Manual Cookies */}
+        {(currentData.manualCookies || []).length > 0 && (
+          <div className="space-y-3">
+            <h4 className="font-semibold text-foreground">Hinzugefügte Cookies ({(currentData.manualCookies || []).length})</h4>
+            <div className="grid grid-cols-1 gap-3">
+              {(currentData.manualCookies || []).map((cookie) => (
+                <div key={cookie.id} className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30">
+                  <Cookie className="h-4 w-4 mt-1 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="font-medium text-sm">{cookie.name}</span>
+                      <Badge variant={getCookieCategoryColor(cookie.category) as any}>
+                        {getCookieCategoryLabel(cookie.category)}
+                      </Badge>
+                    </div>
+                    {cookie.purpose && (
+                      <p className="text-xs text-muted-foreground">{cookie.purpose}</p>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeManualCookie(cookie.id)}
+                    className="text-destructive hover:text-destructive flex-shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Custom Violations */}
         <div className="space-y-4">
