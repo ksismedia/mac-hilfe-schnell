@@ -546,25 +546,47 @@ export const generateDataPrivacySection = (
                         ${(() => {
                           const cookieCount = privacyData?.cookieCount || 0;
                           const cookies = privacyData?.cookies || [];
-                          const necessaryCookies = cookies.filter((c: any) => c.category === 'strictly-necessary').length;
-                          const optionalCookies = cookieCount - necessaryCookies;
-                          const cookieRatio = cookieCount > 0 ? Math.round((necessaryCookies / cookieCount) * 100) : 0;
+                          const manualCookies = manualDataPrivacyData?.manualCookies || [];
+                          
+                          // Combine automatic and manual cookies
+                          const totalCookieCount = cookieCount + manualCookies.length;
+                          const necessaryCookies = cookies.filter((c: any) => c.category === 'strictly-necessary').length + 
+                                                   manualCookies.filter((c: any) => c.category === 'strictly-necessary').length;
+                          const analyticsCookies = cookies.filter((c: any) => c.category === 'analytics').length + 
+                                                   manualCookies.filter((c: any) => c.category === 'analytics').length;
+                          const marketingCookies = cookies.filter((c: any) => c.category === 'marketing').length + 
+                                                   manualCookies.filter((c: any) => c.category === 'marketing').length;
+                          const functionalCookies = cookies.filter((c: any) => c.category === 'functional').length + 
+                                                    manualCookies.filter((c: any) => c.category === 'functional').length;
+                          const optionalCookies = totalCookieCount - necessaryCookies;
+                          const cookieRatio = totalCookieCount > 0 ? Math.round((necessaryCookies / totalCookieCount) * 100) : 0;
                           
                           return `
-                        <div class="metric-value ${cookieCount <= 5 ? 'good' : cookieCount <= 10 ? 'warning' : 'danger'}">
-                            ${cookieCount === 0 ? 'Keine Cookies erkannt' : `Gesamt: ${cookieCount} (${necessaryCookies} notwendig, ${optionalCookies} optional)`}
+                        <div class="metric-value ${totalCookieCount <= 5 ? 'good' : totalCookieCount <= 10 ? 'warning' : 'danger'}">
+                            ${totalCookieCount === 0 ? 'Keine Cookies' : `Gesamt: ${totalCookieCount}`}
+                            ${manualCookies.length > 0 ? `<span style="font-size: 11px; color: #6b7280;"> (${manualCookies.length} manuell)</span>` : ''}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>Cookie-Verhältnis ${cookieCount === 0 ? '(Manuelle Eingabe erforderlich)' : ''}</span>
+                                <span>Cookie-Kategorisierung</span>
                                 <button class="percentage-btn">${cookieRatio}%</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${cookieRatio < 50 ? '0-60' : cookieRatio < 80 ? '60-80' : '80-100'}" style="width: ${cookieRatio}%"></div>
                             </div>
-                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Untersuchte Parameter:</strong> Notwendige vs. optionale Cookies, Analytics-Cookies, Marketing-Cookies, Functional-Cookies
+                            ${totalCookieCount > 0 ? `
+                            <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
+                                <strong>Nach Kategorien:</strong><br>
+                                • Notwendig: ${necessaryCookies} (ohne Einwilligung erlaubt)<br>
+                                • Analytics: ${analyticsCookies} (Einwilligung erforderlich)<br>
+                                • Marketing: ${marketingCookies} (Einwilligung erforderlich)<br>
+                                • Funktional: ${functionalCookies} (Einwilligung erforderlich)
                             </div>
+                            ` : `
+                            <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
+                                <strong>Hinweis:</strong> Keine Cookies erkannt. Nutzen Sie die manuelle Eingabe für eine vollständige Analyse.
+                            </div>
+                            `}
                         </div>
                           `;
                         })()}
