@@ -4,7 +4,6 @@ import PerformanceAnalysis from '../PerformanceAnalysis';
 import MobileOptimization from '../MobileOptimization';
 import ConversionOptimization from '../ConversionOptimization';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { calculatePerformanceCategoryScores, calculateAverageScore, getScoreBadgeColor, getScoreBadgeBackground } from '@/utils/categoryScoreUtils';
 
 interface PerformanceMobileCategoryProps {
   realData: RealBusinessData;
@@ -15,22 +14,11 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
   realData,
   businessData,
 }) => {
-  // Calculate category average score
-  const categoryScores = calculatePerformanceCategoryScores(realData);
-  const averageScore = calculateAverageScore(categoryScores);
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-400 mb-2">Performance & Technik</h2>
-          <p className="text-gray-300">Website-Performance, Mobile-Optimierung und Conversion</p>
-        </div>
-        <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${getScoreBadgeBackground(averageScore)}`}>
-          <span className={`text-xl font-bold ${getScoreBadgeColor(averageScore)}`}>
-            {averageScore}%
-          </span>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold text-yellow-400 mb-2">Performance & Technik</h2>
+        <p className="text-gray-300">Website-Performance, Mobile-Optimierung und Conversion</p>
       </div>
       
       <Tabs defaultValue="performance" className="w-full">

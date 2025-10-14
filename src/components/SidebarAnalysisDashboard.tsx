@@ -98,7 +98,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualAccessibilityData,
     manualBacklinkData,
     manualDataPrivacyData,
-    manualLocalSEOData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -113,8 +112,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateStaffQualificationData,
     updateHourlyRateData,
     updateQuoteResponseData,
-    updateManualDataPrivacyData,
-    updateManualLocalSEOData
+    updateManualDataPrivacyData
   } = useManualData();
 
   // Access saved analyses hook
@@ -355,10 +353,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             onCompanyScoreChange={handleCompanyScoreChange}
             manualDataPrivacyData={manualDataPrivacyData}
             updateManualDataPrivacyData={updateManualDataPrivacyData}
-            manualLocalSEOData={manualLocalSEOData}
-            onManualLocalSEOChange={updateManualLocalSEOData}
-            manualContentData={manualContentData}
-            manualBacklinkData={manualBacklinkData}
           />
         );
       case 'website-performance-tech':
@@ -556,12 +550,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             {categories.map((category) => {
               console.log('🔍 Rendering button for category:', category.id, category.title);
               const IconComponent = category.icon;
-              const score = Math.round(category.score);
-              const scoreColor = score >= 90 ? '#facc15' : score >= 61 ? '#4ade80' : '#f87171';
-              const scoreBgColor = score >= 90 ? 'rgba(250, 204, 21, 0.15)' : 
-                                    score >= 61 ? 'rgba(74, 222, 128, 0.15)' : 
-                                    'rgba(248, 113, 113, 0.15)';
-              
               return (
                 <button
                   key={category.id}
@@ -570,25 +558,12 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                     setActiveCategory(category.id);
                     console.log('✅ Set active category to:', category.id);
                   }}
-                  className={`relative w-full p-4 rounded-lg border-2 transition-all ${
+                  className={`w-full p-4 rounded-lg border-2 transition-all ${
                     activeCategory === category.id 
                       ? 'bg-yellow-400 text-black border-yellow-400 shadow-lg' 
                       : 'bg-gray-800/40 text-gray-300 border-gray-600 hover:bg-gray-700/40 hover:border-gray-500'
                   }`}
                 >
-                  {/* Score Badge in top right corner */}
-                  <div 
-                    className="absolute top-2 right-2 flex items-center justify-center w-12 h-12 rounded-full font-bold text-sm border-2"
-                    style={{
-                      color: scoreColor,
-                      backgroundColor: activeCategory === category.id ? 'rgba(0, 0, 0, 0.1)' : scoreBgColor,
-                      borderColor: scoreColor,
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                    }}
-                  >
-                    {score}%
-                  </div>
-                  
                   <div className="space-y-2">
                     <div className="flex items-center justify-center">
                       <IconComponent className="h-6 w-6" />
@@ -597,7 +572,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                     <div className={`text-lg font-bold ${
                       activeCategory === category.id ? 'text-black' : getScoreColor(category.score)
                     }`}>
-                      {score}
+                      {Math.round(category.score)}
                     </div>
                   </div>
                 </button>

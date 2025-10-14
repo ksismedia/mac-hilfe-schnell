@@ -7,7 +7,6 @@ import GoogleReviews from '../GoogleReviews';
 import WorkplaceReviews from '../WorkplaceReviews';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
-import { calculateSocialMediaCategoryScores, calculateAverageScore, getScoreBadgeColor, getScoreBadgeBackground } from '@/utils/categoryScoreUtils';
 
 interface SocialMediaCategoryProps {
   realData: RealBusinessData;
@@ -26,22 +25,11 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
   manualWorkplaceData,
   updateWorkplaceData,
 }) => {
-  // Calculate category average score
-  const categoryScores = calculateSocialMediaCategoryScores(realData, manualSocialData);
-  const averageScore = calculateAverageScore(categoryScores);
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-400 mb-2">Social Media & Online-Präsenz</h2>
-          <p className="text-gray-300">Social Media Kanäle, Bewertungen und Online-Reputation</p>
-        </div>
-        <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${getScoreBadgeBackground(averageScore)}`}>
-          <span className={`text-xl font-bold ${getScoreBadgeColor(averageScore)}`}>
-            {averageScore}%
-          </span>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold text-yellow-400 mb-2">Social Media & Online-Präsenz</h2>
+        <p className="text-gray-300">Social Media Kanäle, Bewertungen und Online-Reputation</p>
       </div>
       
       <Tabs defaultValue="social-simple" className="w-full">
