@@ -2144,27 +2144,27 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="seo-performance">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.seo.score}%</span></div>
                   <div class="score-label">SEO-Auswertung</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">74%</span></div>
                   <div class="score-label">Lokale SEO</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${displayAccessibilityScore}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayAccessibilityScore}</span></div>
                   <div class="score-label">Barrierefreiheit</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${actualDataPrivacyScore > 0 ? getScoreColorClass(actualDataPrivacyScore) : 'neutral'}">${displayDataPrivacyScore}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayDataPrivacyScore}</span></div>
                   <div class="score-label">Datenschutz</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${dsgvoScore > 0 ? getScoreColorClass(dsgvoScore) : 'neutral'}">${displayDSGVOScore}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayDSGVOScore}</span></div>
                   <div class="score-label">DSGVO</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(impressumScore)}">${impressumScore}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${impressumScore}%</span></div>
                   <div class="score-label">Impressum</div>
                 </div>
               </div>
@@ -2183,11 +2183,11 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.performance.score}%</span></div>
                   <div class="score-label">Website Performance</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.mobile.overallScore}%</span></div>
                   <div class="score-label">Mobile Optimierung</div>
                 </div>
               </div>
@@ -2210,11 +2210,11 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="social-reputation">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${displaySocialScore}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displaySocialScore}</span></div>
                   <div class="score-label">Social Media</div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${googleReviewScore}%</span></div>
                   <div class="score-label">Google Bewertungen</div>
                 </div>
               </div>
@@ -2292,7 +2292,7 @@ export const generateCustomerHTML = ({
                   return allCompetitors.length > 0 ? `
                     <div class="score-card">
                       <div class="score-big">
-                        <span class="score-tile ${getCompetitorAnalysisColorClass(marketComparisonScore, avgCompetitorScore)}">${Math.round(marketComparisonScore)}%</span>
+                        <span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(marketComparisonScore)}%</span>
                       </div>
                       <div class="score-label">Wettbewerbsanalyse</div>
                       <div class="score-sublabel" style="font-size: 0.7em; margin-top: 2px; color: #666;">
@@ -2302,17 +2302,17 @@ export const generateCustomerHTML = ({
                   ` : '';
                 })()}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? getScoreColorClass(staffQualificationScore) : 'neutral'}">${displayStaffScore}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayStaffScore}</span></div>
                   <div class="score-label">Mitarbeiterqualifikation</div>
                 </div>
                 ${hourlyRateData ? `
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(pricingScore)}">${Math.round(pricingScore)}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(pricingScore)}%</span></div>
                   <div class="score-label">Stundensatzanalyse</div>
                 </div>
                 ` : ''}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${workplaceScore === -1 ? 'neutral' : getScoreColorClass(workplaceScore)}">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
                   <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
                 </div>
               </div>
@@ -2328,7 +2328,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(corporateIdentityScore)}%</span></div>
                   <div class="score-label">Corporate Design</div>
                 </div>
               </div>
@@ -2347,7 +2347,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="staff-service">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile ${quoteResponseData && quoteResponseData.responseTime ? getScoreColorClass(quoteResponseScore) : 'neutral'}">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
                   <div class="score-label">Reaktionszeit auf Anfragen</div>
                 </div>
               </div>

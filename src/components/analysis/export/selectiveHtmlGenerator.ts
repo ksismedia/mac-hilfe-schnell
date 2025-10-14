@@ -116,19 +116,19 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="seo-performance">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.seo.score}%</span></div>
                 <div class="score-label">SEO-Auswertung</div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${getScoreColorClass(74)}">74%</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">74%</span></div>
                 <div class="score-label">Lokale SEO</div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${accessibilityScore > 0 ? getScoreColorClass(accessibilityScore) : 'neutral'}">${accessibilityScore > 0 ? accessibilityScore + '%' : '—'}</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${accessibilityScore > 0 ? accessibilityScore + '%' : '—'}</span></div>
                 <div class="score-label">Barrierefreiheit</div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${dataPrivacyScore > 0 ? getScoreColorClass(dataPrivacyScore) : 'neutral'}">${dataPrivacyScore > 0 ? dataPrivacyScore + '%' : '—'}</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${dataPrivacyScore > 0 ? dataPrivacyScore + '%' : '—'}</span></div>
                 <div class="score-label">Datenschutz</div>
               </div>
             </div>
@@ -143,11 +143,11 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="mobile-accessibility">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.performance.score}%</span></div>
                 <div class="score-label">Website Performance</div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.mobile.overallScore}%</span></div>
                 <div class="score-label">Mobile Optimierung</div>
               </div>
             </div>
@@ -162,11 +162,11 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="social-reputation">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${socialMediaScore > 0 ? getScoreColorClass(socialMediaScore) : 'neutral'}">${socialMediaScore > 0 ? socialMediaScore + '%' : '—'}</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${socialMediaScore > 0 ? socialMediaScore + '%' : '—'}</span></div>
                 <div class="score-label">Social Media</div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${getScoreColorClass(100)}">100%</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">100%</span></div>
                 <div class="score-label">Google Bewertungen</div>
               </div>
             </div>
@@ -181,7 +181,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="legal-privacy">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile ${workplaceScore > 0 ? getScoreColorClass(workplaceScore) : 'neutral'}">${workplaceScore > 0 ? workplaceScore + '%' : '—'}</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${workplaceScore > 0 ? workplaceScore + '%' : '—'}</span></div>
                 <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
               </div>
             </div>
