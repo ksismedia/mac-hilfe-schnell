@@ -330,39 +330,33 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          {manualData && (
+            <Badge variant="secondary">Manuell bearbeitet</Badge>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditMode(true)}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Bearbeiten
+          </Button>
+        </div>
+        <div 
+          className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+            localSEOData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
+            localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+            'bg-red-500 text-white'
+          }`}
+        >
+          {localSEOData.overallScore}%
+        </div>
+      </div>
+
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Lokale SEO-Faktoren</span>
-            <div className="flex items-center gap-2">
-              {manualData && (
-                <Badge variant="secondary">Manuell bearbeitet</Badge>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditMode(true)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Bearbeiten
-              </Button>
-              <div 
-                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                  localSEOData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                  localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
-                  'bg-red-500 text-white'
-                }`}
-              >
-                {localSEOData.overallScore}%
-              </div>
-            </div>
-          </CardTitle>
-          <CardDescription>
-            Analyse der lokalen Suchmaschinenoptimierung für {businessData.address}
-            {isLoadingAnalysis && <span className="ml-2">(Lade echte Daten...)</span>}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {/* Google My Business */}
           <Card className="mb-6">
             <CardHeader>
