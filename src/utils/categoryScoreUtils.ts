@@ -52,16 +52,26 @@ export const calculateOnlineQualityCategoryScores = (
   accessibilityData: any,
   manualContentData: any,
   manualBacklinkData: any,
-  businessData: { address: string; url: string; industry: string }
+  businessData: { address: string; url: string; industry: string },
+  manualLocalSEOData?: any
 ): number[] => {
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
   const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
   const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
 
+  // Calculate Local SEO Score - same logic as in scoreCalculations.ts
+  const calculateLocalSEOScoreInternal = () => {
+    if (manualLocalSEOData?.overallScore) {
+      return manualLocalSEOData.overallScore;
+    }
+    return realData?.seo?.score || 75;
+  };
+
   return [
     realData.seo?.score || 0,
     currentKeywordsScore,
+    calculateLocalSEOScoreInternal(),
     realData.imprint?.score || 0,
     privacyData?.score || 75,
     accessibilityData?.score || 0,

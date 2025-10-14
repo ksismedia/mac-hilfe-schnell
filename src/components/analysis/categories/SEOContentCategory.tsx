@@ -95,7 +95,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
     accessibilityData,
     manualContentData,
     manualBacklinkData,
-    businessData
+    businessData,
+    manualLocalSEOData
   );
   const averageScore = calculateAverageScore(categoryScores);
 
