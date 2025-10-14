@@ -1183,10 +1183,9 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        <h3 class="header-local-seo" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-          <span>📍 Lokale SEO & Regionale Sichtbarkeit</span>
+        <div style="display: flex; justify-content: flex-end; align-items: center; padding: 15px; margin-bottom: 15px;">
           <span class="score-tile ${getScoreColorClass(localSEOData.overallScore)}">${localSEOData.overallScore}%</span>
-        </h3>
+        </div>
         
         <div class="score-details" style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-bottom: 15px;">
           <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
@@ -2696,10 +2695,9 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Lokale SEO & Regionale Sichtbarkeit -->
+    <!-- Lokale SEO -->
     <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Lokale SEO & Regionale Sichtbarkeit</span>
+      <div class="section-header" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
         <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
       </div>
       <div class="section-content">
