@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
@@ -34,6 +34,7 @@ interface CustomerReportData {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
   privacyData?: any;
   accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
@@ -104,6 +105,7 @@ export const generateCustomerHTML = ({
   keywordScore,
   manualImprintData,
   manualDataPrivacyData,
+  manualLocalSEOData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
@@ -1092,11 +1094,50 @@ export const generateCustomerHTML = ({
     `;
   };
 
-  // Local SEO Analysis - Vollständige Integration
+  // Local SEO Analysis - Verwendet manuelle Daten wenn vorhanden
   const getLocalSEOAnalysis = () => {
-    // Simulierte Local SEO Daten basierend auf der LocalSEO-Komponente
-    const localSEOData = {
-      overallScore: 74,
+    // Verwende manuelle Daten wenn vorhanden, sonst Fallback
+    const localSEOData = manualLocalSEOData ? {
+      overallScore: manualLocalSEOData.overallScore,
+      googleMyBusiness: {
+        score: Math.round((manualLocalSEOData.gmbCompleteness + (manualLocalSEOData.gmbVerified ? 20 : 0) + (manualLocalSEOData.gmbClaimed ? 10 : 0)) / 1.3),
+        claimed: manualLocalSEOData.gmbClaimed,
+        verified: manualLocalSEOData.gmbVerified,
+        complete: manualLocalSEOData.gmbCompleteness,
+        photos: manualLocalSEOData.gmbPhotos,
+        posts: manualLocalSEOData.gmbPosts,
+        lastUpdate: manualLocalSEOData.gmbLastUpdate
+      },
+      localCitations: {
+        score: Math.round((manualLocalSEOData.directories.filter(d => d.status === 'complete').length / Math.max(1, manualLocalSEOData.directories.length)) * 100),
+        totalCitations: manualLocalSEOData.directories.length,
+        consistent: manualLocalSEOData.directories.filter(d => d.status === 'complete').length,
+        inconsistent: manualLocalSEOData.directories.filter(d => d.status === 'incomplete').length,
+        topDirectories: manualLocalSEOData.directories.slice(0, 5).map(d => ({
+          name: d.name,
+          status: d.status === 'complete' ? 'vollständig' : d.status === 'incomplete' ? 'unvollständig' : 'nicht gefunden'
+        }))
+      },
+      localKeywords: {
+        score: manualLocalSEOData.localKeywordRankings.length > 0 ? Math.round(
+          manualLocalSEOData.localKeywordRankings.reduce((acc, kw) => acc + (100 - kw.position), 0) / manualLocalSEOData.localKeywordRankings.length
+        ) : 0,
+        ranking: manualLocalSEOData.localKeywordRankings.map(kw => ({
+          keyword: kw.keyword,
+          position: kw.position,
+          volume: kw.searchVolume === 'high' ? 'hoch' : kw.searchVolume === 'medium' ? 'mittel' : 'niedrig'
+        }))
+      },
+      onPageLocal: {
+        score: manualLocalSEOData.localContentScore,
+        addressVisible: manualLocalSEOData.addressVisible,
+        phoneVisible: manualLocalSEOData.phoneVisible,
+        openingHours: manualLocalSEOData.openingHoursVisible,
+        localSchema: manualLocalSEOData.hasLocalBusinessSchema,
+        localContent: manualLocalSEOData.localContentScore
+      }
+    } : {
+      overallScore: calculateLocalSEOScore(businessData, realData, null),
       googleMyBusiness: {
         score: 82,
         claimed: true,

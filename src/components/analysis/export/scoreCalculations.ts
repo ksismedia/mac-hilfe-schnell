@@ -303,11 +303,18 @@ export const calculateStaffServiceScore = (
 };
 
 // Add missing function stubs for exported functions that are expected by other files
-export const calculateLocalSEOScore = (businessData: any, realData: any): number => {
+export const calculateLocalSEOScore = (businessData: any, realData: any, manualData?: any): number => {
   console.log('📍 calculateLocalSEOScore called');
+  
+  // Wenn manuelle Daten vorhanden sind, verwende diese
+  if (manualData?.overallScore !== undefined) {
+    console.log('📍 Using manual Local SEO score:', manualData.overallScore);
+    return manualData.overallScore;
+  }
+  
   // Verwende echte SEO-Daten falls vorhanden
   const result = realData?.seo?.score || 75;
-  console.log('📍 Local SEO score:', result);
+  console.log('📍 Local SEO score from real data:', result);
   return isNaN(result) ? 75 : result;
 };
 
