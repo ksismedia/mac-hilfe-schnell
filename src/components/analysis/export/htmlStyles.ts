@@ -162,12 +162,14 @@ section[class*="section"],
   font-size: 18px !important;
   line-height: 1.2 !important;
   white-space: normal !important;
+  font-weight: 900 !important;
 }
 /* More specific override */
 .score-card .score-big span.score-tile.neutral {
   font-size: 18px !important;
   line-height: 1.2 !important;
   white-space: normal !important;
+  font-weight: 900 !important;
 }
 .score-big span { 
   /* Inline-Farben haben Vorrang */
