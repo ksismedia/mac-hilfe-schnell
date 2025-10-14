@@ -1,5 +1,6 @@
 import { GoogleAPIService } from './GoogleAPIService';
 import { WebsiteAnalysisService } from './WebsiteAnalysisService';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface RealBusinessData {
   company: {
@@ -185,9 +186,9 @@ export class BusinessAnalysisService {
     }
     
     try {
-      console.log('Analyzing keywords...');
-      keywordsData = this.analyzeKeywordsFromContent(websiteContent, industry);
-      console.log('Keywords analyzed successfully');
+      console.log('Analyzing keywords with AI...');
+      keywordsData = await this.analyzeKeywordsFromContent(websiteContent, industry, url);
+      console.log('Keywords analyzed successfully:', keywordsData.length, 'keywords');
     } catch (error) {
       console.error('Keywords analysis failed:', error);
       keywordsData = [];
@@ -288,7 +289,7 @@ export class BusinessAnalysisService {
         performance: this.generatePerformanceFromPageSpeed(null, url),
         reviews: { google: { rating: 0, count: 0, recent: [] } },
         competitors: [],
-        keywords: this.analyzeKeywordsFromContent(fallbackWebsiteContent, industry),
+        keywords: await this.analyzeKeywordsFromContent(fallbackWebsiteContent, industry, url),
         imprint: this.analyzeImprintFromContent(fallbackWebsiteContent),
         socialMedia: this.generateFallbackSocialMediaData(),
         workplace: this.generateRealisticWorkplaceData(companyName),
@@ -459,7 +460,63 @@ export class BusinessAnalysisService {
     };
   }
 
-  private static analyzeKeywordsFromContent(websiteContent: any, industry: string) {
+  private static async analyzeKeywordsFromContent(websiteContent: any, industry: string, url: string) {
+    console.log('=== AI-BASED KEYWORD ANALYSIS ===');
+    console.log('Industry:', industry);
+    console.log('URL:', url);
+
+    try {
+      // Sammle den gesamten Website-Content für die KI-Analyse
+      const title = websiteContent?.title || '';
+      const metaDesc = websiteContent?.metaDescription || '';
+      const content = websiteContent?.content || '';
+      const headings = [];
+      if (websiteContent?.headings) {
+        headings.push(...(websiteContent.headings.h1 || []));
+        headings.push(...(websiteContent.headings.h2 || []));
+        headings.push(...(websiteContent.headings.h3 || []));
+      }
+      const headingsText = headings.join(' ');
+      
+      // Kombiniere den Content für die KI
+      const fullContent = `Title: ${title}\nMeta: ${metaDesc}\nHeadings: ${headingsText}\nContent: ${content}`;
+      
+      console.log('Calling AI keyword analysis...');
+      console.log('Content length:', fullContent.length);
+
+      const { data, error } = await supabase.functions.invoke('analyze-keywords-ai', {
+        body: {
+          websiteContent: fullContent,
+          industry,
+          url,
+        },
+      });
+
+      if (error) {
+        console.error('AI keyword analysis error:', error);
+        throw error;
+      }
+
+      if (data?.keywords && Array.isArray(data.keywords)) {
+        console.log('AI found', data.keywords.length, 'keywords');
+        return data.keywords.map((kw: any) => ({
+          keyword: kw.keyword,
+          found: Boolean(kw.found),
+          volume: Number(kw.volume) || 100,
+          position: Number(kw.position) || 50,
+        }));
+      }
+
+      throw new Error('Invalid AI response');
+    } catch (error) {
+      console.error('AI keyword analysis failed, falling back to simple matching:', error);
+      
+      // Fallback zur alten Methode
+      return this.analyzeKeywordsFromContentFallback(websiteContent, industry);
+    }
+  }
+
+  private static analyzeKeywordsFromContentFallback(websiteContent: any, industry: string) {
     const industryKeywords = this.getIndustryKeywords(industry);
     
     // Sammle ALLE verfügbaren Textinhalte
@@ -482,19 +539,13 @@ export class BusinessAnalysisService {
     // Kombiniere ALLE Textquellen
     const allText = `${title} ${metaDesc} ${headingsText} ${content} ${linkTexts}`;
     
-    console.log('=== KEYWORD ANALYSIS DEBUG ===');
+    console.log('=== FALLBACK KEYWORD ANALYSIS ===');
     console.log('Total text length:', allText.length);
-    console.log('Sample text (first 200 chars):', allText.substring(0, 200));
-    console.log('Industry:', industry);
-    console.log('Keywords to analyze:', industryKeywords);
     
     // Verbesserte Keyword-Erkennung mit verschiedenen Varianten
-    return industryKeywords.map((keyword, index) => {
+    return industryKeywords.map((keyword) => {
       const keywordLower = keyword.toLowerCase();
-      console.log(`\n--- Analyzing keyword: "${keyword}" ---`);
-      
       let found = false;
-      let matchReason = '';
       let position = 0;
       
       // Erweiterte Keyword-Suche mit Varianten
@@ -503,41 +554,21 @@ export class BusinessAnalysisService {
       for (const variant of keywordVariants) {
         if (allText.includes(variant)) {
           found = true;
-          matchReason = `found variant: "${variant}"`;
-          console.log(`✓ FOUND "${keyword}": ${matchReason}`);
           break;
-        }
-      }
-      
-      // Spezielle Branchenlogik für SHK
-      if (!found && industry === 'shk') {
-        const shkSpecialTerms = ['heiz', 'warm', 'kalt', 'wasser', 'rohr', 'technik', 'service'];
-        if (shkSpecialTerms.some(term => allText.includes(term))) {
-          // Wenn verwandte Begriffe gefunden werden, simuliere höhere Chance
-          if (Math.random() > 0.3) {
-            found = true;
-            matchReason = 'inferred from related SHK terms';
-            console.log(`✓ INFERRED "${keyword}": ${matchReason}`);
-          }
         }
       }
       
       // Realistische Positionsberechnung
       if (found) {
         if (title.includes(keywordLower)) {
-          position = Math.floor(Math.random() * 5) + 1; // Position 1-5
+          position = Math.floor(Math.random() * 5) + 1;
         } else if (metaDesc.includes(keywordLower)) {
-          position = Math.floor(Math.random() * 8) + 6; // Position 6-13
+          position = Math.floor(Math.random() * 8) + 6;
         } else if (headingsText.includes(keywordLower)) {
-          position = Math.floor(Math.random() * 12) + 5; // Position 5-16
+          position = Math.floor(Math.random() * 12) + 5;
         } else {
-          position = Math.floor(Math.random() * 20) + 11; // Position 11-30
+          position = Math.floor(Math.random() * 20) + 11;
         }
-      }
-      
-      // Log wenn nicht gefunden
-      if (!found) {
-        console.log(`✗ NOT FOUND: "${keyword}"`);
       }
       
       return {
