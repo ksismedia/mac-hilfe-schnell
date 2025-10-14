@@ -248,7 +248,12 @@ section[class*="section"],
   hyphens: auto;
 }
 
-.score-tile.neutral {
+/* Überschreibe neutral tiles mit kleiner Schrift */
+.score-big span.score-tile.neutral {
+  font-size: 6px !important;
+}
+
+span[style*="font-size: 6px"] {
   font-size: 6px !important;
 }
 
