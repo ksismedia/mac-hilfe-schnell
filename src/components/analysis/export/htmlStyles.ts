@@ -157,9 +157,15 @@ section[class*="section"],
   font-weight: bold; 
   margin-bottom: 10px;
 }
-/* Override for neutral tiles in score-big */
+/* Override for neutral tiles in score-big - reset font-size inheritance */
 .score-big .score-tile.neutral { 
   font-size: 6px !important;
+  line-height: 1 !important;
+}
+/* More specific override */
+.score-card .score-big span.score-tile.neutral {
+  font-size: 6px !important;
+  line-height: 1 !important;
 }
 .score-big span { 
   /* Inline-Farben haben Vorrang */
