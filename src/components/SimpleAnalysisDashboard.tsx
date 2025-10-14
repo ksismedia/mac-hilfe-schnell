@@ -675,6 +675,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           {categories.map((category) => {
             const IconComponent = category.icon;
             const isActive = activeCategory === category.id;
+            const score = Math.round(category.score);
+            const scoreColor = score >= 90 ? '#facc15' : score >= 61 ? '#4ade80' : '#f87171';
+            const scoreBgColor = score >= 90 ? 'rgba(250, 204, 21, 0.15)' : 
+                                  score >= 61 ? 'rgba(74, 222, 128, 0.15)' : 
+                                  'rgba(248, 113, 113, 0.15)';
+            
             return (
               <button
                 key={category.id}
@@ -688,9 +694,31 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                   textAlign: 'center',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
-                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)'
+                  boxShadow: isActive ? '0 8px 25px rgba(250, 204, 21, 0.3)' : '0 4px 15px rgba(0, 0, 0, 0.3)',
+                  position: 'relative'
                 }}
               >
+                {/* Score Badge in top right corner */}
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  color: isActive ? scoreColor : scoreColor,
+                  backgroundColor: isActive ? 'rgba(0, 0, 0, 0.1)' : scoreBgColor,
+                  border: `3px solid ${scoreColor}`,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+                }}>
+                  {score}%
+                </div>
+                
                 <div style={{ marginBottom: '12px' }}>
                   <IconComponent style={{ width: '28px', height: '28px', margin: '0 auto' }} />
                 </div>
@@ -702,7 +730,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                   fontSize: '20px',
                   color: isActive ? '#000' : getScoreColor(category.score)
                 }}>
-                  {Math.round(category.score)} Punkte
+                  {score} Punkte
                 </div>
               </button>
             );
