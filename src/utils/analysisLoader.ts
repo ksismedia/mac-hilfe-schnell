@@ -23,7 +23,9 @@ export const loadSavedAnalysisData = (
   setManualKeywordData?: (data: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void,
   updateStaffQualificationData?: (data: any) => void,
   updateHourlyRateData?: (data: any) => void,
-  updateQuoteResponseData?: (data: any) => void
+  updateQuoteResponseData?: (data: any) => void,
+  updateRemovedMissingServices?: (services: string[]) => void,
+  addDeletedCompetitor?: (competitorName: string) => void
 ) => {
   console.log('Loading saved analysis data:', savedAnalysis.id);
   
@@ -56,6 +58,20 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.competitorServices) {
     console.log('Loading competitor services');
     loadCompetitorServices(savedAnalysis.manualData.competitorServices, updateCompetitorServices);
+  }
+
+  // Load removed missing services
+  if (savedAnalysis.manualData?.removedMissingServices && updateRemovedMissingServices && Array.isArray(savedAnalysis.manualData.removedMissingServices)) {
+    console.log('Loading removed missing services:', savedAnalysis.manualData.removedMissingServices.length);
+    updateRemovedMissingServices(savedAnalysis.manualData.removedMissingServices);
+  }
+
+  // Load deleted competitors
+  if (savedAnalysis.manualData?.deletedCompetitors && addDeletedCompetitor && Array.isArray(savedAnalysis.manualData.deletedCompetitors)) {
+    console.log('Loading deleted competitors:', savedAnalysis.manualData.deletedCompetitors.length);
+    savedAnalysis.manualData.deletedCompetitors.forEach(competitorName => {
+      addDeletedCompetitor(competitorName);
+    });
   }
   
   // Load company services if available and function is provided

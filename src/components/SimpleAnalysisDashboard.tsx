@@ -103,6 +103,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateCompetitors,
     updateCompetitorServices,
     addRemovedMissingService,
+    updateRemovedMissingServices,
     updateCompanyServices,
     addDeletedCompetitor,
     removeDeletedCompetitor,
@@ -177,7 +178,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           setManualKeywordData,
           updateStaffQualificationData,
           updateHourlyRateData,
-          updateQuoteResponseData
+          updateQuoteResponseData,
+          updateRemovedMissingServices,
+          addDeletedCompetitor
         );
         
         console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');

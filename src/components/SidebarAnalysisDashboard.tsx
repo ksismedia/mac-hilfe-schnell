@@ -105,6 +105,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateCompetitors,
     updateCompetitorServices,
     addRemovedMissingService,
+    updateRemovedMissingServices,
     updateCompanyServices,
     addDeletedCompetitor,
     removeDeletedCompetitor,
@@ -160,7 +161,12 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateCompetitors,
               updateCompetitorServices,
               updateCompanyServices,
-              setManualKeywordData
+              setManualKeywordData,
+              updateStaffQualificationData,
+              updateHourlyRateData,
+              updateQuoteResponseData,
+              updateRemovedMissingServices,
+              addDeletedCompetitor
             );
             
             console.log('Saved analysis loaded successfully');
