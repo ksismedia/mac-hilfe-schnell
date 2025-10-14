@@ -159,13 +159,13 @@ section[class*="section"],
 }
 /* Override for neutral tiles in score-big - reset font-size inheritance */
 .score-big .score-tile.neutral { 
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 1.2 !important;
   white-space: normal !important;
 }
 /* More specific override */
 .score-card .score-big span.score-tile.neutral {
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 1.2 !important;
   white-space: normal !important;
 }
