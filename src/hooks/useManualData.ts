@@ -189,6 +189,60 @@ export interface ManualDataPrivacyData {
   notes?: string;
 }
 
+export interface LocalSEODirectory {
+  name: string;
+  status: 'complete' | 'incomplete' | 'not-found';
+  url?: string;
+  claimedByOwner?: boolean;
+  verified?: boolean;
+  completeness?: number;
+  lastUpdate?: string;
+}
+
+export interface ManualLocalSEOData {
+  // Google My Business
+  gmbClaimed: boolean;
+  gmbVerified: boolean;
+  gmbCompleteness: number; // 0-100
+  gmbPhotos: number;
+  gmbPosts: number;
+  gmbLastUpdate: string;
+  
+  // Verzeichnisse
+  directories: LocalSEODirectory[];
+  
+  // NAP Konsistenz
+  napConsistencyScore: number; // 0-100
+  napIssues: Array<{
+    type: string;
+    severity: 'high' | 'medium' | 'low';
+    message: string;
+  }>;
+  
+  // Structured Data
+  hasLocalBusinessSchema: boolean;
+  hasOrganizationSchema: boolean;
+  schemaTypes: string[];
+  
+  // Lokale Keywords (Positionen)
+  localKeywordRankings: Array<{
+    keyword: string;
+    position: number;
+    searchVolume: 'high' | 'medium' | 'low';
+    trend: 'up' | 'down' | 'stable';
+  }>;
+  
+  // On-Page Local Faktoren
+  addressVisible: boolean;
+  phoneVisible: boolean;
+  openingHoursVisible: boolean;
+  localContentScore: number; // 0-100
+  
+  // Gesamtscore
+  overallScore: number; // 0-100
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -206,6 +260,7 @@ export const useManualData = () => {
   const [manualAccessibilityData, setManualAccessibilityData] = useState<ManualAccessibilityData | null>(null);
   const [manualBacklinkData, setManualBacklinkData] = useState<ManualBacklinkData | null>(null);
   const [manualDataPrivacyData, setManualDataPrivacyData] = useState<ManualDataPrivacyData | null>(null);
+  const [manualLocalSEOData, setManualLocalSEOData] = useState<ManualLocalSEOData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -312,6 +367,11 @@ export const useManualData = () => {
     console.log('Manual Data Privacy Data Updated:', data);
   }, []);
 
+  const updateManualLocalSEOData = useCallback((data: ManualLocalSEOData | null) => {
+    setManualLocalSEOData(data);
+    console.log('Manual Local SEO Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -329,6 +389,7 @@ export const useManualData = () => {
     manualAccessibilityData,
     manualBacklinkData,
     manualDataPrivacyData,
+    manualLocalSEOData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -346,6 +407,7 @@ export const useManualData = () => {
     updateManualContentData,
     updateManualAccessibilityData,
     updateManualBacklinkData,
-    updateManualDataPrivacyData
+    updateManualDataPrivacyData,
+    updateManualLocalSEOData
   };
 };

@@ -40,6 +40,8 @@ interface SEOContentCategoryProps {
   onNavigateToCategory?: (categoryId: string) => void; // Neue Prop für Navigation
   manualDataPrivacyData?: any;
   updateManualDataPrivacyData?: (data: any) => void;
+  manualLocalSEOData?: any;
+  onManualLocalSEOChange?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -70,6 +72,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   onNavigateToCategory,
   manualDataPrivacyData,
   updateManualDataPrivacyData,
+  manualLocalSEOData,
+  onManualLocalSEOChange,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -146,7 +150,12 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
           )}
 
           {activeTab === 'local-seo' && (
-            <LocalSEO businessData={businessData} realData={realData} />
+            <LocalSEO 
+              businessData={businessData} 
+              realData={realData}
+              manualData={manualLocalSEOData}
+              onManualDataChange={onManualLocalSEOChange}
+            />
           )}
 
           {activeTab === 'backlinks' && (

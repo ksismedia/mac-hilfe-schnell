@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Star, Clock, Phone, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MapPin, Star, Clock, Phone, Globe, Edit, Save, X } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { calculateLocalSEOScore } from './export/scoreCalculations';
+import { ManualLocalSEOData } from '@/hooks/useManualData';
+import ManualLocalSEOInput from './ManualLocalSEOInput';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 interface LocalSEOProps {
   businessData: {
@@ -13,17 +18,197 @@ interface LocalSEOProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
   };
   realData: RealBusinessData;
+  manualData?: ManualLocalSEOData | null;
+  onManualDataChange?: (data: ManualLocalSEOData | null) => void;
 }
 
-const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
-  // Berechne den strengen Local SEO Score
-  const overallScore = calculateLocalSEOScore(businessData, realData);
+const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData, onManualDataChange }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  const [realLocalSEOData, setRealLocalSEOData] = useState<any>(null);
+
+  // Verwende manuelle Daten wenn vorhanden, sonst berechne Score
+  const overallScore = manualData?.overallScore ?? calculateLocalSEOScore(businessData, realData);
+
+  // Lade echte Local SEO Daten beim Mount
+  useEffect(() => {
+    if (!manualData) {
+      loadRealLocalSEOData();
+    }
+  }, [businessData.url, businessData.address]);
+
+  const loadRealLocalSEOData = async () => {
+    setIsLoadingAnalysis(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-local-seo', {
+        body: {
+          url: businessData.url,
+          businessName: realData.company.name,
+          address: businessData.address,
+          industry: businessData.industry
+        }
+      });
+
+      if (error) throw error;
+      
+      console.log('Real Local SEO Data:', data);
+      setRealLocalSEOData(data);
+      
+      toast({
+        title: "Local SEO Analyse abgeschlossen",
+        description: "Echte Daten wurden erfolgreich geladen"
+      });
+    } catch (error) {
+      console.error('Error loading real local SEO data:', error);
+      toast({
+        title: "Hinweis",
+        description: "Automatische Analyse nicht verfügbar. Verwenden Sie die manuelle Eingabe.",
+        variant: "default"
+      });
+    } finally {
+      setIsLoadingAnalysis(false);
+    }
+  };
+
+  const handleManualDataSave = (data: ManualLocalSEOData) => {
+    if (onManualDataChange) {
+      onManualDataChange(data);
+      setIsEditMode(false);
+      toast({
+        title: "Gespeichert",
+        description: "Manuelle Local SEO Daten wurden gespeichert"
+      });
+    }
+  };
+
+  const handleManualDataClear = () => {
+    if (onManualDataChange) {
+      onManualDataChange(null);
+      setIsEditMode(false);
+      toast({
+        title: "Zurückgesetzt",
+        description: "Manuelle Daten wurden gelöscht, automatische Analyse wird verwendet"
+      });
+    }
+  };
+
+  if (isEditMode) {
+    return (
+      <div>
+        <div className="flex justify-end gap-2 mb-4">
+          <Button variant="outline" onClick={() => setIsEditMode(false)}>
+            <X className="h-4 w-4 mr-2" />
+            Abbrechen
+          </Button>
+          {manualData && (
+            <Button variant="destructive" onClick={handleManualDataClear}>
+              Zurücksetzen
+            </Button>
+          )}
+        </div>
+        <ManualLocalSEOInput
+          initialData={manualData}
+          onDataChange={handleManualDataSave}
+        />
+      </div>
+    );
+  }
   
-  // Simulierte Local SEO Daten - jetzt basierend auf realData und strengerer Bewertung
-  const localSEOData = {
-    overallScore: overallScore, // Verwendung des berechneten strengen Scores
+  // Verwende manuelle oder echte Daten, sonst Fallback
+  const localSEOData = manualData ? {
+    overallScore: manualData.overallScore,
     googleMyBusiness: {
-      score: Math.max(0, Math.min(100, overallScore + (realData.seo.score >= 70 ? 15 : -10))), // Strenger an SEO-Qualität gekoppelt
+      score: Math.round((manualData.gmbCompleteness + (manualData.gmbVerified ? 20 : 0) + (manualData.gmbClaimed ? 10 : 0)) / 1.3),
+      claimed: manualData.gmbClaimed,
+      verified: manualData.gmbVerified,
+      complete: manualData.gmbCompleteness,
+      photos: manualData.gmbPhotos,
+      posts: manualData.gmbPosts,
+      lastUpdate: manualData.gmbLastUpdate
+    },
+    localCitations: {
+      score: Math.round((manualData.directories.filter(d => d.status === 'complete').length / Math.max(1, manualData.directories.length)) * 100),
+      totalCitations: manualData.directories.length,
+      consistent: manualData.directories.filter(d => d.status === 'complete').length,
+      inconsistent: manualData.directories.filter(d => d.status === 'incomplete').length,
+      topDirectories: manualData.directories.map(d => ({
+        name: d.name,
+        status: d.status === 'complete' ? 'vollständig' : d.status === 'incomplete' ? 'unvollständig' : 'nicht gefunden'
+      }))
+    },
+    localKeywords: {
+      score: manualData.localKeywordRankings.length > 0 ? Math.round(
+        manualData.localKeywordRankings.reduce((acc, kw) => acc + (100 - kw.position), 0) / manualData.localKeywordRankings.length
+      ) : 0,
+      ranking: manualData.localKeywordRankings.map(kw => ({
+        keyword: kw.keyword,
+        position: kw.position,
+        volume: kw.searchVolume === 'high' ? 'hoch' : kw.searchVolume === 'medium' ? 'mittel' : 'niedrig'
+      }))
+    },
+    onPageLocal: {
+      score: manualData.localContentScore,
+      addressVisible: manualData.addressVisible,
+      phoneVisible: manualData.phoneVisible,
+      openingHours: manualData.openingHoursVisible,
+      localSchema: manualData.hasLocalBusinessSchema,
+      localContent: manualData.localContentScore
+    }
+  } : realLocalSEOData ? {
+    overallScore: overallScore,
+    googleMyBusiness: {
+      score: Math.round((realLocalSEOData.structuredData.hasLocalBusinessSchema ? 30 : 0) + 
+                       (realLocalSEOData.napConsistency.score * 0.7)),
+      claimed: realLocalSEOData.napConsistency.score > 60,
+      verified: realLocalSEOData.napConsistency.score > 75,
+      complete: realLocalSEOData.napConsistency.score,
+      photos: Math.floor(realLocalSEOData.directories.completionRate / 10),
+      posts: realLocalSEOData.directories.found.length > 5 ? 3 : 1,
+      lastUpdate: "Unbekannt"
+    },
+    localCitations: {
+      score: realLocalSEOData.directories.completionRate,
+      totalCitations: realLocalSEOData.directories.total,
+      consistent: realLocalSEOData.directories.found.filter((d: any) => d.status === 'complete').length,
+      inconsistent: realLocalSEOData.directories.found.filter((d: any) => d.status === 'incomplete').length,
+      topDirectories: [
+        ...realLocalSEOData.directories.found.map((d: any) => ({
+          name: d.name,
+          status: d.status === 'complete' ? 'vollständig' : 'unvollständig'
+        })),
+        ...realLocalSEOData.directories.notFound.slice(0, 3).map((d: any) => ({
+          name: d.name,
+          status: 'nicht gefunden'
+        }))
+      ].slice(0, 5)
+    },
+    localKeywords: {
+      score: Math.max(15, Math.min(80, overallScore - 10)),
+      ranking: [
+        { 
+          keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim()}`, 
+          position: realData.seo.score >= 70 ? 8 : realData.seo.score >= 50 ? 15 : 25, 
+          volume: realData.seo.score >= 60 ? "hoch" : "niedrig" 
+        },
+        { 
+          keyword: `Handwerker ${businessData.address.split(',')[1]?.trim()}`, 
+          position: realData.seo.score >= 60 ? 12 : 20, 
+          volume: realData.seo.score >= 50 ? "mittel" : "niedrig" 
+        }
+      ]
+    },
+    onPageLocal: {
+      score: realLocalSEOData.napConsistency.score,
+      addressVisible: realLocalSEOData.napConsistency.hasAddress,
+      phoneVisible: realLocalSEOData.napConsistency.hasPhone,
+      openingHours: realData.seo.score >= 61,
+      localSchema: realLocalSEOData.structuredData.hasLocalBusinessSchema,
+      localContent: Math.max(25, Math.min(90, realLocalSEOData.napConsistency.score))
+    }
+  } : {
+    overallScore: overallScore,
+    googleMyBusiness: {
+      score: Math.max(0, Math.min(100, overallScore + (realData.seo.score >= 70 ? 15 : -10))),
       claimed: realData.seo.score >= 60,
       verified: realData.seo.score >= 70,
       complete: Math.max(30, Math.min(95, realData.seo.score + 10)),
@@ -148,19 +333,33 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData }) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Lokale SEO-Faktoren
-            <div 
-              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                localSEOData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
-                'bg-red-500 text-white'
-              }`}
-            >
-              {localSEOData.overallScore}%
+            <span>Lokale SEO-Faktoren</span>
+            <div className="flex items-center gap-2">
+              {manualData && (
+                <Badge variant="secondary">Manuell bearbeitet</Badge>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditMode(true)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Bearbeiten
+              </Button>
+              <div 
+                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                  localSEOData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
+                  localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                  'bg-red-500 text-white'
+                }`}
+              >
+                {localSEOData.overallScore}%
+              </div>
             </div>
           </CardTitle>
           <CardDescription>
             Analyse der lokalen Suchmaschinenoptimierung für {businessData.address}
+            {isLoadingAnalysis && <span className="ml-2">(Lade echte Daten...)</span>}
           </CardDescription>
         </CardHeader>
         <CardContent>
