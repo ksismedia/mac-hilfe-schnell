@@ -237,7 +237,6 @@ section[class*="section"],
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 1.0em; 
   font-weight: bold; 
   flex-shrink: 0;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -247,6 +246,10 @@ section[class*="section"],
   padding: 4px;
   word-wrap: break-word;
   hyphens: auto;
+}
+
+.score-tile.neutral {
+  font-size: 6px !important;
 }
 
 /* Spezielle Pricing Text Tile */
