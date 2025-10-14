@@ -2144,28 +2144,22 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="seo-performance">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.seo.score}%</span></div>
-                  <div class="score-label">SEO-Auswertung</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">SEO-Auswertung</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">74%</span></div>
-                  <div class="score-label">Lokale SEO</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Lokale SEO</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayAccessibilityScore}</span></div>
-                  <div class="score-label">Barrierefreiheit</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Barrierefreiheit</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayDataPrivacyScore}</span></div>
-                  <div class="score-label">Datenschutz</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Datenschutz</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayDSGVOScore}</span></div>
-                  <div class="score-label">DSGVO</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">DSGVO</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${impressumScore}%</span></div>
-                  <div class="score-label">Impressum</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Impressum</span></div>
                 </div>
               </div>
             </div>
@@ -2183,12 +2177,10 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.performance.score}%</span></div>
-                  <div class="score-label">Website Performance</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Website Performance</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.mobile.overallScore}%</span></div>
-                  <div class="score-label">Mobile Optimierung</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Mobile Optimierung</span></div>
                 </div>
               </div>
             </div>
@@ -2210,12 +2202,10 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="social-reputation">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displaySocialScore}</span></div>
-                  <div class="score-label">Social Media</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Social Media</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${googleReviewScore}%</span></div>
-                  <div class="score-label">Google Bewertungen</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Google Bewertungen</span></div>
                 </div>
               </div>
             </div>
@@ -2292,28 +2282,21 @@ export const generateCustomerHTML = ({
                   return allCompetitors.length > 0 ? `
                     <div class="score-card">
                       <div class="score-big">
-                        <span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(marketComparisonScore)}%</span>
-                      </div>
-                      <div class="score-label">Wettbewerbsanalyse</div>
-                      <div class="score-sublabel" style="font-size: 0.7em; margin-top: 2px; color: #666;">
-                        Eigene: ${Math.round(marketComparisonScore)}% | Ø Wettb.: ${Math.round(avgCompetitorScore)}%
+                        <span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Wettbewerbsanalyse</span>
                       </div>
                     </div>
                   ` : '';
                 })()}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${displayStaffScore}</span></div>
-                  <div class="score-label">Mitarbeiterqualifikation</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Mitarbeiterqualifikation</span></div>
                 </div>
                 ${hourlyRateData ? `
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(pricingScore)}%</span></div>
-                  <div class="score-label">Stundensatzanalyse</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Stundensatzanalyse</span></div>
                 </div>
                 ` : ''}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${workplaceScore === -1 ? '–' : workplaceScore + '%'}</span></div>
-                  <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Arbeitsplatz- und geber-Bewertung</span></div>
                 </div>
               </div>
             </div>
@@ -2328,8 +2311,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${Math.round(corporateIdentityScore)}%</span></div>
-                  <div class="score-label">Corporate Design</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Corporate Design</span></div>
                 </div>
               </div>
             </div>
@@ -2347,8 +2329,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="staff-service">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore + '%' : '–'}</span></div>
-                  <div class="score-label">Reaktionszeit auf Anfragen</div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Reaktionszeit auf Anfragen</span></div>
                 </div>
               </div>
             </div>

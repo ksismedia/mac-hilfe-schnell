@@ -116,20 +116,16 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="seo-performance">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.seo.score}%</span></div>
-                <div class="score-label">SEO-Auswertung</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">SEO-Auswertung</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">74%</span></div>
-                <div class="score-label">Lokale SEO</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Lokale SEO</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${accessibilityScore > 0 ? accessibilityScore + '%' : '—'}</span></div>
-                <div class="score-label">Barrierefreiheit</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Barrierefreiheit</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${dataPrivacyScore > 0 ? dataPrivacyScore + '%' : '—'}</span></div>
-                <div class="score-label">Datenschutz</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Datenschutz</span></div>
               </div>
             </div>
           </div>
@@ -143,12 +139,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="mobile-accessibility">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.performance.score}%</span></div>
-                <div class="score-label">Website Performance</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Website Performance</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${realData.mobile.overallScore}%</span></div>
-                <div class="score-label">Mobile Optimierung</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Mobile Optimierung</span></div>
               </div>
             </div>
           </div>
@@ -162,12 +156,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="social-reputation">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${socialMediaScore > 0 ? socialMediaScore + '%' : '—'}</span></div>
-                <div class="score-label">Social Media</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Social Media</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">100%</span></div>
-                <div class="score-label">Google Bewertungen</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Google Bewertungen</span></div>
               </div>
             </div>
           </div>
@@ -181,8 +173,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="legal-privacy">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important;">${workplaceScore > 0 ? workplaceScore + '%' : '—'}</span></div>
-                <div class="score-label">Arbeitsplatz- und geber-Bewertung</div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Arbeitsplatz- und geber-Bewertung</span></div>
               </div>
             </div>
           </div>
