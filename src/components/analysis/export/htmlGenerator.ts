@@ -2693,8 +2693,9 @@ export const generateCustomerHTML = ({
 
     <!-- Lokale SEO -->
     <div class="section">
-      <div class="section-header">
+      <div class="section-header" style="display: flex; align-items: center; justify-content: space-between;">
         <span>Lokale SEO & Regionale Sichtbarkeit</span>
+        <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
       </div>
       <div class="section-content">
         ${getLocalSEOAnalysis()}
