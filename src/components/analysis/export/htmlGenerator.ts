@@ -2144,22 +2144,22 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="seo-performance">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">SEO-Auswertung</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">SEO-Auswertung</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Lokale SEO</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Lokale SEO</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Barrierefreiheit</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Barrierefreiheit</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Datenschutz</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Datenschutz</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">DSGVO</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">DSGVO</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Impressum</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Impressum</span></div>
                 </div>
               </div>
             </div>
@@ -2177,10 +2177,10 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Website Performance</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Website Performance</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Mobile Optimierung</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Mobile Optimierung</span></div>
                 </div>
               </div>
             </div>
@@ -2202,10 +2202,10 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="social-reputation">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Social Media</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Social Media</span></div>
                 </div>
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Google Bewertungen</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Google Bewertungen</span></div>
                 </div>
               </div>
             </div>
@@ -2282,21 +2282,21 @@ export const generateCustomerHTML = ({
                   return allCompetitors.length > 0 ? `
                     <div class="score-card">
                       <div class="score-big">
-                        <span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Wettbewerbsanalyse</span>
+                        <span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Wettbewerbsanalyse</span>
                       </div>
                     </div>
                   ` : '';
                 })()}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Mitarbeiterqualifikation</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Mitarbeiterqualifikation</span></div>
                 </div>
                 ${hourlyRateData ? `
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Stundensatzanalyse</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Stundensatzanalyse</span></div>
                 </div>
                 ` : ''}
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Arbeitsplatz- und geber-Bewertung</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Arbeitsplatz- und geber-Bewertung</span></div>
                 </div>
               </div>
             </div>
@@ -2311,7 +2311,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="design-branding">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Corporate Design</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Corporate Design</span></div>
                 </div>
               </div>
             </div>
@@ -2329,7 +2329,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="staff-service">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 1.1em; padding: 15px 20px;">Reaktionszeit auf Anfragen</span></div>
+                  <div class="score-big"><span class="score-tile neutral" style="background: #FFD700 !important; color: #000000 !important; font-size: 0.85em; padding: 12px 16px;">Reaktionszeit auf Anfragen</span></div>
                 </div>
               </div>
             </div>
