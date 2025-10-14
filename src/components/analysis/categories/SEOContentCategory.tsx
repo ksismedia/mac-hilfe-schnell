@@ -11,6 +11,7 @@ import ImprintCheck from '../ImprintCheck';
 import CompetitorAnalysis from '../CompetitorAnalysis';
 import IndustryFeatures from '../IndustryFeatures';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { calculateOnlineQualityCategoryScores, calculateAverageScore, getScoreBadgeColor, getScoreBadgeBackground } from '@/utils/categoryScoreUtils';
 
 interface SEOContentCategoryProps {
   businessData: any;
@@ -37,11 +38,13 @@ interface SEOContentCategoryProps {
   addDeletedCompetitor: (competitorName: string) => void;
   removeDeletedCompetitor: (competitorName: string) => void;
   onCompanyScoreChange?: (score: number) => void;
-  onNavigateToCategory?: (categoryId: string) => void; // Neue Prop für Navigation
+  onNavigateToCategory?: (categoryId: string) => void;
   manualDataPrivacyData?: any;
   updateManualDataPrivacyData?: (data: any) => void;
   manualLocalSEOData?: any;
   onManualLocalSEOChange?: (data: any) => void;
+  manualContentData?: any;
+  manualBacklinkData?: any;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -74,6 +77,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateManualDataPrivacyData,
   manualLocalSEOData,
   onManualLocalSEOChange,
+  manualContentData,
+  manualBacklinkData,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -82,11 +87,30 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
     setActiveTab(value);
   };
 
+  // Calculate category average score
+  const categoryScores = calculateOnlineQualityCategoryScores(
+    realData,
+    keywordsScore,
+    privacyData,
+    accessibilityData,
+    manualContentData,
+    manualBacklinkData,
+    businessData
+  );
+  const averageScore = calculateAverageScore(categoryScores);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-yellow-400 mb-2">SEO & Content Analyse</h2>
-        <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-yellow-400 mb-2">SEO & Content Analyse</h2>
+          <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
+        </div>
+        <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${getScoreBadgeBackground(averageScore)}`}>
+          <span className={`text-xl font-bold ${getScoreBadgeColor(averageScore)}`}>
+            {averageScore}%
+          </span>
+        </div>
       </div>
       
       

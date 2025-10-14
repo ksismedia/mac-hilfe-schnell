@@ -357,6 +357,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
             manualDataPrivacyData={manualDataPrivacyData}
             updateManualDataPrivacyData={updateManualDataPrivacyData}
+            manualLocalSEOData={manualLocalSEOData}
+            onManualLocalSEOChange={updateManualLocalSEOData}
+            manualContentData={manualContentData}
+            manualBacklinkData={manualBacklinkData}
           />
         );
       case 'website-performance-tech':
@@ -378,11 +382,27 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           />
         );
       case 'market-environment':
+        const marketScore = scores.marketEnvironment;
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Markt & Marktumfeld</h2>
-              <p className="text-gray-300">Stundensatz, Personal und Wettbewerbsumfeld</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-yellow-400 mb-2">Markt & Marktumfeld</h2>
+                <p className="text-gray-300">Stundensatz, Personal und Wettbewerbsumfeld</p>
+              </div>
+              <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${
+                marketScore >= 90 ? 'bg-yellow-400/20 border-yellow-400' :
+                marketScore >= 61 ? 'bg-green-400/20 border-green-400' :
+                'bg-red-400/20 border-red-400'
+              }`}>
+                <span className={`text-xl font-bold ${
+                  marketScore >= 90 ? 'text-yellow-400' :
+                  marketScore >= 61 ? 'text-green-400' :
+                  'text-red-400'
+                }`}>
+                  {marketScore}%
+                </span>
+              </div>
             </div>
             <StaffServiceCategory 
               businessData={businessData}
@@ -399,11 +419,27 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           </div>
         );
       case 'corporate-appearance':
+        const corporateScore = scores.corporateAppearance;
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
-              <p className="text-gray-300">Corporate Design</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
+                <p className="text-gray-300">Corporate Design</p>
+              </div>
+              <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${
+                corporateScore >= 90 ? 'bg-yellow-400/20 border-yellow-400' :
+                corporateScore >= 61 ? 'bg-green-400/20 border-green-400' :
+                'bg-red-400/20 border-red-400'
+              }`}>
+                <span className={`text-xl font-bold ${
+                  corporateScore >= 90 ? 'text-yellow-400' :
+                  corporateScore >= 61 ? 'text-green-400' :
+                  'text-red-400'
+                }`}>
+                  {corporateScore}%
+                </span>
+              </div>
             </div>
             <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
               <CorporateIdentityInput 
@@ -418,11 +454,27 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           </div>
         );
       case 'service-quality':
+        const serviceScore = scores.serviceQuality;
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Qualität · Service · Kundenorientierung</h2>
-              <p className="text-gray-300">Kundenservice und Angebotserstellung</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-yellow-400 mb-2">Qualität · Service · Kundenorientierung</h2>
+                <p className="text-gray-300">Kundenservice und Angebotserstellung</p>
+              </div>
+              <div className={`flex items-center justify-center w-16 h-16 rounded-full border-2 ${
+                serviceScore >= 90 ? 'bg-yellow-400/20 border-yellow-400' :
+                serviceScore >= 61 ? 'bg-green-400/20 border-green-400' :
+                'bg-red-400/20 border-red-400'
+              }`}>
+                <span className={`text-xl font-bold ${
+                  serviceScore >= 90 ? 'text-yellow-400' :
+                  serviceScore >= 61 ? 'text-green-400' :
+                  'text-red-400'
+                }`}>
+                  {serviceScore}%
+                </span>
+              </div>
             </div>
             <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
               <QuoteResponseInput 
