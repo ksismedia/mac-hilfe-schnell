@@ -257,6 +257,15 @@ export interface ManualIndustryReviewData {
   overallScore: number;
 }
 
+export interface ManualOnlinePresenceData {
+  items: Array<{
+    url: string;
+    type: 'image' | 'video' | 'short';
+    relevance: 'high' | 'medium' | 'low';
+  }>;
+  overallScore?: number;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -276,6 +285,7 @@ export const useManualData = () => {
   const [manualDataPrivacyData, setManualDataPrivacyData] = useState<ManualDataPrivacyData | null>(null);
   const [manualLocalSEOData, setManualLocalSEOData] = useState<ManualLocalSEOData | null>(null);
   const [manualIndustryReviewData, setManualIndustryReviewData] = useState<ManualIndustryReviewData | null>(null);
+  const [manualOnlinePresenceData, setManualOnlinePresenceData] = useState<ManualOnlinePresenceData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -392,6 +402,11 @@ export const useManualData = () => {
     console.log('Manual Industry Review Data Updated:', data);
   }, []);
 
+  const updateManualOnlinePresenceData = useCallback((data: ManualOnlinePresenceData | null) => {
+    setManualOnlinePresenceData(data);
+    console.log('Manual Online Presence Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -430,6 +445,8 @@ export const useManualData = () => {
     updateManualBacklinkData,
     updateManualDataPrivacyData,
     updateManualLocalSEOData,
-    updateManualIndustryReviewData
+    updateManualIndustryReviewData,
+    manualOnlinePresenceData,
+    updateManualOnlinePresenceData
   };
 };
