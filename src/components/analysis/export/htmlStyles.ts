@@ -66,7 +66,7 @@ section[class*="section"],
   box-sizing: border-box !important;
 }
 /* Preserve responsive grid for score cards */
-.score-overview {
+.score-overview { 
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(200px, 200px)) !important;
   gap: 20px 20px !important;
@@ -81,12 +81,16 @@ section[class*="section"],
   min-width: 200px !important;
   height: 180px !important;
   min-height: 180px !important;
+  max-height: 180px !important;
   flex: none !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+  padding: 20px 15px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
+  align-items: center !important;
+  overflow: hidden !important;
 }
 .header { 
   text-align: center; 
@@ -144,28 +148,36 @@ section[class*="section"],
 }
 .score-card { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
-  padding: 20px 15px; 
+  padding: 20px 15px !important; 
   border-radius: 12px; 
   box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
-  text-align: center;
+  text-align: center !important;
   transition: transform 0.3s ease;
   border: 1px solid rgba(251, 191, 36, 0.3);
-  width: 200px;
-  max-width: 200px;
-  min-width: 200px;
-  height: 180px;
-  min-height: 180px;
-  overflow-x: hidden;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: 200px !important;
+  max-width: 200px !important;
+  min-width: 200px !important;
+  height: 180px !important;
+  min-height: 180px !important;
+  max-height: 180px !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
   font-size: 3.2em; 
   font-weight: bold; 
   margin-bottom: 10px;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
 }
 /* Override for neutral tiles in score-big - reset font-size inheritance */
 .score-big .score-tile.neutral { 
@@ -184,7 +196,14 @@ section[class*="section"],
 .score-big span { 
   /* Inline-Farben haben Vorrang */
 }
-.score-label { color: #d1d5db; font-weight: 600; font-size: 1.0em; }
+.score-label { 
+  color: #d1d5db; 
+  font-weight: 600; 
+  font-size: 1.0em; 
+  width: 100% !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+}
 .section { 
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
   margin-bottom: 30px; 
