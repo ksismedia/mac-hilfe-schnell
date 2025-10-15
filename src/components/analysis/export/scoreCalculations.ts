@@ -72,12 +72,31 @@ const calculateSocialMediaScore = (
   return score;
 };
 
+// Calculate industry review platforms score
+const calculateIndustryReviewScore = (
+  manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null
+): number => {
+  if (!manualIndustryReviewData || !manualIndustryReviewData.overallScore) {
+    return 0;
+  }
+  return manualIndustryReviewData.overallScore;
+};
+
 export const calculateSocialMediaCategoryScore = (
   realData: RealBusinessData,
   manualSocialData?: ManualSocialData | null,
-  manualWorkplaceData?: ManualWorkplaceData | null
+  manualWorkplaceData?: ManualWorkplaceData | null,
+  manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null
 ): number => {
-  return calculateSocialMediaPerformanceScore(realData, manualSocialData);
+  const socialMediaScore = calculateSocialMediaPerformanceScore(realData, manualSocialData);
+  const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
+  
+  // Include industry review score in the category average if it exists
+  if (industryReviewScore > 0) {
+    return Math.round((socialMediaScore + industryReviewScore) / 2);
+  }
+  
+  return socialMediaScore;
 };
 
 export const calculateWorkplaceScore = newCalculateWorkplaceScore;

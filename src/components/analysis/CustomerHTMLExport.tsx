@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualIndustryReviewData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -31,6 +31,7 @@ interface CustomerHTMLExportProps {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   privacyData?: any;
@@ -57,6 +58,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualAccessibilityData,
   manualBacklinkData,
   manualDataPrivacyData,
+  manualIndustryReviewData,
   manualKeywordData,
   keywordScore,
   privacyData,
@@ -192,6 +194,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
+      manualLocalSEOData: undefined,
+      manualIndustryReviewData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
@@ -258,6 +262,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
+      manualLocalSEOData: undefined,
+      manualIndustryReviewData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
