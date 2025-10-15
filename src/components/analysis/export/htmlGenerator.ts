@@ -3177,6 +3177,184 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    ${(() => {
+      // Branchenplattformen Sektion
+      if (manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0) {
+        const overallScore = manualIndustryReviewData.overallScore || 0;
+        return `
+    <!-- Branchenplattformen -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>🏆 Branchenplattformen</span>
+        <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Branchenspezifische Bewertungsplattformen</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+            <div class="score-details">
+              <p><strong>Erfasste Plattformen:</strong> ${manualIndustryReviewData.platforms.length}</p>
+              <p><strong>Verifizierte Profile:</strong> ${manualIndustryReviewData.platforms.filter(p => p.isVerified).length}</p>
+              <p><strong>Gesamtbewertungen:</strong> ${manualIndustryReviewData.platforms.reduce((sum, p) => sum + (p.reviewCount || 0), 0)}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${overallScore}%; background-color: ${getScoreColor(overallScore)} !important;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">Plattform-Übersicht</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+            ${manualIndustryReviewData.platforms.map(platform => {
+              const platformScore = Math.round((platform.rating / 5) * 100);
+              return `
+              <div class="metric-card" style="padding: 15px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2);">
+                <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 10px;">
+                  <h4 style="margin: 0; color: #fbbf24;">${platform.platformName}</h4>
+                  ${platform.isVerified ? '<span style="color: #10b981; font-size: 0.8em;">✓ Verifiziert</span>' : ''}
+                </div>
+                <div style="margin: 10px 0;">
+                  <p style="margin: 5px 0;"><strong>Bewertung:</strong> ${platform.rating}/5 ⭐</p>
+                  <p style="margin: 5px 0;"><strong>Anzahl Bewertungen:</strong> ${platform.reviewCount}</p>
+                  ${platform.lastReviewDate ? `<p style="margin: 5px 0;"><strong>Letzte Bewertung:</strong> ${platform.lastReviewDate}</p>` : ''}
+                  ${platform.profileUrl ? `<p style="margin: 5px 0;"><a href="${platform.profileUrl}" target="_blank" style="color: #3b82f6;">Profil ansehen →</a></p>` : ''}
+                </div>
+                <div class="progress-container">
+                  <div class="progress-label">
+                    <span>Bewertungslevel</span>
+                    <span>${platformScore}%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${platformScore}%; background-color: ${getScoreColor(platformScore)} !important;"></div>
+                  </div>
+                </div>
+              </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="recommendations">
+          <h4>Empfehlungen für Branchenplattformen:</h4>
+          <ul>
+            <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
+            <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
+            <li>Auf Bewertungen zeitnah und professionell reagieren</li>
+            <li>Profile verifizieren lassen für höhere Glaubwürdigkeit</li>
+            <li>Referenzprojekte und Zertifikate hinterlegen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+        `;
+      }
+      return '';
+    })()}
+
+    ${(() => {
+      // Online-Präsenz Sektion
+      if (manualOnlinePresenceData && manualOnlinePresenceData.items && manualOnlinePresenceData.items.length > 0) {
+        const overallScore = manualOnlinePresenceData.overallScore || 0;
+        const imageCount = manualOnlinePresenceData.items.filter(i => i.type === 'image').length;
+        const videoCount = manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
+        const shortCount = manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
+        const highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
+        
+        return `
+    <!-- Online-Präsenz -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>🔍 Online-Präsenz (Google-Suche)</span>
+        <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Google-Suchergebnisse: Bilder, Videos & Shorts</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+            <div class="score-details">
+              <p><strong>Erfasste Inhalte:</strong> ${manualOnlinePresenceData.items.length}</p>
+              <p><strong>Hochrelevante Inhalte:</strong> ${highRelevance}</p>
+              <p><strong>Content-Mix:</strong> ${imageCount} Bilder, ${videoCount} Videos, ${shortCount} Shorts</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${overallScore}%; background-color: ${getScoreColor(overallScore)} !important;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">Content-Verteilung</h4>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(59, 130, 246, 0.1);">
+              <div style="font-size: 2em;">📷</div>
+              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
+              <p style="color: #9ca3af;">Bilder</p>
+            </div>
+            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(239, 68, 68, 0.1);">
+              <div style="font-size: 2em;">🎥</div>
+              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
+              <p style="color: #9ca3af;">Videos</p>
+            </div>
+            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(168, 85, 247, 0.1);">
+              <div style="font-size: 2em;">📱</div>
+              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
+              <p style="color: #9ca3af;">Shorts/Reels</p>
+            </div>
+          </div>
+
+          <h4 style="color: #fbbf24; margin-bottom: 15px;">Erfasste Inhalte nach Relevanz</h4>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+            ${manualOnlinePresenceData.items.map(item => {
+              const typeIcon = item.type === 'image' ? '📷' : item.type === 'video' ? '🎥' : '📱';
+              const relevanceColor = item.relevance === 'high' ? '#10b981' : item.relevance === 'medium' ? '#fbbf24' : '#9ca3af';
+              const relevanceText = item.relevance === 'high' ? 'Hoch (eigener Content)' : item.relevance === 'medium' ? 'Mittel (erwähnt)' : 'Niedrig (indirekt)';
+              
+              return `
+              <div class="metric-card" style="padding: 12px; background: rgba(251, 191, 36, 0.05); border-left: 3px solid ${relevanceColor};">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="font-size: 1.5em;">${typeIcon}</div>
+                  <div style="flex: 1; min-width: 0;">
+                    <p style="margin: 0; font-size: 0.85em; color: #9ca3af; word-break: break-all;">${item.url}</p>
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                      <span style="padding: 2px 8px; background: ${relevanceColor}22; color: ${relevanceColor}; border-radius: 4px; font-size: 0.75em;">
+                        ${item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short'}
+                      </span>
+                      <span style="padding: 2px 8px; background: ${relevanceColor}22; color: ${relevanceColor}; border-radius: 4px; font-size: 0.75em;">
+                        Relevanz: ${relevanceText}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="recommendations">
+          <h4>Empfehlungen für Online-Präsenz:</h4>
+          <ul>
+            <li>Regelmäßig hochwertige Bilder von Projekten auf Google My Business hochladen</li>
+            <li>Video-Content erstellen und auf YouTube sowie Google optimieren</li>
+            <li>Shorts/Reels für soziale Medien produzieren und verbreiten</li>
+            <li>Alt-Tags und Bildbeschreibungen für bessere Auffindbarkeit nutzen</li>
+            <li>Einheitliche Markenpräsenz über alle visuellen Inhalte sicherstellen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+        `;
+      }
+      return '';
+    })()}
+
     <!-- Barrierefreiheit -->
     <div class="section">
         <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
