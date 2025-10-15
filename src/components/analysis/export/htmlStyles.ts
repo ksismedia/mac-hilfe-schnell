@@ -274,21 +274,26 @@ section[class*="section"],
 
 /* Score Tile - rechteckige Kachel statt Kreis */
 .score-tile { 
-  min-width: 120px; 
-  height: 80px; 
+  min-width: 120px !important; 
+  max-width: 160px !important;
+  width: 140px !important;
+  height: 80px !important;
+  max-height: 80px !important;
   border-radius: 12px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
+  display: flex !important; 
+  align-items: center !important; 
+  justify-content: center !important; 
   font-weight: bold; 
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   border: 2px solid rgba(255,255,255,0.1);
-  text-align: center;
-  line-height: 1.1;
-  padding: 4px;
+  text-align: center !important;
+  line-height: 1.1 !important;
+  padding: 4px !important;
   word-wrap: break-word;
   hyphens: auto;
+  box-sizing: border-box !important;
+}
 }
 
 /* Überschreibe neutral tiles mit kleiner Schrift */

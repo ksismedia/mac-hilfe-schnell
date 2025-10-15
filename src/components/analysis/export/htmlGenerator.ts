@@ -2116,7 +2116,7 @@ export const generateCustomerHTML = ({
       <div class="section-content">
         <!-- Gesamtscore als erstes -->
         <div class="score-overview" style="margin-bottom: 30px;">
-          <div class="score-card" style="max-width: 300px; margin: 0 auto;">
+          <div class="score-card">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
