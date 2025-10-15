@@ -243,6 +243,20 @@ export interface ManualLocalSEOData {
   notes?: string;
 }
 
+export interface PlatformReview {
+  platformName: string;
+  rating: number;
+  reviewCount: number;
+  profileUrl?: string;
+  isVerified: boolean;
+  lastReviewDate?: string;
+}
+
+export interface ManualIndustryReviewData {
+  platforms: PlatformReview[];
+  overallScore: number;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -261,6 +275,7 @@ export const useManualData = () => {
   const [manualBacklinkData, setManualBacklinkData] = useState<ManualBacklinkData | null>(null);
   const [manualDataPrivacyData, setManualDataPrivacyData] = useState<ManualDataPrivacyData | null>(null);
   const [manualLocalSEOData, setManualLocalSEOData] = useState<ManualLocalSEOData | null>(null);
+  const [manualIndustryReviewData, setManualIndustryReviewData] = useState<ManualIndustryReviewData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -372,6 +387,11 @@ export const useManualData = () => {
     console.log('Manual Local SEO Data Updated:', data);
   }, []);
 
+  const updateManualIndustryReviewData = useCallback((data: ManualIndustryReviewData | null) => {
+    setManualIndustryReviewData(data);
+    console.log('Manual Industry Review Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -390,6 +410,7 @@ export const useManualData = () => {
     manualBacklinkData,
     manualDataPrivacyData,
     manualLocalSEOData,
+    manualIndustryReviewData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -408,6 +429,7 @@ export const useManualData = () => {
     updateManualAccessibilityData,
     updateManualBacklinkData,
     updateManualDataPrivacyData,
-    updateManualLocalSEOData
+    updateManualLocalSEOData,
+    updateManualIndustryReviewData
   };
 };

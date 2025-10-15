@@ -98,6 +98,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualAccessibilityData,
     manualBacklinkData,
     manualDataPrivacyData,
+    manualLocalSEOData,
+    manualIndustryReviewData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -112,7 +114,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateStaffQualificationData,
     updateHourlyRateData,
     updateQuoteResponseData,
-    updateManualDataPrivacyData
+    updateManualDataPrivacyData,
+    updateManualLocalSEOData,
+    updateManualIndustryReviewData
   } = useManualData();
 
   // Access saved analyses hook
@@ -371,6 +375,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateSocialData={updateSocialData}
             manualWorkplaceData={manualWorkplaceData}
             updateWorkplaceData={updateWorkplaceData}
+            manualIndustryReviewData={manualIndustryReviewData}
+            updateIndustryReviewData={updateManualIndustryReviewData}
           />
         );
       case 'market-environment':

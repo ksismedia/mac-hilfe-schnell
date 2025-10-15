@@ -5,8 +5,9 @@ import SocialMediaSimple from '../SocialMediaSimple';
 import SocialProof from '../SocialProof';
 import GoogleReviews from '../GoogleReviews';
 import WorkplaceReviews from '../WorkplaceReviews';
+import { ManualIndustryReviewInput } from '../ManualIndustryReviewInput';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualWorkplaceData, ManualIndustryReviewData } from '@/hooks/useManualData';
 
 interface SocialMediaCategoryProps {
   realData: RealBusinessData;
@@ -15,6 +16,8 @@ interface SocialMediaCategoryProps {
   updateSocialData: (data: ManualSocialData | null) => void;
   manualWorkplaceData: ManualWorkplaceData | null;
   updateWorkplaceData: (data: ManualWorkplaceData | null) => void;
+  manualIndustryReviewData: ManualIndustryReviewData | null;
+  updateIndustryReviewData: (data: ManualIndustryReviewData | null) => void;
 }
 
 const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
@@ -24,6 +27,8 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
   updateSocialData,
   manualWorkplaceData,
   updateWorkplaceData,
+  manualIndustryReviewData,
+  updateIndustryReviewData,
 }) => {
   return (
     <div className="space-y-6">
@@ -33,11 +38,12 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
       </div>
       
       <Tabs defaultValue="social-simple" className="w-full">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-5 mb-6">
+        <TabsList className="grid grid-cols-2 lg:grid-cols-6 mb-6">
           <TabsTrigger value="social-simple">Social Media</TabsTrigger>
           <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
           <TabsTrigger value="reviews">Google Reviews</TabsTrigger>
           <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
+          <TabsTrigger value="industry-reviews">Branchenplattformen</TabsTrigger>
           <TabsTrigger value="social-analysis">Detailanalyse</TabsTrigger>
         </TabsList>
 
@@ -64,6 +70,13 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
             realData={realData}
             manualData={manualWorkplaceData}
             onManualDataChange={updateWorkplaceData}
+          />
+        </TabsContent>
+
+        <TabsContent value="industry-reviews">
+          <ManualIndustryReviewInput 
+            onUpdate={updateIndustryReviewData}
+            initialData={manualIndustryReviewData || undefined}
           />
         </TabsContent>
 

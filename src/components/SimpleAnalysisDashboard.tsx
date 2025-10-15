@@ -97,6 +97,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualBacklinkData,
     manualDataPrivacyData,
     manualLocalSEOData,
+    manualIndustryReviewData,
     updateImprintData,
     updateSocialData,
     updateWorkplaceData,
@@ -115,7 +116,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateManualAccessibilityData,
     updateManualBacklinkData,
     updateManualDataPrivacyData,
-    updateManualLocalSEOData
+    updateManualLocalSEOData,
+    updateManualIndustryReviewData
   } = useManualData();
 
   // Access saved analyses hook
@@ -375,6 +377,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateSocialData={updateSocialData}
             manualWorkplaceData={manualWorkplaceData}
             updateWorkplaceData={updateWorkplaceData}
+            manualIndustryReviewData={manualIndustryReviewData}
+            updateIndustryReviewData={updateManualIndustryReviewData}
           />
         );
       case 'market-environment':
