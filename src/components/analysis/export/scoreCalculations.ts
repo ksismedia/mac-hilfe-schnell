@@ -82,21 +82,34 @@ const calculateIndustryReviewScore = (
   return manualIndustryReviewData.overallScore;
 };
 
+// Calculate online presence score
+const calculateOnlinePresenceScore = (
+  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
+): number => {
+  if (!manualOnlinePresenceData || !manualOnlinePresenceData.overallScore) {
+    return 0;
+  }
+  return manualOnlinePresenceData.overallScore;
+};
+
 export const calculateSocialMediaCategoryScore = (
   realData: RealBusinessData,
   manualSocialData?: ManualSocialData | null,
   manualWorkplaceData?: ManualWorkplaceData | null,
-  manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null
+  manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null,
+  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
 ): number => {
   const socialMediaScore = calculateSocialMediaPerformanceScore(realData, manualSocialData);
   const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
+  const onlinePresenceScore = calculateOnlinePresenceScore(manualOnlinePresenceData);
   
-  // Include industry review score in the category average if it exists
-  if (industryReviewScore > 0) {
-    return Math.round((socialMediaScore + industryReviewScore) / 2);
-  }
+  // Collect all scores that exist
+  const scores = [socialMediaScore];
+  if (industryReviewScore > 0) scores.push(industryReviewScore);
+  if (onlinePresenceScore > 0) scores.push(onlinePresenceScore);
   
-  return socialMediaScore;
+  // Return average of all available scores
+  return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
 };
 
 export const calculateWorkplaceScore = newCalculateWorkplaceScore;

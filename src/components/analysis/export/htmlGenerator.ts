@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
@@ -36,6 +36,7 @@ interface CustomerReportData {
   manualDataPrivacyData?: ManualDataPrivacyData | null;
   manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
+  manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   privacyData?: any;
   accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
@@ -108,6 +109,7 @@ export const generateCustomerHTML = ({
   manualDataPrivacyData,
   manualLocalSEOData,
   manualIndustryReviewData,
+  manualOnlinePresenceData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
@@ -2194,10 +2196,12 @@ export const generateCustomerHTML = ({
               <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
               ${(() => {
                 const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
+                const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
                 const scores = [
                   socialMediaScore > 0 ? socialMediaScore : 0,
                   googleReviewScore,
-                  industryReviewScore
+                  industryReviewScore,
+                  onlinePresenceScore
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
                 return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
@@ -2216,6 +2220,15 @@ export const generateCustomerHTML = ({
                   if (industryReviewScore > 0) {
                     return `<div class="score-card">
                       <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Branchenplattformen</span></div>
+                    </div>`;
+                  }
+                  return '';
+                })()}
+                ${(() => {
+                  const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+                  if (onlinePresenceScore > 0) {
+                    return `<div class="score-card">
+                      <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Online-Präsenz</span></div>
                     </div>`;
                   }
                   return '';

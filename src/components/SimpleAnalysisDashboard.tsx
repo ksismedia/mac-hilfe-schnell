@@ -590,6 +590,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualBacklinkData={manualBacklinkData}
               manualDataPrivacyData={manualDataPrivacyData}
               manualIndustryReviewData={manualIndustryReviewData}
+              manualOnlinePresenceData={manualOnlinePresenceData}
               calculatedOwnCompanyScore={currentOwnCompanyScore}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
