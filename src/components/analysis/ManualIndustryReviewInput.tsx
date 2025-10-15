@@ -160,8 +160,8 @@ export const ManualIndustryReviewInput = ({ onUpdate, initialData }: ManualIndus
                           <p className="text-sm text-muted-foreground">
                             ⭐ {platform.rating}/5 • {platform.reviewCount} Bewertungen
                           </p>
-                          {platform.isVerified && (
-                            <p className="text-sm text-green-600">✓ Verifiziert</p>
+                           {platform.isVerified && (
+                            <p className="text-sm text-success">✓ Verifiziert</p>
                           )}
                         </div>
                       </div>
@@ -169,7 +169,16 @@ export const ManualIndustryReviewInput = ({ onUpdate, initialData }: ManualIndus
                   ))}
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="font-semibold">Gesamt-Score: {calculateOverallScore(platforms)}%</p>
+                  <p className="font-semibold">
+                    Gesamt-Score: 
+                    <span className={
+                      calculateOverallScore(platforms) >= 90 ? "text-warning ml-1" :
+                      calculateOverallScore(platforms) >= 61 ? "text-success ml-1" :
+                      "text-destructive ml-1"
+                    }>
+                      {calculateOverallScore(platforms)}%
+                    </span>
+                  </p>
                 </div>
               </>
             )}

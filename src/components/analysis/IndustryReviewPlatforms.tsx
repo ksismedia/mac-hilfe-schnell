@@ -18,15 +18,15 @@ interface IndustryReviewPlatformsProps {
 
 export const IndustryReviewPlatforms = ({ platforms, overallScore }: IndustryReviewPlatformsProps) => {
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 90) return "text-warning";
+    if (score >= 61) return "text-success";
+    return "text-destructive";
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 80) return "bg-green-100 text-green-800";
-    if (score >= 60) return "bg-yellow-100 text-yellow-800";
-    return "bg-red-100 text-red-800";
+    if (score >= 90) return "bg-warning/10 text-warning border-warning/20";
+    if (score >= 61) return "bg-success/10 text-success border-success/20";
+    return "bg-destructive/10 text-destructive border-destructive/20";
   };
 
   const renderStars = (rating: number) => {
@@ -51,7 +51,7 @@ export const IndustryReviewPlatforms = ({ platforms, overallScore }: IndustryRev
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Branchenspezifische Bewertungsplattformen</CardTitle>
-          <Badge className={getScoreBadge(overallScore)}>
+          <Badge variant="outline" className={getScoreBadge(overallScore)}>
             Score: {overallScore}%
           </Badge>
         </div>
@@ -72,12 +72,12 @@ export const IndustryReviewPlatforms = ({ platforms, overallScore }: IndustryRev
                       <div className="flex items-center gap-2 mb-2">
                         <h4 className="font-semibold text-lg">{platform.platformName}</h4>
                         {platform.isVerified && (
-                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <CheckCircle2 className="w-5 h-5 text-success" />
                         )}
                       </div>
                       <div className="flex items-center gap-4">
                         {renderStars(platform.rating)}
-                        <span className={`font-bold ${getScoreColor(platform.rating * 20)}`}>
+                        <span className="font-semibold text-foreground">
                           {platform.rating.toFixed(1)}/5
                         </span>
                       </div>
