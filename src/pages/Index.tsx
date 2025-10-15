@@ -587,13 +587,14 @@ const Index = () => {
             <h3 className="text-xl font-semibold text-yellow-300 mb-4 flex items-center gap-2">
               📱 Online-/Web-/Social-Media Performance
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               {[
                 { title: "Social Media", icon: "📲", desc: "Facebook, Instagram, LinkedIn Profile" },
                 { title: "Social Proof", icon: "👥", desc: "Testimonials und Vertrauenssignale" },
                 { title: "Social Media Analyse", icon: "📊", desc: "Detaillierte Social Media Auswertung" },
                 { title: "Google-Bewertungen", icon: "⭐", desc: "Bewertungen und Rezensionen" },
-                { title: "Branchenplattformen", icon: "🏆", desc: "MyHammer, 11880, ProvenExpert" }
+                { title: "Branchenplattformen", icon: "🏆", desc: "MyHammer, 11880, ProvenExpert" },
+                { title: "Online-Präsenz", icon: "🔍", desc: "Google Bilder, Videos & Shorts" }
               ].map((feature, index) => (
                 <Card key={index} className="bg-gray-800 border-blue-400/20 hover:border-blue-400/40 transition-colors">
                   <CardContent className="p-4 text-center">
