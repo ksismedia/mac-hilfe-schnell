@@ -79,9 +79,14 @@ section[class*="section"],
   width: 200px !important;
   max-width: 200px !important;
   min-width: 200px !important;
+  height: 180px !important;
+  min-height: 180px !important;
   flex: none !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 .header { 
   text-align: center; 
@@ -148,8 +153,13 @@ section[class*="section"],
   width: 200px;
   max-width: 200px;
   min-width: 200px;
+  height: 180px;
+  min-height: 180px;
   overflow-x: hidden;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .score-card:hover { transform: translateY(-5px); }
 .score-big { 
