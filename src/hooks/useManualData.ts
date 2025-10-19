@@ -99,7 +99,7 @@ export interface StaffQualificationData {
   training_budget_per_year: number;
   average_experience_years: number;
   // Neue Felder für Schulungen und Zertifikate
-  annual_training_courses_per_employee: number; // Anzahl Schulungen pro Mitarbeiter
+  offers_employee_training: boolean; // Ob Mitarbeiter Schulungen machen können
   employee_certifications: Array<{
     name: string;
     employees_certified: number;

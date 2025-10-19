@@ -417,13 +417,10 @@ export const calculateStaffQualificationScore = (data: any): number => {
   const industrySpecificCount = data.industry_specific?.length || 0;
   score += (industrySpecificCount / 6) * 15;
   
-  // Schulungsteilnahmen (20% der Bewertung)
-  const trainingCourses = data.annual_training_courses_per_employee || 0;
-  if (trainingCourses >= 6) score += 20;
-  else if (trainingCourses >= 4) score += 14;
-  else if (trainingCourses >= 3) score += 10;
-  else if (trainingCourses >= 2) score += 6;
-  else if (trainingCourses >= 1) score += 3;
+  // Mitarbeiterschulungen (20% der Bewertung)
+  if (data.offers_employee_training) {
+    score += 20;
+  }
   
   // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
   const certifications = data.employee_certifications || [];

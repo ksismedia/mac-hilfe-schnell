@@ -42,7 +42,7 @@ export interface StaffQualificationData {
   average_experience_years: number;
   
   // Neue Felder für Schulungen und Zertifikate
-  annual_training_courses_per_employee: number; // Anzahl Schulungen pro Mitarbeiter
+  offers_employee_training: boolean; // Ob Mitarbeiter Schulungen machen können
   employee_certifications: Array<{
     name: string;
     employees_certified: number;
@@ -139,7 +139,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     specializations: '',
     training_budget_per_year: 0,
     average_experience_years: 0,
-    annual_training_courses_per_employee: 0,
+    offers_employee_training: false,
     employee_certifications: [],
   });
 
@@ -224,13 +224,10 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
   const industrySpecificCount = data.industry_specific?.length || 0;
     score += (industrySpecificCount / 6) * 15;
     
-    // Schulungsteilnahmen (20% der Bewertung)
-    const trainingCourses = data.annual_training_courses_per_employee || 0;
-    if (trainingCourses >= 6) score += 20;
-    else if (trainingCourses >= 4) score += 14;
-    else if (trainingCourses >= 3) score += 10;
-    else if (trainingCourses >= 2) score += 6;
-    else if (trainingCourses >= 1) score += 3;
+    // Mitarbeiterschulungen (20% der Bewertung)
+    if (data.offers_employee_training) {
+      score += 20;
+    }
     
     // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
   const certifications = data.employee_certifications || [];
@@ -342,8 +339,10 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
           {/* Schulungen und Zertifikate */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-3 bg-gray-700 rounded-lg">
-              <div className="text-sm text-gray-300">Schulungen/Mitarbeiter/Jahr</div>
-              <div className="text-lg font-bold text-white">{data.annual_training_courses_per_employee || 0} Schulungen</div>
+              <div className="text-sm text-gray-300">Mitarbeiterschulungen</div>
+              <div className="text-lg font-bold text-white">
+                {data.offers_employee_training ? '✓ Verfügbar' : '✗ Nicht verfügbar'}
+              </div>
             </div>
             <div className="p-3 bg-gray-700 rounded-lg">
               <div className="text-sm text-gray-300">Mitarbeiterzertifikate</div>
@@ -568,26 +567,25 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
             </h4>
             
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="annual_training_courses" className="text-gray-200">
-                  Jährliche Schulungsteilnahmen pro Mitarbeiter
-                </Label>
-                <Input
-                  id="annual_training_courses"
-                  type="number"
-                  min="0"
-                  value={formData.annual_training_courses_per_employee}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    annual_training_courses_per_employee: parseInt(e.target.value) || 0 
-                  }))}
-                  className="bg-gray-700 border-gray-600 text-white"
-                  placeholder="z.B. 3"
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="offers_employee_training"
+                  checked={formData.offers_employee_training}
+                  onCheckedChange={(checked) => 
+                    setFormData(prev => ({
+                      ...prev,
+                      offers_employee_training: checked as boolean
+                    }))
+                  }
+                  className="border-gray-400 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400"
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  Durchschnittliche Anzahl der Schulungen pro Mitarbeiter im Jahr
-                </p>
+                <Label htmlFor="offers_employee_training" className="text-gray-200 cursor-pointer">
+                  Mitarbeiter können an Schulungen teilnehmen
+                </Label>
               </div>
+              <p className="text-xs text-gray-400">
+                Wird das Unternehmen Schulungen für Mitarbeiter anbietet oder Teilnahmen ermöglicht
+              </p>
 
               <div>
                 <Label className="text-gray-200 mb-2 block">Mitarbeiterzertifikate</Label>
