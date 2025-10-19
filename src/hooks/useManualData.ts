@@ -172,7 +172,6 @@ export interface ManualDataPrivacyData {
   hasSSL: boolean;
   cookiePolicy: boolean;
   privacyPolicy: boolean;
-  legalImprint: boolean;
   gdprCompliant: boolean;
   cookieConsent: boolean;
   dataProcessingAgreement: boolean;

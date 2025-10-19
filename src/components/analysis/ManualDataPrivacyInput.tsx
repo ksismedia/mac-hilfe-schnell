@@ -35,7 +35,6 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     hasSSL: true,
     cookiePolicy: false,
     privacyPolicy: false,
-    legalImprint: false,
     gdprCompliant: false,
     cookieConsent: false,
     dataProcessingAgreement: false,
@@ -161,15 +160,6 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
                 id="cookie-policy"
                 checked={currentData.cookiePolicy}
                 onCheckedChange={(checked) => updateData({ cookiePolicy: checked })}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="imprint">Impressum vollständig</Label>
-              <Switch
-                id="imprint"
-                checked={currentData.legalImprint}
-                onCheckedChange={(checked) => updateData({ legalImprint: checked })}
               />
             </div>
           </div>
