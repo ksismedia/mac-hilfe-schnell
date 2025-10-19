@@ -84,7 +84,7 @@ export interface StaffQualificationData {
   apprentices: number;
   skilled_workers: number;
   masters: number;
-  office_workers: number; // Neue Rubrik: Bürokräfte
+  office_workers: number;
   unskilled_workers: number;
   certifications: {
     welding_certificates: boolean;
@@ -98,6 +98,13 @@ export interface StaffQualificationData {
   specializations: string;
   training_budget_per_year: number;
   average_experience_years: number;
+  // Neue Felder für Schulungen und Zertifikate
+  annual_training_hours_per_employee: number;
+  employee_certifications: Array<{
+    name: string;
+    employees_certified: number;
+    renewal_interval?: string;
+  }>;
 }
 
 export interface HourlyRateData {

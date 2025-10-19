@@ -16,7 +16,7 @@ export interface StaffQualificationData {
   apprentices: number;
   skilled_workers: number;
   masters: number;
-  office_workers: number; // Neue Rubrik: Bürokräfte
+  office_workers: number;
   unskilled_workers: number;
   
   // Zertifizierungen
@@ -40,6 +40,14 @@ export interface StaffQualificationData {
   
   // Durchschnittliche Berufserfahrung
   average_experience_years: number;
+  
+  // Neue Felder für Schulungen und Zertifikate
+  annual_training_hours_per_employee: number;
+  employee_certifications: Array<{
+    name: string;
+    employees_certified: number;
+    renewal_interval?: string;
+  }>;
 }
 
 interface StaffQualificationInputProps {
@@ -117,7 +125,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     apprentices: 0,
     skilled_workers: 0,
     masters: 0,
-    office_workers: 0, // Neue Rubrik initialisieren
+    office_workers: 0,
     unskilled_workers: 0,
     certifications: {
       welding_certificates: false,
@@ -131,6 +139,8 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     specializations: '',
     training_budget_per_year: 0,
     average_experience_years: 0,
+    annual_training_hours_per_employee: 0,
+    employee_certifications: [],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -210,9 +220,22 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     if (data.certifications?.business_qualification) certificationPoints += 1;
     score += (certificationPoints / 6) * 20;
     
-    // Branchenspezifische Qualifikationen (20% der Bewertung)
+    // Branchenspezifische Qualifikationen (15% der Bewertung)
     const industrySpecificCount = data.industry_specific?.length || 0;
-    score += (industrySpecificCount / 6) * 20;
+    score += (industrySpecificCount / 6) * 15;
+    
+    // Schulungsstunden (10% der Bewertung)
+    const trainingHours = data.annual_training_hours_per_employee || 0;
+    if (trainingHours >= 40) score += 10;
+    else if (trainingHours >= 24) score += 7;
+    else if (trainingHours >= 16) score += 5;
+    else if (trainingHours >= 8) score += 3;
+    
+    // Mitarbeiterzertifikate (10% der Bewertung)
+    const certifications = data.employee_certifications || [];
+    const certCount = certifications.length;
+    if (certCount >= 5) score += 10;
+    else score += (certCount / 5) * 10;
     
     return Math.min(Math.round(score), 100);
   };
@@ -310,6 +333,47 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
                   <Badge key={index} variant="secondary" className="bg-blue-900 text-blue-200">
                     {qual}
                   </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Schulungen und Zertifikate */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 bg-gray-700 rounded-lg">
+              <div className="text-sm text-gray-300">Schulungsstunden/Mitarbeiter/Jahr</div>
+              <div className="text-lg font-bold text-white">{data.annual_training_hours_per_employee || 0} Stunden</div>
+            </div>
+            <div className="p-3 bg-gray-700 rounded-lg">
+              <div className="text-sm text-gray-300">Mitarbeiterzertifikate</div>
+              <div className="text-lg font-bold text-white">{data.employee_certifications?.length || 0} Zertifikate</div>
+            </div>
+          </div>
+
+          {/* Mitarbeiterzertifikate Details */}
+          {data.employee_certifications && data.employee_certifications.length > 0 && (
+            <div>
+              <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Mitarbeiterzertifikate
+              </h4>
+              <div className="space-y-2">
+                {data.employee_certifications.map((cert, index) => (
+                  <div key={index} className="bg-gray-700 p-3 rounded-lg">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium text-white">{cert.name}</div>
+                        <div className="text-sm text-gray-300">
+                          {cert.employees_certified} Mitarbeiter zertifiziert
+                        </div>
+                      </div>
+                      {cert.renewal_interval && (
+                        <Badge variant="outline" className="text-xs">
+                          Alle {cert.renewal_interval}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -490,6 +554,113 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
                   </Label>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <Separator className="bg-gray-600" />
+
+          {/* Schulungen und Mitarbeiterzertifikate */}
+          <div>
+            <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              Schulungen und Mitarbeiterzertifikate
+            </h4>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="annual_training_hours" className="text-gray-200">
+                  Jährliche Schulungsstunden pro Mitarbeiter
+                </Label>
+                <Input
+                  id="annual_training_hours"
+                  type="number"
+                  min="0"
+                  value={formData.annual_training_hours_per_employee}
+                  onChange={(e) => setFormData(prev => ({ 
+                    ...prev, 
+                    annual_training_hours_per_employee: parseInt(e.target.value) || 0 
+                  }))}
+                  className="bg-gray-700 border-gray-600 text-white"
+                  placeholder="z.B. 24"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Durchschnittliche Schulungsstunden pro Mitarbeiter im Jahr
+                </p>
+              </div>
+
+              <div>
+                <Label className="text-gray-200 mb-2 block">Mitarbeiterzertifikate</Label>
+                <div className="space-y-3">
+                  {formData.employee_certifications.map((cert, index) => (
+                    <div key={index} className="flex gap-2 items-start bg-gray-700 p-3 rounded-lg">
+                      <div className="flex-1 space-y-2">
+                        <Input
+                          placeholder="Zertifikatsname"
+                          value={cert.name}
+                          onChange={(e) => {
+                            const newCerts = [...formData.employee_certifications];
+                            newCerts[index].name = e.target.value;
+                            setFormData(prev => ({ ...prev, employee_certifications: newCerts }));
+                          }}
+                          className="bg-gray-600 border-gray-500 text-white"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <Input
+                            type="number"
+                            placeholder="Anzahl zertifiziert"
+                            value={cert.employees_certified}
+                            onChange={(e) => {
+                              const newCerts = [...formData.employee_certifications];
+                              newCerts[index].employees_certified = parseInt(e.target.value) || 0;
+                              setFormData(prev => ({ ...prev, employee_certifications: newCerts }));
+                            }}
+                            className="bg-gray-600 border-gray-500 text-white"
+                          />
+                          <Input
+                            placeholder="Erneuerung (z.B. 2 Jahre)"
+                            value={cert.renewal_interval || ''}
+                            onChange={(e) => {
+                              const newCerts = [...formData.employee_certifications];
+                              newCerts[index].renewal_interval = e.target.value;
+                              setFormData(prev => ({ ...prev, employee_certifications: newCerts }));
+                            }}
+                            className="bg-gray-600 border-gray-500 text-white"
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const newCerts = formData.employee_certifications.filter((_, i) => i !== index);
+                          setFormData(prev => ({ ...prev, employee_certifications: newCerts }));
+                        }}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        employee_certifications: [
+                          ...prev.employee_certifications,
+                          { name: '', employees_certified: 0, renewal_interval: '' }
+                        ]
+                      }));
+                    }}
+                    className="w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                  >
+                    + Zertifikat hinzufügen
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 

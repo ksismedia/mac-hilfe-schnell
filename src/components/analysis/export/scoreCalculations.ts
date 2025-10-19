@@ -413,10 +413,22 @@ export const calculateStaffQualificationScore = (data: any): number => {
   if (data.certifications?.business_qualification) certificationPoints += 1;
   score += (certificationPoints / 6) * 20;
   
-  // Branchenspezifische Qualifikationen (20% der Bewertung)
+  // Branchenspezifische Qualifikationen (15% der Bewertung)
   const industrySpecificCount = data.industry_specific?.length || 0;
-  // Annahme: maximal 6 branchenspezifische Qualifikationen verfügbar
-  score += (industrySpecificCount / 6) * 20;
+  score += (industrySpecificCount / 6) * 15;
+  
+  // Schulungsstunden (10% der Bewertung)
+  const trainingHours = data.annual_training_hours_per_employee || 0;
+  if (trainingHours >= 40) score += 10;
+  else if (trainingHours >= 24) score += 7;
+  else if (trainingHours >= 16) score += 5;
+  else if (trainingHours >= 8) score += 3;
+  
+  // Mitarbeiterzertifikate (10% der Bewertung)
+  const certifications = data.employee_certifications || [];
+  const certCount = certifications.length;
+  if (certCount >= 5) score += 10;
+  else score += (certCount / 5) * 10;
   
   return Math.min(Math.round(score), 100);
 };
