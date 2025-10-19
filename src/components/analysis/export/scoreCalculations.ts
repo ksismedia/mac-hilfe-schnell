@@ -403,7 +403,7 @@ export const calculateStaffQualificationScore = (data: any): number => {
     score += 5; // Bonus für >60% qualifizierte Mitarbeiter
   }
   
-  // Zertifizierungen (20% der Bewertung)
+  // Zertifizierungen (5% der Bewertung)
   let certificationPoints = 0;
   if (data.certifications?.welding_certificates) certificationPoints += 1;
   if (data.certifications?.safety_training) certificationPoints += 1;
@@ -411,18 +411,19 @@ export const calculateStaffQualificationScore = (data: any): number => {
   if (data.certifications?.digital_skills) certificationPoints += 1;
   if (data.certifications?.instructor_qualification) certificationPoints += 1;
   if (data.certifications?.business_qualification) certificationPoints += 1;
-  score += (certificationPoints / 6) * 15;
+  score += (certificationPoints / 6) * 5;
   
   // Branchenspezifische Qualifikationen (15% der Bewertung)
   const industrySpecificCount = data.industry_specific?.length || 0;
   score += (industrySpecificCount / 6) * 15;
   
-  // Schulungsstunden (10% der Bewertung)
+  // Schulungsstunden (20% der Bewertung)
   const trainingHours = data.annual_training_hours_per_employee || 0;
-  if (trainingHours >= 40) score += 10;
-  else if (trainingHours >= 24) score += 7;
-  else if (trainingHours >= 16) score += 5;
-  else if (trainingHours >= 8) score += 3;
+  if (trainingHours >= 40) score += 20;
+  else if (trainingHours >= 24) score += 14;
+  else if (trainingHours >= 16) score += 10;
+  else if (trainingHours >= 8) score += 6;
+  else if (trainingHours > 0) score += (trainingHours / 8) * 6;
   
   // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
   const certifications = data.employee_certifications || [];
