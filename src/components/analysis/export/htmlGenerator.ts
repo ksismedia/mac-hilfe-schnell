@@ -3183,13 +3183,13 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Online Reputation</span>
-        <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${realData.reviews.google.rating}/5</div>
+        <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Online Reputation</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${realData.reviews.google.rating}/5</div>
+            <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
             <div class="score-details">
               <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
               <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
