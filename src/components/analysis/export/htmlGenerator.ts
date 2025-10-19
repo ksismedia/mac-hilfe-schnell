@@ -495,7 +495,25 @@ export const generateCustomerHTML = ({
 
   // Reputation Analysis
   const getReputationAnalysis = () => {
-    const reputationScore = realData.reviews.google.rating * 20;
+  const googleReviewsScore = (() => {
+    const reviews = realData.reviews?.google?.count || 0;
+    const rating = realData.reviews?.google?.rating || 0;
+    let score = 0;
+    if (rating > 0) {
+      score += (rating / 5) * 50;
+    }
+    if (reviews > 0) {
+      if (reviews >= 500) score += 50;
+      else if (reviews >= 200) score += 45;
+      else if (reviews >= 100) score += 40;
+      else if (reviews >= 50) score += 35;
+      else if (reviews >= 20) score += 25;
+      else if (reviews >= 10) score += 15;
+      else score += Math.min(reviews, 10);
+    }
+    return Math.min(score, 100);
+  })();
+  const reputationScore = googleReviewsScore;
     return `
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
         <h3>Google Bewertungen</h3>
@@ -2059,7 +2077,24 @@ export const generateCustomerHTML = ({
   `;
 
   // Calculate individual scores for overall assessment
-  const googleReviewScore = realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0;
+  const googleReviewScore = (() => {
+    const reviews = realData.reviews?.google?.count || 0;
+    const rating = realData.reviews?.google?.rating || 0;
+    let score = 0;
+    if (rating > 0) {
+      score += (rating / 5) * 50;
+    }
+    if (reviews > 0) {
+      if (reviews >= 500) score += 50;
+      else if (reviews >= 200) score += 45;
+      else if (reviews >= 100) score += 40;
+      else if (reviews >= 50) score += 35;
+      else if (reviews >= 20) score += 25;
+      else if (reviews >= 10) score += 15;
+      else score += Math.min(reviews, 10);
+    }
+    return Math.min(score, 100);
+  })();
   
   // Collect all available scores for proper average calculation
   const allScores = [
@@ -3148,13 +3183,13 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>Online Reputation</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
+        <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${realData.reviews.google.rating}/5</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Online Reputation</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(realData.reviews.google.rating * 20)}">${realData.reviews.google.rating}/5</div>
+            <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${realData.reviews.google.rating}/5</div>
             <div class="score-details">
               <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
               <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
@@ -3162,7 +3197,7 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.reviews.google.rating * 20)}" style="width: ${realData.reviews.google.rating * 20}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(googleReviewScore)}" style="width: ${googleReviewScore}%"></div>
             </div>
           </div>
         </div>
