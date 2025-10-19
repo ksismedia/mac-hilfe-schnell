@@ -411,7 +411,7 @@ export const calculateStaffQualificationScore = (data: any): number => {
   if (data.certifications?.digital_skills) certificationPoints += 1;
   if (data.certifications?.instructor_qualification) certificationPoints += 1;
   if (data.certifications?.business_qualification) certificationPoints += 1;
-  score += (certificationPoints / 6) * 20;
+  score += (certificationPoints / 6) * 15;
   
   // Branchenspezifische Qualifikationen (15% der Bewertung)
   const industrySpecificCount = data.industry_specific?.length || 0;
@@ -424,11 +424,11 @@ export const calculateStaffQualificationScore = (data: any): number => {
   else if (trainingHours >= 16) score += 5;
   else if (trainingHours >= 8) score += 3;
   
-  // Mitarbeiterzertifikate (10% der Bewertung)
+  // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
   const certifications = data.employee_certifications || [];
   const certCount = certifications.length;
-  if (certCount >= 5) score += 10;
-  else score += (certCount / 5) * 10;
+  if (certCount >= 5) score += 15;
+  else score += (certCount / 5) * 15;
   
   return Math.min(Math.round(score), 100);
 };
