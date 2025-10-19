@@ -42,7 +42,7 @@ export interface StaffQualificationData {
   average_experience_years: number;
   
   // Neue Felder für Schulungen und Zertifikate
-  annual_training_hours_per_employee: number;
+  annual_training_courses_per_employee: number; // Anzahl Schulungen pro Mitarbeiter
   employee_certifications: Array<{
     name: string;
     employees_certified: number;
@@ -139,7 +139,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
     specializations: '',
     training_budget_per_year: 0,
     average_experience_years: 0,
-    annual_training_hours_per_employee: 0,
+    annual_training_courses_per_employee: 0,
     employee_certifications: [],
   });
 
@@ -222,17 +222,17 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
   
   // Branchenspezifische Qualifikationen (15% der Bewertung)
   const industrySpecificCount = data.industry_specific?.length || 0;
-  score += (industrySpecificCount / 6) * 15;
-  
-  // Schulungsstunden (20% der Bewertung)
-  const trainingHours = data.annual_training_hours_per_employee || 0;
-  if (trainingHours >= 40) score += 20;
-  else if (trainingHours >= 24) score += 14;
-  else if (trainingHours >= 16) score += 10;
-  else if (trainingHours >= 8) score += 6;
-  else if (trainingHours > 0) score += (trainingHours / 8) * 6;
-  
-  // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
+    score += (industrySpecificCount / 6) * 15;
+    
+    // Schulungsteilnahmen (20% der Bewertung)
+    const trainingCourses = data.annual_training_courses_per_employee || 0;
+    if (trainingCourses >= 6) score += 20;
+    else if (trainingCourses >= 4) score += 14;
+    else if (trainingCourses >= 3) score += 10;
+    else if (trainingCourses >= 2) score += 6;
+    else if (trainingCourses >= 1) score += 3;
+    
+    // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
   const certifications = data.employee_certifications || [];
   const certCount = certifications.length;
   if (certCount >= 5) score += 15;
@@ -342,8 +342,8 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
           {/* Schulungen und Zertifikate */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-3 bg-gray-700 rounded-lg">
-              <div className="text-sm text-gray-300">Schulungsstunden/Mitarbeiter/Jahr</div>
-              <div className="text-lg font-bold text-white">{data.annual_training_hours_per_employee || 0} Stunden</div>
+              <div className="text-sm text-gray-300">Schulungen/Mitarbeiter/Jahr</div>
+              <div className="text-lg font-bold text-white">{data.annual_training_courses_per_employee || 0} Schulungen</div>
             </div>
             <div className="p-3 bg-gray-700 rounded-lg">
               <div className="text-sm text-gray-300">Mitarbeiterzertifikate</div>
@@ -569,23 +569,23 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="annual_training_hours" className="text-gray-200">
-                  Jährliche Schulungsstunden pro Mitarbeiter
+                <Label htmlFor="annual_training_courses" className="text-gray-200">
+                  Jährliche Schulungsteilnahmen pro Mitarbeiter
                 </Label>
                 <Input
-                  id="annual_training_hours"
+                  id="annual_training_courses"
                   type="number"
                   min="0"
-                  value={formData.annual_training_hours_per_employee}
+                  value={formData.annual_training_courses_per_employee}
                   onChange={(e) => setFormData(prev => ({ 
                     ...prev, 
-                    annual_training_hours_per_employee: parseInt(e.target.value) || 0 
+                    annual_training_courses_per_employee: parseInt(e.target.value) || 0 
                   }))}
                   className="bg-gray-700 border-gray-600 text-white"
-                  placeholder="z.B. 24"
+                  placeholder="z.B. 3"
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  Durchschnittliche Schulungsstunden pro Mitarbeiter im Jahr
+                  Durchschnittliche Anzahl der Schulungen pro Mitarbeiter im Jahr
                 </p>
               </div>
 
