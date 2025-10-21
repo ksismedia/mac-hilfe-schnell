@@ -171,6 +171,20 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
 
         {isEditing && (
           <div className="space-y-4">
+            {items.length > 0 && (
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Aktueller Score</p>
+                  <p className={`text-2xl font-bold ${getScoreColor(overallScore)}`}>
+                    {overallScore}%
+                  </p>
+                </div>
+                <Badge variant={getScoreBadge(overallScore)}>
+                  {overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}
+                </Badge>
+              </div>
+            )}
+            
             <div className="grid gap-4 p-4 border rounded-lg">
               <div className="grid gap-2">
                 <Label htmlFor="content-url">URL des Inhalts</Label>
