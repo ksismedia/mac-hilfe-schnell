@@ -1020,7 +1020,7 @@ export const generateCustomerHTML = ({
               <small class="secondary-text">Score: ${effectiveKeywordScore !== null && effectiveKeywordScore !== undefined ? effectiveKeywordScore : 'N/A'}%</small>
             </div>
             <div>
-              <p><strong>Long-Tail Keywords:</strong> ${effectiveKeywordScore >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Long-Tail Keywords:</strong> ${Math.max(20, effectiveKeywordScore * 0.6) >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill progress-${getScoreColorClass(Math.max(20, effectiveKeywordScore * 0.6))}" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%;"></div>
