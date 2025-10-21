@@ -116,16 +116,16 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="seo-performance">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">SEO-Auswertung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">SEO-Auswertung</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Lokale SEO</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Lokale SEO</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Barrierefreiheit</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Barrierefreiheit</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Datenschutz</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Datenschutz</span></div>
               </div>
             </div>
           </div>
@@ -139,10 +139,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="mobile-accessibility">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Website Performance</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Website Performance</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Mobile Optimierung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mobile Optimierung</span></div>
               </div>
             </div>
           </div>
@@ -156,10 +156,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="social-reputation">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Social Media</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Social Media</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Google Bewertungen</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Google Bewertungen</span></div>
               </div>
             </div>
           </div>
@@ -173,7 +173,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="legal-privacy">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-shadow: 0 0 15px rgba(232, 232, 232, 0.6), 0 0 30px rgba(192, 192, 192, 0.3), 0 0 50px rgba(160, 160, 160, 0.15);">Arbeitsplatz- und geber-Bewertung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Arbeitsplatz- und geber-Bewertung</span></div>
               </div>
             </div>
           </div>
