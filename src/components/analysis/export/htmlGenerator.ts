@@ -2261,12 +2261,10 @@ export const generateCustomerHTML = ({
                 </div>
                 ${(() => {
                   const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
-                  if (industryReviewScore > 0) {
-                    return `<div class="score-card">
-                      <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(industryReviewScore)} !important; color: ${getScoreTileTextColor(industryReviewScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Branchenplattformen</span></div>
-                    </div>`;
-                  }
-                  return '';
+                  // IMMER anzeigen, auch ohne Daten
+                  return `<div class="score-card">
+                    <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(industryReviewScore)} !important; color: ${getScoreTileTextColor(industryReviewScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Branchenplattformen</span></div>
+                  </div>`;
                 })()}
                 ${(() => {
                   const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
@@ -3176,36 +3174,44 @@ export const generateCustomerHTML = ({
     </div>
 
     ${(() => {
-      // Branchenplattformen Sektion
-      if (manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0) {
-        const overallScore = manualIndustryReviewData.overallScore || 0;
-        return `
+      // Branchenplattformen Sektion - IMMER anzeigen
+      const overallScore = (manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0) 
+        ? (manualIndustryReviewData.overallScore || 0) 
+        : 0;
+      const hasData = manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0;
+      
+      return `
     <!-- Branchenplattformen -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>🏆 Branchenplattformen</span>
-        <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+        <div class="header-score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Branchenspezifische Bewertungsplattformen</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+            <div class="score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
             <div class="score-details">
-              <p><strong>Erfasste Plattformen:</strong> ${manualIndustryReviewData.platforms.length}</p>
-              <p><strong>Verifizierte Profile:</strong> ${manualIndustryReviewData.platforms.filter(p => p.isVerified).length}</p>
-              <p><strong>Gesamtbewertungen:</strong> ${manualIndustryReviewData.platforms.reduce((sum, p) => sum + (p.reviewCount || 0), 0)}</p>
+              <p><strong>Status:</strong> ${overallScore <= 0 ? 'Nicht erfasst' : 'Erfasst'}</p>
+              <p><strong>Empfehlung:</strong> ${overallScore <= 0 ? 'Bitte erfassen Sie Ihre Bewertungen auf branchenspezifischen Plattformen' : overallScore >= 70 ? 'Sehr gute Präsenz' : 'Ausbaufähig'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${overallScore}%; background-color: ${getScoreColor(overallScore)} !important;"></div>
+              <div class="progress-fill" data-score="${overallScore <= 0 ? 'none' : getScoreRange(overallScore)}" style="width: ${overallScore <= 0 ? '0' : overallScore + '%'}; background-color: ${overallScore <= 0 ? '#ccc' : getScoreColor(overallScore)} !important;"></div>
             </div>
           </div>
         </div>
 
+        ${hasData ? `
         <div style="margin-top: 20px;">
           <h4 style="color: #fbbf24; margin-bottom: 15px;">Plattform-Übersicht</h4>
+          <div style="margin-bottom: 15px;">
+            <p><strong>Erfasste Plattformen:</strong> ${manualIndustryReviewData.platforms.length}</p>
+            <p><strong>Verifizierte Profile:</strong> ${manualIndustryReviewData.platforms.filter(p => p.isVerified).length}</p>
+            <p><strong>Gesamtbewertungen:</strong> ${manualIndustryReviewData.platforms.reduce((sum, p) => sum + (p.reviewCount || 0), 0)}</p>
+          </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
             ${manualIndustryReviewData.platforms.map(platform => {
               const platformScore = Math.round((platform.rating / 5) * 100);
@@ -3235,6 +3241,12 @@ export const generateCustomerHTML = ({
             }).join('')}
           </div>
         </div>
+        ` : `
+        <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
+          <h4 style="color: #ef4444;">⚠️ Keine Branchenplattformen erfasst</h4>
+          <p style="margin-top: 10px;">Es wurden noch keine Bewertungen auf branchenspezifischen Plattformen erfasst. Nutzen Sie relevante Plattformen, um Ihre Sichtbarkeit zu erhöhen.</p>
+        </div>
+        `}
 
         <div class="recommendations">
           <h4>Empfehlungen für Branchenplattformen:</h4>
@@ -3248,9 +3260,7 @@ export const generateCustomerHTML = ({
         </div>
       </div>
     </div>
-        `;
-      }
-      return '';
+      `;
     })()}
 
     ${(() => {
