@@ -1023,11 +1023,9 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
         }
         
         .category-content .score-card {
-          background: white;
           border-radius: 12px;
           padding: 20px;
           text-align: center;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           min-width: 180px;
           border: 1px solid #e5e7eb;
         }

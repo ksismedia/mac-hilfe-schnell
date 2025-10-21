@@ -147,10 +147,8 @@ section[class*="section"],
   border: 1px solid #f59e0b;
 }
 .score-card { 
-  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); 
   padding: 20px 15px !important; 
   border-radius: 12px; 
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
   text-align: center !important;
   transition: transform 0.3s ease;
   border: 1px solid rgba(251, 191, 36, 0.3);
