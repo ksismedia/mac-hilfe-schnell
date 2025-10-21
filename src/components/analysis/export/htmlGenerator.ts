@@ -3743,7 +3743,7 @@ export const generateCustomerHTML = ({
                 }; font-weight: bold;">
                   ${quoteResponseData.responseTime === '1-hour' ? 'Branchenführend schnell' :
                     quoteResponseData.responseTime === '2-4-hours' ? 'Überdurchschnittlich schnell' :
-                    quoteResponseData.responseTime === '4-8-hours' ? 'Angemessen' :
+                    quoteResponseData.responseTime === '4-8-hours' ? 'anhand von Testanfrage' :
                     quoteResponseData.responseTime === '1-day' ? 'Akzeptabel' :
                     'Verbesserung dringend empfohlen'}
                 </span>
