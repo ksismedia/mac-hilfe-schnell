@@ -2300,6 +2300,9 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="legal-privacy">
               <div class="score-overview">
                 ${(() => {
+                  // Definiere allCompetitors für die Executive Summary
+                  const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                  
                   return allCompetitors.length > 0 ? `
                     <div class="score-card">
                       <div class="score-big">
