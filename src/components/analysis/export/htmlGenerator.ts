@@ -3599,11 +3599,11 @@ export const generateCustomerHTML = ({
            <h3>Preispositionierung</h3>
            <div class="score-display">
              <div class="score-circle ${getScoreColorClass(pricingScore)}">${pricingText}</div>
-             <div class="score-details">
-               <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
-               <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
-               <p><strong>Positionierung:</strong> ${pricingText}</p>
-             </div>
+              <div class="score-details">
+                <p><strong>Installation:</strong> ${hourlyRateData.installationRate || 0}€/h</p>
+                <p><strong>Service:</strong> ${hourlyRateData.serviceRate || 0}€/h</p>
+                <p><strong>Positionierung:</strong> ${pricingText}</p>
+              </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
