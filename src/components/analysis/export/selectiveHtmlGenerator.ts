@@ -3,7 +3,16 @@ import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporat
 import { getHTMLStyles } from './htmlStyles';
 import { getLogoHTML } from './logoData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateAccessibilityScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
+import { calculateAccessibilityScore, calculateDataPrivacyScore, calculateWorkplaceScore, calculateLocalSEOScore } from './scoreCalculations';
+
+// Helper function to get background color based on score
+const getScoreBackgroundColor = (score: number): string => {
+  return score >= 0 && score <= 60 ? '#FF0000' : '#E8E8E8'; // Red for 0-60%, silver for 61-100%
+};
+
+const getScoreTextColor = (score: number): string => {
+  return score >= 0 && score <= 60 ? '#FFFFFF' : '#000000'; // White text on red, black on silver
+};
 
 interface SectionSelections {
   seoContent: boolean;
@@ -88,6 +97,25 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
   const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
   const dataPrivacyScore = calculateDataPrivacyScore(realData, data.manualDataPrivacyData);
   const workplaceScore = calculateWorkplaceScore(realData, data.manualWorkplaceData);
+  const localSEOScore = calculateLocalSEOScore(data.businessData, realData, null);
+  
+  // Calculate Google Reviews Score
+  const googleReviewsScore = (() => {
+    const reviews = realData.reviews?.google?.count || 0;
+    const rating = realData.reviews?.google?.rating || 0;
+    let score = 0;
+    if (rating > 0) {
+      score += (rating / 5) * 50;
+    }
+    if (reviews > 0) {
+      if (reviews >= 100) score += 50;
+      else if (reviews >= 50) score += 40;
+      else if (reviews >= 20) score += 30;
+      else if (reviews >= 10) score += 20;
+      else score += 10;
+    }
+    return Math.min(score, 100);
+  })();
   
   // Calculate overall score
   const overallScore = Math.round((realData.seo.score + realData.performance.score + realData.mobile.overallScore + socialMediaScore + accessibilityScore + dataPrivacyScore) / 6);
@@ -116,16 +144,16 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="seo-performance">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">SEO-Auswertung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(realData.seo.score)} !important; color: ${getScoreTextColor(realData.seo.score)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">SEO-Auswertung</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Lokale SEO</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(localSEOScore)} !important; color: ${getScoreTextColor(localSEOScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Lokale SEO</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Barrierefreiheit</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(accessibilityScore)} !important; color: ${getScoreTextColor(accessibilityScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Barrierefreiheit</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Datenschutz</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(dataPrivacyScore)} !important; color: ${getScoreTextColor(dataPrivacyScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Datenschutz</span></div>
               </div>
             </div>
           </div>
@@ -139,10 +167,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="mobile-accessibility">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Website Performance</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(realData.performance.score)} !important; color: ${getScoreTextColor(realData.performance.score)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Website Performance</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mobile Optimierung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(realData.mobile.overallScore)} !important; color: ${getScoreTextColor(realData.mobile.overallScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mobile Optimierung</span></div>
               </div>
             </div>
           </div>
@@ -156,10 +184,10 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="social-reputation">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Social Media</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(socialMediaScore)} !important; color: ${getScoreTextColor(socialMediaScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Social Media</span></div>
               </div>
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Google Bewertungen</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(googleReviewsScore)} !important; color: ${getScoreTextColor(googleReviewsScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Google Bewertungen</span></div>
               </div>
             </div>
           </div>
@@ -173,7 +201,7 @@ export const generateSelectiveHTML = (data: SelectiveReportData): string => {
           <div class="category-content" id="legal-privacy">
             <div class="score-overview">
               <div class="score-card">
-                <div class="score-big"><span class="score-tile neutral" style="background: #E8E8E8 !important; color: #000000 !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Arbeitsplatz- und geber-Bewertung</span></div>
+                <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreBackgroundColor(workplaceScore)} !important; color: ${getScoreTextColor(workplaceScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Arbeitsplatz- und geber-Bewertung</span></div>
               </div>
             </div>
           </div>
