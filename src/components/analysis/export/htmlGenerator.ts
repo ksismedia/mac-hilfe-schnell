@@ -3261,6 +3261,28 @@ export const generateCustomerHTML = ({
         const videoCount = manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
         const shortCount = manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
         const highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
+        const mediumRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
+        const lowRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+        
+        // Calculate scoring components
+        let diversityScore = 0;
+        if (imageCount > 0) diversityScore += 15;
+        if (videoCount > 0) diversityScore += 15;
+        if (shortCount > 0) diversityScore += 10;
+        
+        const totalContent = manualOnlinePresenceData.items.length;
+        let quantityScore = 0;
+        if (totalContent >= 20) quantityScore = 30;
+        else if (totalContent >= 15) quantityScore = 25;
+        else if (totalContent >= 10) quantityScore = 20;
+        else if (totalContent >= 5) quantityScore = 15;
+        else quantityScore = totalContent * 3;
+        
+        const relevanceScore = Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
+        
+        // Determine assessment level
+        const assessment = overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf';
+        const assessmentColor = overallScore >= 90 ? '#10b981' : overallScore >= 61 ? '#fbbf24' : '#ef4444';
         
         return `
     <!-- Online-Präsenz -->
@@ -3270,64 +3292,178 @@ export const generateCustomerHTML = ({
         <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
       </div>
       <div class="section-content">
-        <div class="metric-card">
-          <h3>Google-Suchergebnisse: Bilder, Videos & Shorts</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
-            <div class="score-details">
-              <p><strong>Erfasste Inhalte:</strong> ${manualOnlinePresenceData.items.length}</p>
-              <p><strong>Hochrelevante Inhalte:</strong> ${highRelevance}</p>
-              <p><strong>Content-Mix:</strong> ${imageCount} Bilder, ${videoCount} Videos, ${shortCount} Shorts</p>
+        <!-- Übersicht und Gesamtbewertung -->
+        <div class="metric-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+          <h3 style="margin-top: 0; color: #1e293b;">Sichtbarkeit in Google-Suchergebnissen</h3>
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: center;">
+            <div style="text-align: center;">
+              <div class="score-circle ${getScoreColorClass(overallScore)}" style="width: 120px; height: 120px; font-size: 2.5em; margin: 0 auto;">${overallScore}%</div>
+              <p style="margin-top: 15px; font-size: 1.1em; font-weight: 600; color: ${assessmentColor};">${assessment}</p>
             </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${overallScore}%; background-color: ${getScoreColor(overallScore)} !important;"></div>
+            <div>
+              <div style="display: grid; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+                  <span style="font-weight: 500;">📊 Erfasste Inhalte gesamt:</span>
+                  <span style="font-weight: bold; color: #3b82f6;">${totalContent}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+                  <span style="font-weight: 500;">⭐ Hochrelevante Inhalte:</span>
+                  <span style="font-weight: bold; color: #10b981;">${highRelevance}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+                  <span style="font-weight: 500;">🎨 Content-Typen vorhanden:</span>
+                  <span style="font-weight: bold; color: #f59e0b;">${[imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length} von 3</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div style="margin-top: 20px;">
-          <h4 style="color: #fbbf24; margin-bottom: 15px;">Content-Verteilung</h4>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(59, 130, 246, 0.1);">
-              <div style="font-size: 2em;">📷</div>
-              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
-              <p style="color: #9ca3af;">Bilder</p>
+        <!-- Score-Berechnung Erklärung -->
+        <div class="metric-card" style="background: #fef3c7; padding: 20px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-bottom: 25px;">
+          <h4 style="margin-top: 0; color: #92400e; display: flex; align-items: center; gap: 8px;">
+            📐 Wie wird der Score berechnet?
+          </h4>
+          <div style="display: grid; gap: 12px; margin-top: 15px;">
+            <div style="background: white; padding: 12px; border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="font-weight: 500; color: #1e293b;">1️⃣ Content-Vielfalt (max. 40 Punkte)</span>
+                <span style="font-weight: bold; color: #3b82f6;">${diversityScore} Punkte</span>
+              </div>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">
+                Bilder: ${imageCount > 0 ? '+15 ✓' : '0 ✗'} | Videos: ${videoCount > 0 ? '+15 ✓' : '0 ✗'} | Shorts: ${shortCount > 0 ? '+10 ✓' : '0 ✗'}
+              </p>
             </div>
-            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(239, 68, 68, 0.1);">
-              <div style="font-size: 2em;">🎥</div>
-              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
-              <p style="color: #9ca3af;">Videos</p>
+            <div style="background: white; padding: 12px; border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="font-weight: 500; color: #1e293b;">2️⃣ Content-Menge (max. 30 Punkte)</span>
+                <span style="font-weight: bold; color: #10b981;">${quantityScore} Punkte</span>
+              </div>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">
+                ${totalContent >= 20 ? '20+ Inhalte: Optimal!' : totalContent >= 15 ? '15-19 Inhalte: Sehr gut' : totalContent >= 10 ? '10-14 Inhalte: Gut' : totalContent >= 5 ? '5-9 Inhalte: Ausbaufähig' : 'Unter 5 Inhalte: Stark ausbaufähig'}
+              </p>
             </div>
-            <div class="metric-card" style="padding: 15px; text-align: center; background: rgba(168, 85, 247, 0.1);">
-              <div style="font-size: 2em;">📱</div>
-              <p style="font-size: 1.5em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
-              <p style="color: #9ca3af;">Shorts/Reels</p>
+            <div style="background: white; padding: 12px; border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="font-weight: 500; color: #1e293b;">3️⃣ Relevanz-Score (max. 30 Punkte)</span>
+                <span style="font-weight: bold; color: #a855f7;">${Math.round(relevanceScore)} Punkte</span>
+              </div>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">
+                Hoch: ${highRelevance} × 2 | Mittel: ${mediumRelevance} × 1 | Niedrig: ${lowRelevance} × 0.5
+              </p>
             </div>
           </div>
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #fbbf24;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1em;">
+              <span style="font-weight: 600; color: #92400e;">🎯 Gesamtscore:</span>
+              <span style="font-weight: bold; color: #92400e; font-size: 1.3em;">${overallScore} / 100 Punkten</span>
+            </div>
+          </div>
+        </div>
 
-          <h4 style="color: #fbbf24; margin-bottom: 15px;">Erfasste Inhalte nach Relevanz</h4>
+        <!-- Content-Verteilung Detailliert -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="color: #1e293b; margin-bottom: 15px; font-size: 1.2em;">📊 Content-Verteilung im Detail</h4>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div class="metric-card" style="padding: 20px; text-align: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3);">
+              <div style="font-size: 3em; margin-bottom: 10px;">📷</div>
+              <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #1e40af;">${imageCount}</p>
+              <p style="color: #64748b; font-weight: 500; margin-bottom: 10px;">Bilder</p>
+              <div style="background: white; padding: 8px; border-radius: 6px; margin-top: 10px;">
+                <p style="margin: 0; font-size: 0.85em; color: #475569;">
+                  ${imageCount === 0 ? '❌ Keine Bilder gefunden' : imageCount < 5 ? '⚠️ Wenige Bilder' : imageCount < 10 ? '✓ Gute Anzahl' : '⭐ Exzellente Präsenz'}
+                </p>
+              </div>
+            </div>
+            <div class="metric-card" style="padding: 20px; text-align: center; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border: 2px solid rgba(239, 68, 68, 0.3);">
+              <div style="font-size: 3em; margin-bottom: 10px;">🎥</div>
+              <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #dc2626;">${videoCount}</p>
+              <p style="color: #64748b; font-weight: 500; margin-bottom: 10px;">Videos</p>
+              <div style="background: white; padding: 8px; border-radius: 6px; margin-top: 10px;">
+                <p style="margin: 0; font-size: 0.85em; color: #475569;">
+                  ${videoCount === 0 ? '❌ Keine Videos gefunden' : videoCount < 3 ? '⚠️ Wenige Videos' : videoCount < 8 ? '✓ Gute Anzahl' : '⭐ Exzellente Präsenz'}
+                </p>
+              </div>
+            </div>
+            <div class="metric-card" style="padding: 20px; text-align: center; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05)); border: 2px solid rgba(168, 85, 247, 0.3);">
+              <div style="font-size: 3em; margin-bottom: 10px;">📱</div>
+              <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #7c3aed;">${shortCount}</p>
+              <p style="color: #64748b; font-weight: 500; margin-bottom: 10px;">Shorts/Reels</p>
+              <div style="background: white; padding: 8px; border-radius: 6px; margin-top: 10px;">
+                <p style="margin: 0; font-size: 0.85em; color: #475569;">
+                  ${shortCount === 0 ? '❌ Keine Shorts gefunden' : shortCount < 3 ? '⚠️ Wenige Shorts' : shortCount < 8 ? '✓ Gute Anzahl' : '⭐ Exzellente Präsenz'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Relevanz-Analyse -->
+        <div class="metric-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+          <h4 style="margin-top: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            ⭐ Relevanz-Analyse der Inhalte
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #10b981;">
+              <p style="font-size: 2em; margin: 0 0 10px 0; color: #10b981;">${highRelevance}</p>
+              <p style="margin: 0; font-weight: 600; color: #065f46;">Hochrelevant</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #6b7280;">Eigener Content</p>
+              <div style="margin-top: 10px; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                <p style="margin: 0; font-size: 0.85em; color: #047857;">Beitrag zum Score: +${highRelevance * 2} Pkt.</p>
+              </div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #fbbf24;">
+              <p style="font-size: 2em; margin: 0 0 10px 0; color: #fbbf24;">${mediumRelevance}</p>
+              <p style="margin: 0; font-weight: 600; color: #92400e;">Mittelrelevant</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #6b7280;">Unternehmen erwähnt</p>
+              <div style="margin-top: 10px; padding: 8px; background: rgba(251, 191, 36, 0.1); border-radius: 6px;">
+                <p style="margin: 0; font-size: 0.85em; color: #b45309;">Beitrag zum Score: +${mediumRelevance} Pkt.</p>
+              </div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #9ca3af;">
+              <p style="font-size: 2em; margin: 0 0 10px 0; color: #9ca3af;">${lowRelevance}</p>
+              <p style="margin: 0; font-weight: 600; color: #374151;">Niedrigrelevant</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #6b7280;">Indirekte Erwähnung</p>
+              <div style="margin-top: 10px; padding: 8px; background: rgba(156, 163, 175, 0.1); border-radius: 6px;">
+                <p style="margin: 0; font-size: 0.85em; color: #4b5563;">Beitrag zum Score: +${lowRelevance * 0.5} Pkt.</p>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 8px;">
+            <p style="margin: 0; color: #475569; font-size: 0.9em;">
+              💡 <strong>Tipp:</strong> Je mehr hochrelevante Inhalte (eigener Content), desto besser Ihre Online-Sichtbarkeit. 
+              Fokussieren Sie auf die Produktion und Verbreitung eigener Bilder, Videos und Shorts.
+            </p>
+          </div>
+        </div>
+
+        <!-- Erfasste Inhalte Liste -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="color: #1e293b; margin-bottom: 15px; font-size: 1.2em;">📋 Alle erfassten Inhalte im Detail</h4>
           <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-            ${manualOnlinePresenceData.items.map(item => {
+            ${manualOnlinePresenceData.items.map((item, index) => {
               const typeIcon = item.type === 'image' ? '📷' : item.type === 'video' ? '🎥' : '📱';
               const relevanceColor = item.relevance === 'high' ? '#10b981' : item.relevance === 'medium' ? '#fbbf24' : '#9ca3af';
               const relevanceText = item.relevance === 'high' ? 'Hoch (eigener Content)' : item.relevance === 'medium' ? 'Mittel (erwähnt)' : 'Niedrig (indirekt)';
+              const typeName = item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short/Reel';
               
               return `
-              <div class="metric-card" style="padding: 12px; background: rgba(251, 191, 36, 0.05); border-left: 3px solid ${relevanceColor};">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <div style="font-size: 1.5em;">${typeIcon}</div>
+              <div class="metric-card" style="padding: 15px; background: white; border-left: 4px solid ${relevanceColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: start; gap: 12px;">
+                  <div style="font-size: 2em; line-height: 1;">${typeIcon}</div>
                   <div style="flex: 1; min-width: 0;">
-                    <p style="margin: 0; font-size: 0.85em; color: #9ca3af; word-break: break-all;">${item.url}</p>
-                    <div style="display: flex; gap: 10px; margin-top: 5px;">
-                      <span style="padding: 2px 8px; background: ${relevanceColor}22; color: ${relevanceColor}; border-radius: 4px; font-size: 0.75em;">
-                        ${item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short'}
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                      <span style="font-weight: 600; color: #1e293b; font-size: 0.9em;">Content #${index + 1}</span>
+                      <span style="padding: 3px 10px; background: ${relevanceColor}22; color: ${relevanceColor}; border-radius: 12px; font-size: 0.75em; font-weight: 600;">
+                        ${typeName}
                       </span>
-                      <span style="padding: 2px 8px; background: ${relevanceColor}22; color: ${relevanceColor}; border-radius: 4px; font-size: 0.75em;">
-                        Relevanz: ${relevanceText}
+                      <span style="padding: 3px 10px; background: ${relevanceColor}; color: white; border-radius: 12px; font-size: 0.75em; font-weight: 600;">
+                        ${relevanceText}
                       </span>
                     </div>
+                    <p style="margin: 0; font-size: 0.85em; color: #64748b; word-break: break-all; line-height: 1.4;">
+                      🔗 ${item.url}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -3336,14 +3472,51 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-        <div class="recommendations">
-          <h4>Empfehlungen für Online-Präsenz:</h4>
-          <ul>
-            <li>Regelmäßig hochwertige Bilder von Projekten auf Google My Business hochladen</li>
-            <li>Video-Content erstellen und auf YouTube sowie Google optimieren</li>
-            <li>Shorts/Reels für soziale Medien produzieren und verbreiten</li>
-            <li>Alt-Tags und Bildbeschreibungen für bessere Auffindbarkeit nutzen</li>
-            <li>Einheitliche Markenpräsenz über alle visuellen Inhalte sicherstellen</li>
+        <!-- Benchmark und Einordnung -->
+        <div class="metric-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+          <h4 style="margin-top: 0; color: #4c1d95; display: flex; align-items: center; gap: 8px;">
+            📈 Benchmark & Einordnung
+          </h4>
+          <div style="display: grid; gap: 12px; margin-top: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 3px solid ${overallScore >= 90 ? '#10b981' : overallScore >= 61 ? '#fbbf24' : '#ef4444'};">
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #1e293b;">Ihre Position:</p>
+              <p style="margin: 0; color: #64748b; line-height: 1.6;">
+                ${overallScore >= 90 
+                  ? '🏆 <strong>Exzellent (90-100%)</strong>: Ihre Online-Präsenz ist hervorragend. Sie haben eine starke Sichtbarkeit mit vielfältigem, hochrelevantem Content in Google-Suchergebnissen.'
+                  : overallScore >= 61 
+                  ? '✅ <strong>Gut (61-89%)</strong>: Ihre Online-Präsenz ist solide, aber es gibt noch Potenzial zur Steigerung. Mehr hochrelevanter Content würde Ihre Sichtbarkeit deutlich verbessern.'
+                  : '⚠️ <strong>Verbesserungsbedarf (0-60%)</strong>: Ihre Online-Präsenz ist ausbaufähig. Mit gezielten Maßnahmen können Sie Ihre Sichtbarkeit in Google-Suchergebnissen deutlich steigern.'
+                }
+              </p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px;">
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #1e293b;">Branchen-Durchschnitt:</p>
+              <p style="margin: 0; color: #64748b; line-height: 1.6;">
+                📊 Typische Handwerksbetriebe haben durchschnittlich <strong>8-12 Inhalte</strong> in Google-Suchergebnissen, 
+                wobei führende Betriebe mit <strong>20+ Inhalten</strong> eine deutlich höhere Sichtbarkeit erreichen.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spezifische Empfehlungen -->
+        <div class="recommendations" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); padding: 20px; border-radius: 10px; border: 2px solid rgba(34, 197, 94, 0.3);">
+          <h4 style="margin-top: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            💡 Maßgeschneiderte Empfehlungen für Ihre Online-Präsenz
+          </h4>
+          <ul style="margin: 15px 0 0 0; padding-left: 20px; color: #1e293b; line-height: 1.8;">
+            ${imageCount === 0 ? '<li><strong>📷 Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in den ersten 3 Monaten.</li>' : ''}
+            ${imageCount > 0 && imageCount < 10 ? '<li><strong>📷 Bilder-Portfolio erweitern:</strong> Erhöhen Sie Ihre Bildanzahl auf mindestens 15-20 Fotos. Zeigen Sie Vorher-Nachher-Vergleiche, Team-Fotos und abgeschlossene Projekte.</li>' : ''}
+            ${videoCount === 0 ? '<li><strong>🎥 Video-Content einführen:</strong> Erstellen Sie erste Projekt-Videos oder Erklär-Videos. Bereits 2-3 Videos können Ihre Sichtbarkeit deutlich steigern.</li>' : ''}
+            ${videoCount > 0 && videoCount < 5 ? '<li><strong>🎥 Video-Präsenz ausbauen:</strong> Produzieren Sie regelmäßig kurze Projekt-Videos (1-2 Minuten). Optimal sind 8-10 Videos für maximale Sichtbarkeit.</li>' : ''}
+            ${shortCount === 0 ? '<li><strong>📱 Shorts/Reels nutzen:</strong> Starten Sie mit kurzen 30-60 Sekunden Videos für Social Media und Google. Besonders effektiv für schnelle Projekt-Einblicke.</li>' : ''}
+            ${highRelevance < totalContent * 0.5 ? '<li><strong>⭐ Relevanz steigern:</strong> Fokus auf eigenen Content! Laden Sie mehr eigene Bilder und Videos hoch statt auf Erwähnungen durch Dritte zu setzen.</li>' : ''}
+            <li><strong>🏷️ Optimierung für Auffindbarkeit:</strong> Verwenden Sie beschreibende Dateinamen und Alt-Tags (z.B. "Dachsanierung-Einfamilienhaus-2024.jpg" statt "IMG_1234.jpg").</li>
+            <li><strong>📅 Content-Kalender einrichten:</strong> Planen Sie wöchentlich 1-2 neue Inhalte. Kontinuität ist wichtiger als sporadische große Uploads.</li>
+            ${overallScore < 80 ? '<li><strong>🎯 Vielfalt erhöhen:</strong> Kombinieren Sie alle drei Content-Typen (Bilder, Videos, Shorts) für maximale Reichweite und besseres Ranking.</li>' : ''}
+            <li><strong>🔄 Regelmäßige Aktualisierung:</strong> Löschen Sie veraltete Inhalte und ersetzen Sie diese durch aktuelle Projekte. Google bevorzugt frischen Content.</li>
+            <li><strong>📊 Performance tracken:</strong> Nutzen Sie Google My Business Insights, um zu sehen, welche Inhalte am meisten Aufrufe generieren.</li>
+            ${totalContent < 15 ? '<li><strong>🚀 Kurzziel setzen:</strong> Erreichen Sie in den nächsten 3 Monaten mindestens 15 Inhalte für eine spürbare Verbesserung Ihrer Sichtbarkeit.</li>' : ''}
           </ul>
         </div>
       </div>
