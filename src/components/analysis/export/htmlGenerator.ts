@@ -2470,6 +2470,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%"></div>
                 </div>
               </div>
+              <p style="font-size: 0.85em; color: #6b7280; margin-top: 8px;">Zeit bis die Seite vollständig geladen und bedienbar ist</p>
             </div>
           </div>
         </div>
