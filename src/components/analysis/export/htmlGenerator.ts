@@ -1467,7 +1467,7 @@ export const generateCustomerHTML = ({
               <p><strong>Mobile Ladezeit:</strong> ${realData.performance.loadTime <= 3 ? 'Schnell' : realData.performance.loadTime <= 5 ? 'Akzeptabel' : 'Langsam'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, 100 - (realData.performance.loadTime * 15)))}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 15))}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, 100 - (realData.performance.loadTime * 20)))}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 20))}%"></div>
                 </div>
               </div>
             </div>
