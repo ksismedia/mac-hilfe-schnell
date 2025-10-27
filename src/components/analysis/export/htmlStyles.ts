@@ -248,20 +248,26 @@ section[class*="section"],
 
 /* Score Circle - kreisrunder Button in Detailansichten wie im Banner */
 .score-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  font-size: 1.1em;
-  font-weight: 700;
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-variant-numeric: tabular-nums;
-  text-rendering: optimizeLegibility;
-  border: 3px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  margin-bottom: 15px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+  border-radius: 50% !important;
+  font-size: 1.1em !important;
+  font-weight: 700 !important;
+  font-family: 'Arial', 'Helvetica', sans-serif !important;
+  font-variant-numeric: tabular-nums !important;
+  text-rendering: optimizeLegibility !important;
+  border: 3px solid white !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 15px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 .score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
 .score-circle.red { background: #FF0000 !important; color: white !important; }      /* 0-60% */
