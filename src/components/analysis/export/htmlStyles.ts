@@ -477,20 +477,15 @@ span[style*="font-size: 6px"] {
 }
 
 .percentage-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  border: 2px solid white;
-  font-size: 0.95em;
-  font-weight: 700;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 50px;
 }
 
 .percentage-btn[data-score="0-60"] { background: #FF0000; color: white !important; }
@@ -501,7 +496,7 @@ span[style*="font-size: 6px"] {
 
 .percentage-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .company-info { 
