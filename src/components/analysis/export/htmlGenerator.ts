@@ -1162,11 +1162,6 @@ export const generateCustomerHTML = ({
             </div>
           </div>
         </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         
       </div>
     `;
@@ -2553,6 +2548,7 @@ export const generateCustomerHTML = ({
         
         <div id="seo-details" style="display: none;">
           ${getSEOAnalysis()}
+          
           <div class="metric-card good" style="margin-top: 20px;">
             <h3>SEO-Details</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
@@ -2596,6 +2592,7 @@ export const generateCustomerHTML = ({
           </div>
         </div>
       </div>
+    </div>
 
     <!-- Content-Qualität -->
     <div class="section">
