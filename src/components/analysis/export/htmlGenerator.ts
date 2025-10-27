@@ -4137,9 +4137,10 @@ export const generateCustomerHTML = ({
       <h3 style="color: #fbbf24; margin: 15px 0; font-size: 1.2em;">UNNA - die Unternehmensanalyse</h3>
       <div style="color: #9ca3af; font-size: 0.9em;">
         <p style="margin: 0;">Erstellt am ${new Date().toLocaleDateString('de-DE')} | Vollständiger Business-Analyse Report</p>
-        <p style="margin: 10px 0 0 0; font-size: 0.8em;">Alle Daten basieren auf automatischer Analyse und manueller Datenerfassung</p>
-        <p style="margin: 5px 0 0 0; font-size: 0.8em;">Diese Analyse dient zur Orientierung und ersetzt keine rechtliche Beratung.</p>
-        <p style="margin: 5px 0 0 0; font-size: 0.8em;">Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung</p>
+        <p style="margin: 10px 0 0 0; font-size: 0.8em;"><strong>Rechtlicher Hinweis:</strong> Alle Daten basieren auf KI-gestützter automatischer Analyse und manueller Datenerfassung.</p>
+        <p style="margin: 5px 0 0 0; font-size: 0.8em;">Diese Analyse dient ausschließlich zur Orientierung und stellt keine Rechts-, Steuer- oder Unternehmensberatung dar. Für rechtsverbindliche Auskünfte konsultieren Sie bitte einen Fachanwalt oder Steuerberater.</p>
+        <p style="margin: 5px 0 0 0; font-size: 0.8em;">Die Analyse trifft keine automatisierten Entscheidungen über Ihr Unternehmen und dient lediglich als Informationsgrundlage. Alle Angaben ohne Gewähr.</p>
+        <p style="margin: 5px 0 0 0; font-size: 0.8em;">Datenschutzhinweis: Die Verarbeitung Ihrer Daten erfolgt DSGVO-konform. Für Rückfragen und Optimierungsberatung stehen wir gerne zur Verfügung.</p>
       </div>
     </div>
 
