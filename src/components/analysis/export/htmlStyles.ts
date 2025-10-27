@@ -24,7 +24,7 @@ body {
   max-width: 100vw;
 }
 .container { 
-  max-width: 1200px; 
+  max-width: 1500px; 
   margin: 0 auto; 
   padding: 20px; 
   box-sizing: border-box; 
@@ -55,7 +55,7 @@ section[class*="section"],
 .recommendations,
 .collapsible {
   width: 95% !important;
-  max-width: 1100px !important;
+  max-width: 1400px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   box-sizing: border-box !important;
