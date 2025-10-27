@@ -1380,6 +1380,7 @@ export const generateCustomerHTML = ({
             <div>
               <p><strong>🕒 Öffnungszeiten:</strong> ${localSEOData.onPageLocal.openingHours ? '✅ Ja' : '❌ Nein'}</p>
               <p><strong>🏷️ Local Schema:</strong> ${localSEOData.onPageLocal.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
+              <p style="color: #e5e7eb; font-size: 0.85em; margin: 5px 0 0 0;">Strukturierte Daten, die Google helfen, Ihr Unternehmen zu verstehen</p>
             </div>
           </div>
           
@@ -1392,6 +1393,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
+            <p style="color: #e5e7eb; font-size: 0.85em; margin: 8px 0 0 0;">Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen</p>
           </div>
           
           <div class="progress-container" style="margin-top: 10px;">
@@ -1403,6 +1405,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
+            <p style="color: #e5e7eb; font-size: 0.85em; margin: 8px 0 0 0;">Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website</p>
           </div>
         </div>
 
