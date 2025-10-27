@@ -943,8 +943,8 @@ export const generateCustomerHTML = ({
     const altTagsScore = realData.seo.altTags.total > 0 ? 
       Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 0;
     
-    // Kritischere Gesamtbewertung
-    const criticalSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
+    // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
+    const criticalSeoScore = seoScore; // Nutze den bereits vorhandenen seoScore
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
     return `
