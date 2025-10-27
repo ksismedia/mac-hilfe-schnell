@@ -118,6 +118,39 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     }
   };
 
+  const getTitleTagRating = (score: number, length: number) => {
+    if (score >= 90) return "Exzellent - perfekte Länge und Struktur";
+    if (score >= 80) return "Sehr gut - ideal für Suchmaschinen";
+    if (score >= 70) return "Gut - könnte optimiert werden";
+    if (score >= 60) return "Ausreichend - Verbesserungsbedarf";
+    return "Unzureichend - dringend überarbeiten";
+  };
+
+  const getMetaDescriptionRating = (score: number, length: number) => {
+    if (score >= 90) return "Exzellent - optimal für Suchergebnisse";
+    if (score >= 80) return "Sehr gut - ansprechend formuliert";
+    if (score >= 70) return "Gut - könnte prägnanter sein";
+    if (score >= 60) return "Ausreichend - zu lang oder zu kurz";
+    return "Unzureichend - fehlt oder zu kurz";
+  };
+
+  const getHeadingRating = (score: number, h1Count: number) => {
+    if (score >= 90) return "Exzellent - perfekt strukturiert";
+    if (score >= 75) return "Sehr gut - klare Hierarchie";
+    if (score >= 60) return "Ausreichend - verbesserungsfähig";
+    if (h1Count > 1) return "Kritisch - mehrere H1-Tags gefunden";
+    if (h1Count === 0) return "Kritisch - keine Hauptüberschrift vorhanden";
+    return "Unzureichend - Struktur fehlt";
+  };
+
+  const getAltTagRating = (score: number) => {
+    if (score >= 100) return "Perfekt - alle Bilder beschrieben";
+    if (score >= 80) return "Sehr gut - fast vollständig";
+    if (score >= 60) return "Ausreichend - einige Bilder ohne Beschreibung";
+    if (score >= 40) return "Mangelhaft - viele Bilder fehlen";
+    return "Unzureichend - Alt-Tags fehlen größtenteils";
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -168,14 +201,17 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   {seoData.titleTag.score}/100
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 italic">
+                  Der Seitentitel erscheint in Suchergebnissen und Browser-Tabs. Ideal sind 50-70 Zeichen mit wichtigen Keywords am Anfang.
+                </p>
                 <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
                   "{seoData.titleTag.content}"
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.titleTag.length} Zeichen</span>
-                  <span className={seoData.titleTag.length <= 70 ? "text-green-600" : "text-red-600"}>
-                    {seoData.titleTag.length <= 70 ? "Optimal" : "Zu lang"}
+                  <span className={`font-medium ${getScoreColor(seoData.titleTag.score)}`}>
+                    {getTitleTagRating(seoData.titleTag.score, seoData.titleTag.length)}
                   </span>
                 </div>
                 <Progress value={seoData.titleTag.score} className="h-2" />
@@ -196,14 +232,17 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   {seoData.metaDescription.score}/100
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 italic">
+                  Die Kurzbeschreibung wird unter Ihrem Seitentitel in Google angezeigt. Optimal sind 120-160 Zeichen mit klarem Mehrwert.
+                </p>
                 <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
                   "{seoData.metaDescription.content}"
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.metaDescription.length} Zeichen</span>
-                  <span className={seoData.metaDescription.length <= 160 ? "text-green-600" : "text-red-600"}>
-                    {seoData.metaDescription.length <= 160 ? "Optimal" : "Zu lang"}
+                  <span className={`font-medium ${getScoreColor(seoData.metaDescription.score)}`}>
+                    {getMetaDescriptionRating(seoData.metaDescription.score, seoData.metaDescription.length)}
                   </span>
                 </div>
                 <Progress value={seoData.metaDescription.score} className="h-2" />
@@ -224,7 +263,10 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   {seoData.headingStructure.score}/100
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 italic">
+                  Überschriften gliedern Ihre Inhalte für Leser und Suchmaschinen. Ideal ist genau eine H1 als Hauptüberschrift, gefolgt von H2 und H3 für Unterkapitel.
+                </p>
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div className="text-center">
                     <div className="font-bold text-lg">{seoData.headingStructure.h1Count}</div>
@@ -240,7 +282,9 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   </div>
                 </div>
                 <Progress value={seoData.headingStructure.score} className="h-2" />
-                <p className="text-sm text-gray-600">{seoData.headingStructure.structure}</p>
+                <p className={`text-sm font-medium ${getScoreColor(seoData.headingStructure.score)}`}>
+                  {getHeadingRating(seoData.headingStructure.score, seoData.headingStructure.h1Count)}
+                </p>
               </div>
             </div>
 
@@ -258,14 +302,17 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   {seoData.altTags.score}/100
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 italic">
+                  Alt-Texte beschreiben Bilder für Suchmaschinen und Screenreader. Jedes Bild sollte eine aussagekräftige Beschreibung haben.
+                </p>
                 <div className="flex justify-between text-sm">
                   <span>Bilder mit Alt-Tags:</span>
-                  <span>{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
+                  <span className="font-semibold">{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
                 </div>
                 <Progress value={seoData.altTags.coverage} className="h-2" />
-                <p className="text-sm text-gray-600">
-                  {seoData.altTags.coverage}% der Bilder haben Alt-Attribute
+                <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score)}`}>
+                  {getAltTagRating(seoData.altTags.score)}
                 </p>
               </div>
             </div>
