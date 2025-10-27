@@ -2835,7 +2835,7 @@ export const generateCustomerHTML = ({
           <h3>Backlink-Profil</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(backlinksScore)}">
-              ${backlinksScore}
+              ${backlinksScore}%
             </div>
             <div class="score-details">
               <p><strong>Backlink-Status:</strong> ${backlinksScore >= 70 ? 'Gut entwickelt' : backlinksScore >= 50 ? 'Durchschnittlich' : 'Ausbaufähig'}</p>
