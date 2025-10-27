@@ -639,7 +639,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
         <h3>⚖️ Impressum & Rechtssicherheit</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(legalScore)}">${legalScore}%</div>
+          <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
         </div>
           <div class="progress-container">
             <div class="progress-bar">
