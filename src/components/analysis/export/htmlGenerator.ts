@@ -527,7 +527,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
         <h3>Google Bewertungen</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
+          <div class="score-circle ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
           <div class="score-details">
             <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5</p>
             <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
