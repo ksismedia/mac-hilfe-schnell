@@ -2448,7 +2448,7 @@ export const generateCustomerHTML = ({
               <p><strong>${realData.performance.loadTime}s</strong></p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, 100 - (realData.performance.loadTime * 20)))}" style="width: ${Math.max(0, 100 - (realData.performance.loadTime * 20))}%"></div>
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
                 </div>
               </div>
             </div>
