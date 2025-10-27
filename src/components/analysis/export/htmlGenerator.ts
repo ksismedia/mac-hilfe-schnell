@@ -1440,11 +1440,12 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'}</p>
           </div>
         </div>
-        <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-          <div class="progress-bar" style="flex: 1;">
-            <div class="progress-fill progress-${getScoreColorClass(performanceScore)}" style="width: ${performanceScore}%;"></div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill progress-${getScoreColorClass(performanceScore)}" style="width: ${performanceScore}%; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-weight: bold; font-size: 14px;">${performanceScore}%</span>
+            </div>
           </div>
-          <span style="color: ${getScoreColor(performanceScore)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${performanceScore}%</span>
         </div>
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
@@ -1474,11 +1475,12 @@ export const generateCustomerHTML = ({
             <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
           </div>
         </div>
-        <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-          <div class="progress-bar" style="flex: 1;">
-            <div class="progress-fill progress-${getScoreColorClass(mobileScore)}" style="width: ${mobileScore}%;"></div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill progress-${getScoreColorClass(mobileScore)}" style="width: ${mobileScore}%; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-weight: bold; font-size: 14px;">${mobileScore}%</span>
+            </div>
           </div>
-          <span style="color: ${getScoreColor(mobileScore)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${mobileScore}%</span>
         </div>
         
         <!-- Responsive Design -->
@@ -1487,29 +1489,32 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 70 ? 'Korrekt' : 'Fehlerhaft'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore))}" style="width: ${Math.max(40, mobileScore)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore))}" style="width: ${Math.max(40, mobileScore)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.max(40, mobileScore)}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(40, mobileScore))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.max(40, mobileScore)}%</span>
               </div>
             </div>
             <div>
               <p><strong>Flexible Layouts:</strong> ${mobileScore >= 60 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, mobileScore * 0.9))}" style="width: ${Math.max(30, mobileScore * 0.9)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, mobileScore * 0.9))}" style="width: ${Math.max(30, mobileScore * 0.9)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.round(Math.max(30, mobileScore * 0.9))}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(30, mobileScore * 0.9))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.round(Math.max(30, mobileScore * 0.9))}%</span>
               </div>
             </div>
             <div>
               <p><strong>Bildoptimierung:</strong> ${mobileScore >= 70 ? 'Responsive Bilder' : 'Nicht optimiert'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 85 : 35)}" style="width: ${mobileScore >= 70 ? 85 : 35}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 85 : 35)}" style="width: ${mobileScore >= 70 ? 85 : 35}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${mobileScore >= 70 ? 85 : 35}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(mobileScore >= 70 ? 85 : 35)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${mobileScore >= 70 ? 85 : 35}%</span>
               </div>
             </div>
           </div>
@@ -1521,29 +1526,32 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Mobile Ladezeit:</strong> ${realData.performance.loadTime <= 3 ? 'Schnell' : realData.performance.loadTime <= 5 ? 'Akzeptabel' : 'Langsam'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, 100 - (realData.performance.loadTime * 20)))}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 20))}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(20, 100 - (realData.performance.loadTime * 20)))}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 20))}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.round(Math.max(20, 100 - (realData.performance.loadTime * 20)))}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(20, 100 - (realData.performance.loadTime * 20)))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.round(Math.max(20, 100 - (realData.performance.loadTime * 20)))}%</span>
               </div>
             </div>
             <div>
               <p><strong>Core Web Vitals:</strong> ${Math.max(25, mobileScore * 0.8) >= 70 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(25, mobileScore * 0.8))}" style="width: ${Math.max(25, mobileScore * 0.8)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(25, mobileScore * 0.8))}" style="width: ${Math.max(25, mobileScore * 0.8)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.round(Math.max(25, mobileScore * 0.8))}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(25, mobileScore * 0.8))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.round(Math.max(25, mobileScore * 0.8))}%</span>
               </div>
             </div>
             <div>
               <p><strong>Mobile-First Index:</strong> ${mobileScore >= 60 ? 'Berücksichtigt' : 'Nicht optimiert'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 80 : 30)}" style="width: ${mobileScore >= 60 ? 80 : 30}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 80 : 30)}" style="width: ${mobileScore >= 60 ? 80 : 30}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${mobileScore >= 60 ? 80 : 30}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(mobileScore >= 60 ? 80 : 30)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${mobileScore >= 60 ? 80 : 30}%</span>
               </div>
             </div>
           </div>
@@ -1555,29 +1563,32 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Button-Größen:</strong> ${mobileScore >= 70 ? 'Touch-freundlich' : 'Zu klein'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 90 : 40)}" style="width: ${mobileScore >= 70 ? 90 : 40}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 70 ? 90 : 40)}" style="width: ${mobileScore >= 70 ? 90 : 40}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${mobileScore >= 70 ? 90 : 40}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(mobileScore >= 70 ? 90 : 40)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${mobileScore >= 70 ? 90 : 40}%</span>
               </div>
             </div>
             <div>
               <p><strong>Tap-Abstände:</strong> ${mobileScore >= 60 ? 'Ausreichend' : 'Zu gering'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 85 : 35)}" style="width: ${mobileScore >= 60 ? 85 : 35}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 85 : 35)}" style="width: ${mobileScore >= 60 ? 85 : 35}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${mobileScore >= 60 ? 85 : 35}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(mobileScore >= 60 ? 85 : 35)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${mobileScore >= 60 ? 85 : 35}%</span>
               </div>
             </div>
             <div>
               <p><strong>Scroll-Verhalten:</strong> ${mobileScore >= 70 ? 'Flüssig' : 'Verbesserbar'}</p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore * 0.9))}" style="width: ${Math.max(40, mobileScore * 0.9)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore * 0.9))}" style="width: ${Math.max(40, mobileScore * 0.9)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.round(Math.max(40, mobileScore * 0.9))}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(40, mobileScore * 0.9))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.round(Math.max(40, mobileScore * 0.9))}%</span>
               </div>
             </div>
           </div>
@@ -2482,22 +2493,24 @@ export const generateCustomerHTML = ({
             <div class="status-item">
               <h4>Benutzerfreundlichkeit</h4>
               <p><strong>${realData.performance.score >= 70 ? 'Sehr gut' : realData.performance.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.min(100, realData.performance.score + 10))}" style="width: ${Math.min(100, realData.performance.score + 10)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.min(100, realData.performance.score + 10))}" style="width: ${Math.min(100, realData.performance.score + 10)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.min(100, realData.performance.score + 10)}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.min(100, realData.performance.score + 10))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.min(100, realData.performance.score + 10)}%</span>
               </div>
               <p style="font-size: 12px; color: #6b7280;">Navigation, Layout, Responsivität</p>
             </div>
             <div class="status-item">
               <h4>Verfügbarkeit</h4>
               <p><strong>${realData.performance.score >= 80 ? '99.9%' : realData.performance.score >= 60 ? '99.5%' : '98.8%'}</strong></p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%</span>
               </div>
               <p style="font-size: 12px; color: #6b7280;">Uptime, Serverantwortzeit</p>
             </div>
@@ -2510,32 +2523,35 @@ export const generateCustomerHTML = ({
             <div class="status-item">
               <h4>Ladezeit</h4>
               <p><strong>${realData.performance.loadTime}s</strong></p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(realData.performance.score)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${realData.performance.score}%</span>
               </div>
             </div>
             <div class="status-item">
               <h4>First Contentful Paint</h4>
               <p><strong>${(realData.performance.loadTime * 0.6).toFixed(1)}s</strong></p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(realData.performance.score)}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${realData.performance.score}%</span>
               </div>
               <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis erste Inhalte (Text, Bilder) sichtbar werden</p>
             </div>
             <div class="status-item">
               <h4>Time to Interactive</h4>
               <p><strong>${(realData.performance.loadTime * 1.2).toFixed(1)}s</strong></p>
-              <div class="progress-container" style="display: flex; align-items: center; gap: 10px;">
-                <div class="progress-bar" style="flex: 1;">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%"></div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.max(0, realData.performance.score - 10)}%</span>
+                  </div>
                 </div>
-                <span style="color: ${getScoreColor(Math.max(0, realData.performance.score - 10))}; font-weight: bold; font-size: 14px; min-width: 45px; text-align: right;">${Math.max(0, realData.performance.score - 10)}%</span>
               </div>
               <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis die Seite vollständig geladen und bedienbar ist</p>
             </div>
