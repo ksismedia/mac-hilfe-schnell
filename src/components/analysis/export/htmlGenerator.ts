@@ -2460,6 +2460,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
                 </div>
               </div>
+              <p style="font-size: 0.85em; color: #6b7280; margin-top: 8px;">Zeit bis erste Inhalte (Text, Bilder) sichtbar werden</p>
             </div>
             <div class="status-item">
               <h4>Time to Interactive</h4>
