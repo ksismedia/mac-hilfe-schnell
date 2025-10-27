@@ -268,7 +268,7 @@ section[class*="section"],
   position: relative;
 }
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
-.score-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+.score-display { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
 
 /* Score Tile - rechteckige Kachel statt Kreis */
 .score-tile { 
@@ -344,7 +344,7 @@ span[style*="font-size: 6px"] {
 .score-tile.dark-red { background: #FF0000 !important; color: white !important; } /* 0-60% */
 .score-tile.green { background: #22c55e !important; color: white !important; }   /* 61-80% */
 .score-tile.yellow { background: #FFD700 !important; color: black !important; }  /* 81-100% */
-.score-details { flex: 1; }
+.score-details { width: 100%; }
 .score-details p { margin-bottom: 8px; color: #d1d5db; }
 .score-details strong { color: #fbbf24; }
 
