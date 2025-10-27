@@ -475,15 +475,15 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
             <div>
               <p style="margin: 0; font-size: 14px;"><strong>Bewertungsportale:</strong> Nicht registriert</p>
-              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Kununu, Glassdoor etc.</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #6b7280;">Kununu, Glassdoor etc.</p>
             </div>
             <div>
               <p style="margin: 0; font-size: 14px;"><strong>Employer Branding:</strong> Ausbau empfohlen</p>
-              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Sichtbarkeit als Arbeitgeber</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #6b7280;">Sichtbarkeit als Arbeitgeber</p>
             </div>
             <div>
               <p style="margin: 0; font-size: 14px;"><strong>Fachkräfte-Gewinnung:</strong> Potenzial nicht genutzt</p>
-              <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Arbeitgebermarke stärken</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #6b7280;">Arbeitgebermarke stärken</p>
             </div>
           </div>
         </div>
@@ -1266,11 +1266,11 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
             <div>
               <p><strong>Status:</strong> ${localSEOData.googleMyBusiness.claimed ? '✅ Beansprucht' : '❌ Nicht beansprucht'}</p>
-              <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>
               <p><strong>Verifiziert:</strong> ${localSEOData.googleMyBusiness.verified ? '✅ Ja' : '❌ Nein'}</p>
-              <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>
               <p><strong>Vollständigkeit:</strong> ${localSEOData.googleMyBusiness.complete}%</p>
-              <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Wie vollständig alle Unternehmensinformationen ausgefüllt sind</p>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie vollständig alle Unternehmensinformationen ausgefüllt sind</p>
             </div>
             <div>
               <p><strong>Fotos:</strong> ${localSEOData.googleMyBusiness.photos} hochgeladen</p>
@@ -1287,14 +1287,14 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
-            <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils</p>
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils</p>
           </div>
         </div>
 
         <!-- Lokale Verzeichnisse (Citations) -->
         <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
           <h4>🌐 Lokale Verzeichnisse & Citations</h4>
-          <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten (Name, Adresse, Telefon) in Online-Verzeichnissen erscheinen</p>
+          <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten (Name, Adresse, Telefon) in Online-Verzeichnissen erscheinen</p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
             <div style="text-align: center;">
               <div class="citation-total">${localSEOData.localCitations.totalCitations}</div>
@@ -1333,14 +1333,14 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
-            <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg</p>
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg</p>
           </div>
         </div>
 
         <!-- Lokale Keywords -->
         <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
           <h4>🎯 Lokale Keyword-Rankings</h4>
-          <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Zeigt Ihre Platzierung in Google bei lokalen Suchbegriffen (z.B. "SHK Bahnhofstraße 15")</p>
+          <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Zeigt Ihre Platzierung in Google bei lokalen Suchbegriffen (z.B. "SHK Bahnhofstraße 15")</p>
           <div style="display: grid; gap: 10px; margin-top: 10px;">
             ${localSEOData.localKeywords.ranking.map(keyword => `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
@@ -1365,7 +1365,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%;"></div>
               <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
-            <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg</p>
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg</p>
           </div>
         </div>
 
@@ -1380,7 +1380,7 @@ export const generateCustomerHTML = ({
             <div>
               <p><strong>🕒 Öffnungszeiten:</strong> ${localSEOData.onPageLocal.openingHours ? '✅ Ja' : '❌ Nein'}</p>
               <p><strong>🏷️ Local Schema:</strong> ${localSEOData.onPageLocal.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
-              <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Strukturierte Daten, die Google helfen, Ihr Unternehmen zu verstehen</p>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Strukturierte Daten, die Google helfen, Ihr Unternehmen zu verstehen</p>
             </div>
           </div>
           
@@ -1393,7 +1393,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
-            <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen</p>
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen</p>
           </div>
           
           <div class="progress-container" style="margin-top: 10px;">
@@ -1405,7 +1405,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%;"></div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
-            <p style="color: #6b7280; font-size: 0.875rem; margin: 8px 0 0 0;">Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website</p>
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website</p>
           </div>
         </div>
 
@@ -2099,7 +2099,7 @@ export const generateCustomerHTML = ({
                 <strong>${platform.name}:</strong> 
                 ${platform.followers} Follower
                 • Letzter Post: ${platform.lastPost}
-                ${platform.name === 'Instagram' ? '<br><small style="color: #666; font-size: 0.85em;">* Bewertung basiert auf Posts und Reels. Stories sind zu kurz sichtbar für eine Bewertung.</small>' : ''}
+                ${platform.name === 'Instagram' ? '<br><small style="color: #6b7280; font-size: 0.9rem;">* Bewertung basiert auf Posts und Reels. Stories sind zu kurz sichtbar für eine Bewertung.</small>' : ''}
               </li>
             `).join('')}
           </ul>
@@ -2511,7 +2511,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.85em; color: #6b7280; margin-top: 8px;">Zeit bis erste Inhalte (Text, Bilder) sichtbar werden</p>
+              <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis erste Inhalte (Text, Bilder) sichtbar werden</p>
             </div>
             <div class="status-item">
               <h4>Time to Interactive</h4>
@@ -2521,7 +2521,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%"></div>
                 </div>
               </div>
-              <p style="font-size: 0.85em; color: #6b7280; margin-top: 8px;">Zeit bis die Seite vollständig geladen und bedienbar ist</p>
+              <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis die Seite vollständig geladen und bedienbar ist</p>
             </div>
           </div>
         </div>
@@ -2623,14 +2623,14 @@ export const generateCustomerHTML = ({
               <p>
                 <strong>Optimierungsgrad:</strong> ${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, Math.round(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 100))}%
                 <br/>
-                <small style="color: #6b7280; font-size: 0.875rem;">
+                <small style="color: #6b7280; font-size: 0.9rem;">
                   Der Optimierungsgrad zeigt, wie gut Ihre Website für relevante Suchbegriffe optimiert ist
                 </small>
               </p>
               <p>
                 <strong>Keyword-Dichte:</strong> ${(((manualKeywordData || realData.keywords).filter(k => k.found).length / (manualKeywordData || realData.keywords).length) * 3).toFixed(1)}%
                 <br/>
-                <small style="color: #6b7280; font-size: 0.875rem;">
+                <small style="color: #6b7280; font-size: 0.9rem;">
                   Die Keyword-Dichte beschreibt, wie häufig wichtige Suchbegriffe im Verhältnis zum Gesamttext erscheinen
                 </small>
               </p>
@@ -2692,7 +2692,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
                 </div>
               </div>
-              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.9rem; margin-top: 8px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2722,7 +2722,7 @@ export const generateCustomerHTML = ({
                     <div class="progress-fill" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="width: ${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%; background-color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}"></div>
                   </div>
                  </div>
-               <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Branche: ${businessData.industry.toUpperCase()}</p>
+               <p class="gray-text" style="color: #6b7280; font-size: 0.9rem; margin-top: 8px;">Branche: ${businessData.industry.toUpperCase()}</p>
              </div>
                <div class="status-item">
                 <h4>Dienstleistungen</h4>
