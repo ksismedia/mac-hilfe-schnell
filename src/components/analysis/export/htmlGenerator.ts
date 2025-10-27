@@ -1467,7 +1467,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <h3>Mobile Optimierung</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
+          <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 70 ? 'Hoch' : mobileScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
