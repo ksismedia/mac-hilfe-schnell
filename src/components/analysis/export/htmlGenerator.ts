@@ -1975,7 +1975,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-tile neutral">–</div>
+            <div class="score-circle neutral">–</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine Social Media Aktivität erkannt</p>
               <p><strong>Empfehlung:</strong> Aufbau einer professionellen Social Media Präsenz</p>
@@ -2009,7 +2009,7 @@ export const generateCustomerHTML = ({
         <div class="metric-card warning">
           <h3>Social Media Präsenz</h3>
           <div class="score-display">
-            <div class="score-tile neutral">–</div>
+            <div class="score-circle neutral">–</div>
             <div class="score-details">
               <p><strong>Status:</strong> Keine aktiven Social Media Kanäle</p>
               <p><strong>Empfehlung:</strong> Social Media Präsenz aufbauen</p>
@@ -2078,7 +2078,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${cardClass}">
         <h3>Social Media Präsenz</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(socialMediaScore)}">${displaySocialScore}</div>
+          <div class="score-circle ${getScoreColorClass(socialMediaScore)}">${displaySocialScore}</div>
           <div class="score-details">
             <p><strong>Aktive Plattformen:</strong> ${activePlatforms.length}</p>
             <p><strong>Status:</strong> ${socialMediaScore >= 80 ? 'Sehr gut' : socialMediaScore >= 60 ? 'Gut' : socialMediaScore >= 40 ? 'Ausbaufähig' : 'Schwach'}</p>
