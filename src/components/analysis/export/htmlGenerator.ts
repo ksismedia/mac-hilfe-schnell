@@ -2276,7 +2276,7 @@ export const generateCustomerHTML = ({
             <div class="category-content" id="mobile-accessibility">
               <div class="score-overview">
                 <div class="score-card">
-                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(realData.performance.score)} !important; color: ${getScoreTileTextColor(realData.performance.score)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Website Performance</span></div>
+                  <div class="score-big"><div class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</div></div>
                 </div>
                 <div class="score-card">
                   <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(realData.mobile.overallScore)} !important; color: ${getScoreTileTextColor(realData.mobile.overallScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mobile Optimierung</span></div>
