@@ -2552,50 +2552,49 @@ export const generateCustomerHTML = ({
         </div>
         
         <div id="seo-details" style="display: none;">
-          ${getSEOAnalysis()}
-        <div class="metric-card good" style="margin-top: 20px;">
-          <h3>SEO-Details</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-            <div class="status-item">
-              <h4>Meta-Titel</h4>
-              <p><strong>${realData.seo.titleTag ? 'Vorhanden' : 'Fehlend'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.titleTag ? 100 : 0)}" style="width: ${realData.seo.titleTag ? 100 : 0}%"></div>
+          <div class="metric-card good" style="margin-top: 20px;">
+            <h3>SEO-Details</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+              <div class="status-item">
+                <h4>Meta-Titel</h4>
+                <p><strong>${realData.seo.titleTag ? 'Vorhanden' : 'Fehlend'}</strong></p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" data-score="${getScoreRange(realData.seo.titleTag ? 100 : 0)}" style="width: ${realData.seo.titleTag ? 100 : 0}%"></div>
+                  </div>
                 </div>
+                <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
+                  Der Seitentitel erscheint als Überschrift in Suchergebnissen und im Browser-Tab
+                </small>
               </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
-                Der Seitentitel erscheint als Überschrift in Suchergebnissen und im Browser-Tab
-              </small>
-            </div>
-            <div class="status-item">
-              <h4>Meta-Beschreibung</h4>
-              <p><strong>${realData.seo.metaDescription ? 'Optimiert' : 'Verbesserungsbedarf'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 30)}" style="width: ${realData.seo.metaDescription ? 85 : 30}%"></div>
+              <div class="status-item">
+                <h4>Meta-Beschreibung</h4>
+                <p><strong>${realData.seo.metaDescription ? 'Optimiert' : 'Verbesserungsbedarf'}</strong></p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 30)}" style="width: ${realData.seo.metaDescription ? 85 : 30}%"></div>
+                  </div>
                 </div>
+                <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
+                  Die Kurzbeschreibung wird unter dem Titel in Google angezeigt und beeinflusst Klickrate
+                </small>
               </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
-                Die Kurzbeschreibung wird unter dem Titel in Google angezeigt und beeinflusst Klickrate
-              </small>
-            </div>
-            <div class="status-item">
-              <h4>Strukturierte Daten</h4>
-              <p><strong>Zu analysieren</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(50)}" style="width: 50%"></div>
+              <div class="status-item">
+                <h4>Strukturierte Daten</h4>
+                <p><strong>Zu analysieren</strong></p>
+                <div class="progress-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill" data-score="${getScoreRange(50)}" style="width: 50%"></div>
+                  </div>
                 </div>
+                <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
+                  Schema Markup ermöglicht erweiterte Darstellung (Bewertungen, Öffnungszeiten) in Suchergebnissen
+                </small>
               </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 6px; line-height: 1.4;">
-                Schema Markup ermöglicht erweiterte Darstellung (Bewertungen, Öffnungszeiten) in Suchergebnissen
-              </small>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Content-Qualität -->
     <div class="section">
