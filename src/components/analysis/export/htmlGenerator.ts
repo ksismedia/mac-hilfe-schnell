@@ -1397,10 +1397,10 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Bilder komprimieren und optimieren</li>
-            <li>Browser-Caching aktivieren</li>
-            <li>CSS und JavaScript minimieren</li>
-            <li>Content Delivery Network nutzen</li>
+            <li>Bilder komprimieren und optimieren (Dateigröße reduzieren ohne sichtbaren Qualitätsverlust)</li>
+            <li>Browser-Caching aktivieren (Inhalte beim ersten Besuch speichern für schnelleren Seitenaufbau bei erneutem Besuch)</li>
+            <li>CSS und JavaScript minimieren (Überflüssige Leerzeichen und Kommentare aus Code entfernen)</li>
+            <li>Content Delivery Network nutzen (Inhalte weltweit auf Servern verteilen für schnellere Ladezeiten)</li>
           </ul>
         </div>
       </div>
