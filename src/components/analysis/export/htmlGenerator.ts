@@ -952,7 +952,7 @@ export const generateCustomerHTML = ({
           <span>🔍 SEO-Bestandsanalyse</span>
         </h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(criticalSeoScore)}">${criticalSeoScore}%</div>
+          <div class="score-circle ${getScoreColorClass(criticalSeoScore)}">${criticalSeoScore}%</div>
           <div class="score-details">
             <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 90 ? 'Exzellent' : criticalSeoScore >= 61 ? 'Hoch' : 'Niedrig'}</p>
             <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 61 ? 'Sehr gute SEO-Basis' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
