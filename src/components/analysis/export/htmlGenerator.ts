@@ -2542,7 +2542,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(Math.min(100, realData.performance.score + 10))}" style="width: ${Math.min(100, realData.performance.score + 10)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.min(100, realData.performance.score + 10)}%</span>
+                    <span style="color: ${Math.min(100, realData.performance.score + 10) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${Math.min(100, realData.performance.score + 10)}%</span>
                   </div>
                 </div>
               </div>
@@ -2554,7 +2554,7 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%</span>
+                    <span style="color: ${(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%</span>
                   </div>
                 </div>
               </div>
