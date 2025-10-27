@@ -945,7 +945,7 @@ export const generateCustomerHTML = ({
     
     // Kritischere Gesamtbewertung
     const criticalSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
-    const scoreClass = criticalSeoScore >= 80 ? 'yellow' : criticalSeoScore >= 60 ? 'green' : 'red';
+    const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -956,8 +956,8 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(criticalSeoScore)}">${criticalSeoScore}%</div>
           <div class="score-details">
-            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 80 ? 'Hoch' : criticalSeoScore >= 60 ? 'Mittel' : 'Niedrig'}</p>
-            <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'SEO-Grundlagen vorhanden, Optimierung empfohlen' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
+            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 90 ? 'Exzellent' : criticalSeoScore >= 61 ? 'Hoch' : 'Niedrig'}</p>
+            <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 61 ? 'Sehr gute SEO-Basis' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
           </div>
         </div>
         <div class="progress-container">
@@ -1210,13 +1210,13 @@ export const generateCustomerHTML = ({
       }
     };
 
-    const scoreClass = localSEOData.overallScore >= 80 ? 'yellow' : localSEOData.overallScore >= 60 ? 'green' : 'red';
+    const scoreClass = localSEOData.overallScore >= 90 ? 'yellow' : localSEOData.overallScore >= 61 ? 'green' : 'red';
 
     return `
       <div class="metric-card ${scoreClass}">
         <div class="score-details" style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-bottom: 15px;">
-          <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 80 ? 'Sehr gut' : localSEOData.overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-          <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 80 ? 'Exzellente lokale Präsenz' : localSEOData.overallScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
+          <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 90 ? 'Exzellent' : localSEOData.overallScore >= 61 ? 'Sehr gut' : 'Verbesserungsbedarf'}</p>
+          <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 90 ? 'Hervorragende lokale Präsenz' : localSEOData.overallScore >= 61 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
         </div>
         
 
@@ -2489,8 +2489,8 @@ export const generateCustomerHTML = ({
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</div>
             <div class="score-details">
-              <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 70 ? 'Hoch' : realData.seo.score >= 40 ? 'Mittel' : 'Niedrig'}</p>
-              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 70 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+              <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 90 ? 'Exzellent' : realData.seo.score >= 61 ? 'Hoch' : 'Niedrig'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 90 ? 'Hervorragende SEO-Basis' : realData.seo.score >= 61 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
             </div>
           </div>
           <div class="progress-container">
