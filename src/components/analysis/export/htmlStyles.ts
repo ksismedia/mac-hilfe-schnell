@@ -246,21 +246,21 @@ section[class*="section"],
 .header-score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-80% */
 .header-score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 81-100% */
 
-/* Score Circle - konsistent mit header-score-circle für Sections */
+/* Score Circle - kreisrunder Button in Detailansichten wie im Banner */
 .score-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 55px;
-  height: 55px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  font-size: 0.8em;
+  font-size: 1.1em;
   font-weight: 700;
   font-family: 'Arial', 'Helvetica', sans-serif;
   font-variant-numeric: tabular-nums;
   text-rendering: optimizeLegibility;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   margin-bottom: 15px;
 }
 .score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
