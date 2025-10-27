@@ -1023,9 +1023,6 @@ export const generateCustomerHTML = ({
                 if (effectiveKeywordScore >= 61) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Sehr gut`;
                 return `${foundKeywords}/${keywordData.length} Keywords gefunden`;
               })()}</p>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
-                Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen
-              </p>
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill progress-${getScoreColorClass(effectiveKeywordScore)}" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%;"></div>
@@ -1033,6 +1030,9 @@ export const generateCustomerHTML = ({
                   </div>
                 </div>
               <small class="secondary-text">Score: ${effectiveKeywordScore !== null && effectiveKeywordScore !== undefined ? effectiveKeywordScore : 'N/A'}%</small>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
+                Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen
+              </p>
             </div>
             <div>
               <p><strong>Long-Tail Keywords:</strong> ${(() => {
@@ -1041,9 +1041,6 @@ export const generateCustomerHTML = ({
                 if (longTailScore >= 61) return 'Gut optimiert';
                 return 'Verbesserungsbedarf';
               })()}</p>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
-                Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen
-              </p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill progress-${getScoreColorClass(Math.max(20, effectiveKeywordScore * 0.6))}" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%;"></div>
@@ -1051,6 +1048,9 @@ export const generateCustomerHTML = ({
                 </div>
               </div>
               <small class="secondary-text">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
+                Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen
+              </p>
             </div>
             <div>
               <p><strong>Lokale Keywords:</strong> ${(() => {
@@ -1060,9 +1060,6 @@ export const generateCustomerHTML = ({
                 if (localKeywordScore >= 61) return 'Gut vorhanden';
                 return 'Verbesserungsbedarf';
               })()}</p>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
-                Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit
-              </p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill progress-${getScoreColorClass(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%;"></div>
@@ -1070,6 +1067,9 @@ export const generateCustomerHTML = ({
                 </div>
               </div>
               <small class="secondary-text">Score: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20).toFixed(0)}%</small>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
+                Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit
+              </p>
             </div>
           </div>
           ${manualKeywordData ? `
