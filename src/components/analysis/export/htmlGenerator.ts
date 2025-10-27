@@ -2806,33 +2806,31 @@ export const generateCustomerHTML = ({
             <div class="status-item">
               <h4>Fachvokabular</h4>
               <p><strong>${businessData.industry === 'shk' ? 'SHK-spezifisch' : businessData.industry === 'elektriker' ? 'Elektro-spezifisch' : 'Handwerk-spezifisch'}</strong></p>
-                 <div class="progress-container">
-                  <div class="progress-label">
-                    <span>Branchenvokabular</span>
-                    <button class="percentage-btn" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))};">${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%</button>
+                  <div class="progress-container">
+                   <div class="progress-label">
+                     <span>Branchenvokabular</span>
+                   </div>
+                   <div class="progress-bar">
+                     <div class="progress-fill" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="width: ${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%; background-color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}; display: flex; align-items: center; justify-content: center;">
+                       <span style="color: ${(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%</span>
+                     </div>
+                   </div>
                   </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="width: ${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%; background-color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%</span>
-                    </div>
-                  </div>
-                 </div>
                <p class="gray-text" style="color: #6b7280; font-size: 0.9rem; margin-top: 8px;">Branche: ${businessData.industry.toUpperCase()}</p>
              </div>
                <div class="status-item">
                 <h4>Dienstleistungen</h4>
                 <p><strong>${(manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 'Klar definiert' : 'Unklar'}</strong></p>
-                 <div class="progress-container">
+                  <div class="progress-container">
                    <div class="progress-label">
                      <span>Dienstleistungen</span>
-                     <button class="percentage-btn" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}" style="color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))};">${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%</button>
                    </div>
                    <div class="progress-bar">
                      <div class="progress-fill" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}" style="width: ${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%; background-color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}; display: flex; align-items: center; justify-content: center;">
                        <span style="color: ${(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%</span>
                      </div>
                   </div>
-                </div>
+                 </div>
               <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Service-Keywords gefunden</p>
             </div>
             <div class="status-item">
@@ -2841,7 +2839,6 @@ export const generateCustomerHTML = ({
                <div class="progress-container">
                  <div class="progress-label">
                    <span>Lokaler Bezug</span>
-                   <button class="percentage-btn" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="color: ${getScoreColor(businessData.address ? 90 : 30)};">${businessData.address ? 90 : 30}%</button>
                  </div>
                  <div class="progress-bar">
                    <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%; display: flex; align-items: center; justify-content: center;">
