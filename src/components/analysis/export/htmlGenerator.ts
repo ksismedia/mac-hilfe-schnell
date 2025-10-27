@@ -1340,6 +1340,7 @@ export const generateCustomerHTML = ({
         <!-- Lokale Keywords -->
         <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
           <h4>🎯 Lokale Keyword-Rankings</h4>
+          <p style="color: #e5e7eb; font-size: 0.85em; margin: 8px 0 15px 0;">Zeigt Ihre Platzierung in Google bei lokalen Suchbegriffen (z.B. "SHK Bahnhofstraße 15")</p>
           <div style="display: grid; gap: 10px; margin-top: 10px;">
             ${localSEOData.localKeywords.ranking.map(keyword => `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
