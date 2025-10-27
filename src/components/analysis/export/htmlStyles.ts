@@ -245,6 +245,32 @@ section[class*="section"],
 .header-score-circle.orange { background: #FF0000 !important; color: white !important; }   /* 0-60% */
 .header-score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-80% */
 .header-score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 81-100% */
+
+/* Score Circle - konsistent mit header-score-circle */
+.score-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  font-size: 1.1em;
+  font-weight: 700;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin-bottom: 15px;
+}
+.score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
+.score-circle.red { background: #FF0000 !important; color: white !important; }      /* 0-60% */
+.score-circle.orange { background: #FF0000 !important; color: white !important; }   /* 0-60% */
+.score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-89% */
+.score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 90-100% */
+.score-circle[data-score="0-60"] { background: #FF0000 !important; color: white !important; }
+.score-circle[data-score="61-89"] { background: #22c55e !important; color: white !important; }
+.score-circle[data-score="90-100"] { background: #FFD700 !important; color: black !important; }
 .section-content { 
   padding: 30px; 
   max-width: 100% !important;
@@ -451,15 +477,20 @@ span[style*="font-size: 6px"] {
 }
 
 .percentage-btn {
-  border: none;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.9em;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  border: 2px solid white;
+  font-size: 0.95em;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  min-width: 50px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-variant-numeric: tabular-nums;
 }
 
 .percentage-btn[data-score="0-60"] { background: #FF0000; color: white !important; }
@@ -470,7 +501,7 @@ span[style*="font-size: 6px"] {
 
 .percentage-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
 }
 
 .company-info { 
