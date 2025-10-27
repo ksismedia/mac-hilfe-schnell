@@ -2756,14 +2756,17 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-label">
                   <span>Lesbarkeit</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(Math.max(60, realData.seo.score))}">${Math.max(60, realData.seo.score)}%</button>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${Math.max(60, realData.seo.score)}%; background-color: ${getScoreColor(Math.max(60, realData.seo.score))}; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: ${Math.max(60, realData.seo.score) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.max(60, realData.seo.score)}%</span>
+                  </div>
                 </div>
               </div>
               
               <div class="progress-container">
                 <div class="progress-label">
                   <span>Meta-Description</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.metaDescription ? 85 : 40)}">${realData.seo.metaDescription ? 85 : 40}%</button>
                 </div>
                 <div class="progress-bar">
                   <div class="progress-fill" style="width: ${realData.seo.metaDescription ? 85 : 40}%; background-color: ${getScoreColor(realData.seo.metaDescription ? 85 : 40)}; display: flex; align-items: center; justify-content: center;">
@@ -2775,7 +2778,6 @@ export const generateCustomerHTML = ({
               <div class="progress-container">
                 <div class="progress-label">
                   <span>H1-Überschriften</span>
-                  <button class="percentage-btn" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="color: ${getScoreColor(realData.seo.headings.h1.length > 0 ? 90 : 30)};">${realData.seo.headings.h1.length > 0 ? 90 : 30}%</button>
                 </div>
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%; display: flex; align-items: center; justify-content: center;">
