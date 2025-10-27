@@ -176,7 +176,7 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                                 <span>${realData.performance.loadTime < 3 ? 'Erreicht' : 'Verbesserung nötig'}</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${realData.performance.loadTime > 4 ? 'warning' : ''}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 15))}%"></div>
+                                <div class="progress-fill ${realData.performance.loadTime > 4 ? 'warning' : ''}" style="width: ${Math.max(20, 100 - (realData.performance.loadTime * 20))}%"></div>
                             </div>
                         </div>
                     </div>
