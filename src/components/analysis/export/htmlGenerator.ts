@@ -1323,7 +1323,6 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 10px;">
             <div class="progress-label">
               <span>GMB Optimierung</span>
-              <span class="score-text ${getScoreColorClass(localSEOData.googleMyBusiness.score)}">${localSEOData.googleMyBusiness.score}%</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%;"></div>
@@ -1369,7 +1368,6 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Citation Qualität</span>
-              <span class="score-text ${getScoreColorClass(localSEOData.localCitations.score)}">${localSEOData.localCitations.score}%</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%;"></div>
@@ -1401,7 +1399,6 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Lokale Keyword Performance</span>
-              <span class="score-text ${getScoreColorClass(localSEOData.localKeywords.score)}">${localSEOData.localKeywords.score}%</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%;"></div>
@@ -1429,7 +1426,6 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 15px;">
             <div class="progress-label">
               <span>Lokaler Content</span>
-              <span class="score-text ${getScoreColorClass(localSEOData.onPageLocal.localContent)}">${localSEOData.onPageLocal.localContent}%</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%;"></div>
@@ -1441,7 +1437,6 @@ export const generateCustomerHTML = ({
           <div class="progress-container" style="margin-top: 10px;">
             <div class="progress-label">
               <span>On-Page Local Gesamt</span>
-              <span class="score-text ${getScoreColorClass(localSEOData.onPageLocal.score)}">${localSEOData.onPageLocal.score}%</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%;"></div>
