@@ -1266,8 +1266,11 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
             <div>
               <p><strong>Status:</strong> ${localSEOData.googleMyBusiness.claimed ? '✅ Beansprucht' : '❌ Nicht beansprucht'}</p>
+              <p style="color: #e5e7eb; font-size: 0.85em; margin: 5px 0 10px 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>
               <p><strong>Verifiziert:</strong> ${localSEOData.googleMyBusiness.verified ? '✅ Ja' : '❌ Nein'}</p>
+              <p style="color: #e5e7eb; font-size: 0.85em; margin: 5px 0 10px 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>
               <p><strong>Vollständigkeit:</strong> ${localSEOData.googleMyBusiness.complete}%</p>
+              <p style="color: #e5e7eb; font-size: 0.85em; margin: 5px 0 10px 0;">Wie vollständig alle Unternehmensinformationen ausgefüllt sind</p>
             </div>
             <div>
               <p><strong>Fotos:</strong> ${localSEOData.googleMyBusiness.photos} hochgeladen</p>
