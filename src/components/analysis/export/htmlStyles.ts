@@ -345,7 +345,7 @@ span[style*="font-size: 6px"] {
 .score-tile.green { background: #22c55e !important; color: white !important; }   /* 61-80% */
 .score-tile.yellow { background: #FFD700 !important; color: black !important; }  /* 81-100% */
 .score-details { width: 100%; }
-.score-details p { margin-bottom: 8px; color: #d1d5db; }
+.score-details p { margin-bottom: 8px; color: #e5e7eb; font-size: 0.95em; }
 .score-details strong { color: #fbbf24; }
 
 /* Progress-Balken mit einfarbigem Design basierend auf Score-Bereichen */
