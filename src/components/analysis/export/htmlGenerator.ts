@@ -1019,7 +1019,14 @@ export const generateCustomerHTML = ({
           <h4>Branchenrelevante Keywords</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
-              <p><strong>Keyword-Analyse:</strong> ${foundKeywords}/${keywordData.length} Keywords gefunden</p>
+              <p><strong>Keyword-Analyse:</strong> ${(() => {
+                if (effectiveKeywordScore >= 90) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Exzellent`;
+                if (effectiveKeywordScore >= 61) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Sehr gut`;
+                return `${foundKeywords}/${keywordData.length} Keywords gefunden`;
+              })()}</p>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
+                Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen
+              </p>
                 <div class="progress-container">
                   <div class="progress-bar">
                     <div class="progress-fill progress-${getScoreColorClass(effectiveKeywordScore)}" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%;"></div>
@@ -1029,7 +1036,15 @@ export const generateCustomerHTML = ({
               <small class="secondary-text">Score: ${effectiveKeywordScore !== null && effectiveKeywordScore !== undefined ? effectiveKeywordScore : 'N/A'}%</small>
             </div>
             <div>
-              <p><strong>Long-Tail Keywords:</strong> ${Math.max(20, effectiveKeywordScore * 0.6) >= 60 ? 'Gut optimiert' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Long-Tail Keywords:</strong> ${(() => {
+                const longTailScore = Math.max(20, Math.round(effectiveKeywordScore * 0.6));
+                if (longTailScore >= 90) return 'Hervorragend optimiert';
+                if (longTailScore >= 61) return 'Gut optimiert';
+                return 'Verbesserungsbedarf';
+              })()}</p>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
+                Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen
+              </p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill progress-${getScoreColorClass(Math.max(20, effectiveKeywordScore * 0.6))}" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%;"></div>
@@ -1039,7 +1054,16 @@ export const generateCustomerHTML = ({
               <small class="secondary-text">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
             </div>
             <div>
-              <p><strong>Lokale Keywords:</strong> ${businessData.address ? 'Vorhanden' : 'Fehlend'}</p>
+              <p><strong>Lokale Keywords:</strong> ${(() => {
+                const localKeywordScore = businessData.address ? Math.max(40, Math.round(effectiveKeywordScore * 0.9)) : 20;
+                if (!businessData.address) return 'Fehlend';
+                if (localKeywordScore >= 90) return 'Exzellent integriert';
+                if (localKeywordScore >= 61) return 'Gut vorhanden';
+                return 'Verbesserungsbedarf';
+              })()}</p>
+              <p style="font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.4;">
+                Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit
+              </p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill progress-${getScoreColorClass(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%;"></div>
