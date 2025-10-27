@@ -246,21 +246,21 @@ section[class*="section"],
 .header-score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-80% */
 .header-score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 81-100% */
 
-/* Score Circle - konsistent mit header-score-circle */
+/* Score Circle - konsistent mit header-score-circle für Sections */
 .score-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
-  font-size: 1.1em;
+  font-size: 0.8em;
   font-weight: 700;
   font-family: 'Arial', 'Helvetica', sans-serif;
   font-variant-numeric: tabular-nums;
   text-rendering: optimizeLegibility;
-  border: 3px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   margin-bottom: 15px;
 }
 .score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
@@ -296,29 +296,27 @@ section[class*="section"],
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
 
-/* Score Tile - kreisrunde Buttons wie im Banner */
+/* Score Tile - rechteckige Kachel für Executive Summary */
 .score-tile { 
-  width: 80px !important;
+  min-width: 120px !important; 
+  max-width: 160px !important;
+  width: 140px !important;
   height: 80px !important;
-  max-width: 80px !important;
   max-height: 80px !important;
-  min-width: 80px !important;
-  min-height: 80px !important;
-  border-radius: 50%; 
+  border-radius: 12px; 
   display: flex !important; 
   align-items: center !important; 
   justify-content: center !important; 
-  font-weight: 700; 
-  font-size: 1.1em;
+  font-weight: bold; 
   flex-shrink: 0 !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border: 3px solid white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.1);
   text-align: center !important;
   line-height: 1.1 !important;
-  padding: 0 !important;
+  padding: 4px !important;
+  word-wrap: break-word;
+  hyphens: auto;
   box-sizing: border-box !important;
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Überschreibe neutral tiles mit kleiner Schrift */
