@@ -1365,6 +1365,7 @@ export const generateCustomerHTML = ({
               <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%;"></div>
               <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
+            <p style="color: #e5e7eb; font-size: 0.85em; margin: 8px 0 0 0;">Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg</p>
           </div>
         </div>
 
