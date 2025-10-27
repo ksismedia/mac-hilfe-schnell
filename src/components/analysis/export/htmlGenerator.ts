@@ -588,6 +588,17 @@ export const generateCustomerHTML = ({
         <h3>Stundensatz-Analyse & Wettbewerbsvergleich</h3>
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(localPricingScore)}">${localPricingText}</div>
+        </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${
+                localPricingScore < 40 ? '#CD0000' :
+                localPricingScore < 60 ? '#dc2626' :
+                localPricingScore < 70 ? '#16a34a' :
+                '#ffd700'
+              };"></div>
+            </div>
+          </div>
           <div class="score-details">
             <h4>Ihre Stundensätze:</h4>
             <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
@@ -617,18 +628,6 @@ export const generateCustomerHTML = ({
             </div>
             ` : ''}
           </div>
-          </div>
-        </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${
-                localPricingScore < 40 ? '#CD0000' :
-                localPricingScore < 60 ? '#dc2626' :
-                localPricingScore < 70 ? '#16a34a' :
-                '#ffd700'
-              };"></div>
-            </div>
-          </div>
       </div>
     `;
   };
@@ -641,10 +640,6 @@ export const generateCustomerHTML = ({
         <h3>⚖️ Impressum & Rechtssicherheit</h3>
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(legalScore)}">${legalScore}%</div>
-          <div class="score-details">
-            <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
-            <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
-          </div>
         </div>
           <div class="progress-container">
             <div class="progress-bar">
@@ -655,6 +650,10 @@ export const generateCustomerHTML = ({
                 '#eab308'
               };"></div>
             </div>
+          </div>
+          <div class="score-details">
+            <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
+            <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
           </div>
 
         <!-- Impressum-Details -->
@@ -788,20 +787,20 @@ export const generateCustomerHTML = ({
         </h3>
         <div class="score-display">
           <div class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</div>
-          <div class="score-details">
-             <p><strong>Compliance-Level:</strong> 
-               <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
-                 ${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'}
-               </span>
-             </p>
-            <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
-            ${hasRealData && lighthouseVersion ? `<p style="font-size: 12px; color: #6b7280;"><strong>Prüfung:</strong> Lighthouse ${lighthouseVersion}</p>` : ''}
-          </div>
         </div>
         <div class="progress-container">
           <div class="progress-bar">
             <div class="progress-fill progress-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%; background-color: ${getAccessibilityComplianceColor(accessibilityScore)};"></div>
           </div>
+        </div>
+        <div class="score-details">
+           <p><strong>Compliance-Level:</strong> 
+             <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
+               ${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'}
+             </span>
+           </p>
+          <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
+          ${hasRealData && lighthouseVersion ? `<p style="font-size: 12px; color: #6b7280;"><strong>Prüfung:</strong> Lighthouse ${lighthouseVersion}</p>` : ''}
         </div>
 
         <!-- WCAG-Analyse -->
