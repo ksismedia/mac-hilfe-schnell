@@ -2692,7 +2692,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(realData.seo.headings.h1.length > 0 ? 90 : 30)}" style="width: ${realData.seo.headings.h1.length > 0 ? 90 : 30}%"></div>
                 </div>
               </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2722,7 +2722,7 @@ export const generateCustomerHTML = ({
                     <div class="progress-fill" data-score="${getScoreRange(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}" style="width: ${keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50)}%; background-color: ${getScoreColor(keywordScore !== undefined && keywordScore !== null ? keywordScore : Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 3 ? 80 : 50))}"></div>
                   </div>
                  </div>
-               <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Branche: ${businessData.industry.toUpperCase()}</p>
+               <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Branche: ${businessData.industry.toUpperCase()}</p>
              </div>
                <div class="status-item">
                 <h4>Dienstleistungen</h4>
@@ -2736,7 +2736,7 @@ export const generateCustomerHTML = ({
                      <div class="progress-fill" data-score="${getScoreRange(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}" style="width: ${keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45)}%; background-color: ${getScoreColor(keywordScore || Math.max(30, (manualKeywordData || realData.keywords || []).filter(k => k.found).length >= 2 ? 85 : 45))}"></div>
                   </div>
                 </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Service-Keywords gefunden</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Service-Keywords gefunden</p>
             </div>
             <div class="status-item">
               <h4>Lokaler Bezug</h4>
@@ -2750,7 +2750,7 @@ export const generateCustomerHTML = ({
                    <div class="progress-fill" data-score="${getScoreRange(businessData.address ? 90 : 30)}" style="width: ${businessData.address ? 90 : 30}%"></div>
                  </div>
                </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Region: ${businessData.address ? 'Erfasst' : 'Fehlt'}</p>
             </div>
           </div>
           <div class="recommendations">
@@ -2776,7 +2776,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(60)}" style="width: 60%"></div>
                 </div>
               </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Empfehlung: Quartalweise</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Empfehlung: Quartalweise</p>
             </div>
             <div class="status-item">
               <h4>News & Updates</h4>
@@ -2786,7 +2786,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(25)}" style="width: 25%"></div>
                 </div>
               </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Blog/News-Bereich fehlt</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Blog/News-Bereich fehlt</p>
             </div>
             <div class="status-item">
               <h4>Saisonale Inhalte</h4>
@@ -2796,7 +2796,7 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(35)}" style="width: 35%"></div>
                 </div>
               </div>
-              <p class="gray-text" style="font-size: 0.9em; margin-top: 5px;">Winterdienst, Klimaanlagen etc.</p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Winterdienst, Klimaanlagen etc.</p>
             </div>
           </div>
           <div class="recommendations">
