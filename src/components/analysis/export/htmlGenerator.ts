@@ -1294,6 +1294,7 @@ export const generateCustomerHTML = ({
         <!-- Lokale Verzeichnisse (Citations) -->
         <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
           <h4>🌐 Lokale Verzeichnisse & Citations</h4>
+          <p style="color: #e5e7eb; font-size: 0.85em; margin: 8px 0 15px 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten (Name, Adresse, Telefon) in Online-Verzeichnissen erscheinen</p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
             <div style="text-align: center;">
               <div class="citation-total">${localSEOData.localCitations.totalCitations}</div>
