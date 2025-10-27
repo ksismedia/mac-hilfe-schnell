@@ -1094,6 +1094,9 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(40, seoScore))}" style="width: ${Math.max(40, seoScore)}%"></div>
                 </div>
               </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Sprechende URLs (z.B. /heizung-wartung) helfen Nutzern und Suchmaschinen, Inhalte besser zu verstehen
+              </small>
             </div>
             <div>
               <p><strong>Interne Verlinkung:</strong> ${seoScore >= 60 ? 'Gut strukturiert' : 'Ausbaufähig'}</p>
@@ -1102,6 +1105,9 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(30, seoScore * 0.9))}" style="width: ${Math.max(30, seoScore * 0.9)}%"></div>
                 </div>
               </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Gut vernetzte Seiten ermöglichen einfache Navigation und bessere Auffindbarkeit aller Inhalte
+              </small>
             </div>
             <div>
               <p><strong>Breadcrumbs:</strong> ${seoScore >= 70 ? 'Implementiert' : 'Fehlen teilweise'}</p>
@@ -1110,6 +1116,9 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(seoScore >= 70 ? 85 : 35)}" style="width: ${seoScore >= 70 ? 85 : 35}%"></div>
                 </div>
               </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Navigationspfade (Start → Leistungen → Heizung) zeigen Nutzern ihre Position auf der Website
+              </small>
             </div>
           </div>
         </div>
@@ -1125,6 +1134,9 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(35, seoScore))}" style="width: ${Math.max(35, seoScore)}%"></div>
                 </div>
               </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Unsichtbare Metadaten wie Title und Description erscheinen in Suchergebnissen
+              </small>
             </div>
             <div>
               <p><strong>Schema Markup:</strong> ${seoScore >= 80 ? 'Implementiert' : 'Teilweise/Fehlend'}</p>
@@ -1133,12 +1145,23 @@ export const generateCustomerHTML = ({
                   <div class="progress-fill" data-score="${getScoreRange(seoScore >= 80 ? 90 : 25)}" style="width: ${seoScore >= 80 ? 90 : 25}%"></div>
                 </div>
               </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Strukturierte Daten ermöglichen Rich Snippets (Sternebewertungen, Öffnungszeiten) in Google
+              </small>
             </div>
             <div>
               <p><strong>XML Sitemap:</strong> ${seoScore >= 60 ? 'Vorhanden' : 'Nicht gefunden'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(seoScore >= 60 ? 85 : 30)}" style="width: ${seoScore >= 60 ? 85 : 30}%"></div>
+                </div>
+              </div>
+              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
+                Übersichtskarte aller Seiten - hilft Google, alle Inhalte Ihrer Website zu finden
+              </small>
+            </div>
+          </div>
+        </div>
                 </div>
               </div>
             </div>
