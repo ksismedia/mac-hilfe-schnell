@@ -1412,13 +1412,13 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen für lokale SEO:</h4>
           <ul>
-            ${localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren</li>' : ''}
-            ${localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen</li>' : ''}
-            ${localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren</li>' : ''}
-            ${!localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren</li>' : ''}
-            <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken</li>
-            <li>Kundenbewertungen aktiv sammeln und beantworten</li>
-            <li>Lokale Backlinks durch Partnerschaften und Events aufbauen</li>
+            ${localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
+            ${localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
+            ${localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren (z.B. "Handwerker in [Stadt]")</li>' : ''}
+            ${!localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren (strukturierte Daten für Google)</li>' : ''}
+            <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken (Stadtteilnamen, lokale Projekte zeigen)</li>
+            <li>Kundenbewertungen aktiv sammeln und beantworten (baut Vertrauen und Sichtbarkeit auf)</li>
+            <li>Lokale Backlinks durch Partnerschaften und Events aufbauen (Vernetzung mit lokalen Unternehmen)</li>
           </ul>
         </div>
       </div>
