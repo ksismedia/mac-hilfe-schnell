@@ -296,28 +296,29 @@ section[class*="section"],
 .metric-card h3 { color: #fbbf24; margin-bottom: 15px; font-size: 1.2em; }
 .score-display { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
 
-/* Score Tile - rechteckige Kachel statt Kreis */
+/* Score Tile - kreisrunde Buttons wie im Banner */
 .score-tile { 
-  min-width: 120px !important; 
-  max-width: 160px !important;
-  width: 140px !important;
+  width: 80px !important;
   height: 80px !important;
+  max-width: 80px !important;
   max-height: 80px !important;
-  border-radius: 12px; 
+  min-width: 80px !important;
+  min-height: 80px !important;
+  border-radius: 50%; 
   display: flex !important; 
   align-items: center !important; 
   justify-content: center !important; 
-  font-weight: bold; 
+  font-weight: 700; 
+  font-size: 1.1em;
   flex-shrink: 0 !important;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 3px solid white;
   text-align: center !important;
   line-height: 1.1 !important;
-  padding: 4px !important;
-  word-wrap: break-word;
-  hyphens: auto;
+  padding: 0 !important;
   box-sizing: border-box !important;
-}
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Überschreibe neutral tiles mit kleiner Schrift */
