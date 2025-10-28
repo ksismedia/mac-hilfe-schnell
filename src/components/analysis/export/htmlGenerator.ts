@@ -3156,7 +3156,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${workplaceScore <= 0 ? 'none' : getScoreRange(workplaceScore)}" style="width: ${workplaceScore <= 0 ? '0' : workplaceScore + '%'}"></div>
+              <div class="progress-fill" data-score="${workplaceScore <= 0 ? 'none' : getScoreRange(workplaceScore)}" style="width: ${workplaceScore <= 0 ? '0' : workplaceScore + '%'}; display: flex; align-items: center; justify-content: center;">
+                ${workplaceScore > 0 ? `<span style="color: ${workplaceScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${workplaceScore}%</span>` : ''}
+              </div>
             </div>
           </div>
         </div>
