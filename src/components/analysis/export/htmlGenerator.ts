@@ -3893,31 +3893,59 @@ export const generateCustomerHTML = ({
         
         <div id="social-platforms-details" style="display: none;">
           <div style="margin-top: 15px;">
-            ${['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube', 'TikTok'].map(platform => {
-              const platformKey = platform.toLowerCase();
-              const platformUrl = manualSocialData?.[platformKey + 'Url'];
-              const platformFollowers = manualSocialData?.[platformKey + (platform === 'YouTube' ? 'Subscribers' : 'Followers')] || '0';
-              const platformLastPost = manualSocialData?.[platformKey + 'LastPost'] || 'Unbekannt';
+            ${(() => {
+              console.log('🔍 Platform-specific analysis - manualSocialData:', JSON.stringify(manualSocialData, null, 2));
               
-              const hasData = !!platformUrl;
-              const followerCount = parseInt(platformFollowers) || 0;
-              const lastPostDays = platformLastPost === 'Unbekannt' ? 999 : parseInt(platformLastPost) || 0;
-              
-              return `
-                <div class="metric-card" style="margin-bottom: 20px; ${hasData ? '' : 'opacity: 0.6; border: 2px dashed #666;'}">
-                  <h3>${platform} ${hasData ? '✓' : '✗'}</h3>
-                  <p><strong>Status:</strong> ${hasData ? 'Vorhanden' : 'Nicht eingerichtet'}</p>
-                  ${hasData ? `
-                    <p><strong>${platform === 'YouTube' ? 'Abonnenten' : 'Follower'}:</strong> ${followerCount.toLocaleString()}</p>
-                    <p><strong>Letzter Post:</strong> ${lastPostDays === 999 ? 'Unbekannt' : lastPostDays === 0 ? 'Heute' : `vor ${lastPostDays} Tagen`}</p>
-                    <p><strong>Aktivität:</strong> ${lastPostDays <= 7 ? 'Sehr aktiv' : lastPostDays <= 30 ? 'Aktiv' : 'Inaktiv'}</p>
-                  ` : `
-                    <p><strong>Empfehlung:</strong> Kanal einrichten für bessere Reichweite</p>
-                    <p><strong>Potenzial:</strong> ${platform === 'Facebook' ? 'Lokale Zielgruppe erreichen' : platform === 'Instagram' ? 'Visuelle Inhalte teilen' : platform === 'LinkedIn' ? 'B2B Networking' : platform === 'Twitter' ? 'Schnelle Kommunikation' : platform === 'YouTube' ? 'Video-Marketing' : 'Junge Zielgruppe ansprechen'}</p>
-                  `}
-                </div>
-              `;
-            }).join('')}
+              return ['Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'YouTube', 'TikTok'].map(platform => {
+                const platformKey = platform.toLowerCase();
+                const urlKey = platformKey + 'Url';
+                const followersKey = platformKey + (platform === 'YouTube' ? 'Subscribers' : 'Followers');
+                const lastPostKey = platformKey + 'LastPost';
+                
+                const platformUrl = manualSocialData?.[urlKey];
+                const platformFollowers = manualSocialData?.[followersKey] || '0';
+                const platformLastPost = manualSocialData?.[lastPostKey] || 'Unbekannt';
+                
+                console.log(`Platform ${platform}:`, { urlKey, platformUrl, followersKey, platformFollowers, lastPostKey, platformLastPost });
+                
+                const hasData = !!platformUrl;
+                const followerCount = parseInt(platformFollowers) || 0;
+                
+                // Parse last post - can be either number of days or a string like "vor 7 Tagen"
+                let lastPostDays = 999;
+                if (platformLastPost && platformLastPost !== 'Unbekannt') {
+                  const numericValue = parseInt(platformLastPost);
+                  if (!isNaN(numericValue)) {
+                    lastPostDays = numericValue;
+                  } else if (platformLastPost.includes('vor') && platformLastPost.includes('Tag')) {
+                    const match = platformLastPost.match(/\d+/);
+                    if (match) {
+                      lastPostDays = parseInt(match[0]);
+                    }
+                  } else if (platformLastPost.includes('vor') && platformLastPost.includes('Jahr')) {
+                    const match = platformLastPost.match(/\d+/);
+                    if (match) {
+                      lastPostDays = parseInt(match[0]) * 365;
+                    }
+                  }
+                }
+                
+                return `
+                  <div class="metric-card" style="margin-bottom: 20px; ${hasData ? '' : 'opacity: 0.6; border: 2px dashed #666;'}">
+                    <h3>${platform} ${hasData ? '✓' : '✗'}</h3>
+                    <p><strong>Status:</strong> ${hasData ? 'Vorhanden' : 'Nicht eingerichtet'}</p>
+                    ${hasData ? `
+                      <p><strong>${platform === 'YouTube' ? 'Abonnenten' : 'Follower'}:</strong> ${followerCount.toLocaleString()}</p>
+                      <p><strong>Letzter Post:</strong> ${lastPostDays === 999 ? platformLastPost : lastPostDays === 0 ? 'Heute' : `vor ${lastPostDays} Tag${lastPostDays === 1 ? '' : 'en'}`}</p>
+                      <p><strong>Aktivität:</strong> ${lastPostDays <= 7 ? 'Sehr aktiv' : lastPostDays <= 30 ? 'Aktiv' : 'Inaktiv'}</p>
+                    ` : `
+                      <p><strong>Empfehlung:</strong> Kanal einrichten für bessere Reichweite</p>
+                      <p><strong>Potenzial:</strong> ${platform === 'Facebook' ? 'Lokale Zielgruppe erreichen' : platform === 'Instagram' ? 'Visuelle Inhalte teilen' : platform === 'LinkedIn' ? 'B2B Networking' : platform === 'Twitter' ? 'Schnelle Kommunikation' : platform === 'YouTube' ? 'Video-Marketing' : 'Junge Zielgruppe ansprechen'}</p>
+                    `}
+                  </div>
+                `;
+              }).join('');
+            })()}
           </div>
         </div>
       </div>
