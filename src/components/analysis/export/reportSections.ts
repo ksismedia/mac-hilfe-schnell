@@ -312,10 +312,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>DSGVO Art. 5-22 Compliance <span style="font-size: 11px; color: #6b7280;">(Einhaltung der Datenschutzgrundsätze und Nutzerrechte gemäß DSGVO, z. B. Rechtmäßigkeit, Transparenz, Löschung und Auskunftspflicht)</span></span>
-                                <button class="percentage-btn">${dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${dataPrivacyScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${dataPrivacyScore}%</span>
+                                </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Einwilligung (Art. 7), Informationspflichten (Art. 13-14), Drittlandtransfer (Art. 44-49), Rechtsbasis, Tracking-Scripts, Externe Services
@@ -331,7 +332,6 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>DSGVO-Verstöße</span>
-                                <button class="percentage-btn" style="background-color: ${activeViolations.length === 0 ? '#10b981' : activeViolations.length <= 2 ? '#f59e0b' : '#ef4444'};">${activeViolations.length}</button>
                             </div>
                             ${activeViolations.length > 0 ? `
                             <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
@@ -354,10 +354,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Bußgeldrisiko</span>
-                                <button class="percentage-btn">${100 - dataPrivacyScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${100 - dataPrivacyScore}%"></div>
+                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${100 - dataPrivacyScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${(100 - dataPrivacyScore) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${100 - dataPrivacyScore}%</span>
+                                </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Faktoren:</strong> Verstöße, Drittlandtransfer, Consent-Management, Dokumentation
