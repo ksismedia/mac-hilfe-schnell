@@ -484,10 +484,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>HTTPS-Verschlüsselung ${hasRealData ? '✓ <strong style="color: #10b981;">Echte SSL Labs Prüfung</strong>' : ''} <span style="font-size: 11px; color: #6b7280;">(Sichere SSL/TLS-Verbindung, die Datenübertragung vor unbefugtem Zugriff schützt und Voraussetzung für DSGVO-Konformität ist)</span></span>
-                                <button class="percentage-btn">${sslScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${sslScore < 60 ? '0-60' : sslScore < 80 ? '60-80' : '80-100'}" style="width: ${sslScore}%"></div>
+                                <div class="progress-fill" data-score="${sslScore < 60 ? '0-60' : sslScore < 80 ? '60-80' : '80-100'}" style="width: ${sslScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${sslScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${sslScore}%</span>
+                                </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Zertifikat ${sslData?.hasCertificate ? '✓' : '✗'}, Verschlüsselungsstärke, HSTS ${sslData?.hasHSTS ? '✓' : '✗'}, Sicherheitslücken ${sslData?.vulnerabilities ? '⚠️' : '✓'}
@@ -510,7 +511,6 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Cookie-Consent-Banner (TTDSG) <span style="font-size: 11px; color: #6b7280;">(Pflicht-Element für datenschutzkonformes Cookie-Management nach TTDSG § 25)</span></span>
-                                <button class="percentage-btn" style="background-color: ${hasCookieBanner ? '#10b981' : '#ef4444'};">${hasCookieBanner ? '✓' : '✗'}</button>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${bannerScore >= 80 ? '80-100' : '0-60'}" style="width: ${bannerScore}%"></div>
@@ -531,10 +531,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Cookie-Management (TTDSG) <span style="font-size: 11px; color: #6b7280;">(Rechtskonformes Einholen und Verwalten von Cookie-Einwilligungen nach deutschem TTDSG, z. B. über Consent-Banner mit Auswahlmöglichkeit)</span></span>
-                                <button class="percentage-btn">${cookieScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${cookieScore < 60 ? '0-60' : cookieScore < 80 ? '60-80' : '80-100'}" style="width: ${cookieScore}%"></div>
+                                <div class="progress-fill" data-score="${cookieScore < 60 ? '0-60' : cookieScore < 80 ? '60-80' : '80-100'}" style="width: ${cookieScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${cookieScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${cookieScore}%</span>
+                                </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Cookie-Banner, Einwilligungsmanagement, Cookie-Kategorisierung, Granularität, Opt-out-Möglichkeiten
@@ -570,10 +571,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Cookie-Kategorisierung</span>
-                                <button class="percentage-btn">${cookieRatio}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${cookieRatio < 50 ? '0-60' : cookieRatio < 80 ? '60-80' : '80-100'}" style="width: ${cookieRatio}%"></div>
+                                <div class="progress-fill" data-score="${cookieRatio < 50 ? '0-60' : cookieRatio < 80 ? '60-80' : '80-100'}" style="width: ${cookieRatio}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${cookieRatio >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${cookieRatio}%</span>
+                                </div>
                             </div>
                             ${totalCookieCount > 0 ? `
                             <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
@@ -619,10 +621,11 @@ export const generateDataPrivacySection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Sicherheitsmaßnahmen ${hasRealData ? '✓ <strong style="color: #10b981;">Echte Headerprüfung</strong>' : ''}</span>
-                                <button class="percentage-btn">${securityScore}%</button>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${securityScore < 60 ? '0-60' : securityScore < 80 ? '60-80' : '80-100'}" style="width: ${securityScore}%"></div>
+                                <div class="progress-fill" data-score="${securityScore < 60 ? '0-60' : securityScore < 80 ? '60-80' : '80-100'}" style="width: ${securityScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${securityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${securityScore}%</span>
+                                </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> CSP ${csp ? '✓' : '✗'}, X-Frame-Options ${xFrame ? '✓' : '✗'}, X-Content-Type ${xContent ? '✓' : '✗'}, HSTS ${hsts ? '✓' : '✗'}, Referrer-Policy ${referrer ? '✓' : '✗'}
