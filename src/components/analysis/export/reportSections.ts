@@ -76,12 +76,8 @@ export const generateSEOSection = (
                         <div class="metric-title">SEO-Gesamtbewertung</div>
                         <div class="metric-value ${realData.seo.score >= 80 ? 'excellent' : realData.seo.score >= 60 ? 'good' : realData.seo.score >= 40 ? 'warning' : 'danger'}">${realData.seo.score > 0 ? `${realData.seo.score}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Optimierung</span>
-                                <button class="percentage-btn" data-score="${realData.seo.score < 60 ? '0-60' : realData.seo.score < 80 ? '60-80' : '80-100'}">${realData.seo.score > 0 ? `${realData.seo.score}%` : '—'}</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%"></div>
+                                <div class="progress-fill ${realData.seo.score < 60 ? 'warning' : ''}" style="width: ${realData.seo.score}%; display: flex; align-items: center; justify-content: center; color: ${realData.seo.score < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${realData.seo.score > 0 ? `${realData.seo.score}%` : '—'}</div>
                             </div>
                         </div>
                     </div>
@@ -90,12 +86,8 @@ export const generateSEOSection = (
                         <div class="metric-title">Branchenrelevante Keywords</div>
                         <div class="metric-value ${keywordsScore >= 80 ? 'excellent' : keywordsScore >= 60 ? 'good' : keywordsScore >= 40 ? 'warning' : 'danger'}">${keywordsFoundCount}/${realData.keywords.length} gefunden</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Keyword-Abdeckung</span>
-                                <button class="percentage-btn" data-score="${keywordsScore < 60 ? '0-60' : keywordsScore < 80 ? '60-80' : '80-100'}">${keywordsScore}%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" data-score="${keywordsScore < 60 ? '0-60' : keywordsScore < 80 ? '60-80' : '80-100'}" style="width: ${keywordsScore}%"></div>
+                                <div class="progress-fill ${keywordsScore < 60 ? 'warning' : ''}" data-score="${keywordsScore < 60 ? '0-60' : keywordsScore < 80 ? '60-80' : '80-100'}" style="width: ${keywordsScore}%; display: flex; align-items: center; justify-content: center; color: ${keywordsScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${keywordsScore}%</div>
                             </div>
                         </div>
                     </div>
@@ -106,12 +98,8 @@ export const generateSEOSection = (
                             ${hasMetaDescription ? 'Vollständig optimiert' : 'Verbesserungspotenzial'}
                         </div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Meta-Tags & Struktur</span>
-                                <button class="percentage-btn">${hasMetaDescription ? '100' : '60'}%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${!hasMetaDescription ? 'warning' : ''}" style="width: ${hasMetaDescription ? 100 : 60}%"></div>
+                                <div class="progress-fill ${!hasMetaDescription ? 'warning' : ''}" style="width: ${hasMetaDescription ? 100 : 60}%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">${hasMetaDescription ? '100' : '60'}%</div>
                             </div>
                         </div>
                     </div>
@@ -120,12 +108,8 @@ export const generateSEOSection = (
                         <div class="metric-title">Technische SEO</div>
                         <div class="metric-value good">Grundlagen vorhanden</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Technische Umsetzung</span>
-                                <button class="percentage-btn">75%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
+                                <div class="progress-fill" style="width: 75%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">75%</div>
                             </div>
                         </div>
                     </div>
@@ -157,12 +141,8 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="metric-title">Performance-Score</div>
                         <div class="metric-value ${realData.performance.score >= 80 ? 'excellent' : realData.performance.score >= 60 ? 'good' : realData.performance.score >= 40 ? 'warning' : 'danger'}">${realData.performance.score > 0 ? `${realData.performance.score}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Geschwindigkeit</span>
-                                <button class="percentage-btn">${realData.performance.score > 0 ? `${realData.performance.score}%` : '—'}</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${realData.performance.score < 60 ? 'warning' : ''}" style="width: ${realData.performance.score}%"></div>
+                                <div class="progress-fill ${realData.performance.score < 60 ? 'warning' : ''}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center; color: ${realData.performance.score < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${realData.performance.score > 0 ? `${realData.performance.score}%` : '—'}</div>
                             </div>
                         </div>
                     </div>
@@ -185,12 +165,8 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="metric-title">Nutzerfreundlichkeit</div>
                         <div class="metric-value good">Benutzerfreundlich</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>User Experience</span>
-                                <button class="percentage-btn">85%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%"></div>
+                                <div class="progress-fill" style="width: 85%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">85%</div>
                             </div>
                         </div>
                     </div>
@@ -199,12 +175,8 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                         <div class="metric-title">Verfügbarkeit</div>
                         <div class="metric-value excellent">Online & erreichbar</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Uptime & Erreichbarkeit</span>
-                                <button class="percentage-btn">100%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
+                                <div class="progress-fill" style="width: 100%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 14px;">100%</div>
                             </div>
                         </div>
                     </div>
@@ -223,12 +195,8 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         <div class="metric-title">Mobile-Score</div>
                         <div class="metric-value ${realData.mobile.overallScore >= 80 ? 'excellent' : realData.mobile.overallScore >= 60 ? 'good' : realData.mobile.overallScore >= 40 ? 'warning' : 'danger'}">${realData.mobile.overallScore > 0 ? `${realData.mobile.overallScore}/100 Punkte` : '—/100 Punkte'}</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Mobile Nutzerfreundlichkeit</span>
-                                <button class="percentage-btn">${realData.mobile.overallScore > 0 ? `${realData.mobile.overallScore}%` : '—'}</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill ${realData.mobile.overallScore < 60 ? 'warning' : ''}" style="width: ${realData.mobile.overallScore}%"></div>
+                                <div class="progress-fill ${realData.mobile.overallScore < 60 ? 'warning' : ''}" style="width: ${realData.mobile.overallScore}%; display: flex; align-items: center; justify-content: center; color: ${realData.mobile.overallScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${realData.mobile.overallScore > 0 ? `${realData.mobile.overallScore}%` : '—'}</div>
                             </div>
                         </div>
                     </div>
@@ -238,7 +206,7 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         <div class="metric-value ${realData.mobile.responsive ? 'excellent' : 'danger'}">${realData.mobile.responsive ? 'Optimal umgesetzt' : 'Nicht responsive'}</div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.mobile.responsive ? 'danger' : ''}" style="width: ${realData.mobile.responsive ? 100 : 0}%"></div>
+                                <div class="progress-fill ${!realData.mobile.responsive ? 'danger' : ''}" style="width: ${realData.mobile.responsive ? 100 : 0}%; display: flex; align-items: center; justify-content: center; color: ${realData.mobile.responsive ? '#000' : '#fff'}; font-weight: bold; font-size: 14px;">${realData.mobile.responsive ? '100' : '0'}%</div>
                             </div>
                         </div>
                     </div>
@@ -250,7 +218,7 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.mobile.responsive ? 'warning' : ''}" style="width: ${realData.mobile.responsive ? 80 : 40}%"></div>
+                                <div class="progress-fill ${!realData.mobile.responsive ? 'warning' : ''}" style="width: ${realData.mobile.responsive ? 80 : 40}%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">${realData.mobile.responsive ? '80' : '40'}%</div>
                             </div>
                         </div>
                     </div>
@@ -259,12 +227,8 @@ export const generateMobileSection = (realData: RealBusinessData) => `
                         <div class="metric-title">Mobile Performance</div>
                         <div class="metric-value good">Zufriedenstellend</div>
                         <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Mobile Ladezeit</span>
-                                <button class="percentage-btn">75%</button>
-                            </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
+                                <div class="progress-fill" style="width: 75%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">75%</div>
                             </div>
                         </div>
                     </div>
@@ -513,7 +477,7 @@ export const generateDataPrivacySection = (
                                 <span>Cookie-Consent-Banner (TTDSG) <span style="font-size: 11px; color: #6b7280;">(Pflicht-Element für datenschutzkonformes Cookie-Management nach TTDSG § 25)</span></span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${bannerScore >= 80 ? '80-100' : '0-60'}" style="width: ${bannerScore}%"></div>
+                                <div class="progress-fill" data-score="${bannerScore >= 80 ? '80-100' : '0-60'}" style="width: ${bannerScore}%; display: flex; align-items: center; justify-content: center; color: ${bannerScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 14px;">${bannerScore}%</div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Prüfung:</strong> Einwilligungspflichtige Cookies, Opt-in/Opt-out-Mechanismus, Granularität der Einwilligung
