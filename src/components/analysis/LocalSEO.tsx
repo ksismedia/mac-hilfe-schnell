@@ -405,11 +405,8 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
               </div>
               
               <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <span className="text-sm font-medium">GMB Optimierung</span>
-                  <span className={`font-bold ${getScoreColor(localSEOData.googleMyBusiness.score)}`}>
-                    {localSEOData.googleMyBusiness.score}/100
-                  </span>
                 </div>
                 <Progress value={localSEOData.googleMyBusiness.score} className="h-2" />
               </div>
@@ -549,9 +546,8 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
               </div>
               
               <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <span className="text-sm font-medium">Lokaler Content</span>
-                  <span className="font-medium">{localSEOData.onPageLocal.localContent}%</span>
                 </div>
                 <Progress value={localSEOData.onPageLocal.localContent} className="h-2" />
               </div>
