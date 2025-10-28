@@ -3033,7 +3033,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(corporateIdentityScore)}" style="width: ${corporateIdentityScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(corporateIdentityScore)}" style="width: ${corporateIdentityScore}%; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${corporateIdentityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${corporateIdentityScore}%</span>
+              </div>
             </div>
           </div>
         </div>
