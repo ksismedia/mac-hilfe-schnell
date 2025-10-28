@@ -1647,10 +1647,10 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Mobile-First Design-Strategie implementieren</li>
-            <li>Touch-Interfaces optimieren (min. 44px Buttons)</li>
-            <li>Progressive Web App (PWA) Features hinzufügen</li>
-            <li>Mobile Performance kontinuierlich überwachen</li>
+            <li>Mobile-First Design-Strategie implementieren (Website zuerst für Smartphones entwickeln, dann für Desktop anpassen)</li>
+            <li>Touch-Interfaces optimieren (min. 44px Buttons) (Schaltflächen groß genug für bequeme Fingerbedienung machen)</li>
+            <li>Progressive Web App (PWA) Features hinzufügen (App-ähnliches Erlebnis im Browser, auch offline nutzbar)</li>
+            <li>Mobile Performance kontinuierlich überwachen (Regelmäßig Ladezeiten auf Smartphones prüfen und verbessern)</li>
           </ul>
         </div>
       </div>
