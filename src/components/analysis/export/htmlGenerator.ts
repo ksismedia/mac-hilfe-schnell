@@ -2993,7 +2993,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.mobile.overallScore)}" style="width: ${realData.mobile.overallScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(realData.mobile.overallScore)}" style="width: ${realData.mobile.overallScore}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${realData.mobile.overallScore}%</span>
+              </div>
             </div>
           </div>
         </div>
