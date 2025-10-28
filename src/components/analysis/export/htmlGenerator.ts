@@ -4047,29 +4047,26 @@ export const generateCustomerHTML = ({
       <div id="customer-service-content" class="section-content" style="display: none;">
         <div class="metric-card">
           <h3>Kundenservice-Qualität</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${quoteResponseScore}%</div>
-            <div class="score-details">
-              <p><strong>Reaktionszeit:</strong> ${
-                quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde (Ausgezeichnet)' :
-                quoteResponseData.responseTime === '2-4-hours' ? '2-4 Stunden (Sehr gut)' :
-                quoteResponseData.responseTime === '4-8-hours' ? '4-8 Stunden (Gut)' :
-                quoteResponseData.responseTime === '1-day' ? '1 Tag (Durchschnittlich)' :
-                quoteResponseData.responseTime === '2-3-days' ? '2-3 Tage (Verbesserungsbedarf)' :
-                'Über 3 Tage (Kritisch)'
-              }</p>
-              <p><strong>Antwortqualität:</strong> ${
-                quoteResponseData.responseQuality === 'excellent' ? 'Ausgezeichnet' :
-                quoteResponseData.responseQuality === 'good' ? 'Gut' :
-                quoteResponseData.responseQuality === 'average' ? 'Durchschnittlich' :
-                'Verbesserungsbedarf'
-              }</p>
-              <p><strong>Verfügbare Kontaktkanäle:</strong> ${Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length} von 5</p>
-            </div>
-          </div>
+          
+          <p><strong>Reaktionszeit:</strong> ${
+            quoteResponseData.responseTime === '1-hour' ? 'Innerhalb 1 Stunde (Ausgezeichnet)' :
+            quoteResponseData.responseTime === '2-4-hours' ? '2-4 Stunden (Sehr gut)' :
+            quoteResponseData.responseTime === '4-8-hours' ? '4-8 Stunden (Gut)' :
+            quoteResponseData.responseTime === '1-day' ? '1 Tag (Durchschnittlich)' :
+            quoteResponseData.responseTime === '2-3-days' ? '2-3 Tage (Verbesserungsbedarf)' :
+            'Über 3 Tage (Kritisch)'
+          }</p>
+          <p><strong>Antwortqualität:</strong> ${
+            quoteResponseData.responseQuality === 'excellent' ? 'Ausgezeichnet' :
+            quoteResponseData.responseQuality === 'good' ? 'Gut' :
+            quoteResponseData.responseQuality === 'average' ? 'Durchschnittlich' :
+            'Verbesserungsbedarf'
+          }</p>
+          <p><strong>Verfügbare Kontaktkanäle:</strong> ${Object.values(quoteResponseData.contactMethods || {}).filter(Boolean).length} von 5</p>
+          
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(quoteResponseScore)}" style="width: ${quoteResponseScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(quoteResponseScore)}" style="width: ${quoteResponseScore}%; display: flex; align-items: center; justify-content: center; color: ${quoteResponseScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 16px;">${quoteResponseScore}%</div>
             </div>
           </div>
         </div>
