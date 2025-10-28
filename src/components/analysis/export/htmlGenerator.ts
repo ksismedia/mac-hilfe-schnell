@@ -1325,7 +1325,9 @@ export const generateCustomerHTML = ({
               <span>GMB Optimierung</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%;"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.googleMyBusiness.score}%</span>
+              </div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
             <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils</p>
@@ -1370,7 +1372,9 @@ export const generateCustomerHTML = ({
               <span>Citation Qualität</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%;"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.localCitations.score}%</span>
+              </div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
             <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg</p>
