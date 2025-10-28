@@ -2955,10 +2955,11 @@ export const generateCustomerHTML = ({
           <div class="progress-container">
             <div class="progress-label">
               <span>Backlink-Qualität</span>
-              <button class="percentage-btn" data-score="${getScoreRange(backlinksScore)}">${backlinksScore}%</button>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${backlinksScore}%; background-color: ${getScoreColor(backlinksScore)};"></div>
+              <div class="progress-fill" style="width: ${backlinksScore}%; background-color: ${getScoreColor(backlinksScore)}; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${backlinksScore}%</span>
+              </div>
             </div>
           </div>
           <div class="recommendations">
