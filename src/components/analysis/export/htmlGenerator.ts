@@ -1543,6 +1543,7 @@ export const generateCustomerHTML = ({
                   </div>
                 </div>
               </div>
+              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 0 0; line-height: 1.4;">Richtige Bildschirmeinstellung für alle Geräte</p>
             </div>
             <div>
               <p><strong>Flexible Layouts:</strong> ${mobileScore >= 60 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
@@ -1590,6 +1591,7 @@ export const generateCustomerHTML = ({
                   </div>
                 </div>
               </div>
+              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 0 0; line-height: 1.4;">Googles Messgrößen für Nutzererlebnis und Seitengeschwindigkeit</p>
             </div>
             <div>
               <p><strong>Mobile-First Index:</strong> ${mobileScore >= 60 ? 'Berücksichtigt' : 'Nicht optimiert'}</p>
@@ -1600,6 +1602,7 @@ export const generateCustomerHTML = ({
                   </div>
                 </div>
               </div>
+              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 0 0; line-height: 1.4;">Google bewertet primär die mobile Version Ihrer Website</p>
             </div>
           </div>
         </div>
