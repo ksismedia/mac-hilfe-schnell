@@ -2,6 +2,164 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
 
+// ============= Berechnungsfunktionen für echte Metriken =============
+
+/**
+ * Berechnet den Technischen SEO-Score basierend auf echten Website-Daten
+ * Berücksichtigt: Überschriftenstruktur, Alt-Tags, Title-Tag, Meta-Description
+ */
+const calculateTechnicalSEOScore = (realData: RealBusinessData): number => {
+  let score = 0;
+  let factors = 0;
+  
+  // H1-Struktur (25 Punkte) - sollte genau 1 H1 haben
+  if (realData.seo.headings.h1.length === 1) {
+    score += 25;
+  } else if (realData.seo.headings.h1.length > 0) {
+    score += 15;
+  }
+  factors += 25;
+  
+  // Überschriftenhierarchie (25 Punkte) - H2 und H3 vorhanden
+  const hasH2 = realData.seo.headings.h2.length > 0;
+  const hasH3 = realData.seo.headings.h3.length > 0;
+  if (hasH2 && hasH3) {
+    score += 25;
+  } else if (hasH2) {
+    score += 15;
+  }
+  factors += 25;
+  
+  // Alt-Tags (25 Punkte) - Prozentsatz der Bilder mit Alt-Tags
+  if (realData.seo.altTags.total > 0) {
+    const altTagRatio = realData.seo.altTags.withAlt / realData.seo.altTags.total;
+    score += Math.round(altTagRatio * 25);
+  } else {
+    score += 12; // Neutral wenn keine Bilder
+  }
+  factors += 25;
+  
+  // Title-Tag vorhanden (12.5 Punkte)
+  if (realData.seo.titleTag && realData.seo.titleTag.length > 0) {
+    score += 12.5;
+  }
+  factors += 12.5;
+  
+  // Meta-Description vorhanden (12.5 Punkte)
+  if (realData.seo.metaDescription && realData.seo.metaDescription.length > 0) {
+    score += 12.5;
+  }
+  factors += 12.5;
+  
+  return Math.round((score / factors) * 100);
+};
+
+/**
+ * Berechnet den User Experience Score basierend auf Core Web Vitals
+ * Berücksichtigt: CLS, FID, LCP
+ */
+const calculateUserExperienceScore = (realData: RealBusinessData): number => {
+  let score = 0;
+  let factors = 0;
+  
+  // CLS - Cumulative Layout Shift (gut: < 0.1, mittel: < 0.25, schlecht: >= 0.25)
+  if (realData.performance.cls <= 0.1) {
+    score += 35;
+  } else if (realData.performance.cls <= 0.25) {
+    score += 20;
+  } else {
+    score += 10;
+  }
+  factors += 35;
+  
+  // FID - First Input Delay (gut: < 100ms, mittel: < 300ms, schlecht: >= 300ms)
+  if (realData.performance.fid <= 100) {
+    score += 35;
+  } else if (realData.performance.fid <= 300) {
+    score += 20;
+  } else {
+    score += 10;
+  }
+  factors += 35;
+  
+  // LCP - Largest Contentful Paint (gut: < 2.5s, mittel: < 4s, schlecht: >= 4s)
+  if (realData.performance.lcp <= 2.5) {
+    score += 30;
+  } else if (realData.performance.lcp <= 4) {
+    score += 15;
+  } else {
+    score += 5;
+  }
+  factors += 30;
+  
+  return Math.round((score / factors) * 100);
+};
+
+/**
+ * Berechnet den Touch-Optimierungscore basierend auf Mobile-Metriken
+ */
+const calculateTouchOptimizationScore = (realData: RealBusinessData): number => {
+  let score = 0;
+  
+  // Basis: touchFriendly Flag (50%)
+  if (realData.mobile.touchFriendly) {
+    score += 50;
+  } else if (realData.mobile.responsive) {
+    score += 30; // Responsive ist besser als nichts
+  }
+  
+  // Mobile PageSpeed (50%)
+  score += Math.round((realData.mobile.pageSpeedMobile / 100) * 50);
+  
+  return Math.min(100, Math.round(score));
+};
+
+/**
+ * Berechnet den Website-Struktur-Score detaillierter
+ */
+const calculateWebsiteStructureScore = (realData: RealBusinessData): number => {
+  let score = 0;
+  let factors = 0;
+  
+  // Title-Tag (30%)
+  if (realData.seo.titleTag && realData.seo.titleTag.length > 0) {
+    if (realData.seo.titleTag.length >= 30 && realData.seo.titleTag.length <= 60) {
+      score += 30; // Optimal
+    } else if (realData.seo.titleTag.length > 0) {
+      score += 20; // Vorhanden aber nicht optimal
+    }
+  }
+  factors += 30;
+  
+  // Meta-Description (30%)
+  if (realData.seo.metaDescription && realData.seo.metaDescription.length > 0) {
+    if (realData.seo.metaDescription.length >= 120 && realData.seo.metaDescription.length <= 160) {
+      score += 30; // Optimal
+    } else if (realData.seo.metaDescription.length > 0) {
+      score += 20; // Vorhanden aber nicht optimal
+    }
+  }
+  factors += 30;
+  
+  // H1-Struktur (20%)
+  if (realData.seo.headings.h1.length === 1) {
+    score += 20; // Perfekt
+  } else if (realData.seo.headings.h1.length > 0) {
+    score += 10; // Vorhanden aber nicht ideal
+  }
+  factors += 20;
+  
+  // Überschriftenhierarchie (20%)
+  if (realData.seo.headings.h2.length > 0 && realData.seo.headings.h3.length > 0) {
+    score += 20;
+  } else if (realData.seo.headings.h2.length > 0) {
+    score += 10;
+  }
+  factors += 20;
+  
+  return Math.round((score / factors) * 100);
+};
+
 export const generateHeaderSection = (
   companyName: string,
   industryName: string,
@@ -66,7 +224,12 @@ export const generateSEOSection = (
   keywordsFoundCount: number,
   keywordsScore: number,
   hasMetaDescription: boolean
-) => `
+) => {
+    // Echte Berechnungen verwenden
+    const websiteStructureScore = calculateWebsiteStructureScore(realData);
+    const technicalSEOScore = calculateTechnicalSEOScore(realData);
+    
+    return `
         <!-- SEO-Analyse -->
         <div class="section">
             <div class="section-header">🔍 Suchmaschinenoptimierung (SEO)</div>
@@ -94,22 +257,24 @@ export const generateSEOSection = (
 
                     <div class="metric-item">
                         <div class="metric-title">Website-Struktur</div>
-                        <div class="metric-value ${hasMetaDescription ? 'excellent' : 'warning'}">
-                            ${hasMetaDescription ? 'Vollständig optimiert' : 'Verbesserungspotenzial'}
+                        <div class="metric-value ${websiteStructureScore >= 80 ? 'excellent' : websiteStructureScore >= 60 ? 'good' : 'warning'}">
+                            ${websiteStructureScore >= 80 ? 'Vollständig optimiert' : websiteStructureScore >= 60 ? 'Gut strukturiert' : 'Verbesserungspotenzial'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill ${!hasMetaDescription ? 'warning' : ''}" style="width: ${hasMetaDescription ? 100 : 60}%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">${hasMetaDescription ? '100' : '60'}%</div>
+                                <div class="progress-fill ${websiteStructureScore < 60 ? 'warning' : ''}" style="width: ${websiteStructureScore}%; display: flex; align-items: center; justify-content: center; color: ${websiteStructureScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${websiteStructureScore}%</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Technische SEO</div>
-                        <div class="metric-value good">Grundlagen vorhanden</div>
+                        <div class="metric-value ${technicalSEOScore >= 80 ? 'excellent' : technicalSEOScore >= 60 ? 'good' : 'warning'}">
+                            ${technicalSEOScore >= 80 ? 'Sehr gut umgesetzt' : technicalSEOScore >= 60 ? 'Grundlagen vorhanden' : 'Verbesserungsbedarf'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">75%</div>
+                                <div class="progress-fill ${technicalSEOScore < 60 ? 'warning' : ''}" style="width: ${technicalSEOScore}%; display: flex; align-items: center; justify-content: center; color: ${technicalSEOScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${technicalSEOScore}%</div>
                             </div>
                         </div>
                     </div>
@@ -129,9 +294,14 @@ export const generateSEOSection = (
                 ` : ''}
             </div>
         </div>
-`;
+    `;
+};
 
-export const generatePerformanceSection = (realData: RealBusinessData) => `
+export const generatePerformanceSection = (realData: RealBusinessData) => {
+    // Echte User Experience Berechnung
+    const userExperienceScore = calculateUserExperienceScore(realData);
+    
+    return `
         <!-- Performance-Analyse -->
         <div class="section">
             <div class="section-header">⚡ Website-Performance</div>
@@ -162,30 +332,31 @@ export const generatePerformanceSection = (realData: RealBusinessData) => `
                     </div>
 
                     <div class="metric-item">
-                        <div class="metric-title">Nutzerfreundlichkeit</div>
-                        <div class="metric-value good">Benutzerfreundlich</div>
+                        <div class="metric-title">Nutzerfreundlichkeit (Core Web Vitals)</div>
+                        <div class="metric-value ${userExperienceScore >= 80 ? 'excellent' : userExperienceScore >= 60 ? 'good' : 'warning'}">
+                            ${userExperienceScore >= 80 ? 'Hervorragend' : userExperienceScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">85%</div>
+                                <div class="progress-fill ${userExperienceScore < 60 ? 'warning' : ''}" style="width: ${userExperienceScore}%; display: flex; align-items: center; justify-content: center; color: ${userExperienceScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${userExperienceScore}%</div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="metric-item">
-                        <div class="metric-title">Verfügbarkeit</div>
-                        <div class="metric-value excellent">Online & erreichbar</div>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 14px;">100%</div>
-                            </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #6b7280;">
+                            <strong>Metriken:</strong> CLS: ${realData.performance.cls.toFixed(2)} | FID: ${realData.performance.fid}ms | LCP: ${realData.performance.lcp.toFixed(1)}s
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-`;
+    `;
+};
 
-export const generateMobileSection = (realData: RealBusinessData) => `
+export const generateMobileSection = (realData: RealBusinessData) => {
+    // Echte Touch-Optimierung und Mobile Performance Berechnungen
+    const touchOptimizationScore = calculateTouchOptimizationScore(realData);
+    const mobilePerformanceScore = realData.mobile.pageSpeedMobile;
+    
+    return `
         <!-- Mobile Optimierung -->
         <div class="section">
             <div class="section-header">📱 Mobile Optimierung</div>
@@ -213,29 +384,38 @@ export const generateMobileSection = (realData: RealBusinessData) => `
 
                     <div class="metric-item">
                         <div class="metric-title">Touch-Optimierung</div>
-                        <div class="metric-value ${realData.mobile.responsive ? 'good' : 'warning'}">
-                            ${realData.mobile.responsive ? 'Gut umgesetzt' : 'Verbesserung nötig'}
+                        <div class="metric-value ${touchOptimizationScore >= 80 ? 'excellent' : touchOptimizationScore >= 60 ? 'good' : 'warning'}">
+                            ${touchOptimizationScore >= 80 ? 'Hervorragend' : touchOptimizationScore >= 60 ? 'Gut umgesetzt' : 'Verbesserung nötig'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill ${!realData.mobile.responsive ? 'warning' : ''}" style="width: ${realData.mobile.responsive ? 80 : 40}%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">${realData.mobile.responsive ? '80' : '40'}%</div>
+                                <div class="progress-fill ${touchOptimizationScore < 60 ? 'warning' : ''}" style="width: ${touchOptimizationScore}%; display: flex; align-items: center; justify-content: center; color: ${touchOptimizationScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${touchOptimizationScore}%</div>
                             </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #6b7280;">
+                            <strong>Touch-Friendly:</strong> ${realData.mobile.touchFriendly ? 'Ja ✓' : 'Nein ✗'} | <strong>Mobile PageSpeed:</strong> ${realData.mobile.pageSpeedMobile}
                         </div>
                     </div>
 
                     <div class="metric-item">
                         <div class="metric-title">Mobile Performance</div>
-                        <div class="metric-value good">Zufriedenstellend</div>
+                        <div class="metric-value ${mobilePerformanceScore >= 80 ? 'excellent' : mobilePerformanceScore >= 60 ? 'good' : mobilePerformanceScore >= 40 ? 'warning' : 'danger'}">
+                            ${mobilePerformanceScore >= 80 ? 'Hervorragend' : mobilePerformanceScore >= 60 ? 'Gut' : mobilePerformanceScore >= 40 ? 'Zufriedenstellend' : 'Verbesserungsbedarf'}
+                        </div>
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 14px;">75%</div>
+                                <div class="progress-fill ${mobilePerformanceScore < 60 ? 'warning' : ''}" style="width: ${mobilePerformanceScore}%; display: flex; align-items: center; justify-content: center; color: ${mobilePerformanceScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 14px;">${mobilePerformanceScore}%</div>
                             </div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: #6b7280;">
+                            <strong>PageSpeed Mobile:</strong> ${realData.mobile.pageSpeedMobile}/100 | <strong>Desktop:</strong> ${realData.mobile.pageSpeedDesktop}/100
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-`;
+    `;
+};
 
 export const generateDataPrivacySection = (
   dataPrivacyScore: number = 75, 
