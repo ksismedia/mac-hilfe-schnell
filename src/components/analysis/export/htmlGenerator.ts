@@ -3866,11 +3866,11 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Prioritäre Handlungsempfehlungen:</h4>
             <ul>
-              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)</li>
-              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)</li>
-              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1)</li>
-              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)</li>
-              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern</li>
+              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>
+              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>
+              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1) <span style="font-size: 0.9em; color: #666;">(Logischer Aufbau für Screenreader und Orientierung)</span></li>
+              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>
+              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>
             </ul>
           </div>
         </div>
