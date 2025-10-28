@@ -3759,7 +3759,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)} !important;"></div>
+              <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)} !important; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${actualAccessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${actualAccessibilityScore}%</span>
+              </div>
             </div>
           </div>
         </div>
