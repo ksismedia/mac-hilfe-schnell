@@ -4230,7 +4230,7 @@ export const generateCustomerHTML = ({
           ${staffQualificationData && staffQualificationData.totalEmployees > 0 ? `
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(staffQualificationScore)}" style="width: ${staffQualificationScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(staffQualificationScore)}" style="width: ${staffQualificationScore}%; display: flex; align-items: center; justify-content: center; color: ${staffQualificationScore < 90 ? '#fff' : '#000'}; font-weight: bold; font-size: 16px;">${displayStaffScore}</div>
             </div>
           </div>` : `
           <div class="progress-container">
