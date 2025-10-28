@@ -4018,7 +4018,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%; background-color: ${getScoreColor(impressumScore)}; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${impressumScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${impressumScore}%</span>
+              </div>
             </div>
           </div>
         </div>
