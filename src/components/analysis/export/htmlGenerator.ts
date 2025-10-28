@@ -1401,7 +1401,9 @@ export const generateCustomerHTML = ({
               <span>Lokale Keyword Performance</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%;"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.localKeywords.score}%</span>
+              </div>
               <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
             <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg</p>
@@ -1428,7 +1430,9 @@ export const generateCustomerHTML = ({
               <span>Lokaler Content</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%;"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.onPageLocal.localContent}%</span>
+              </div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
             <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen</p>
@@ -1439,7 +1443,9 @@ export const generateCustomerHTML = ({
               <span>On-Page Local Gesamt</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%;"></div>
+              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.onPageLocal.score}%</span>
+              </div>
               <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
             </div>
             <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website</p>
