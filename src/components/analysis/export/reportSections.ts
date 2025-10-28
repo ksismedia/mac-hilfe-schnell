@@ -640,14 +640,18 @@ export const generateDataPrivacySection = (
                 <div class="recommendations">
                     <h4>Empfehlungen zur technischen Datenschutz-Verbesserung:</h4>
                     <ul>
-                        <li>SSL-Konfiguration und Sicherheitsheader optimieren</li>
+                        <li><strong>SSL-Konfiguration und Sicherheitsheader optimieren</strong><br>
+                        <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Durch moderne Verschlüsselungsmethoden und Security-Header schützen Sie die Daten Ihrer Besucher vor Angriffen und erfüllen gleichzeitig gesetzliche Anforderungen.</span></li>
                         ${(() => {
                           const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
-                          return hasCookieViolations ? '<li>Implementierung eines TTDSG-konformen Cookie-Banners</li>' : '';
+                          return hasCookieViolations ? '<li><strong>Implementierung eines TTDSG-konformen Cookie-Banners</strong><br><span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Ein rechtskonformes Cookie-Banner stellt sicher, dass Ihre Besucher vor dem Setzen von Cookies aktiv zustimmen können - das schützt Sie vor teuren Abmahnungen.</span></li>' : '';
                         })()}
-                        <li>Cookie-Policy erstellen und verlinken</li>
-                        <li>Technische Sicherheitsmaßnahmen verstärken</li>
-                        <li>Regelmäßige Sicherheitsupdates durchführen</li>
+                        <li><strong>Cookie-Policy erstellen und verlinken</strong><br>
+                        <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Eine transparente Cookie-Richtlinie informiert Ihre Kunden darüber, welche Daten erfasst werden und schafft Vertrauen in Ihre Website.</span></li>
+                        <li><strong>Technische Sicherheitsmaßnahmen verstärken</strong><br>
+                        <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Moderne Sicherheitstechnologien wie Content Security Policy und sichere Cookie-Einstellungen schützen Ihre Website vor Hackerangriffen und Datenlecks.</span></li>
+                        <li><strong>Regelmäßige Sicherheitsupdates durchführen</strong><br>
+                        <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Durch kontinuierliche Updates Ihrer Website-Software schließen Sie Sicherheitslücken frühzeitig und minimieren das Risiko von Cyberangriffen.</span></li>
                     </ul>
                 </div>
                 ` : ''}
