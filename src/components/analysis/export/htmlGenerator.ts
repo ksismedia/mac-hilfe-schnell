@@ -2946,7 +2946,9 @@ export const generateCustomerHTML = ({
             </div>
             <div class="score-details">
               <p><strong>Backlink-Status:</strong> ${backlinksScore >= 70 ? 'Gut entwickelt' : backlinksScore >= 50 ? 'Durchschnittlich' : 'Ausbaufähig'}</p>
+              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Anzahl und Wachstum der Links von anderen Websites zu Ihrer Seite</p>
               <p><strong>Domain Authority:</strong> ${backlinksScore >= 70 ? 'Stark' : backlinksScore >= 50 ? 'Mittel' : 'Schwach'}</p>
+              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Vertrauenswürdigkeit Ihrer Website in den Augen von Suchmaschinen</p>
               <p><strong>Qualitätsbewertung:</strong> ${backlinksScore >= 70 ? 'Hochwertig' : 'Verbesserungsbedarf'}</p>
             </div>
           </div>
