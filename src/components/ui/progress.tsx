@@ -37,7 +37,7 @@ const Progress = React.forwardRef<
         style={{ width: `${percentage}%` }}
       >
         {percentage > 0 && (
-          <span className={cn("text-xs font-medium", getTextColor(percentage))}>
+          <span className={cn("text-[11px] font-bold leading-none", getTextColor(percentage))}>
             {percentage}%
           </span>
         )}
