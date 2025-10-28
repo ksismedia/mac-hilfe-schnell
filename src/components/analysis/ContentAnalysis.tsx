@@ -9,7 +9,7 @@ import { useManualData } from '@/hooks/useManualData';
 
 interface ContentAnalysisProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
 }
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {

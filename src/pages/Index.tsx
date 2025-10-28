@@ -19,7 +19,7 @@ import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
   extensionData?: any;
 }
 
@@ -495,7 +495,7 @@ const Index = () => {
                 </Label>
                 <Select 
                   value={businessData.industry} 
-                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung') => 
+                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei') => 
                     setBusinessData({...businessData, industry: value})
                   }
                 >
@@ -511,6 +511,7 @@ const Index = () => {
                     <SelectItem value="planungsbuero">Planungsbüro Versorgungstechnik</SelectItem>
                     <SelectItem value="facility-management">Facility-Management & Gebäudereinigung</SelectItem>
                     <SelectItem value="holzverarbeitung">Holzverarbeitung (Schreiner/Tischler)</SelectItem>
+                    <SelectItem value="baeckerei">Bäckereifachbetrieb</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

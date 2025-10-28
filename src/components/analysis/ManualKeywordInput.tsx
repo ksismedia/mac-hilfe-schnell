@@ -123,6 +123,12 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
         'glasreinigung', 'fensterreinigung', 'wartung', 'instandhaltung', 'haustechnik',
         'sicherheitsdienst', 'pförtnerdienst', 'grünpflege', 'winterdienst',
         'energiemanagement', 'objektbetreuung', 'liegenschaftsservice', 'catering'
+      ],
+      'baeckerei': [
+        'bäckerei', 'backwaren', 'brot', 'brötchen', 'gebäck', 'konditorei',
+        'frühstück', 'cafe', 'kuchen', 'torte', 'backhaus', 'bäcker',
+        'handwerk', 'traditional', 'frisch', 'regional', 'vollkorn', 'bio',
+        'feinbäckerei', 'meisterbetrieb', 'bäckermeister', 'backstube', 'tradition'
       ]
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];

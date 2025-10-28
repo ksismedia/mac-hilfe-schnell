@@ -31,7 +31,7 @@ import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechSc
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
 }
 
 interface SimpleAnalysisDashboardProps {
@@ -46,7 +46,10 @@ const industryNames = {
   'elektriker': 'Elektroinstallation',
   'dachdecker': 'Dachdeckerei',
   'stukateur': 'Stuckateur & Trockenbau',
-  'planungsbuero': 'Planungsbüro'
+  'planungsbuero': 'Planungsbüro',
+  'facility-management': 'Facility-Management',
+  'holzverarbeitung': 'Holzverarbeitung',
+  'baeckerei': 'Bäckereifachbetrieb'
 };
 
 const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({ 
