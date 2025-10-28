@@ -408,7 +408,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                 <div className="mb-2">
                   <span className="text-sm font-medium">GMB Optimierung</span>
                 </div>
-                <Progress value={localSEOData.googleMyBusiness.score} className="h-2" />
+                <Progress value={localSEOData.googleMyBusiness.score} className="h-4" />
               </div>
             </CardContent>
           </Card>
@@ -549,7 +549,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                 <div className="mb-2">
                   <span className="text-sm font-medium">Lokaler Content</span>
                 </div>
-                <Progress value={localSEOData.onPageLocal.localContent} className="h-2" />
+                <Progress value={localSEOData.onPageLocal.localContent} className="h-4" />
               </div>
             </CardContent>
           </Card>
