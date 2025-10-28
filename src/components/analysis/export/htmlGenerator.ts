@@ -3356,7 +3356,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(googleReviewScore)}" style="width: ${googleReviewScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(googleReviewScore)}" style="width: ${googleReviewScore}%; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${googleReviewScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${googleReviewScore}%</span>
+              </div>
             </div>
           </div>
         </div>
