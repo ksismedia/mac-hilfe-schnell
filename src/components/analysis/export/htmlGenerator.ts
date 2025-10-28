@@ -2535,33 +2535,50 @@ export const generateCustomerHTML = ({
         <div id="performance-details" style="display: none;">
           ${getPerformanceAnalysis()}
         
-        <!-- Nutzerfreundlichkeit und Verfügbarkeit -->
+        <!-- Nutzerfreundlichkeit (basierend auf Core Web Vitals) -->
         <div class="metric-card good" style="margin-top: 20px;">
-          <h3>Nutzerfreundlichkeit & Verfügbarkeit</h3>
+          <h3>Nutzerfreundlichkeit</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div class="status-item">
-              <h4>Benutzerfreundlichkeit</h4>
-              <p><strong>${realData.performance.score >= 70 ? 'Sehr gut' : realData.performance.score >= 50 ? 'Gut' : 'Verbesserungsbedarf'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.min(100, realData.performance.score + 10))}" style="width: ${Math.min(100, realData.performance.score + 10)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${Math.min(100, realData.performance.score + 10) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${Math.min(100, realData.performance.score + 10)}%</span>
+              <h4>Benutzerfreundlichkeit (Core Web Vitals)</h4>
+              ${(() => {
+                const cls = realData.performance.cls || 0;
+                const fid = realData.performance.fid || 0;
+                const lcp = realData.performance.lcp || 0;
+                
+                // Score based on Core Web Vitals
+                let uxScore = 0;
+                // CLS scoring (good: <0.1, needs improvement: 0.1-0.25, poor: >0.25)
+                if (cls <= 0.1) uxScore += 33;
+                else if (cls <= 0.25) uxScore += 20;
+                else uxScore += 10;
+                
+                // FID scoring (good: <100ms, needs improvement: 100-300ms, poor: >300ms)
+                if (fid <= 100) uxScore += 33;
+                else if (fid <= 300) uxScore += 20;
+                else uxScore += 10;
+                
+                // LCP scoring (good: <2.5s, needs improvement: 2.5-4s, poor: >4s)
+                if (lcp <= 2.5) uxScore += 34;
+                else if (lcp <= 4) uxScore += 20;
+                else uxScore += 10;
+                
+                const uxText = uxScore >= 80 ? 'Sehr gut' : uxScore >= 60 ? 'Gut' : 'Verbesserungsbedarf';
+                
+                return `
+                  <p><strong>${uxText}</strong></p>
+                  <div class="progress-container">
+                    <div class="progress-bar">
+                      <div class="progress-fill" data-score="${getScoreRange(uxScore)}" style="width: ${uxScore}%; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: ${uxScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${uxScore}%</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <p style="font-size: 12px; color: #6b7280;">Navigation, Layout, Responsivität</p>
-            </div>
-            <div class="status-item">
-              <h4>Verfügbarkeit</h4>
-              <p><strong>${realData.performance.score >= 80 ? '99.9%' : realData.performance.score >= 60 ? '99.5%' : '98.8%'}</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88)}" style="width: ${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${(realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${realData.performance.score >= 80 ? 99 : realData.performance.score >= 60 ? 95 : 88}%</span>
-                  </div>
-                </div>
-              </div>
-              <p style="font-size: 12px; color: #6b7280;">Uptime, Serverantwortzeit</p>
+                  <p style="font-size: 12px; color: #6b7280;">
+                    CLS: ${cls.toFixed(3)} | FID: ${fid}ms | LCP: ${lcp.toFixed(1)}s
+                  </p>
+                `;
+              })()}
             </div>
           </div>
         </div>
