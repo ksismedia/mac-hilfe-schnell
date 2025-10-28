@@ -3399,7 +3399,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${overallScore <= 0 ? 'none' : getScoreRange(overallScore)}" style="width: ${overallScore <= 0 ? '0' : overallScore + '%'}; background-color: ${overallScore <= 0 ? '#ccc' : getScoreColor(overallScore)} !important;"></div>
+              <div class="progress-fill" data-score="${overallScore <= 0 ? 'none' : getScoreRange(overallScore)}" style="width: ${overallScore <= 0 ? '0' : overallScore + '%'}; background-color: ${overallScore <= 0 ? '#ccc' : getScoreColor(overallScore)} !important; display: flex; align-items: center; justify-content: center;">
+                ${overallScore > 0 ? `<span style="color: ${overallScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${overallScore}%</span>` : ''}
+              </div>
             </div>
           </div>
         </div>
@@ -3433,7 +3435,9 @@ export const generateCustomerHTML = ({
                     <span>${platformScore}%</span>
                   </div>
                   <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${platformScore}%; background-color: ${getScoreColor(platformScore)} !important;"></div>
+                    <div class="progress-fill" style="width: ${platformScore}%; background-color: ${getScoreColor(platformScore)} !important; display: flex; align-items: center; justify-content: center;">
+                      <span style="color: ${platformScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${platformScore}%</span>
+                    </div>
                   </div>
                 </div>
               </div>
