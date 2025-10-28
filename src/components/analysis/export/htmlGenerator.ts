@@ -593,12 +593,7 @@ export const generateCustomerHTML = ({
         </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${
-                localPricingScore < 40 ? '#CD0000' :
-                localPricingScore < 60 ? '#dc2626' :
-                localPricingScore < 70 ? '#16a34a' :
-                '#ffd700'
-              }; display: flex; align-items: center; justify-content: center;">
+              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${getScoreColor(localPricingScore)}; display: flex; align-items: center; justify-content: center;">
                 <span style="color: ${localPricingScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${localPricingScore}%</span>
               </div>
             </div>
@@ -3987,7 +3982,9 @@ export const generateCustomerHTML = ({
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(pricingScore)}" style="width: ${pricingScore}%"></div>
+              <div class="progress-fill" data-score="${getScoreRange(pricingScore)}" style="width: ${pricingScore}%; background-color: ${getScoreColor(pricingScore)}; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${pricingScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${pricingScore}%</span>
+              </div>
             </div>
           </div>
         </div>
