@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompanyServices, CompetitorServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { FileText, Download, Printer, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 import { generateSelectiveCustomerHTML, generateSelectiveCustomerHTMLForBrowser } from './export/selectiveHtmlGenerator';
 import { calculateDataPrivacyScore } from './export/scoreCalculations';
@@ -31,6 +31,7 @@ interface SelectiveHTMLExportProps {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
@@ -92,6 +93,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
   manualAccessibilityData,
   manualBacklinkData,
   manualDataPrivacyData,
+  manualLocalSEOData,
   manualIndustryReviewData,
   manualOnlinePresenceData,
   manualKeywordData,
@@ -209,6 +211,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
+      manualLocalSEOData,
       manualIndustryReviewData,
       manualOnlinePresenceData,
       privacyData,
@@ -257,6 +260,7 @@ const SelectiveHTMLExport: React.FC<SelectiveHTMLExportProps> = ({
       manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
+      manualLocalSEOData,
       manualIndustryReviewData,
       manualOnlinePresenceData,
       manualKeywordData,

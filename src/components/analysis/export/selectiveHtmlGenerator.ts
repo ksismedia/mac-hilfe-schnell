@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompetitorServices, CompanyServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualCorporateIdentityData, CompetitorServices, CompanyServices, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { getLogoHTML } from './logoData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
@@ -69,6 +69,7 @@ interface SelectiveReportData {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   dataPrivacyScore?: number;

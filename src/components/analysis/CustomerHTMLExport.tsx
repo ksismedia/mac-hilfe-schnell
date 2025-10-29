@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualIndustryReviewData, ManualOnlinePresenceData, useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -31,6 +31,7 @@ interface CustomerHTMLExportProps {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
@@ -59,6 +60,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualAccessibilityData,
   manualBacklinkData,
   manualDataPrivacyData,
+  manualLocalSEOData,
   manualIndustryReviewData,
   manualOnlinePresenceData,
   manualKeywordData,
@@ -73,6 +75,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     manualSocialData: currentManualSocialData,
     manualCorporateIdentityData: currentManualCorporateIdentityData,
     manualWorkplaceData: currentManualWorkplaceData,
+    manualLocalSEOData: currentManualLocalSEOData,
     manualIndustryReviewData: currentManualIndustryReviewData,
     manualOnlinePresenceData: currentManualOnlinePresenceData
   } = useManualData();
@@ -198,9 +201,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
-      manualLocalSEOData: undefined,
+      manualLocalSEOData: currentManualLocalSEOData || manualLocalSEOData,
       manualIndustryReviewData: currentManualIndustryReviewData || manualIndustryReviewData,
-      manualOnlinePresenceData: currentManualOnlinePresenceData,
+      manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore
@@ -267,9 +270,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualAccessibilityData,
       manualBacklinkData,
       manualDataPrivacyData,
-      manualLocalSEOData: undefined,
+      manualLocalSEOData: currentManualLocalSEOData || manualLocalSEOData,
       manualIndustryReviewData: currentManualIndustryReviewData || manualIndustryReviewData,
-      manualOnlinePresenceData: currentManualOnlinePresenceData,
+      manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore

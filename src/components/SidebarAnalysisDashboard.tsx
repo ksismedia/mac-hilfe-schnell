@@ -534,6 +534,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualAccessibilityData={manualAccessibilityData}
                   manualBacklinkData={manualBacklinkData}
                   manualDataPrivacyData={manualDataPrivacyData}
+                  manualLocalSEOData={manualLocalSEOData}
+                  manualIndustryReviewData={manualIndustryReviewData}
+                  manualOnlinePresenceData={manualOnlinePresenceData}
                   calculatedOwnCompanyScore={currentOwnCompanyScore}
                 />
                 <SelectiveHTMLExport
@@ -556,6 +559,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualAccessibilityData={manualAccessibilityData}
                   manualBacklinkData={manualBacklinkData}
                   manualDataPrivacyData={manualDataPrivacyData}
+                  manualLocalSEOData={manualLocalSEOData}
+                  manualIndustryReviewData={manualIndustryReviewData}
+                  manualOnlinePresenceData={manualOnlinePresenceData}
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
                 />
