@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData } from '@/hooks/useManualData';
+import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateIndustryReviewScore, calculateOnlinePresenceScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 interface OverallRatingProps {
@@ -23,9 +23,37 @@ interface OverallRatingProps {
   hourlyRateData?: HourlyRateData | null;
   manualWorkplaceData?: any;
   competitorScore?: number | null;
+  manualContentData?: ManualContentData | null;
+  manualAccessibilityData?: ManualAccessibilityData | null;
+  manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
+  manualIndustryReviewData?: ManualIndustryReviewData | null;
+  manualOnlinePresenceData?: ManualOnlinePresenceData | null;
+  privacyData?: any;
+  accessibilityData?: any;
 }
 
-const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, manualSocialData, keywordsScore, staffQualificationData, quoteResponseData, hourlyRateData, manualWorkplaceData, competitorScore }) => {
+const OverallRating: React.FC<OverallRatingProps> = ({ 
+  businessData, 
+  realData, 
+  manualSocialData, 
+  keywordsScore, 
+  staffQualificationData, 
+  quoteResponseData, 
+  hourlyRateData, 
+  manualWorkplaceData, 
+  competitorScore,
+  manualContentData,
+  manualAccessibilityData,
+  manualBacklinkData,
+  manualDataPrivacyData,
+  manualLocalSEOData,
+  manualIndustryReviewData,
+  manualOnlinePresenceData,
+  privacyData,
+  accessibilityData
+}) => {
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
   const keywordsFoundCount = keywords.filter(k => k.found).length;
@@ -36,7 +64,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   
   // Local SEO Score - STRENGE BEWERTUNG MIT HÖCHSTER GEWICHTUNG
-  const localSEOScore = calculateLocalSEOScore(businessData, realData);
+  const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData);
 
   // Workplace Score - korrigierte Berechnung verwenden
   const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
@@ -45,6 +73,16 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   // Staff Qualification Score - nur bewerten wenn Daten vorhanden
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
+  
+  // Content, Accessibility, Backlinks, Privacy Scores
+  const contentScore = manualContentData ? calculateContentQualityScore(realData, null, businessData, manualContentData) : null;
+  const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(realData, manualAccessibilityData || accessibilityData) : null;
+  const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData) : null;
+  const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
+  
+  // Industry Reviews and Online Presence
+  const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
+  const onlinePresenceScore = manualOnlinePresenceData ? calculateOnlinePresenceScore(manualOnlinePresenceData) : null;
 
   // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG (nur wenn Daten vorhanden)
   const baseMetrics = [
@@ -76,6 +114,36 @@ const OverallRating: React.FC<OverallRatingProps> = ({ businessData, realData, m
   if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0)) {
     const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
     metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 4, maxScore: 100 });
+  }
+  
+  // Content Quality - wenn manuell eingegeben
+  if (contentScore !== null) {
+    metrics.push({ name: 'Content-Qualität', score: contentScore, weight: 5, maxScore: 100 });
+  }
+  
+  // Accessibility - wenn manuell eingegeben oder automatisch analysiert
+  if (accessibilityScore !== null) {
+    metrics.push({ name: 'Barrierefreiheit', score: accessibilityScore, weight: 4, maxScore: 100 });
+  }
+  
+  // Backlinks - wenn manuell eingegeben
+  if (backlinksScore !== null) {
+    metrics.push({ name: 'Backlinks', score: backlinksScore, weight: 5, maxScore: 100 });
+  }
+  
+  // Data Privacy - wenn manuell eingegeben oder automatisch analysiert
+  if (dataPrivacyScore !== null) {
+    metrics.push({ name: 'Datenschutz', score: dataPrivacyScore, weight: 6, maxScore: 100 });
+  }
+  
+  // Industry Reviews - wenn manuell eingegeben
+  if (industryReviewScore !== null && industryReviewScore > 0) {
+    metrics.push({ name: 'Branchenplattformen', score: industryReviewScore, weight: 4, maxScore: 100 });
+  }
+  
+  // Online Presence - wenn manuell eingegeben
+  if (onlinePresenceScore !== null && onlinePresenceScore > 0) {
+    metrics.push({ name: 'Online-Präsenz', score: onlinePresenceScore, weight: 3, maxScore: 100 });
   }
 
   // Gewichteter Gesamtscore

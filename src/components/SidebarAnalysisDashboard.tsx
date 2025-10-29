@@ -623,6 +623,15 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             hourlyRateData={hourlyRateData}
             manualWorkplaceData={manualWorkplaceData}
             competitorScore={currentOwnCompanyScore}
+            manualContentData={manualContentData}
+            manualAccessibilityData={manualAccessibilityData}
+            manualBacklinkData={manualBacklinkData}
+            manualDataPrivacyData={manualDataPrivacyData}
+            manualLocalSEOData={manualLocalSEOData}
+            manualIndustryReviewData={manualIndustryReviewData}
+            manualOnlinePresenceData={manualOnlinePresenceData}
+            privacyData={privacyData}
+            accessibilityData={accessibilityData}
           />
         </div>
 

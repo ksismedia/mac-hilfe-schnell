@@ -73,7 +73,7 @@ const calculateSocialMediaScore = (
 };
 
 // Calculate industry review platforms score
-const calculateIndustryReviewScore = (
+export const calculateIndustryReviewScore = (
   manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null
 ): number => {
   if (!manualIndustryReviewData || !manualIndustryReviewData.overallScore) {
@@ -83,7 +83,7 @@ const calculateIndustryReviewScore = (
 };
 
 // Calculate online presence score
-const calculateOnlinePresenceScore = (
+export const calculateOnlinePresenceScore = (
   manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
 ): number => {
   if (!manualOnlinePresenceData || !manualOnlinePresenceData.overallScore) {
