@@ -3668,7 +3668,6 @@ export const generateCustomerHTML = ({
           <h4 style="color: #1e293b; margin-bottom: 15px; font-size: 1.2em;">📋 Alle erfassten Inhalte im Detail</h4>
           <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
             ${manualOnlinePresenceData.items.map((item, index) => {
-              const typeIcon = item.type === 'image' ? '📷' : item.type === 'video' ? '🎥' : '📱';
               const relevanceColor = item.relevance === 'high' ? '#10b981' : item.relevance === 'medium' ? '#fbbf24' : '#9ca3af';
               const relevanceText = item.relevance === 'high' ? 'Hoch (eigener Content)' : item.relevance === 'medium' ? 'Mittel (erwähnt)' : 'Niedrig (indirekt)';
               const typeName = item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short/Reel';
@@ -3676,7 +3675,6 @@ export const generateCustomerHTML = ({
               return `
               <div class="metric-card" style="padding: 15px; background: white; border-left: 4px solid ${relevanceColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <div style="display: flex; align-items: start; gap: 12px;">
-                  <div style="font-size: 2em; line-height: 1;">${typeIcon}</div>
                   <div style="flex: 1; min-width: 0;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                       <span style="font-weight: 600; color: #1e293b; font-size: 0.9em;">Content #${index + 1}</span>
@@ -4104,16 +4102,8 @@ export const generateCustomerHTML = ({
                   whatsapp: 'WhatsApp',
                   messenger: 'Messenger'
                 };
-                const methodIcons = {
-                  phone: '📞',
-                  email: '📧',
-                  contactForm: '📝',
-                  whatsapp: '💬',
-                  messenger: '💭'
-                };
                 return `
                   <div style="text-align: center; padding: 10px; background: ${available ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)'}; border-radius: 6px; border: 2px ${available ? 'solid rgba(34, 197, 94, 0.3)' : 'dashed rgba(107, 114, 128, 0.3)'};">
-                    <div style="font-size: 1.5em; margin-bottom: 5px;">${methodIcons[method] || '📋'}</div>
                     <div style="font-size: 0.9em; font-weight: bold; color: ${available ? '#22c55e' : '#6b7280'};">${methodLabels[method] || method}</div>
                     <div style="font-size: 0.7em; color: ${available ? '#22c55e' : '#6b7280'};">${available ? 'Verfügbar' : 'Nicht verfügbar'}</div>
                   </div>
