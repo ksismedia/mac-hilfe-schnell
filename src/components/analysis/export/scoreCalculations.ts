@@ -338,16 +338,32 @@ export const calculateStaffServiceScore = (
 export const calculateLocalSEOScore = (businessData: any, realData: any, manualData?: any): number => {
   console.log('📍 calculateLocalSEOScore called');
   
-  // Wenn manuelle Daten vorhanden sind, verwende diese
-  if (manualData?.overallScore !== undefined) {
-    console.log('📍 Using manual Local SEO score:', manualData.overallScore);
-    return manualData.overallScore;
+  const autoScore = realData?.seo?.score || 0;
+  const manualScore = manualData?.overallScore;
+  
+  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
+  if (autoScore > 0 && manualScore !== undefined) {
+    // Gewichteter Durchschnitt: 60% automatisch, 40% manuell
+    const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
+    console.log('📍 Combined Local SEO score (auto + manual):', { autoScore, manualScore, combined });
+    return combined;
   }
   
-  // Verwende echte SEO-Daten falls vorhanden
-  const result = realData?.seo?.score || 75;
-  console.log('📍 Local SEO score from real data:', result);
-  return isNaN(result) ? 75 : result;
+  // Wenn nur manuelle Daten vorhanden
+  if (manualScore !== undefined) {
+    console.log('📍 Using manual Local SEO score:', manualScore);
+    return manualScore;
+  }
+  
+  // Wenn nur automatische Daten vorhanden
+  if (autoScore > 0) {
+    console.log('📍 Using auto Local SEO score:', autoScore);
+    return autoScore;
+  }
+  
+  // Fallback
+  console.log('📍 No data available, using default 75');
+  return 75;
 };
 
 export const calculateStaffQualificationScore = (data: any): number => {
@@ -531,7 +547,10 @@ export const calculateContentQualityScore = (realData: any, manualKeywordData: a
     manualContentData: manualContentData ? 'present' : 'null'
   });
   
-  // Verwende manuelle Content-Daten falls vorhanden
+  const autoScore = realData?.content?.qualityScore || 0;
+  
+  // Berechne manuellen Score falls Daten vorhanden
+  let manualScore = 0;
   if (manualContentData) {
     const scores = [
       manualContentData.textQuality,
@@ -540,23 +559,35 @@ export const calculateContentQualityScore = (realData: any, manualKeywordData: a
       manualContentData.contentFreshness
     ];
     
-    console.log('📝 Manual content scores:', scores);
-    
-    // Check for NaN values
     const hasNaN = scores.some(score => isNaN(score));
-    if (hasNaN) {
-      console.error('🚨 NaN detected in manual content scores:', scores);
-      return 75; // Fallback
+    if (!hasNaN) {
+      manualScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
     }
-    
-    const result = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
-    console.log('📝 Calculated content quality score:', result);
-    return result;
   }
   
-  const fallbackScore = realData?.content?.qualityScore || 75;
-  console.log('📝 Using fallback content score:', fallbackScore);
-  return fallbackScore;
+  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
+  if (autoScore > 0 && manualScore > 0) {
+    // Gewichteter Durchschnitt: 50% automatisch, 50% manuell (Content-Qualität gleichwertig)
+    const combined = Math.round(autoScore * 0.5 + manualScore * 0.5);
+    console.log('📝 Combined content score (auto + manual):', { autoScore, manualScore, combined });
+    return combined;
+  }
+  
+  // Wenn nur manuelle Daten vorhanden
+  if (manualScore > 0) {
+    console.log('📝 Using manual content score:', manualScore);
+    return manualScore;
+  }
+  
+  // Wenn nur automatische Daten vorhanden
+  if (autoScore > 0) {
+    console.log('📝 Using auto content score:', autoScore);
+    return autoScore;
+  }
+  
+  // Fallback
+  console.log('📝 No data available, using default 75');
+  return 75;
 };
 
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
@@ -565,16 +596,32 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
     manualBacklinkData: manualBacklinkData ? 'present' : 'null'
   });
   
-  // Verwende manuelle Backlink-Daten falls vorhanden
-  if (manualBacklinkData) {
-    const result = manualBacklinkData.overallScore || 75;
-    console.log('🔗 Using manual backlink score:', result);
-    return isNaN(result) ? 75 : result;
+  const autoScore = realData?.backlinks?.score || 0;
+  const manualScore = manualBacklinkData?.overallScore;
+  
+  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
+  if (autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
+    // Gewichteter Durchschnitt: 60% automatisch, 40% manuell
+    const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
+    console.log('🔗 Combined backlink score (auto + manual):', { autoScore, manualScore, combined });
+    return combined;
   }
   
-  const result = realData?.backlinks?.score || 75;
-  console.log('🔗 Using fallback backlink score:', result);
-  return isNaN(result) ? 75 : result;
+  // Wenn nur manuelle Daten vorhanden
+  if (manualScore !== undefined && !isNaN(manualScore)) {
+    console.log('🔗 Using manual backlink score:', manualScore);
+    return manualScore;
+  }
+  
+  // Wenn nur automatische Daten vorhanden
+  if (autoScore > 0) {
+    console.log('🔗 Using auto backlink score:', autoScore);
+    return autoScore;
+  }
+  
+  // Fallback
+  console.log('🔗 No data available, using default 75');
+  return 75;
 };
 
 // Helper function stub for Corporate Identity (actual implementation is above)
@@ -585,10 +632,17 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     manualAccessibilityData: manualAccessibilityData ? manualAccessibilityData : 'null'
   });
   
+  // Berechne automatischen Score
+  let autoScore = 40; // Default
+  if (realData?.violations && realData.violations.length > 0) {
+    autoScore = Math.min(59, 40); // Grundwert bei automatisch erkannten Problemen
+  } else if (realData?.violations && realData.violations.length === 0) {
+    autoScore = 85; // Keine automatisch erkannten Probleme
+  }
+  
+  // Berechne manuellen Score falls Daten vorhanden
+  let manualScore = 0;
   if (manualAccessibilityData) {
-    console.log('🎯 Using manual accessibility data:', manualAccessibilityData);
-    
-    // Check if all features are enabled (all checkboxes checked)
     const allFeaturesEnabled = 
       manualAccessibilityData.keyboardNavigation &&
       manualAccessibilityData.screenReaderCompatible &&
@@ -597,43 +651,44 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       manualAccessibilityData.focusVisibility &&
       manualAccessibilityData.textScaling;
     
-    // If all features are enabled, return 100%
     if (allFeaturesEnabled) {
-      console.log('🎯 All accessibility features enabled - returning 100%');
-      return 100;
-    }
-    
-    // Count missing critical features (critical violations)
-    const missingFeatures = [
-      !manualAccessibilityData.keyboardNavigation,
-      !manualAccessibilityData.screenReaderCompatible,
-      !manualAccessibilityData.colorContrast,
-      !manualAccessibilityData.altTextsPresent,
-      !manualAccessibilityData.focusVisibility,
-      !manualAccessibilityData.textScaling
-    ].filter(Boolean).length;
-    
-    // If there are missing features (critical issues), cap score at 50% for one, lower for more
-    if (missingFeatures > 0) {
-      const maxScore = Math.max(20, 50 - (missingFeatures - 1) * 8);
-      const enabledFeatures = 6 - missingFeatures;
-      const proportionalScore = (enabledFeatures / 6) * maxScore;
+      manualScore = 100;
+    } else {
+      const missingFeatures = [
+        !manualAccessibilityData.keyboardNavigation,
+        !manualAccessibilityData.screenReaderCompatible,
+        !manualAccessibilityData.colorContrast,
+        !manualAccessibilityData.altTextsPresent,
+        !manualAccessibilityData.focusVisibility,
+        !manualAccessibilityData.textScaling
+      ].filter(Boolean).length;
       
-      console.log('🎯 Critical issues present, capped score:', Math.round(proportionalScore));
-      return Math.round(proportionalScore);
+      if (missingFeatures > 0) {
+        const maxScore = Math.max(20, 50 - (missingFeatures - 1) * 8);
+        const enabledFeatures = 6 - missingFeatures;
+        manualScore = Math.round((enabledFeatures / 6) * maxScore);
+      }
     }
-    
-    return 100;
   }
   
-  // Für automatische Daten: Bei vorhandenen Violations sofort 59% oder weniger
-  if (realData?.violations && realData.violations.length > 0) {
-    console.log('🎯 Using real data with violations, returning 40');
-    return Math.min(59, 40); // Grundwert bei automatisch erkannten Problemen
+  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
+  if (manualScore > 0 && autoScore > 0) {
+    // Nutze den höheren Wert, da manuelle Prüfung oft genauer ist
+    // Aber kombiniere mit 70% manuell, 30% auto für Ausgleich
+    const combined = Math.round(manualScore * 0.7 + autoScore * 0.3);
+    console.log('🎯 Combined accessibility score (auto + manual):', { autoScore, manualScore, combined });
+    return combined;
   }
   
-  console.log('🎯 No data available, returning default 75');
-  return 40; // FESTER WERT - Default auf 40%
+  // Wenn nur manuelle Daten vorhanden
+  if (manualScore > 0) {
+    console.log('🎯 Using manual accessibility score:', manualScore);
+    return manualScore;
+  }
+  
+  // Wenn nur automatische Daten vorhanden
+  console.log('🎯 Using auto accessibility score:', autoScore);
+  return autoScore;
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
