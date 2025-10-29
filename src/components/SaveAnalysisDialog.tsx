@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 
 interface SaveAnalysisDialogProps {
@@ -35,6 +35,7 @@ interface SaveAnalysisDialogProps {
   manualContentData?: ManualContentData | null;
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
+  manualDataPrivacyData?: ManualDataPrivacyData | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -60,6 +61,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualContentData,
   manualAccessibilityData,
   manualBacklinkData,
+  manualDataPrivacyData,
   privacyData,
   accessibilityData
 }) => {
@@ -106,6 +108,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualContentData: manualContentData || undefined,
         manualAccessibilityData: manualAccessibilityData || undefined,
         manualBacklinkData: manualBacklinkData || undefined,
+        manualDataPrivacyData: manualDataPrivacyData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined
       };

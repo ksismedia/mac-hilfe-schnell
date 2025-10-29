@@ -25,7 +25,14 @@ export const loadSavedAnalysisData = (
   updateHourlyRateData?: (data: any) => void,
   updateQuoteResponseData?: (data: any) => void,
   updateRemovedMissingServices?: (services: string[]) => void,
-  addDeletedCompetitor?: (competitorName: string) => void
+  addDeletedCompetitor?: (competitorName: string) => void,
+  updateManualContentData?: (data: any) => void,
+  updateManualAccessibilityData?: (data: any) => void,
+  updateManualBacklinkData?: (data: any) => void,
+  updateManualDataPrivacyData?: (data: any) => void,
+  updateManualLocalSEOData?: (data: any) => void,
+  updateManualIndustryReviewData?: (data: any) => void,
+  updateManualOnlinePresenceData?: (data: any) => void
 ) => {
   console.log('Loading saved analysis data:', savedAnalysis.id);
   
@@ -101,6 +108,42 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.quoteResponseData && updateQuoteResponseData) {
     console.log('Loading quote response data');
     updateQuoteResponseData(savedAnalysis.manualData.quoteResponseData);
+  }
+  
+  // Load additional manual data
+  if (savedAnalysis.manualData?.manualContentData && updateManualContentData) {
+    console.log('Loading manual content data');
+    updateManualContentData(savedAnalysis.manualData.manualContentData);
+  }
+  
+  if (savedAnalysis.manualData?.manualAccessibilityData && updateManualAccessibilityData) {
+    console.log('Loading manual accessibility data');
+    updateManualAccessibilityData(savedAnalysis.manualData.manualAccessibilityData);
+  }
+  
+  if (savedAnalysis.manualData?.manualBacklinkData && updateManualBacklinkData) {
+    console.log('Loading manual backlink data');
+    updateManualBacklinkData(savedAnalysis.manualData.manualBacklinkData);
+  }
+  
+  if (savedAnalysis.manualData?.manualDataPrivacyData && updateManualDataPrivacyData) {
+    console.log('Loading manual data privacy data');
+    updateManualDataPrivacyData(savedAnalysis.manualData.manualDataPrivacyData);
+  }
+  
+  if (savedAnalysis.manualData?.manualLocalSEOData && updateManualLocalSEOData) {
+    console.log('Loading manual local SEO data');
+    updateManualLocalSEOData(savedAnalysis.manualData.manualLocalSEOData);
+  }
+  
+  if (savedAnalysis.manualData?.manualIndustryReviewData && updateManualIndustryReviewData) {
+    console.log('Loading manual industry review data');
+    updateManualIndustryReviewData(savedAnalysis.manualData.manualIndustryReviewData);
+  }
+  
+  if (savedAnalysis.manualData?.manualOnlinePresenceData && updateManualOnlinePresenceData) {
+    console.log('Loading manual online presence data');
+    updateManualOnlinePresenceData(savedAnalysis.manualData.manualOnlinePresenceData);
   }
   
   console.log('Saved analysis data loaded successfully');

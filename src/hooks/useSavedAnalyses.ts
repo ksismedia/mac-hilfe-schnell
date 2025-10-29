@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData } from './useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from './useManualData';
 
 export interface SavedAnalysis {
   id: string;
@@ -31,6 +31,10 @@ export interface SavedAnalysis {
     manualContentData?: ManualContentData;
     manualAccessibilityData?: ManualAccessibilityData;
     manualBacklinkData?: ManualBacklinkData;
+    manualDataPrivacyData?: ManualDataPrivacyData;
+    manualLocalSEOData?: ManualLocalSEOData;
+    manualIndustryReviewData?: ManualIndustryReviewData;
+    manualOnlinePresenceData?: ManualOnlinePresenceData;
     privacyData?: any;
     accessibilityData?: any;
   };

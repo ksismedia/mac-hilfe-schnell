@@ -115,6 +115,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateStaffQualificationData,
     updateHourlyRateData,
     updateQuoteResponseData,
+    updateManualContentData,
+    updateManualAccessibilityData,
+    updateManualBacklinkData,
     updateManualDataPrivacyData,
     updateManualLocalSEOData,
     updateManualIndustryReviewData,
@@ -172,7 +175,14 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateHourlyRateData,
               updateQuoteResponseData,
               updateRemovedMissingServices,
-              addDeletedCompetitor
+              addDeletedCompetitor,
+              updateManualContentData,
+              updateManualAccessibilityData,
+              updateManualBacklinkData,
+              updateManualDataPrivacyData,
+              updateManualLocalSEOData,
+              updateManualIndustryReviewData,
+              updateManualOnlinePresenceData
             );
             
             console.log('Saved analysis loaded successfully');
@@ -491,6 +501,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   companyServices={companyServices}
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
+                  manualDataPrivacyData={manualDataPrivacyData}
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
                 />
