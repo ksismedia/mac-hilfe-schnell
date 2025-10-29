@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/components/ui/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 
 interface SaveAnalysisDialogProps {
@@ -36,6 +36,9 @@ interface SaveAnalysisDialogProps {
   manualAccessibilityData?: ManualAccessibilityData | null;
   manualBacklinkData?: ManualBacklinkData | null;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
+  manualLocalSEOData?: ManualLocalSEOData | null;
+  manualIndustryReviewData?: ManualIndustryReviewData | null;
+  manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -62,6 +65,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualAccessibilityData,
   manualBacklinkData,
   manualDataPrivacyData,
+  manualLocalSEOData,
+  manualIndustryReviewData,
+  manualOnlinePresenceData,
   privacyData,
   accessibilityData
 }) => {
@@ -109,6 +115,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualAccessibilityData: manualAccessibilityData || undefined,
         manualBacklinkData: manualBacklinkData || undefined,
         manualDataPrivacyData: manualDataPrivacyData || undefined,
+        manualLocalSEOData: manualLocalSEOData || undefined,
+        manualIndustryReviewData: manualIndustryReviewData || undefined,
+        manualOnlinePresenceData: manualOnlinePresenceData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined
       };
