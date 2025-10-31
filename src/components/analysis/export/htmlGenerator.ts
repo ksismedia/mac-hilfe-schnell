@@ -300,9 +300,9 @@ export const generateCustomerHTML = ({
   // FINALER SCORE inklusive Bonus
   const finalOwnScore = Math.min(ownDynamicScore + serviceRemovalBonus, 96);
   
-  // VERWENDE NUR DIE BEREITS BERECHNETEN GLOBALEN WERTE AUS COMPETITORANALYSIS
-  const competitorComparisonScore = (window as any).globalOwnCompanyScore || 75;
-  const marketComparisonScore = (window as any).globalOwnCompanyScore || 75;
+  // VERWENDE DEN TATSÄCHLICH BERECHNETEN SCORE - Priorisiere übergebenen Score, dann berechneten, dann Fallback
+  const competitorComparisonScore = calculatedOwnCompanyScore || finalOwnScore || 75;
+  const marketComparisonScore = calculatedOwnCompanyScore || finalOwnScore || 75;
   // Impressum Analysis - berücksichtigt manuelle Eingaben
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
