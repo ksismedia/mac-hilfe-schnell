@@ -1750,7 +1750,7 @@ export const generateCustomerHTML = ({
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">${realData.reviews.google.count}</td>
                 <td style="padding: 12px; text-align: center; color: #fbbf24;">
                   <span style="font-weight: bold; font-size: 1.2em;">${Math.round(competitorComparisonScore)}</span>
-                    <br><small style="color: #fbbf24;">${expectedServices.length} Services${(removedMissingServices?.length || 0) > 0 ? ` (+${(removedMissingServices?.length || 0) * 0.3}% Bonus)` : ""}</small>
+                    <br><small style="color: #fbbf24;">${expectedServices.length} Services</small>
                   </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="color: #fbbf24; font-weight: bold;">Referenz</span>
