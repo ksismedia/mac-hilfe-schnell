@@ -286,7 +286,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       manualContentData, manualBacklinkData
     ),
     websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
-    socialMediaPerformance: calculateSocialMediaPerformanceScore(realData, manualSocialData),
+    socialMediaPerformance: calculateSocialMediaPerformanceScore(
+      realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
+    ),
     marketEnvironment: calculateMarketEnvironmentScore(
       realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
     ),

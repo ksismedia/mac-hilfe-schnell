@@ -213,18 +213,31 @@ export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData)
 
 export const calculateSocialMediaPerformanceScore = (
   realData: RealBusinessData,
-  manualSocialData?: ManualSocialData | null
+  manualSocialData?: ManualSocialData | null,
+  manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null,
+  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
 ): number => {
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const googleReviewsScore = (realData.reviews?.google?.count || 0) > 0 ? 
     Math.min(100, (realData.reviews?.google?.rating || 0) * 20) : 0;
+  const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
+  const onlinePresenceScore = calculateOnlinePresenceScore(manualOnlinePresenceData);
   
   const metrics = [
-    { score: socialMediaScore, weight: 40 }, // Social Media
-    { score: realData.socialProof?.overallScore || 0, weight: 25 }, // Social Proof
-    { score: socialMediaScore, weight: 20 }, // Social Media Analyse (same as Social Media for now)
+    { score: socialMediaScore, weight: 30 }, // Social Media (reduced from 40)
+    { score: realData.socialProof?.overallScore || 0, weight: 20 }, // Social Proof (reduced from 25)
     { score: googleReviewsScore, weight: 15 }, // Google-Bewertungen
   ];
+  
+  // Add Industry Review score if available
+  if (industryReviewScore > 0) {
+    metrics.push({ score: industryReviewScore, weight: 20 }); // Branchenplattformen
+  }
+  
+  // Add Online Presence score if available
+  if (onlinePresenceScore > 0) {
+    metrics.push({ score: onlinePresenceScore, weight: 15 }); // Online-Präsenz
+  }
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
