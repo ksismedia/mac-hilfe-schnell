@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,21 @@ interface ManualDataPrivacyInputProps {
 }
 
 const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange }) => {
+  const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(data || {
+    hasSSL: true,
+    cookiePolicy: false,
+    privacyPolicy: false,
+    gdprCompliant: false,
+    cookieConsent: false,
+    dataProcessingAgreement: false,
+    dataSubjectRights: false,
+    deselectedViolations: [],
+    customViolations: [],
+    manualCookies: [],
+    overallScore: undefined,
+    notes: ''
+  });
+  
   const [newViolation, setNewViolation] = useState({
     description: '',
     severity: 'medium' as 'high' | 'medium' | 'low',
@@ -31,23 +46,17 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     purpose: ''
   });
 
-  const currentData: ManualDataPrivacyData = data || {
-    hasSSL: true,
-    cookiePolicy: false,
-    privacyPolicy: false,
-    gdprCompliant: false,
-    cookieConsent: false,
-    dataProcessingAgreement: false,
-    dataSubjectRights: false,
-    deselectedViolations: [],
-    customViolations: [],
-    manualCookies: [],
-    overallScore: undefined,
-    notes: ''
-  };
+  // Sync with prop data when it changes
+  useEffect(() => {
+    if (data) {
+      setCurrentData(data);
+    }
+  }, [data]);
 
   const updateData = (updates: Partial<ManualDataPrivacyData>) => {
-    onDataChange({ ...currentData, ...updates });
+    const updatedData = { ...currentData, ...updates };
+    setCurrentData(updatedData);
+    onDataChange(updatedData);
   };
 
   const addCustomViolation = () => {
