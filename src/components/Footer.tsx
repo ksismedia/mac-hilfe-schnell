@@ -36,11 +36,25 @@ export const Footer = () => {
                 Impressum
               </Link>
               <Link 
-                to="/compliance" 
+                to="/terms" 
                 className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"
               >
                 <FileText className="h-4 w-4" />
-                Compliance-Dokumentation
+                AGB
+              </Link>
+              <Link 
+                to="/avv" 
+                className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                AVV
+              </Link>
+              <Link 
+                to="/processing-register" 
+                className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                Verarbeitungsverzeichnis
               </Link>
             </nav>
           </div>
