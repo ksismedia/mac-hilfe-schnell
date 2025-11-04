@@ -14,6 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_logs: {
+        Row: {
+          ai_function: string
+          ai_model: string
+          analysis_id: string | null
+          confidence_score: number | null
+          created_at: string
+          id: string
+          input_data: Json | null
+          output_data: Json | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          user_id: string
+          was_reviewed: boolean | null
+        }
+        Insert: {
+          ai_function: string
+          ai_model: string
+          analysis_id?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          input_data?: Json | null
+          output_data?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          user_id: string
+          was_reviewed?: boolean | null
+        }
+        Update: {
+          ai_function?: string
+          ai_model?: string
+          analysis_id?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          input_data?: Json | null
+          output_data?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          user_id?: string
+          was_reviewed?: boolean | null
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      data_retention_settings: {
+        Row: {
+          auto_delete_enabled: boolean | null
+          created_at: string
+          id: string
+          last_cleanup_at: string | null
+          retention_days: number
+          updated_at: string
+        }
+        Insert: {
+          auto_delete_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          last_cleanup_at?: string | null
+          retention_days?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_delete_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          last_cleanup_at?: string | null
+          retention_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       saved_analyses: {
         Row: {
           business_data: Json
@@ -50,12 +164,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_consent: {
+        Row: {
+          consent_type: string
+          consent_version: string
+          consented_at: string
+          id: string
+          ip_address: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_type: string
+          consent_version: string
+          consented_at?: string
+          id?: string
+          ip_address?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_type?: string
+          consent_version?: string
+          consented_at?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_old_data: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
