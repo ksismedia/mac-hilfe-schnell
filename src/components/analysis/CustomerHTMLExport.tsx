@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -7,6 +7,9 @@ import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateDataPrivacyScore } from './export/scoreCalculations';
+import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { AIActComplianceWarning } from './AIActComplianceWarning';
+import { useToast } from '@/hooks/use-toast';
 
 interface CustomerHTMLExportProps {
   businessData: {
@@ -69,8 +72,33 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   accessibilityData,
   calculatedOwnCompanyScore
 }) => {
-  // Import useManualData to get current state
+  const { toast } = useToast();
+  
+  // AI Review Status for KI-VO compliance
   const { 
+    reviewStatus,
+    isFullyReviewed,
+    getUnreviewedCategories,
+    initializeCategories
+  } = useAIReviewStatus();
+
+  // Initialize AI review categories when component mounts
+  useEffect(() => {
+    const aiCategories = [
+      'SEO-Analyse',
+      'Performance-Analyse',
+      'Keyword-Analyse',
+      'Content-Qualität',
+      'Barrierefreiheit',
+      'Datenschutz (DSGVO)',
+      'Lokales SEO',
+      'Wettbewerbsanalyse'
+    ];
+    initializeCategories(aiCategories);
+  }, [initializeCategories]);
+  
+  // Import useManualData to get current state
+  const {
     manualAccessibilityData: currentManualAccessibilityData, 
     manualSocialData: currentManualSocialData,
     manualCorporateIdentityData: currentManualCorporateIdentityData,
@@ -146,6 +174,19 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 
   const exportAsCustomerReport = () => {
     console.log('🔵 CustomerHTMLExport exportAsCustomerReport called - THIS OPENS IN BROWSER');
+    
+    // KI-VO Compliance Check
+    if (!isFullyReviewed()) {
+      const unreviewed = getUnreviewedCategories();
+      console.warn('⚠️ KI-VO WARNING: Exporting report with unreviewed AI content:', unreviewed);
+      
+      toast({
+        title: 'Warnung: Nicht alle AI-Inhalte geprüft',
+        description: `${unreviewed.length} Kategorien wurden noch nicht manuell überprüft. Export erfolgt mit Warnhinweis.`,
+        variant: 'destructive'
+      });
+    }
+    
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
     const missingImprintElements = getMissingImprintElements();
@@ -376,6 +417,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
               </div>
             </div>
           )}
+
+          {/* KI-Verordnung (EU AI Act) Compliance Warnung */}
+          <AIActComplianceWarning 
+            unreviewedCategories={getUnreviewedCategories()}
+            isFullyReviewed={isFullyReviewed()}
+          />
 
           <div className="flex gap-3">
             <Button 

@@ -7,6 +7,7 @@ import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { getLogoHTML } from './logoData';
+import { getAIActDisclaimerHTML, getAITransparencyInfoHTML } from './aiActDisclaimer';
 
 interface CustomerReportData {
   businessData: {
@@ -2277,6 +2278,12 @@ export const generateCustomerHTML = ({
       <div class="subtitle">${realData.company.name} - ${businessData.url}</div>
       <p class="gray-text" style="margin-top: 15px;">Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht für: ${realData.company.name}</p>
     </div>
+
+    <!-- KI-Verordnung (EU AI Act) Compliance Hinweis -->
+    ${getAIActDisclaimerHTML(false)}
+    
+    <!-- AI Transparency Info -->
+    ${getAITransparencyInfoHTML()}
 
     <!-- Executive Summary -->
     <div class="section">
