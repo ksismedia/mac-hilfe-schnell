@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_review_status: {
+        Row: {
+          analysis_id: string
+          category_name: string
+          created_at: string
+          id: string
+          is_reviewed: boolean
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          analysis_id: string
+          category_name: string
+          created_at?: string
+          id?: string
+          is_reviewed?: boolean
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          analysis_id?: string
+          category_name?: string
+          created_at?: string
+          id?: string
+          is_reviewed?: boolean
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_usage_logs: {
         Row: {
           ai_function: string

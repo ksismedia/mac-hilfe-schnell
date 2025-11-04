@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface SEOAnalysisProps {
   url: string;
@@ -12,8 +13,10 @@ interface SEOAnalysisProps {
 }
 
 const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  
   // Prüfe ob Fallback-Daten verwendet werden
-  const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' || 
+  const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||
                                realData?.seo.metaDescription === 'Website-Inhalte konnten nicht abgerufen werden';
 
   // Verwende echte Daten wenn verfügbar, sonst Fallback
@@ -320,6 +323,12 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
           </div>
         </CardContent>
       </Card>
+      
+      <AIReviewCheckbox
+        categoryName="SEO-Analyse"
+        isReviewed={reviewStatus['SEO-Analyse']?.isReviewed || false}
+        onReviewChange={(reviewed) => updateReviewStatus('SEO-Analyse', reviewed)}
+      />
     </div>
   );
 };

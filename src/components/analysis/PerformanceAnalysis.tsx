@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface PerformanceAnalysisProps {
   url: string;
@@ -11,6 +13,7 @@ interface PerformanceAnalysisProps {
 }
 
 const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const performanceData = realData.performance;
 
   const getScoreColor = (score: number) => {
@@ -129,6 +132,12 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
           </div>
         </CardContent>
       </Card>
+      
+      <AIReviewCheckbox
+        categoryName="Performance-Analyse"
+        isReviewed={reviewStatus['Performance-Analyse']?.isReviewed || false}
+        onReviewChange={(reviewed) => updateReviewStatus('Performance-Analyse', reviewed)}
+      />
     </div>
   );
 };

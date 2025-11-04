@@ -175,17 +175,22 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   const exportAsCustomerReport = () => {
     console.log('🔵 CustomerHTMLExport exportAsCustomerReport called - THIS OPENS IN BROWSER');
     
-    // KI-VO Compliance Check
+    // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
     if (!isFullyReviewed()) {
       const unreviewed = getUnreviewedCategories();
-      console.warn('⚠️ KI-VO WARNING: Exporting report with unreviewed AI content:', unreviewed);
+      console.error('⛔ KI-VO BLOCKIERUNG: Export nicht möglich - ungeprüfte AI-Inhalte:', unreviewed);
       
       toast({
-        title: 'Warnung: Nicht alle AI-Inhalte geprüft',
-        description: `${unreviewed.length} Kategorien wurden noch nicht manuell überprüft. Export erfolgt mit Warnhinweis.`,
-        variant: 'destructive'
+        title: '⛔ Export blockiert - KI-Verordnung',
+        description: `Export nicht möglich! ${unreviewed.length} Kategorien müssen noch manuell geprüft werden: ${unreviewed.join(', ')}`,
+        variant: 'destructive',
+        duration: 8000
       });
+      
+      return; // BLOCKIERE DEN EXPORT
     }
+    
+    console.log('✅ KI-VO Check passed - all AI content reviewed');
     
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
@@ -205,6 +210,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('DEBUG CustomerHTMLExport - deletedCompetitors:', deletedCompetitors);
     console.log('🔴 manualAccessibilityData passed to CustomerHTMLExport:', manualAccessibilityData);
     console.log('🔴 currentManualAccessibilityData from hook:', currentManualAccessibilityData);
+    
+    // Check if AI content is fully reviewed
+    const hasUnreviewedContent = !isFullyReviewed();
     
     console.log('=== STARTING HTML GENERATION ===');
     const htmlContent = generateCustomerHTML({
@@ -247,7 +255,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       privacyData,
       accessibilityData,
-      calculatedOwnCompanyScore: currentOwnCompanyScore
+      calculatedOwnCompanyScore: currentOwnCompanyScore,
+      hasUnreviewedAIContent: hasUnreviewedContent
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
@@ -264,10 +273,30 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const downloadCustomerReport = () => {
+    // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
+    if (!isFullyReviewed()) {
+      const unreviewed = getUnreviewedCategories();
+      console.error('⛔ KI-VO BLOCKIERUNG: Download nicht möglich - ungeprüfte AI-Inhalte:', unreviewed);
+      
+      toast({
+        title: '⛔ Download blockiert - KI-Verordnung',
+        description: `Download nicht möglich! ${unreviewed.length} Kategorien müssen noch manuell geprüft werden: ${unreviewed.join(', ')}`,
+        variant: 'destructive',
+        duration: 8000
+      });
+      
+      return; // BLOCKIERE DEN DOWNLOAD
+    }
+    
+    console.log('✅ KI-VO Check passed - all AI content reviewed');
+    
     // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
     console.log('=== DOWNLOAD CUSTOMER REPORT CLICKED ===');
     const missingImprintElements = getMissingImprintElements();
+    
+    // Check if AI content is fully reviewed
+    const hasUnreviewedContent = !isFullyReviewed();
     
     // Social Media Score für Customer Report berechnen
     const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
@@ -316,7 +345,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       privacyData,
       accessibilityData,
-      calculatedOwnCompanyScore: currentOwnCompanyScore
+      calculatedOwnCompanyScore: currentOwnCompanyScore,
+      hasUnreviewedAIContent: hasUnreviewedContent
     });
 
     try {

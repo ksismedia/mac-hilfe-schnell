@@ -42,6 +42,8 @@ interface CustomerReportData {
   accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
   calculatedOwnCompanyScore?: number;
+  // KI-VO Compliance
+  hasUnreviewedAIContent?: boolean;
 }
 
 // Function to get score range for data attribute
@@ -127,7 +129,8 @@ export const generateCustomerHTML = ({
   manualAccessibilityData,
   manualBacklinkData,
   accessibilityData,
-  calculatedOwnCompanyScore
+  calculatedOwnCompanyScore,
+  hasUnreviewedAIContent = false
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
@@ -2280,7 +2283,7 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- KI-Verordnung (EU AI Act) Compliance Hinweis -->
-    ${getAIActDisclaimerHTML(false)}
+    ${getAIActDisclaimerHTML(hasUnreviewedAIContent)}
     
     <!-- AI Transparency Info -->
     ${getAITransparencyInfoHTML()}

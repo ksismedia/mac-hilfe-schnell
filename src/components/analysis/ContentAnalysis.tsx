@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit } from 'lucide-react';
 import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface ContentAnalysisProps {
   url: string;
@@ -14,6 +16,7 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   
   // Branchenspezifische Content-Themen
   const industryContentTopics = {
@@ -350,6 +353,12 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
           </Tabs>
         </CardContent>
       </Card>
+      
+      <AIReviewCheckbox
+        categoryName="Content-Qualität"
+        isReviewed={reviewStatus['Content-Qualität']?.isReviewed || false}
+        onReviewChange={(reviewed) => updateReviewStatus('Content-Qualität', reviewed)}
+      />
     </div>
   );
 };
