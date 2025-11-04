@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, X, Star } from 'lucide-react';
 import { ManualCompetitor } from '@/hooks/useManualData';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface ManualCompetitorInputProps {
   competitors: ManualCompetitor[];
@@ -18,6 +20,7 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
   competitors,
   onCompetitorsChange
 }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const [newCompetitor, setNewCompetitor] = useState<Partial<ManualCompetitor>>({
     name: '',
     rating: 4.0,
@@ -88,13 +91,14 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Manuelle Konkurrenten-Eingabe</CardTitle>
-        <CardDescription>
-          Fügen Sie bekannte lokale Konkurrenten hinzu, wenn die automatische Suche nicht ausreichend ist
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Manuelle Konkurrenten-Eingabe</CardTitle>
+          <CardDescription>
+            Fügen Sie bekannte lokale Konkurrenten hinzu, wenn die automatische Suche nicht ausreichend ist
+          </CardDescription>
+        </CardHeader>
       <CardContent className="space-y-6">
         {/* Bestehende Konkurrenten */}
         {competitors.length > 0 && (
@@ -226,6 +230,13 @@ const ManualCompetitorInput: React.FC<ManualCompetitorInputProps> = ({
         </div>
       </CardContent>
     </Card>
+    
+    <AIReviewCheckbox
+      categoryName="Wettbewerbsanalyse"
+      isReviewed={reviewStatus['Wettbewerbsanalyse']?.isReviewed || false}
+      onReviewChange={(reviewed) => updateReviewStatus('Wettbewerbsanalyse', reviewed)}
+    />
+    </>
   );
 };
 

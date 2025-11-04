@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Save, RotateCcw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { ManualAccessibilityData } from '@/hooks/useManualData';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface ManualAccessibilityInputProps {
   onSave: (data: ManualAccessibilityData) => void;
@@ -19,6 +21,7 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
   initialData
 }) => {
   const { toast } = useToast();
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const [data, setData] = React.useState<ManualAccessibilityData>({
     keyboardNavigation: initialData?.keyboardNavigation || false,
     screenReaderCompatible: initialData?.screenReaderCompatible || false,
@@ -52,15 +55,16 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          ♿ Manuelle Accessibility-Bewertung
-        </CardTitle>
-        <CardDescription>
-          Bewerten Sie die Barrierefreiheit basierend auf manuellen Tests
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            ♿ Manuelle Accessibility-Bewertung
+          </CardTitle>
+          <CardDescription>
+            Bewerten Sie die Barrierefreiheit basierend auf manuellen Tests
+          </CardDescription>
+        </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,5 +191,12 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
         </div>
       </CardContent>
     </Card>
+    
+    <AIReviewCheckbox
+      categoryName="Barrierefreiheit"
+      isReviewed={reviewStatus['Barrierefreiheit']?.isReviewed || false}
+      onReviewChange={(reviewed) => updateReviewStatus('Barrierefreiheit', reviewed)}
+    />
+    </>
   );
 };

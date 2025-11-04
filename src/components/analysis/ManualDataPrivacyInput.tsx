@@ -19,6 +19,7 @@ interface ManualDataPrivacyInputProps {
 }
 
 const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(data || {
     hasSSL: true,
     cookiePolicy: false,
@@ -134,13 +135,14 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   };
 
   return (
-    <Card className="border-accent">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-accent">
-          <Shield className="h-5 w-5" />
-          Manuelle Datenschutz-Eingabe
-        </CardTitle>
-      </CardHeader>
+    <>
+      <Card className="border-accent">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-accent">
+            <Shield className="h-5 w-5" />
+            Manuelle Datenschutz-Eingabe
+          </CardTitle>
+        </CardHeader>
       <CardContent className="space-y-6">
         {/* DSGVO Compliance Checkboxes */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -452,6 +454,13 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
         </div>
       </CardContent>
     </Card>
+    
+    <AIReviewCheckbox
+      categoryName="Datenschutz (DSGVO)"
+      isReviewed={reviewStatus['Datenschutz (DSGVO)']?.isReviewed || false}
+      onReviewChange={(reviewed) => updateReviewStatus('Datenschutz (DSGVO)', reviewed)}
+    />
+    </>
   );
 };
 

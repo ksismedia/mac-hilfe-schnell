@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Plus, X, MapPin, Globe, Search, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { ManualLocalSEOData, LocalSEODirectory } from '@/hooks/useManualData';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import {
   Select,
   SelectContent,
@@ -24,6 +26,7 @@ interface ManualLocalSEOInputProps {
 }
 
 const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, onDataChange }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const [formData, setFormData] = useState<ManualLocalSEOData>(
     initialData || {
       gmbClaimed: false,
@@ -532,6 +535,12 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
           </div>
         </CardContent>
       </Card>
+      
+      <AIReviewCheckbox
+        categoryName="Lokales SEO"
+        isReviewed={reviewStatus['Lokales SEO']?.isReviewed || false}
+        onReviewChange={(reviewed) => updateReviewStatus('Lokales SEO', reviewed)}
+      />
     </div>
   );
 };

@@ -6,6 +6,8 @@ import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualKeywordInput from './ManualKeywordInput';
+import { AIReviewCheckbox } from './AIReviewCheckbox';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
 interface KeywordAnalysisProps {
   url: string;
@@ -19,6 +21,7 @@ interface KeywordAnalysisProps {
 }
 
 const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory }) => {
+  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const [keywordData, setKeywordData] = useState(() => {
     const keywords = realData.keywords || [];
     const initialFoundKeywords = keywords.filter(k => k.found).length;
@@ -350,6 +353,12 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
           </div>
         </CardContent>
       </Card>
+      
+      <AIReviewCheckbox
+        categoryName="Keyword-Analyse"
+        isReviewed={reviewStatus['Keyword-Analyse']?.isReviewed || false}
+        onReviewChange={(reviewed) => updateReviewStatus('Keyword-Analyse', reviewed)}
+      />
     </div>
   );
 };
