@@ -11,7 +11,7 @@ import AnalysisDashboard from '@/components/AnalysisDashboard';
 import ExtensionDataProcessor from '@/components/ExtensionDataProcessor';
 import SavedAnalysesManager from '@/components/SavedAnalysesManager';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
-import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff, LogIn, LogOut, User } from 'lucide-react';
+import { Search, Globe, MapPin, Building, Star, Key, Eye, EyeOff, LogIn, LogOut, User, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
@@ -422,11 +422,15 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
               <SavedAnalysesManager onLoadAnalysis={handleLoadSavedAnalysis} />
               {user ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap justify-center">
                   <Badge variant="outline" className="flex items-center gap-2 bg-green-500/20 border-green-500 text-green-400">
                     <User className="h-3 w-3" />
                     ✅ Angemeldet: {user.email}
                   </Badge>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/compliance')}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Compliance
+                  </Button>
                   <Button variant="outline" size="sm" onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Abmelden

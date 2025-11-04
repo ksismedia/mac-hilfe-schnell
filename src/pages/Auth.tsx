@@ -8,12 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { ComplianceDisclaimer } from '@/components/compliance/ComplianceDisclaimer';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,13 +23,13 @@ export default function Auth() {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate('/');
+        setShowDisclaimer(true);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate('/');
+        setShowDisclaimer(true);
       }
     });
 
@@ -81,12 +83,18 @@ export default function Auth() {
       } else {
         setError(error.message);
       }
+    } else {
+      setShowDisclaimer(true);
     }
 
     setLoading(false);
   };
 
   return (
+    <>
+      {showDisclaimer && (
+        <ComplianceDisclaimer onAccept={() => navigate('/')} />
+      )}
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -176,5 +184,6 @@ export default function Auth() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }

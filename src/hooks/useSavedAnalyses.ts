@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from './useManualData';
+import { AuditLogService } from '@/services/AuditLogService';
 
 export interface SavedAnalysis {
   id: string;
@@ -365,6 +366,16 @@ export const useSavedAnalyses = () => {
         };
 
         setSavedAnalyses(prev => [newAnalysis, ...prev]);
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'create',
+          resourceType: 'analysis',
+          resourceId: newAnalysis.id,
+          resourceName: name,
+          details: { businessData }
+        });
+        
         return newAnalysis.id;
       } catch (error) {
         console.error('Database save error:', error);
@@ -383,6 +394,15 @@ export const useSavedAnalyses = () => {
       const updatedAnalyses = [newAnalysis, ...savedAnalyses];
       setSavedAnalyses(updatedAnalyses);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+      
+      // Audit log
+      await AuditLogService.log({
+        action: 'create',
+        resourceType: 'analysis',
+        resourceId: newAnalysis.id,
+        resourceName: name,
+        details: { businessData }
+      });
       
       return newAnalysis.id;
     }
@@ -422,6 +442,14 @@ export const useSavedAnalyses = () => {
             ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
             : analysis
         ));
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'update',
+          resourceType: 'analysis',
+          resourceId: id,
+          resourceName: name
+        });
       } catch (error) {
         console.error('Database update error:', error);
         throw error;
@@ -449,6 +477,13 @@ export const useSavedAnalyses = () => {
         if (error) throw error;
 
         setSavedAnalyses(prev => prev.filter(analysis => analysis.id !== id));
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'delete',
+          resourceType: 'analysis',
+          resourceId: id
+        });
       } catch (error) {
         console.error('Database delete error:', error);
         throw error;
