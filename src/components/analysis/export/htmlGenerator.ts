@@ -3509,23 +3509,19 @@ export const generateCustomerHTML = ({
         
         // Kategorisierung basierend auf Score
         let categoryName = '';
-        let categoryEmoji = '';
         let categoryColor = '';
         let categoryDescription = '';
         
         if (overallScore >= 91) {
           categoryName = 'Stark';
-          categoryEmoji = '🏆';
           categoryColor = '#10b981';
           categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
         } else if (overallScore >= 61) {
           categoryName = 'Mittel';
-          categoryEmoji = '✅';
           categoryColor = '#fbbf24';
           categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
         } else {
           categoryName = 'Schwach';
-          categoryEmoji = '⚠️';
           categoryColor = '#ef4444';
           categoryDescription = 'Ausbaufähige Online-Präsenz mit hohem Optimierungsbedarf';
         }
@@ -3571,8 +3567,7 @@ export const generateCustomerHTML = ({
               <div class="score-circle ${getScoreColorClass(overallScore)}" style="width: 120px; height: 120px; font-size: 2.5em; margin: 0 auto;">${overallScore}%</div>
               <p style="margin-top: 15px; font-size: 1.1em; font-weight: 600; color: ${assessmentColor};">${assessment}</p>
               <div style="margin-top: 10px; padding: 10px 20px; background: ${categoryColor}22; border: 2px solid ${categoryColor}; border-radius: 20px; display: inline-block;">
-                <span style="font-size: 1.5em;">${categoryEmoji}</span>
-                <span style="font-weight: bold; color: ${categoryColor}; margin-left: 8px; font-size: 1.1em;">${categoryName}</span>
+                <span style="font-weight: bold; color: ${categoryColor}; font-size: 1.1em;">${categoryName}</span>
               </div>
               <p style="margin-top: 10px; font-size: 0.9em; color: #64748b; max-width: 200px; margin-left: auto; margin-right: auto;">${categoryDescription}</p>
             </div>
