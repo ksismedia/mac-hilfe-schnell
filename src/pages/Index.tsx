@@ -97,6 +97,9 @@ const Index = () => {
       return;
     }
 
+    // Clear any loaded analysis when starting new analysis
+    setAnalysisToLoad(null);
+
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
     console.log('Existing API key found:', !!existingKey);
@@ -151,6 +154,9 @@ const Index = () => {
         console.log('API key is valid, saving...');
         GoogleAPIService.setApiKey(keyToValidate);
         setApiKey(keyToValidate);
+        
+        // Clear any loaded analysis when starting new analysis
+        setAnalysisToLoad(null);
         
         console.log('Moving to results step...');
         setStep('results');
@@ -227,6 +233,7 @@ const Index = () => {
     
     setStep('business');
     setLoadedAnalysisId(undefined);
+    setAnalysisToLoad(null);  // Clear loaded analysis
     setBusinessData({
       address: '',
       url: '',
