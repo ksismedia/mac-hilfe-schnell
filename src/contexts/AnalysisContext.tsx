@@ -38,22 +38,20 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
     initializeCategories
   } = useAIReviewStatus(currentAnalysis?.id);
   
-  // Initialize AI review categories when analysis changes
+  // Initialize AI review categories - IMMER, auch ohne gespeicherte Analyse
   React.useEffect(() => {
-    if (currentAnalysis) {
-      const aiCategories = [
-        'SEO-Analyse',
-        'Performance-Analyse',
-        'Keyword-Analyse',
-        'Content-Qualität',
-        'Barrierefreiheit',
-        'Datenschutz (DSGVO)',
-        'Lokales SEO',
-        'Wettbewerbsanalyse'
-      ];
-      initializeCategories(aiCategories);
-    }
-  }, [currentAnalysis, initializeCategories]);
+    const aiCategories = [
+      'SEO-Analyse',
+      'Performance-Analyse',
+      'Keyword-Analyse',
+      'Content-Qualität',
+      'Barrierefreiheit',
+      'Datenschutz (DSGVO)',
+      'Lokales SEO',
+      'Wettbewerbsanalyse'
+    ];
+    initializeCategories(aiCategories);
+  }, [initializeCategories]);
 
   const clearAnalysis = () => {
     setCurrentAnalysis(null);

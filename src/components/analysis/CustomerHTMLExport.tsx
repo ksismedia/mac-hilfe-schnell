@@ -7,7 +7,7 @@ import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateDataPrivacyScore } from './export/scoreCalculations';
-import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { AIActComplianceWarning } from './AIActComplianceWarning';
 import { useToast } from '@/hooks/use-toast';
 
@@ -74,28 +74,12 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
 }) => {
   const { toast } = useToast();
   
-  // AI Review Status for KI-VO compliance
+  // AI Review Status from AnalysisContext (supports both saved and unsaved analyses)
   const { 
     reviewStatus,
     isFullyReviewed,
-    getUnreviewedCategories,
-    initializeCategories
-  } = useAIReviewStatus();
-
-  // Initialize AI review categories when component mounts
-  useEffect(() => {
-    const aiCategories = [
-      'SEO-Analyse',
-      'Performance-Analyse',
-      'Keyword-Analyse',
-      'Content-Qualität',
-      'Barrierefreiheit',
-      'Datenschutz (DSGVO)',
-      'Lokales SEO',
-      'Wettbewerbsanalyse'
-    ];
-    initializeCategories(aiCategories);
-  }, [initializeCategories]);
+    getUnreviewedCategories
+  } = useAnalysisContext();
   
   // Import useManualData to get current state
   const {
