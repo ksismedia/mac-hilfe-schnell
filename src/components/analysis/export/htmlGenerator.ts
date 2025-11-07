@@ -3491,14 +3491,48 @@ export const generateCustomerHTML = ({
 
     ${(() => {
       // Online-Präsenz Sektion
-      if (manualOnlinePresenceData && manualOnlinePresenceData.items && manualOnlinePresenceData.items.length > 0) {
+      if (manualOnlinePresenceData && (
+        (manualOnlinePresenceData.items && manualOnlinePresenceData.items.length > 0) ||
+        (manualOnlinePresenceData.simpleCounts && (manualOnlinePresenceData.simpleCounts.images > 0 || manualOnlinePresenceData.simpleCounts.videos > 0 || manualOnlinePresenceData.simpleCounts.shorts > 0))
+      )) {
         const overallScore = manualOnlinePresenceData.overallScore || 0;
-        const imageCount = manualOnlinePresenceData.items.filter(i => i.type === 'image').length;
-        const videoCount = manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
-        const shortCount = manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
-        const highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
-        const mediumRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
-        const lowRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+        
+        // Bestimme ob simple oder detaillierte Eingabe
+        const useSimpleCounts = manualOnlinePresenceData.simpleCounts && 
+          (manualOnlinePresenceData.simpleCounts.images > 0 || 
+           manualOnlinePresenceData.simpleCounts.videos > 0 || 
+           manualOnlinePresenceData.simpleCounts.shorts > 0);
+        
+        const imageCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.images : manualOnlinePresenceData.items.filter(i => i.type === 'image').length;
+        const videoCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.videos : manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
+        const shortCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.shorts : manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
+        
+        // Kategorisierung basierend auf Score
+        let categoryName = '';
+        let categoryEmoji = '';
+        let categoryColor = '';
+        let categoryDescription = '';
+        
+        if (overallScore >= 91) {
+          categoryName = 'Stark';
+          categoryEmoji = '🏆';
+          categoryColor = '#10b981';
+          categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
+        } else if (overallScore >= 61) {
+          categoryName = 'Mittel';
+          categoryEmoji = '✅';
+          categoryColor = '#fbbf24';
+          categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
+        } else {
+          categoryName = 'Schwach';
+          categoryEmoji = '⚠️';
+          categoryColor = '#ef4444';
+          categoryDescription = 'Ausbaufähige Online-Präsenz mit hohem Optimierungsbedarf';
+        }
+        const highRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
+        const mediumRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
+        const lowRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+        const totalContent = imageCount + videoCount + shortCount;
         
         // Calculate scoring components
         let diversityScore = 0;
@@ -3506,7 +3540,6 @@ export const generateCustomerHTML = ({
         if (videoCount > 0) diversityScore += 15;
         if (shortCount > 0) diversityScore += 10;
         
-        const totalContent = manualOnlinePresenceData.items.length;
         let quantityScore = 0;
         if (totalContent >= 20) quantityScore = 30;
         else if (totalContent >= 15) quantityScore = 25;
@@ -3514,7 +3547,9 @@ export const generateCustomerHTML = ({
         else if (totalContent >= 5) quantityScore = 15;
         else quantityScore = totalContent * 3;
         
-        const relevanceScore = Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
+        const relevanceScore = useSimpleCounts 
+          ? Math.min(30, totalContent * 1.5) 
+          : Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
         
         // Determine assessment level
         const assessment = overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf';
@@ -3535,6 +3570,11 @@ export const generateCustomerHTML = ({
             <div style="text-align: center;">
               <div class="score-circle ${getScoreColorClass(overallScore)}" style="width: 120px; height: 120px; font-size: 2.5em; margin: 0 auto;">${overallScore}%</div>
               <p style="margin-top: 15px; font-size: 1.1em; font-weight: 600; color: ${assessmentColor};">${assessment}</p>
+              <div style="margin-top: 10px; padding: 10px 20px; background: ${categoryColor}22; border: 2px solid ${categoryColor}; border-radius: 20px; display: inline-block;">
+                <span style="font-size: 1.5em;">${categoryEmoji}</span>
+                <span style="font-weight: bold; color: ${categoryColor}; margin-left: 8px; font-size: 1.1em;">${categoryName}</span>
+              </div>
+              <p style="margin-top: 10px; font-size: 0.9em; color: #64748b; max-width: 200px; margin-left: auto; margin-right: auto;">${categoryDescription}</p>
             </div>
             <div>
               <div style="display: grid; gap: 12px;">
@@ -3634,6 +3674,7 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
+        ${!useSimpleCounts ? `
         <!-- Relevanz-Analyse -->
         <div class="metric-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
           <h4 style="margin-top: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
@@ -3672,7 +3713,9 @@ export const generateCustomerHTML = ({
             </p>
           </div>
         </div>
+        ` : ''}
 
+        ${!useSimpleCounts ? `
         <!-- Erfasste Inhalte Liste -->
         <div style="margin-bottom: 25px;">
           <h4 style="color: #1e293b; margin-bottom: 15px; font-size: 1.2em;">📋 Alle erfassten Inhalte im Detail</h4>
@@ -3705,6 +3748,18 @@ export const generateCustomerHTML = ({
             }).join('')}
           </div>
         </div>
+        ` : `
+        <!-- Vereinfachte Eingabe Info -->
+        <div class="metric-card" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 2px solid rgba(34, 197, 94, 0.3);">
+          <h4 style="margin-top: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            ℹ️ Eingabemodus: Vereinfachte Zählung
+          </h4>
+          <p style="margin: 10px 0 0 0; color: #475569; line-height: 1.6;">
+            Die Bewertung basiert auf der Gesamtanzahl der in Google-Suchergebnissen gefundenen Inhalte. 
+            Für eine noch detailliertere Analyse kann beim nächsten Report auch die Relevanz jedes einzelnen Inhalts erfasst werden.
+          </p>
+        </div>
+        `}
 
         <!-- Benchmark und Einordnung -->
         <div class="metric-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); padding: 20px; border-radius: 10px; margin-bottom: 25px;">

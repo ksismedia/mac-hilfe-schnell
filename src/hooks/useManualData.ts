@@ -270,6 +270,11 @@ export interface ManualOnlinePresenceData {
     relevance: 'high' | 'medium' | 'low';
   }>;
   overallScore?: number;
+  simpleCounts?: {
+    images: number;
+    videos: number;
+    shorts: number;
+  };
 }
 
 export const useManualData = () => {
