@@ -272,6 +272,43 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                   </p>
                 </div>
 
+                {/* Schnellauswahl-Buttons */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Schnellauswahl:</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex flex-col items-center p-3 h-auto border-2 border-red-300 hover:bg-red-50 hover:border-red-400"
+                      onClick={() => setSimpleCounts({ images: 2, videos: 1, shorts: 0 })}
+                    >
+                      <span className="text-xs font-semibold text-red-700">Schwach</span>
+                      <span className="text-2xl font-bold text-red-600 my-1">~44%</span>
+                      <span className="text-xs text-gray-600">2/1/0</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex flex-col items-center p-3 h-auto border-2 border-yellow-300 hover:bg-yellow-50 hover:border-yellow-400"
+                      onClick={() => setSimpleCounts({ images: 8, videos: 3, shorts: 2 })}
+                    >
+                      <span className="text-xs font-semibold text-yellow-700">Mittel</span>
+                      <span className="text-2xl font-bold text-yellow-600 my-1">~80%</span>
+                      <span className="text-xs text-gray-600">8/3/2</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex flex-col items-center p-3 h-auto border-2 border-green-300 hover:bg-green-50 hover:border-green-400"
+                      onClick={() => setSimpleCounts({ images: 12, videos: 6, shorts: 4 })}
+                    >
+                      <span className="text-xs font-semibold text-green-700">Stark</span>
+                      <span className="text-2xl font-bold text-green-600 my-1">100%</span>
+                      <span className="text-xs text-gray-600">12/6/4</span>
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="simple-images" className="flex items-center gap-2">
