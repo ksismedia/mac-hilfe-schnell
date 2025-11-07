@@ -282,11 +282,18 @@ export const useSavedAnalyses = () => {
   const loadAnalysesFromLocalStorage = () => {
     try {
       console.log('Loading from localStorage...');
+      console.log('STORAGE_KEY:', STORAGE_KEY);
       
       const stored = localStorage.getItem(STORAGE_KEY);
+      console.log('Raw localStorage value:', stored);
+      console.log('Value type:', typeof stored);
+      console.log('Value length:', stored?.length);
       
       if (stored && stored !== 'null' && stored !== 'undefined') {
+        console.log('Valid stored data found, parsing...');
         const parsed = JSON.parse(stored);
+        console.log('Parsed data:', parsed);
+        console.log('Is array:', Array.isArray(parsed));
         
         if (Array.isArray(parsed)) {
           // Ensure all analyses have complete data structures
@@ -302,9 +309,17 @@ export const useSavedAnalyses = () => {
           }));
           
           console.log(`Loaded ${analyses.length} analyses from localStorage`);
+          console.log('Analyses:', analyses.map(a => ({ id: a.id, name: a.name })));
           setSavedAnalyses(analyses);
           return;
+        } else {
+          console.warn('Parsed data is not an array:', typeof parsed);
         }
+      } else {
+        console.log('No valid data in localStorage');
+        console.log('stored === null:', stored === null);
+        console.log('stored === "null":', stored === 'null');
+        console.log('stored === "undefined":', stored === 'undefined');
       }
       
       // Nur leeres Array setzen - keine Demo-Analyse erstellen
@@ -382,6 +397,7 @@ export const useSavedAnalyses = () => {
         throw error;
       }
     } else {
+      console.log('Saving analysis to localStorage (anonymous user)...');
       const newAnalysis: SavedAnalysis = {
         id: crypto.randomUUID(),
         name,
@@ -391,9 +407,24 @@ export const useSavedAnalyses = () => {
         manualData: completeManualData
       };
 
+      console.log('New analysis created:', { id: newAnalysis.id, name: newAnalysis.name });
+      
       const updatedAnalyses = [newAnalysis, ...savedAnalyses];
+      console.log('Updated analyses array length:', updatedAnalyses.length);
+      
+      const jsonString = JSON.stringify(updatedAnalyses);
+      console.log('JSON string length:', jsonString.length);
+      
+      localStorage.setItem(STORAGE_KEY, jsonString);
+      console.log('Saved to localStorage with key:', STORAGE_KEY);
+      
+      // Verify it was saved
+      const verification = localStorage.getItem(STORAGE_KEY);
+      console.log('Verification - data in localStorage:', verification ? 'exists' : 'MISSING!');
+      console.log('Verification - length:', verification?.length);
+      
       setSavedAnalyses(updatedAnalyses);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+      console.log('State updated with', updatedAnalyses.length, 'analyses');
       
       // Audit log
       await AuditLogService.log({
