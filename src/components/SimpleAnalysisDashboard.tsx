@@ -586,7 +586,35 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             flexDirection: 'column',
             alignItems: 'center'
           }}>
-            <CustomerHTMLExport 
+            <SaveAnalysisDialog
+              businessData={businessData}
+              realData={realData || {} as RealBusinessData}
+              manualImprintData={manualImprintData}
+              manualSocialData={manualSocialData}
+              manualWorkplaceData={manualWorkplaceData}
+              manualCorporateIdentityData={manualCorporateIdentityData}
+              manualCompetitors={manualCompetitors}
+              competitorServices={competitorServices}
+              removedMissingServices={removedMissingServices}
+              deletedCompetitors={deletedCompetitors}
+              currentAnalysisId={analysisData?.id}
+              manualKeywordData={manualKeywordData}
+              keywordScore={keywordsScore}
+              companyServices={companyServices}
+              staffQualificationData={staffQualificationData}
+              hourlyRateData={hourlyRateData}
+              quoteResponseData={quoteResponseData}
+              manualContentData={manualContentData}
+              manualAccessibilityData={manualAccessibilityData}
+              manualBacklinkData={manualBacklinkData}
+              manualDataPrivacyData={manualDataPrivacyData}
+              manualLocalSEOData={manualLocalSEOData}
+              manualIndustryReviewData={manualIndustryReviewData}
+              manualOnlinePresenceData={manualOnlinePresenceData}
+              privacyData={privacyData}
+              accessibilityData={accessibilityData}
+            />
+            <CustomerHTMLExport
               businessData={businessData}
               realData={realData}
               manualImprintData={manualImprintData}
