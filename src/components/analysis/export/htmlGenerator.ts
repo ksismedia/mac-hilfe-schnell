@@ -4072,15 +4072,15 @@ export const generateCustomerHTML = ({
     </div>
     ` : ''}
 
-    <!-- Rechtssicherheit -->
+    <!-- Rechtssicherheit & Impressum -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Rechtssicherheit</span>
+        <span>Rechtssicherheit & Impressum</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Rechtssicherheit</h3>
+          <h3>Rechtssicherheit & Impressum</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
             <div class="score-details">
