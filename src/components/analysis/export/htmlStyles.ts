@@ -226,6 +226,9 @@ section[class*="section"],
   font-weight: 700;
   max-width: 100%;
   overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 .header-score-circle {
   display: inline-flex;
