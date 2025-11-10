@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle2, Edit3, Save, X } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Edit3, Save, X, HelpCircle } from 'lucide-react';
 import { ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface CorporateIdentityAnalysisProps {
   businessData: {
@@ -22,20 +22,20 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<ManualCorporateIdentityData>({
     // Corporate Design
-    uniformLogo: false,
-    uniformWorkClothing: false,
-    uniformColorScheme: false,
-    uniformTypography: false,
-    uniformWebsiteDesign: false,
+    uniformLogo: 'unknown',
+    uniformWorkClothing: 'unknown',
+    uniformColorScheme: 'unknown',
+    uniformTypography: 'unknown',
+    uniformWebsiteDesign: 'unknown',
     // Eingesetzte Werbemittel
-    hauszeitung: false,
-    herstellerInfos: false,
+    hauszeitung: 'unknown',
+    herstellerInfos: 'unknown',
     // Außenwirkung Fahrzeugflotte
-    uniformVehicleBranding: false,
-    vehicleCondition: false,
+    uniformVehicleBranding: 'unknown',
+    vehicleCondition: 'unknown',
     // Außenwerbung
-    bauzaunBanner: false,
-    bandenWerbung: false,
+    bauzaunBanner: 'unknown',
+    bandenWerbung: 'unknown',
     notes: ''
   });
 
@@ -55,70 +55,102 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
       setFormData(manualData);
     } else {
       setFormData({
-        uniformLogo: false,
-        uniformWorkClothing: false,
-        uniformColorScheme: false,
-        uniformTypography: false,
-        uniformWebsiteDesign: false,
-        hauszeitung: false,
-        herstellerInfos: false,
-        uniformVehicleBranding: false,
-        vehicleCondition: false,
-        bauzaunBanner: false,
-        bandenWerbung: false,
+        uniformLogo: 'unknown',
+        uniformWorkClothing: 'unknown',
+        uniformColorScheme: 'unknown',
+        uniformTypography: 'unknown',
+        uniformWebsiteDesign: 'unknown',
+        hauszeitung: 'unknown',
+        herstellerInfos: 'unknown',
+        uniformVehicleBranding: 'unknown',
+        vehicleCondition: 'unknown',
+        bauzaunBanner: 'unknown',
+        bandenWerbung: 'unknown',
         notes: ''
       });
     }
     setIsEditing(false);
   };
 
+  const calculateScore = (fields: Array<'yes' | 'no' | 'unknown'>) => {
+    const knownFields = fields.filter(f => f !== 'unknown');
+    if (knownFields.length === 0) return 0;
+    const yesCount = knownFields.filter(f => f === 'yes').length;
+    return Math.round((yesCount / knownFields.length) * 100);
+  };
+
   const calculateCorporateDesignScore = () => {
     if (!manualData) return 0;
-    const checks = [
+    return calculateScore([
       manualData.uniformLogo,
       manualData.uniformWorkClothing,
       manualData.uniformColorScheme,
       manualData.uniformTypography,
       manualData.uniformWebsiteDesign
-    ];
-    return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    ]);
   };
 
   const calculateWerbemittelScore = () => {
     if (!manualData) return 0;
-    const checks = [
+    return calculateScore([
       manualData.hauszeitung,
       manualData.herstellerInfos
-    ];
-    return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    ]);
   };
 
   const calculateFahrzeugflotteScore = () => {
     if (!manualData) return 0;
-    const checks = [
+    return calculateScore([
       manualData.uniformVehicleBranding,
       manualData.vehicleCondition
-    ];
-    return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    ]);
   };
 
   const calculateAussenWerbungScore = () => {
     if (!manualData) return 0;
-    const checks = [
+    return calculateScore([
       manualData.bauzaunBanner,
       manualData.bandenWerbung
-    ];
-    return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    ]);
   };
 
   const calculateOverallScore = () => {
     if (!manualData) return 0;
-    return Math.round((
-      calculateCorporateDesignScore() + 
-      calculateWerbemittelScore() + 
-      calculateFahrzeugflotteScore() + 
+    const scores = [
+      calculateCorporateDesignScore(),
+      calculateWerbemittelScore(),
+      calculateFahrzeugflotteScore(),
       calculateAussenWerbungScore()
-    ) / 4);
+    ].filter(s => s > 0); // Nur Scores einbeziehen, wo Daten vorhanden sind
+    
+    if (scores.length === 0) return 0;
+    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  };
+
+  const getImprovementSuggestions = () => {
+    if (!manualData) return [];
+    const suggestions: string[] = [];
+    
+    // Corporate Design
+    if (manualData.uniformLogo === 'no') suggestions.push('Einheitliches Logo auf allen Kanälen implementieren');
+    if (manualData.uniformWorkClothing === 'no') suggestions.push('Einheitliche Arbeitskleidung für Mitarbeiter einführen');
+    if (manualData.uniformColorScheme === 'no') suggestions.push('Corporate Farbgebung definieren und konsistent nutzen');
+    if (manualData.uniformTypography === 'no') suggestions.push('Einheitliche Typografie festlegen');
+    if (manualData.uniformWebsiteDesign === 'no') suggestions.push('Website-Design an Corporate Design anpassen');
+    
+    // Werbemittel
+    if (manualData.hauszeitung === 'no') suggestions.push('Hauszeitung oder Newsletter zur Kundenbindung einführen');
+    if (manualData.herstellerInfos === 'no') suggestions.push('Herstellerinformationen und Produktbroschüren bereitstellen');
+    
+    // Fahrzeugflotte
+    if (manualData.uniformVehicleBranding === 'no') suggestions.push('Fahrzeugbeklebung mit Logo und Kontaktdaten umsetzen');
+    if (manualData.vehicleCondition === 'no') suggestions.push('Fahrzeugpflege und -wartung verbessern');
+    
+    // Außenwerbung
+    if (manualData.bauzaunBanner === 'no') suggestions.push('Bauzaunbanner für Baustellen-Marketing nutzen');
+    if (manualData.bandenWerbung === 'no') suggestions.push('Sportmarketing durch Bandenwerbung erwägen');
+    
+    return suggestions;
   };
 
   const getScoreColor = (score: number) => {
@@ -133,11 +165,48 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
     return 'destructive';
   };
 
+  const getStatusIcon = (status: 'yes' | 'no' | 'unknown') => {
+    if (status === 'yes') return <CheckCircle2 className="h-5 w-5 text-green-600" />;
+    if (status === 'no') return <X className="h-5 w-5 text-red-600" />;
+    return <HelpCircle className="h-5 w-5 text-gray-400" />;
+  };
+
   const overallScore = calculateOverallScore();
   const cdScore = calculateCorporateDesignScore();
   const wmScore = calculateWerbemittelScore();
   const ffScore = calculateFahrzeugflotteScore();
   const awScore = calculateAussenWerbungScore();
+  const suggestions = getImprovementSuggestions();
+
+  const RadioField = ({ 
+    id, 
+    label, 
+    value, 
+    onChange 
+  }: { 
+    id: string; 
+    label: string; 
+    value: 'yes' | 'no' | 'unknown'; 
+    onChange: (value: 'yes' | 'no' | 'unknown') => void;
+  }) => (
+    <div className="space-y-2 p-3 border rounded-lg">
+      <Label className="text-sm font-medium">{label}</Label>
+      <RadioGroup value={value} onValueChange={(v) => onChange(v as 'yes' | 'no' | 'unknown')}>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="yes" id={`${id}-yes`} />
+          <Label htmlFor={`${id}-yes`} className="cursor-pointer">Ja</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="no" id={`${id}-no`} />
+          <Label htmlFor={`${id}-no`} className="cursor-pointer">Nein</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="unknown" id={`${id}-unknown`} />
+          <Label htmlFor={`${id}-unknown`} className="cursor-pointer text-muted-foreground">Keine Info verfügbar</Label>
+        </div>
+      </RadioGroup>
+    </div>
+  );
 
   return (
     <Card>
@@ -259,6 +328,23 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
                   </p>
                 </div>
               </div>
+
+              {suggestions.length > 0 && (
+                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h4 className="font-medium mb-2 flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    Verbesserungsvorschläge
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {suggestions.map((suggestion, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-blue-600 mt-0.5">•</span>
+                        <span>{suggestion}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="cd" className="space-y-3">
@@ -266,43 +352,23 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span>Einheitliches Logo</span>
-                  {manualData.uniformLogo ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformLogo)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Arbeitskleidung</span>
-                  {manualData.uniformWorkClothing ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformWorkClothing)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Farbgebung</span>
-                  {manualData.uniformColorScheme ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformColorScheme)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Typografie</span>
-                  {manualData.uniformTypography ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformTypography)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Einheitliches Website-Design</span>
-                  {manualData.uniformWebsiteDesign ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformWebsiteDesign)}
                 </div>
               </div>
             </TabsContent>
@@ -312,19 +378,11 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span>Hauszeitung</span>
-                  {manualData.hauszeitung ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.hauszeitung)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Herstellerinfos</span>
-                  {manualData.herstellerInfos ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.herstellerInfos)}
                 </div>
               </div>
             </TabsContent>
@@ -334,19 +392,11 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span>Einheitliche Fahrzeugbeklebung</span>
-                  {manualData.uniformVehicleBranding ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.uniformVehicleBranding)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Fahrzeugzustand</span>
-                  {manualData.vehicleCondition ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.vehicleCondition)}
                 </div>
               </div>
             </TabsContent>
@@ -356,19 +406,11 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span>Bauzaunbanner</span>
-                  {manualData.bauzaunBanner ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.bauzaunBanner)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Bandenwerbung (Sportmarketing)</span>
-                  {manualData.bandenWerbung ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ) : (
-                    <X className="h-5 w-5 text-red-600" />
-                  )}
+                  {getStatusIcon(manualData.bandenWerbung)}
                 </div>
               </div>
             </TabsContent>
@@ -384,167 +426,86 @@ export function CorporateIdentityAnalysis({ businessData, manualData, onUpdate }
               <TabsTrigger value="aw">Außenwerbung</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="cd" className="space-y-4">
-              <h4 className="font-medium">Corporate Design</h4>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformLogo"
-                    checked={formData.uniformLogo}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformLogo: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformLogo">
-                    Einheitliches Logo
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformWorkClothing"
-                    checked={formData.uniformWorkClothing}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformWorkClothing: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformWorkClothing">
-                    Einheitliche Arbeitskleidung
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformColorScheme"
-                    checked={formData.uniformColorScheme}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformColorScheme: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformColorScheme">
-                    Einheitliche Farbgebung
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformTypography"
-                    checked={formData.uniformTypography}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformTypography: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformTypography">
-                    Einheitliche Typografie
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformWebsiteDesign"
-                    checked={formData.uniformWebsiteDesign}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformWebsiteDesign: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformWebsiteDesign">
-                    Einheitliches Website-Design
-                  </Label>
-                </div>
-              </div>
+            <TabsContent value="cd" className="space-y-3">
+              <h4 className="font-medium mb-3">Corporate Design</h4>
+              <RadioField 
+                id="uniformLogo"
+                label="Einheitliches Logo"
+                value={formData.uniformLogo}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformLogo: v }))}
+              />
+              <RadioField 
+                id="uniformWorkClothing"
+                label="Einheitliche Arbeitskleidung"
+                value={formData.uniformWorkClothing}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformWorkClothing: v }))}
+              />
+              <RadioField 
+                id="uniformColorScheme"
+                label="Einheitliche Farbgebung"
+                value={formData.uniformColorScheme}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformColorScheme: v }))}
+              />
+              <RadioField 
+                id="uniformTypography"
+                label="Einheitliche Typografie"
+                value={formData.uniformTypography}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformTypography: v }))}
+              />
+              <RadioField 
+                id="uniformWebsiteDesign"
+                label="Einheitliches Website-Design"
+                value={formData.uniformWebsiteDesign}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformWebsiteDesign: v }))}
+              />
             </TabsContent>
 
-            <TabsContent value="wm" className="space-y-4">
-              <h4 className="font-medium">Eingesetzte Werbemittel</h4>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="hauszeitung"
-                    checked={formData.hauszeitung}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, hauszeitung: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="hauszeitung">
-                    Hauszeitung
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="herstellerInfos"
-                    checked={formData.herstellerInfos}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, herstellerInfos: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="herstellerInfos">
-                    Herstellerinfos
-                  </Label>
-                </div>
-              </div>
+            <TabsContent value="wm" className="space-y-3">
+              <h4 className="font-medium mb-3">Eingesetzte Werbemittel</h4>
+              <RadioField 
+                id="hauszeitung"
+                label="Hauszeitung"
+                value={formData.hauszeitung}
+                onChange={(v) => setFormData(prev => ({ ...prev, hauszeitung: v }))}
+              />
+              <RadioField 
+                id="herstellerInfos"
+                label="Herstellerinfos"
+                value={formData.herstellerInfos}
+                onChange={(v) => setFormData(prev => ({ ...prev, herstellerInfos: v }))}
+              />
             </TabsContent>
 
-            <TabsContent value="ff" className="space-y-4">
-              <h4 className="font-medium">Außenwirkung Fahrzeugflotte</h4>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="uniformVehicleBranding"
-                    checked={formData.uniformVehicleBranding}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, uniformVehicleBranding: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="uniformVehicleBranding">
-                    Einheitliche Fahrzeugbeklebung
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="vehicleCondition"
-                    checked={formData.vehicleCondition}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, vehicleCondition: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="vehicleCondition">
-                    Fahrzeugzustand (gepflegt, sauber)
-                  </Label>
-                </div>
-              </div>
+            <TabsContent value="ff" className="space-y-3">
+              <h4 className="font-medium mb-3">Außenwirkung Fahrzeugflotte</h4>
+              <RadioField 
+                id="uniformVehicleBranding"
+                label="Einheitliche Fahrzeugbeklebung"
+                value={formData.uniformVehicleBranding}
+                onChange={(v) => setFormData(prev => ({ ...prev, uniformVehicleBranding: v }))}
+              />
+              <RadioField 
+                id="vehicleCondition"
+                label="Fahrzeugzustand (gepflegt, sauber)"
+                value={formData.vehicleCondition}
+                onChange={(v) => setFormData(prev => ({ ...prev, vehicleCondition: v }))}
+              />
             </TabsContent>
 
-            <TabsContent value="aw" className="space-y-4">
-              <h4 className="font-medium">Außenwerbung</h4>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="bauzaunBanner"
-                    checked={formData.bauzaunBanner}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, bauzaunBanner: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="bauzaunBanner">
-                    Bauzaunbanner
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="bandenWerbung"
-                    checked={formData.bandenWerbung}
-                    onCheckedChange={(checked) =>
-                      setFormData(prev => ({ ...prev, bandenWerbung: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="bandenWerbung">
-                    Bandenwerbung (Sportmarketing)
-                  </Label>
-                </div>
-              </div>
+            <TabsContent value="aw" className="space-y-3">
+              <h4 className="font-medium mb-3">Außenwerbung</h4>
+              <RadioField 
+                id="bauzaunBanner"
+                label="Bauzaunbanner"
+                value={formData.bauzaunBanner}
+                onChange={(v) => setFormData(prev => ({ ...prev, bauzaunBanner: v }))}
+              />
+              <RadioField 
+                id="bandenWerbung"
+                label="Bandenwerbung (Sportmarketing)"
+                value={formData.bandenWerbung}
+                onChange={(v) => setFormData(prev => ({ ...prev, bandenWerbung: v }))}
+              />
             </TabsContent>
           </Tabs>
         )}

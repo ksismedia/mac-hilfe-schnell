@@ -3071,36 +3071,36 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Einheitliches Logo:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformLogo ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformLogo ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'green' : manualCorporateIdentityData.uniformLogo === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformLogo === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformLogo === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Arbeitskleidung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformWorkClothing ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformWorkClothing ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'green' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Farbgebung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformColorScheme ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformColorScheme ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'green' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliche Typografie:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformTypography ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformTypography ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'green' : manualCorporateIdentityData.uniformTypography === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformTypography === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformTypography === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliches Website-Design:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformWebsiteDesign ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformWebsiteDesign ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'green' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
@@ -3113,15 +3113,15 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Hauszeitung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.hauszeitung ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.hauszeitung ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  <span class="score-badge ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'green' : manualCorporateIdentityData.hauszeitung === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.hauszeitung === 'yes' ? '✅ Vorhanden' : manualCorporateIdentityData.hauszeitung === 'no' ? '❌ Nicht vorhanden' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Herstellerinfos:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.herstellerInfos ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.herstellerInfos ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  <span class="score-badge ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'green' : manualCorporateIdentityData.herstellerInfos === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.herstellerInfos === 'yes' ? '✅ Vorhanden' : manualCorporateIdentityData.herstellerInfos === 'no' ? '❌ Nicht vorhanden' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
@@ -3134,15 +3134,15 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Einheitliche Fahrzeugbeklebung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformVehicleBranding ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformVehicleBranding ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'green' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? '✅ Umgesetzt' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? '❌ Fehlt' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Fahrzeugzustand:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.vehicleCondition ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.vehicleCondition ? '✅ Gepflegt' : '❌ Verbesserungsbedarf'}
+                  <span class="score-badge ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'green' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.vehicleCondition === 'yes' ? '✅ Gepflegt' : manualCorporateIdentityData.vehicleCondition === 'no' ? '❌ Verbesserungsbedarf' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
@@ -3155,20 +3155,48 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Bauzaunbanner:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.bauzaunBanner ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.bauzaunBanner ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  <span class="score-badge ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'green' : manualCorporateIdentityData.bauzaunBanner === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? '✅ Vorhanden' : manualCorporateIdentityData.bauzaunBanner === 'no' ? '❌ Nicht vorhanden' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Bandenwerbung (Sportmarketing):</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.bandenWerbung ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.bandenWerbung ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  <span class="score-badge ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'green' : manualCorporateIdentityData.bandenWerbung === 'no' ? 'red' : 'neutral'}">
+                    ${manualCorporateIdentityData.bandenWerbung === 'yes' ? '✅ Vorhanden' : manualCorporateIdentityData.bandenWerbung === 'no' ? '❌ Nicht vorhanden' : '❓ Keine Info'}
                   </span>
                 </p>
               </div>
             </div>
           </div>
+            
+            ${(() => {
+              // Verbesserungsvorschläge sammeln
+              const suggestions = [];
+              if (manualCorporateIdentityData.uniformLogo === 'no') suggestions.push('Einheitliches Logo auf allen Kanälen implementieren');
+              if (manualCorporateIdentityData.uniformWorkClothing === 'no') suggestions.push('Einheitliche Arbeitskleidung für Mitarbeiter einführen');
+              if (manualCorporateIdentityData.uniformColorScheme === 'no') suggestions.push('Corporate Farbgebung definieren und konsistent nutzen');
+              if (manualCorporateIdentityData.uniformTypography === 'no') suggestions.push('Einheitliche Typografie festlegen');
+              if (manualCorporateIdentityData.uniformWebsiteDesign === 'no') suggestions.push('Website-Design an Corporate Design anpassen');
+              if (manualCorporateIdentityData.hauszeitung === 'no') suggestions.push('Hauszeitung oder Newsletter zur Kundenbindung einführen');
+              if (manualCorporateIdentityData.herstellerInfos === 'no') suggestions.push('Herstellerinformationen und Produktbroschüren bereitstellen');
+              if (manualCorporateIdentityData.uniformVehicleBranding === 'no') suggestions.push('Fahrzeugbeklebung mit Logo und Kontaktdaten umsetzen');
+              if (manualCorporateIdentityData.vehicleCondition === 'no') suggestions.push('Fahrzeugpflege und -wartung verbessern');
+              if (manualCorporateIdentityData.bauzaunBanner === 'no') suggestions.push('Bauzaunbanner für Baustellen-Marketing nutzen');
+              if (manualCorporateIdentityData.bandenWerbung === 'no') suggestions.push('Sportmarketing durch Bandenwerbung erwägen');
+              
+              if (suggestions.length > 0) {
+                return `
+            <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
+              <h4 style="color: #3b82f6;">💡 Verbesserungsvorschläge</h4>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                ${suggestions.map(s => `<li style="margin: 5px 0;">${s}</li>`).join('')}
+              </ul>
+            </div>
+                `;
+              }
+              return '';
+            })()}
             
             ${manualCorporateIdentityData.notes ? `
             <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(59, 130, 246, 0.1);">

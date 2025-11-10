@@ -708,49 +708,61 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   // Wenn keine Außendarstellungs-Daten vorhanden, verwende Defaultwert
   if (!data) return 50;
   
+  const calculateScore = (fields: Array<'yes' | 'no' | 'unknown'>) => {
+    const knownFields = fields.filter(f => f !== 'unknown');
+    if (knownFields.length === 0) return 0;
+    const yesCount = knownFields.filter(f => f === 'yes').length;
+    return Math.round((yesCount / knownFields.length) * 100);
+  };
+  
   let totalScore = 0;
   let categoryCount = 0;
   
   // Corporate Design (5 Felder)
-  const cdFields = [
+  const cdScore = calculateScore([
     data.uniformLogo,
     data.uniformWorkClothing,
     data.uniformColorScheme,
     data.uniformTypography,
     data.uniformWebsiteDesign
-  ];
-  const cdScore = (cdFields.filter(Boolean).length / cdFields.length) * 100;
-  totalScore += cdScore;
-  categoryCount++;
+  ]);
+  if (cdScore > 0) {
+    totalScore += cdScore;
+    categoryCount++;
+  }
   
   // Eingesetzte Werbemittel (2 Felder)
-  const wmFields = [
+  const wmScore = calculateScore([
     data.hauszeitung,
     data.herstellerInfos
-  ];
-  const wmScore = (wmFields.filter(Boolean).length / wmFields.length) * 100;
-  totalScore += wmScore;
-  categoryCount++;
+  ]);
+  if (wmScore > 0) {
+    totalScore += wmScore;
+    categoryCount++;
+  }
   
   // Außenwirkung Fahrzeugflotte (2 Felder)
-  const ffFields = [
+  const ffScore = calculateScore([
     data.uniformVehicleBranding,
     data.vehicleCondition
-  ];
-  const ffScore = (ffFields.filter(Boolean).length / ffFields.length) * 100;
-  totalScore += ffScore;
-  categoryCount++;
+  ]);
+  if (ffScore > 0) {
+    totalScore += ffScore;
+    categoryCount++;
+  }
   
   // Außenwerbung (2 Felder)
-  const awFields = [
+  const awScore = calculateScore([
     data.bauzaunBanner,
     data.bandenWerbung
-  ];
-  const awScore = (awFields.filter(Boolean).length / awFields.length) * 100;
-  totalScore += awScore;
-  categoryCount++;
+  ]);
+  if (awScore > 0) {
+    totalScore += awScore;
+    categoryCount++;
+  }
   
-  // Durchschnitt der 4 Kategorien
+  // Durchschnitt der bewerteten Kategorien
+  if (categoryCount === 0) return 50; // Defaultwert wenn alles unknown
   return Math.round(totalScore / categoryCount);
 };
 

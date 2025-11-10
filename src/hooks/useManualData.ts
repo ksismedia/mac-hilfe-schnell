@@ -41,23 +41,23 @@ export interface ManualWorkplaceData {
 
 export interface ManualCorporateIdentityData {
   // Corporate Design (5 Felder)
-  uniformLogo: boolean;
-  uniformWorkClothing: boolean;
-  uniformColorScheme: boolean;
-  uniformTypography: boolean;
-  uniformWebsiteDesign: boolean;
+  uniformLogo: 'yes' | 'no' | 'unknown';
+  uniformWorkClothing: 'yes' | 'no' | 'unknown';
+  uniformColorScheme: 'yes' | 'no' | 'unknown';
+  uniformTypography: 'yes' | 'no' | 'unknown';
+  uniformWebsiteDesign: 'yes' | 'no' | 'unknown';
   
   // Eingesetzte Werbemittel (2 Felder)
-  hauszeitung: boolean;
-  herstellerInfos: boolean;
+  hauszeitung: 'yes' | 'no' | 'unknown';
+  herstellerInfos: 'yes' | 'no' | 'unknown';
   
   // Außenwirkung Fahrzeugflotte (2 Felder)
-  uniformVehicleBranding: boolean;
-  vehicleCondition: boolean;
+  uniformVehicleBranding: 'yes' | 'no' | 'unknown';
+  vehicleCondition: 'yes' | 'no' | 'unknown';
   
   // Außenwerbung (2 Felder)
-  bauzaunBanner: boolean;
-  bandenWerbung: boolean;
+  bauzaunBanner: 'yes' | 'no' | 'unknown';
+  bandenWerbung: 'yes' | 'no' | 'unknown';
   
   notes?: string;
 }
