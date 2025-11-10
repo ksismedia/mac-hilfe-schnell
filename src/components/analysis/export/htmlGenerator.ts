@@ -3218,6 +3218,11 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    <!-- Kategorie-Überschrift: Online-/Web-/Social-Media Performance -->
+    <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 4px solid #fbbf24; border-radius: 8px;">
+      <h2 style="margin: 0; color: #fbbf24; font-size: 1.8em; font-weight: bold;">Online-/Web-/Social-Media Performance</h2>
+    </div>
+
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
