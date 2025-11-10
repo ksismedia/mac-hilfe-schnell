@@ -9,7 +9,7 @@ export const getAIActDisclaimerHTML = (hasUnreviewedContent: boolean = false): s
           <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
         </svg>
         <h3 style="margin: 0; color: #e65100; font-size: 20px; font-weight: 700;">
-          ⚠️ HINWEIS: KI-Verordnung (EU AI Act)
+          HINWEIS: KI-Verordnung (EU AI Act)
         </h3>
       </div>
       <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
@@ -24,7 +24,7 @@ export const getAIActDisclaimerHTML = (hasUnreviewedContent: boolean = false): s
       </div>
       <div style="background: #fff8e1; padding: 12px; border-left: 4px solid #ff6f00; border-radius: 4px;">
         <p style="margin: 0; color: #e65100; font-size: 13px; font-weight: 600;">
-          📋 Bitte beachten: Die in diesem Report enthaltenen AI-Bewertungen dienen als 
+          Bitte beachten: Die in diesem Report enthaltenen AI-Bewertungen dienen als 
           Ersteinschätzung und sollten durch Fachexperten überprüft werden.
         </p>
       </div>
@@ -35,7 +35,7 @@ export const getAIActDisclaimerHTML = (hasUnreviewedContent: boolean = false): s
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <h3 style="margin: 0; color: #2e7d32; font-size: 18px; font-weight: 700;">
-          ✓ KI-Verordnung (EU AI Act) konform
+          KI-Verordnung (EU AI Act) konform
         </h3>
       </div>
       <p style="margin: 0; color: #1b5e20; font-size: 14px; line-height: 1.6;">
@@ -72,7 +72,7 @@ export const getAITransparencyInfoHTML = (): string => {
           <li>Content-Quality Scoring</li>
         </ul>
         <p style="margin: 12px 0 0 0; font-size: 12px; color: #0277bd;">
-          ℹ️ Alle AI-Bewertungen basieren auf objektiven Metriken und öffentlich verfügbaren Daten. 
+          Alle AI-Bewertungen basieren auf objektiven Metriken und öffentlich verfügbaren Daten. 
           Die finale Interpretation und Handlungsempfehlungen erfolgen durch qualifizierte Berater.
         </p>
       </div>
@@ -98,7 +98,7 @@ export const getCollapsibleComplianceSectionHTML = (hasUnreviewedContent: boolea
         <div style="display: flex; align-items: center; gap: 12px;">
           <span id="legal-compliance-toggle" style="color: #fbbf24; font-size: 20px; transition: transform 0.3s ease; font-weight: bold;">▶</span>
           <h3 style="margin: 0; color: #fbbf24; font-size: 18px; font-weight: 700;">
-            ⚖️ Rechtliche Hinweise & KI-Transparenz
+            Rechtliche Hinweise & KI-Transparenz
           </h3>
         </div>
         <div style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">

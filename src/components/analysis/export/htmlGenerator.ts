@@ -356,11 +356,11 @@ export const generateCustomerHTML = ({
 
   const getMissingImprintList = () => {
     if (finalMissingImprintElements.length === 0) {
-      return '<p>✅ Alle notwendigen Angaben im Impressum gefunden.</p>';
+      return '<p>Alle notwendigen Angaben im Impressum gefunden.</p>';
     } else {
       return `
         <ul>
-          ${finalMissingImprintElements.map(element => `<li>❌ ${element}</li>`).join('')}
+          ${finalMissingImprintElements.map(element => `<li>${element}</li>`).join('')}
         </ul>
         <p>Es fehlen wichtige Angaben. Dies kann zu rechtlichen Problemen führen.</p>
       `;
@@ -369,11 +369,11 @@ export const generateCustomerHTML = ({
   
   const getFoundImprintList = () => {
     if (foundImprintElements.length === 0) {
-      return '<p>❌ Keine Impressum-Angaben gefunden.</p>';
+      return '<p>Keine Impressum-Angaben gefunden.</p>';
     } else {
       return `
         <ul>
-          ${foundImprintElements.map(element => `<li>✅ ${element}</li>`).join('')}
+          ${foundImprintElements.map(element => `<li>${element}</li>`).join('')}
         </ul>
         ${manualImprintData ? '<p><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>' : ''}
       `;
@@ -393,7 +393,7 @@ export const generateCustomerHTML = ({
     
     return `
       <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-        <h4>💼 Detaillierte Arbeitgeber-Bewertung</h4>
+        <h4>Detaillierte Arbeitgeber-Bewertung</h4>
         
         ${hasWorkplaceData ? `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
@@ -409,16 +409,16 @@ export const generateCustomerHTML = ({
                 if (isManualData) {
                   const disabled = manualWorkplaceData.disableAutoKununu;
                   if (disabled && !manualWorkplaceData.kununuFound) {
-                    return '❌ Nicht gefunden';
+                    return 'Nicht gefunden';
                   } else if (manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating) {
-                    return `✅ ${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`;
+                    return `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`;
                   } else {
-                    return '❌ Nicht gefunden';
+                    return 'Nicht gefunden';
                   }
                 } else {
                   return realData.workplace?.kununu?.found && realData.workplace?.kununu?.rating
-                    ? `✅ ${realData.workplace.kununu.rating}/5 (${realData.workplace.kununu.reviews || 0} Bewertungen)`
-                    : '❌ Nicht gefunden';
+                    ? `${realData.workplace.kununu.rating}/5 (${realData.workplace.kununu.reviews || 0} Bewertungen)`
+                    : 'Nicht gefunden';
                 }
               })()
             }</p>
@@ -435,16 +435,16 @@ export const generateCustomerHTML = ({
                 if (isManualData) {
                   const disabled = manualWorkplaceData.disableAutoGlassdoor;
                   if (disabled && !manualWorkplaceData.glassdoorFound) {
-                    return '❌ Nicht gefunden';
+                    return 'Nicht gefunden';
                   } else if (manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating) {
-                    return `✅ ${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`;
+                    return `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`;
                   } else {
-                    return '❌ Nicht gefunden';
+                    return 'Nicht gefunden';
                   }
                 } else {
                   return realData.workplace?.glassdoor?.found && realData.workplace?.glassdoor?.rating
-                    ? `✅ ${realData.workplace.glassdoor.rating}/5 (${realData.workplace.glassdoor.reviews || 0} Bewertungen)`
-                    : '❌ Nicht gefunden';
+                    ? `${realData.workplace.glassdoor.rating}/5 (${realData.workplace.glassdoor.reviews || 0} Bewertungen)`
+                    : 'Nicht gefunden';
                 }
               })()
             }</p>
@@ -452,7 +452,7 @@ export const generateCustomerHTML = ({
           <div>
             <p><strong>Gesamtbewertung:</strong> 
               <span class="score-badge ${workplaceScore >= 70 ? 'green' : workplaceScore >= 50 ? 'yellow' : 'red'}">
-                ${workplaceScore >= 70 ? '✅ Sehr gut' : workplaceScore >= 50 ? '⚠️ Gut' : '❌ Verbesserungsbedarf'}
+                ${workplaceScore >= 70 ? 'Sehr gut' : workplaceScore >= 50 ? 'Gut' : 'Verbesserungsbedarf'}
               </span>
             </p>
           </div>
@@ -464,7 +464,7 @@ export const generateCustomerHTML = ({
         ` : `
         <div style="background: #2d3748; color: #fbbf24; padding: 20px; border-radius: 8px; border: 2px solid #fbbf24; margin-top: 15px;">
           <h4 style="color: #fbbf24; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;">
-            ⭐ Arbeitsplatz-Bewertungen nicht vorhanden
+            Fachkräfte-Attraktivität
           </h4>
           <p style="margin: 10px 0; font-size: 14px;">
             Derzeit liegen noch keine Arbeitgeber-Bewertungen vor. Eine Registrierung bei relevanten Bewertungsportalen wird empfohlen, um die Attraktivität als Arbeitgeber zu steigern.
@@ -640,7 +640,7 @@ export const generateCustomerHTML = ({
     const legalScore = impressumScore;
     return `
       <div class="metric-card ${legalScore >= 70 ? 'good' : 'warning'}">
-        <h3>⚖️ Impressum & Rechtssicherheit</h3>
+        <h3>Impressum & Rechtssicherheit</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
         </div>
@@ -663,38 +663,38 @@ export const generateCustomerHTML = ({
 
         <!-- Impressum-Details -->
         <div style="margin-top: 20px;">
-          <h4 class="section-text" style="margin-bottom: 10px;">📋 Impressum-Analyse</h4>
+          <h4 class="section-text" style="margin-bottom: 10px;">Impressum-Analyse</h4>
           
           ${manualImprintData ? `
           <div style="margin-bottom: 15px;">
-            <h5 class="success-text" style="margin-bottom: 8px;">✅ Vorhandene Angaben (manuell bestätigt):</h5>
+            <h5 class="success-text" style="margin-bottom: 8px;">Vorhandene Angaben (manuell bestätigt):</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">✅ ${element}</li>`).join('')}
+              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">${element}</li>`).join('')}
             </ul>
             <p style="font-size: 0.9em; margin-top: 8px;"><strong>Hinweis:</strong> Diese Angaben wurden manuell bestätigt.</p>
           </div>
           ${finalMissingImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
-            <h5 class="error-text" style="margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
+            <h5 class="error-text" style="margin-bottom: 8px;">Fehlende Angaben:</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">❌ ${element}</li>`).join('')}
+              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">${element}</li>`).join('')}
             </ul>
           </div>
           ` : ''}
           ` : `
           ${foundImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
-            <h5 class="success-text" style="margin-bottom: 8px;">✅ Automatisch gefundene Angaben:</h5>
+            <h5 class="success-text" style="margin-bottom: 8px;">Automatisch gefundene Angaben:</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">✅ ${element}</li>`).join('')}
+              ${foundImprintElements.map(element => `<li class="success-text" style="margin-bottom: 3px;">${element}</li>`).join('')}
             </ul>
           </div>
           ` : ''}
           ${finalMissingImprintElements.length > 0 ? `
           <div style="margin-bottom: 15px;">
-            <h5 class="error-text" style="margin-bottom: 8px;">❌ Fehlende Angaben:</h5>
+            <h5 class="error-text" style="margin-bottom: 8px;">Fehlende Angaben:</h5>
             <ul style="margin: 0; padding-left: 20px;">
-              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">❌ ${element}</li>`).join('')}
+              ${finalMissingImprintElements.map(element => `<li class="error-text" style="margin-bottom: 3px;">${element}</li>`).join('')}
             </ul>
           </div>
           ` : ''}
@@ -702,7 +702,7 @@ export const generateCustomerHTML = ({
 
           ${legalScore < 80 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-            <h5 class="error-text" style="margin: 0 0 10px 0;">⚠️ WARNUNG: Abmahngefahr bei unvollständigem Impressum</h5>
+            <h5 class="error-text" style="margin: 0 0 10px 0;">WARNUNG: Abmahngefahr bei unvollständigem Impressum</h5>
             <p class="error-text" style="margin: 0 0 10px 0; font-size: 14px;">
               <strong>Rechtliche Risiken:</strong> Fehlende Impressum-Angaben können zu Abmahnungen führen.
             </p>
@@ -775,19 +775,19 @@ export const generateCustomerHTML = ({
         ${violations.length > 0 || accessibilityScore < 90 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
             <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-              ⚖️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
+              RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
             </h4>
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
               <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
             </p>
             <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-              <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
             </div>
           </div>
         ` : ''}
         <h3 class="header-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-          <span>♿ Barrierefreiheit & Zugänglichkeit ${hasRealData ? '✓ <span style="color: #10b981; font-size: 14px;">Echte PageSpeed Insights Prüfung</span>' : ''}</span>
+          <span>Barrierefreiheit & Zugänglichkeit ${hasRealData ? '<span style="color: #10b981; font-size: 14px;">Echte PageSpeed Insights Prüfung</span>' : ''}</span>
           <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</span>
         </h3>
         <div class="score-display">
@@ -836,7 +836,7 @@ export const generateCustomerHTML = ({
 
           <!-- Successful Tests -->
           <div class="success-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-            <h4 class="success-text">✅ Erfolgreich umgesetzt</h4>
+            <h4 class="success-text">Erfolgreich umgesetzt</h4>
             <ul style="margin-top: 10px; padding-left: 20px;">
               ${passes.map(pass => `<li class="success-text" style="margin-bottom: 5px;">${pass}</li>`).join('')}
             </ul>
@@ -850,7 +850,7 @@ export const generateCustomerHTML = ({
         
         <div id="legal-requirements" style="display: none;">
           <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-            <h4 class="section-text">⚖️ Rechtliche Compliance</h4>
+            <h4 class="section-text">Rechtliche Compliance</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
@@ -898,13 +898,13 @@ export const generateCustomerHTML = ({
             
             ${accessibilityScore < 90 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 class="error-text" style="margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+              <h4 class="error-text" style="margin: 0 0 10px 0;">RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
                 Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
                 Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
               </p>
               <p class="error-text" style="margin: 0; font-size: 14px;">
-                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+                <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt.
                 Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
                 Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
               </p>
@@ -3398,7 +3398,7 @@ export const generateCustomerHTML = ({
     <!-- Online-Präsenz -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🔍 Online-Präsenz (Google-Suche)</span>
+        <span>Online-Präsenz (Google-Suche)</span>
         <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
       </div>
       <div class="section-content">
@@ -3616,7 +3616,7 @@ export const generateCustomerHTML = ({
     <!-- Branchenplattformen -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🏆 Branchenplattformen</span>
+        <span>Branchenplattformen</span>
         <div class="header-score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
       </div>
       <div class="section-content">
@@ -3711,7 +3711,7 @@ export const generateCustomerHTML = ({
     <!-- Wettbewerber-Analyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>👥 Wettbewerber-Analyse</span>
+        <span>Wettbewerber-Analyse</span>
         ${(() => {
           const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
           const ownScore = (window as any).globalOwnCompanyScore || competitorComparisonScore || 75;
@@ -3731,7 +3731,7 @@ export const generateCustomerHTML = ({
       return `
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>💼 Arbeitgeber-Bewertungen</span>
+        <span>Arbeitgeber-Bewertungen</span>
         ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
       </div>
       <div class="section-content">
@@ -3748,12 +3748,12 @@ export const generateCustomerHTML = ({
       return hasStaffData ? `
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>👥 Mitarbeiterqualifikation</span>
+        <span>Mitarbeiterqualifikation</span>
         <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>📊 Team-Zusammensetzung</h3>
+          <h3>Team-Zusammensetzung</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
             <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border-radius: 10px;">
               <div style="font-size: 3em; font-weight: bold; color: #3b82f6;">${staffQualificationData.totalEmployees}</div>
@@ -3765,31 +3765,31 @@ export const generateCustomerHTML = ({
               <div style="display: grid; gap: 8px;">
                 ${staffQualificationData.apprentices > 0 ? `
                 <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>👨‍🎓 Auszubildende:</span>
+                  <span>Auszubildende:</span>
                   <strong>${staffQualificationData.apprentices}</strong>
                 </div>
                 ` : ''}
                 ${staffQualificationData.skilled_workers > 0 ? `
                 <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>🔧 Facharbeiter:</span>
+                  <span>Facharbeiter:</span>
                   <strong>${staffQualificationData.skilled_workers}</strong>
                 </div>
                 ` : ''}
                 ${staffQualificationData.masters > 0 ? `
                 <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>🎓 Meister:</span>
+                  <span>Meister:</span>
                   <strong>${staffQualificationData.masters}</strong>
                 </div>
                 ` : ''}
                 ${staffQualificationData.office_workers > 0 ? `
                 <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>💼 Bürokräfte:</span>
+                  <span>Bürokräfte:</span>
                   <strong>${staffQualificationData.office_workers}</strong>
                 </div>
                 ` : ''}
                 ${staffQualificationData.unskilled_workers > 0 ? `
                 <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>👷 Hilfskräfte:</span>
+                  <span>Hilfskräfte:</span>
                   <strong>${staffQualificationData.unskilled_workers}</strong>
                 </div>
                 ` : ''}
@@ -3800,46 +3800,40 @@ export const generateCustomerHTML = ({
 
         ${Object.values(staffQualificationData.certifications).some(val => val === true) ? `
         <div class="metric-card" style="margin-top: 20px;">
-          <h3>🏆 Zertifizierungen & Qualifikationen</h3>
+          <h3>Zertifizierungen & Qualifikationen</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
             ${staffQualificationData.certifications.welding_certificates ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">🔥</div>
               <h4 style="margin: 0; color: #16a34a;">Schweißzertifikate</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
             </div>
             ` : ''}
             ${staffQualificationData.certifications.safety_training ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">🦺</div>
               <h4 style="margin: 0; color: #16a34a;">Arbeitssicherheit</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Geschult</p>
             </div>
             ` : ''}
             ${staffQualificationData.certifications.first_aid ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">🚑</div>
               <h4 style="margin: 0; color: #16a34a;">Erste Hilfe</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Zertifiziert</p>
             </div>
             ` : ''}
             ${staffQualificationData.certifications.digital_skills ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">💻</div>
               <h4 style="margin: 0; color: #16a34a;">Digitale Kompetenzen</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
             </div>
             ` : ''}
             ${staffQualificationData.certifications.instructor_qualification ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">👨‍🏫</div>
               <h4 style="margin: 0; color: #16a34a;">Ausbildereignung</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">AdA-Schein</p>
             </div>
             ` : ''}
             ${staffQualificationData.certifications.business_qualification ? `
             <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">📊</div>
               <h4 style="margin: 0; color: #16a34a;">Betriebswirtschaft</h4>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Qualifiziert</p>
             </div>
@@ -3850,7 +3844,7 @@ export const generateCustomerHTML = ({
 
         ${staffQualificationData.industry_specific && staffQualificationData.industry_specific.length > 0 ? `
         <div class="metric-card" style="margin-top: 20px;">
-          <h3>🔧 Branchenspezifische Qualifikationen</h3>
+          <h3>Branchenspezifische Qualifikationen</h3>
           <div style="display: flex; flex-wrap: gap; gap: 10px; margin-top: 15px;">
             ${staffQualificationData.industry_specific.map(qual => `
               <div style="padding: 10px 20px; background: rgba(168, 85, 247, 0.1); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 20px; font-weight: 600; color: #7e22ce;">
@@ -3914,7 +3908,7 @@ export const generateCustomerHTML = ({
     ${hourlyRateData ? `
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>💰 Stundensatzanalyse</span>
+        <span>Stundensatzanalyse</span>
         <div class="header-score-circle ${getScoreColorClass(hourlyRateScore)}">${Math.round(hourlyRateScore)}%</div>
       </div>
       <div class="section-content">
@@ -3935,34 +3929,30 @@ export const generateCustomerHTML = ({
       return hasCorporateData ? `
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🎨 Corporate Identity & Außendarstellung</span>
+        <span>Corporate Identity & Außendarstellung</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>🏢 Corporate Design</h3>
+          <h3>Corporate Design</h3>
           <p style="color: #64748b; margin-bottom: 20px;">Ein einheitliches Corporate Design stärkt die Markenidentität und sorgt für professionellen Auftritt.</p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformLogo === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformLogo === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformLogo === 'yes' ? '✅' : manualCorporateIdentityData.uniformLogo === 'no' ? '❌' : '❓'}</div>
               <h4 style="margin: 0 0 5px 0; color: #1e293b;">Einheitliches Logo</h4>
               <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformLogo === 'yes' ? 'Konsistent vorhanden' : manualCorporateIdentityData.uniformLogo === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
             </div>
 
             <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? '✅' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? '❌' : '❓'}</div>
               <h4 style="margin: 0 0 5px 0; color: #1e293b;">Arbeitskleidung</h4>
               <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitlich vorhanden' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
             </div>
 
             <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformColorScheme === 'yes' ? '✅' : manualCorporateIdentityData.uniformColorScheme === 'no' ? '❌' : '❓'}</div>
               <h4 style="margin: 0 0 5px 0; color: #1e293b;">Farbkonzept</h4>
               <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistent eingesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
             </div>
 
             <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformTypography === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformTypography === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformTypography === 'yes' ? '✅' : manualCorporateIdentityData.uniformTypography === 'no' ? '❌' : '❓'}</div>
               <h4 style="margin: 0 0 5px 0; color: #1e293b;">Schriftarten</h4>
               <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitlich verwendet' : manualCorporateIdentityData.uniformTypography === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
             </div>
@@ -4061,32 +4051,32 @@ export const generateCustomerHTML = ({
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>📞 Reaktionszeit auf Anfragen</span>
+        <span>Reaktionszeit auf Anfragen</span>
         <div class="header-score-circle ${quoteResponseScore > 0 ? getScoreColorClass(quoteResponseScore) : 'red'}">${displayQuoteScore}</div>
       </div>
       <div class="section-content">
         ${(() => {
           const responseTimeHours = parseFloat(quoteResponseData.responseTime);
           const contactMethodsList = [];
-          if (quoteResponseData.contactMethods.phone) contactMethodsList.push('📞 Telefon');
-          if (quoteResponseData.contactMethods.email) contactMethodsList.push('📧 E-Mail');
-          if (quoteResponseData.contactMethods.contactForm) contactMethodsList.push('📝 Kontaktformular');
-          if (quoteResponseData.contactMethods.whatsapp) contactMethodsList.push('💬 WhatsApp');
-          if (quoteResponseData.contactMethods.messenger) contactMethodsList.push('💬 Messenger');
+          if (quoteResponseData.contactMethods.phone) contactMethodsList.push('Telefon');
+          if (quoteResponseData.contactMethods.email) contactMethodsList.push('E-Mail');
+          if (quoteResponseData.contactMethods.contactForm) contactMethodsList.push('Kontaktformular');
+          if (quoteResponseData.contactMethods.whatsapp) contactMethodsList.push('WhatsApp');
+          if (quoteResponseData.contactMethods.messenger) contactMethodsList.push('Messenger');
           
           return `
         <div class="metric-card">
-          <h3>📊 Kundenservice-Leistung</h3>
+          <h3>Kundenservice-Leistung</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
             <div>
-              <h4>⏱️ Reaktionszeit auf Anfragen</h4>
+              <h4>Reaktionszeit auf Anfragen</h4>
               <div style="font-size: 2em; font-weight: bold; color: ${responseTimeHours <= 2 ? '#10b981' : responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'};">
                 ${quoteResponseData.responseTime} Stunden
               </div>
               <p style="margin-top: 10px; color: #6b7280;">
-                ${responseTimeHours <= 2 ? '✅ Exzellente Reaktionszeit' : 
-                  responseTimeHours <= 24 ? '⚠️ Gute Reaktionszeit, aber optimierbar' : 
-                  '❌ Reaktionszeit sollte verbessert werden'}
+                ${responseTimeHours <= 2 ? 'Exzellente Reaktionszeit' : 
+                  responseTimeHours <= 24 ? 'Gute Reaktionszeit, aber optimierbar' : 
+                  'Reaktionszeit sollte verbessert werden'}
               </p>
             </div>
             

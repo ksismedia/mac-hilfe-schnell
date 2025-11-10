@@ -5,7 +5,7 @@ export const generatePricingSection = (
 ) => `
         <!-- Stundensatz-Analyse -->
         <div class="section">
-            <div class="section-header">💰 Preisstrategie-Analyse</div>
+            <div class="section-header">Preisstrategie-Analyse</div>
             <div class="section-content">
                 <div class="metric-grid">
                     <div class="metric-item">
@@ -76,7 +76,7 @@ export const generatePricingSection = (
                 </div>
 
                 <div class="highlight-box">
-                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">💡 Preisstrategie-Empfehlung</h4>
+                    <h4 style="color: #2c7a7b; margin-bottom: 10px;">Preisstrategie-Empfehlung</h4>
                     <p style="color: #2c7a7b;">
                         ${hourlyRateData.ownRate < hourlyRateData.regionAverage * 0.8 ? 
                             'Ihr Stundensatz liegt deutlich unter dem Durchschnitt. Eine moderate Erhöhung könnte Ihre Gewinnmarge verbessern, ohne Kunden zu verlieren.' :
