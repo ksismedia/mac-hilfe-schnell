@@ -595,42 +595,75 @@ export const generateCustomerHTML = ({
       }
     }
     return `
-      <div class="metric-card good">
+      <div class="metric-card">
         <h3>Stundensatz-Analyse & Wettbewerbsvergleich</h3>
         <div class="score-display">
-          <div class="score-tile ${getScoreColorClass(localPricingScore)}">${localPricingText}</div>
-        </div>
-          ${generateProgressBar(localPricingScore, `${localPricingText}`)}
+          <div class="score-circle ${getScoreColorClass(localPricingScore)}">${Math.round(localPricingScore)}%</div>
           <div class="score-details">
-            <h4>Ihre Stundensätze:</h4>
-            <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
-            <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate || 0}€/h</p>
-            <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate || 0}€/h</p>
-            <p><strong>Helfer:</strong> ${hourlyRateData.helferRate || 0}€/h</p>
-            <p><strong>Service:</strong> ${hourlyRateData.serviceRate || 0}€/h</p>
-            <p><strong>Installation:</strong> ${hourlyRateData.installationRate || 0}€/h</p>
+            <p><strong>Bewertung:</strong> ${localPricingText}</p>
             ${companyAvg > 0 ? `<p><strong>Ihr Durchschnitt:</strong> ${companyAvg.toFixed(2)}€/h</p>` : ''}
-            
-            ${regionalAvg > 0 ? `
-            <h4 style="margin-top: 15px;">Regional üblich:</h4>
-            <p><strong>Regional Meister:</strong> ${hourlyRateData.regionalMeisterRate || 0}€/h</p>
-            <p><strong>Regional Facharbeiter:</strong> ${hourlyRateData.regionalFacharbeiterRate || 0}€/h</p>
-            <p><strong>Regional Azubi:</strong> ${hourlyRateData.regionalAzubiRate || 0}€/h</p>
-            <p><strong>Regional Helfer:</strong> ${hourlyRateData.regionalHelferRate || 0}€/h</p>
-            <p><strong>Regional Service:</strong> ${hourlyRateData.regionalServiceRate || 0}€/h</p>
-            <p><strong>Regional Installation:</strong> ${hourlyRateData.regionalInstallationRate || 0}€/h</p>
-            <p><strong>Regional Durchschnitt:</strong> ${regionalAvg.toFixed(2)}€/h</p>
-            
-            <div style="margin-top: 15px; padding: 10px; background: ${localPricingScore >= 60 ? (localPricingScore >= 70 ? '#ffd700' : '#e8f5e8') : '#f8d7da'}; border-radius: 5px;">
-              <strong>Bewertung:</strong> ${
-                localPricingScore >= 70 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
-                localPricingScore >= 50 ? 'Ihre Preise sind wettbewerbsfähig.' :
-                'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
-              }
-            </div>
-            ` : ''}
+            ${regionalAvg > 0 ? `<p><strong>Regional Durchschnitt:</strong> ${regionalAvg.toFixed(2)}€/h</p>` : ''}
           </div>
+        </div>
+        ${generateProgressBar(localPricingScore, localPricingText)}
       </div>
+
+      <div class="metric-card">
+        <h3>Ihre Stundensätze</h3>
+        
+        ${hourlyRateData.meisterRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Meister:</strong> ${hourlyRateData.meisterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalMeisterRate > 0 ? `(Regional: ${hourlyRateData.regionalMeisterRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalMeisterRate > 0 ? generateProgressBar((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate) * 100, `${((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.meisterRate > hourlyRateData.regionalMeisterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+        
+        ${hourlyRateData.facharbeiterRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalFacharbeiterRate > 0 ? `(Regional: ${hourlyRateData.regionalFacharbeiterRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalFacharbeiterRate > 0 ? generateProgressBar((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate) * 100, `${((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.facharbeiterRate > hourlyRateData.regionalFacharbeiterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+        
+        ${hourlyRateData.azubiRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalAzubiRate > 0 ? `(Regional: ${hourlyRateData.regionalAzubiRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalAzubiRate > 0 ? generateProgressBar((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate) * 100, `${((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate - 1) * 100).toFixed(1)}% ${hourlyRateData.azubiRate > hourlyRateData.regionalAzubiRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+        
+        ${hourlyRateData.helferRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Helfer:</strong> ${hourlyRateData.helferRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalHelferRate > 0 ? `(Regional: ${hourlyRateData.regionalHelferRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalHelferRate > 0 ? generateProgressBar((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate) * 100, `${((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate - 1) * 100).toFixed(1)}% ${hourlyRateData.helferRate > hourlyRateData.regionalHelferRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+        
+        ${hourlyRateData.serviceRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Service:</strong> ${hourlyRateData.serviceRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalServiceRate > 0 ? `(Regional: ${hourlyRateData.regionalServiceRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalServiceRate > 0 ? generateProgressBar((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate) * 100, `${((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate - 1) * 100).toFixed(1)}% ${hourlyRateData.serviceRate > hourlyRateData.regionalServiceRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+        
+        ${hourlyRateData.installationRate > 0 ? `
+        <div style="margin-bottom: 15px;">
+          <p><strong>Installation:</strong> ${hourlyRateData.installationRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalInstallationRate > 0 ? `(Regional: ${hourlyRateData.regionalInstallationRate}€/h)` : ''}</p>
+          ${hourlyRateData.regionalInstallationRate > 0 ? generateProgressBar((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate) * 100, `${((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate - 1) * 100).toFixed(1)}% ${hourlyRateData.installationRate > hourlyRateData.regionalInstallationRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+        </div>
+        ` : ''}
+      </div>
+
+      ${regionalAvg > 0 ? `
+      <div class="metric-card">
+        <h3>Bewertung der Preisstrategie</h3>
+        <p>${
+          localPricingScore >= 85 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes und sind wettbewerbsfähig.' :
+          localPricingScore >= 50 ? 'Ihre Preise sind grundsätzlich wettbewerbsfähig, haben aber Optimierungspotenzial.' :
+          'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Eine Überprüfung Ihrer Preispositionierung wird empfohlen.'
+        }</p>
+      </div>
+      ` : ''}
     `;
   };
 
