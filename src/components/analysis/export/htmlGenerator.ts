@@ -3234,62 +3234,31 @@ export const generateCustomerHTML = ({
               <p><strong>Status:</strong> ${hasData ? 'Aktiv' : 'Nicht erfasst'}</p>
             </div>
           </div>
+          ${hasData ? generateProgressBar(overallScore, 'Gesamtbewertung über alle Branchenplattformen') : ''}
         </div>
 
         ${hasData ? `
-        <div style="margin-top: 20px;">
-          <h4 style="margin-bottom: 15px;">Ihre Präsenz auf Branchenplattformen:</h4>
-          <div style="display: grid; gap: 15px;">
-            ${manualIndustryReviewData.platforms.map((platform) => {
-              const rating = platform.rating || 0;
-              const ratingScore = (rating / 5) * 100;
-              const scoreColorClass = getScoreColorClass(ratingScore);
-              
-              return `
-              <div class="metric-card" style="border-left: 4px solid ${
-                scoreColorClass === 'yellow' ? '#eab308' : 
-                scoreColorClass === 'green' ? '#16a34a' : 
-                scoreColorClass === 'red' ? '#dc2626' : '#94a3b8'
-              };">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                  <div style="flex: 1;">
-                    <h4 style="margin: 0 0 5px 0; color: #1e293b;">${platform.platformName}</h4>
-                    <a href="${platform.profileUrl}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 0.9em; word-break: break-all;">
-                      ${platform.profileUrl}
-                    </a>
-                  </div>
-                  <div style="text-align: right; margin-left: 15px;">
-                    <div class="score-circle small ${scoreColorClass}" style="width: 60px; height: 60px; font-size: 1.2em;">
-                      ${rating.toFixed(1)}
-                    </div>
-                  </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
-                  <div style="padding: 10px; background: #f8fafc; border-radius: 6px;">
-                    <p style="margin: 0; font-size: 0.85em; color: #64748b;">Bewertungen</p>
-                    <p style="margin: 5px 0 0 0; font-size: 1.1em; font-weight: bold; color: #1e293b;">${platform.reviewCount || 0}</p>
-                  </div>
-                  <div style="padding: 10px; background: #f8fafc; border-radius: 6px;">
-                    <p style="margin: 0; font-size: 0.85em; color: #64748b;">Verifiziert</p>
-                    <p style="margin: 5px 0 0 0; font-size: 1.1em; font-weight: bold; color: ${platform.isVerified ? '#16a34a' : '#dc2626'};">
-                      ${platform.isVerified ? '✅ Ja' : '❌ Nein'}
-                    </p>
-                  </div>
-                </div>
-                ${platform.lastReviewDate ? `
-                <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #64748b;">
-                  Letzte Bewertung: ${platform.lastReviewDate}
-                </p>
-                ` : ''}
-              </div>
-              `;
-            }).join('')}
+        ${manualIndustryReviewData.platforms.map((platform) => {
+          const rating = platform.rating || 0;
+          const ratingScore = (rating / 5) * 100;
+          
+          return `
+          <div class="metric-card">
+            <h4>${platform.platformName}</h4>
+            <p><strong>Bewertung:</strong> ${rating.toFixed(1)} von 5.0</p>
+            ${generateProgressBar(ratingScore, `${platform.reviewCount || 0} Bewertungen`)}
+            <div style="margin-top: 15px;">
+              <p><strong>Profil-URL:</strong> <a href="${platform.profileUrl}" target="_blank" style="color: #3b82f6; text-decoration: none; word-break: break-all;">${platform.profileUrl}</a></p>
+              <p><strong>Verifiziert:</strong> ${platform.isVerified ? 'Ja' : 'Nein'}</p>
+              ${platform.lastReviewDate ? `<p><strong>Letzte Bewertung:</strong> ${platform.lastReviewDate}</p>` : ''}
+            </div>
           </div>
-        </div>
+          `;
+        }).join('')}
         ` : `
-        <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
-          <h4 style="color: #ef4444;">⚠️ Keine Branchenplattformen erfasst</h4>
-          <p style="margin-top: 10px;">Es wurden noch keine Bewertungen auf branchenspezifischen Plattformen erfasst. Nutzen Sie relevante Plattformen, um Ihre Sichtbarkeit zu erhöhen.</p>
+        <div class="metric-card">
+          <h4>Keine Branchenplattformen erfasst</h4>
+          <p>Es wurden noch keine Bewertungen auf branchenspezifischen Plattformen erfasst. Nutzen Sie relevante Plattformen, um Ihre Sichtbarkeit zu erhöhen.</p>
         </div>
         `}
 
