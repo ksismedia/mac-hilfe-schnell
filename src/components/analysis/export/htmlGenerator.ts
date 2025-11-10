@@ -3703,6 +3703,11 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    <!-- Kategorie-Überschrift: Markt & Marktumfeld -->
+    <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 4px solid #fbbf24; border-radius: 8px;">
+      <h2 style="margin: 0; color: #fbbf24; font-size: 1.8em; font-weight: bold;">Markt & Marktumfeld</h2>
+    </div>
+
     <!-- Wettbewerber-Analyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
