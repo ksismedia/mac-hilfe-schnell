@@ -3343,125 +3343,81 @@ export const generateCustomerHTML = ({
           )}
         </div>
 
-        <div class="metric-card" style="margin-top: 20px;">
+        <div class="metric-card">
           <h3>Mitarbeiterstruktur</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
-            ${staffQualificationData.masters > 0 ? `
-            <div style="text-align: center; padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 2px solid rgba(251, 191, 36, 0.3);">
-              <div style="font-size: 2em; font-weight: bold; color: #fbbf24;">${staffQualificationData.masters}</div>
-              <p style="margin: 8px 0 0 0; color: #78350f; font-weight: 600; font-size: 0.9em;">Meister</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.skilled_workers > 0 ? `
-            <div style="text-align: center; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <div style="font-size: 2em; font-weight: bold; color: #16a34a;">${staffQualificationData.skilled_workers}</div>
-              <p style="margin: 8px 0 0 0; color: #14532d; font-weight: 600; font-size: 0.9em;">Gesellen</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.office_workers > 0 ? `
-            <div style="text-align: center; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 2px solid rgba(59, 130, 246, 0.3);">
-              <div style="font-size: 2em; font-weight: bold; color: #3b82f6;">${staffQualificationData.office_workers}</div>
-              <p style="margin: 8px 0 0 0; color: #1e40af; font-weight: 600; font-size: 0.9em;">Bürokräfte</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.apprentices > 0 ? `
-            <div style="text-align: center; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; border: 2px solid rgba(168, 85, 247, 0.3);">
-              <div style="font-size: 2em; font-weight: bold; color: #a855f7;">${staffQualificationData.apprentices}</div>
-              <p style="margin: 8px 0 0 0; color: #6b21a8; font-weight: 600; font-size: 0.9em;">Azubis</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.unskilled_workers > 0 ? `
-            <div style="text-align: center; padding: 15px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; border: 2px solid rgba(156, 163, 175, 0.3);">
-              <div style="font-size: 2em; font-weight: bold; color: #6b7280;">${staffQualificationData.unskilled_workers}</div>
-              <p style="margin: 8px 0 0 0; color: #374151; font-weight: 600; font-size: 0.9em;">Ungelernte</p>
-            </div>
-            ` : ''}
+          ${staffQualificationData.masters > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Meister:</strong> ${staffQualificationData.masters}</p>
+            ${generateProgressBar((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100, `${Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100)}% der Mitarbeiter`)}
           </div>
+          ` : ''}
+          ${staffQualificationData.skilled_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Gesellen:</strong> ${staffQualificationData.skilled_workers}</p>
+            ${generateProgressBar((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100, `${Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100)}% der Mitarbeiter`)}
+          </div>
+          ` : ''}
+          ${staffQualificationData.office_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Bürokräfte:</strong> ${staffQualificationData.office_workers}</p>
+            ${generateProgressBar((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100, `${Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100)}% der Mitarbeiter`)}
+          </div>
+          ` : ''}
+          ${staffQualificationData.apprentices > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Azubis:</strong> ${staffQualificationData.apprentices}</p>
+            ${generateProgressBar((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100, `${Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100)}% der Mitarbeiter`)}
+          </div>
+          ` : ''}
+          ${staffQualificationData.unskilled_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Ungelernte:</strong> ${staffQualificationData.unskilled_workers}</p>
+            ${generateProgressBar((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100, `${Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100)}% der Mitarbeiter`)}
+          </div>
+          ` : ''}
         </div>
 
         ${Object.values(staffQualificationData.certifications).some(val => val === true) ? `
-        <div class="metric-card" style="margin-top: 20px;">
+        <div class="metric-card">
           <h3>Zertifizierungen & Qualifikationen</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-            ${staffQualificationData.certifications.welding_certificates ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Schweißzertifikate</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.certifications.safety_training ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Arbeitssicherheit</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Geschult</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.certifications.first_aid ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Erste Hilfe</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Zertifiziert</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.certifications.digital_skills ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Digitale Kompetenzen</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.certifications.instructor_qualification ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Ausbildereignung</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">AdA-Schein</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.certifications.business_qualification ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <h4 style="margin: 0; color: #16a34a;">Betriebswirtschaft</h4>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Qualifiziert</p>
-            </div>
-            ` : ''}
-          </div>
+          <ul style="margin-top: 10px;">
+            ${staffQualificationData.certifications.welding_certificates ? '<li>Schweißzertifikate: Vorhanden</li>' : ''}
+            ${staffQualificationData.certifications.safety_training ? '<li>Arbeitssicherheit: Geschult</li>' : ''}
+            ${staffQualificationData.certifications.first_aid ? '<li>Erste Hilfe: Zertifiziert</li>' : ''}
+            ${staffQualificationData.certifications.digital_skills ? '<li>Digitale Kompetenzen: Vorhanden</li>' : ''}
+            ${staffQualificationData.certifications.instructor_qualification ? '<li>Ausbildereignung: AdA-Schein</li>' : ''}
+            ${staffQualificationData.certifications.business_qualification ? '<li>Betriebswirtschaft: Qualifiziert</li>' : ''}
+          </ul>
         </div>
         ` : ''}
 
         ${staffQualificationData.industry_specific && staffQualificationData.industry_specific.length > 0 ? `
-        <div class="metric-card" style="margin-top: 20px;">
+        <div class="metric-card">
           <h3>Branchenspezifische Qualifikationen</h3>
-          <div style="display: flex; flex-wrap: gap; gap: 10px; margin-top: 15px;">
-            ${staffQualificationData.industry_specific.map(qual => `
-              <div style="padding: 10px 20px; background: rgba(168, 85, 247, 0.1); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 20px; font-weight: 600; color: #7e22ce;">
-                ${qual}
-              </div>
-            `).join('')}
-          </div>
+          <ul style="margin-top: 10px;">
+            ${staffQualificationData.industry_specific.map(qual => `<li>${qual}</li>`).join('')}
+          </ul>
         </div>
         ` : ''}
 
         ${staffQualificationData.specializations ? `
-        <div class="metric-card" style="margin-top: 20px;">
-          <h3>⭐ Spezialisierungen</h3>
-          <p style="margin-top: 15px; line-height: 1.6; color: #1e293b;">${staffQualificationData.specializations}</p>
+        <div class="metric-card">
+          <h3>Spezialisierungen</h3>
+          <p style="margin-top: 10px;">${staffQualificationData.specializations}</p>
         </div>
         ` : ''}
 
-        <div class="metric-card" style="margin-top: 20px;">
+        <div class="metric-card">
           <h3>Weitere Kennzahlen</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-            ${staffQualificationData.average_experience_years > 0 ? `
-            <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 2px solid rgba(251, 191, 36, 0.3);">
-              <p style="margin: 0; color: #78350f; font-weight: 600; font-size: 0.85em;">Durchschnittliche Berufserfahrung:</p>
-              <p style="margin: 5px 0 0 0; font-size: 1.5em; font-weight: bold; color: #d97706;">${staffQualificationData.average_experience_years} Jahre</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.training_budget_per_year > 0 ? `
-            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
-              <p style="margin: 0; color: #14532d; font-weight: 600; font-size: 0.85em;">Weiterbildungsbudget/Jahr:</p>
-              <p style="margin: 5px 0 0 0; font-size: 1.5em; font-weight: bold; color: #16a34a;">${staffQualificationData.training_budget_per_year.toLocaleString('de-DE')} €</p>
-            </div>
-            ` : ''}
-          </div>
+          ${staffQualificationData.average_experience_years > 0 ? `
+          <p><strong>Durchschnittliche Berufserfahrung:</strong> ${staffQualificationData.average_experience_years} Jahre</p>
+          ` : ''}
+          ${staffQualificationData.training_budget_per_year > 0 ? `
+          <p><strong>Weiterbildungsbudget/Jahr:</strong> ${staffQualificationData.training_budget_per_year.toLocaleString('de-DE')} €</p>
+          ` : ''}
         </div>
 
-        <div class="recommendations" style="margin-top: 20px;">
+        <div class="recommendations">
           <h4>Empfehlungen zur Personalentwicklung</h4>
           <ul>
             ${staffQualificationData.apprentices === 0 ? '<li>Priorität: Qualifikationsgrad der Mitarbeiter erhöhen</li>' : ''}
