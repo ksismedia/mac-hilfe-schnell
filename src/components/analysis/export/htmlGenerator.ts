@@ -3282,6 +3282,41 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    <!-- Online Reputation -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Online Reputation</span>
+        <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Online Reputation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
+            <div class="score-details">
+              <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
+              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(googleReviewScore)}" style="width: ${googleReviewScore}%; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${googleReviewScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${googleReviewScore}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('reputation-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Reputation-Details anzeigen</h4>
+        </div>
+        
+        <div id="reputation-details" style="display: none;">
+          ${getReputationAnalysis()}
+        </div>
+      </div>
+    </div>
+
     <!-- Corporate Identity -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -3662,40 +3697,6 @@ export const generateCustomerHTML = ({
 
 
 
-    <!-- Online Reputation -->
-    <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Online Reputation</span>
-        <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Online Reputation</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
-            <div class="score-details">
-              <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(googleReviewScore)}" style="width: ${googleReviewScore}%; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${googleReviewScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${googleReviewScore}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="collapsible" onclick="toggleSection('reputation-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ Reputation-Details anzeigen</h4>
-        </div>
-        
-        <div id="reputation-details" style="display: none;">
-          ${getReputationAnalysis()}
-        </div>
-      </div>
-    </div>
 
     ${(() => {
       // Branchenplattformen Sektion - IMMER anzeigen
