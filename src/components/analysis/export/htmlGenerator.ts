@@ -943,23 +943,18 @@ export const generateCustomerHTML = ({
     return `
       <div class="metric-card ${scoreClass}">
         <h3 class="header-seo" style="padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-          <span>🔍 SEO-Bestandsanalyse</span>
+          <span>SEO-Bestandsanalyse</span>
         </h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(criticalSeoScore)}">${criticalSeoScore}%</div>
           <div class="score-details">
             <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 90 ? 'Exzellent' : criticalSeoScore >= 61 ? 'Hoch' : 'Niedrig'}</p>
-            <p><strong>Empfehlung:</strong> ${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 61 ? 'Sehr gute SEO-Basis' : 'Dringende SEO-Verbesserungen erforderlich'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" data-score="${getScoreRange(criticalSeoScore)}" style="width: ${criticalSeoScore}%; background-color: ${getScoreColor(criticalSeoScore)}; display: flex; align-items: center; justify-content: center;">
-              <span style="color: ${criticalSeoScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${criticalSeoScore}%</span>
-            </div>
-            <div class="progress-point" style="position: absolute; left: ${criticalSeoScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 18px; height: 18px; background: white; border: 3px solid ${getScoreColor(criticalSeoScore)}; border-radius: 50%; z-index: 10; box-shadow: 0 3px 8px rgba(0,0,0,0.4);"></div>
-          </div>
-        </div>
+        ${generateProgressBar(
+          criticalSeoScore,
+          `${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 61 ? 'Sehr gute SEO-Basis' : 'Dringende SEO-Verbesserungen erforderlich'}`
+        )}
         
         <!-- Detaillierte SEO-Analyse basierend auf tatsächlichen Werten -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
@@ -1464,16 +1459,12 @@ export const generateCustomerHTML = ({
           <div class="score-circle" data-score="${getScoreRange(performanceScore)}">${performanceScore}%</div>
           <div class="score-details">
             <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
-            <p><strong>Empfehlung:</strong> ${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill progress-${getScoreColorClass(performanceScore)}" style="width: ${performanceScore}%; display: flex; align-items: center; justify-content: center;">
-              <span style="color: white; font-weight: bold; font-size: 14px;">${performanceScore}%</span>
-            </div>
-          </div>
-        </div>
+        ${generateProgressBar(
+          performanceScore,
+          `${performanceScore >= 70 ? 'Sehr gute Performance' : 'Performance verbessern für bessere Nutzererfahrung'} - Ladezeit: ${realData.performance.loadTime}s`
+        )}
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
@@ -1499,16 +1490,12 @@ export const generateCustomerHTML = ({
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 70 ? 'Hoch' : mobileScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
-            <p><strong>Empfehlung:</strong> ${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}</p>
           </div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill progress-${getScoreColorClass(mobileScore)}" style="width: ${mobileScore}%; display: flex; align-items: center; justify-content: center;">
-              <span style="color: white; font-weight: bold; font-size: 14px;">${mobileScore}%</span>
-            </div>
-          </div>
-        </div>
+        ${generateProgressBar(
+          mobileScore,
+          `${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}`
+        )}
         
         <!-- Responsive Design -->
         <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
@@ -3635,48 +3622,55 @@ export const generateCustomerHTML = ({
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Team-Zusammensetzung</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-            <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border-radius: 10px;">
-              <div style="font-size: 3em; font-weight: bold; color: #3b82f6;">${staffQualificationData.totalEmployees}</div>
-              <p style="margin: 10px 0 0 0; color: #64748b; font-weight: 600;">Gesamt-Mitarbeiter</p>
+          <h3>Personal-Qualifikation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+            <div class="score-details">
+              <p><strong>Gesamt-Mitarbeiter:</strong> ${staffQualificationData.totalEmployees}</p>
+              <p><strong>Qualifizierte Kräfte:</strong> ${staffQualificationData.skilled_workers + staffQualificationData.masters} von ${staffQualificationData.totalEmployees}</p>
+              <p><strong>Meister-Quote:</strong> ${staffQualificationData.masters} Meister</p>
+              <p><strong>Facharbeiter & Bürokräfte:</strong> ${staffQualificationData.skilled_workers + staffQualificationData.office_workers} qualifizierte Mitarbeiter</p>
             </div>
-            
-            <div style="padding: 20px; background: #f8fafc; border-radius: 10px;">
-              <h4 style="margin: 0 0 15px 0; color: #1e293b;">Mitarbeiter-Struktur</h4>
-              <div style="display: grid; gap: 8px;">
-                ${staffQualificationData.apprentices > 0 ? `
-                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>Auszubildende:</span>
-                  <strong>${staffQualificationData.apprentices}</strong>
-                </div>
-                ` : ''}
-                ${staffQualificationData.skilled_workers > 0 ? `
-                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>Facharbeiter:</span>
-                  <strong>${staffQualificationData.skilled_workers}</strong>
-                </div>
-                ` : ''}
-                ${staffQualificationData.masters > 0 ? `
-                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>Meister:</span>
-                  <strong>${staffQualificationData.masters}</strong>
-                </div>
-                ` : ''}
-                ${staffQualificationData.office_workers > 0 ? `
-                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>Bürokräfte:</span>
-                  <strong>${staffQualificationData.office_workers}</strong>
-                </div>
-                ` : ''}
-                ${staffQualificationData.unskilled_workers > 0 ? `
-                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
-                  <span>Hilfskräfte:</span>
-                  <strong>${staffQualificationData.unskilled_workers}</strong>
-                </div>
-                ` : ''}
-              </div>
+          </div>
+          ${generateProgressBar(
+            Math.round(staffQualificationScore),
+            `Qualifikationsgrad mit ${staffQualificationData.totalEmployees} Mitarbeitern, davon ${staffQualificationData.masters} Meister und ${staffQualificationData.skilled_workers} Facharbeiter`
+          )}
+        </div>
+
+        <div class="metric-card" style="margin-top: 20px;">
+          <h3>Mitarbeiterstruktur</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+            ${staffQualificationData.masters > 0 ? `
+            <div style="text-align: center; padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 2px solid rgba(251, 191, 36, 0.3);">
+              <div style="font-size: 2em; font-weight: bold; color: #fbbf24;">${staffQualificationData.masters}</div>
+              <p style="margin: 8px 0 0 0; color: #78350f; font-weight: 600; font-size: 0.9em;">Meister</p>
             </div>
+            ` : ''}
+            ${staffQualificationData.skilled_workers > 0 ? `
+            <div style="text-align: center; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 2em; font-weight: bold; color: #16a34a;">${staffQualificationData.skilled_workers}</div>
+              <p style="margin: 8px 0 0 0; color: #14532d; font-weight: 600; font-size: 0.9em;">Gesellen</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.office_workers > 0 ? `
+            <div style="text-align: center; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 2px solid rgba(59, 130, 246, 0.3);">
+              <div style="font-size: 2em; font-weight: bold; color: #3b82f6;">${staffQualificationData.office_workers}</div>
+              <p style="margin: 8px 0 0 0; color: #1e40af; font-weight: 600; font-size: 0.9em;">Bürokräfte</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.apprentices > 0 ? `
+            <div style="text-align: center; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; border: 2px solid rgba(168, 85, 247, 0.3);">
+              <div style="font-size: 2em; font-weight: bold; color: #a855f7;">${staffQualificationData.apprentices}</div>
+              <p style="margin: 8px 0 0 0; color: #6b21a8; font-weight: 600; font-size: 0.9em;">Azubis</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.unskilled_workers > 0 ? `
+            <div style="text-align: center; padding: 15px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; border: 2px solid rgba(156, 163, 175, 0.3);">
+              <div style="font-size: 2em; font-weight: bold; color: #6b7280;">${staffQualificationData.unskilled_workers}</div>
+              <p style="margin: 8px 0 0 0; color: #374151; font-weight: 600; font-size: 0.9em;">Ungelernte</p>
+            </div>
+            ` : ''}
           </div>
         </div>
 
@@ -3745,39 +3739,31 @@ export const generateCustomerHTML = ({
         ` : ''}
 
         <div class="metric-card" style="margin-top: 20px;">
-          <h3>Qualifikations-Kennzahlen</h3>
+          <h3>Weitere Kennzahlen</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
             ${staffQualificationData.average_experience_years > 0 ? `
-            <div style="padding: 20px; background: #fef3c7; border-radius: 10px; text-align: center;">
-              <div style="font-size: 2em; font-weight: bold; color: #d97706;">${staffQualificationData.average_experience_years} Jahre</div>
-              <p style="margin: 10px 0 0 0; color: #78350f; font-weight: 600;">Ø Berufserfahrung</p>
+            <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 2px solid rgba(251, 191, 36, 0.3);">
+              <p style="margin: 0; color: #78350f; font-weight: 600; font-size: 0.85em;">Durchschnittliche Berufserfahrung:</p>
+              <p style="margin: 5px 0 0 0; font-size: 1.5em; font-weight: bold; color: #d97706;">${staffQualificationData.average_experience_years} Jahre</p>
             </div>
             ` : ''}
             ${staffQualificationData.training_budget_per_year > 0 ? `
-            <div style="padding: 20px; background: #dcfce7; border-radius: 10px; text-align: center;">
-              <div style="font-size: 2em; font-weight: bold; color: #16a34a;">${staffQualificationData.training_budget_per_year.toLocaleString('de-DE')} €</div>
-              <p style="margin: 10px 0 0 0; color: #14532d; font-weight: 600;">Schulungsbudget/Jahr</p>
-            </div>
-            ` : ''}
-            ${staffQualificationData.offers_employee_training ? `
-            <div style="padding: 20px; background: #dbeafe; border-radius: 10px; text-align: center;">
-              <p style="margin: 0; color: #1e40af; font-weight: 600;">Mitarbeiter-Schulungen</p>
-              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #3b82f6;">Werden angeboten</p>
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <p style="margin: 0; color: #14532d; font-weight: 600; font-size: 0.85em;">Weiterbildungsbudget/Jahr:</p>
+              <p style="margin: 5px 0 0 0; font-size: 1.5em; font-weight: bold; color: #16a34a;">${staffQualificationData.training_budget_per_year.toLocaleString('de-DE')} €</p>
             </div>
             ` : ''}
           </div>
         </div>
 
         <div class="recommendations" style="margin-top: 20px;">
-          <h4>Empfehlungen zur Weiterentwicklung</h4>
+          <h4>Empfehlungen zur Personalentwicklung</h4>
           <ul>
-            ${staffQualificationData.apprentices === 0 ? '<li>Ausbildungsplätze schaffen, um Fachkräftenachwuchs zu sichern</li>' : ''}
-            ${staffQualificationData.training_budget_per_year < 1000 ? '<li>Schulungsbudget erhöhen für kontinuierliche Weiterbildung</li>' : ''}
-            ${!staffQualificationData.offers_employee_training ? '<li>Strukturiertes Weiterbildungsprogramm für Mitarbeiter etablieren</li>' : ''}
-            ${!staffQualificationData.certifications.digital_skills ? '<li>Digitale Kompetenzen des Teams durch Schulungen stärken</li>' : ''}
-            ${staffQualificationData.average_experience_years < 5 ? '<li>Erfahrene Fachkräfte rekrutieren oder Mentoring-Programme einführen</li>' : ''}
-            <li>Regelmäßige Zertifizierungen und Weiterbildungen für alle Mitarbeiter planen</li>
-            <li>Spezialisierungen gezielt ausbauen, um sich vom Wettbewerb abzuheben</li>
+            ${staffQualificationData.apprentices === 0 ? '<li>Priorität: Qualifikationsgrad der Mitarbeiter erhöhen</li>' : ''}
+            ${!staffQualificationData.certifications.digital_skills ? '<li>Zusätzliche Zertifizierungen erwerben (Sicherheit, Digitalisierung)</li>' : ''}
+            ${!staffQualificationData.certifications.safety_training ? '<li>Branchenspezifische Weiterbildungen verstärken</li>' : ''}
+            ${staffQualificationData.training_budget_per_year < 1000 ? '<li>Weiterbildungsbudget erhöhen (empfohlen: mind. 1.000€/MA/Jahr)</li>' : ''}
+            ${staffQualificationData.apprentices === 0 ? '<li>Ausbildungsplätze schaffen für Nachwuchsförderung</li>' : ''}
           </ul>
         </div>
       </div>
