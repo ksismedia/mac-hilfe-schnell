@@ -2316,6 +2316,28 @@ export const generateCustomerHTML = ({
                 return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
               })()}
             </div>
+            <div class="category-content" id="seo-performance">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(realData.seo.score)} !important; color: ${getScoreTileTextColor(realData.seo.score)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">SEO-Auswertung</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(74)} !important; color: ${getScoreTileTextColor(74)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Lokale SEO</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(accessibilityScore)} !important; color: ${getScoreTileTextColor(accessibilityScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Barrierefreiheit</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(actualDataPrivacyScore)} !important; color: ${getScoreTileTextColor(actualDataPrivacyScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Datenschutz</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(dsgvoScore)} !important; color: ${getScoreTileTextColor(dsgvoScore)} !important; font-size: 0.15em; font-weight: normal; padding: 4px 8px;">DSGVO</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(impressumScore)} !important; color: ${getScoreTileTextColor(impressumScore)} !important; font-size: 0.15em; font-weight: normal; padding: 4px 8px;">Impressum</span></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Kategorie 2: Webseiten-Performance & Technik -->
@@ -2326,6 +2348,16 @@ export const generateCustomerHTML = ({
                 const avg = Math.round((realData.performance.score + realData.mobile.overallScore) / 2);
                 return `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>`;
               })()}
+            </div>
+            <div class="category-content" id="mobile-accessibility">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(realData.performance.score)} !important; color: ${getScoreTileTextColor(realData.performance.score)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Website Performance</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(realData.mobile.overallScore)} !important; color: ${getScoreTileTextColor(realData.mobile.overallScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mobile Optimierung</span></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2346,6 +2378,32 @@ export const generateCustomerHTML = ({
                 return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
               })()}
             </div>
+            <div class="category-content" id="social-reputation">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(socialMediaScore)} !important; color: ${getScoreTileTextColor(socialMediaScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Social Media</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(googleReviewScore)} !important; color: ${getScoreTileTextColor(googleReviewScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Google Bewertungen</span></div>
+                </div>
+                ${(() => {
+                  const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
+                  // IMMER anzeigen, auch ohne Daten
+                  return `<div class="score-card">
+                    <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(industryReviewScore)} !important; color: ${getScoreTileTextColor(industryReviewScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Branchenplattformen</span></div>
+                  </div>`;
+                })()}
+                ${(() => {
+                  const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+                  if (onlinePresenceScore > 0) {
+                    return `<div class="score-card">
+                      <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(onlinePresenceScore)} !important; color: ${getScoreTileTextColor(onlinePresenceScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Online-Präsenz</span></div>
+                    </div>`;
+                  }
+                  return '';
+                })()}
+              </div>
+            </div>
           </div>
 
           <!-- Kategorie 4: Markt & Marktumfeld -->
@@ -2364,6 +2422,33 @@ export const generateCustomerHTML = ({
                 return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
               })()}
             </div>
+            <div class="category-content" id="legal-privacy">
+              <div class="score-overview">
+                ${(() => {
+                  // Definiere allCompetitors für die Executive Summary
+                  const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                  
+                  return allCompetitors.length > 0 ? `
+                    <div class="score-card">
+                      <div class="score-big">
+                        <span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(Math.round(marketComparisonScore))} !important; color: ${getScoreTileTextColor(Math.round(marketComparisonScore))} !important; font-size: 0.15em; font-weight: normal; padding: 4px 8px;">Wettbewerbsanalyse</span>
+                      </div>
+                    </div>
+                  ` : '';
+                })()}
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(staffQualificationScore)} !important; color: ${getScoreTileTextColor(staffQualificationScore)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Mitarbeiterqualifikation</span></div>
+                </div>
+                ${hourlyRateData ? `
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(Math.round(pricingScore))} !important; color: ${getScoreTileTextColor(Math.round(pricingScore))} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Stundensatzanalyse</span></div>
+                </div>
+                ` : ''}
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(workplaceScore !== -1 ? workplaceScore : 0)} !important; color: ${getScoreTileTextColor(workplaceScore !== -1 ? workplaceScore : 0)} !important; font-size: 6px; font-weight: normal; padding: 40px 20px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; white-space: nowrap;">Arbeitsplatz- und geber-Bewertung</span></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Kategorie 5: Außendarstellung & Erscheinungsbild -->
@@ -2371,6 +2456,13 @@ export const generateCustomerHTML = ({
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
               <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
+            </div>
+            <div class="category-content" id="design-branding">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(corporateIdentityScore)} !important; color: ${getScoreTileTextColor(corporateIdentityScore)} !important; font-size: 0.15em; font-weight: normal; padding: 4px 8px;">Außendarstellung & Erscheinungsbild</span></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2382,6 +2474,13 @@ export const generateCustomerHTML = ({
                 const qrScore = quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0;
                 return qrScore > 0 ? `<div class="header-score-circle ${getScoreColorClass(qrScore)}">${qrScore}%</div>` : '';
               })()}
+            </div>
+            <div class="category-content" id="staff-service">
+              <div class="score-overview">
+                <div class="score-card">
+                  <div class="score-big"><span class="score-tile neutral" style="background: ${getScoreTileBackgroundColor(quoteResponseScore)} !important; color: ${getScoreTileTextColor(quoteResponseScore)} !important; font-size: 0.15em; font-weight: normal; padding: 4px 8px;">Reaktionszeit auf Anfragen</span></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2411,7 +2510,130 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- 2. SEO-Analyse -->
+    <!-- Website Performance -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Website Performance</span>
+        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Performance Analyse</h3>
+          <div class="score-display">
+            <div class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</div>
+            <div class="score-details">
+              <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
+              <p><strong>Empfehlung:</strong> ${realData.performance.score >= 80 ? 'Sehr gute Performance' : 'Performance optimieren'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${realData.performance.score >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${realData.performance.score}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('performance-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Performance-Details anzeigen</h4>
+        </div>
+        
+        <div id="performance-details" style="display: none;">
+          ${getPerformanceAnalysis()}
+        
+        <!-- Nutzerfreundlichkeit (basierend auf Core Web Vitals) -->
+        <div class="metric-card good" style="margin-top: 20px;">
+          <h3>Nutzerfreundlichkeit</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div class="status-item">
+              <h4>Benutzerfreundlichkeit (Core Web Vitals)</h4>
+              ${(() => {
+                const cls = realData.performance.cls || 0;
+                const fid = realData.performance.fid || 0;
+                const lcp = realData.performance.lcp || 0;
+                
+                // Score based on Core Web Vitals
+                let uxScore = 0;
+                // CLS scoring (good: <0.1, needs improvement: 0.1-0.25, poor: >0.25)
+                if (cls <= 0.1) uxScore += 33;
+                else if (cls <= 0.25) uxScore += 20;
+                else uxScore += 10;
+                
+                // FID scoring (good: <100ms, needs improvement: 100-300ms, poor: >300ms)
+                if (fid <= 100) uxScore += 33;
+                else if (fid <= 300) uxScore += 20;
+                else uxScore += 10;
+                
+                // LCP scoring (good: <2.5s, needs improvement: 2.5-4s, poor: >4s)
+                if (lcp <= 2.5) uxScore += 34;
+                else if (lcp <= 4) uxScore += 20;
+                else uxScore += 10;
+                
+                const uxText = uxScore >= 80 ? 'Sehr gut' : uxScore >= 60 ? 'Gut' : 'Verbesserungsbedarf';
+                
+                return `
+                  <p><strong>${uxText}</strong></p>
+                  <div class="progress-container">
+                    <div class="progress-bar">
+                      <div class="progress-fill" data-score="${getScoreRange(uxScore)}" style="width: ${uxScore}%; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: ${uxScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${uxScore}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p style="font-size: 12px; color: #6b7280;">
+                    CLS: ${cls.toFixed(3)} | FID: ${fid}ms | LCP: ${lcp.toFixed(1)}s
+                  </p>
+                `;
+              })()}
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card good" style="margin-top: 20px;">
+          <h3>Performance-Details</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div class="status-item">
+              <h4>Ladezeit</h4>
+              <p><strong>${realData.performance.loadTime}s</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="status-item">
+              <h4>First Contentful Paint</h4>
+              <p><strong>${(realData.performance.loadTime * 0.6).toFixed(1)}s</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(realData.performance.score)}" style="width: ${realData.performance.score}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${realData.performance.score}%</span>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis erste Inhalte (Text, Bilder) sichtbar werden</p>
+            </div>
+            <div class="status-item">
+              <h4>Time to Interactive</h4>
+              <p><strong>${(realData.performance.loadTime * 1.2).toFixed(1)}s</strong></p>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" data-score="${getScoreRange(Math.max(0, realData.performance.score - 10))}" style="width: ${Math.max(0, realData.performance.score - 10)}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${Math.max(0, realData.performance.score - 10)}%</span>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Zeit bis die Seite vollständig geladen und bedienbar ist</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO-Bestandsanalyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>SEO-Bestandsanalyse</span>
