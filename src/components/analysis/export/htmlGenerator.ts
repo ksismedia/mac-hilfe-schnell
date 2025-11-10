@@ -3736,6 +3736,175 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    <!-- Mitarbeiterqualifikation -->
+    ${(() => {
+      const hasStaffData = staffQualificationData && staffQualificationData.totalEmployees > 0;
+      
+      return hasStaffData ? `
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>👥 Mitarbeiterqualifikation</span>
+        <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>📊 Team-Zusammensetzung</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border-radius: 10px;">
+              <div style="font-size: 3em; font-weight: bold; color: #3b82f6;">${staffQualificationData.totalEmployees}</div>
+              <p style="margin: 10px 0 0 0; color: #64748b; font-weight: 600;">Gesamt-Mitarbeiter</p>
+            </div>
+            
+            <div style="padding: 20px; background: #f8fafc; border-radius: 10px;">
+              <h4 style="margin: 0 0 15px 0; color: #1e293b;">Mitarbeiter-Struktur</h4>
+              <div style="display: grid; gap: 8px;">
+                ${staffQualificationData.apprentices > 0 ? `
+                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
+                  <span>👨‍🎓 Auszubildende:</span>
+                  <strong>${staffQualificationData.apprentices}</strong>
+                </div>
+                ` : ''}
+                ${staffQualificationData.skilled_workers > 0 ? `
+                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
+                  <span>🔧 Facharbeiter:</span>
+                  <strong>${staffQualificationData.skilled_workers}</strong>
+                </div>
+                ` : ''}
+                ${staffQualificationData.masters > 0 ? `
+                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
+                  <span>🎓 Meister:</span>
+                  <strong>${staffQualificationData.masters}</strong>
+                </div>
+                ` : ''}
+                ${staffQualificationData.office_workers > 0 ? `
+                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
+                  <span>💼 Bürokräfte:</span>
+                  <strong>${staffQualificationData.office_workers}</strong>
+                </div>
+                ` : ''}
+                ${staffQualificationData.unskilled_workers > 0 ? `
+                <div style="display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 6px;">
+                  <span>👷 Hilfskräfte:</span>
+                  <strong>${staffQualificationData.unskilled_workers}</strong>
+                </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${Object.values(staffQualificationData.certifications).some(val => val === true) ? `
+        <div class="metric-card" style="margin-top: 20px;">
+          <h3>🏆 Zertifizierungen & Qualifikationen</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            ${staffQualificationData.certifications.welding_certificates ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">🔥</div>
+              <h4 style="margin: 0; color: #16a34a;">Schweißzertifikate</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.certifications.safety_training ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">🦺</div>
+              <h4 style="margin: 0; color: #16a34a;">Arbeitssicherheit</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Geschult</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.certifications.first_aid ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">🚑</div>
+              <h4 style="margin: 0; color: #16a34a;">Erste Hilfe</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Zertifiziert</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.certifications.digital_skills ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">💻</div>
+              <h4 style="margin: 0; color: #16a34a;">Digitale Kompetenzen</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Vorhanden</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.certifications.instructor_qualification ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">👨‍🏫</div>
+              <h4 style="margin: 0; color: #16a34a;">Ausbildereignung</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">AdA-Schein</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.certifications.business_qualification ? `
+            <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 2px solid rgba(34, 197, 94, 0.3);">
+              <div style="font-size: 1.5em; margin-bottom: 8px;">📊</div>
+              <h4 style="margin: 0; color: #16a34a;">Betriebswirtschaft</h4>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #64748b;">Qualifiziert</p>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        ` : ''}
+
+        ${staffQualificationData.industry_specific && staffQualificationData.industry_specific.length > 0 ? `
+        <div class="metric-card" style="margin-top: 20px;">
+          <h3>🔧 Branchenspezifische Qualifikationen</h3>
+          <div style="display: flex; flex-wrap: gap; gap: 10px; margin-top: 15px;">
+            ${staffQualificationData.industry_specific.map(qual => `
+              <div style="padding: 10px 20px; background: rgba(168, 85, 247, 0.1); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 20px; font-weight: 600; color: #7e22ce;">
+                ${qual}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        ${staffQualificationData.specializations ? `
+        <div class="metric-card" style="margin-top: 20px;">
+          <h3>⭐ Spezialisierungen</h3>
+          <p style="margin-top: 15px; line-height: 1.6; color: #1e293b;">${staffQualificationData.specializations}</p>
+        </div>
+        ` : ''}
+
+        <div class="metric-card" style="margin-top: 20px;">
+          <h3>📈 Qualifikations-Kennzahlen</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            ${staffQualificationData.average_experience_years > 0 ? `
+            <div style="padding: 20px; background: #fef3c7; border-radius: 10px; text-align: center;">
+              <div style="font-size: 2em; font-weight: bold; color: #d97706;">${staffQualificationData.average_experience_years} Jahre</div>
+              <p style="margin: 10px 0 0 0; color: #78350f; font-weight: 600;">Ø Berufserfahrung</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.training_budget_per_year > 0 ? `
+            <div style="padding: 20px; background: #dcfce7; border-radius: 10px; text-align: center;">
+              <div style="font-size: 2em; font-weight: bold; color: #16a34a;">${staffQualificationData.training_budget_per_year.toLocaleString('de-DE')} €</div>
+              <p style="margin: 10px 0 0 0; color: #14532d; font-weight: 600;">Schulungsbudget/Jahr</p>
+            </div>
+            ` : ''}
+            ${staffQualificationData.offers_employee_training ? `
+            <div style="padding: 20px; background: #dbeafe; border-radius: 10px; text-align: center;">
+              <div style="font-size: 2em; margin-bottom: 10px;">✅</div>
+              <p style="margin: 0; color: #1e40af; font-weight: 600;">Mitarbeiter-Schulungen</p>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #3b82f6;">Werden angeboten</p>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="recommendations" style="margin-top: 20px;">
+          <h4>💡 Empfehlungen zur Weiterentwicklung</h4>
+          <ul>
+            ${staffQualificationData.apprentices === 0 ? '<li>Ausbildungsplätze schaffen, um Fachkräftenachwuchs zu sichern</li>' : ''}
+            ${staffQualificationData.training_budget_per_year < 1000 ? '<li>Schulungsbudget erhöhen für kontinuierliche Weiterbildung</li>' : ''}
+            ${!staffQualificationData.offers_employee_training ? '<li>Strukturiertes Weiterbildungsprogramm für Mitarbeiter etablieren</li>' : ''}
+            ${!staffQualificationData.certifications.digital_skills ? '<li>Digitale Kompetenzen des Teams durch Schulungen stärken</li>' : ''}
+            ${staffQualificationData.average_experience_years < 5 ? '<li>Erfahrene Fachkräfte rekrutieren oder Mentoring-Programme einführen</li>' : ''}
+            <li>Regelmäßige Zertifizierungen und Weiterbildungen für alle Mitarbeiter planen</li>
+            <li>Spezialisierungen gezielt ausbauen, um sich vom Wettbewerb abzuheben</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+      ` : '';
+    })()}
+
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
