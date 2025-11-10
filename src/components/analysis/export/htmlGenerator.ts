@@ -3113,17 +3113,17 @@ export const generateCustomerHTML = ({
         <!-- Content-Typ Breakdown -->
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
           <div class="metric-card" style="text-align: center;">
-            <h4>📷 Bilder</h4>
+            <h4>Bilder</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
             <p style="margin: 0; font-size: 0.9em;">${imageCount === 0 ? 'Noch keine Bilder' : imageCount < 5 ? 'Ausbaufähig' : imageCount < 15 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
           <div class="metric-card" style="text-align: center;">
-            <h4>🎥 Videos</h4>
+            <h4>Videos</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
             <p style="margin: 0; font-size: 0.9em;">${videoCount === 0 ? 'Noch keine Videos' : videoCount < 3 ? 'Ausbaufähig' : videoCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
           <div class="metric-card" style="text-align: center;">
-            <h4>📱 Shorts</h4>
+            <h4>Shorts</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
             <p style="margin: 0; font-size: 0.9em;">${shortCount === 0 ? 'Noch keine Shorts' : shortCount < 3 ? 'Ausbaufähig' : shortCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
@@ -3144,15 +3144,13 @@ export const generateCustomerHTML = ({
               </thead>
               <tbody>
                 ${manualOnlinePresenceData.items.map((item, index) => {
-                  const typeIcon = item.type === 'image' ? '📷' : item.type === 'video' ? '🎥' : '📱';
                   const typeLabel = item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short';
                   const relevanceLabel = item.relevance === 'high' ? 'Hoch' : item.relevance === 'medium' ? 'Mittel' : 'Niedrig';
                   
                   return `
                     <tr style="border-bottom: 1px solid #e2e8f0;">
                       <td style="padding: 12px;">
-                        <span style="font-size: 1.5em;">${typeIcon}</span>
-                        <span style="margin-left: 8px;">${typeLabel}</span>
+                        <span>${typeLabel}</span>
                       </td>
                       <td style="padding: 12px;">
                         <a href="${item.url}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 0.9em; word-break: break-all;">
