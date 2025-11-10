@@ -2411,18 +2411,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 1: ONLINE-QUALITÄT -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        🌐 Online-Qualität
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        SEO, Content, Keywords & Lokales SEO
-      </p>
-    </div>
-
     <!-- 2. SEO-Analyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -2787,18 +2775,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 2: PERFORMANCE & TECHNIK -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        ⚡ Performance & Technik
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        Mobile-Optimierung & Barrierefreiheit
-      </p>
-    </div>
-
     <!-- Mobile Optimierung -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -2834,18 +2810,6 @@ export const generateCustomerHTML = ({
           ${getMobileOptimizationAnalysis()}
         </div>
       </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 5: UNTERNEHMENSAUFTRITT -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        🏢 Unternehmensauftritt
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        Corporate Identity & Impressum
-      </p>
     </div>
 
     <!-- Corporate Identity -->
@@ -3026,18 +2990,6 @@ export const generateCustomerHTML = ({
         </div>
         `}
       </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 6: SERVICE -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        🎯 Service
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        Arbeitsplatz, Personal & Kundenservice
-      </p>
     </div>
 
     <!-- Arbeitsplatz & Arbeitgeber-Attraktivität -->
@@ -3238,17 +3190,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 3: SOCIAL MEDIA -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        📱 Social Media
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        Google Reviews, Branchenplattformen, Online-Präsenz & Social Media
-      </p>
-    </div>
+
 
     <!-- Online Reputation -->
     <div class="section">
@@ -3909,18 +3851,6 @@ export const generateCustomerHTML = ({
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- HAUPTKATEGORIE 4: MARKTUMFELD -->
-    <!-- ========================================== -->
-    <div class="category-divider" style="margin: 60px 0 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 5px solid #fbbf24; border-radius: 8px;">
-      <h2 style="margin: 0; color: #fbbf24; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-        📊 Marktumfeld
-      </h2>
-      <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 16px;">
-        Wettbewerbsanalyse & Preispositionierung
-      </p>
     </div>
 
     <!-- Wettbewerbsanalyse -->
