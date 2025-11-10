@@ -3587,7 +3587,7 @@ export const generateCustomerHTML = ({
             
             ${contactMethodsList.length > 0 ? `
             <div>
-              <h4>📞 Kontaktmöglichkeiten</h4>
+              <h4>Kontaktmöglichkeiten</h4>
               <div style="margin-top: 10px;">
                 ${contactMethodsList.map(method => `
                   <div style="padding: 8px 12px; background: rgba(16, 185, 129, 0.1); border-radius: 6px; margin-bottom: 8px; display: inline-block; margin-right: 8px;">
@@ -3601,14 +3601,14 @@ export const generateCustomerHTML = ({
           
           ${quoteResponseData.automaticConfirmation ? `
           <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
-            <h4>✅ Automatische Eingangsbestätigung</h4>
+            <h4>Automatische Eingangsbestätigung</h4>
             <p>Anfragen werden automatisch bestätigt</p>
           </div>
           ` : ''}
           
           ${quoteResponseData.responseQuality ? `
           <div style="margin-top: 20px;">
-            <h4>💎 Antwortqualität</h4>
+            <h4>Antwortqualität</h4>
             <div style="padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
               <p>${quoteResponseData.responseQuality === 'excellent' ? 'Exzellent' : 
                    quoteResponseData.responseQuality === 'good' ? 'Gut' :
@@ -3621,7 +3621,7 @@ export const generateCustomerHTML = ({
           <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
             ${quoteResponseData.availabilityHours ? `
             <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;">
-              <h5 style="margin: 0 0 8px 0;">🕐 Erreichbarkeit</h5>
+              <h5 style="margin: 0 0 8px 0;">Erreichbarkeit</h5>
               <p style="margin: 0; font-size: 0.9em;">
                 ${quoteResponseData.availabilityHours === 'business-hours' ? 'Geschäftszeiten' :
                   quoteResponseData.availabilityHours === 'extended-hours' ? 'Erweiterte Öffnungszeiten' :
@@ -3632,14 +3632,14 @@ export const generateCustomerHTML = ({
             
             ${quoteResponseData.followUpProcess ? `
             <div style="padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px;">
-              <h5 style="margin: 0 0 8px 0;">🔄 Follow-Up-Prozess</h5>
+              <h5 style="margin: 0 0 8px 0;">Follow-Up-Prozess</h5>
               <p style="margin: 0; font-size: 0.9em;">Systematisches Nachfassen implementiert</p>
             </div>
             ` : ''}
             
             ${quoteResponseData.personalContact ? `
             <div style="padding: 15px; background: rgba(236, 72, 153, 0.1); border-radius: 8px;">
-              <h5 style="margin: 0 0 8px 0;">👤 Persönlicher Kontakt</h5>
+              <h5 style="margin: 0 0 8px 0;">Persönlicher Kontakt</h5>
               <p style="margin: 0; font-size: 0.9em;">Persönliche Ansprechpartner verfügbar</p>
             </div>
             ` : ''}
@@ -3647,13 +3647,13 @@ export const generateCustomerHTML = ({
           
           ${quoteResponseData.notes ? `
           <div style="margin-top: 20px; padding: 15px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; border-left: 4px solid #6b7280;">
-            <h4 style="margin-top: 0;">📝 Zusätzliche Hinweise</h4>
+            <h4 style="margin-top: 0;">Zusätzliche Hinweise</h4>
             <p style="margin-bottom: 0;">${quoteResponseData.notes}</p>
           </div>
           ` : ''}
           
           <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 8px;">
-            <h4 style="margin-top: 0;">💡 Empfehlungen zur Optimierung</h4>
+            <h4 style="margin-top: 0;">Empfehlungen zur Optimierung</h4>
             <ul style="margin: 10px 0; padding-left: 20px;">
               ${responseTimeHours > 24 ? '<li>Reaktionszeit auf unter 24 Stunden reduzieren für bessere Kundenzufriedenheit</li>' : ''}
               ${responseTimeHours > 2 && responseTimeHours <= 24 ? '<li>Noch schnellere Reaktionszeiten (unter 2 Stunden) können Ihre Conversion-Rate deutlich steigern</li>' : ''}
