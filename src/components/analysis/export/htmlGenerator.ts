@@ -3688,6 +3688,7 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -3695,150 +3696,17 @@ export const generateCustomerHTML = ({
         <div class="header-score-circle ${quoteResponseScore > 0 ? getScoreColorClass(quoteResponseScore) : 'red'}">${displayQuoteScore}</div>
       </div>
       <div class="section-content">
-        ${quoteResponseData && quoteResponseData.responseTime ? `
         ${(() => {
           const responseTimeHours = parseFloat(quoteResponseData.responseTime);
           return `
         <div class="metric-card">
-          <h3>Angebotsgeschwindigkeit & Reaktionszeit</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(quoteResponseScore)}">${Math.round(quoteResponseScore)}%</div>
-            <div class="score-details">
-              <p><strong>Reaktionszeit:</strong> ${quoteResponseData.responseTime} Stunden</p>
-              <p><strong>Bewertung:</strong> ${
-                quoteResponseScore >= 90 ? 'Exzellent - sehr schnelle Reaktion' : 
-                quoteResponseScore >= 75 ? 'Sehr gut - schnelle Reaktion' : 
-                quoteResponseScore >= 60 ? 'Gut - angemessene Reaktionszeit' : 
-                quoteResponseScore >= 40 ? 'Verbesserungsfähig - langsame Reaktion' : 
-                'Kritisch - sehr langsame Reaktion'
-              }</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${quoteResponseScore}%; background-color: ${getScoreColor(quoteResponseScore)}; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${quoteResponseScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${Math.round(quoteResponseScore)}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Details zur Reaktionszeit -->
-        <div class="metric-card" style="margin-top: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3);">
-          <h4 style="margin-top: 0; color: #1e40af;">📊 Analyse der Reaktionsgeschwindigkeit</h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
-            <div style="padding: 15px; background: white; border-radius: 8px;">
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">Ihre Reaktionszeit</p>
-              <p style="margin: 5px 0 0 0; font-size: 1.8em; font-weight: bold; color: ${
-                responseTimeHours <= 6 ? '#22c55e' : 
-                responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'
-              };">
-                ${quoteResponseData.responseTime}h
-              </p>
-            </div>
-            <div style="padding: 15px; background: white; border-radius: 8px;">
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">Branchendurchschnitt</p>
-              <p style="margin: 5px 0 0 0; font-size: 1.8em; font-weight: bold; color: #64748b;">24-48h</p>
-            </div>
-            <div style="padding: 15px; background: white; border-radius: 8px;">
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">Best Practice</p>
-              <p style="margin: 5px 0 0 0; font-size: 1.8em; font-weight: bold; color: #22c55e;">&lt;6h</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bewertung und Einordnung -->
-        <div class="metric-card" style="margin-top: 20px; background: ${
-          quoteResponseScore >= 90 ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05))' : 
-          quoteResponseScore >= 60 ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05))' : 
-          'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))'
-        }; padding: 20px; border-radius: 10px; border: 2px solid ${
-          quoteResponseScore >= 90 ? 'rgba(34, 197, 94, 0.3)' : 
-          quoteResponseScore >= 60 ? 'rgba(245, 158, 11, 0.3)' : 
-          'rgba(239, 68, 68, 0.3)'
-        };">
-          <h4 style="margin-top: 0; color: ${
-            quoteResponseScore >= 90 ? '#065f46' : 
-            quoteResponseScore >= 60 ? '#92400e' : 
-            '#7f1d1d'
-          }; display: flex; align-items: center; gap: 8px;">
-            ${quoteResponseScore >= 90 ? '✅' : quoteResponseScore >= 60 ? '⚠️' : '❌'} Einordnung Ihrer Reaktionsgeschwindigkeit
-          </h4>
-          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-              <div style="text-align: center; padding: 15px; background: ${responseTimeHours <= 6 ? '#dcfce7' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${responseTimeHours <= 6 ? '#10b981' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Exzellent</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${responseTimeHours <= 6 ? '#059669' : '#94a3b8'};">&lt;6 Stunden</p>
-              </div>
-              <div style="text-align: center; padding: 15px; background: ${responseTimeHours > 6 && responseTimeHours <= 24 ? '#fef3c7' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${responseTimeHours > 6 && responseTimeHours <= 24 ? '#f59e0b' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Gut</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${responseTimeHours > 6 && responseTimeHours <= 24 ? '#d97706' : '#94a3b8'};">6-24 Stunden</p>
-              </div>
-              <div style="text-align: center; padding: 15px; background: ${responseTimeHours > 24 ? '#fee2e2' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${responseTimeHours > 24 ? '#ef4444' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Verbesserungsbedarf</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${responseTimeHours > 24 ? '#dc2626' : '#94a3b8'};">&gt;24 Stunden</p>
-              </div>
-            </div>
-            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid ${
-              quoteResponseScore >= 90 ? '#10b981' : quoteResponseScore >= 60 ? '#f59e0b' : '#ef4444'
-            };">
-              <p style="margin: 0 0 8px 0; font-weight: 600; color: #1e293b;">Ihre Position:</p>
-              <p style="margin: 0; color: #64748b; line-height: 1.6;">
-                ${responseTimeHours <= 6 
-                  ? '🏆 <strong>Exzellent (&lt;6h)</strong>: Ihre Reaktionszeit ist hervorragend. Sie antworten schneller als die meisten Wettbewerber und zeigen hohe Kundenorientierung.'
-                  : responseTimeHours <= 24 
-                  ? '✅ <strong>Gut (6-24h)</strong>: Ihre Reaktionszeit ist im guten Bereich, aber es gibt noch Potenzial zur Steigerung durch schnellere Antwortzeiten.'
-                  : '⚠️ <strong>Verbesserungsbedarf (&gt;24h)</strong>: Ihre Reaktionszeit ist verbesserungswürdig. Kunden erwarten heute schnellere Antworten - jede Verzögerung kostet potenzielle Aufträge.'
-                }
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="recommendations">
-          <h4>Empfehlungen zur Optimierung der Reaktionszeit:</h4>
-          <ul>
-            ${responseTimeHours > 6 ? '<li><strong>Automatische Eingangsbestätigung:</strong> Richten Sie eine automatische E-Mail-Antwort ein, die Anfragen innerhalb von Minuten bestätigt</li>' : ''}
-            ${responseTimeHours > 24 ? '<li><strong>Anfrage-Management-System:</strong> Implementieren Sie ein CRM-System zur besseren Nachverfolgung von Kundenanfragen</li>' : ''}
-            ${responseTimeHours > 12 ? '<li><strong>Klare Verantwortlichkeiten:</strong> Definieren Sie, wer für die Beantwortung von Anfragen zuständig ist</li>' : ''}
-            <li><strong>Mobile Erreichbarkeit:</strong> Nutzen Sie mobile Benachrichtigungen für eingehende Anfragen</li>
-            <li><strong>Antwortvorlagen:</strong> Erstellen Sie Vorlagen für häufige Anfragen zur schnelleren Bearbeitung</li>
-            ${responseTimeHours <= 6 ? '<li><strong>Exzellenz beibehalten:</strong> Ihre schnelle Reaktionszeit ist ein Wettbewerbsvorteil - kommunizieren Sie dies aktiv!</li>' : ''}
-            <li><strong>Zeitfenster kommunizieren:</strong> Geben Sie auf Ihrer Website an, innerhalb welcher Zeit Kunden mit einer Antwort rechnen können</li>
-            <li><strong>Peak-Zeiten beachten:</strong> Verstärken Sie die Bearbeitung zu Stoßzeiten (z.B. Montag morgens)</li>
-          </ul>
+...
         </div>
           `;
         })()}
-        ` : `
-        <div class="metric-card warning" style="padding: 25px;">
-          <h3 style="margin-top: 0;">⚠️ Keine Daten zur Reaktionszeit erfasst</h3>
-          <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 20px; margin: 15px 0;">
-            <p style="margin: 0 0 15px 0; line-height: 1.6;">
-              Die Reaktionszeit auf Kundenanfragen ist ein entscheidender Wettbewerbsfaktor im Handwerk. 
-              Schnelle Antworten erhöhen die Auftragschancen erheblich:
-            </p>
-            <ul style="margin: 15px 0; line-height: 1.8;">
-              <li><strong>78% der Kunden</strong> beauftragen den Handwerker, der zuerst antwortet</li>
-              <li><strong>Reaktionszeit &lt;6h:</strong> 60% höhere Abschlussquote</li>
-              <li><strong>Reaktionszeit &gt;48h:</strong> 70% der Anfragen verloren</li>
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h4>Empfehlungen zum Erfassen und Optimieren der Reaktionszeit:</h4>
-            <ul>
-              <li><strong>Zeiterfassung einführen:</strong> Tracken Sie, wie lange es dauert, bis Sie auf Anfragen antworten</li>
-              <li><strong>Benchmark setzen:</strong> Definieren Sie ein Reaktionsziel (z.B. "innerhalb von 4 Stunden")</li>
-              <li><strong>Prozesse etablieren:</strong> Legen Sie fest, wer wann auf welche Art von Anfragen reagiert</li>
-              <li><strong>Automatisierung nutzen:</strong> Richten Sie automatische Bestätigungen ein</li>
-              <li><strong>Regelmäßig messen:</strong> Überprüfen Sie monatlich Ihre durchschnittliche Reaktionszeit</li>
-            </ul>
-          </div>
-        </div>
-        `}
       </div>
     </div>
+    ` : ''}
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
