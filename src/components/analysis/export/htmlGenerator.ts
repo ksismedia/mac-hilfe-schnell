@@ -3463,96 +3463,73 @@ export const generateCustomerHTML = ({
       <div class="section-content">
         <div class="metric-card">
           <h3>Corporate Design</h3>
-          <p style="color: #64748b; margin-bottom: 20px;">Ein einheitliches Corporate Design stärkt die Markenidentität und sorgt für professionellen Auftritt.</p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformLogo === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformLogo === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Einheitliches Logo</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformLogo === 'yes' ? 'Konsistent vorhanden' : manualCorporateIdentityData.uniformLogo === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Arbeitskleidung</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitlich vorhanden' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Farbkonzept</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistent eingesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformTypography === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformTypography === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Schriftarten</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitlich verwendet' : manualCorporateIdentityData.uniformTypography === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? '✅' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? '❌' : '❓'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Website-Design</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Konsistent gestaltet' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
-            </div>
+          <p style="margin-bottom: 15px;">Ein einheitliches Corporate Design stärkt die Markenidentität und sorgt für professionellen Auftritt.</p>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Einheitliches Logo:</strong> ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'Konsistent vorhanden' : manualCorporateIdentityData.uniformLogo === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformLogo === 'yes' ? 100 : manualCorporateIdentityData.uniformLogo === 'no' ? 0 : 50, manualCorporateIdentityData.uniformLogo === 'yes' ? 'Logo wird konsistent verwendet' : 'Logo sollte vereinheitlicht werden')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Arbeitskleidung:</strong> ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitlich vorhanden' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 100 : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitliche Arbeitskleidung vorhanden' : 'Einheitliche Arbeitskleidung empfohlen')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Farbkonzept:</strong> ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistent eingesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformColorScheme === 'yes' ? 100 : manualCorporateIdentityData.uniformColorScheme === 'no' ? 0 : 50, manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistentes Farbkonzept' : 'Farbkonzept sollte vereinheitlicht werden')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Schriftarten:</strong> ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitlich verwendet' : manualCorporateIdentityData.uniformTypography === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformTypography === 'yes' ? 100 : manualCorporateIdentityData.uniformTypography === 'no' ? 0 : 50, manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitliche Schriftarten' : 'Schriftarten sollten vereinheitlicht werden')}
+          </div>
+          
+          <div>
+            <p><strong>Website-Design:</strong> ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Konsistent gestaltet' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 100 : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Website-Design ist konsistent' : 'Website-Design sollte überarbeitet werden')}
           </div>
         </div>
 
-        <div class="metric-card" style="margin-top: 20px;">
-          <h3>📢 Marketing & Werbemittel</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.hauszeitung === 'yes' ? '📰' : '📭'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Hauszeitung/Newsletter</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.hauszeitung === 'yes' ? 'Wird eingesetzt' : manualCorporateIdentityData.hauszeitung === 'no' ? 'Nicht vorhanden' : 'Unbekannt'}</p>
-            </div>
+        <div class="metric-card">
+          <h3>Marketing & Werbemittel</h3>
+          
+          <p><strong>Hauszeitung/Newsletter:</strong> ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'Wird eingesetzt' : manualCorporateIdentityData.hauszeitung === 'no' ? 'Nicht vorhanden' : 'Unbekannt'}</p>
+          
+          <p><strong>Hersteller-Infos:</strong> ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'Werden genutzt' : manualCorporateIdentityData.herstellerInfos === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
+        </div>
 
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.herstellerInfos === 'yes' ? '📋' : '📭'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Hersteller-Infos</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'Werden genutzt' : manualCorporateIdentityData.herstellerInfos === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
-            </div>
+        <div class="metric-card">
+          <h3>Fahrzeugflotte & Außenwirkung</h3>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Fahrzeugbeschriftung:</strong> ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitlich gestaltet' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 100 : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 0 : 50, manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitliche Fahrzeugbeschriftung vorhanden' : 'Einheitliche Fahrzeugbeschriftung empfohlen')}
+          </div>
+          
+          <div>
+            <p><strong>Fahrzeugzustand:</strong> ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Gepflegt & sauber' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'Verbesserungsbedarf' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.vehicleCondition === 'yes' ? 100 : manualCorporateIdentityData.vehicleCondition === 'no' ? 0 : 50, manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Fahrzeuge in gutem Zustand' : 'Fahrzeugpflege sollte verbessert werden')}
           </div>
         </div>
 
-        <div class="metric-card" style="margin-top: 20px;">
-          <h3>🚗 Fahrzeugflotte & Außenwirkung</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? '✅' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? '❌' : '❓'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Fahrzeugbeschriftung</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitlich gestaltet' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'rgba(34, 197, 94, 0.1)' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'rgba(34, 197, 94, 0.3)' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.vehicleCondition === 'yes' ? '✅' : manualCorporateIdentityData.vehicleCondition === 'no' ? '❌' : '❓'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Fahrzeugzustand</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Gepflegt & sauber' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'Verbesserungsbedarf' : 'Unbekannt'}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="metric-card" style="margin-top: 20px;">
-          <h3>🎪 Außenwerbung</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'rgba(168, 85, 247, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.bauzaunBanner === 'yes' ? '🚧' : '📭'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Bauzaun-Banner</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'Werden eingesetzt' : manualCorporateIdentityData.bauzaunBanner === 'no' ? 'Nicht im Einsatz' : 'Unbekannt'}</p>
-            </div>
-
-            <div style="padding: 15px; background: ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(156, 163, 175, 0.1)'}; border-radius: 8px; border: 2px solid ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'rgba(168, 85, 247, 0.3)' : 'rgba(156, 163, 175, 0.3)'};">
-              <div style="font-size: 1.5em; margin-bottom: 8px;">${manualCorporateIdentityData.bandenWerbung === 'yes' ? '⚽' : '📭'}</div>
-              <h4 style="margin: 0 0 5px 0; color: #1e293b;">Banden-Werbung</h4>
-              <p style="margin: 0; font-size: 0.9em; color: #64748b;">${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'Aktiv genutzt' : manualCorporateIdentityData.bandenWerbung === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
-            </div>
-          </div>
+        <div class="metric-card">
+          <h3>Außenwerbung</h3>
+          
+          <p><strong>Bauzaun-Banner:</strong> ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'Werden eingesetzt' : manualCorporateIdentityData.bauzaunBanner === 'no' ? 'Nicht im Einsatz' : 'Unbekannt'}</p>
+          
+          <p><strong>Banden-Werbung:</strong> ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'Aktiv genutzt' : manualCorporateIdentityData.bandenWerbung === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
         </div>
 
         ${manualCorporateIdentityData.notes ? `
-        <div class="metric-card" style="margin-top: 20px;">
-          <h3>📝 Zusätzliche Hinweise</h3>
-          <p style="margin-top: 15px; line-height: 1.6; color: #1e293b; white-space: pre-wrap;">${manualCorporateIdentityData.notes}</p>
+        <div class="metric-card">
+          <h3>Zusätzliche Hinweise</h3>
+          <p style="white-space: pre-wrap;">${manualCorporateIdentityData.notes}</p>
         </div>
         ` : ''}
 
-        <div class="recommendations" style="margin-top: 20px;">
-          <h4>💡 Empfehlungen zur Optimierung</h4>
+        <div class="recommendations">
+          <h4>Empfehlungen zur Optimierung</h4>
           <ul>
             ${manualCorporateIdentityData.uniformLogo === 'no' || manualCorporateIdentityData.uniformLogo === 'unknown' ? '<li>Einheitliches Logo auf allen Kommunikationskanälen verwenden</li>' : ''}
             ${manualCorporateIdentityData.uniformWorkClothing === 'no' || manualCorporateIdentityData.uniformWorkClothing === 'unknown' ? '<li>Einheitliche Arbeitskleidung mit Firmenlogo für professionellen Auftritt einführen</li>' : ''}
