@@ -290,7 +290,7 @@ section[class*="section"],
   position: relative;
 }
 .metric-card { 
-  background: rgba(17, 24, 39, 0.6); 
+  background: rgba(255, 255, 255, 0.95); 
   padding: 25px; 
   border-radius: 12px; 
   border-left: 5px solid #fbbf24;

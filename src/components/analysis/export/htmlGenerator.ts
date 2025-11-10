@@ -3863,7 +3863,7 @@ export const generateCustomerHTML = ({
         ` : ''}
 
         <div class="metric-card" style="margin-top: 20px;">
-          <h3>📈 Qualifikations-Kennzahlen</h3>
+          <h3>Qualifikations-Kennzahlen</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
             ${staffQualificationData.average_experience_years > 0 ? `
             <div style="padding: 20px; background: #fef3c7; border-radius: 10px; text-align: center;">
@@ -3879,7 +3879,6 @@ export const generateCustomerHTML = ({
             ` : ''}
             ${staffQualificationData.offers_employee_training ? `
             <div style="padding: 20px; background: #dbeafe; border-radius: 10px; text-align: center;">
-              <div style="font-size: 2em; margin-bottom: 10px;">✅</div>
               <p style="margin: 0; color: #1e40af; font-weight: 600;">Mitarbeiter-Schulungen</p>
               <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #3b82f6;">Werden angeboten</p>
             </div>
@@ -3888,7 +3887,7 @@ export const generateCustomerHTML = ({
         </div>
 
         <div class="recommendations" style="margin-top: 20px;">
-          <h4>💡 Empfehlungen zur Weiterentwicklung</h4>
+          <h4>Empfehlungen zur Weiterentwicklung</h4>
           <ul>
             ${staffQualificationData.apprentices === 0 ? '<li>Ausbildungsplätze schaffen, um Fachkräftenachwuchs zu sichern</li>' : ''}
             ${staffQualificationData.training_budget_per_year < 1000 ? '<li>Schulungsbudget erhöhen für kontinuierliche Weiterbildung</li>' : ''}
