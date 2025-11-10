@@ -290,7 +290,7 @@ section[class*="section"],
   position: relative;
 }
 .metric-card { 
-  background: rgba(255, 255, 255, 0.95); 
+  background: rgba(17, 24, 39, 0.6); 
   padding: 25px; 
   border-radius: 12px; 
   border-left: 5px solid #fbbf24;
@@ -386,7 +386,7 @@ span[style*="font-size: 6px"] {
 .progress-container { margin-top: 15px; }
 .progress-bar { 
   background: #374151; 
-  height: 16px; 
+  height: 24px; 
   border-radius: 8px; 
   overflow: hidden;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
@@ -398,6 +398,9 @@ span[style*="font-size: 6px"] {
   transition: width 0.8s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Progress-Fill Farben basierend auf korrekten Wert-Bereichen */

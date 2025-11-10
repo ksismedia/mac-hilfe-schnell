@@ -103,21 +103,20 @@ const getScoreTileTextColor = (score: number): string => {
 };
 
 // Einheitliche Progress-Bar mit Prozentzahl im Balken und Beschreibung darunter
-const generateProgressBar = (score: number, label: string, description: string) => {
+const generateProgressBar = (score: number, description: string) => {
   const barColor = getScoreColor(score);
   const textColor = score >= 90 ? '#000' : '#fff';
+  const scoreRange = getScoreRange(score);
   
   return `
     <div class="progress-container">
       <div class="progress-bar">
-        <div class="progress-fill" style="width: ${score}%; background-color: ${barColor}; display: flex; align-items: center; justify-content: center;">
-          <span style="color: ${textColor}; font-weight: bold; font-size: 14px;">${score}%</span>
+        <div class="progress-fill" data-score="${scoreRange}" style="width: ${score}%; background-color: ${barColor}; display: flex; align-items: center; justify-content: center;">
+          <span style="color: ${textColor}; font-weight: bold; font-size: 12px;">${score}%</span>
         </div>
       </div>
     </div>
-    <div class="score-details" style="margin-top: 10px;">
-      <p><strong>${label}:</strong> ${description}</p>
-    </div>
+    ${description ? `<small style="font-size: 11px; color: #9ca3af; display: block; margin-top: 6px; line-height: 1.4;">${description}</small>` : ''}
   `;
 };
 
@@ -554,7 +553,6 @@ export const generateCustomerHTML = ({
         </div>
         ${generateProgressBar(
           reputationScore,
-          'Bewertungsstatus',
           `${realData.reviews.google.rating}/5 Sterne (${realData.reviews.google.count} Bewertungen) - ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}`
         )}
       </div>
@@ -653,7 +651,6 @@ export const generateCustomerHTML = ({
         </div>
           ${generateProgressBar(
             legalScore,
-            'Vollständigkeit',
             `${legalScore >= 80 ? 'Vollständig vorhanden' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'} - ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}`
           )}
 
@@ -791,7 +788,6 @@ export const generateCustomerHTML = ({
         </div>
         ${generateProgressBar(
           accessibilityScore,
-          'Compliance-Level',
           `${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'} - ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}`
         )}
 
