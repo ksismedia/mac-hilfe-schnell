@@ -140,11 +140,14 @@ section[class*="section"],
   color: #000000;
   padding: 12px 20px;
   border-radius: 8px;
-  margin: 25px 0 15px 0;
+  margin: 25px auto 15px auto;
   font-weight: 600;
   font-size: 1.1em;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
   border: 1px solid #f59e0b;
+  width: 95% !important;
+  max-width: 1400px !important;
+  box-sizing: border-box !important;
 }
 .score-card { 
   padding: 20px 15px !important; 
@@ -932,6 +935,11 @@ table tr {
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(251, 191, 36, 0.2);
     user-select: none;
+    width: 95% !important;
+    max-width: 1400px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
   }
 
   .category-header:hover {
