@@ -3698,9 +3698,108 @@ export const generateCustomerHTML = ({
       <div class="section-content">
         ${(() => {
           const responseTimeHours = parseFloat(quoteResponseData.responseTime);
+          const contactMethodsList = [];
+          if (quoteResponseData.contactMethods.phone) contactMethodsList.push('📞 Telefon');
+          if (quoteResponseData.contactMethods.email) contactMethodsList.push('📧 E-Mail');
+          if (quoteResponseData.contactMethods.contactForm) contactMethodsList.push('📝 Kontaktformular');
+          if (quoteResponseData.contactMethods.whatsapp) contactMethodsList.push('💬 WhatsApp');
+          if (quoteResponseData.contactMethods.messenger) contactMethodsList.push('💬 Messenger');
+          
           return `
         <div class="metric-card">
-...
+          <h3>📊 Kundenservice-Leistung</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div>
+              <h4>⏱️ Reaktionszeit auf Anfragen</h4>
+              <div style="font-size: 2em; font-weight: bold; color: ${responseTimeHours <= 2 ? '#10b981' : responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'};">
+                ${quoteResponseData.responseTime} Stunden
+              </div>
+              <p style="margin-top: 10px; color: #6b7280;">
+                ${responseTimeHours <= 2 ? '✅ Exzellente Reaktionszeit' : 
+                  responseTimeHours <= 24 ? '⚠️ Gute Reaktionszeit, aber optimierbar' : 
+                  '❌ Reaktionszeit sollte verbessert werden'}
+              </p>
+            </div>
+            
+            ${contactMethodsList.length > 0 ? `
+            <div>
+              <h4>📞 Kontaktmöglichkeiten</h4>
+              <div style="margin-top: 10px;">
+                ${contactMethodsList.map(method => `
+                  <div style="padding: 8px 12px; background: rgba(16, 185, 129, 0.1); border-radius: 6px; margin-bottom: 8px; display: inline-block; margin-right: 8px;">
+                    ${method}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            ` : ''}
+          </div>
+          
+          ${quoteResponseData.automaticConfirmation ? `
+          <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+            <h4>✅ Automatische Eingangsbestätigung</h4>
+            <p>Anfragen werden automatisch bestätigt</p>
+          </div>
+          ` : ''}
+          
+          ${quoteResponseData.responseQuality ? `
+          <div style="margin-top: 20px;">
+            <h4>💎 Antwortqualität</h4>
+            <div style="padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+              <p>${quoteResponseData.responseQuality === 'excellent' ? 'Exzellent' : 
+                   quoteResponseData.responseQuality === 'good' ? 'Gut' :
+                   quoteResponseData.responseQuality === 'average' ? 'Durchschnittlich' :
+                   quoteResponseData.responseQuality === 'poor' ? 'Verbesserungsbedürftig' : quoteResponseData.responseQuality}</p>
+            </div>
+          </div>
+          ` : ''}
+          
+          <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            ${quoteResponseData.availabilityHours ? `
+            <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;">
+              <h5 style="margin: 0 0 8px 0;">🕐 Erreichbarkeit</h5>
+              <p style="margin: 0; font-size: 0.9em;">
+                ${quoteResponseData.availabilityHours === 'business-hours' ? 'Geschäftszeiten' :
+                  quoteResponseData.availabilityHours === 'extended-hours' ? 'Erweiterte Öffnungszeiten' :
+                  quoteResponseData.availabilityHours === '24-7' ? '24/7 erreichbar' : quoteResponseData.availabilityHours}
+              </p>
+            </div>
+            ` : ''}
+            
+            ${quoteResponseData.followUpProcess ? `
+            <div style="padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px;">
+              <h5 style="margin: 0 0 8px 0;">🔄 Follow-Up-Prozess</h5>
+              <p style="margin: 0; font-size: 0.9em;">Systematisches Nachfassen implementiert</p>
+            </div>
+            ` : ''}
+            
+            ${quoteResponseData.personalContact ? `
+            <div style="padding: 15px; background: rgba(236, 72, 153, 0.1); border-radius: 8px;">
+              <h5 style="margin: 0 0 8px 0;">👤 Persönlicher Kontakt</h5>
+              <p style="margin: 0; font-size: 0.9em;">Persönliche Ansprechpartner verfügbar</p>
+            </div>
+            ` : ''}
+          </div>
+          
+          ${quoteResponseData.notes ? `
+          <div style="margin-top: 20px; padding: 15px; background: rgba(156, 163, 175, 0.1); border-radius: 8px; border-left: 4px solid #6b7280;">
+            <h4 style="margin-top: 0;">📝 Zusätzliche Hinweise</h4>
+            <p style="margin-bottom: 0;">${quoteResponseData.notes}</p>
+          </div>
+          ` : ''}
+          
+          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 8px;">
+            <h4 style="margin-top: 0;">💡 Empfehlungen zur Optimierung</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              ${responseTimeHours > 24 ? '<li>Reaktionszeit auf unter 24 Stunden reduzieren für bessere Kundenzufriedenheit</li>' : ''}
+              ${responseTimeHours > 2 && responseTimeHours <= 24 ? '<li>Noch schnellere Reaktionszeiten (unter 2 Stunden) können Ihre Conversion-Rate deutlich steigern</li>' : ''}
+              ${contactMethodsList.length < 3 ? '<li>Mehrere Kontaktkanäle anbieten (Telefon, E-Mail, WhatsApp, Live-Chat) erhöht die Erreichbarkeit</li>' : ''}
+              ${!quoteResponseData.automaticConfirmation ? '<li>Automatische Eingangsbestätigung von Anfragen implementieren</li>' : ''}
+              ${!quoteResponseData.followUpProcess ? '<li>Implementieren Sie ein systematisches Follow-Up-System für Angebotsanfragen</li>' : ''}
+              <li>FAQ-Bereich pflegen, um häufige Fragen proaktiv zu beantworten</li>
+              <li>Transparente Kommunikation der Bearbeitungszeiten auf der Website</li>
+            </ul>
+          </div>
         </div>
           `;
         })()}
