@@ -63,6 +63,7 @@ export interface DataPrivacyResult {
   realApiData?: {
     ssl: any;
     securityHeaders: any;
+    cookieBanner?: any;
     checkedWithRealAPIs: boolean;
   };
 }
@@ -106,13 +107,15 @@ export class DataPrivacyService {
     const hostname = new URL(url).hostname;
     
     // Parallel API calls for faster results
-    const [sslResult, securityHeadersResult] = await Promise.all([
+    const [sslResult, securityHeadersResult, cookieBannerResult] = await Promise.all([
       this.checkSSLWithAPI(hostname),
-      this.checkSecurityHeaders(url)
+      this.checkSecurityHeaders(url),
+      this.detectCookieBanner(url)
     ]);
 
     console.log('SSL Result:', sslResult);
     console.log('Security Headers Result:', securityHeadersResult);
+    console.log('Cookie Banner Result:', cookieBannerResult);
     
     // HINWEIS: Cookies, Tracking-Scripts sind NICHT automatisch prüfbar (kostenpflichtige APIs)
     // Diese müssen manuell eingegeben werden
@@ -121,7 +124,8 @@ export class DataPrivacyService {
     const externalServices: Array<{name: string; category: string; gdprCompliant: boolean; adequacyDecision: boolean}> = [];
     
     // Violations basierend auf ECHTEN Daten
-    const violations = this.analyzeRealViolations(sslResult, securityHeadersResult, false);
+    const hasConsentBanner = cookieBannerResult?.hasConsentBanner || false;
+    const violations = this.analyzeRealViolations(sslResult, securityHeadersResult, hasConsentBanner);
     
     // Score berechnen basierend auf echten Prüfungen
     const score = this.calculateRealGDPRScore(sslResult, securityHeadersResult, violations);
@@ -142,7 +146,7 @@ export class DataPrivacyService {
       trackingScripts,
       cookies,
       sslRating,
-      hasConsentBanner: false, // Nicht automatisch prüfbar
+      hasConsentBanner,
       hasPrivacyPolicy: false, // Nicht automatisch prüfbar
       hasCookiePolicy: false, // Nicht automatisch prüfbar
       consentMechanism: 'none', // Nicht automatisch prüfbar
@@ -152,6 +156,7 @@ export class DataPrivacyService {
       realApiData: {
         ssl: sslResult,
         securityHeaders: securityHeadersResult,
+        cookieBanner: cookieBannerResult,
         checkedWithRealAPIs: true
       }
     };
@@ -180,6 +185,33 @@ export class DataPrivacyService {
       return result.success ? result.data : null;
     } catch (error) {
       console.error('Error checking SSL:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Erkennt Cookie-Banner automatisch über Edge Function
+   */
+  private static async detectCookieBanner(url: string): Promise<{hasConsentBanner: boolean; detectionMethod: string | null; detectedPlatform: string | null} | null> {
+    try {
+      const response = await fetch(
+        `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/detect-cookie-banner`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Cookie banner detection failed:', response.status);
+        return null;
+      }
+
+      const result = await response.json();
+      return result.success ? result.data : null;
+    } catch (error) {
+      console.error('Error detecting cookie banner:', error);
       return null;
     }
   }
