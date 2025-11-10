@@ -3590,6 +3590,104 @@ export const generateCustomerHTML = ({
       return '';
     })()}
 
+    ${(() => {
+      // Branchenplattformen Sektion - IMMER anzeigen
+      const overallScore = (manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0) 
+        ? (manualIndustryReviewData.overallScore || 0) 
+        : 0;
+      const hasData = manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0;
+      
+      return `
+    <!-- Branchenplattformen -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>🏆 Branchenplattformen</span>
+        <div class="header-score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Branchenspezifische Bewertungsplattformen</h3>
+          <div class="score-display">
+            <div class="score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
+            <div class="score-details">
+              <p><strong>Plattformen:</strong> ${hasData ? manualIndustryReviewData.platforms.length : 0}</p>
+              <p><strong>Status:</strong> ${hasData ? 'Aktiv' : 'Nicht erfasst'}</p>
+            </div>
+          </div>
+        </div>
+
+        ${hasData ? `
+        <div style="margin-top: 20px;">
+          <h4 style="margin-bottom: 15px;">Ihre Präsenz auf Branchenplattformen:</h4>
+          <div style="display: grid; gap: 15px;">
+            ${manualIndustryReviewData.platforms.map((platform) => {
+              const rating = platform.rating || 0;
+              const ratingScore = (rating / 5) * 100;
+              const scoreColorClass = getScoreColorClass(ratingScore);
+              
+              return `
+              <div class="metric-card" style="border-left: 4px solid ${
+                scoreColorClass === 'yellow' ? '#eab308' : 
+                scoreColorClass === 'green' ? '#16a34a' : 
+                scoreColorClass === 'red' ? '#dc2626' : '#94a3b8'
+              };">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                  <div style="flex: 1;">
+                    <h4 style="margin: 0 0 5px 0; color: #1e293b;">${platform.platformName}</h4>
+                    <a href="${platform.profileUrl}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 0.9em; word-break: break-all;">
+                      ${platform.profileUrl}
+                    </a>
+                  </div>
+                  <div style="text-align: right; margin-left: 15px;">
+                    <div class="score-circle small ${scoreColorClass}" style="width: 60px; height: 60px; font-size: 1.2em;">
+                      ${rating.toFixed(1)}
+                    </div>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                  <div style="padding: 10px; background: #f8fafc; border-radius: 6px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #64748b;">Bewertungen</p>
+                    <p style="margin: 5px 0 0 0; font-size: 1.1em; font-weight: bold; color: #1e293b;">${platform.reviewCount || 0}</p>
+                  </div>
+                  <div style="padding: 10px; background: #f8fafc; border-radius: 6px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #64748b;">Verifiziert</p>
+                    <p style="margin: 5px 0 0 0; font-size: 1.1em; font-weight: bold; color: ${platform.isVerified ? '#16a34a' : '#dc2626'};">
+                      ${platform.isVerified ? '✅ Ja' : '❌ Nein'}
+                    </p>
+                  </div>
+                </div>
+                ${platform.lastReviewDate ? `
+                <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #64748b;">
+                  Letzte Bewertung: ${platform.lastReviewDate}
+                </p>
+                ` : ''}
+              </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        ` : `
+        <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
+          <h4 style="color: #ef4444;">⚠️ Keine Branchenplattformen erfasst</h4>
+          <p style="margin-top: 10px;">Es wurden noch keine Bewertungen auf branchenspezifischen Plattformen erfasst. Nutzen Sie relevante Plattformen, um Ihre Sichtbarkeit zu erhöhen.</p>
+        </div>
+        `}
+
+        <div class="recommendations">
+          <h4>Empfehlungen für Branchenplattformen:</h4>
+          <ul>
+            <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
+            <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
+            <li>Auf Bewertungen zeitnah und professionell reagieren</li>
+            <li>Profile verifizieren lassen für höhere Glaubwürdigkeit</li>
+            <li>Referenzprojekte und Zertifikate hinterlegen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+      `;
+    })()}
+
     <!-- Corporate Identity -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -3971,99 +4069,6 @@ export const generateCustomerHTML = ({
 
 
 
-    ${(() => {
-      // Branchenplattformen Sektion - IMMER anzeigen
-      const overallScore = (manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0) 
-        ? (manualIndustryReviewData.overallScore || 0) 
-        : 0;
-      const hasData = manualIndustryReviewData && manualIndustryReviewData.platforms && manualIndustryReviewData.platforms.length > 0;
-      
-      return `
-    <!-- Branchenplattformen -->
-    <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>🏆 Branchenplattformen</span>
-        <div class="header-score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Branchenspezifische Bewertungsplattformen</h3>
-          <div class="score-display">
-            <div class="score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
-            <div class="score-details">
-              <p><strong>Status:</strong> ${overallScore <= 0 ? 'Nicht erfasst' : 'Erfasst'}</p>
-              <p><strong>Empfehlung:</strong> ${overallScore <= 0 ? 'Bitte erfassen Sie Ihre Bewertungen auf branchenspezifischen Plattformen' : overallScore >= 70 ? 'Sehr gute Präsenz' : 'Ausbaufähig'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${overallScore <= 0 ? 'none' : getScoreRange(overallScore)}" style="width: ${overallScore <= 0 ? '0' : overallScore + '%'}; background-color: ${overallScore <= 0 ? '#ccc' : getScoreColor(overallScore)} !important; display: flex; align-items: center; justify-content: center;">
-                ${overallScore > 0 ? `<span style="color: ${overallScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${overallScore}%</span>` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        ${hasData ? `
-        <div style="margin-top: 20px;">
-          <h4 style="color: #fbbf24; margin-bottom: 15px;">Plattform-Übersicht</h4>
-          <div style="margin-bottom: 15px;">
-            <p><strong>Erfasste Plattformen:</strong> ${manualIndustryReviewData.platforms.length}</p>
-            <p><strong>Verifizierte Profile:</strong> ${manualIndustryReviewData.platforms.filter(p => p.isVerified).length}</p>
-            <p><strong>Gesamtbewertungen:</strong> ${manualIndustryReviewData.platforms.reduce((sum, p) => sum + (p.reviewCount || 0), 0)}</p>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-            ${manualIndustryReviewData.platforms.map(platform => {
-              const platformScore = Math.round((platform.rating / 5) * 100);
-              return `
-              <div class="metric-card" style="padding: 15px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2);">
-                <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 10px;">
-                  <h4 style="margin: 0; color: #fbbf24;">${platform.platformName}</h4>
-                  ${platform.isVerified ? '<span style="color: #10b981; font-size: 0.8em;">✓ Verifiziert</span>' : ''}
-                </div>
-                <div style="margin: 10px 0;">
-                  <p style="margin: 5px 0;"><strong>Bewertung:</strong> ${platform.rating}/5 ⭐</p>
-                  <p style="margin: 5px 0;"><strong>Anzahl Bewertungen:</strong> ${platform.reviewCount}</p>
-                  ${platform.lastReviewDate ? `<p style="margin: 5px 0;"><strong>Letzte Bewertung:</strong> ${platform.lastReviewDate}</p>` : ''}
-                  ${platform.profileUrl ? `<p style="margin: 5px 0;"><a href="${platform.profileUrl}" target="_blank" style="color: #3b82f6;">Profil ansehen →</a></p>` : ''}
-                </div>
-                <div class="progress-container">
-                  <div class="progress-label">
-                    <span>Bewertungslevel</span>
-                    <span>${platformScore}%</span>
-                  </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${platformScore}%; background-color: ${getScoreColor(platformScore)} !important; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${platformScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${platformScore}%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-        ` : `
-        <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
-          <h4 style="color: #ef4444;">⚠️ Keine Branchenplattformen erfasst</h4>
-          <p style="margin-top: 10px;">Es wurden noch keine Bewertungen auf branchenspezifischen Plattformen erfasst. Nutzen Sie relevante Plattformen, um Ihre Sichtbarkeit zu erhöhen.</p>
-        </div>
-        `}
-
-        <div class="recommendations">
-          <h4>Empfehlungen für Branchenplattformen:</h4>
-          <ul>
-            <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
-            <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
-            <li>Auf Bewertungen zeitnah und professionell reagieren</li>
-            <li>Profile verifizieren lassen für höhere Glaubwürdigkeit</li>
-            <li>Referenzprojekte und Zertifikate hinterlegen</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-      `;
-    })()}
 
 
     <!-- Wettbewerbsanalyse -->
