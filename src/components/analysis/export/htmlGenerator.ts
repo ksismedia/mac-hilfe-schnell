@@ -4039,6 +4039,11 @@ export const generateCustomerHTML = ({
       ` : '';
     })()}
 
+    <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
+    <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border-left: 4px solid #22c55e; border-radius: 8px;">
+      <h2 style="margin: 0; color: #22c55e; font-size: 1.8em; font-weight: bold;">Qualität · Service · Kundenorientierung</h2>
+    </div>
+
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
