@@ -3688,6 +3688,39 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    <!-- Wettbewerber-Analyse -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>👥 Wettbewerber-Analyse</span>
+        ${(() => {
+          const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+          const ownScore = (window as any).globalOwnCompanyScore || competitorComparisonScore || 75;
+          return allCompetitors.length > 0 ? `<div class="header-score-circle ${getScoreColorClass(ownScore)}">${Math.round(ownScore)}%</div>` : '';
+        })()}
+      </div>
+      <div class="section-content">
+        ${getCompetitorAnalysis()}
+      </div>
+    </div>
+
+    <!-- Arbeitgeber-Bewertungen -->
+    ${(() => {
+      const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
+      const hasWorkplaceData = workplaceScore !== -1;
+      
+      return `
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>💼 Arbeitgeber-Bewertungen</span>
+        ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
+      </div>
+      <div class="section-content">
+        ${getWorkplaceAnalysis()}
+      </div>
+    </div>
+      `;
+    })()}
+
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
