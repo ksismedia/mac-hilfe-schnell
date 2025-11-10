@@ -44,7 +44,6 @@ export interface DataPrivacyResult {
   sslRating: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F';
   hasConsentBanner: boolean;
   hasPrivacyPolicy: boolean;
-  hasImprint: boolean;
   hasCookiePolicy: boolean;
   consentMechanism: 'none' | 'banner' | 'wall' | 'modal';
   externalServices: Array<{
@@ -145,7 +144,6 @@ export class DataPrivacyService {
       sslRating,
       hasConsentBanner: false, // Nicht automatisch prüfbar
       hasPrivacyPolicy: false, // Nicht automatisch prüfbar
-      hasImprint: false, // Nicht automatisch prüfbar
       hasCookiePolicy: false, // Nicht automatisch prüfbar
       consentMechanism: 'none', // Nicht automatisch prüfbar
       externalServices,

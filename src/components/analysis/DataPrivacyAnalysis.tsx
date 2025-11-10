@@ -590,12 +590,6 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                              (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'marketing').length || 0)}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span>Impressum</span>
-                          <span className={`${privacyData.hasImprint ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.hasImprint ? 'Vorhanden' : 'Fehlend'}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
