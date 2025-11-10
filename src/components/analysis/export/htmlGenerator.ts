@@ -3065,8 +3065,9 @@ export const generateCustomerHTML = ({
         </div>
         
         <div id="corporate-identity-details" style="display: none;">
+          <!-- Corporate Design -->
           <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
-            <h4>🎨 Bewertung der Außendarstellung</h4>
+            <h4>🎨 Corporate Design</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Einheitliches Logo:</strong> 
@@ -3083,13 +3084,6 @@ export const generateCustomerHTML = ({
                 </p>
               </div>
               <div>
-                <p><strong>Einheitliche Fahrzeugbeklebung:</strong> 
-                  <span class="score-badge ${manualCorporateIdentityData.uniformVehicleBranding ? 'green' : 'red'}">
-                    ${manualCorporateIdentityData.uniformVehicleBranding ? '✅ Umgesetzt' : '❌ Fehlt'}
-                  </span>
-                </p>
-              </div>
-              <div>
                 <p><strong>Einheitliche Farbgebung:</strong> 
                   <span class="score-badge ${manualCorporateIdentityData.uniformColorScheme ? 'green' : 'red'}">
                     ${manualCorporateIdentityData.uniformColorScheme ? '✅ Umgesetzt' : '❌ Fehlt'}
@@ -3098,47 +3092,83 @@ export const generateCustomerHTML = ({
               </div>
               <div>
                 <p><strong>Einheitliche Typografie:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformTypography ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformTypography ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <p><strong>Einheitliche Visitenkarten:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformBusinessCards ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformBusinessCards ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformTypography ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformTypography ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
               <div>
                 <p><strong>Einheitliches Website-Design:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformWebsiteDesign ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformWebsiteDesign ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <p><strong>Einheitliche Dokumentvorlagen:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformDocumentTemplates ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformDocumentTemplates ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <p><strong>Einheitliche Beschilderung:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformSignage ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformSignage ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <p><strong>Einheitliche Verpackung:</strong> 
-                  <span class="score-badge ${(manualCorporateIdentityData.uniformPackaging ?? false) ? 'green' : 'red'}">
-                    ${(manualCorporateIdentityData.uniformPackaging ?? false) ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  <span class="score-badge ${manualCorporateIdentityData.uniformWebsiteDesign ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformWebsiteDesign ? '✅ Umgesetzt' : '❌ Fehlt'}
                   </span>
                 </p>
               </div>
             </div>
+          </div>
+
+          <!-- Eingesetzte Werbemittel -->
+          <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4>📰 Eingesetzte Werbemittel</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Hauszeitung:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.hauszeitung ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.hauszeitung ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Herstellerinfos:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.herstellerInfos ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.herstellerInfos ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Außenwirkung Fahrzeugflotte -->
+          <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4>🚗 Außenwirkung Fahrzeugflotte</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Einheitliche Fahrzeugbeklebung:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.uniformVehicleBranding ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.uniformVehicleBranding ? '✅ Umgesetzt' : '❌ Fehlt'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Fahrzeugzustand:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.vehicleCondition ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.vehicleCondition ? '✅ Gepflegt' : '❌ Verbesserungsbedarf'}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Außenwerbung -->
+          <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
+            <h4>📢 Außenwerbung</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Bauzaunbanner:</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.bauzaunBanner ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.bauzaunBanner ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p><strong>Bandenwerbung (Sportmarketing):</strong> 
+                  <span class="score-badge ${manualCorporateIdentityData.bandenWerbung ? 'green' : 'red'}">
+                    ${manualCorporateIdentityData.bandenWerbung ? '✅ Vorhanden' : '❌ Nicht vorhanden'}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
             
             ${manualCorporateIdentityData.notes ? `
             <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(59, 130, 246, 0.1);">
@@ -3146,7 +3176,6 @@ export const generateCustomerHTML = ({
               <p style="margin-top: 10px;">${manualCorporateIdentityData.notes}</p>
             </div>
             ` : ''}
-          </div>
         </div>
         ` : `
         <div class="warning-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">

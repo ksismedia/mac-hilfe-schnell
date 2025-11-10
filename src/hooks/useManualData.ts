@@ -40,16 +40,25 @@ export interface ManualWorkplaceData {
 }
 
 export interface ManualCorporateIdentityData {
+  // Corporate Design (5 Felder)
   uniformLogo: boolean;
   uniformWorkClothing: boolean;
-  uniformVehicleBranding: boolean;
   uniformColorScheme: boolean;
-  uniformTypography?: boolean;
-  uniformBusinessCards?: boolean;
-  uniformWebsiteDesign?: boolean;
-  uniformDocumentTemplates?: boolean;
-  uniformSignage?: boolean;
-  uniformPackaging?: boolean;
+  uniformTypography: boolean;
+  uniformWebsiteDesign: boolean;
+  
+  // Eingesetzte Werbemittel (2 Felder)
+  hauszeitung: boolean;
+  herstellerInfos: boolean;
+  
+  // Außenwirkung Fahrzeugflotte (2 Felder)
+  uniformVehicleBranding: boolean;
+  vehicleCondition: boolean;
+  
+  // Außenwerbung (2 Felder)
+  bauzaunBanner: boolean;
+  bandenWerbung: boolean;
+  
   notes?: string;
 }
 

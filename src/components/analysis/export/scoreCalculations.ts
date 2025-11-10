@@ -708,21 +708,50 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   // Wenn keine Außendarstellungs-Daten vorhanden, verwende Defaultwert
   if (!data) return 50;
   
-  let score = 0; // Start bei 0
+  let totalScore = 0;
+  let categoryCount = 0;
   
-  // Jedes Element gibt 10 Punkte (100/10)
-  if (data.uniformLogo) score += 10;
-  if (data.uniformWorkClothing) score += 10;
-  if (data.uniformVehicleBranding) score += 10;
-  if (data.uniformColorScheme) score += 10;
-  if (data.uniformTypography) score += 10;
-  if (data.uniformBusinessCards) score += 10;
-  if (data.uniformWebsiteDesign) score += 10;
-  if (data.uniformDocumentTemplates) score += 10;
-  if (data.uniformSignage) score += 10;
-  if (data.uniformPackaging) score += 10;
+  // Corporate Design (5 Felder)
+  const cdFields = [
+    data.uniformLogo,
+    data.uniformWorkClothing,
+    data.uniformColorScheme,
+    data.uniformTypography,
+    data.uniformWebsiteDesign
+  ];
+  const cdScore = (cdFields.filter(Boolean).length / cdFields.length) * 100;
+  totalScore += cdScore;
+  categoryCount++;
   
-  return Math.round(score);
+  // Eingesetzte Werbemittel (2 Felder)
+  const wmFields = [
+    data.hauszeitung,
+    data.herstellerInfos
+  ];
+  const wmScore = (wmFields.filter(Boolean).length / wmFields.length) * 100;
+  totalScore += wmScore;
+  categoryCount++;
+  
+  // Außenwirkung Fahrzeugflotte (2 Felder)
+  const ffFields = [
+    data.uniformVehicleBranding,
+    data.vehicleCondition
+  ];
+  const ffScore = (ffFields.filter(Boolean).length / ffFields.length) * 100;
+  totalScore += ffScore;
+  categoryCount++;
+  
+  // Außenwerbung (2 Felder)
+  const awFields = [
+    data.bauzaunBanner,
+    data.bandenWerbung
+  ];
+  const awScore = (awFields.filter(Boolean).length / awFields.length) * 100;
+  totalScore += awScore;
+  categoryCount++;
+  
+  // Durchschnitt der 4 Kategorien
+  return Math.round(totalScore / categoryCount);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
