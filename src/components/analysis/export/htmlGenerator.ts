@@ -2874,6 +2874,8 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
+
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -4163,8 +4165,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
     ` : ''}
-
-    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
 
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Kundenservice & Anfragebearbeitung -->
