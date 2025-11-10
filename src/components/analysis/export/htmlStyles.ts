@@ -136,14 +136,14 @@ section[class*="section"],
 }
 /* Executive Summary Category Headers */
 .category-header-executive {
-  background: transparent;
-  color: #fbbf24;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #000000;
   padding: 12px 20px;
   border-radius: 8px;
   margin: 25px auto 15px auto;
   font-weight: 600;
   font-size: 1.1em;
-  box-shadow: none;
+  box-shadow: 0 4px 6px rgba(251, 191, 36, 0.3);
   border: none;
   width: 95% !important;
   max-width: 1400px !important;
