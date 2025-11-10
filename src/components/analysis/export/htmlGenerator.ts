@@ -2874,6 +2874,41 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    <!-- Rechtssicherheit & Impressum -->
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>Rechtssicherheit & Impressum</span>
+        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Rechtssicherheit & Impressum</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+            <div class="score-details">
+              <p><strong>Impressum:</strong> ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
+              <p><strong>Empfehlung:</strong> ${impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%; background-color: ${getScoreColor(impressumScore)}; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${impressumScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${impressumScore}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('legal-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Rechts-Details anzeigen</h4>
+        </div>
+        
+        <div id="legal-details" style="display: none;">
+          ${getLegalAnalysis()}
+        </div>
+      </div>
+    </div>
+
     <!-- Barrierefreiheit -->
     <div class="section">
         <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -4128,41 +4163,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
     ` : ''}
-
-    <!-- Rechtssicherheit & Impressum -->
-    <div class="section">
-      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-        <span>Rechtssicherheit & Impressum</span>
-        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Rechtssicherheit & Impressum</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
-            <div class="score-details">
-              <p><strong>Impressum:</strong> ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
-              <p><strong>Empfehlung:</strong> ${impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(impressumScore)}" style="width: ${impressumScore}%; background-color: ${getScoreColor(impressumScore)}; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${impressumScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${impressumScore}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="collapsible" onclick="toggleSection('legal-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ Rechts-Details anzeigen</h4>
-        </div>
-        
-        <div id="legal-details" style="display: none;">
-          ${getLegalAnalysis()}
-        </div>
-      </div>
-    </div>
 
     ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
 
