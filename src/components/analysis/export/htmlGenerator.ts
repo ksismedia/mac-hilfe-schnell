@@ -3073,92 +3073,71 @@ export const generateCustomerHTML = ({
         <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
       </div>
       <div class="section-content">
-        <!-- Übersicht und Gesamtbewertung -->
-        <div class="metric-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-          <h3 style="margin-top: 0; color: #1e293b;">Sichtbarkeit in Google-Suchergebnissen</h3>
-          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: center;">
-            <div style="text-align: center;">
-              <div class="score-circle ${getScoreColorClass(overallScore)}" style="width: 120px; height: 120px; font-size: 2.5em; margin: 0 auto;">${overallScore}%</div>
-              <p style="margin-top: 15px; font-size: 1.1em; font-weight: 600; color: ${assessmentColor};">${assessment}</p>
-              <div style="margin-top: 10px; padding: 10px 20px; background: ${categoryColor}22; border: 2px solid ${categoryColor}; border-radius: 20px; display: inline-block;">
-                <span style="font-weight: bold; color: ${categoryColor}; font-size: 1.1em;">${categoryName}</span>
-              </div>
-              <p style="margin-top: 10px; font-size: 0.9em; color: #64748b; max-width: 200px; margin-left: auto; margin-right: auto;">${categoryDescription}</p>
-            </div>
-            <div>
-              <div style="display: grid; gap: 12px;">
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-                  <span style="font-weight: 500;">📊 Erfasste Inhalte gesamt:</span>
-                  <span style="font-weight: bold; color: #3b82f6;">${totalContent}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-                  <span style="font-weight: 500;">⭐ Hochrelevante Inhalte:</span>
-                  <span style="font-weight: bold; color: #10b981;">${highRelevance}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-                  <span style="font-weight: 500;">🎨 Content-Typen vorhanden:</span>
-                  <span style="font-weight: bold; color: #f59e0b;">${[imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length} von 3</span>
-                </div>
-              </div>
+        <!-- Übersicht -->
+        <div class="metric-card">
+          <h3>Sichtbarkeit in Google-Suchergebnissen</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+            <div class="score-details">
+              <p><strong>Status:</strong> ${assessment}</p>
+              <p><strong>Kategorie:</strong> ${categoryName}</p>
+              <p><strong>Erfasste Inhalte:</strong> ${totalContent}</p>
+              <p><strong>Hochrelevant:</strong> ${highRelevance}</p>
+              <p><strong>Content-Typen:</strong> ${[imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length} von 3</p>
             </div>
           </div>
+          ${generateProgressBar(overallScore, `${categoryDescription}`)}
         </div>
 
-        <!-- Score-Berechnung Erklärung -->
-        <div class="metric-card" style="background: #fef3c7; padding: 20px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-bottom: 25px;">
-          <h4 style="margin-top: 0; color: #92400e; display: flex; align-items: center; gap: 8px;">
-            📐 Wie wird der Score berechnet?
-          </h4>
-          <p style="margin: 10px 0; color: #78350f; line-height: 1.6;">
-            Der Online-Präsenz-Score setzt sich aus mehreren Faktoren zusammen:
-          </p>
-          <ul style="margin: 15px 0; padding-left: 20px; color: #78350f; line-height: 1.8;">
-            <li><strong>Content-Vielfalt (${diversityScore}%):</strong> Je mehr unterschiedliche Content-Typen (Bilder, Videos, Shorts) Sie nutzen, desto besser</li>
-            <li><strong>Content-Menge (${quantityScore}%):</strong> Die Anzahl Ihrer Inhalte beeinflusst Ihre Sichtbarkeit</li>
-            <li><strong>Content-Relevanz (${Math.round(relevanceScore)}%):</strong> Hochrelevante, eigene Inhalte werden besser bewertet</li>
-          </ul>
-          <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
-            <p style="margin: 0; font-weight: 600; color: #1e293b;">Ihr Gesamtscore: ${overallScore}%</p>
-            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-              <span style="background: #dbeafe; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; color: #1e40af;">Vielfalt: ${diversityScore}%</span>
-              <span style="background: #dbeafe; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; color: #1e40af;">Menge: ${quantityScore}%</span>
-              <span style="background: #dbeafe; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; color: #1e40af;">Relevanz: ${Math.round(relevanceScore)}%</span>
-            </div>
+        <!-- Score-Berechnung -->
+        <div class="metric-card">
+          <h3>Score-Berechnung</h3>
+          <p style="margin-bottom: 15px;">Der Online-Präsenz-Score setzt sich aus drei Faktoren zusammen:</p>
+          
+          <div style="margin-bottom: 20px;">
+            <p><strong>Content-Vielfalt:</strong> ${diversityScore}%</p>
+            ${generateProgressBar(diversityScore, 'Unterschiedliche Content-Typen (Bilder, Videos, Shorts) erhöhen die Vielfalt')}
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <p><strong>Content-Menge:</strong> ${quantityScore}%</p>
+            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit')}
+          </div>
+          
+          <div>
+            <p><strong>Content-Relevanz:</strong> ${Math.round(relevanceScore)}%</p>
+            ${generateProgressBar(Math.round(relevanceScore), 'Hochrelevante, eigene Inhalte werden besser bewertet')}
           </div>
         </div>
 
         <!-- Content-Typ Breakdown -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
-          <div class="metric-card" style="text-align: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3);">
-            <div style="font-size: 3em; margin-bottom: 10px;">📷</div>
-            <h4 style="margin: 0 0 10px 0; color: #1e40af;">Bilder</h4>
-            <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #2563eb;">${imageCount}</p>
-            <p style="margin: 0; font-size: 0.85em; color: #64748b;">${imageCount === 0 ? 'Noch keine Bilder' : imageCount < 5 ? 'Ausbaufähig' : imageCount < 15 ? 'Guter Start' : 'Sehr gut!'}</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+          <div class="metric-card" style="text-align: center;">
+            <h4>📷 Bilder</h4>
+            <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
+            <p style="margin: 0; font-size: 0.9em;">${imageCount === 0 ? 'Noch keine Bilder' : imageCount < 5 ? 'Ausbaufähig' : imageCount < 15 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
-          <div class="metric-card" style="text-align: center; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); border: 2px solid rgba(168, 85, 247, 0.3);">
-            <div style="font-size: 3em; margin-bottom: 10px;">🎥</div>
-            <h4 style="margin: 0 0 10px 0; color: #7e22ce;">Videos</h4>
-            <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #9333ea;">${videoCount}</p>
-            <p style="margin: 0; font-size: 0.85em; color: #64748b;">${videoCount === 0 ? 'Noch keine Videos' : videoCount < 3 ? 'Ausbaufähig' : videoCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
+          <div class="metric-card" style="text-align: center;">
+            <h4>🎥 Videos</h4>
+            <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
+            <p style="margin: 0; font-size: 0.9em;">${videoCount === 0 ? 'Noch keine Videos' : videoCount < 3 ? 'Ausbaufähig' : videoCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
-          <div class="metric-card" style="text-align: center; background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.05)); border: 2px solid rgba(236, 72, 153, 0.3);">
-            <div style="font-size: 3em; margin-bottom: 10px;">📱</div>
-            <h4 style="margin: 0 0 10px 0; color: #be185d;">Shorts</h4>
-            <p style="font-size: 2em; font-weight: bold; margin: 10px 0; color: #ec4899;">${shortCount}</p>
-            <p style="margin: 0; font-size: 0.85em; color: #64748b;">${shortCount === 0 ? 'Noch keine Shorts' : shortCount < 3 ? 'Ausbaufähig' : shortCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
+          <div class="metric-card" style="text-align: center;">
+            <h4>📱 Shorts</h4>
+            <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
+            <p style="margin: 0; font-size: 0.9em;">${shortCount === 0 ? 'Noch keine Shorts' : shortCount < 3 ? 'Ausbaufähig' : shortCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
         </div>
 
         ${!useSimpleCounts && manualOnlinePresenceData.items && manualOnlinePresenceData.items.length > 0 ? `
         <!-- Detaillierte Content-Liste -->
         <div class="metric-card">
-          <h4 style="margin-top: 0; color: #1e293b;">📋 Erfasste Inhalte im Detail</h4>
+          <h4>Erfasste Inhalte im Detail</h4>
           <div style="max-height: 400px; overflow-y: auto;">
             <table style="width: 100%; border-collapse: collapse;">
               <thead style="background: #f1f5f9; position: sticky; top: 0;">
                 <tr>
                   <th style="padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1;">Typ</th>
-                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1;">Titel/Beschreibung</th>
                   <th style="padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1;">URL</th>
                   <th style="padding: 12px; text-align: center; border-bottom: 2px solid #cbd5e1;">Relevanz</th>
                 </tr>
@@ -3167,23 +3146,21 @@ export const generateCustomerHTML = ({
                 ${manualOnlinePresenceData.items.map((item, index) => {
                   const typeIcon = item.type === 'image' ? '📷' : item.type === 'video' ? '🎥' : '📱';
                   const typeLabel = item.type === 'image' ? 'Bild' : item.type === 'video' ? 'Video' : 'Short';
-                  const relevanceColor = item.relevance === 'high' ? '#10b981' : item.relevance === 'medium' ? '#f59e0b' : '#94a3b8';
                   const relevanceLabel = item.relevance === 'high' ? 'Hoch' : item.relevance === 'medium' ? 'Mittel' : 'Niedrig';
                   
                   return `
-                    <tr style="border-bottom: 1px solid #e2e8f0; ${index % 2 === 0 ? 'background: #f8fafc;' : ''}">
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
                       <td style="padding: 12px;">
                         <span style="font-size: 1.5em;">${typeIcon}</span>
-                        <span style="margin-left: 8px; font-weight: 500;">${typeLabel}</span>
+                        <span style="margin-left: 8px;">${typeLabel}</span>
                       </td>
-                      <td style="padding: 12px; max-width: 250px; overflow: hidden; text-overflow: ellipsis;">${typeLabel}-Inhalt</td>
                       <td style="padding: 12px;">
                         <a href="${item.url}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 0.9em; word-break: break-all;">
-                          ${item.url.length > 40 ? item.url.substring(0, 40) + '...' : item.url}
+                          ${item.url.length > 50 ? item.url.substring(0, 50) + '...' : item.url}
                         </a>
                       </td>
                       <td style="padding: 12px; text-align: center;">
-                        <span style="background: ${relevanceColor}22; color: ${relevanceColor}; padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 600; border: 1px solid ${relevanceColor};">
+                        <span class="score-badge ${item.relevance === 'high' ? 'yellow' : item.relevance === 'medium' ? 'green' : 'red'}">
                           ${relevanceLabel}
                         </span>
                       </td>
@@ -3196,77 +3173,36 @@ export const generateCustomerHTML = ({
         </div>
         ` : ''}
 
-        <!-- Bewertung und Einordnung -->
-        <div class="metric-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.05)); padding: 20px; border-radius: 10px; border: 2px solid rgba(99, 102, 241, 0.3); margin-bottom: 25px;">
-          <h4 style="margin-top: 0; color: #3730a3; display: flex; align-items: center; gap: 8px;">
-            📊 Einordnung Ihrer Online-Präsenz
-          </h4>
-          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-              <div style="text-align: center; padding: 15px; background: ${overallScore >= 90 ? '#dcfce7' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${overallScore >= 90 ? '#10b981' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Exzellent</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${overallScore >= 90 ? '#059669' : '#94a3b8'};">90-100%</p>
-              </div>
-              <div style="text-align: center; padding: 15px; background: ${overallScore >= 61 && overallScore < 90 ? '#fef3c7' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${overallScore >= 61 && overallScore < 90 ? '#f59e0b' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Gut</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${overallScore >= 61 && overallScore < 90 ? '#d97706' : '#94a3b8'};">61-89%</p>
-              </div>
-              <div style="text-align: center; padding: 15px; background: ${overallScore < 61 ? '#fee2e2' : '#f9fafb'}; border-radius: 8px; border: 2px solid ${overallScore < 61 ? '#ef4444' : '#e5e7eb'};">
-                <p style="margin: 0; font-size: 0.9em; color: #64748b;">Verbesserungsbedarf</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: bold; color: ${overallScore < 61 ? '#dc2626' : '#94a3b8'};">0-60%</p>
-              </div>
-            </div>
-            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid ${assessmentColor};">
-              <p style="margin: 0 0 8px 0; font-weight: 600; color: #1e293b;">Ihre Position:</p>
-              <p style="margin: 0; color: #64748b; line-height: 1.6;">
-                ${overallScore >= 90 
-                  ? '🏆 <strong>Exzellent (90-100%)</strong>: Ihre Online-Präsenz ist hervorragend. Sie haben eine starke Sichtbarkeit mit vielfältigem, hochrelevantem Content in Google-Suchergebnissen.'
-                  : overallScore >= 61 
-                  ? '✅ <strong>Gut (61-89%)</strong>: Ihre Online-Präsenz ist solide, aber es gibt noch Potenzial zur Steigerung. Mehr hochrelevanter Content würde Ihre Sichtbarkeit deutlich verbessern.'
-                  : '⚠️ <strong>Verbesserungsbedarf (0-60%)</strong>: Ihre Online-Präsenz ist ausbaufähig. Mit gezielten Maßnahmen können Sie Ihre Sichtbarkeit in Google-Suchergebnissen deutlich steigern.'
-                }
-              </p>
-            </div>
-          </div>
-        </div>
-
         ${overallScore < 80 ? `
         <!-- Branchenvergleich -->
-        <div class="metric-card" style="background: #ede9fe; padding: 20px; border-radius: 10px; border-left: 4px solid #8b5cf6; margin-bottom: 25px;">
-          <h4 style="margin-top: 0; color: #5b21b6;">📈 Branchenvergleich & Zielvorgaben</h4>
-          <p style="color: #6b21a8; line-height: 1.6;">
-            In Ihrer Branche zeigen erfolgreiche Betriebe typischerweise:
-          </p>
-          <ul style="color: #6b21a8; line-height: 1.8; margin: 10px 0;">
-            <li><strong>15-25 Bilder</strong> von abgeschlossenen Projekten</li>
-            <li><strong>5-10 Videos</strong> mit Projekt-Präsentationen oder Erklärungen</li>
-            <li><strong>3-8 Shorts</strong> für schnelle Einblicke in Ihre Arbeit</li>
-            <li>Regelmäßige Updates (mindestens 1-2 neue Inhalte pro Monat)</li>
+        <div class="metric-card">
+          <h4>Branchenvergleich & Zielvorgaben</h4>
+          <p>In Ihrer Branche zeigen erfolgreiche Betriebe typischerweise:</p>
+          <ul>
+            <li>15-25 Bilder von abgeschlossenen Projekten</li>
+            <li>5-10 Videos mit Projekt-Präsentationen</li>
+            <li>3-8 Shorts für schnelle Einblicke</li>
+            <li>Regelmäßige Updates (1-2 neue Inhalte pro Monat)</li>
           </ul>
-          <p style="color: #6b21a8; font-weight: 600; margin-top: 15px;">
-            Ihr Ziel: Erhöhen Sie Ihren Score auf mindestens 75%, um mit führenden Mitbewerbern mitzuhalten.
-          </p>
+          <p><strong>Ziel:</strong> Erhöhen Sie Ihren Score auf mindestens 75%</p>
         </div>
         ` : ''}
 
-        <!-- Spezifische Empfehlungen -->
-        <div class="recommendations" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); padding: 20px; border-radius: 10px; border: 2px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="margin-top: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
-            💡 Maßgeschneiderte Empfehlungen für Ihre Online-Präsenz
-          </h4>
-          <ul style="margin: 15px 0 0 0; padding-left: 20px; color: #1e293b; line-height: 1.8;">
-            ${imageCount === 0 ? '<li><strong>📷 Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in den ersten 3 Monaten.</li>' : ''}
-            ${imageCount > 0 && imageCount < 10 ? '<li><strong>📷 Bilder-Portfolio erweitern:</strong> Erhöhen Sie Ihre Bildanzahl auf mindestens 15-20 Fotos. Zeigen Sie Vorher-Nachher-Vergleiche, Team-Fotos und abgeschlossene Projekte.</li>' : ''}
-            ${videoCount === 0 ? '<li><strong>🎥 Video-Content einführen:</strong> Erstellen Sie erste Projekt-Videos oder Erklär-Videos. Bereits 2-3 Videos können Ihre Sichtbarkeit deutlich steigern.</li>' : ''}
-            ${videoCount > 0 && videoCount < 5 ? '<li><strong>🎥 Video-Präsenz ausbauen:</strong> Produzieren Sie regelmäßig kurze Projekt-Videos (1-2 Minuten). Optimal sind 8-10 Videos für maximale Sichtbarkeit.</li>' : ''}
-            ${shortCount === 0 ? '<li><strong>📱 Shorts/Reels nutzen:</strong> Starten Sie mit kurzen 30-60 Sekunden Videos für Social Media und Google. Besonders effektiv für schnelle Projekt-Einblicke.</li>' : ''}
-            ${highRelevance < totalContent * 0.5 ? '<li><strong>⭐ Relevanz steigern:</strong> Fokus auf eigenen Content! Laden Sie mehr eigene Bilder und Videos hoch statt auf Erwähnungen durch Dritte zu setzen.</li>' : ''}
-            <li><strong>🏷️ Optimierung für Auffindbarkeit:</strong> Verwenden Sie beschreibende Dateinamen und Alt-Tags (z.B. "Dachsanierung-Einfamilienhaus-2024.jpg" statt "IMG_1234.jpg").</li>
-            <li><strong>📅 Content-Kalender einrichten:</strong> Planen Sie wöchentlich 1-2 neue Inhalte. Kontinuität ist wichtiger als sporadische große Uploads.</li>
-            ${overallScore < 80 ? '<li><strong>🎯 Vielfalt erhöhen:</strong> Kombinieren Sie alle drei Content-Typen (Bilder, Videos, Shorts) für maximale Reichweite und besseres Ranking.</li>' : ''}
-            <li><strong>🔄 Regelmäßige Aktualisierung:</strong> Löschen Sie veraltete Inhalte und ersetzen Sie diese durch aktuelle Projekte. Google bevorzugt frischen Content.</li>
-            <li><strong>📊 Performance tracken:</strong> Nutzen Sie Google My Business Insights, um zu sehen, welche Inhalte am meisten Aufrufe generieren.</li>
-            ${totalContent < 15 ? '<li><strong>🚀 Kurzziel setzen:</strong> Erreichen Sie in den nächsten 3 Monaten mindestens 15 Inhalte für eine spürbare Verbesserung Ihrer Sichtbarkeit.</li>' : ''}
+        <!-- Empfehlungen -->
+        <div class="recommendations">
+          <h4>Empfehlungen für Ihre Online-Präsenz</h4>
+          <ul>
+            ${imageCount === 0 ? '<li><strong>Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in 3 Monaten</li>' : ''}
+            ${imageCount > 0 && imageCount < 10 ? '<li><strong>Bilder-Portfolio erweitern:</strong> Erhöhen Sie auf 15-20 Fotos mit Vorher-Nachher-Vergleichen</li>' : ''}
+            ${videoCount === 0 ? '<li><strong>Video-Content einführen:</strong> Erstellen Sie erste Projekt-Videos. Bereits 2-3 Videos steigern die Sichtbarkeit</li>' : ''}
+            ${videoCount > 0 && videoCount < 5 ? '<li><strong>Video-Präsenz ausbauen:</strong> Produzieren Sie regelmäßig kurze Videos (1-2 Minuten)</li>' : ''}
+            ${shortCount === 0 ? '<li><strong>Shorts/Reels nutzen:</strong> Starten Sie mit 30-60 Sekunden Videos für schnelle Projekt-Einblicke</li>' : ''}
+            ${highRelevance < totalContent * 0.5 ? '<li><strong>Relevanz steigern:</strong> Fokus auf eigenen Content statt Erwähnungen durch Dritte</li>' : ''}
+            <li><strong>Optimierung für Auffindbarkeit:</strong> Beschreibende Dateinamen verwenden (z.B. "Dachsanierung-2024.jpg")</li>
+            <li><strong>Content-Kalender:</strong> Wöchentlich 1-2 neue Inhalte planen</li>
+            ${overallScore < 80 ? '<li><strong>Vielfalt erhöhen:</strong> Alle drei Content-Typen kombinieren für maximale Reichweite</li>' : ''}
+            <li><strong>Regelmäßige Aktualisierung:</strong> Veraltete Inhalte durch aktuelle Projekte ersetzen</li>
+            ${totalContent < 15 ? '<li><strong>Kurzziel:</strong> In 3 Monaten mindestens 15 Inhalte erreichen</li>' : ''}
           </ul>
         </div>
       </div>
