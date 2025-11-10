@@ -2411,16 +2411,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========== KATEGORIE 1: Online-Qualität · Relevanz · Autorität ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          📊 Online-Qualität · Relevanz · Autorität
-        </h2>
-      </div>
-    </div>
-
-    <!-- SEO-Bestandsanalyse -->
+    <!-- 2. SEO-Analyse -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
         <span>SEO-Bestandsanalyse</span>
@@ -2784,15 +2775,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========== KATEGORIE 2: Webseiten-Performance & Technik ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          ⚡ Webseiten-Performance & Technik
-        </h2>
-      </div>
-    </div>
-
     <!-- Mobile Optimierung -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -2827,15 +2809,6 @@ export const generateCustomerHTML = ({
         <div id="mobile-details" style="display: none;">
           ${getMobileOptimizationAnalysis()}
         </div>
-      </div>
-    </div>
-
-    <!-- ========== KATEGORIE 5: Außendarstellung & Erscheinungsbild ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(236, 72, 153, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          🎨 Außendarstellung & Erscheinungsbild
-        </h2>
       </div>
     </div>
 
@@ -3806,15 +3779,6 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- ========== KATEGORIE 3: Online-/Web-/Social-Media Performance ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          🌐 Online-/Web-/Social-Media Performance
-        </h2>
-      </div>
-    </div>
-
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
@@ -3886,15 +3850,6 @@ export const generateCustomerHTML = ({
             })()}
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- ========== KATEGORIE 4: Markt & Marktumfeld ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          📈 Markt & Marktumfeld
-        </h2>
       </div>
     </div>
 
@@ -3988,15 +3943,6 @@ export const generateCustomerHTML = ({
     </div>
 
     ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
-
-    <!-- ========== KATEGORIE 6: Qualität · Service · Kundenorientierung ========== -->
-    <div class="section" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); border: none; box-shadow: none; margin-top: 40px; margin-bottom: 20px;">
-      <div class="section-header" style="background: transparent; border: none; text-align: center; padding: 25px 20px;">
-        <h2 style="margin: 0; font-size: 28px; color: #1f2937; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-          ⭐ Qualität · Service · Kundenorientierung
-        </h2>
-      </div>
-    </div>
 
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Kundenservice & Anfragebearbeitung -->
