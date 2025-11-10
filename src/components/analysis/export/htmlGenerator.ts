@@ -600,13 +600,7 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-tile ${getScoreColorClass(localPricingScore)}">${localPricingText}</div>
         </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${localPricingScore}%; background-color: ${getScoreColor(localPricingScore)}; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${localPricingScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${localPricingScore}%</span>
-              </div>
-            </div>
-          </div>
+          ${generateProgressBar(localPricingScore, `${localPricingText}`)}
           <div class="score-details">
             <h4>Ihre Stundensätze:</h4>
             <p><strong>Meister:</strong> ${hourlyRateData.meisterRate || 0}€/h</p>
@@ -839,13 +833,7 @@ export const generateCustomerHTML = ({
                     ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                    <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${Math.max(30, accessibilityScore)}%; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${accessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.max(30, accessibilityScore)}%</span>
-                    </div>
-                  </div>
-                </div>
+                ${generateProgressBar(Math.max(30, accessibilityScore), '')}
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
@@ -853,13 +841,7 @@ export const generateCustomerHTML = ({
                     ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                    <div class="progress-fill progress-${getScoreColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${accessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${accessibilityScore}%</span>
-                    </div>
-                  </div>
-                </div>
+                ${generateProgressBar(accessibilityScore, '')}
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
@@ -867,13 +849,7 @@ export const generateCustomerHTML = ({
                     ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                    <div class="progress-fill progress-${getScoreColorClass(Math.max(25, accessibilityScore * 0.9))}" style="width: ${Math.max(25, accessibilityScore * 0.9)}%; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${Math.max(25, accessibilityScore * 0.9) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.round(Math.max(25, accessibilityScore * 0.9))}%</span>
-                    </div>
-                  </div>
-                </div>
+                ${generateProgressBar(Math.round(Math.max(25, accessibilityScore * 0.9)), '')}
               </div>
             </div>
             
@@ -962,51 +938,19 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div>
               <p><strong>Title-Tag:</strong> ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(titleTagScore)}" style="width: ${titleTagScore}%; background-color: ${getScoreColor(titleTagScore)}; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${titleTagScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${titleTagScore}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${titleTagScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)</small>
+              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)`)}
             </div>
             <div>
               <p><strong>Meta Description:</strong> ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(metaDescriptionScore)}" style="width: ${metaDescriptionScore}%; background-color: ${getScoreColor(metaDescriptionScore)}; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${metaDescriptionScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${metaDescriptionScore}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${metaDescriptionScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)</small>
+              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)`)}
             </div>
             <div>
               <p><strong>Überschriftenstruktur:</strong> ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(headingScore)}" style="width: ${headingScore}%; background-color: ${getScoreColor(headingScore)}; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${headingScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${headingScore}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${headingScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})</small>
+              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})`)}
             </div>
             <div>
               <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total} Bilder</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(altTagsScore)}" style="width: ${altTagsScore}%; background-color: ${getScoreColor(altTagsScore)}; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${altTagsScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${altTagsScore}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${altTagsScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)</small>
+              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)`)}
             </div>
           </div>
         </div>
@@ -1021,18 +965,7 @@ export const generateCustomerHTML = ({
                 if (effectiveKeywordScore >= 61) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Sehr gut`;
                 return `${foundKeywords}/${keywordData.length} Keywords gefunden`;
               })()}</p>
-                <div class="progress-container">
-                  <div class="progress-bar">
-                    <div class="progress-fill progress-${getScoreColorClass(effectiveKeywordScore)}" data-score="${getScoreRange(effectiveKeywordScore)}" style="width: ${effectiveKeywordScore}%; display: flex; align-items: center; justify-content: center;">
-                      <span style="color: ${effectiveKeywordScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${effectiveKeywordScore}%</span>
-                    </div>
-                    <div class="progress-point" style="left: ${effectiveKeywordScore}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                  </div>
-                </div>
-              <small class="secondary-text">Score: ${effectiveKeywordScore !== null && effectiveKeywordScore !== undefined ? effectiveKeywordScore : 'N/A'}%</small>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
-                Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen
-              </p>
+              ${generateProgressBar(effectiveKeywordScore, `Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen`)}
             </div>
             <div>
               <p><strong>Long-Tail Keywords:</strong> ${(() => {
@@ -1041,18 +974,7 @@ export const generateCustomerHTML = ({
                 if (longTailScore >= 61) return 'Gut optimiert';
                 return 'Verbesserungsbedarf';
               })()}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill progress-${getScoreColorClass(Math.max(20, effectiveKeywordScore * 0.6))}" data-score="${getScoreRange(Math.max(20, effectiveKeywordScore * 0.6))}" style="width: ${Math.max(20, effectiveKeywordScore * 0.6)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${Math.max(20, effectiveKeywordScore * 0.6) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.round(Math.max(20, effectiveKeywordScore * 0.6))}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${Math.max(20, effectiveKeywordScore * 0.6)}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${Math.max(20, effectiveKeywordScore * 0.6).toFixed(0)}%</small>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
-                Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen
-              </p>
+              ${generateProgressBar(Math.max(20, Math.round(effectiveKeywordScore * 0.6)), `Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen`)}
             </div>
             <div>
               <p><strong>Lokale Keywords:</strong> ${(() => {
@@ -1062,18 +984,7 @@ export const generateCustomerHTML = ({
                 if (localKeywordScore >= 61) return 'Gut vorhanden';
                 return 'Verbesserungsbedarf';
               })()}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill progress-${getScoreColorClass(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" data-score="${getScoreRange(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}" style="width: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.round(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20)}%</span>
-                  </div>
-                  <div class="progress-point" style="left: ${businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              <small class="secondary-text">Score: ${(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20).toFixed(0)}%</small>
-              <p style="font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4;">
-                Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit
-              </p>
+              ${generateProgressBar(Math.round(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20), `Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit`)}
             </div>
           </div>
           ${manualKeywordData ? `
@@ -1092,42 +1003,15 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>URL-Struktur:</strong> ${seoScore >= 70 ? 'Sehr gut' : seoScore >= 50 ? 'Gut' : 'Optimierbar'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(40, seoScore))}" style="width: ${Math.max(40, seoScore)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${Math.max(40, seoScore) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.max(40, seoScore)}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Sprechende URLs (z.B. /heizung-wartung) helfen Nutzern und Suchmaschinen, Inhalte besser zu verstehen
-              </small>
+              ${generateProgressBar(Math.max(40, seoScore), `Sprechende URLs (z.B. /heizung-wartung) helfen Nutzern und Suchmaschinen, Inhalte besser zu verstehen`)}
             </div>
             <div>
               <p><strong>Interne Verlinkung:</strong> ${seoScore >= 60 ? 'Gut strukturiert' : 'Ausbaufähig'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(30, seoScore * 0.9))}" style="width: ${Math.max(30, seoScore * 0.9)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${Math.max(30, seoScore * 0.9) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.round(Math.max(30, seoScore * 0.9))}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Gut vernetzte Seiten ermöglichen einfache Navigation und bessere Auffindbarkeit aller Inhalte
-              </small>
+              ${generateProgressBar(Math.round(Math.max(30, seoScore * 0.9)), `Gut vernetzte Seiten ermöglichen einfache Navigation und bessere Auffindbarkeit aller Inhalte`)}
             </div>
             <div>
               <p><strong>Breadcrumbs:</strong> ${seoScore >= 70 ? 'Implementiert' : 'Fehlen teilweise'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 70 ? 85 : 35)}" style="width: ${seoScore >= 70 ? 85 : 35}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${(seoScore >= 70 ? 85 : 35) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${seoScore >= 70 ? 85 : 35}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Navigationspfade (Start → Leistungen → Heizung) zeigen Nutzern ihre Position auf der Website
-              </small>
+              ${generateProgressBar(seoScore >= 70 ? 85 : 35, `Navigationspfade (Start → Leistungen → Heizung) zeigen Nutzern ihre Position auf der Website`)}
             </div>
           </div>
         </div>
@@ -1138,42 +1022,15 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
               <p><strong>Meta-Tags:</strong> ${seoScore >= 70 ? 'Vollständig' : 'Unvollständig'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(Math.max(35, seoScore))}" style="width: ${Math.max(35, seoScore)}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${Math.max(35, seoScore) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${Math.max(35, seoScore)}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Unsichtbare Metadaten wie Title und Description erscheinen in Suchergebnissen
-              </small>
+              ${generateProgressBar(Math.max(35, seoScore), `Unsichtbare Metadaten wie Title und Description erscheinen in Suchergebnissen`)}
             </div>
             <div>
               <p><strong>Schema Markup:</strong> ${seoScore >= 80 ? 'Implementiert' : 'Teilweise/Fehlend'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 80 ? 90 : 25)}" style="width: ${seoScore >= 80 ? 90 : 25}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${(seoScore >= 80 ? 90 : 25) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${seoScore >= 80 ? 90 : 25}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Strukturierte Daten ermöglichen Rich Snippets (Sternebewertungen, Öffnungszeiten) in Google
-              </small>
+              ${generateProgressBar(seoScore >= 80 ? 90 : 25, `Strukturierte Daten ermöglichen Rich Snippets (Sternebewertungen, Öffnungszeiten) in Google`)}
             </div>
             <div>
               <p><strong>XML Sitemap:</strong> ${seoScore >= 60 ? 'Vorhanden' : 'Nicht gefunden'}</p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(seoScore >= 60 ? 85 : 30)}" style="width: ${seoScore >= 60 ? 85 : 30}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: ${(seoScore >= 60 ? 85 : 30) >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${seoScore >= 60 ? 85 : 30}%</span>
-                  </div>
-                </div>
-              </div>
-              <small style="font-size: 11px; color: #6b7280; display: block; margin-top: 4px; line-height: 1.4;">
-                Übersichtskarte aller Seiten - hilft Google, alle Inhalte Ihrer Website zu finden
-              </small>
+              ${generateProgressBar(seoScore >= 60 ? 85 : 30, `Übersichtskarte aller Seiten - hilft Google, alle Inhalte Ihrer Website zu finden`)}
             </div>
           </div>
         </div>
@@ -1295,18 +1152,7 @@ export const generateCustomerHTML = ({
               <p><strong>Letztes Update:</strong> ${localSEOData.googleMyBusiness.lastUpdate}</p>
             </div>
           </div>
-          <div class="progress-container" style="margin-top: 10px;">
-            <div class="progress-label">
-              <span>GMB Optimierung</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.googleMyBusiness.score)}" data-score="${getScoreRange(localSEOData.googleMyBusiness.score)}" style="width: ${localSEOData.googleMyBusiness.score}%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.googleMyBusiness.score}%</span>
-              </div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.googleMyBusiness.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
-            </div>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils</p>
-          </div>
+          ${generateProgressBar(localSEOData.googleMyBusiness.score, `Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils`)}
         </div>
 
         <!-- Lokale Verzeichnisse (Citations) -->
@@ -1342,18 +1188,7 @@ export const generateCustomerHTML = ({
             `).join('')}
           </div>
           
-          <div class="progress-container" style="margin-top: 15px;">
-            <div class="progress-label">
-              <span>Citation Qualität</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localCitations.score)}" data-score="${getScoreRange(localSEOData.localCitations.score)}" style="width: ${localSEOData.localCitations.score}%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.localCitations.score}%</span>
-              </div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.localCitations.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
-            </div>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg</p>
-          </div>
+          ${generateProgressBar(localSEOData.localCitations.score, `Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg`)}
         </div>
 
         <!-- Lokale Keywords -->
@@ -1375,18 +1210,7 @@ export const generateCustomerHTML = ({
             `).join('')}
           </div>
           
-          <div class="progress-container" style="margin-top: 15px;">
-            <div class="progress-label">
-              <span>Lokale Keyword Performance</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.localKeywords.score)}" data-score="${getScoreRange(localSEOData.localKeywords.score)}" style="width: ${localSEOData.localKeywords.score}%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.localKeywords.score}%</span>
-              </div>
-              <div style="position: absolute; left: ${localSEOData.localKeywords.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
-            </div>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg</p>
-          </div>
+          ${generateProgressBar(localSEOData.localKeywords.score, `Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg`)}
         </div>
 
         <!-- On-Page Local Faktoren -->
@@ -1404,31 +1228,9 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           
-          <div class="progress-container" style="margin-top: 15px;">
-            <div class="progress-label">
-              <span>Lokaler Content</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.localContent)}" data-score="${getScoreRange(localSEOData.onPageLocal.localContent)}" style="width: ${localSEOData.onPageLocal.localContent}%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.onPageLocal.localContent}%</span>
-              </div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.localContent}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
-            </div>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen</p>
-          </div>
+          ${generateProgressBar(localSEOData.onPageLocal.localContent, `Wie stark lokale Begriffe und Ortsbezüge in Ihren Texten vorkommen`)}
           
-          <div class="progress-container" style="margin-top: 10px;">
-            <div class="progress-label">
-              <span>On-Page Local Gesamt</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-${getScoreColorClass(localSEOData.onPageLocal.score)}" data-score="${getScoreRange(localSEOData.onPageLocal.score)}" style="width: ${localSEOData.onPageLocal.score}%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 11px; font-weight: bold; color: white; z-index: 5;">${localSEOData.onPageLocal.score}%</span>
-              </div>
-              <div class="progress-point" style="position: absolute; left: ${localSEOData.onPageLocal.score}%; top: 50%; transform: translateX(-50%) translateY(-50%); width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;"></div>
-            </div>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website</p>
-          </div>
+          ${generateProgressBar(localSEOData.onPageLocal.score, `Gesamtbewertung aller lokalen Optimierungen auf Ihrer Website`)}
         </div>
 
         <div class="recommendations">
