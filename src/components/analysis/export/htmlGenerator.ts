@@ -3910,6 +3910,11 @@ export const generateCustomerHTML = ({
       ` : '';
     })()}
 
+    <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
+    <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05)); border-left: 4px solid #a855f7; border-radius: 8px;">
+      <h2 style="margin: 0; color: #a855f7; font-size: 1.8em; font-weight: bold;">Außendarstellung & Erscheinungsbild</h2>
+    </div>
+
     <!-- Corporate Identity & Außendarstellung -->
     ${(() => {
       const hasCorporateData = manualCorporateIdentityData !== null;
