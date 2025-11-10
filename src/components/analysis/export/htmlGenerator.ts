@@ -2057,7 +2057,7 @@ export const generateCustomerHTML = ({
 
     <!-- Executive Summary -->
     <div class="section">
-      <div class="section-header">Executive Summary</div>
+      <div class="section-header"><span>Executive Summary</span></div>
       <div class="section-content">
         <!-- Gesamtscore als erstes -->
         <div class="score-overview" style="margin-bottom: 30px;">
@@ -2161,7 +2161,7 @@ export const generateCustomerHTML = ({
 
     <!-- Unternehmensdaten -->
     <div class="section">
-      <div class="section-header">Unternehmensdaten</div>
+      <div class="section-header"><span>Unternehmensdaten</span></div>
       <div class="section-content">
         <div class="company-info">
           <h3>${realData.company.name}</h3>
@@ -3673,7 +3673,7 @@ export const generateCustomerHTML = ({
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
-      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;">▶ Strategische Empfehlungen</div>
+      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;"><span>▶ Strategische Empfehlungen</span></div>
       <div id="recommendations-content" class="section-content" style="display: none;">
         <div class="metric-card good">
           <h3>Prioritäten für die Umsetzung</h3>
