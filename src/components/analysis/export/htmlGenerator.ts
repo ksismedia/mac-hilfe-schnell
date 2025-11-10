@@ -2874,6 +2874,143 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    <!-- Barrierefreiheit -->
+    <div class="section">
+        <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+          <span>Barrierefreiheit & Zugänglichkeit</span>
+          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
+        </div>
+      <div class="section-content">
+        <!-- Hauptbewertung sichtbar -->
+        <div class="metric-card">
+          <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
+            <div class="score-details">
+              <p><strong>Compliance-Level:</strong> Teilweise konform</p>
+              <p><strong>Empfehlung:</strong> Barrierefreiheit verbessern</p>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)} !important; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${actualAccessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${actualAccessibilityScore}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${actualAccessibilityScore < 90 ? `
+        <!-- Warnung direkt sichtbar -->
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
+          </h4>
+          <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+            Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+            Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+          </p>
+          <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+            <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+            Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+            Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+          </div>
+        </div>
+        ` : ''}
+        
+        <!-- Collapsible Untersektionen -->
+        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
+        </div>
+        
+        <div id="wcag-details" style="display: none;">
+          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+            <h4>🚨 Erkannte Probleme</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+              <div style="padding: 8px; background: rgba(239, 68, 68, 0.2); border-radius: 6px;">
+                <p style="font-weight: bold; color: #dc2626;">CRITICAL</p>
+                <p style="font-size: 0.9em;">Bilder ohne Alt-Text</p>
+                <p style="font-size: 0.8em; color: #666;">3 Vorkommen</p>
+              </div>
+              <div style="padding: 8px; background: rgba(245, 158, 11, 0.2); border-radius: 6px;">
+                <p style="font-weight: bold; color: #d97706;">SERIOUS</p>
+                <p style="font-size: 0.9em;">Unzureichender Farbkontrast</p>
+                <p style="font-size: 0.8em; color: #666;">5 Vorkommen</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapsible" onclick="toggleSection('legal-requirements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
+          <h4 style="color: #3b82f6; margin: 0;">▶ Rechtliche Anforderungen</h4>
+        </div>
+        
+        <div id="legal-requirements" style="display: none;">
+          <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+            <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+              <div>
+                <p><strong>EU-Richtlinie 2016/2102:</strong> 
+                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${actualAccessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  </span>
+                </p>
+                <div class="progress-container" style="margin-top: 5px;">
+                  <div class="progress-bar">
+                     <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p><strong>WCAG 2.1 Level AA:</strong> 
+                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
+                    ${actualAccessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
+                  </span>
+                </p>
+                <div class="progress-container" style="margin-top: 5px;">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            ${actualAccessibilityScore < 90 ? `
+            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+              </p>
+              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
+                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+              </div>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
+          <h4 style="color: #22c55e; margin: 0;">▶ Verbesserungsvorschläge</h4>
+        </div>
+        
+        <div id="accessibility-improvements" style="display: none;">
+          <div class="recommendations">
+            <h4>Prioritäre Handlungsempfehlungen:</h4>
+            <ul>
+              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>
+              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>
+              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1) <span style="font-size: 0.9em; color: #666;">(Logischer Aufbau für Screenreader und Orientierung)</span></li>
+              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>
+              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Website Performance -->
     <div class="section">
       <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
@@ -3863,143 +4000,6 @@ export const generateCustomerHTML = ({
       }
       return '';
     })()}
-
-    <!-- Barrierefreiheit -->
-    <div class="section">
-        <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
-          <span>Barrierefreiheit & Zugänglichkeit</span>
-          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
-        </div>
-      <div class="section-content">
-        <!-- Hauptbewertung sichtbar -->
-        <div class="metric-card">
-          <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
-            <div class="score-details">
-              <p><strong>Compliance-Level:</strong> Teilweise konform</p>
-              <p><strong>Empfehlung:</strong> Barrierefreiheit verbessern</p>
-            </div>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${getScoreColor(actualAccessibilityScore)} !important; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${actualAccessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 11px;">${actualAccessibilityScore}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        ${actualAccessibilityScore < 90 ? `
-        <!-- Warnung direkt sichtbar -->
-        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-            ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
-          </h4>
-          <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
-            Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
-            Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
-          </p>
-          <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-            <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
-            Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
-            Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
-          </div>
-        </div>
-        ` : ''}
-        
-        <!-- Collapsible Untersektionen -->
-        <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>
-        </div>
-        
-        <div id="wcag-details" style="display: none;">
-          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-            <h4>🚨 Erkannte Probleme</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-              <div style="padding: 8px; background: rgba(239, 68, 68, 0.2); border-radius: 6px;">
-                <p style="font-weight: bold; color: #dc2626;">CRITICAL</p>
-                <p style="font-size: 0.9em;">Bilder ohne Alt-Text</p>
-                <p style="font-size: 0.8em; color: #666;">3 Vorkommen</p>
-              </div>
-              <div style="padding: 8px; background: rgba(245, 158, 11, 0.2); border-radius: 6px;">
-                <p style="font-weight: bold; color: #d97706;">SERIOUS</p>
-                <p style="font-size: 0.9em;">Unzureichender Farbkontrast</p>
-                <p style="font-size: 0.8em; color: #666;">5 Vorkommen</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="collapsible" onclick="toggleSection('legal-requirements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
-          <h4 style="color: #3b82f6; margin: 0;">▶ Rechtliche Anforderungen</h4>
-        </div>
-        
-        <div id="legal-requirements" style="display: none;">
-          <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-            <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-              <div>
-                <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${actualAccessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
-                  </span>
-                </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                     <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${actualAccessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
-                  </span>
-                </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            ${actualAccessibilityScore < 90 ? `
-            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
-                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
-                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
-              </p>
-              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
-                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
-                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
-              </div>
-            </div>
-            ` : ''}
-          </div>
-        </div>
-
-        <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="color: #22c55e; margin: 0;">▶ Verbesserungsvorschläge</h4>
-        </div>
-        
-        <div id="accessibility-improvements" style="display: none;">
-          <div class="recommendations">
-            <h4>Prioritäre Handlungsempfehlungen:</h4>
-            <ul>
-              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>
-              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>
-              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1) <span style="font-size: 0.9em; color: #666;">(Logischer Aufbau für Screenreader und Orientierung)</span></li>
-              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>
-              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
