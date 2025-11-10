@@ -102,6 +102,25 @@ const getScoreTileTextColor = (score: number): string => {
   return score >= 0 && score <= 60 ? '#FFFFFF' : '#000000'; // White text on red, black on silver
 };
 
+// Einheitliche Progress-Bar mit Prozentzahl im Balken und Beschreibung darunter
+const generateProgressBar = (score: number, label: string, description: string) => {
+  const barColor = getScoreColor(score);
+  const textColor = score >= 90 ? '#000' : '#fff';
+  
+  return `
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${score}%; background-color: ${barColor}; display: flex; align-items: center; justify-content: center;">
+          <span style="color: ${textColor}; font-weight: bold; font-size: 14px;">${score}%</span>
+        </div>
+      </div>
+    </div>
+    <div class="score-details" style="margin-top: 10px;">
+      <p><strong>${label}:</strong> ${description}</p>
+    </div>
+  `;
+};
+
 export const generateCustomerHTML = ({
   businessData,
   realData,
@@ -532,24 +551,12 @@ export const generateCustomerHTML = ({
         <h3>Google Bewertungen</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(reputationScore)}">${realData.reviews.google.rating}/5</div>
-          <div class="score-details">
-            <p><strong>Durchschnittsbewertung:</strong> ${realData.reviews.google.rating}/5</p>
-            <p><strong>Anzahl Bewertungen:</strong> ${realData.reviews.google.count}</p>
-            <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
-          </div>
         </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${reputationScore}%; background-color: ${
-                reputationScore < 20 ? '#CD0000' :
-                reputationScore <= 60 ? '#dc2626' :
-                reputationScore <= 80 ? '#16a34a' :
-                '#eab308'
-              }; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${reputationScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${reputationScore}%</span>
-              </div>
-            </div>
-          </div>
+        ${generateProgressBar(
+          reputationScore,
+          'Bewertungsstatus',
+          `${realData.reviews.google.rating}/5 Sterne (${realData.reviews.google.count} Bewertungen) - ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}`
+        )}
       </div>
     `;
   };
@@ -644,22 +651,11 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(legalScore)}">${legalScore}%</div>
         </div>
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${legalScore}%; background-color: ${
-                legalScore < 20 ? '#CD0000' :
-                legalScore <= 60 ? '#dc2626' :
-                legalScore <= 80 ? '#16a34a' :
-                '#eab308'
-              }; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${legalScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${legalScore}%</span>
-              </div>
-            </div>
-          </div>
-          <div class="score-details">
-            <p><strong>Impressum:</strong> ${legalScore >= 80 ? 'Vollständig' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
-            <p><strong>Empfehlung:</strong> ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
-          </div>
+          ${generateProgressBar(
+            legalScore,
+            'Vollständigkeit',
+            `${legalScore >= 80 ? 'Vollständig vorhanden' : legalScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'} - ${legalScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}`
+          )}
 
         <!-- Impressum-Details -->
         <div style="margin-top: 20px;">
@@ -793,22 +789,11 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</div>
         </div>
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill progress-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="width: ${accessibilityScore}%; background-color: ${getAccessibilityComplianceColor(accessibilityScore)}; display: flex; align-items: center; justify-content: center;">
-              <span style="color: ${accessibilityScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${accessibilityScore}%</span>
-            </div>
-          </div>
-        </div>
-        <div class="score-details">
-           <p><strong>Compliance-Level:</strong> 
-             <span class="score-text ${getAccessibilityComplianceColorClass(accessibilityScore)}">
-               ${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'}
-             </span>
-           </p>
-          <p><strong>Empfehlung:</strong> ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}</p>
-          ${hasRealData && lighthouseVersion ? `<p style="font-size: 12px; color: #6b7280;"><strong>Prüfung:</strong> Lighthouse ${lighthouseVersion}</p>` : ''}
-        </div>
+        ${generateProgressBar(
+          accessibilityScore,
+          'Compliance-Level',
+          `${accessibilityScore >= 95 ? 'AA konform' : accessibilityScore >= 80 ? 'Teilweise konform' : 'Nicht konform'} - ${accessibilityScore >= 80 ? 'Sehr gute Barrierefreiheit' : 'Barrierefreiheit dringend verbessern'}`
+        )}
 
         <!-- WCAG-Analyse -->
         <div class="collapsible header-${getAccessibilityComplianceColorClass(accessibilityScore)}" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
