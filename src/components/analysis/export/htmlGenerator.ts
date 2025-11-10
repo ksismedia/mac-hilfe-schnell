@@ -3910,6 +3910,19 @@ export const generateCustomerHTML = ({
       ` : '';
     })()}
 
+    <!-- Stundensatzanalyse -->
+    ${hourlyRateData ? `
+    <div class="section">
+      <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
+        <span>💰 Stundensatzanalyse</span>
+        <div class="header-score-circle ${getScoreColorClass(hourlyRateScore)}">${Math.round(hourlyRateScore)}%</div>
+      </div>
+      <div class="section-content">
+        ${getPricingAnalysis()}
+      </div>
+    </div>
+    ` : ''}
+
     <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
     <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05)); border-left: 4px solid #a855f7; border-radius: 8px;">
       <h2 style="margin: 0; color: #a855f7; font-size: 1.8em; font-weight: bold;">Außendarstellung & Erscheinungsbild</h2>
