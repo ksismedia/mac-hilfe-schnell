@@ -705,7 +705,7 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
-  // Wenn keine Corporate Design Daten vorhanden, verwende Defaultwert
+  // Wenn keine Außendarstellungs-Daten vorhanden, verwende Defaultwert
   if (!data) return 50;
   
   let score = 0; // Start bei 0
