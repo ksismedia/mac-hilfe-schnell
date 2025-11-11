@@ -3329,7 +3329,7 @@ export const generateCustomerHTML = ({
       return hasStaffData ? `
     <div class="section">
       <div class="section-header">
-        <span>Personal & Qualifikation</span>
+        <span>Mitarbeiterqualifikation</span>
         <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
       </div>
       <div class="section-content">
@@ -3453,7 +3453,7 @@ export const generateCustomerHTML = ({
     <!-- Wettbewerber-Analyse -->
     <div class="section">
       <div class="section-header">
-        <span>Wettbewerbsvergleich</span>
+        <span>Wettbewerber-Analyse</span>
         ${(() => {
           const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
           const ownScore = (window as any).globalOwnCompanyScore || competitorComparisonScore || 75;
@@ -3473,7 +3473,7 @@ export const generateCustomerHTML = ({
       return `
     <div class="section">
       <div class="section-header">
-        <span>Bewertungen als Arbeitgeber</span>
+        <span>Arbeitgeber-Bewertungen</span>
         ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
       </div>
       <div class="section-content">
@@ -3640,7 +3640,7 @@ export const generateCustomerHTML = ({
       return hasCorporateData ? `
     <div class="section">
       <div class="section-header">
-        <span>Markenauftritt & Corporate Design</span>
+        <span>Corporate Identity & Außendarstellung</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
       </div>
       <div class="section-content">
