@@ -2090,7 +2090,7 @@ export const generateCustomerHTML = ({
 
     <!-- Executive Summary -->
     <div class="section">
-      <h3 class="section-title">Executive Summary</h3>
+      <div class="section-header"><span>Executive Summary</span></div>
       <div class="section-content">
         <!-- Gesamtscore als erstes -->
         <div class="score-overview" style="margin-bottom: 30px;">
@@ -2194,7 +2194,7 @@ export const generateCustomerHTML = ({
 
     <!-- Unternehmensdaten -->
     <div class="section">
-      <h3 class="section-title">Unternehmensdaten</h3>
+      <div class="section-header"><span>Unternehmensdaten</span></div>
       <div class="section-content">
         <div class="company-info">
           <h3>${realData.company.name}</h3>
@@ -2221,8 +2221,8 @@ export const generateCustomerHTML = ({
 
     <!-- SEO-Bestandsanalyse -->
     <div class="section">
-      <h3 class="section-title">SEO-Bestandsanalyse</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>SEO-Bestandsanalyse</span>
         <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
       </div>
       <div class="section-content">
@@ -2304,8 +2304,8 @@ export const generateCustomerHTML = ({
 
     <!-- Content-Qualität -->
     <div class="section">
-      <h3 class="section-title collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">▶ Content-Qualität</h3>
-      <div style="display: none;">
+      <div class="section-header collapsible" onclick="toggleSection('content-content')" style="cursor: pointer;">
+        <span>▶ Content-Qualität</span>
         <div class="header-score-circle ${getScoreColorClass(contentQualityScore)}">${contentQualityScore}%</div>
       </div>
       <div id="content-content" class="section-content" style="display: none;">
@@ -2530,8 +2530,8 @@ export const generateCustomerHTML = ({
 
     <!-- Lokale SEO -->
     <div class="section">
-      <h3 class="section-title">Lokale SEO & Regionale Sichtbarkeit</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Lokale SEO & Regionale Sichtbarkeit</span>
         <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
       </div>
       <div class="section-content">
@@ -2541,8 +2541,8 @@ export const generateCustomerHTML = ({
 
     <!-- Backlinks Übersicht -->
     <div class="section">
-      <h3 class="section-title collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">▶ Backlinks Übersicht</h3>
-      <div style="display: none;">
+      <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">
+        <span>▶ Backlinks Übersicht</span>
         <div class="header-score-circle ${getScoreColorClass(backlinksScore)}">${backlinksScore}%</div>
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
@@ -2587,8 +2587,8 @@ export const generateCustomerHTML = ({
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
-      <h3 class="section-title">Rechtssicherheit & Impressum</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Rechtssicherheit & Impressum</span>
         <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
       </div>
       <div class="section-content">
@@ -2622,8 +2622,8 @@ export const generateCustomerHTML = ({
 
     <!-- Barrierefreiheit -->
     <div class="section">
-        <h3 class="section-title">Barrierefreiheit & Zugänglichkeit</h3>
-        <div style="display: none;">
+        <div class="section-header">
+          <span>Barrierefreiheit & Zugänglichkeit</span>
           <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
         </div>
       <div class="section-content">
@@ -2764,8 +2764,8 @@ export const generateCustomerHTML = ({
 
     <!-- Website Performance -->
     <div class="section">
-      <h3 class="section-title">Website Performance</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Website Performance</span>
         <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
       </div>
       <div class="section-content">
@@ -2887,8 +2887,8 @@ export const generateCustomerHTML = ({
 
     <!-- Mobile Optimierung -->
     <div class="section">
-      <h3 class="section-title">Mobile Optimierung</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Mobile Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(realData.mobile.overallScore)}">${realData.mobile.overallScore}%</div>
       </div>
       <div class="section-content">
@@ -2929,8 +2929,8 @@ export const generateCustomerHTML = ({
 
     <!-- Social Media Listening & Monitoring -->
     <div class="section">
-      <h3 class="section-title collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer;">▶ Social Media Listening & Monitoring</h3>
-      <div style="display: none;">
+      <div class="section-header collapsible" onclick="toggleSection('social-media-content')" style="cursor: pointer;">
+        <span>▶ Social Media Listening & Monitoring</span>
         <div class="header-score-circle ${socialMediaScore <= 0 ? 'red' : getScoreColorClass(socialMediaScore)}">${displaySocialScore}</div>
       </div>
       <div id="social-media-content" class="section-content" style="display: none;">
@@ -3003,8 +3003,8 @@ export const generateCustomerHTML = ({
 
     <!-- Online Reputation -->
     <div class="section">
-      <h3 class="section-title">Online Reputation</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Online Reputation</span>
         <div class="header-score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
       </div>
       <div class="section-content">
@@ -3108,8 +3108,8 @@ export const generateCustomerHTML = ({
         return `
     <!-- Online-Präsenz -->
     <div class="section">
-      <h3 class="section-title">Online-Präsenz (Google-Suche)</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Online-Präsenz (Google-Suche)</span>
         <div class="header-score-circle ${getScoreColorClass(calculatedOverallScore)}">${calculatedOverallScore}%</div>
       </div>
       <div class="section-content">
@@ -3260,8 +3260,8 @@ export const generateCustomerHTML = ({
       return `
     <!-- Branchenplattformen -->
     <div class="section">
-      <h3 class="section-title">Branchenplattformen</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Branchenplattformen</span>
         <div class="header-score-circle ${overallScore <= 0 ? 'red' : getScoreColorClass(overallScore)}">${overallScore <= 0 ? '–' : overallScore + '%'}</div>
       </div>
       <div class="section-content">
@@ -3328,8 +3328,8 @@ export const generateCustomerHTML = ({
       
       return hasStaffData ? `
     <div class="section">
-      <h3 class="section-title">Mitarbeiterqualifikation</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Mitarbeiterqualifikation</span>
         <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
       </div>
       <div class="section-content">
@@ -3452,8 +3452,8 @@ export const generateCustomerHTML = ({
 
     <!-- Wettbewerber-Analyse -->
     <div class="section">
-      <h3 class="section-title">Wettbewerber-Analyse</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Wettbewerber-Analyse</span>
         ${(() => {
           const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
           const ownScore = (window as any).globalOwnCompanyScore || competitorComparisonScore || 75;
@@ -3472,8 +3472,8 @@ export const generateCustomerHTML = ({
       
       return `
     <div class="section">
-      <h3 class="section-title">Arbeitgeber-Bewertungen</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Arbeitgeber-Bewertungen</span>
         ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
       </div>
       <div class="section-content">
@@ -3489,8 +3489,8 @@ export const generateCustomerHTML = ({
       
       return hasStaffData ? `
     <div class="section">
-      <h3 class="section-title">Mitarbeiterqualifikation</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Mitarbeiterqualifikation</span>
         <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
       </div>
       <div class="section-content">
@@ -3618,8 +3618,8 @@ export const generateCustomerHTML = ({
     <!-- Stundensatzanalyse -->
     ${hourlyRateData ? `
     <div class="section">
-      <h3 class="section-title">Stundensatzanalyse</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Stundensatzanalyse</span>
         <div class="header-score-circle ${getScoreColorClass(hourlyRateScore)}">${Math.round(hourlyRateScore)}%</div>
       </div>
       <div class="section-content">
@@ -3639,8 +3639,8 @@ export const generateCustomerHTML = ({
       
       return hasCorporateData ? `
     <div class="section">
-      <h3 class="section-title">Corporate Identity & Außendarstellung</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Corporate Identity & Außendarstellung</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
       </div>
       <div class="section-content">
@@ -3738,8 +3738,8 @@ export const generateCustomerHTML = ({
     ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
     <div class="section">
-      <h3 class="section-title">Reaktionszeit auf Anfragen</h3>
-      <div style="display: none;">
+      <div class="section-header">
+        <span>Reaktionszeit auf Anfragen</span>
         <div class="header-score-circle ${quoteResponseScore > 0 ? getScoreColorClass(quoteResponseScore) : 'red'}">${displayQuoteScore}</div>
       </div>
       <div class="section-content">
@@ -3856,7 +3856,7 @@ export const generateCustomerHTML = ({
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
-      <h3 class="section-title collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;">▶ Strategische Empfehlungen</h3>
+      <div class="section-header collapsible" onclick="toggleSection('recommendations-content')" style="cursor: pointer;"><span>▶ Strategische Empfehlungen</span></div>
       <div id="recommendations-content" class="section-content" style="display: none;">
         <div class="metric-card good">
           <h3>Prioritäten für die Umsetzung</h3>

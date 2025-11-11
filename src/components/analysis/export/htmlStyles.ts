@@ -227,28 +227,21 @@ div.section-header,
 div[class="section-header"],
 div[class*="section-header"],
 .section-header[onclick],
-.section-title {
-  margin: 0 0 15px 40px !important;
-  padding: 12px 20px !important;
-  font-size: 1.2em !important;
-  font-weight: 600 !important;
-  color: #000 !important;
-  background-color: #f5f5f5 !important;
-  border-left: 4px solid #B8860B !important;
-}
-
-.section-title[style] { 
-  background: #f5f5f5 !important;
-  background-color: #f5f5f5 !important;
+.section-header[style] { 
+  background: #fbbf24 !important;
+  background-color: #fbbf24 !important;
   color: #000000 !important;
-  padding: 12px 20px !important;
-  font-size: 1.2em !important;
-  font-weight: 600 !important;
+  padding: 25px 40px !important;
+  font-size: 1.5em !important;
+  font-weight: 700 !important;
   max-width: 100% !important;
   overflow-x: hidden !important;
-  margin: 0 0 15px 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  box-sizing: border-box !important;
+  margin: 0 0 0 40px !important;
   border-radius: 0 !important;
-  border-left: 4px solid #B8860B !important;
 }
 
 /* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein */
@@ -714,17 +707,21 @@ table tr {
   div.section-header,
   .section > .section-header,
   .section .section-header,
-  div[class="section-title"],
-  .section-title[onclick] {
-    background: #f5f5f5 !important;
-    background-color: #f5f5f5 !important;
+  div[class="section-header"],
+  .section-header[onclick],
+  .section-header.header-red,
+  .section-header.header-green,
+  .section-header.header-yellow {
+    background: #fbbf24 !important;
+    background-color: #fbbf24 !important;
     color: #000000 !important;
-    font-weight: 600 !important;
-    padding: 12px 20px !important;
-    font-size: 1.2em !important;
-    margin: 0 0 15px 40px !important;
+    font-weight: 700 !important;
+    padding: 25px 40px !important;
+    font-size: 1.5em !important;
+    margin: 0 0 0 40px !important;
     border-radius: 0 !important;
-    border-left: 4px solid #B8860B !important;
+    display: flex !important;
+    align-items: center !important;
   }
   
   .header h1 {
