@@ -3559,12 +3559,12 @@ export const generateCustomerHTML = ({
           
           <div style="margin-bottom: 15px;">
             <p><strong>Fahrzeugbeschriftung:</strong> ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitlich gestaltet' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 100 : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 0 : 50, manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitliche Fahrzeugbeschriftung vorhanden' : 'Einheitliche Fahrzeugbeschriftung empfohlen')}
+            ${manualCorporateIdentityData.uniformVehicleBranding !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 100 : 0, manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitliche Fahrzeugbeschriftung vorhanden' : 'Einheitliche Fahrzeugbeschriftung empfohlen') : ''}
           </div>
           
           <div>
             <p><strong>Fahrzeugzustand:</strong> ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Gepflegt & sauber' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'Verbesserungsbedarf' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.vehicleCondition === 'yes' ? 100 : manualCorporateIdentityData.vehicleCondition === 'no' ? 0 : 50, manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Fahrzeuge in gutem Zustand' : 'Fahrzeugpflege sollte verbessert werden')}
+            ${manualCorporateIdentityData.vehicleCondition !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.vehicleCondition === 'yes' ? 100 : 0, manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Fahrzeuge in gutem Zustand' : 'Fahrzeugpflege sollte verbessert werden') : ''}
           </div>
         </div>
 
