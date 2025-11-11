@@ -3076,23 +3076,31 @@ export const generateCustomerHTML = ({
         // KORREKTUR: Berechne overallScore AUS den drei Komponenten
         const calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
         
-        // Kategorisierung basierend auf berechnetem Score
+        // WICHTIG: Strenge Bewertung basierend auf Content-Vielfalt
+        // Nur 1 Content-Typ = maximal "Befriedigend", auch bei vielen Inhalten
+        const contentTypeCount = [imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length;
+        
         let categoryName = '';
         let categoryColor = '';
         let categoryDescription = '';
         
-        if (calculatedOverallScore >= 85) {
-          categoryName = 'Stark';
+        if (contentTypeCount === 1) {
+          // Nur ein Content-Typ = maximal befriedigend
+          categoryName = 'Befriedigend';
+          categoryColor = '#fbbf24';
+          categoryDescription = 'Einseitige Online-Präsenz - erweitern Sie auf Videos und Shorts für bessere Sichtbarkeit';
+        } else if (calculatedOverallScore >= 85 && contentTypeCount === 3) {
+          categoryName = 'Exzellent';
           categoryColor = '#10b981';
-          categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
-        } else if (calculatedOverallScore >= 75) {
+          categoryDescription = 'Hervorragende Online-Präsenz mit ausgezeichneter Content-Vielfalt';
+        } else if (calculatedOverallScore >= 75 && contentTypeCount >= 2) {
           categoryName = 'Sehr gut';
           categoryColor = '#10b981';
-          categoryDescription = 'Sehr gute Online-Präsenz mit hoher Sichtbarkeit';
+          categoryDescription = 'Sehr gute Online-Präsenz mit guter Content-Vielfalt';
         } else if (calculatedOverallScore >= 60) {
-          categoryName = 'Mittel';
+          categoryName = 'Gut';
           categoryColor = '#fbbf24';
-          categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
+          categoryDescription = 'Solide Online-Präsenz mit Verbesserungspotenzial';
         } else {
           categoryName = 'Schwach';
           categoryColor = '#ef4444';
@@ -3132,23 +3140,65 @@ export const generateCustomerHTML = ({
           <h3>Score-Berechnung</h3>
           <p style="margin-bottom: 15px;">Der Online-Präsenz-Score setzt sich aus drei Faktoren zusammen, die <strong>addiert</strong> werden:</p>
           
-          <div style="margin-bottom: 20px;">
-            <p><strong>Content-Vielfalt:</strong> ${diversityScore} Punkte (max. 40)</p>
-            ${generateProgressBar(diversityScore, 'Unterschiedliche Content-Typen (Bilder, Videos, Shorts) erhöhen die Vielfalt')}
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 2px solid #cbd5e1;">
+                  <th style="text-align: left; padding: 10px; font-weight: bold;">Faktor</th>
+                  <th style="text-align: center; padding: 10px; font-weight: bold;">Erreicht</th>
+                  <th style="text-align: center; padding: 10px; font-weight: bold;">Maximum</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px;">
+                    <strong>Content-Vielfalt</strong><br>
+                    <small style="color: #64748b;">Unterschiedliche Content-Typen (Bilder, Videos, Shorts)</small>
+                  </td>
+                  <td style="text-align: center; padding: 12px; font-size: 1.3em; font-weight: bold; color: ${diversityScore < 25 ? '#ef4444' : '#10b981'};">
+                    ${diversityScore}
+                  </td>
+                  <td style="text-align: center; padding: 12px; color: #64748b;">
+                    40
+                  </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px;">
+                    <strong>Content-Menge</strong><br>
+                    <small style="color: #64748b;">Anzahl der Inhalte (50+ = 40 Punkte, 30+ = 35 Punkte, 20+ = 30 Punkte)</small>
+                  </td>
+                  <td style="text-align: center; padding: 12px; font-size: 1.3em; font-weight: bold; color: ${quantityScore < 20 ? '#ef4444' : '#10b981'};">
+                    ${quantityScore}
+                  </td>
+                  <td style="text-align: center; padding: 12px; color: #64748b;">
+                    40
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px;">
+                    <strong>Content-Relevanz</strong><br>
+                    <small style="color: #64748b;">Hochrelevante, eigene Inhalte werden besser bewertet</small>
+                  </td>
+                  <td style="text-align: center; padding: 12px; font-size: 1.3em; font-weight: bold; color: ${relevanceScore < 15 ? '#ef4444' : '#10b981'};">
+                    ${Math.round(relevanceScore)}
+                  </td>
+                  <td style="text-align: center; padding: 12px; color: #64748b;">
+                    30
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           
-          <div style="margin-bottom: 20px;">
-            <p><strong>Content-Menge:</strong> ${quantityScore} Punkte (max. 40)</p>
-            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit (50+ Inhalte = 40 Punkte, 30+ = 35 Punkte, 20+ = 30 Punkte)')}
-          </div>
-          
-          <div style="margin-bottom: 20px;">
-            <p><strong>Content-Relevanz:</strong> ${Math.round(relevanceScore)} Punkte (max. 30)</p>
-            ${generateProgressBar(Math.round(relevanceScore), 'Hochrelevante, eigene Inhalte werden besser bewertet')}
-          </div>
-          
-          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid ${getScoreColor(calculatedOverallScore)}; margin-top: 15px;">
-            <p style="margin: 0;"><strong>Gesamt-Score:</strong> ${diversityScore} + ${quantityScore} + ${Math.round(relevanceScore)} = <strong style="font-size: 1.2em; color: ${getScoreColor(calculatedOverallScore)};">${calculatedOverallScore} Punkte (${calculatedOverallScore}%)</strong></p>
+          <div style="background: ${categoryColor}15; padding: 20px; border-radius: 8px; border-left: 4px solid ${categoryColor};">
+            <p style="margin: 0; font-size: 1.1em;">
+              <strong>Gesamt-Score:</strong> 
+              ${diversityScore} + ${quantityScore} + ${Math.round(relevanceScore)} = 
+              <strong style="font-size: 1.4em; color: ${categoryColor};">${calculatedOverallScore} Punkte</strong>
+            </p>
+            <p style="margin: 10px 0 0 0; color: #64748b;">
+              <strong>Bewertung:</strong> ${categoryName} – ${categoryDescription}
+            </p>
           </div>
         </div>
 
