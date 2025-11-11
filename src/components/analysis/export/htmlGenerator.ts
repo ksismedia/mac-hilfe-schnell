@@ -3130,21 +3130,25 @@ export const generateCustomerHTML = ({
         <!-- Score-Berechnung -->
         <div class="metric-card">
           <h3>Score-Berechnung</h3>
-          <p style="margin-bottom: 15px;">Der Online-Präsenz-Score setzt sich aus drei Faktoren zusammen:</p>
+          <p style="margin-bottom: 15px;">Der Online-Präsenz-Score setzt sich aus drei Faktoren zusammen, die <strong>addiert</strong> werden:</p>
           
           <div style="margin-bottom: 20px;">
-            <p><strong>Content-Vielfalt:</strong> ${diversityScore}%</p>
+            <p><strong>Content-Vielfalt:</strong> ${diversityScore} Punkte (max. 40)</p>
             ${generateProgressBar(diversityScore, 'Unterschiedliche Content-Typen (Bilder, Videos, Shorts) erhöhen die Vielfalt')}
           </div>
           
           <div style="margin-bottom: 20px;">
-            <p><strong>Content-Menge:</strong> ${quantityScore}%</p>
-            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit (50+ Inhalte = 40%, 30+ = 35%, 20+ = 30%)')}
+            <p><strong>Content-Menge:</strong> ${quantityScore} Punkte (max. 40)</p>
+            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit (50+ Inhalte = 40 Punkte, 30+ = 35 Punkte, 20+ = 30 Punkte)')}
           </div>
           
-          <div>
-            <p><strong>Content-Relevanz:</strong> ${Math.round(relevanceScore)}%</p>
+          <div style="margin-bottom: 20px;">
+            <p><strong>Content-Relevanz:</strong> ${Math.round(relevanceScore)} Punkte (max. 30)</p>
             ${generateProgressBar(Math.round(relevanceScore), 'Hochrelevante, eigene Inhalte werden besser bewertet')}
+          </div>
+          
+          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid ${getScoreColor(calculatedOverallScore)}; margin-top: 15px;">
+            <p style="margin: 0;"><strong>Gesamt-Score:</strong> ${diversityScore} + ${quantityScore} + ${Math.round(relevanceScore)} = <strong style="font-size: 1.2em; color: ${getScoreColor(calculatedOverallScore)};">${calculatedOverallScore} Punkte (${calculatedOverallScore}%)</strong></p>
           </div>
         </div>
 
