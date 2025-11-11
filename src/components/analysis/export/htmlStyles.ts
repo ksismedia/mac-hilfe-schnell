@@ -7,11 +7,14 @@ html, body, * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; 
   transition: all 0.3s ease; 
   user-select: none;
   border-radius: 8px;
-  padding: 15px 20px !important;
 }
 .collapsible:hover { 
   background: rgba(251, 191, 36, 0.1) !important; 
   transform: translateY(-1px);
+}
+/* Ensure section-header.collapsible has consistent padding with regular section-header */
+.section-header.collapsible {
+  padding: 25px 40px !important;
 }
 body { 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
