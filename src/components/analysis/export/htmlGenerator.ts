@@ -553,7 +553,7 @@ export const generateCustomerHTML = ({
         </div>
         ${generateProgressBar(
           reputationScore,
-          `${realData.reviews.google.rating}/5 Sterne (${realData.reviews.google.count} Bewertungen) - ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}`
+          `${realData.reviews.google.rating}/5 Sterne (${realData.reviews.google.count} Bewertungen) - ${realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}`
         )}
       </div>
     `;
@@ -3008,7 +3008,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
             <div class="score-details">
               <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.0 ? 'Sehr gute Reputation' : 'Bewertungen verbessern'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}</p>
             </div>
           </div>
           <div class="progress-container">
