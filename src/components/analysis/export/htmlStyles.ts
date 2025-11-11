@@ -430,10 +430,19 @@ span[style*="font-size: 6px"] {
 .score-text.green { color: #22c55e !important; font-weight: bold; }
 .score-text.yellow { color: #FFD700 !important; font-weight: bold; }
 
-/* Header-Klassen für verschiedene Bereiche */
-.header-red { background: #FF0000 !important; color: white !important; }
-.header-green { background: #22c55e !important; color: white !important; }
-.header-yellow { background: #FFD700 !important; color: black !important; }
+/* Header-Klassen für verschiedene Bereiche - NUR für NICHT-.section-header Elemente */
+.header-red:not(.section-header) { background: #FF0000 !important; color: white !important; }
+.header-green:not(.section-header) { background: #22c55e !important; color: white !important; }
+.header-yellow:not(.section-header) { background: #FFD700 !important; color: black !important; }
+
+/* WICHTIG: section-header bleibt IMMER gelb, egal welche anderen Klassen */
+.section-header.header-red,
+.section-header.header-green,
+.section-header.header-yellow,
+.section-header { 
+  background: #fbbf24 !important;
+  color: #000000 !important;
+}
 
 /* Header score-circle overrides - Kreise in Headern behalten ihre eigene Farbe */
 .header-yellow .score-circle.yellow { color: black !important; }
