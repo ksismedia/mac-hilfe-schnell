@@ -503,45 +503,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           textAlign: 'center',
           marginBottom: '32px'
         }}>
-          <div style={{ 
-            display: 'inline-flex',
-            gap: '16px',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
-          }}>
-            <Button onClick={onReset} variant="outline" size="lg">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Neue Analyse
-            </Button>
-            <SaveAnalysisDialog 
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              removedMissingServices={removedMissingServices}
-              hourlyRateData={hourlyRateData}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              manualContentData={manualContentData}
-              manualAccessibilityData={manualAccessibilityData}
-              manualBacklinkData={manualBacklinkData}
-              manualDataPrivacyData={manualDataPrivacyData}
-              manualLocalSEOData={manualLocalSEOData}
-              manualIndustryReviewData={manualIndustryReviewData}
-              manualOnlinePresenceData={manualOnlinePresenceData}
-              keywordScore={keywordsScore}
-              manualKeywordData={manualKeywordData}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-              currentAnalysisId={analysisData?.id}
-            />
-          </div>
+          <Button onClick={onReset} variant="outline" size="lg">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Neue Analyse
+          </Button>
         </div>
 
         {/* Title Section */}
