@@ -381,58 +381,62 @@ export const calculateLocalSEOScore = (businessData: any, realData: any, manualD
 
 export const calculateStaffQualificationScore = (data: any): number => {
   // Echte Berechnung basierend auf Daten
-  if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
+  if (!data) return 0;
   
   let score = 0;
   const totalEmployees = data.totalEmployees || 1;
   const masters = data.masters || 0;
   const skilledWorkers = data.skilled_workers || 0;
-  const officeWorkers = data.office_workers || 0; // Bürokräfte hinzufügen
+  const officeWorkers = data.office_workers || 0;
   
-  // Meister-Quote (35% der Bewertung) - Progressives Bewertungssystem
+  // NEUE LOGIK: Basis-Score für hohe Gesamtqualifikation
+  const totalQualified = masters + skilledWorkers + officeWorkers;
+  const totalQualifiedRatio = totalQualified / totalEmployees;
+  
+  // Basis-Score: 40 Punkte für hohe Gesamtqualifikation
+  if (totalQualifiedRatio >= 0.9) {
+    score += 40; // Exzellent: >90% qualifiziert
+  } else if (totalQualifiedRatio >= 0.8) {
+    score += 35; // Sehr gut: 80-90%
+  } else if (totalQualifiedRatio >= 0.7) {
+    score += 30; // Gut: 70-80%
+  } else if (totalQualifiedRatio >= 0.5) {
+    score += 20; // Mittel: 50-70%
+  } else if (totalQualifiedRatio > 0) {
+    score += totalQualifiedRatio * 40; // Linear unter 50%
+  }
+  
+  // Meister-Quote (25 Punkte max) - weniger streng
   const masterRatio = masters / totalEmployees;
   let masterScore = 0;
-  if (masterRatio >= 0.2) {
-    masterScore = 35; // Volle Punkte ab 20% Meister
-  } else if (masterRatio >= 0.1) {
-    masterScore = (masterRatio - 0.1) * (35 / 0.1); // Linear zwischen 10% und 20%
+  if (masterRatio >= 0.15) {
+    masterScore = 25; // Volle Punkte ab 15% Meister
+  } else if (masterRatio >= 0.05) {
+    masterScore = 15 + ((masterRatio - 0.05) / 0.1) * 10; // 15-25 Punkte zwischen 5-15%
   } else if (masterRatio > 0) {
-    masterScore = masterRatio * (35 / 0.1) * 0.5; // Reduzierte Punkte unter 10%
+    masterScore = (masterRatio / 0.05) * 15; // 0-15 Punkte unter 5%
   }
+  score += masterScore;
   
-  // Bonus für sehr hohe Meisterquote
-  if (masterRatio >= 0.4) {
-    masterScore += 5; // Extra 5 Punkte für >40% Meister
-  }
-  score += Math.min(masterScore, 40); // Maximal 40 Punkte für Meister
-  
-  // Facharbeiter-Quote + Bürokräfte (25% der Bewertung) - Bürokräfte als vollwertige Facharbeiter bewerten
-  const totalQualifiedWorkers = skilledWorkers + officeWorkers; // Bürokräfte + Facharbeiter zusammenrechnen
+  // Facharbeiter-Anteil (20 Punkte max)
+  const totalQualifiedWorkers = skilledWorkers + officeWorkers;
   const qualifiedWorkerRatio = totalQualifiedWorkers / totalEmployees;
   let skilledScore = 0;
-  if (qualifiedWorkerRatio >= 0.3) {
-    skilledScore = 25; // Volle Punkte ab 30% qualifizierte Arbeiter (Facharbeiter + Bürokräfte)
-  } else if (qualifiedWorkerRatio >= 0.15) {
-    skilledScore = (qualifiedWorkerRatio - 0.15) * (25 / 0.15); // Linear zwischen 15% und 30%
-  } else if (qualifiedWorkerRatio > 0) {
-    skilledScore = qualifiedWorkerRatio * (25 / 0.15) * 0.6; // Reduzierte Punkte unter 15%
-  }
-  
-  // Bonus für sehr hohe Qualifiziertenquote (Facharbeiter + Bürokräfte)
   if (qualifiedWorkerRatio >= 0.6) {
-    skilledScore += 5; // Extra 5 Punkte für >60% qualifizierte Arbeiter
+    skilledScore = 20; // Volle Punkte ab 60%
+  } else if (qualifiedWorkerRatio > 0) {
+    skilledScore = (qualifiedWorkerRatio / 0.6) * 20;
   }
-  score += Math.min(skilledScore, 30); // Maximal 30 Punkte für qualifizierte Arbeiter
+  score += skilledScore;
   
-  // Kombinationsbonus für hohe Gesamt-Qualifikationsquote
-  const totalQualifiedRatio = (masters + skilledWorkers + officeWorkers) / totalEmployees; // Bürokräfte in Gesamtqualifikation einbeziehen
-  if (totalQualifiedRatio >= 0.8) {
-    score += 10; // Bonus für >80% qualifizierte Mitarbeiter (Meister + Facharbeiter + Bürokräfte)
-  } else if (totalQualifiedRatio >= 0.6) {
-    score += 5; // Bonus für >60% qualifizierte Mitarbeiter
+  // Bonus für sehr hohe Gesamtqualifikation
+  if (totalQualifiedRatio >= 0.95) {
+    score += 10; // Bonus für >95% qualifiziert
+  } else if (totalQualifiedRatio >= 0.85) {
+    score += 5; // Bonus für >85% qualifiziert
   }
   
-  // Zertifizierungen (5% der Bewertung)
+  // Zertifizierungen (5 Punkte)
   let certificationPoints = 0;
   if (data.certifications?.welding_certificates) certificationPoints += 1;
   if (data.certifications?.safety_training) certificationPoints += 1;
@@ -442,20 +446,20 @@ export const calculateStaffQualificationScore = (data: any): number => {
   if (data.certifications?.business_qualification) certificationPoints += 1;
   score += (certificationPoints / 6) * 5;
   
-  // Branchenspezifische Qualifikationen (15% der Bewertung)
+  // Branchenspezifische Qualifikationen (10 Punkte)
   const industrySpecificCount = data.industry_specific?.length || 0;
-  score += (industrySpecificCount / 6) * 15;
+  score += (industrySpecificCount / 6) * 10;
   
-  // Mitarbeiterschulungen (20% der Bewertung)
+  // Mitarbeiterschulungen (10 Punkte)
   if (data.offers_employee_training) {
-    score += 20;
+    score += 10;
   }
   
-  // Mitarbeiterzertifikate (branchenspezifische Zertifikate) (15% der Bewertung)
+  // Mitarbeiterzertifikate (10 Punkte)
   const certifications = data.employee_certifications || [];
   const certCount = certifications.length;
-  if (certCount >= 5) score += 15;
-  else score += (certCount / 5) * 15;
+  if (certCount >= 5) score += 10;
+  else score += (certCount / 5) * 10;
   
   return Math.min(Math.round(score), 100);
 };
