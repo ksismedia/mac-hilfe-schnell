@@ -3066,7 +3066,10 @@ export const generateCustomerHTML = ({
         if (shortCount > 0) diversityScore += 10;
         
         let quantityScore = 0;
-        if (totalContent >= 20) quantityScore = 30;
+        // Verbesserte Bewertung: 30+ Inhalte = hohe Punktzahl
+        if (totalContent >= 50) quantityScore = 40;      // 50+ = exzellent
+        else if (totalContent >= 30) quantityScore = 35; // 30+ = sehr gut
+        else if (totalContent >= 20) quantityScore = 30; // 20+ = gut
         else if (totalContent >= 15) quantityScore = 25;
         else if (totalContent >= 10) quantityScore = 20;
         else if (totalContent >= 5) quantityScore = 15;
@@ -3138,7 +3141,7 @@ export const generateCustomerHTML = ({
           
           <div style="margin-bottom: 20px;">
             <p><strong>Content-Menge:</strong> ${quantityScore}%</p>
-            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit')}
+            ${generateProgressBar(quantityScore, 'Die Anzahl Ihrer Inhalte beeinflusst die Sichtbarkeit (50+ Inhalte = 40%, 30+ = 35%, 20+ = 30%)')}
           </div>
           
           <div>
