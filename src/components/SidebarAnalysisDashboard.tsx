@@ -14,7 +14,6 @@ import { CorporateIdentityInput } from './analysis/CorporateIdentityInput';
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
-import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
 import OverallRating from './analysis/OverallRating';
 
 // Services
@@ -540,32 +539,6 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualIndustryReviewData={manualIndustryReviewData}
                   manualOnlinePresenceData={manualOnlinePresenceData}
                   calculatedOwnCompanyScore={currentOwnCompanyScore}
-                />
-                <SelectiveHTMLExport
-                  businessData={businessData}
-                  realData={realData}
-                  manualImprintData={manualImprintData}
-                  manualSocialData={manualSocialData}
-                  manualWorkplaceData={manualWorkplaceData}
-                  manualCorporateIdentityData={manualCorporateIdentityData}
-                  manualCompetitors={manualCompetitors}
-                  competitorServices={competitorServices}
-                  companyServices={companyServices}
-                  deletedCompetitors={deletedCompetitors}
-                  hourlyRateData={hourlyRateData}
-                  manualKeywordData={manualKeywordData}
-                  keywordScore={keywordsScore}
-                  staffQualificationData={staffQualificationData}
-                  quoteResponseData={quoteResponseData}
-                  manualContentData={manualContentData}
-                  manualAccessibilityData={manualAccessibilityData}
-                  manualBacklinkData={manualBacklinkData}
-                  manualDataPrivacyData={manualDataPrivacyData}
-                  manualLocalSEOData={manualLocalSEOData}
-                  manualIndustryReviewData={manualIndustryReviewData}
-                  manualOnlinePresenceData={manualOnlinePresenceData}
-                  privacyData={privacyData}
-                  accessibilityData={accessibilityData}
                 />
               </div>
             </div>

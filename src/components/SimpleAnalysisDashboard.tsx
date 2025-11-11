@@ -16,7 +16,6 @@ import QuoteResponseInput from './analysis/QuoteResponseInput';
 // Components
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
-import SelectiveHTMLExport from './analysis/SelectiveHTMLExport';
 import OverallRating from './analysis/OverallRating';
 
 // Services
@@ -639,32 +638,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               calculatedOwnCompanyScore={currentOwnCompanyScore}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
-              privacyData={privacyData}
-              accessibilityData={accessibilityData}
-            />
-            <SelectiveHTMLExport
-              businessData={businessData}
-              realData={realData}
-              manualImprintData={manualImprintData}
-              manualSocialData={manualSocialData}
-              manualWorkplaceData={manualWorkplaceData}
-              manualCorporateIdentityData={manualCorporateIdentityData}
-              manualCompetitors={manualCompetitors}
-              competitorServices={competitorServices}
-              companyServices={companyServices}
-              deletedCompetitors={deletedCompetitors}
-              hourlyRateData={hourlyRateData}
-              staffQualificationData={staffQualificationData}
-              quoteResponseData={quoteResponseData}
-              manualContentData={manualContentData}
-              manualAccessibilityData={manualAccessibilityData}
-              manualBacklinkData={manualBacklinkData}
-              manualDataPrivacyData={manualDataPrivacyData}
-              manualLocalSEOData={manualLocalSEOData}
-              manualIndustryReviewData={manualIndustryReviewData}
-              manualOnlinePresenceData={manualOnlinePresenceData}
-              manualKeywordData={manualKeywordData}
-              keywordScore={keywordsScore}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
