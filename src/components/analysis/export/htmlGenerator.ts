@@ -3074,11 +3074,16 @@ export const generateCustomerHTML = ({
           : Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
         
         // KORREKTUR: Berechne overallScore AUS den drei Komponenten
-        const calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
+        let calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
+        
+        // WICHTIG: Bei nur einem Content-Typ maximal 70%
+        const contentTypeCount = [imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length;
+        if (contentTypeCount === 1) {
+          calculatedOverallScore = Math.min(calculatedOverallScore, 70);
+        }
         
         // WICHTIG: Strenge Bewertung basierend auf Content-Vielfalt
         // Nur 1 Content-Typ = maximal "Befriedigend", auch bei vielen Inhalten
-        const contentTypeCount = [imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length;
         
         let categoryName = '';
         let categoryColor = '';
@@ -3107,9 +3112,9 @@ export const generateCustomerHTML = ({
           categoryDescription = 'Ausbaufähige Online-Präsenz mit hohem Optimierungsbedarf';
         }
         
-        // Determine assessment level
-        const assessment = calculatedOverallScore >= 85 ? 'Exzellent' : calculatedOverallScore >= 75 ? 'Sehr gut' : calculatedOverallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf';
-        const assessmentColor = calculatedOverallScore >= 90 ? '#10b981' : calculatedOverallScore >= 61 ? '#fbbf24' : '#ef4444';
+        // Status-Bewertung (nie "Sehr gut", nur Exzellent/Gut/Befriedigend/Schwach)
+        const assessment = calculatedOverallScore >= 85 ? 'Exzellent' : calculatedOverallScore >= 75 ? 'Gut' : calculatedOverallScore >= 60 ? 'Befriedigend' : 'Schwach';
+        const assessmentColor = calculatedOverallScore >= 85 ? '#10b981' : calculatedOverallScore >= 75 ? '#10b981' : calculatedOverallScore >= 60 ? '#fbbf24' : '#ef4444';
         
         return `
     <!-- Online-Präsenz -->
