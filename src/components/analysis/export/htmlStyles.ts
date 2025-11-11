@@ -3,18 +3,15 @@ export const getHTMLStyles = () => {
   console.log('CSS Styles being applied');
   return `
 html, body, * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; overflow-x: hidden; }
-.collapsible { 
+.collapsible:not(.section-header) { 
   transition: all 0.3s ease; 
   user-select: none;
   border-radius: 8px;
+  padding: 15px 20px;
 }
-.collapsible:hover { 
-  background: rgba(251, 191, 36, 0.1) !important; 
+.collapsible:not(.section-header):hover { 
+  background: rgba(251, 191, 36, 0.1); 
   transform: translateY(-1px);
-}
-/* Ensure section-header.collapsible has consistent padding with regular section-header */
-.section-header.collapsible {
-  padding: 25px 40px !important;
 }
 body { 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -221,17 +218,24 @@ section[class*="section"],
   contain: layout style !important;
   position: relative;
 }
-.section-header { 
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #000000; 
-  padding: 25px 40px; 
-  font-size: 1.5em; 
-  font-weight: 700;
-  max-width: 100%;
-  overflow-x: hidden;
-  display: flex;
-  align-items: center;
-  gap: 15px;
+/* BRUTALE ÜBERSCHRIFTEN-REGEL - ÜBERSCHREIBT ALLES */
+.section-header,
+.section-header.collapsible,
+div.section-header,
+.section > .section-header { 
+  background: #fbbf24 !important;
+  color: #000000 !important;
+  padding: 25px 40px !important;
+  font-size: 1.5em !important;
+  font-weight: 700 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
 }
 .header-score-circle {
   display: inline-flex;
@@ -677,11 +681,17 @@ table tr {
     page-break-inside: avoid !important;
   }
   
-  .section-header {
+  .section-header,
+  .section-header.collapsible,
+  div.section-header,
+  .section > .section-header {
     background: #fbbf24 !important;
     color: #000000 !important;
-    font-weight: bold !important;
+    font-weight: 700 !important;
     padding: 25px 40px !important;
+    font-size: 1.5em !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
   
   .header h1 {
