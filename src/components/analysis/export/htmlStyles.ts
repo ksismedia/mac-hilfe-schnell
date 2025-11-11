@@ -218,12 +218,18 @@ section[class*="section"],
   contain: layout style !important;
   position: relative;
 }
-/* BRUTALE ÜBERSCHRIFTEN-REGEL - ÜBERSCHREIBT ALLES */
+/* ABSOLUTE SECTION-HEADER REGEL - ALLES MUSS GELB SEIN!!! */
 .section-header,
 .section-header.collapsible,
 div.section-header,
-.section > .section-header { 
+.section > .section-header,
+.section .section-header,
+div[class="section-header"],
+div[class*="section-header"],
+.section-header[onclick],
+.section-header[style] { 
   background: #fbbf24 !important;
+  background-color: #fbbf24 !important;
   color: #000000 !important;
   padding: 25px 40px !important;
   font-size: 1.5em !important;
@@ -236,6 +242,20 @@ div.section-header,
   box-sizing: border-box !important;
   margin: 0 !important;
   border-radius: 0 !important;
+}
+
+/* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein */
+.section-header.header-red,
+.section-header.header-green,
+.section-header.header-yellow,
+.section-header.red,
+.section-header.green,
+.section-header.yellow,
+.collapsible.section-header,
+div.collapsible.section-header {
+  background: #fbbf24 !important;
+  background-color: #fbbf24 !important;
+  color: #000000 !important;
 }
 .header-score-circle {
   display: inline-flex;
@@ -431,18 +451,9 @@ span[style*="font-size: 6px"] {
 .score-text.yellow { color: #FFD700 !important; font-weight: bold; }
 
 /* Header-Klassen für verschiedene Bereiche - NUR für NICHT-.section-header Elemente */
-.header-red:not(.section-header) { background: #FF0000 !important; color: white !important; }
-.header-green:not(.section-header) { background: #22c55e !important; color: white !important; }
-.header-yellow:not(.section-header) { background: #FFD700 !important; color: black !important; }
-
-/* WICHTIG: section-header bleibt IMMER gelb, egal welche anderen Klassen */
-.section-header.header-red,
-.section-header.header-green,
-.section-header.header-yellow,
-.section-header { 
-  background: #fbbf24 !important;
-  color: #000000 !important;
-}
+.header-red:not(.section-header):not([class*="section-header"]) { background: #FF0000 !important; color: white !important; }
+.header-green:not(.section-header):not([class*="section-header"]) { background: #22c55e !important; color: white !important; }
+.header-yellow:not(.section-header):not([class*="section-header"]) { background: #FFD700 !important; color: black !important; }
 
 /* Header score-circle overrides - Kreise in Headern behalten ihre eigene Farbe */
 .header-yellow .score-circle.yellow { color: black !important; }
@@ -690,17 +701,27 @@ table tr {
     page-break-inside: avoid !important;
   }
   
+  /* PRINT: Section-Header MÜSSEN gelb sein */
   .section-header,
   .section-header.collapsible,
   div.section-header,
-  .section > .section-header {
+  .section > .section-header,
+  .section .section-header,
+  div[class="section-header"],
+  .section-header[onclick],
+  .section-header.header-red,
+  .section-header.header-green,
+  .section-header.header-yellow {
     background: #fbbf24 !important;
+    background-color: #fbbf24 !important;
     color: #000000 !important;
     font-weight: 700 !important;
     padding: 25px 40px !important;
     font-size: 1.5em !important;
     margin: 0 !important;
     border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
   }
   
   .header h1 {
