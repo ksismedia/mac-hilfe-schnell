@@ -221,7 +221,7 @@ section[class*="section"],
 .section-header { 
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   color: #000000; 
-  padding: 25px 30px; 
+  padding: 25px 40px; 
   font-size: 1.5em; 
   font-weight: 700;
   max-width: 100%;
@@ -678,6 +678,7 @@ table tr {
     background: #fbbf24 !important;
     color: #000000 !important;
     font-weight: bold !important;
+    padding: 25px 40px !important;
   }
   
   .header h1 {
