@@ -130,14 +130,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-warning';
-    if (score >= 61) return 'text-success';
+    if (score >= 85) return 'text-warning';
+    if (score >= 60) return 'text-success';
     return 'text-destructive';
   };
 
   const getScoreBadge = (score: number) => {
-    if (score >= 90) return 'default'; // Gold
-    if (score >= 61) return 'secondary'; // Grün
+    if (score >= 85) return 'default'; // Gold
+    if (score >= 60) return 'secondary'; // Grün
     return 'destructive'; // Rot
   };
 
@@ -180,7 +180,7 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                 </p>
               </div>
               <Badge variant={getScoreBadge(overallScore)}>
-                {overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}
+                {overallScore >= 85 ? 'Exzellent' : overallScore >= 75 ? 'Sehr gut' : overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}
               </Badge>
             </div>
 

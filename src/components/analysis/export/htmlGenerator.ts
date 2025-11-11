@@ -3081,11 +3081,15 @@ export const generateCustomerHTML = ({
         let categoryColor = '';
         let categoryDescription = '';
         
-        if (calculatedOverallScore >= 91) {
+        if (calculatedOverallScore >= 85) {
           categoryName = 'Stark';
           categoryColor = '#10b981';
           categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
-        } else if (calculatedOverallScore >= 61) {
+        } else if (calculatedOverallScore >= 75) {
+          categoryName = 'Sehr gut';
+          categoryColor = '#10b981';
+          categoryDescription = 'Sehr gute Online-Präsenz mit hoher Sichtbarkeit';
+        } else if (calculatedOverallScore >= 60) {
           categoryName = 'Mittel';
           categoryColor = '#fbbf24';
           categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
@@ -3096,7 +3100,7 @@ export const generateCustomerHTML = ({
         }
         
         // Determine assessment level
-        const assessment = calculatedOverallScore >= 90 ? 'Exzellent' : calculatedOverallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf';
+        const assessment = calculatedOverallScore >= 85 ? 'Exzellent' : calculatedOverallScore >= 75 ? 'Sehr gut' : calculatedOverallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf';
         const assessmentColor = calculatedOverallScore >= 90 ? '#10b981' : calculatedOverallScore >= 61 ? '#fbbf24' : '#ef4444';
         
         return `
