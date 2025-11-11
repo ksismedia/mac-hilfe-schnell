@@ -3054,24 +3054,6 @@ export const generateCustomerHTML = ({
         const videoCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.videos : manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
         const shortCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.shorts : manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
         
-        // Kategorisierung basierend auf Score
-        let categoryName = '';
-        let categoryColor = '';
-        let categoryDescription = '';
-        
-        if (overallScore >= 91) {
-          categoryName = 'Stark';
-          categoryColor = '#10b981';
-          categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
-        } else if (overallScore >= 61) {
-          categoryName = 'Mittel';
-          categoryColor = '#fbbf24';
-          categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
-        } else {
-          categoryName = 'Schwach';
-          categoryColor = '#ef4444';
-          categoryDescription = 'Ausbaufähige Online-Präsenz mit hohem Optimierungsbedarf';
-        }
         const highRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
         const mediumRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
         const lowRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
@@ -3094,23 +3076,45 @@ export const generateCustomerHTML = ({
           ? Math.min(30, totalContent * 1.5) 
           : Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
         
+        // KORREKTUR: Berechne overallScore AUS den drei Komponenten
+        const calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
+        
+        // Kategorisierung basierend auf berechnetem Score
+        let categoryName = '';
+        let categoryColor = '';
+        let categoryDescription = '';
+        
+        if (calculatedOverallScore >= 91) {
+          categoryName = 'Stark';
+          categoryColor = '#10b981';
+          categoryDescription = 'Exzellente Online-Präsenz mit hervorragender Sichtbarkeit';
+        } else if (calculatedOverallScore >= 61) {
+          categoryName = 'Mittel';
+          categoryColor = '#fbbf24';
+          categoryDescription = 'Solide Online-Präsenz mit gutem Verbesserungspotenzial';
+        } else {
+          categoryName = 'Schwach';
+          categoryColor = '#ef4444';
+          categoryDescription = 'Ausbaufähige Online-Präsenz mit hohem Optimierungsbedarf';
+        }
+        
         // Determine assessment level
-        const assessment = overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf';
-        const assessmentColor = overallScore >= 90 ? '#10b981' : overallScore >= 61 ? '#fbbf24' : '#ef4444';
+        const assessment = calculatedOverallScore >= 90 ? 'Exzellent' : calculatedOverallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf';
+        const assessmentColor = calculatedOverallScore >= 90 ? '#10b981' : calculatedOverallScore >= 61 ? '#fbbf24' : '#ef4444';
         
         return `
     <!-- Online-Präsenz -->
     <div class="section">
       <div class="section-header">
         <span>Online-Präsenz (Google-Suche)</span>
-        <div class="header-score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(calculatedOverallScore)}">${calculatedOverallScore}%</div>
       </div>
       <div class="section-content">
         <!-- Übersicht -->
         <div class="metric-card">
           <h3>Sichtbarkeit in Google-Suchergebnissen</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(overallScore)}">${overallScore}%</div>
+            <div class="score-circle ${getScoreColorClass(calculatedOverallScore)}">${calculatedOverallScore}%</div>
             <div class="score-details">
               <p><strong>Status:</strong> ${assessment}</p>
               <p><strong>Kategorie:</strong> ${categoryName}</p>
@@ -3119,7 +3123,7 @@ export const generateCustomerHTML = ({
               <p><strong>Content-Typen:</strong> ${[imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length} von 3</p>
             </div>
           </div>
-          ${generateProgressBar(overallScore, `${categoryDescription}`)}
+          ${generateProgressBar(calculatedOverallScore, `${categoryDescription}`)}
         </div>
 
         <!-- Score-Berechnung -->
