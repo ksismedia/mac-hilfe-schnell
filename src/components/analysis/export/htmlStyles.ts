@@ -240,7 +240,7 @@ div[class*="section-header"],
   align-items: center !important;
   gap: 15px !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
+  margin: 0 0 0 40px !important;
   border-radius: 0 !important;
 }
 
@@ -718,7 +718,7 @@ table tr {
     font-weight: 700 !important;
     padding: 25px 40px !important;
     font-size: 1.5em !important;
-    margin: 0 !important;
+    margin: 0 0 0 40px !important;
     border-radius: 0 !important;
     display: flex !important;
     align-items: center !important;
