@@ -3317,6 +3317,134 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
+    <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border-left: 4px solid #3b82f6; border-radius: 8px;">
+      <h2 style="margin: 0; color: #3b82f6; font-size: 1.8em; font-weight: bold;">Qualität · Service · Kundenorientierung</h2>
+    </div>
+
+    <!-- Mitarbeiterqualifikation -->
+    ${(() => {
+      const hasStaffData = staffQualificationData && staffQualificationData.totalEmployees > 0;
+      
+      return hasStaffData ? `
+    <div class="section">
+      <div class="section-header">
+        <span>Personal & Qualifikation</span>
+        <div class="header-score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Personal-Qualifikation</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(staffQualificationScore)}">${Math.round(staffQualificationScore)}%</div>
+            <div class="score-details">
+              <p><strong>Gesamt-Mitarbeiter:</strong> ${staffQualificationData.totalEmployees}</p>
+              <p><strong>Qualifizierte Kräfte:</strong> ${staffQualificationData.skilled_workers + staffQualificationData.masters} von ${staffQualificationData.totalEmployees}</p>
+              <p><strong>Meister-Quote:</strong> ${staffQualificationData.masters} Meister</p>
+              <p><strong>Facharbeiter & Bürokräfte:</strong> ${staffQualificationData.skilled_workers + staffQualificationData.office_workers} qualifizierte Mitarbeiter</p>
+            </div>
+          </div>
+          ${generateProgressBar(
+            Math.round(staffQualificationScore),
+            `Qualifikationsgrad mit ${staffQualificationData.totalEmployees} Mitarbeitern, davon ${staffQualificationData.masters} Meister und ${staffQualificationData.skilled_workers} Facharbeiter`
+          )}
+        </div>
+
+        <div class="metric-card">
+          <h3>Mitarbeiterstruktur</h3>
+          ${staffQualificationData.masters > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Meister:</strong> ${staffQualificationData.masters}</p>
+            ${(() => {
+              const percentage = Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100);
+              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
+            })()}
+          </div>
+          ` : ''}
+          ${staffQualificationData.skilled_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Gesellen:</strong> ${staffQualificationData.skilled_workers}</p>
+            ${(() => {
+              const percentage = Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100);
+              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
+            })()}
+          </div>
+          ` : ''}
+          ${staffQualificationData.office_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Bürokräfte:</strong> ${staffQualificationData.office_workers}</p>
+            ${(() => {
+              const percentage = Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100);
+              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
+            })()}
+          </div>
+          ` : ''}
+          ${staffQualificationData.apprentices > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Azubis:</strong> ${staffQualificationData.apprentices}</p>
+            ${(() => {
+              const percentage = Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100);
+              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
+            })()}
+          </div>
+          ` : ''}
+          ${staffQualificationData.unskilled_workers > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <p><strong>Hilfskräfte:</strong> ${staffQualificationData.unskilled_workers}</p>
+            ${(() => {
+              const percentage = Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100);
+              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
+            })()}
+          </div>
+          ` : ''}
+        </div>
+
+        <!-- Weitere Qualifikationen -->
+        <div class="metric-card">
+          <h3>Weiterbildung & Zertifikate</h3>
+          <div style="margin-bottom: 15px;">
+            <p><strong>Zertifizierungen:</strong></p>
+            <ul style="margin-top: 5px; padding-left: 20px;">
+              ${staffQualificationData.certifications.welding_certificates ? '<li>Schweißzertifikate vorhanden</li>' : ''}
+              ${staffQualificationData.certifications.safety_training ? '<li>Sicherheitsschulung absolviert</li>' : ''}
+              ${staffQualificationData.certifications.first_aid ? '<li>Erste-Hilfe-Schulung</li>' : ''}
+              ${staffQualificationData.certifications.digital_skills ? '<li>Digitale Kompetenzen</li>' : ''}
+              ${staffQualificationData.certifications.instructor_qualification ? '<li>Ausbilderqualifikation</li>' : ''}
+              ${staffQualificationData.certifications.business_qualification ? '<li>Betriebswirtschaftliche Qualifikation</li>' : ''}
+              ${!staffQualificationData.certifications.welding_certificates && !staffQualificationData.certifications.safety_training && !staffQualificationData.certifications.first_aid && !staffQualificationData.certifications.digital_skills && !staffQualificationData.certifications.instructor_qualification && !staffQualificationData.certifications.business_qualification ? '<li>Keine angegeben</li>' : ''}
+            </ul>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <p><strong>Branchenspezifische Qualifikationen:</strong> ${staffQualificationData.industry_specific && staffQualificationData.industry_specific.length > 0 ? staffQualificationData.industry_specific.join(', ') : 'Keine angegeben'}</p>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <p><strong>Mitarbeiterfortbildungen:</strong> ${staffQualificationData.offers_employee_training ? 'Ja' : 'Nein'}</p>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <p><strong>Mitarbeiter-Zertifikate:</strong></p>
+            ${staffQualificationData.employee_certifications && staffQualificationData.employee_certifications.length > 0 ? `
+              <ul style="margin-top: 5px; padding-left: 20px;">
+                ${staffQualificationData.employee_certifications.map(cert => `<li>${cert.name} (${cert.employees_certified} Mitarbeiter)</li>`).join('')}
+              </ul>
+            ` : '<p style="margin-top: 5px;">Keine angegeben</p>'}
+          </div>
+        </div>
+
+        <div class="recommendations">
+          <h4>Empfehlungen zur Personalqualität:</h4>
+          <ul>
+            <li>Meisterquote von mindestens 10-15% anstreben für Führungsqualität</li>
+            <li>Regelmäßige Fortbildungen dokumentieren und kommunizieren</li>
+            <li>Zertifikate und Qualifikationen auf Website präsentieren</li>
+            <li>Ausbildungsbetrieb werden - zeigt Engagement für Nachwuchsförderung</li>
+            <li>Spezialisierungen und Fachqualifikationen hervorheben</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+      ` : '';
+    })()}
+
     <!-- Kategorie-Überschrift: Markt & Marktumfeld -->
     <div style="margin: 40px 0 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-left: 4px solid #fbbf24; border-radius: 8px;">
       <h2 style="margin: 0; color: #fbbf24; font-size: 1.8em; font-weight: bold;">Markt & Marktumfeld</h2>
@@ -3325,7 +3453,7 @@ export const generateCustomerHTML = ({
     <!-- Wettbewerber-Analyse -->
     <div class="section">
       <div class="section-header">
-        <span>Wettbewerber-Analyse</span>
+        <span>Wettbewerbsvergleich</span>
         ${(() => {
           const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
           const ownScore = (window as any).globalOwnCompanyScore || competitorComparisonScore || 75;
@@ -3345,7 +3473,7 @@ export const generateCustomerHTML = ({
       return `
     <div class="section">
       <div class="section-header">
-        <span>Arbeitgeber-Bewertungen</span>
+        <span>Bewertungen als Arbeitgeber</span>
         ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
       </div>
       <div class="section-content">
@@ -3512,7 +3640,7 @@ export const generateCustomerHTML = ({
       return hasCorporateData ? `
     <div class="section">
       <div class="section-header">
-        <span>Corporate Identity & Außendarstellung</span>
+        <span>Markenauftritt & Corporate Design</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
       </div>
       <div class="section-content">
