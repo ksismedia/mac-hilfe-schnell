@@ -425,9 +425,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       case 'market-environment':
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Markt & Marktumfeld</h2>
-              <p className="text-gray-300">Stundensatz, Personal und Wettbewerbsumfeld</p>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-white mb-2 border-b border-white pb-2 inline-block">Markt & Marktumfeld</h2>
+              <p className="text-gray-300 mt-4">Stundensatz, Personal und Wettbewerbsumfeld</p>
             </div>
             <StaffServiceCategory 
               businessData={businessData}
@@ -446,9 +446,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       case 'corporate-appearance':
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Außendarstellung & Erscheinungsbild</h2>
-              <p className="text-gray-300">Corporate Design</p>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-white mb-2 border-b border-white pb-2 inline-block">Außendarstellung & Erscheinungsbild</h2>
+              <p className="text-gray-300 mt-4">Corporate Design</p>
             </div>
             <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
               <CorporateIdentityInput 
@@ -465,9 +465,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       case 'service-quality':
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Qualität · Service · Kundenorientierung</h2>
-              <p className="text-gray-300">Kundenservice und Angebotserstellung</p>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-white mb-2 border-b border-white pb-2 inline-block">Qualität · Service · Kundenorientierung</h2>
+              <p className="text-gray-300 mt-4">Kundenservice und Angebotserstellung</p>
             </div>
             <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
               <QuoteResponseInput 

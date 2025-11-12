@@ -84,9 +84,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-yellow-400 mb-2">SEO & Content Analyse</h2>
-        <p className="text-gray-300">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-white mb-2 border-b border-white pb-2 inline-block">SEO & Content Analyse</h2>
+        <p className="text-gray-300 mt-4">Suchmaschinenoptimierung, Keywords und Inhaltsqualität</p>
       </div>
       
       
