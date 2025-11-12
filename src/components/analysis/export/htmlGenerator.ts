@@ -2936,146 +2936,133 @@ export const generateCustomerHTML = ({
         <div class="header-score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
       </div>
       <div class="section-content">
-        <div class="metric-card">
-          <h3>Conversion-Rate Optimierung</h3>
-          <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
-            <div class="score-details">
-              <p><strong>Status:</strong> ${manualConversionData.overallScore >= 75 ? 'Sehr gute Basis' : manualConversionData.overallScore >= 60 ? 'Gute Basis vorhanden' : 'Optimierungsbedarf'}</p>
-              <p><strong>Empfehlung:</strong> ${manualConversionData.overallScore >= 75 ? 'Feintuning möglich' : 'Weitere Optimierungen empfohlen'}</p>
+        
+        <!-- Sub-Section: Conversion-Rate Optimierung -->
+        <div style="margin-bottom: 40px;">
+          <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); padding: 20px; border-radius: 12px; border-left: 4px solid #fbbf24;">
+            <h3 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 1.3em;">Conversion-Rate Optimierung</h3>
+            <div class="score-display">
+              <div class="score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
+              <div class="score-details">
+                <p><strong>Status:</strong> ${manualConversionData.overallScore >= 75 ? 'Sehr gute Basis' : manualConversionData.overallScore >= 60 ? 'Gute Basis vorhanden' : 'Optimierungsbedarf'}</p>
+                <p><strong>Empfehlung:</strong> ${manualConversionData.overallScore >= 75 ? 'Feintuning möglich' : 'Weitere Optimierungen empfohlen'}</p>
+              </div>
             </div>
+            ${generateProgressBar(manualConversionData.overallScore, `Conversion-Rate-Optimierung: ${manualConversionData.overallScore}%`)}
           </div>
-          ${generateProgressBar(manualConversionData.overallScore, `Conversion-Rate-Optimierung: ${manualConversionData.overallScore}%`)}
-        </div>
-        
-        <div class="collapsible" onclick="toggleSection('conversion-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ Conversion-Details anzeigen</h4>
-        </div>
-        
-        <div id="conversion-details" style="display: none;">
-          <!-- Call-to-Action Analyse -->
-          <div class="metric-card ${manualConversionData.ctaScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
-            <h3>Call-to-Action (CTA) Analyse</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-              <div>
-                <p><strong>Gesamt-CTAs:</strong> ${manualConversionData.totalCTAs}</p>
-                <p style="font-size: 0.9rem; color: #6b7280;">Davon ${manualConversionData.visibleCTAs} sichtbar, ${manualConversionData.effectiveCTAs} effektiv</p>
-              </div>
-              <div>
-                <p><strong>Above-the-Fold:</strong> ${manualConversionData.aboveFoldCTAs} CTAs</p>
-                <p style="font-size: 0.9rem; color: #6b7280;">Direkt im sichtbaren Bereich</p>
-              </div>
-              <div>
-                <p><strong>CTA-Score:</strong> ${manualConversionData.ctaScore}%</p>
-                ${generateProgressBar(manualConversionData.ctaScore, `${manualConversionData.ctaScore >= 70 ? 'Gute' : 'Verbesserungsfähige'} CTA-Platzierung`)}
-              </div>
-            </div>
-            
-            ${manualConversionData.ctaTypes && manualConversionData.ctaTypes.length > 0 ? `
-            <!-- CTA-Typen Details -->
-            <div style="margin-top: 20px;">
-              <h4>CTA-Typen Performance</h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
-                ${manualConversionData.ctaTypes.map(cta => `
-                <div style="padding: 15px; background: ${cta.effectiveness >= 70 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)'}; border-radius: 8px;">
-                  <p><strong>${cta.type} (${cta.count}x)</strong></p>
-                  <p style="font-size: 0.9rem; color: ${cta.mobileOptimized ? '#22c55e' : '#ef4444'};">${cta.mobileOptimized ? '✓' : '✗'} Mobile optimiert</p>
-                  <p style="font-size: 0.9rem; color: ${cta.trackingSetup ? '#22c55e' : '#ef4444'};">${cta.trackingSetup ? '✓' : '✗'} Tracking ${cta.trackingSetup ? 'aktiv' : 'fehlt'}</p>
-                  ${generateProgressBar(cta.effectiveness, `Effektivität: ${cta.effectiveness}%`)}
+          
+          <div class="collapsible" onclick="toggleSection('conversion-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+            <h4 style="color: #fbbf24; margin: 0;">▶ Conversion-Details anzeigen</h4>
+          </div>
+          
+          <div id="conversion-details" style="display: none;">
+            <!-- Call-to-Action Analyse -->
+            <div class="metric-card ${manualConversionData.ctaScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
+              <h3>Call-to-Action (CTA) Analyse</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div>
+                  <p><strong>Gesamt-CTAs:</strong> ${manualConversionData.totalCTAs}</p>
+                  <p style="font-size: 0.9rem; color: #6b7280;">Davon ${manualConversionData.visibleCTAs} sichtbar, ${manualConversionData.effectiveCTAs} effektiv</p>
                 </div>
-                `).join('')}
+                <div>
+                  <p><strong>Above-the-Fold:</strong> ${manualConversionData.aboveFoldCTAs} CTAs</p>
+                  <p style="font-size: 0.9rem; color: #6b7280;">Direkt im sichtbaren Bereich</p>
+                </div>
+                <div>
+                  <p><strong>CTA-Score:</strong> ${manualConversionData.ctaScore}%</p>
+                  ${generateProgressBar(manualConversionData.ctaScore, `${manualConversionData.ctaScore >= 70 ? 'Gute' : 'Verbesserungsfähige'} CTA-Platzierung`)}
+                </div>
               </div>
+              
+              ${manualConversionData.ctaTypes && manualConversionData.ctaTypes.length > 0 ? `
+              <!-- CTA-Typen Details -->
+              <div style="margin-top: 20px;">
+                <h4>CTA-Typen Performance</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                  ${manualConversionData.ctaTypes.map(cta => `
+                  <div style="padding: 15px; background: ${cta.effectiveness >= 70 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)'}; border-radius: 8px;">
+                    <p><strong>${cta.type} (${cta.count}x)</strong></p>
+                    <p style="font-size: 0.9rem; color: ${cta.mobileOptimized ? '#22c55e' : '#ef4444'};">${cta.mobileOptimized ? '✓' : '✗'} Mobile optimiert</p>
+                    <p style="font-size: 0.9rem; color: ${cta.trackingSetup ? '#22c55e' : '#ef4444'};">${cta.trackingSetup ? '✓' : '✗'} Tracking ${cta.trackingSetup ? 'aktiv' : 'fehlt'}</p>
+                    ${generateProgressBar(cta.effectiveness, `Effektivität: ${cta.effectiveness}%`)}
+                  </div>
+                  `).join('')}
+                </div>
+              </div>
+              ` : ''}
             </div>
-            ` : ''}
-          </div>
 
-          <!-- Kontaktmethoden -->
-          <div class="metric-card ${manualConversionData.contactScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
-            <h3>Kontaktmethoden Analyse</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-              ${manualConversionData.contactMethods.phone.visible ? `
-              <div>
-                <p><strong>Telefon</strong></p>
-                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.prominent ? '✓' : '○'} Prominent</p>
-                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.clickable ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.clickable ? '✓' : '○'} Klickbar</p>
+            <!-- Kontaktmethoden -->
+            <div class="metric-card ${manualConversionData.contactScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
+              <h3>Kontaktmethoden Analyse</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                ${manualConversionData.contactMethods.phone.visible ? `
+                <div>
+                  <p><strong>Telefon</strong></p>
+                  <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.prominent ? '✓' : '○'} Prominent</p>
+                  <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.clickable ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.clickable ? '✓' : '○'} Klickbar</p>
+                </div>
+                ` : ''}
+                ${manualConversionData.contactMethods.email.visible ? `
+                <div>
+                  <p><strong>E-Mail</strong></p>
+                  <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.email.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.email.prominent ? '✓' : '○'} ${manualConversionData.contactMethods.email.prominent ? 'Prominent' : 'Sichtbar'}</p>
+                </div>
+                ` : ''}
+                ${manualConversionData.contactMethods.form.present ? `
+                <div>
+                  <p><strong>Kontaktformular</strong></p>
+                  <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.form.mobileOptimized ? '#22c55e' : '#fbbf24'};">${manualConversionData.contactMethods.form.mobileOptimized ? '✓' : '⚠'} ${manualConversionData.contactMethods.form.mobileOptimized ? 'Mobile-freundlich' : 'Mobile-Optimierung empfohlen'}</p>
+                </div>
+                ` : ''}
+                ${manualConversionData.contactMethods.whatsapp.present ? `
+                <div>
+                  <p><strong>WhatsApp</strong></p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
+                </div>
+                ` : ''}
+                ${manualConversionData.contactMethods.callback.present ? `
+                <div>
+                  <p><strong>Rückruf-Service</strong></p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
+                </div>
+                ` : ''}
+                ${manualConversionData.contactMethods.chat.present ? `
+                <div>
+                  <p><strong>Live-Chat</strong></p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
+                </div>
+                ` : ''}
               </div>
-              ` : ''}
-              ${manualConversionData.contactMethods.email.visible ? `
-              <div>
-                <p><strong>E-Mail</strong></p>
-                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.email.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.email.prominent ? '✓' : '○'} ${manualConversionData.contactMethods.email.prominent ? 'Prominent' : 'Sichtbar'}</p>
-              </div>
-              ` : ''}
-              ${manualConversionData.contactMethods.form.present ? `
-              <div>
-                <p><strong>Kontaktformular</strong></p>
-                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.form.mobileOptimized ? '#22c55e' : '#fbbf24'};">${manualConversionData.contactMethods.form.mobileOptimized ? '✓' : '⚠'} ${manualConversionData.contactMethods.form.mobileOptimized ? 'Mobile-freundlich' : 'Mobile-Optimierung empfohlen'}</p>
-              </div>
-              ` : ''}
-              ${manualConversionData.contactMethods.whatsapp.present ? `
-              <div>
-                <p><strong>WhatsApp</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
-              </div>
-              ` : ''}
-              ${manualConversionData.contactMethods.callback.present ? `
-              <div>
-                <p><strong>Rückruf-Service</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
-              </div>
-              ` : ''}
-              ${manualConversionData.contactMethods.chat.present ? `
-              <div>
-                <p><strong>Live-Chat</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
-              </div>
-              ` : ''}
+              <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> ${manualConversionData.contactScore}%</p>
+              ${generateProgressBar(manualConversionData.contactScore, manualConversionData.contactScore >= 70 ? 'Sehr gute Erreichbarkeit' : 'Ausbaufähige Erreichbarkeit')}
             </div>
-            <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> ${manualConversionData.contactScore}%</p>
-            ${generateProgressBar(manualConversionData.contactScore, manualConversionData.contactScore >= 70 ? 'Sehr gute Erreichbarkeit' : 'Ausbaufähige Erreichbarkeit')}
-          </div>
 
-          <!-- User Journey -->
-          <div class="metric-card" style="margin-top: 20px;">
-            <h3>User Journey Optimierung</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-              <div>
-                <p><strong>Landing Page</strong></p>
-                ${generateProgressBar(
-                  manualConversionData.userJourneyDetails?.landingPageScore || 0, 
-                  'Bewertet wurden: Headline, Value Proposition, Trust Signals'
-                )}
-              </div>
-              <div>
-                <p><strong>Navigation</strong></p>
-                ${generateProgressBar(
-                  manualConversionData.userJourneyDetails?.navigationScore || 0, 
-                  'Bewertet wurden: Menüstruktur, Breadcrumbs, Suchfunktion'
-                )}
-              </div>
-              <div>
-                <p><strong>Informationshierarchie</strong></p>
-                ${generateProgressBar(
-                  manualConversionData.userJourneyDetails?.informationHierarchyScore || 0, 
-                  'Bewertet wurden: Content Flow, Scanability, CTA-Platzierung'
-                )}
-              </div>
-              <div>
-                <p><strong>Vertrauenselemente</strong></p>
-                ${generateProgressBar(
-                  manualConversionData.userJourneyDetails?.trustElementsScore || 0, 
-                  'Bewertet wurden: Testimonials, Zertifikate, Garantien'
-                )}
-              </div>
-              <div>
-                <p><strong>Dringlichkeitselemente</strong></p>
-                ${generateProgressBar(
-                  manualConversionData.userJourneyDetails?.urgencyElementsScore || 0, 
-                  'Bewertet wurden: Limitierte Angebote, zeitliche Beschränkungen'
-                )}
+            <!-- Handlungsempfehlungen für Conversion -->
+            <div class="recommendations">
+              <h4>Prioritäre Handlungsempfehlungen (Conversion)</h4>
+              <ul>
+                <li><strong>Tracking implementieren:</strong> Conversion-Tracking für Kontaktformular und WhatsApp einrichten</li>
+                <li><strong>Mobile-Optimierung:</strong> E-Mail-CTAs für mobile Geräte optimieren</li>
+                <li><strong>Live-Chat hinzufügen:</strong> Chat-System mit FAQ-Bot für schnellere Kundenansprache</li>
+                <li><strong>WhatsApp optimieren:</strong> Automatische Begrüßungsnachricht einrichten</li>
+                <li><strong>A/B-Testing:</strong> CTA-Varianten testen zur Optimierung der Conversion-Rate</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Section: User Journey Optimierung -->
+        <div style="margin-bottom: 40px;">
+          <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15)); padding: 20px; border-radius: 12px; border-left: 4px solid #8b5cf6;">
+            <h3 style="color: #8b5cf6; margin: 0 0 15px 0; font-size: 1.3em;">User Journey Optimierung</h3>
+            <div class="score-display">
+              <div class="score-circle ${getScoreColorClass(manualConversionData.userJourneyScore)}">${manualConversionData.userJourneyScore}%</div>
+              <div class="score-details">
+                <p><strong>Status:</strong> ${manualConversionData.userJourneyScore >= 75 ? 'Sehr gute User Journey' : manualConversionData.userJourneyScore >= 60 ? 'Gute Basis vorhanden' : 'Optimierungsbedarf'}</p>
+                <p><strong>Nutzerführung:</strong> ${manualConversionData.userJourneyScore >= 75 ? 'Nutzer finden sich gut zurecht' : 'Sollte verbessert werden'}</p>
               </div>
             </div>
-            <p style="margin-top: 15px;"><strong>User Journey Score:</strong> ${manualConversionData.userJourneyScore}%</p>
             ${generateProgressBar(
               manualConversionData.userJourneyScore, 
               manualConversionData.userJourneyScore >= 75 
@@ -3086,20 +3073,67 @@ export const generateCustomerHTML = ({
             )}
           </div>
 
-          <!-- Handlungsempfehlungen -->
-          <div class="recommendations">
-            <h4>Prioritäre Handlungsempfehlungen</h4>
-            <ul>
-              <li><strong>Tracking implementieren:</strong> Conversion-Tracking für Kontaktformular und WhatsApp einrichten</li>
-              <li><strong>Mobile-Optimierung:</strong> E-Mail-CTAs für mobile Geräte optimieren</li>
-              <li><strong>Live-Chat hinzufügen:</strong> Chat-System mit FAQ-Bot für schnellere Kundenansprache</li>
-              <li><strong>Suchfunktion:</strong> Website-Suche implementieren für bessere Navigation</li>
-              <li><strong>Dringlichkeit schaffen:</strong> Zeitlich begrenzte Angebote oder Aktionen einführen</li>
-              <li><strong>WhatsApp optimieren:</strong> Automatische Begrüßungsnachricht einrichten</li>
-              <li><strong>A/B-Testing:</strong> CTA-Varianten testen zur Optimierung der Conversion-Rate</li>
-            </ul>
+          <div class="collapsible" onclick="toggleSection('user-journey-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
+            <h4 style="color: #8b5cf6; margin: 0;">▶ User Journey Details anzeigen</h4>
+          </div>
+          
+          <div id="user-journey-details" style="display: none;">
+            <!-- User Journey Komponenten -->
+            <div class="metric-card" style="margin-top: 20px;">
+              <h3>User Journey Komponenten</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div>
+                  <p><strong>Landing Page</strong></p>
+                  ${generateProgressBar(
+                    manualConversionData.userJourneyDetails?.landingPageScore || 0, 
+                    'Bewertet wurden: Headline, Value Proposition, Trust Signals'
+                  )}
+                </div>
+                <div>
+                  <p><strong>Navigation</strong></p>
+                  ${generateProgressBar(
+                    manualConversionData.userJourneyDetails?.navigationScore || 0, 
+                    'Bewertet wurden: Menüstruktur, Breadcrumbs, Suchfunktion'
+                  )}
+                </div>
+                <div>
+                  <p><strong>Informationshierarchie</strong></p>
+                  ${generateProgressBar(
+                    manualConversionData.userJourneyDetails?.informationHierarchyScore || 0, 
+                    'Bewertet wurden: Content Flow, Scanability, CTA-Platzierung'
+                  )}
+                </div>
+                <div>
+                  <p><strong>Vertrauenselemente</strong></p>
+                  ${generateProgressBar(
+                    manualConversionData.userJourneyDetails?.trustElementsScore || 0, 
+                    'Bewertet wurden: Testimonials, Zertifikate, Garantien'
+                  )}
+                </div>
+                <div>
+                  <p><strong>Dringlichkeitselemente</strong></p>
+                  ${generateProgressBar(
+                    manualConversionData.userJourneyDetails?.urgencyElementsScore || 0, 
+                    'Bewertet wurden: Limitierte Angebote, zeitliche Beschränkungen'
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <!-- Handlungsempfehlungen für User Journey -->
+            <div class="recommendations">
+              <h4>Prioritäre Handlungsempfehlungen (User Journey)</h4>
+              <ul>
+                <li><strong>Suchfunktion:</strong> Website-Suche implementieren für bessere Navigation</li>
+                <li><strong>Dringlichkeit schaffen:</strong> Zeitlich begrenzte Angebote oder Aktionen einführen</li>
+                <li><strong>Trust Signals:</strong> Mehr Kundenbewertungen und Zertifikate prominent platzieren</li>
+                <li><strong>Content Flow:</strong> Informationshierarchie optimieren für bessere Scanbarkeit</li>
+                <li><strong>Breadcrumbs:</strong> Navigationspfad einführen für bessere Orientierung</li>
+              </ul>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
     ` : ''}
