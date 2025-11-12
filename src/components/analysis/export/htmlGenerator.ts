@@ -3407,51 +3407,40 @@ export const generateCustomerHTML = ({
 
         <div class="metric-card">
           <h3>Mitarbeiterstruktur</h3>
-          ${staffQualificationData.masters > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Meister:</strong> ${staffQualificationData.masters}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
+          <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              ${staffQualificationData.masters > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Meister:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.masters} (${Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.skilled_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Gesellen:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.skilled_workers} (${Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.office_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Bürokräfte:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.office_workers} (${Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.apprentices > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Azubis:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.apprentices} (${Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.unskilled_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Hilfskräfte:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.unskilled_workers} (${Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+            </table>
           </div>
-          ` : ''}
-          ${staffQualificationData.skilled_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Gesellen:</strong> ${staffQualificationData.skilled_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.office_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Bürokräfte:</strong> ${staffQualificationData.office_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.apprentices > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Azubis:</strong> ${staffQualificationData.apprentices}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.unskilled_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Hilfskräfte:</strong> ${staffQualificationData.unskilled_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
         </div>
 
         <!-- Weitere Qualifikationen -->
@@ -3566,51 +3555,40 @@ export const generateCustomerHTML = ({
 
         <div class="metric-card">
           <h3>Mitarbeiterstruktur</h3>
-          ${staffQualificationData.masters > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Meister:</strong> ${staffQualificationData.masters}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
+          <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              ${staffQualificationData.masters > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Meister:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.masters} (${Math.round((staffQualificationData.masters / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.skilled_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Gesellen:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.skilled_workers} (${Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.office_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Bürokräfte:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.office_workers} (${Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.apprentices > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Azubis:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.apprentices} (${Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+              ${staffQualificationData.unskilled_workers > 0 ? `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Ungelernte:</td>
+                <td style="padding: 10px 0; text-align: right; color: #ffffff;">${staffQualificationData.unskilled_workers} (${Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100)}%)</td>
+              </tr>
+              ` : ''}
+            </table>
           </div>
-          ` : ''}
-          ${staffQualificationData.skilled_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Gesellen:</strong> ${staffQualificationData.skilled_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.skilled_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.office_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Bürokräfte:</strong> ${staffQualificationData.office_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.office_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.apprentices > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Azubis:</strong> ${staffQualificationData.apprentices}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.apprentices / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
-          ${staffQualificationData.unskilled_workers > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <p><strong>Ungelernte:</strong> ${staffQualificationData.unskilled_workers}</p>
-            ${(() => {
-              const percentage = Math.round((staffQualificationData.unskilled_workers / staffQualificationData.totalEmployees) * 100);
-              return generateProgressBar(percentage, `${percentage}% der Mitarbeiter`);
-            })()}
-          </div>
-          ` : ''}
         </div>
 
         ${Object.values(staffQualificationData.certifications).some(val => val === true) ? `
