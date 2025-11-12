@@ -111,8 +111,8 @@ section[class*="section"],
   -webkit-text-fill-color: transparent;
   font-weight: 700;
 }
-/* Kategorie-Überschriften (h2) - einheitliche 40px Einrückung */
-h2 {
+/* Nur Kategorie-Überschriften (h2 direkt im body, nicht in sections) - 40px Einrückung */
+body > h2 {
   margin-left: 40px !important;
   box-sizing: border-box !important;
 }
