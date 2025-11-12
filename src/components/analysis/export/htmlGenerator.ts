@@ -3560,115 +3560,8 @@ export const generateCustomerHTML = ({
     </div>
     ` : ''}
 
-    <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h2>
-    </div>
-
-    <!-- Corporate Identity & Außendarstellung -->
-    ${(() => {
-      const hasCorporateData = manualCorporateIdentityData !== null;
-      
-      return hasCorporateData ? `
-    <div class="section">
-      <div class="section-header">
-        <span>Erscheinungsbild & Außendarstellung</span>
-        <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
-      </div>
-      <div class="section-content">
-        <div class="metric-card">
-          <h3>Corporate Design</h3>
-          <p style="margin-bottom: 15px;">Ein einheitliches Corporate Design stärkt die Markenidentität und sorgt für professionellen Auftritt.</p>
-          
-          <div style="margin-bottom: 15px;">
-            <p><strong>Einheitliches Logo:</strong> ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'Konsistent vorhanden' : manualCorporateIdentityData.uniformLogo === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformLogo === 'yes' ? 100 : manualCorporateIdentityData.uniformLogo === 'no' ? 0 : 50, manualCorporateIdentityData.uniformLogo === 'yes' ? 'Logo wird konsistent verwendet' : 'Logo sollte vereinheitlicht werden')}
-          </div>
-          
-          <div style="margin-bottom: 15px;">
-            <p><strong>Arbeitskleidung:</strong> ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitlich vorhanden' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 100 : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitliche Arbeitskleidung vorhanden' : 'Einheitliche Arbeitskleidung empfohlen')}
-          </div>
-          
-          <div style="margin-bottom: 15px;">
-            <p><strong>Farbkonzept:</strong> ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistent eingesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformColorScheme === 'yes' ? 100 : manualCorporateIdentityData.uniformColorScheme === 'no' ? 0 : 50, manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistentes Farbkonzept' : 'Farbkonzept sollte vereinheitlicht werden')}
-          </div>
-          
-          <div style="margin-bottom: 15px;">
-            <p><strong>Schriftarten:</strong> ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitlich verwendet' : manualCorporateIdentityData.uniformTypography === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformTypography === 'yes' ? 100 : manualCorporateIdentityData.uniformTypography === 'no' ? 0 : 50, manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitliche Schriftarten' : 'Schriftarten sollten vereinheitlicht werden')}
-          </div>
-          
-          <div>
-            <p><strong>Website-Design:</strong> ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Konsistent gestaltet' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
-            ${generateProgressBar(manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 100 : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Website-Design ist konsistent' : 'Website-Design sollte überarbeitet werden')}
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <h3>Marketing & Werbemittel</h3>
-          
-          <p><strong>Hauszeitung/Newsletter:</strong> ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'Wird eingesetzt' : manualCorporateIdentityData.hauszeitung === 'no' ? 'Nicht vorhanden' : 'Unbekannt'}</p>
-          
-          <p><strong>Hersteller-Infos:</strong> ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'Werden genutzt' : manualCorporateIdentityData.herstellerInfos === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
-        </div>
-
-        <div class="metric-card">
-          <h3>Fahrzeugflotte & Außenwirkung</h3>
-          
-          <div style="margin-bottom: 15px;">
-            <p><strong>Fahrzeugbeschriftung:</strong> ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitlich gestaltet' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
-            ${manualCorporateIdentityData.uniformVehicleBranding !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 100 : 0, manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitliche Fahrzeugbeschriftung vorhanden' : 'Einheitliche Fahrzeugbeschriftung empfohlen') : ''}
-          </div>
-          
-          <div>
-            <p><strong>Fahrzeugzustand:</strong> ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Gepflegt & sauber' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'Verbesserungsbedarf' : 'Unbekannt'}</p>
-            ${manualCorporateIdentityData.vehicleCondition !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.vehicleCondition === 'yes' ? 100 : 0, manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Fahrzeuge in gutem Zustand' : 'Fahrzeugpflege sollte verbessert werden') : ''}
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <h3>Außenwerbung</h3>
-          
-          <p><strong>Bauzaun-Banner:</strong> ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'Werden eingesetzt' : manualCorporateIdentityData.bauzaunBanner === 'no' ? 'Nicht im Einsatz' : 'Unbekannt'}</p>
-          
-          <p><strong>Banden-Werbung:</strong> ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'Aktiv genutzt' : manualCorporateIdentityData.bandenWerbung === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
-        </div>
-
-        ${manualCorporateIdentityData.notes ? `
-        <div class="metric-card">
-          <h3>Zusätzliche Hinweise</h3>
-          <p style="white-space: pre-wrap;">${manualCorporateIdentityData.notes}</p>
-        </div>
-        ` : ''}
-
-        <div class="recommendations">
-          <h4>Empfehlungen zur Optimierung</h4>
-          <ul>
-            ${manualCorporateIdentityData.uniformLogo === 'no' || manualCorporateIdentityData.uniformLogo === 'unknown' ? '<li>Einheitliches Logo auf allen Kommunikationskanälen verwenden</li>' : ''}
-            ${manualCorporateIdentityData.uniformWorkClothing === 'no' || manualCorporateIdentityData.uniformWorkClothing === 'unknown' ? '<li>Einheitliche Arbeitskleidung mit Firmenlogo für professionellen Auftritt einführen</li>' : ''}
-            ${manualCorporateIdentityData.uniformColorScheme === 'no' || manualCorporateIdentityData.uniformColorScheme === 'unknown' ? '<li>Konsistentes Farbkonzept für alle Marketing-Materialien entwickeln</li>' : ''}
-            ${manualCorporateIdentityData.uniformVehicleBranding === 'no' || manualCorporateIdentityData.uniformVehicleBranding === 'unknown' ? '<li>Firmenfahrzeuge professionell beschriften für mobile Werbung</li>' : ''}
-            ${manualCorporateIdentityData.vehicleCondition === 'no' || manualCorporateIdentityData.vehicleCondition === 'unknown' ? '<li>Fahrzeugflotte regelmäßig reinigen und in gutem Zustand halten</li>' : ''}
-            ${manualCorporateIdentityData.hauszeitung === 'no' ? '<li>Newsletter oder Kundenmagazin zur Kundenbindung etablieren</li>' : ''}
-            ${manualCorporateIdentityData.bauzaunBanner === 'no' ? '<li>Baustellen-Werbung nutzen, um lokale Sichtbarkeit zu erhöhen</li>' : ''}
-            <li>Corporate Design Manual erstellen für konsistente Markenkommunikation</li>
-            <li>Regelmäßiges Marken-Audit durchführen, um Konsistenz sicherzustellen</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-      ` : '';
-    })()}
-
-    <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
-    </div>
-
-    ${quoteResponseData && quoteResponseData.responseTime ? `
     <!-- Reaktionszeit auf Anfragen -->
+    ${quoteResponseData && quoteResponseData.responseTime ? `
     <div class="section">
       <div class="section-header">
         <span>Reaktionszeit auf Anfragen</span>
@@ -3799,6 +3692,108 @@ export const generateCustomerHTML = ({
       </div>
     </div>
     ` : ''}
+
+    <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h2>
+    </div>
+
+    <!-- Corporate Identity & Außendarstellung -->
+    ${(() => {
+      const hasCorporateData = manualCorporateIdentityData !== null;
+      
+      return hasCorporateData ? `
+    <div class="section">
+      <div class="section-header">
+        <span>Erscheinungsbild & Außendarstellung</span>
+        <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Corporate Design</h3>
+          <p style="margin-bottom: 15px;">Ein einheitliches Corporate Design stärkt die Markenidentität und sorgt für professionellen Auftritt.</p>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Einheitliches Logo:</strong> ${manualCorporateIdentityData.uniformLogo === 'yes' ? 'Konsistent vorhanden' : manualCorporateIdentityData.uniformLogo === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformLogo === 'yes' ? 100 : manualCorporateIdentityData.uniformLogo === 'no' ? 0 : 50, manualCorporateIdentityData.uniformLogo === 'yes' ? 'Logo wird konsistent verwendet' : 'Logo sollte vereinheitlicht werden')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Arbeitskleidung:</strong> ${manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitlich vorhanden' : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 100 : manualCorporateIdentityData.uniformWorkClothing === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWorkClothing === 'yes' ? 'Einheitliche Arbeitskleidung vorhanden' : 'Einheitliche Arbeitskleidung empfohlen')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Farbkonzept:</strong> ${manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistent eingesetzt' : manualCorporateIdentityData.uniformColorScheme === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformColorScheme === 'yes' ? 100 : manualCorporateIdentityData.uniformColorScheme === 'no' ? 0 : 50, manualCorporateIdentityData.uniformColorScheme === 'yes' ? 'Konsistentes Farbkonzept' : 'Farbkonzept sollte vereinheitlicht werden')}
+          </div>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Schriftarten:</strong> ${manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitlich verwendet' : manualCorporateIdentityData.uniformTypography === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformTypography === 'yes' ? 100 : manualCorporateIdentityData.uniformTypography === 'no' ? 0 : 50, manualCorporateIdentityData.uniformTypography === 'yes' ? 'Einheitliche Schriftarten' : 'Schriftarten sollten vereinheitlicht werden')}
+          </div>
+          
+          <div>
+            <p><strong>Website-Design:</strong> ${manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Konsistent gestaltet' : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 'Inkonsistent' : 'Unbekannt'}</p>
+            ${generateProgressBar(manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 100 : manualCorporateIdentityData.uniformWebsiteDesign === 'no' ? 0 : 50, manualCorporateIdentityData.uniformWebsiteDesign === 'yes' ? 'Website-Design ist konsistent' : 'Website-Design sollte überarbeitet werden')}
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <h3>Marketing & Werbemittel</h3>
+          
+          <p><strong>Hauszeitung/Newsletter:</strong> ${manualCorporateIdentityData.hauszeitung === 'yes' ? 'Wird eingesetzt' : manualCorporateIdentityData.hauszeitung === 'no' ? 'Nicht vorhanden' : 'Unbekannt'}</p>
+          
+          <p><strong>Hersteller-Infos:</strong> ${manualCorporateIdentityData.herstellerInfos === 'yes' ? 'Werden genutzt' : manualCorporateIdentityData.herstellerInfos === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
+        </div>
+
+        <div class="metric-card">
+          <h3>Fahrzeugflotte & Außenwirkung</h3>
+          
+          <div style="margin-bottom: 15px;">
+            <p><strong>Fahrzeugbeschriftung:</strong> ${manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitlich gestaltet' : manualCorporateIdentityData.uniformVehicleBranding === 'no' ? 'Nicht einheitlich' : 'Unbekannt'}</p>
+            ${manualCorporateIdentityData.uniformVehicleBranding !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 100 : 0, manualCorporateIdentityData.uniformVehicleBranding === 'yes' ? 'Einheitliche Fahrzeugbeschriftung vorhanden' : 'Einheitliche Fahrzeugbeschriftung empfohlen') : ''}
+          </div>
+          
+          <div>
+            <p><strong>Fahrzeugzustand:</strong> ${manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Gepflegt & sauber' : manualCorporateIdentityData.vehicleCondition === 'no' ? 'Verbesserungsbedarf' : 'Unbekannt'}</p>
+            ${manualCorporateIdentityData.vehicleCondition !== 'unknown' ? generateProgressBar(manualCorporateIdentityData.vehicleCondition === 'yes' ? 100 : 0, manualCorporateIdentityData.vehicleCondition === 'yes' ? 'Fahrzeuge in gutem Zustand' : 'Fahrzeugpflege sollte verbessert werden') : ''}
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <h3>Außenwerbung</h3>
+          
+          <p><strong>Bauzaun-Banner:</strong> ${manualCorporateIdentityData.bauzaunBanner === 'yes' ? 'Werden eingesetzt' : manualCorporateIdentityData.bauzaunBanner === 'no' ? 'Nicht im Einsatz' : 'Unbekannt'}</p>
+          
+          <p><strong>Banden-Werbung:</strong> ${manualCorporateIdentityData.bandenWerbung === 'yes' ? 'Aktiv genutzt' : manualCorporateIdentityData.bandenWerbung === 'no' ? 'Nicht genutzt' : 'Unbekannt'}</p>
+        </div>
+
+        ${manualCorporateIdentityData.notes ? `
+        <div class="metric-card">
+          <h3>Zusätzliche Hinweise</h3>
+          <p style="white-space: pre-wrap;">${manualCorporateIdentityData.notes}</p>
+        </div>
+        ` : ''}
+
+        <div class="recommendations">
+          <h4>Empfehlungen zur Optimierung</h4>
+          <ul>
+            ${manualCorporateIdentityData.uniformLogo === 'no' || manualCorporateIdentityData.uniformLogo === 'unknown' ? '<li>Einheitliches Logo auf allen Kommunikationskanälen verwenden</li>' : ''}
+            ${manualCorporateIdentityData.uniformWorkClothing === 'no' || manualCorporateIdentityData.uniformWorkClothing === 'unknown' ? '<li>Einheitliche Arbeitskleidung mit Firmenlogo für professionellen Auftritt einführen</li>' : ''}
+            ${manualCorporateIdentityData.uniformColorScheme === 'no' || manualCorporateIdentityData.uniformColorScheme === 'unknown' ? '<li>Konsistentes Farbkonzept für alle Marketing-Materialien entwickeln</li>' : ''}
+            ${manualCorporateIdentityData.uniformVehicleBranding === 'no' || manualCorporateIdentityData.uniformVehicleBranding === 'unknown' ? '<li>Firmenfahrzeuge professionell beschriften für mobile Werbung</li>' : ''}
+            ${manualCorporateIdentityData.vehicleCondition === 'no' || manualCorporateIdentityData.vehicleCondition === 'unknown' ? '<li>Fahrzeugflotte regelmäßig reinigen und in gutem Zustand halten</li>' : ''}
+            ${manualCorporateIdentityData.hauszeitung === 'no' ? '<li>Newsletter oder Kundenmagazin zur Kundenbindung etablieren</li>' : ''}
+            ${manualCorporateIdentityData.bauzaunBanner === 'no' ? '<li>Baustellen-Werbung nutzen, um lokale Sichtbarkeit zu erhöhen</li>' : ''}
+            <li>Corporate Design Manual erstellen für konsistente Markenkommunikation</li>
+            <li>Regelmäßiges Marken-Audit durchführen, um Konsistenz sicherzustellen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+      ` : '';
+    })()}
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
