@@ -264,7 +264,7 @@ div.collapsible.section-header {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  font-size: 0.9em;
+  font-size: 0.7em;
   font-weight: 700;
   font-family: 'Arial', 'Helvetica', sans-serif;
   font-variant-numeric: tabular-nums;
@@ -1061,7 +1061,7 @@ table tr {
   .header-score-circle.neutral {
     background: #e5e7eb !important;
     color: #6b7280 !important;
-    font-size: 1.2em !important;
+    font-size: 0.7em !important;
     font-weight: normal !important;
   }
 
