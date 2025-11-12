@@ -712,48 +712,37 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   // Wenn keine Außendarstellungs-Daten vorhanden, verwende Defaultwert
   if (!data) return 50;
   
-  const calculateScore = (fields: Array<'yes' | 'no' | 'unknown'>) => {
-    const knownFields = fields.filter(f => f !== 'unknown');
-    if (knownFields.length === 0) return null; // null = keine Daten verfügbar
-    const yesCount = knownFields.filter(f => f === 'yes').length;
-    return Math.round((yesCount / knownFields.length) * 100);
-  };
-  
-  // Corporate Design (5 Felder)
-  const cdScore = calculateScore([
+  // Zähle alle Felder
+  const allFields = [
+    // Corporate Design (5 Felder)
     data.uniformLogo,
     data.uniformWorkClothing,
     data.uniformColorScheme,
     data.uniformTypography,
-    data.uniformWebsiteDesign
-  ]);
-  
-  // Eingesetzte Werbemittel (2 Felder)
-  const wmScore = calculateScore([
+    data.uniformWebsiteDesign,
+    // Eingesetzte Werbemittel (2 Felder)
     data.hauszeitung,
-    data.herstellerInfos
-  ]);
-  
-  // Außenwirkung Fahrzeugflotte (2 Felder)
-  const ffScore = calculateScore([
+    data.herstellerInfos,
+    // Außenwirkung Fahrzeugflotte (2 Felder)
     data.uniformVehicleBranding,
-    data.vehicleCondition
-  ]);
-  
-  // Außenwerbung (2 Felder)
-  const awScore = calculateScore([
+    data.vehicleCondition,
+    // Außenwerbung (2 Felder)
     data.bauzaunBanner,
     data.bandenWerbung
-  ]);
+  ];
   
-  // Nur bewertete Kategorien (mit tatsächlichen Daten) berücksichtigen
-  // Kategorien ohne Daten (nur unknown) werden nicht negativ gewertet
-  const scores = [cdScore, wmScore, ffScore, awScore].filter(score => score !== null);
+  // Zähle nur "yes" - alles andere (no, unknown) wird nicht negativ gewertet
+  const yesCount = allFields.filter(f => f === 'yes').length;
+  const totalFields = allFields.length; // 11 Felder insgesamt
   
-  if (scores.length === 0) return 50; // Defaultwert wenn keine Daten
+  // Wenn gar keine "yes" vorhanden sind, gib 50% zurück (neutral)
+  if (yesCount === 0) return 50;
   
-  const totalScore = scores.reduce((sum, score) => sum + score, 0);
-  return Math.round(totalScore / scores.length);
+  // Berechne Score: Nur vorhandene Elemente zählen positiv
+  // 0 yes = 50%, 11 yes = 100%, linear dazwischen
+  const score = 50 + (yesCount / totalFields) * 50;
+  
+  return Math.round(score);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
