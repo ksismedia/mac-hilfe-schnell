@@ -26,37 +26,23 @@ const HourlyRateTab: React.FC<HourlyRateTabProps> = ({ hourlyRateData, updateHou
         </AlertDescription>
       </Alert>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Euro className="h-5 w-5" />
-            Stundensatz-Konfiguration
-          </CardTitle>
-          <CardDescription>
-            Geben Sie Ihren Stundensatz für die Kalkulation und Bewertung ein. 
-            Diese Daten werden für die Kostenanalyse in den Reports verwendet.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <HourlyRateInput 
-            data={hourlyRateData || undefined}
-            onDataChange={handleDataChange}
-          />
-          
-          {hourlyRateData && (
-            <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
-                <Euro className="h-4 w-4" />
-                <span className="font-semibold">Stundensatz konfiguriert</span>
-              </div>
-              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                Stundensätze wurden konfiguriert. 
-                Reports und Bewertungen können jetzt vollständig generiert werden.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <HourlyRateInput 
+        data={hourlyRateData || undefined}
+        onDataChange={handleDataChange}
+      />
+      
+      {hourlyRateData && (
+        <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
+            <Euro className="h-4 w-4" />
+            <span className="font-semibold">Stundensatz konfiguriert</span>
+          </div>
+          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+            Stundensätze wurden konfiguriert. 
+            Reports und Bewertungen können jetzt vollständig generiert werden.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
