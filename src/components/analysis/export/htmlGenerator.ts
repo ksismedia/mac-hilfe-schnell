@@ -2159,7 +2159,9 @@ export const generateCustomerHTML = ({
                 const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
                 const scores = [
                   allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
-                  hourlyRateData ? Math.round(pricingScore) : 0
+                  hourlyRateData ? Math.round(pricingScore) : 0,
+                  workplaceScore !== -1 ? workplaceScore : 0,
+                  staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
                 return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
@@ -2181,8 +2183,6 @@ export const generateCustomerHTML = ({
               <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
               ${(() => {
                 const scores = [
-                  workplaceScore !== -1 ? workplaceScore : 0,
-                  staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0,
                   quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
