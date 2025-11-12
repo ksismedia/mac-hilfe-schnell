@@ -286,6 +286,41 @@ export interface ManualOnlinePresenceData {
   };
 }
 
+export interface ManualConversionData {
+  // Call-to-Action
+  totalCTAs: number;
+  visibleCTAs: number;
+  effectiveCTAs: number;
+  aboveFoldCTAs: number;
+  
+  // CTA-Typen mit Performance
+  ctaTypes: Array<{
+    type: string;
+    count: number;
+    effectiveness: number; // 0-100
+    mobileOptimized: boolean;
+    trackingSetup: boolean;
+  }>;
+  
+  // Kontaktmethoden
+  contactMethods: {
+    phone: { visible: boolean; prominent: boolean; clickable: boolean };
+    email: { visible: boolean; prominent: boolean };
+    form: { present: boolean; mobileOptimized: boolean };
+    chat: { present: boolean };
+    whatsapp: { present: boolean };
+    callback: { present: boolean };
+  };
+  
+  // Scores
+  ctaScore: number; // 0-100
+  contactScore: number; // 0-100
+  userJourneyScore: number; // 0-100
+  overallScore: number; // 0-100
+  
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -306,6 +341,7 @@ export const useManualData = () => {
   const [manualLocalSEOData, setManualLocalSEOData] = useState<ManualLocalSEOData | null>(null);
   const [manualIndustryReviewData, setManualIndustryReviewData] = useState<ManualIndustryReviewData | null>(null);
   const [manualOnlinePresenceData, setManualOnlinePresenceData] = useState<ManualOnlinePresenceData | null>(null);
+  const [manualConversionData, setManualConversionData] = useState<ManualConversionData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -427,6 +463,11 @@ export const useManualData = () => {
     console.log('Manual Online Presence Data Updated:', data);
   }, []);
 
+  const updateManualConversionData = useCallback((data: ManualConversionData | null) => {
+    setManualConversionData(data);
+    console.log('Manual Conversion Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -467,6 +508,8 @@ export const useManualData = () => {
     updateManualLocalSEOData,
     updateManualIndustryReviewData,
     manualOnlinePresenceData,
-    updateManualOnlinePresenceData
+    updateManualOnlinePresenceData,
+    manualConversionData,
+    updateManualConversionData
   };
 };

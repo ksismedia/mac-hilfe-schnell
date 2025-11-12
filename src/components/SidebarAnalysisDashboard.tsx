@@ -121,7 +121,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateManualDataPrivacyData,
     updateManualLocalSEOData,
     updateManualIndustryReviewData,
-    updateManualOnlinePresenceData
+    updateManualOnlinePresenceData,
+    manualConversionData,
+    updateManualConversionData
   } = useManualData();
 
   // Access saved analyses hook
@@ -381,6 +383,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           <PerformanceMobileCategory
             realData={realData}
             businessData={businessData}
+            manualConversionData={manualConversionData}
+            updateManualConversionData={updateManualConversionData}
           />
         );
       case 'social-media-performance':

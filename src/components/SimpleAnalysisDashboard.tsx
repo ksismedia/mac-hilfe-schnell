@@ -136,7 +136,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateManualDataPrivacyData,
     updateManualLocalSEOData,
     updateManualIndustryReviewData,
-    updateManualOnlinePresenceData
+    updateManualOnlinePresenceData,
+    manualConversionData,
+    updateManualConversionData
   } = useManualData();
 
   // Access saved analyses hook
@@ -397,6 +399,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           <PerformanceMobileCategory
             realData={realData}
             businessData={businessData}
+            manualConversionData={manualConversionData}
+            updateManualConversionData={updateManualConversionData}
           />
         );
       case 'social-media-performance':
