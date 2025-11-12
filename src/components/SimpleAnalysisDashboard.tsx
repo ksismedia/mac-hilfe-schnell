@@ -24,6 +24,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
+import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
 
@@ -126,6 +127,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
   // Access saved analyses hook
   const { loadAnalysis } = useSavedAnalyses();
+
+  // AI Review Status Hook
+  const { reviewStatus } = useAIReviewStatus(analysisData?.id);
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
@@ -553,6 +557,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             <SaveAnalysisDialog
               businessData={businessData}
               realData={realData || {} as RealBusinessData}
+              reviewStatus={reviewStatus}
               manualImprintData={manualImprintData}
               manualSocialData={manualSocialData}
               manualWorkplaceData={manualWorkplaceData}

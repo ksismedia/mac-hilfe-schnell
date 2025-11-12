@@ -9,6 +9,8 @@ import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
+import { AIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SaveAnalysisDialogProps {
   businessData: {
@@ -17,6 +19,7 @@ interface SaveAnalysisDialogProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
   };
   realData: RealBusinessData;
+  reviewStatus?: AIReviewStatus;
   manualImprintData?: ManualImprintData | null;
   manualSocialData?: ManualSocialData | null;
   manualWorkplaceData?: ManualWorkplaceData | null;
@@ -69,7 +72,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualIndustryReviewData,
   manualOnlinePresenceData,
   privacyData,
-  accessibilityData
+  accessibilityData,
+  reviewStatus
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [analysisName, setAnalysisName] = useState('');
@@ -128,6 +132,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
       console.log('Business Data:', businessData);
       console.log('Manual Data:', manualData);
 
+      let analysisId = currentAnalysisId;
+      
       if (currentAnalysisId) {
         console.log('Updating existing analysis...');
         await updateAnalysis(currentAnalysisId, analysisName, businessData, realData, manualData);
@@ -139,10 +145,35 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         console.log('Creating new analysis...');
         const newId = await saveAnalysis(analysisName, businessData, realData, manualData);
         console.log('New analysis ID:', newId);
+        analysisId = newId;
         toast({
           title: "Analyse gespeichert",
           description: `Die Analyse "${analysisName}" wurde erfolgreich gespeichert.`,
         });
+      }
+
+      // Save AI review status if available
+      if (reviewStatus && analysisId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('Saving AI review status for analysis:', analysisId);
+        
+        for (const [category, status] of Object.entries(reviewStatus)) {
+          if (status.isReviewed) {
+            await supabase
+              .from('ai_review_status')
+              .upsert({
+                analysis_id: analysisId,
+                category_name: category,
+                is_reviewed: status.isReviewed,
+                reviewed_at: status.reviewedAt || new Date().toISOString(),
+                reviewer_id: user?.id || null,
+                review_notes: status.reviewNotes || null
+              }, {
+                onConflict: 'analysis_id,category_name'
+              });
+          }
+        }
+        console.log('AI review status saved successfully');
       }
 
       setIsOpen(false);
