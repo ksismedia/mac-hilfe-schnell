@@ -111,18 +111,6 @@ section[class*="section"],
   -webkit-text-fill-color: transparent;
   font-weight: 700;
 }
-/* Kategorie-Überschriften - einheitliche Einrückung */
-.category-heading {
-  margin: 60px 0 30px 40px !important;
-  color: #ffffff !important;
-  font-size: 1.8em !important;
-  font-weight: bold !important;
-  border-bottom: 3px solid #fbbf24 !important;
-  padding-bottom: 10px !important;
-  display: block !important;
-  width: fit-content !important;
-  box-sizing: border-box !important;
-}
 .header .subtitle { color: #d1d5db; font-size: 1.3em; font-weight: 300; }
 .logo-container { 
   display: flex; 
