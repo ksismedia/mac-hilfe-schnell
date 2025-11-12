@@ -719,9 +719,6 @@ export const calculateCorporateIdentityScore = (data: any): number => {
     return Math.round((yesCount / knownFields.length) * 100);
   };
   
-  let totalScore = 0;
-  let categoryCount = 0;
-  
   // Corporate Design (5 Felder)
   const cdScore = calculateScore([
     data.uniformLogo,
@@ -730,44 +727,29 @@ export const calculateCorporateIdentityScore = (data: any): number => {
     data.uniformTypography,
     data.uniformWebsiteDesign
   ]);
-  if (cdScore > 0) {
-    totalScore += cdScore;
-    categoryCount++;
-  }
   
   // Eingesetzte Werbemittel (2 Felder)
   const wmScore = calculateScore([
     data.hauszeitung,
     data.herstellerInfos
   ]);
-  if (wmScore > 0) {
-    totalScore += wmScore;
-    categoryCount++;
-  }
   
   // Außenwirkung Fahrzeugflotte (2 Felder)
   const ffScore = calculateScore([
     data.uniformVehicleBranding,
     data.vehicleCondition
   ]);
-  if (ffScore > 0) {
-    totalScore += ffScore;
-    categoryCount++;
-  }
   
   // Außenwerbung (2 Felder)
   const awScore = calculateScore([
     data.bauzaunBanner,
     data.bandenWerbung
   ]);
-  if (awScore > 0) {
-    totalScore += awScore;
-    categoryCount++;
-  }
   
-  // Durchschnitt der bewerteten Kategorien
-  if (categoryCount === 0) return 50; // Defaultwert wenn alles unknown
-  return Math.round(totalScore / categoryCount);
+  // Immer alle 4 Bereiche berücksichtigen, auch wenn sie 0 Punkte haben
+  // Das sorgt dafür, dass fehlende Bereiche die Gesamtbewertung reduzieren
+  const totalScore = cdScore + wmScore + ffScore + awScore;
+  return Math.round(totalScore / 4);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
