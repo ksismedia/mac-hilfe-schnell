@@ -3041,41 +3041,49 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
                 <p><strong>Landing Page</strong></p>
-                <p style="font-size: 0.9rem;">Headline: Klar & nutzenorientiert</p>
-                <p style="font-size: 0.9rem;">Value Proposition: Deutlich erkennbar</p>
-                <p style="font-size: 0.9rem;">Trust Signals: 6 vorhanden</p>
-                ${generateProgressBar(70, 'Score: 70%')}
+                ${generateProgressBar(
+                  manualConversionData.userJourneyDetails?.landingPageScore || 0, 
+                  'Bewertet wurden: Headline, Value Proposition, Trust Signals'
+                )}
               </div>
               <div>
                 <p><strong>Navigation</strong></p>
-                <p style="font-size: 0.9rem;">Menüstruktur: Logisch</p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Breadcrumbs vorhanden</p>
-                <p style="font-size: 0.9rem; color: #ef4444;">✗ Suchfunktion fehlt</p>
-                ${generateProgressBar(75, 'Score: 75%')}
+                ${generateProgressBar(
+                  manualConversionData.userJourneyDetails?.navigationScore || 0, 
+                  'Bewertet wurden: Menüstruktur, Breadcrumbs, Suchfunktion'
+                )}
               </div>
               <div>
                 <p><strong>Informationshierarchie</strong></p>
-                <p style="font-size: 0.9rem;">Content Flow: Überwiegend logisch</p>
-                <p style="font-size: 0.9rem;">Scanability: Gut</p>
-                <p style="font-size: 0.9rem;">CTA-Platzierung: Strategisch</p>
-                ${generateProgressBar(68, 'Score: 68%')}
+                ${generateProgressBar(
+                  manualConversionData.userJourneyDetails?.informationHierarchyScore || 0, 
+                  'Bewertet wurden: Content Flow, Scanability, CTA-Platzierung'
+                )}
               </div>
               <div>
                 <p><strong>Vertrauenselemente</strong></p>
-                <p style="font-size: 0.9rem;">Testimonials: 6</p>
-                <p style="font-size: 0.9rem;">Zertifikate: 3</p>
-                <p style="font-size: 0.9rem;">Garantien: 2</p>
-                ${generateProgressBar(60, 'Score: 60%')}
+                ${generateProgressBar(
+                  manualConversionData.userJourneyDetails?.trustElementsScore || 0, 
+                  'Bewertet wurden: Testimonials, Zertifikate, Garantien'
+                )}
               </div>
               <div>
                 <p><strong>Dringlichkeitselemente</strong></p>
-                <p style="font-size: 0.9rem; color: #ef4444;">✗ Limitierte Angebote: 0</p>
-                <p style="font-size: 0.9rem;">Zeitliche Beschränkungen: 1</p>
-                ${generateProgressBar(45, 'Score: 45% - Ausbaufähig')}
+                ${generateProgressBar(
+                  manualConversionData.userJourneyDetails?.urgencyElementsScore || 0, 
+                  'Bewertet wurden: Limitierte Angebote, zeitliche Beschränkungen'
+                )}
               </div>
             </div>
-            <p style="margin-top: 15px;"><strong>User Journey Score:</strong> 64%</p>
-            ${generateProgressBar(64, 'Gute Basis, Optimierungspotenzial vorhanden')}
+            <p style="margin-top: 15px;"><strong>User Journey Score:</strong> ${manualConversionData.userJourneyScore}%</p>
+            ${generateProgressBar(
+              manualConversionData.userJourneyScore, 
+              manualConversionData.userJourneyScore >= 75 
+                ? 'Sehr gute User Journey - Nutzer finden sich gut zurecht' 
+                : manualConversionData.userJourneyScore >= 60 
+                  ? 'Gute Basis, Optimierungspotenzial vorhanden' 
+                  : 'Optimierungsbedarf - Nutzerführung sollte verbessert werden'
+            )}
           </div>
 
           <!-- Handlungsempfehlungen -->

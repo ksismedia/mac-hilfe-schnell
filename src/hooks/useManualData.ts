@@ -318,6 +318,15 @@ export interface ManualConversionData {
   userJourneyScore: number; // 0-100
   overallScore: number; // 0-100
   
+  // User Journey Details
+  userJourneyDetails?: {
+    landingPageScore: number;
+    navigationScore: number;
+    informationHierarchyScore: number;
+    trustElementsScore: number;
+    urgencyElementsScore: number;
+  };
+  
   notes?: string;
 }
 

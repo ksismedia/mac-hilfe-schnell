@@ -47,6 +47,13 @@ const getDefaultData = (): ManualConversionData => ({
   contactScore: 0,
   userJourneyScore: 0,
   overallScore: 0,
+  userJourneyDetails: {
+    landingPageScore: 0,
+    navigationScore: 0,
+    informationHierarchyScore: 0,
+    trustElementsScore: 0,
+    urgencyElementsScore: 0
+  },
   notes: ''
 });
 
@@ -130,6 +137,17 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
       )
     }));
   };
+
+  // Auto-calculate User Journey Score from details
+  React.useEffect(() => {
+    if (data.userJourneyDetails) {
+      const { landingPageScore, navigationScore, informationHierarchyScore, trustElementsScore, urgencyElementsScore } = data.userJourneyDetails;
+      const avg = Math.round((landingPageScore + navigationScore + informationHierarchyScore + trustElementsScore + urgencyElementsScore) / 5);
+      if (avg !== data.userJourneyScore) {
+        setData(prev => ({ ...prev, userJourneyScore: avg }));
+      }
+    }
+  }, [data.userJourneyDetails]);
 
   // Auto-calculate overall score
   React.useEffect(() => {
@@ -489,11 +507,118 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
 
           <div>
             <Label className="text-sm font-medium">
-              User Journey Score ({data.userJourneyScore}%)
+              User Journey Score ({data.userJourneyScore}%) - Durchschnitt
             </Label>
+            <p className="text-xs text-muted-foreground mt-1">
+              Wird automatisch aus den 5 Unterkategorien berechnet
+            </p>
             <Slider
               value={[data.userJourneyScore]}
-              onValueChange={([value]) => setData(prev => ({ ...prev, userJourneyScore: value }))}
+              max={100}
+              min={0}
+              disabled
+              className="mt-2 opacity-60"
+            />
+          </div>
+        </div>
+
+        {/* User Journey Details */}
+        <div className="space-y-4 p-4 bg-muted/30 rounded-lg">
+          <h4 className="font-semibold">User Journey Details</h4>
+          
+          <div>
+            <Label className="text-sm font-medium">
+              Landing Page ({data.userJourneyDetails?.landingPageScore || 0}%)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Headline, Value Proposition, Trust Signals
+            </p>
+            <Slider
+              value={[data.userJourneyDetails?.landingPageScore || 0]}
+              onValueChange={([value]) => setData(prev => ({ 
+                ...prev, 
+                userJourneyDetails: { ...prev.userJourneyDetails!, landingPageScore: value }
+              }))}
+              max={100}
+              min={0}
+              step={5}
+              className="mt-2"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">
+              Navigation ({data.userJourneyDetails?.navigationScore || 0}%)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Menüstruktur, Breadcrumbs, Suchfunktion
+            </p>
+            <Slider
+              value={[data.userJourneyDetails?.navigationScore || 0]}
+              onValueChange={([value]) => setData(prev => ({ 
+                ...prev, 
+                userJourneyDetails: { ...prev.userJourneyDetails!, navigationScore: value }
+              }))}
+              max={100}
+              min={0}
+              step={5}
+              className="mt-2"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">
+              Informationshierarchie ({data.userJourneyDetails?.informationHierarchyScore || 0}%)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Content Flow, Scanability, CTA-Platzierung
+            </p>
+            <Slider
+              value={[data.userJourneyDetails?.informationHierarchyScore || 0]}
+              onValueChange={([value]) => setData(prev => ({ 
+                ...prev, 
+                userJourneyDetails: { ...prev.userJourneyDetails!, informationHierarchyScore: value }
+              }))}
+              max={100}
+              min={0}
+              step={5}
+              className="mt-2"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">
+              Vertrauenselemente ({data.userJourneyDetails?.trustElementsScore || 0}%)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Testimonials, Zertifikate, Garantien
+            </p>
+            <Slider
+              value={[data.userJourneyDetails?.trustElementsScore || 0]}
+              onValueChange={([value]) => setData(prev => ({ 
+                ...prev, 
+                userJourneyDetails: { ...prev.userJourneyDetails!, trustElementsScore: value }
+              }))}
+              max={100}
+              min={0}
+              step={5}
+              className="mt-2"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">
+              Dringlichkeitselemente ({data.userJourneyDetails?.urgencyElementsScore || 0}%)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Limitierte Angebote, zeitliche Beschränkungen
+            </p>
+            <Slider
+              value={[data.userJourneyDetails?.urgencyElementsScore || 0]}
+              onValueChange={([value]) => setData(prev => ({ 
+                ...prev, 
+                userJourneyDetails: { ...prev.userJourneyDetails!, urgencyElementsScore: value }
+              }))}
               max={100}
               min={0}
               step={5}
