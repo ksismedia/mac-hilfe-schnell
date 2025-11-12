@@ -326,6 +326,16 @@ div.collapsible.section-header {
   contain: layout style !important;
   position: relative;
 }
+/* Überschriften innerhalb von Sections - explizite Farben für Lesbarkeit */
+.section-content h3,
+.section-content h4 {
+  color: #ffffff !important;
+  margin-bottom: 15px;
+}
+.section-content .metric-card h3,
+.section-content .metric-card h4 {
+  color: #fbbf24 !important;
+}
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
   padding: 25px; 
