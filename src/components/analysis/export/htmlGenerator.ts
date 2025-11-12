@@ -3087,9 +3087,9 @@ export const generateCustomerHTML = ({
           </div>
 
           <!-- Handlungsempfehlungen -->
-          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 8px;">
-            <h4 style="margin-top: 0;">Prioritäre Handlungsempfehlungen</h4>
-            <ul style="margin: 10px 0; padding-left: 20px;">
+          <div class="recommendations">
+            <h4>Prioritäre Handlungsempfehlungen</h4>
+            <ul>
               <li><strong>Tracking implementieren:</strong> Conversion-Tracking für Kontaktformular und WhatsApp einrichten</li>
               <li><strong>Mobile-Optimierung:</strong> E-Mail-CTAs für mobile Geräte optimieren</li>
               <li><strong>Live-Chat hinzufügen:</strong> Chat-System mit FAQ-Bot für schnellere Kundenansprache</li>

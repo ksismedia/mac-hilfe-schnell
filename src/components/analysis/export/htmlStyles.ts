@@ -606,20 +606,30 @@ span[style*="font-size: 6px"] {
 }
 
 .recommendations { 
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); 
+  background: rgba(0, 0, 0, 0.7); 
   padding: 20px; 
   border-radius: 12px; 
   margin-top: 20px; 
-  border-left: 5px solid #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
-.recommendations h4 { color: #fbbf24; margin-bottom: 15px; font-size: 1.1em; }
-.recommendations ul { list-style: none; padding-left: 0; }
+.recommendations h4 { 
+  color: #fbbf24; 
+  margin-bottom: 15px; 
+  font-size: 1.1em; 
+  font-weight: 600;
+}
+.recommendations ul { 
+  list-style: none; 
+  padding-left: 0; 
+  margin: 0;
+}
 .recommendations li { 
   margin-bottom: 8px; 
-  padding-left: 20px; 
+  padding-left: 25px; 
   position: relative; 
-  color: #d1d5db;
+  color: #f5f5f5;
+  line-height: 1.5;
 }
 .recommendations li:before { 
   content: "⭐"; 
