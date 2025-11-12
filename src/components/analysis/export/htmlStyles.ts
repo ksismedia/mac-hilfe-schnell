@@ -233,17 +233,22 @@ div[class*="section-header"],
   padding: 25px 40px !important;
   font-size: 1.5em !important;
   font-weight: 700 !important;
-  max-width: 100% !important;
+  max-width: calc(100% - 40px) !important;
   overflow-x: hidden !important;
   display: flex !important;
   align-items: center !important;
   gap: 15px !important;
   box-sizing: border-box !important;
-  margin: 0 0 0 40px !important;
+  margin-left: 40px !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   border-radius: 0 !important;
+  position: relative !important;
+  left: 0 !important;
 }
 
-/* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein */
+/* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein UND EINGERÜCKT */
 .section-header.header-red,
 .section-header.header-green,
 .section-header.header-yellow,
@@ -255,6 +260,9 @@ div.collapsible.section-header {
   background: #fbbf24 !important;
   background-color: #fbbf24 !important;
   color: #000000 !important;
+  margin-left: 40px !important;
+  max-width: calc(100% - 40px) !important;
+  left: 0 !important;
 }
 .header-score-circle {
   display: inline-flex;
@@ -700,7 +708,7 @@ table tr {
     page-break-inside: avoid !important;
   }
   
-  /* PRINT: Section-Header MÜSSEN gelb sein */
+  /* PRINT: Section-Header MÜSSEN gelb sein UND EINGERÜCKT */
   .section-header,
   .section-header.collapsible,
   div.section-header,
@@ -717,10 +725,16 @@ table tr {
     font-weight: 700 !important;
     padding: 25px 40px !important;
     font-size: 1.5em !important;
-    margin: 0 0 0 40px !important;
+    margin-left: 40px !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    max-width: calc(100% - 40px) !important;
     border-radius: 0 !important;
     display: flex !important;
     align-items: center !important;
+    position: relative !important;
+    left: 0 !important;
   }
   
   .header h1 {
