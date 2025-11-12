@@ -52,7 +52,7 @@ const getDefaultData = (): ManualConversionData => ({
     navigationScore: 0,
     informationHierarchyScore: 0,
     trustElementsScore: 0,
-    urgencyElementsScore: 0
+    readabilityScore: 0
   },
   notes: ''
 });
@@ -141,8 +141,8 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
   // Auto-calculate User Journey Score from details
   React.useEffect(() => {
     if (data.userJourneyDetails) {
-      const { landingPageScore, navigationScore, informationHierarchyScore, trustElementsScore, urgencyElementsScore } = data.userJourneyDetails;
-      const avg = Math.round((landingPageScore + navigationScore + informationHierarchyScore + trustElementsScore + urgencyElementsScore) / 5);
+      const { landingPageScore, navigationScore, informationHierarchyScore, trustElementsScore, readabilityScore } = data.userJourneyDetails;
+      const avg = Math.round((landingPageScore + navigationScore + informationHierarchyScore + trustElementsScore + readabilityScore) / 5);
       if (avg !== data.userJourneyScore) {
         setData(prev => ({ ...prev, userJourneyScore: avg }));
       }
@@ -608,16 +608,16 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
 
           <div>
             <Label className="text-sm font-medium">
-              Dringlichkeitselemente ({data.userJourneyDetails?.urgencyElementsScore || 0}%)
+              Lesbarkeit ({data.userJourneyDetails?.readabilityScore || 0}%)
             </Label>
             <p className="text-xs text-muted-foreground">
-              Limitierte Angebote, zeitliche Beschränkungen
+              Schriftgröße, Kontrast, Zeilenlänge, Absätze
             </p>
             <Slider
-              value={[data.userJourneyDetails?.urgencyElementsScore || 0]}
+              value={[data.userJourneyDetails?.readabilityScore || 0]}
               onValueChange={([value]) => setData(prev => ({ 
                 ...prev, 
-                userJourneyDetails: { ...prev.userJourneyDetails!, urgencyElementsScore: value }
+                userJourneyDetails: { ...prev.userJourneyDetails!, readabilityScore: value }
               }))}
               max={100}
               min={0}

@@ -3111,10 +3111,10 @@ export const generateCustomerHTML = ({
                   )}
                 </div>
                 <div>
-                  <p><strong>Dringlichkeitselemente</strong></p>
+                  <p><strong>Lesbarkeit</strong></p>
                   ${generateProgressBar(
-                    manualConversionData.userJourneyDetails?.urgencyElementsScore || 0, 
-                    'Bewertet wurden: Limitierte Angebote, zeitliche Beschränkungen'
+                    manualConversionData.userJourneyDetails?.readabilityScore || 0, 
+                    'Bewertet wurden: Schriftgröße, Kontrast, Zeilenlänge, Absätze'
                   )}
                 </div>
               </div>
@@ -3125,7 +3125,7 @@ export const generateCustomerHTML = ({
               <h4>Prioritäre Handlungsempfehlungen (User Journey)</h4>
               <ul>
                 <li><strong>Suchfunktion:</strong> Website-Suche implementieren für bessere Navigation</li>
-                <li><strong>Dringlichkeit schaffen:</strong> Zeitlich begrenzte Angebote oder Aktionen einführen</li>
+                <li><strong>Lesbarkeit verbessern:</strong> Schriftgröße, Kontraste und Zeilenlängen optimieren</li>
                 <li><strong>Trust Signals:</strong> Mehr Kundenbewertungen und Zertifikate prominent platzieren</li>
                 <li><strong>Content Flow:</strong> Informationshierarchie optimieren für bessere Scanbarkeit</li>
                 <li><strong>Breadcrumbs:</strong> Navigationspfad einführen für bessere Orientierung</li>

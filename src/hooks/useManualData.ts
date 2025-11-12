@@ -324,7 +324,7 @@ export interface ManualConversionData {
     navigationScore: number;
     informationHierarchyScore: number;
     trustElementsScore: number;
-    urgencyElementsScore: number;
+    readabilityScore: number;
   };
   
   notes?: string;
