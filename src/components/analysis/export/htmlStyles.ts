@@ -48,12 +48,11 @@ body {
 }
 /* CRITICAL: Force ALL sections to have consistent, limited width */
 .section,
-div[class*="section"],
+div[class*="section"]:not(.section-header),
 section[class*="section"],
 .metric-card,
 .company-info,
-.recommendations,
-.collapsible {
+.recommendations {
   width: 95% !important;
   max-width: 1400px !important;
   margin-left: auto !important;
