@@ -99,7 +99,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ onCategoryChange, act
                       {!collapsed && (
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="font-medium text-white truncate">
+                            <span className="font-medium text-sidebar-foreground truncate">
                               {category.title}
                             </span>
                             <span className={`text-sm font-bold ${getScoreColor(category.score)}`}>
