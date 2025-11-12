@@ -217,7 +217,7 @@ section[class*="section"],
   contain: layout style !important;
   position: relative;
 }
-/* ABSOLUTE SECTION-HEADER REGEL - ALLES MUSS GELB SEIN!!! */
+/* ABSOLUTE SECTION-HEADER REGEL - EINHEITLICHER EINZUG VON 40PX */
 .section-header,
 .section-header.collapsible,
 div.section-header,
@@ -230,25 +230,27 @@ div[class*="section-header"],
   background: #fbbf24 !important;
   background-color: #fbbf24 !important;
   color: #000000 !important;
-  padding: 25px 40px !important;
   font-size: 1.5em !important;
   font-weight: 700 !important;
-  max-width: 100% !important;
-  width: 100% !important;
   overflow-x: hidden !important;
   display: flex !important;
   align-items: center !important;
   gap: 15px !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
   border-radius: 0 !important;
-  position: relative !important;
-  /* Verschiebt den Header nach links um aus der Section rauszuragen */
-  left: -40px !important;
-  padding-left: 80px !important;
+  /* Negative margin zieht den Header aus der zentrierten Section */
+  margin-left: calc(-2.5% - 0px) !important;
+  margin-right: calc(-2.5% - 0px) !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  /* Padding für 40px Einzug vom linken Viewport-Rand */
+  padding: 25px 40px 25px calc(2.5% + 40px) !important;
+  /* Breite größer als Section um negative margins auszugleichen */
+  width: calc(100% + 5%) !important;
+  max-width: none !important;
 }
 
-/* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein UND EINGERÜCKT */
+/* NOCHMAL: Section-Header Farbe überschreiben */
 .section-header.header-red,
 .section-header.header-green,
 .section-header.header-yellow,
@@ -260,8 +262,6 @@ div.collapsible.section-header {
   background: #fbbf24 !important;
   background-color: #fbbf24 !important;
   color: #000000 !important;
-  left: -40px !important;
-  padding-left: 80px !important;
 }
 .header-score-circle {
   display: inline-flex;
@@ -722,17 +722,19 @@ table tr {
     background-color: #fbbf24 !important;
     color: #000000 !important;
     font-weight: 700 !important;
-    padding: 25px 40px !important;
     font-size: 1.5em !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
     border-radius: 0 !important;
     display: flex !important;
     align-items: center !important;
-    position: relative !important;
-    left: -40px !important;
-    padding-left: 80px !important;
+    /* Print: Negative margins für Vollbreite */
+    margin-left: calc(-2.5% - 0px) !important;
+    margin-right: calc(-2.5% - 0px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    /* Print: 40px Einzug */
+    padding: 25px 40px 25px calc(2.5% + 40px) !important;
+    width: calc(100% + 5%) !important;
+    max-width: none !important;
   }
   
   .header h1 {
