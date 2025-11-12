@@ -3034,10 +3034,6 @@ export const generateCustomerHTML = ({
             <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> ${manualConversionData.contactScore}%</p>
             ${generateProgressBar(manualConversionData.contactScore, manualConversionData.contactScore >= 70 ? 'Sehr gute Erreichbarkeit' : 'Ausbaufähige Erreichbarkeit')}
           </div>
-        </div>
-      </div>
-    </div>
-    ` : ''}
 
           <!-- User Journey -->
           <div class="metric-card" style="margin-top: 20px;">
@@ -3098,6 +3094,7 @@ export const generateCustomerHTML = ({
         </div>
       </div>
     </div>
+    ` : ''}
 
     <!-- Kategorie-Überschrift: Online-/Web-/Social-Media Performance -->
     <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
