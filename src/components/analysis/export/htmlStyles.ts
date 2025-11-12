@@ -232,14 +232,12 @@ div[class*="section-header"],
   color: #000000 !important;
   font-size: 1.5em !important;
   font-weight: 700 !important;
-  overflow-x: hidden !important;
   display: flex !important;
   align-items: center !important;
   gap: 15px !important;
   box-sizing: border-box !important;
   border-radius: 0 !important;
   position: relative !important;
-  /* Einheitlicher 40px Einzug - ohne Überlauf */
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
@@ -723,7 +721,6 @@ table tr {
     display: flex !important;
     align-items: center !important;
     position: relative !important;
-    /* Print: Einheitlich 40px Einzug ohne Überlauf */
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
