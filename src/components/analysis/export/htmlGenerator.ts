@@ -2126,7 +2126,8 @@ export const generateCustomerHTML = ({
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
               ${(() => {
-                const avg = Math.round((realData.performance.score + realData.mobile.overallScore) / 2);
+                const conversionScore = 67; // Simulierter Conversion-Score
+                const avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
                 return `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>`;
               })()}
             </div>
@@ -2921,6 +2922,196 @@ export const generateCustomerHTML = ({
         
         <div id="mobile-details" style="display: none;">
           ${getMobileOptimizationAnalysis()}
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversion-Optimierung -->
+    <div class="section">
+      <div class="section-header">
+        <span>Conversion-Optimierung</span>
+        <div class="header-score-circle ${getScoreColorClass(67)}">67%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Conversion-Rate Optimierung</h3>
+          <div class="score-display">
+            <div class="score-circle ${getScoreColorClass(67)}">67%</div>
+            <div class="score-details">
+              <p><strong>Status:</strong> Gute Basis vorhanden</p>
+              <p><strong>Empfehlung:</strong> Weitere Optimierungen möglich</p>
+            </div>
+          </div>
+          ${generateProgressBar(67, 'Conversion-Rate-Optimierung auf gutem Niveau')}
+        </div>
+        
+        <div class="collapsible" onclick="toggleSection('conversion-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Conversion-Details anzeigen</h4>
+        </div>
+        
+        <div id="conversion-details" style="display: none;">
+          <!-- Call-to-Action Analyse -->
+          <div class="metric-card good" style="margin-top: 20px;">
+            <h3>Call-to-Action (CTA) Analyse</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Gesamt-CTAs:</strong> 12</p>
+                <p style="font-size: 0.9rem; color: #6b7280;">Davon 9 sichtbar, 6 effektiv</p>
+              </div>
+              <div>
+                <p><strong>Above-the-Fold:</strong> 4 CTAs</p>
+                <p style="font-size: 0.9rem; color: #6b7280;">Direkt im sichtbaren Bereich</p>
+              </div>
+              <div>
+                <p><strong>CTA-Score:</strong> 72%</p>
+                ${generateProgressBar(72, 'Gute CTA-Platzierung')}
+              </div>
+            </div>
+            
+            <!-- CTA-Typen Details -->
+            <div style="margin-top: 20px;">
+              <h4>CTA-Typen Performance</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <p><strong>📞 Telefon (4x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 12.5% | Conversion: 68%</p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
+                  ${generateProgressBar(85, 'Effektivität: 85%')}
+                </div>
+                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <p><strong>📝 Kontaktformular (3x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 8.2% | Conversion: 45%</p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert</p>
+                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Tracking fehlt</p>
+                  ${generateProgressBar(60, 'Effektivität: 60%')}
+                </div>
+                <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;">
+                  <p><strong>✉️ E-Mail (2x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 3.1% | Conversion: 25%</p>
+                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Nicht mobile optimiert | ✗ Tracking fehlt</p>
+                  ${generateProgressBar(45, 'Effektivität: 45%')}
+                </div>
+                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <p><strong>💬 WhatsApp (1x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 15.3% | Conversion: 72%</p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert</p>
+                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Tracking fehlt</p>
+                  ${generateProgressBar(78, 'Effektivität: 78%')}
+                </div>
+                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <p><strong>🔙 Rückruf Service (1x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 6.8% | Conversion: 85%</p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
+                  ${generateProgressBar(82, 'Effektivität: 82%')}
+                </div>
+                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <p><strong>📅 Termin buchen (1x)</strong></p>
+                  <p style="font-size: 0.9rem;">Klickrate: 4.2% | Conversion: 92%</p>
+                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
+                  ${generateProgressBar(90, 'Effektivität: 90%')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kontaktmethoden -->
+          <div class="metric-card good" style="margin-top: 20px;">
+            <h3>Kontaktmethoden Analyse</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Telefon</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Prominent | ✓ Klickbar | ✓ Getrackt</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Reaktionszeit: &lt; 3 Klingeltöne</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Verfügbar: Mo-Fr 7-18h, Sa 8-14h</p>
+              </div>
+              <div>
+                <p><strong>E-Mail</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Sichtbar | ✓ Auto-Responder</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Antwortzeit: &lt; 4h</p>
+              </div>
+              <div>
+                <p><strong>Kontaktformular</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile-freundlich | 5 Felder</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Completion Rate: 78% | Ladezeit: 1.2s</p>
+              </div>
+              <div>
+                <p><strong>WhatsApp Business</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Business Account</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Antwortzeit: &lt; 30min</p>
+                <p style="font-size: 0.85rem; color: #fbbf24;">⚠ Automatische Begrüßung fehlt</p>
+              </div>
+              <div>
+                <p><strong>Rückruf-Service</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Request-Formular vorhanden</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Erfüllungsrate: 92%</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Ø Rückrufzeit: &lt; 2h</p>
+              </div>
+              <div>
+                <p><strong>Live-Chat</strong></p>
+                <p style="font-size: 0.9rem; color: #ef4444;">✗ Nicht vorhanden</p>
+                <p style="font-size: 0.85rem; color: #6b7280;">Empfehlung: Live Chat mit FAQ-Bot</p>
+              </div>
+            </div>
+            <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> 78%</p>
+            ${generateProgressBar(78, 'Sehr gute Erreichbarkeit')}
+          </div>
+
+          <!-- User Journey -->
+          <div class="metric-card" style="margin-top: 20px;">
+            <h3>User Journey Optimierung</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong>Landing Page</strong></p>
+                <p style="font-size: 0.9rem;">Headline: Klar & nutzenorientiert</p>
+                <p style="font-size: 0.9rem;">Value Proposition: Deutlich erkennbar</p>
+                <p style="font-size: 0.9rem;">Trust Signals: 6 vorhanden</p>
+                ${generateProgressBar(70, 'Score: 70%')}
+              </div>
+              <div>
+                <p><strong>Navigation</strong></p>
+                <p style="font-size: 0.9rem;">Menüstruktur: Logisch</p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Breadcrumbs vorhanden</p>
+                <p style="font-size: 0.9rem; color: #ef4444;">✗ Suchfunktion fehlt</p>
+                ${generateProgressBar(75, 'Score: 75%')}
+              </div>
+              <div>
+                <p><strong>Informationshierarchie</strong></p>
+                <p style="font-size: 0.9rem;">Content Flow: Überwiegend logisch</p>
+                <p style="font-size: 0.9rem;">Scanability: Gut</p>
+                <p style="font-size: 0.9rem;">CTA-Platzierung: Strategisch</p>
+                ${generateProgressBar(68, 'Score: 68%')}
+              </div>
+              <div>
+                <p><strong>Vertrauenselemente</strong></p>
+                <p style="font-size: 0.9rem;">Testimonials: 6</p>
+                <p style="font-size: 0.9rem;">Zertifikate: 3</p>
+                <p style="font-size: 0.9rem;">Garantien: 2</p>
+                ${generateProgressBar(60, 'Score: 60%')}
+              </div>
+              <div>
+                <p><strong>Dringlichkeitselemente</strong></p>
+                <p style="font-size: 0.9rem; color: #ef4444;">✗ Limitierte Angebote: 0</p>
+                <p style="font-size: 0.9rem;">Zeitliche Beschränkungen: 1</p>
+                ${generateProgressBar(45, 'Score: 45% - Ausbaufähig')}
+              </div>
+            </div>
+            <p style="margin-top: 15px;"><strong>User Journey Score:</strong> 64%</p>
+            ${generateProgressBar(64, 'Gute Basis, Optimierungspotenzial vorhanden')}
+          </div>
+
+          <!-- Handlungsempfehlungen -->
+          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 8px;">
+            <h4 style="margin-top: 0;">Prioritäre Handlungsempfehlungen</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li><strong>Tracking implementieren:</strong> Conversion-Tracking für Kontaktformular und WhatsApp einrichten</li>
+              <li><strong>Mobile-Optimierung:</strong> E-Mail-CTAs für mobile Geräte optimieren</li>
+              <li><strong>Live-Chat hinzufügen:</strong> Chat-System mit FAQ-Bot für schnellere Kundenansprache</li>
+              <li><strong>Suchfunktion:</strong> Website-Suche implementieren für bessere Navigation</li>
+              <li><strong>Dringlichkeit schaffen:</strong> Zeitlich begrenzte Angebote oder Aktionen einführen</li>
+              <li><strong>WhatsApp optimieren:</strong> Automatische Begrüßungsnachricht einrichten</li>
+              <li><strong>A/B-Testing:</strong> CTA-Varianten testen zur Optimierung der Conversion-Rate</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
