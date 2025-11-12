@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
@@ -38,6 +38,7 @@ interface CustomerReportData {
   manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
+  manualConversionData?: ManualConversionData | null;
   privacyData?: any;
   accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
@@ -140,6 +141,7 @@ export const generateCustomerHTML = ({
   manualLocalSEOData,
   manualIndustryReviewData,
   manualOnlinePresenceData,
+  manualConversionData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
@@ -2927,22 +2929,23 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Conversion-Optimierung -->
+    ${manualConversionData ? `
     <div class="section">
       <div class="section-header">
         <span>Conversion-Optimierung</span>
-        <div class="header-score-circle ${getScoreColorClass(67)}">67%</div>
+        <div class="header-score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>Conversion-Rate Optimierung</h3>
           <div class="score-display">
-            <div class="score-circle ${getScoreColorClass(67)}">67%</div>
+            <div class="score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
             <div class="score-details">
-              <p><strong>Status:</strong> Gute Basis vorhanden</p>
-              <p><strong>Empfehlung:</strong> Weitere Optimierungen möglich</p>
+              <p><strong>Status:</strong> ${manualConversionData.overallScore >= 75 ? 'Sehr gute Basis' : manualConversionData.overallScore >= 60 ? 'Gute Basis vorhanden' : 'Optimierungsbedarf'}</p>
+              <p><strong>Empfehlung:</strong> ${manualConversionData.overallScore >= 75 ? 'Feintuning möglich' : 'Weitere Optimierungen empfohlen'}</p>
             </div>
           </div>
-          ${generateProgressBar(67, 'Conversion-Rate-Optimierung auf gutem Niveau')}
+          ${generateProgressBar(manualConversionData.overallScore, `Conversion-Rate-Optimierung: ${manualConversionData.overallScore}%`)}
         </div>
         
         <div class="collapsible" onclick="toggleSection('conversion-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
@@ -2951,110 +2954,90 @@ export const generateCustomerHTML = ({
         
         <div id="conversion-details" style="display: none;">
           <!-- Call-to-Action Analyse -->
-          <div class="metric-card good" style="margin-top: 20px;">
+          <div class="metric-card ${manualConversionData.ctaScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
             <h3>Call-to-Action (CTA) Analyse</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
               <div>
-                <p><strong>Gesamt-CTAs:</strong> 12</p>
-                <p style="font-size: 0.9rem; color: #6b7280;">Davon 9 sichtbar, 6 effektiv</p>
+                <p><strong>Gesamt-CTAs:</strong> ${manualConversionData.totalCTAs}</p>
+                <p style="font-size: 0.9rem; color: #6b7280;">Davon ${manualConversionData.visibleCTAs} sichtbar, ${manualConversionData.effectiveCTAs} effektiv</p>
               </div>
               <div>
-                <p><strong>Above-the-Fold:</strong> 4 CTAs</p>
+                <p><strong>Above-the-Fold:</strong> ${manualConversionData.aboveFoldCTAs} CTAs</p>
                 <p style="font-size: 0.9rem; color: #6b7280;">Direkt im sichtbaren Bereich</p>
               </div>
               <div>
-                <p><strong>CTA-Score:</strong> 72%</p>
-                ${generateProgressBar(72, 'Gute CTA-Platzierung')}
+                <p><strong>CTA-Score:</strong> ${manualConversionData.ctaScore}%</p>
+                ${generateProgressBar(manualConversionData.ctaScore, `${manualConversionData.ctaScore >= 70 ? 'Gute' : 'Verbesserungsfähige'} CTA-Platzierung`)}
               </div>
             </div>
             
+            ${manualConversionData.ctaTypes && manualConversionData.ctaTypes.length > 0 ? `
             <!-- CTA-Typen Details -->
             <div style="margin-top: 20px;">
               <h4>CTA-Typen Performance</h4>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
-                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-                  <p><strong>📞 Telefon (4x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 12.5% | Conversion: 68%</p>
-                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
-                  ${generateProgressBar(85, 'Effektivität: 85%')}
+                ${manualConversionData.ctaTypes.map(cta => `
+                <div style="padding: 15px; background: ${cta.effectiveness >= 70 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)'}; border-radius: 8px;">
+                  <p><strong>${cta.type} (${cta.count}x)</strong></p>
+                  <p style="font-size: 0.9rem; color: ${cta.mobileOptimized ? '#22c55e' : '#ef4444'};">${cta.mobileOptimized ? '✓' : '✗'} Mobile optimiert</p>
+                  <p style="font-size: 0.9rem; color: ${cta.trackingSetup ? '#22c55e' : '#ef4444'};">${cta.trackingSetup ? '✓' : '✗'} Tracking ${cta.trackingSetup ? 'aktiv' : 'fehlt'}</p>
+                  ${generateProgressBar(cta.effectiveness, `Effektivität: ${cta.effectiveness}%`)}
                 </div>
-                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-                  <p><strong>📝 Kontaktformular (3x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 8.2% | Conversion: 45%</p>
-                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert</p>
-                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Tracking fehlt</p>
-                  ${generateProgressBar(60, 'Effektivität: 60%')}
-                </div>
-                <div style="padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;">
-                  <p><strong>✉️ E-Mail (2x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 3.1% | Conversion: 25%</p>
-                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Nicht mobile optimiert | ✗ Tracking fehlt</p>
-                  ${generateProgressBar(45, 'Effektivität: 45%')}
-                </div>
-                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-                  <p><strong>💬 WhatsApp (1x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 15.3% | Conversion: 72%</p>
-                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert</p>
-                  <p style="font-size: 0.9rem; color: #ef4444;">✗ Tracking fehlt</p>
-                  ${generateProgressBar(78, 'Effektivität: 78%')}
-                </div>
-                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-                  <p><strong>🔙 Rückruf Service (1x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 6.8% | Conversion: 85%</p>
-                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
-                  ${generateProgressBar(82, 'Effektivität: 82%')}
-                </div>
-                <div style="padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
-                  <p><strong>📅 Termin buchen (1x)</strong></p>
-                  <p style="font-size: 0.9rem;">Klickrate: 4.2% | Conversion: 92%</p>
-                  <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile optimiert | ✓ Tracking aktiv</p>
-                  ${generateProgressBar(90, 'Effektivität: 90%')}
-                </div>
+                `).join('')}
               </div>
             </div>
+            ` : ''}
           </div>
 
           <!-- Kontaktmethoden -->
-          <div class="metric-card good" style="margin-top: 20px;">
+          <div class="metric-card ${manualConversionData.contactScore >= 70 ? 'good' : ''}" style="margin-top: 20px;">
             <h3>Kontaktmethoden Analyse</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+              ${manualConversionData.contactMethods.phone.visible ? `
               <div>
                 <p><strong>Telefon</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Prominent | ✓ Klickbar | ✓ Getrackt</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Reaktionszeit: &lt; 3 Klingeltöne</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Verfügbar: Mo-Fr 7-18h, Sa 8-14h</p>
+                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.prominent ? '✓' : '○'} Prominent</p>
+                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.phone.clickable ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.phone.clickable ? '✓' : '○'} Klickbar</p>
               </div>
+              ` : ''}
+              ${manualConversionData.contactMethods.email.visible ? `
               <div>
                 <p><strong>E-Mail</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Sichtbar | ✓ Auto-Responder</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Antwortzeit: &lt; 4h</p>
+                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.email.prominent ? '#22c55e' : '#6b7280'};">${manualConversionData.contactMethods.email.prominent ? '✓' : '○'} ${manualConversionData.contactMethods.email.prominent ? 'Prominent' : 'Sichtbar'}</p>
               </div>
+              ` : ''}
+              ${manualConversionData.contactMethods.form.present ? `
               <div>
                 <p><strong>Kontaktformular</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Mobile-freundlich | 5 Felder</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Completion Rate: 78% | Ladezeit: 1.2s</p>
+                <p style="font-size: 0.9rem; color: ${manualConversionData.contactMethods.form.mobileOptimized ? '#22c55e' : '#fbbf24'};">${manualConversionData.contactMethods.form.mobileOptimized ? '✓' : '⚠'} ${manualConversionData.contactMethods.form.mobileOptimized ? 'Mobile-freundlich' : 'Mobile-Optimierung empfohlen'}</p>
               </div>
+              ` : ''}
+              ${manualConversionData.contactMethods.whatsapp.present ? `
               <div>
-                <p><strong>WhatsApp Business</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Business Account</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Antwortzeit: &lt; 30min</p>
-                <p style="font-size: 0.85rem; color: #fbbf24;">⚠ Automatische Begrüßung fehlt</p>
+                <p><strong>WhatsApp</strong></p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
               </div>
+              ` : ''}
+              ${manualConversionData.contactMethods.callback.present ? `
               <div>
                 <p><strong>Rückruf-Service</strong></p>
-                <p style="font-size: 0.9rem; color: #22c55e;">✓ Request-Formular vorhanden</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Erfüllungsrate: 92%</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Ø Rückrufzeit: &lt; 2h</p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
               </div>
+              ` : ''}
+              ${manualConversionData.contactMethods.chat.present ? `
               <div>
                 <p><strong>Live-Chat</strong></p>
-                <p style="font-size: 0.9rem; color: #ef4444;">✗ Nicht vorhanden</p>
-                <p style="font-size: 0.85rem; color: #6b7280;">Empfehlung: Live Chat mit FAQ-Bot</p>
+                <p style="font-size: 0.9rem; color: #22c55e;">✓ Verfügbar</p>
               </div>
+              ` : ''}
             </div>
-            <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> 78%</p>
-            ${generateProgressBar(78, 'Sehr gute Erreichbarkeit')}
+            <p style="margin-top: 15px;"><strong>Kontaktmethoden-Score:</strong> ${manualConversionData.contactScore}%</p>
+            ${generateProgressBar(manualConversionData.contactScore, manualConversionData.contactScore >= 70 ? 'Sehr gute Erreichbarkeit' : 'Ausbaufähige Erreichbarkeit')}
           </div>
+        </div>
+      </div>
+    </div>
+    ` : ''}
 
           <!-- User Journey -->
           <div class="metric-card" style="margin-top: 20px;">
