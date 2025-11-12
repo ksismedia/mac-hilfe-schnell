@@ -20,6 +20,10 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
   manualConversionData,
   updateManualConversionData
 }) => {
+  console.log('=== PerformanceMobileCategory Render ===');
+  console.log('manualConversionData:', manualConversionData);
+  console.log('updateManualConversionData exists:', !!updateManualConversionData);
+  
   return (
     <div className="space-y-6">
       <div>

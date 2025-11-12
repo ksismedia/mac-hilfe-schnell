@@ -464,6 +464,8 @@ export const useManualData = () => {
   }, []);
 
   const updateManualConversionData = useCallback((data: ManualConversionData | null) => {
+    console.log('=== updateManualConversionData called ===');
+    console.log('New data:', data);
     setManualConversionData(data);
     console.log('Manual Conversion Data Updated:', data);
   }, []);
