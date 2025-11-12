@@ -441,7 +441,7 @@ export const generateDataPrivacySection = (
   return `
         <!-- DSGVO-Konformität -->
         <div class="section">
-            <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+            <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">
               <span>▶ DSGVO-Konformität</span>
               <div class="header-score-circle ${dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
             </div>
@@ -583,7 +583,7 @@ export const generateDataPrivacySection = (
 
         <!-- Datenschutz & Technische Sicherheit -->
         <div class="section">
-            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer; display: flex; align-items: center; gap: 15px;">
+            <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">
               <span>▶ Datenschutz & Technische Sicherheit</span>
               <div class="header-score-circle ${dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
             </div>

@@ -233,19 +233,19 @@ div[class*="section-header"],
   padding: 25px 40px !important;
   font-size: 1.5em !important;
   font-weight: 700 !important;
-  max-width: calc(100% - 40px) !important;
+  max-width: 100% !important;
+  width: 100% !important;
   overflow-x: hidden !important;
   display: flex !important;
   align-items: center !important;
   gap: 15px !important;
   box-sizing: border-box !important;
-  margin-left: 40px !important;
-  margin-right: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin: 0 !important;
   border-radius: 0 !important;
   position: relative !important;
-  left: 0 !important;
+  /* Verschiebt den Header nach links um aus der Section rauszuragen */
+  left: -40px !important;
+  padding-left: 80px !important;
 }
 
 /* NOCHMAL: Section-Header mit ALLEN möglichen Kombinationen MÜSSEN gelb sein UND EINGERÜCKT */
@@ -260,9 +260,8 @@ div.collapsible.section-header {
   background: #fbbf24 !important;
   background-color: #fbbf24 !important;
   color: #000000 !important;
-  margin-left: 40px !important;
-  max-width: calc(100% - 40px) !important;
-  left: 0 !important;
+  left: -40px !important;
+  padding-left: 80px !important;
 }
 .header-score-circle {
   display: inline-flex;
@@ -725,16 +724,15 @@ table tr {
     font-weight: 700 !important;
     padding: 25px 40px !important;
     font-size: 1.5em !important;
-    margin-left: 40px !important;
-    margin-right: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    max-width: calc(100% - 40px) !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
     border-radius: 0 !important;
     display: flex !important;
     align-items: center !important;
     position: relative !important;
-    left: 0 !important;
+    left: -40px !important;
+    padding-left: 80px !important;
   }
   
   .header h1 {
