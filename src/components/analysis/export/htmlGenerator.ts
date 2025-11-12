@@ -3669,7 +3669,7 @@ export const generateCustomerHTML = ({
       return hasCorporateData ? `
     <div class="section">
       <div class="section-header">
-        <span>Corporate Identity & Außendarstellung</span>
+        <span>Erscheinungsbild & Außendarstellung</span>
         <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
       </div>
       <div class="section-content">
