@@ -2219,8 +2219,8 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Kategorie-Überschrift: Online-Qualität · Relevanz · Autorität -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-Qualität · Relevanz · Autorität</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-Qualität · Relevanz · Autorität</h2>
     </div>
 
     <!-- SEO-Bestandsanalyse -->
@@ -2762,8 +2762,8 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Kategorie-Überschrift: Webseiten-Performance & Technik -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Webseiten-Performance & Technik</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Webseiten-Performance & Technik</h2>
     </div>
 
     <!-- Website Performance -->
@@ -3117,8 +3117,8 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Kategorie-Überschrift: Online-/Web-/Social-Media Performance -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-/Web-/Social-Media Performance</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-/Web-/Social-Media Performance</h2>
     </div>
 
     <!-- Social Media Listening & Monitoring -->
@@ -3575,8 +3575,8 @@ export const generateCustomerHTML = ({
     })()}
 
     <!-- Kategorie-Überschrift: Markt & Marktumfeld -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Markt & Marktumfeld</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Markt & Marktumfeld</h2>
     </div>
 
     <!-- Wettbewerber-Analyse -->
@@ -3747,8 +3747,8 @@ export const generateCustomerHTML = ({
     })()}
 
     <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
     </div>
 
     <!-- Reaktionszeit auf Anfragen -->
@@ -3885,8 +3885,8 @@ export const generateCustomerHTML = ({
     ` : ''}
 
     <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h2>
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #ffffff !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h2>
     </div>
 
     <!-- Corporate Identity & Außendarstellung -->
