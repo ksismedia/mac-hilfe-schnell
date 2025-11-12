@@ -169,8 +169,8 @@ export class BusinessAnalysisService {
       socialMediaData = await this.analyzeSocialMediaPresence(companyName, url, websiteContent);
       console.log('Social media analysis completed');
     } catch (error) {
-      console.warn('Social media analysis failed, using fallback:', error);
-      socialMediaData = this.generateFallbackSocialMediaData();
+      console.warn('Social media analysis failed, no fallback data:', error);
+      socialMediaData = null;
     }
     
     // Generiere alle Analysedaten mit realistischen Scores - mit Fehlerbehandlung
@@ -222,18 +222,18 @@ export class BusinessAnalysisService {
     }
     
     try {
-      console.log('Generating workplace data...');
-      workplaceData = this.generateRealisticWorkplaceData(companyName);
-      console.log('Workplace data generated successfully');
+      console.log('No workplace data - API required');
+      workplaceData = null;
+      console.log('Workplace data: none (only real data allowed)');
     } catch (error) {
       console.error('Workplace data generation failed:', error);
       workplaceData = { kununu: { found: false, rating: 0, reviews: 0 }, glassdoor: { found: false, rating: 0, reviews: 0 }, overallScore: 0 };
     }
     
     try {
-      console.log('Generating social proof data...');
-      socialProofData = this.generateRealisticSocialProofData(industry);
-      console.log('Social proof data generated successfully');
+      console.log('No social proof data - API required');
+      socialProofData = null;
+      console.log('Social proof data: none (only real data allowed)');
     } catch (error) {
       console.error('Social proof data generation failed:', error);
       socialProofData = { testimonials: 0, certifications: [], awards: [], overallScore: 0 };
@@ -278,28 +278,92 @@ export class BusinessAnalysisService {
       const companyName = this.extractCompanyName(url, address);
       const fallbackWebsiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
       
-      const fallbackData = {
+      const noApiData: RealBusinessData = {
         company: {
           name: companyName,
-          address,
-          url,
-          industry,
+          address: address,
+          url: url,
+          industry: industry,
+          phone: undefined,
+          email: undefined
         },
-        seo: this.generateSEOFromContent(fallbackWebsiteContent, industry, companyName),
-        performance: this.generatePerformanceFromPageSpeed(null, url),
-        reviews: { google: { rating: 0, count: 0, recent: [] } },
+        seo: {
+          titleTag: '',
+          metaDescription: '',
+          headings: { h1: [], h2: [], h3: [] },
+          altTags: { total: 0, withAlt: 0 },
+          score: 0
+        },
+        performance: {
+          loadTime: 0,
+          lcp: 0,
+          fid: 0,
+          cls: 0,
+          score: 0
+        },
+        reviews: {
+          google: {
+            rating: 0,
+            count: 0,
+            recent: []
+          }
+        },
         competitors: [],
-        keywords: await this.analyzeKeywordsFromContent(fallbackWebsiteContent, industry, url),
-        imprint: this.analyzeImprintFromContent(fallbackWebsiteContent),
-        socialMedia: this.generateFallbackSocialMediaData(),
-        workplace: this.generateRealisticWorkplaceData(companyName),
-        socialProof: this.generateRealisticSocialProofData(industry),
-        mobile: this.generateMobileDataFromPageSpeed(null),
+        keywords: [],
+        imprint: {
+          found: false,
+          completeness: 0,
+          missingElements: [],
+          foundElements: [],
+          score: 0
+        },
+        socialMedia: {
+          facebook: {
+            found: false,
+            followers: 0,
+            lastPost: '',
+            engagement: ''
+          },
+          instagram: {
+            found: false,
+            followers: 0,
+            lastPost: '',
+            engagement: ''
+          },
+          overallScore: 0
+        },
+        workplace: {
+          kununu: {
+            found: false,
+            rating: 0,
+            reviews: 0
+          },
+          glassdoor: {
+            found: false,
+            rating: 0,
+            reviews: 0
+          },
+          overallScore: 0
+        },
+        socialProof: {
+          testimonials: 0,
+          certifications: [],
+          awards: [],
+          overallScore: 0
+        },
+        mobile: {
+          responsive: false,
+          touchFriendly: false,
+          pageSpeedMobile: 0,
+          pageSpeedDesktop: 0,
+          overallScore: 0,
+          issues: []
+        }
       };
       
-      console.log('=== RETURNING FALLBACK DATA ===');
-      console.log('Fallback data prepared:', fallbackData);
-      return fallbackData;
+      console.log('=== NO API DATA - RETURNING NULL VALUES ===');
+      console.log('No fallback data - only real API data allowed');
+      return noApiData;
     }
   }
 

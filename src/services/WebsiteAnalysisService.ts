@@ -80,12 +80,12 @@ export class WebsiteAnalysisService {
       }
       
       // Fallback: Generiere realistische Demo-Inhalte basierend auf URL
-      console.log('All fetch methods failed, generating realistic fallback content');
-      return this.generateRealisticContent(url);
+      console.log('All fetch methods failed, no fallback data');
+      return '';
       
     } catch (error) {
       console.error('Failed to fetch website content:', error);
-      return this.generateRealisticContent(url);
+      return '';
     }
   }
 
@@ -139,9 +139,9 @@ export class WebsiteAnalysisService {
       return this.parseHtmlContent(htmlContent, url);
     } catch (error) {
       console.error('Website analysis failed:', error);
-      // Fallback auf realistische Demo-Daten
-      const fallbackContent = this.generateRealisticContent(url);
-      return this.parseHtmlContent(fallbackContent, url);
+      // No fallback - return empty result
+      console.log('No content available, returning empty result');
+      return this.parseHtmlContent('', url);
     }
   }
 
