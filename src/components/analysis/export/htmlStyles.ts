@@ -230,7 +230,7 @@ div[class*="section-header"],
   background: #fbbf24 !important;
   background-color: #fbbf24 !important;
   color: #000000 !important;
-  font-size: 1.5em !important;
+  font-size: 1.8em !important;
   font-weight: 700 !important;
   display: flex !important;
   align-items: center !important;
