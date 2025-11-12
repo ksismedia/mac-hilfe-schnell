@@ -239,16 +239,11 @@ div[class*="section-header"],
   box-sizing: border-box !important;
   border-radius: 0 !important;
   position: relative !important;
-  /* Section ist 95% breit, also 2.5vw Abstand auf jeder Seite */
-  /* Header soll über volle Viewport-Breite gehen */
-  width: calc(100% + 5vw) !important;
-  max-width: none !important;
-  margin-left: -2.5vw !important;
-  margin-right: -2.5vw !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  /* Einheitlicher 40px Einzug vom linken Viewport-Rand: 2.5vw + 40px */
-  padding: 25px 40px 25px calc(2.5vw + 40px) !important;
+  /* Einheitlicher 40px Einzug - ohne Überlauf */
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 25px 40px !important;
 }
 
 /* NOCHMAL: Section-Header Farbe überschreiben */
@@ -325,16 +320,6 @@ div.collapsible.section-header {
   box-sizing: border-box !important;
   contain: layout style !important;
   position: relative;
-}
-/* Überschriften innerhalb von Sections - explizite Farben für Lesbarkeit */
-.section-content h3,
-.section-content h4 {
-  color: #ffffff !important;
-  margin-bottom: 15px;
-}
-.section-content .metric-card h3,
-.section-content .metric-card h4 {
-  color: #fbbf24 !important;
 }
 .metric-card { 
   background: rgba(17, 24, 39, 0.6); 
@@ -738,15 +723,11 @@ table tr {
     display: flex !important;
     align-items: center !important;
     position: relative !important;
-    /* Print: Section ist 95% breit, Header über volle Breite */
-    width: calc(100% + 5vw) !important;
-    max-width: none !important;
-    margin-left: -2.5vw !important;
-    margin-right: -2.5vw !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    /* Print: Einheitlich 40px vom Viewport-Rand */
-    padding: 25px 40px 25px calc(2.5vw + 40px) !important;
+    /* Print: Einheitlich 40px Einzug ohne Überlauf */
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 25px 40px !important;
   }
   
   .header h1 {
