@@ -238,16 +238,16 @@ div[class*="section-header"],
   gap: 15px !important;
   box-sizing: border-box !important;
   border-radius: 0 !important;
-  /* Negative margin zieht den Header aus der zentrierten Section */
-  margin-left: calc(-2.5% - 0px) !important;
-  margin-right: calc(-2.5% - 0px) !important;
+  position: relative !important;
+  /* Viewport-basierte Ausrichtung: Header auf Vollbreite bringen */
+  width: 100vw !important;
+  max-width: none !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: 0 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  /* Padding für 40px Einzug vom linken Viewport-Rand */
-  padding: 25px 40px 25px calc(2.5% + 40px) !important;
-  /* Breite größer als Section um negative margins auszugleichen */
-  width: calc(100% + 5%) !important;
-  max-width: none !important;
+  /* Einheitlicher 40px Einzug vom linken Viewport-Rand */
+  padding: 25px 40px 25px 40px !important;
 }
 
 /* NOCHMAL: Section-Header Farbe überschreiben */
@@ -726,15 +726,16 @@ table tr {
     border-radius: 0 !important;
     display: flex !important;
     align-items: center !important;
-    /* Print: Negative margins für Vollbreite */
-    margin-left: calc(-2.5% - 0px) !important;
-    margin-right: calc(-2.5% - 0px) !important;
+    position: relative !important;
+    /* Print: Viewport-basiert für einheitliche Einrückung */
+    width: 100vw !important;
+    max-width: none !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: 0 !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    /* Print: 40px Einzug */
-    padding: 25px 40px 25px calc(2.5% + 40px) !important;
-    width: calc(100% + 5%) !important;
-    max-width: none !important;
+    /* Print: Einheitlich 40px vom Viewport-Rand */
+    padding: 25px 40px 25px 40px !important;
   }
   
   .header h1 {
