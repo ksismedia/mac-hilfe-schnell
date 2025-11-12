@@ -3142,7 +3142,7 @@ export const generateCustomerHTML = ({
               <p><strong>Status:</strong> ${assessment}</p>
               <p><strong>Kategorie:</strong> ${categoryName}</p>
               <p><strong>Erfasste Inhalte:</strong> ${totalContent}</p>
-              <p><strong>Hochrelevant:</strong> ${useSimpleCounts ? '–' : highRelevance}</p>
+              ${!useSimpleCounts ? `<p><strong>Hochrelevant:</strong> ${highRelevance}</p>` : ''}
               <p><strong>Content-Typen:</strong> ${[imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length} von 3</p>
             </div>
           </div>
