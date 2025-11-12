@@ -192,6 +192,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         if (analysisData.manualData?.manualBacklinkData) {
           updateManualBacklinkData(analysisData.manualData.manualBacklinkData);
         }
+        if (analysisData.manualData?.manualConversionData) {
+          updateManualConversionData(analysisData.manualData.manualConversionData);
+        }
         
         // Load saved analysis data using utility function
         loadSavedAnalysisData(
@@ -215,7 +218,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           updateManualDataPrivacyData,
           updateManualLocalSEOData,
           updateManualIndustryReviewData,
-          updateManualOnlinePresenceData
+          updateManualOnlinePresenceData,
+          updateManualConversionData
         );
         
         console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
