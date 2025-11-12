@@ -120,12 +120,24 @@ const APIKeyManager: React.FC<APIKeyManagerProps> = ({ onApiKeySet, onLoadSavedA
           </form>
           
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">Benötigte APIs:</h4>
+            <h4 className="font-medium text-blue-900 mb-2">Mit Ihrem API-Key werden automatisch analysiert:</h4>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Places API (für Unternehmensdaten und Bewertungen)</li>
-              <li>• PageSpeed Insights API (für Performance-Analyse)</li>
-              <li>• Geocoding API (für Standortdaten)</li>
+              <li>✓ Places API (Unternehmensdaten und Bewertungen)</li>
+              <li>✓ PageSpeed Insights API (Performance, SEO, Accessibility)</li>
+              <li>✓ Geocoding API (Standortdaten für Wettbewerber)</li>
             </ul>
+          </div>
+          
+          <div className="mt-4 p-4 bg-amber-50 rounded-lg">
+            <h4 className="font-medium text-amber-900 mb-2">Manuelle Eingabe erforderlich für:</h4>
+            <ul className="text-sm text-amber-800 space-y-1">
+              <li>• Conversion-Daten (Call-to-Actions, Kontaktmethoden)</li>
+              <li>• Detaillierte Content-Analyse</li>
+              <li>• Spezifische Branchendaten</li>
+            </ul>
+            <p className="text-xs text-amber-700 mt-2">
+              Hinweis: Für automatische Conversion-Tracking würde Google Analytics 4 benötigt werden.
+            </p>
           </div>
         </CardContent>
       </Card>
