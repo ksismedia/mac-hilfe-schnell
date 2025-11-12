@@ -2928,11 +2928,11 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    <!-- Conversion-Optimierung -->
+    <!-- Conversion-Optimierung & User Journey -->
     ${manualConversionData ? `
     <div class="section">
       <div class="section-header">
-        <span>Conversion-Optimierung</span>
+        <span>Conversion-Optimierung & User Journey</span>
         <div class="header-score-circle ${getScoreColorClass(manualConversionData.overallScore)}">${manualConversionData.overallScore}%</div>
       </div>
       <div class="section-content">
