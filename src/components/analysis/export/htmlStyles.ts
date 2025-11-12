@@ -239,15 +239,16 @@ div[class*="section-header"],
   box-sizing: border-box !important;
   border-radius: 0 !important;
   position: relative !important;
-  /* Viewport-basierte Ausrichtung: Header auf Vollbreite bringen */
-  width: 100vw !important;
+  /* Section ist 95% breit, also 2.5vw Abstand auf jeder Seite */
+  /* Header soll über volle Viewport-Breite gehen */
+  width: calc(100% + 5vw) !important;
   max-width: none !important;
-  margin-left: calc(-50vw + 50%) !important;
-  margin-right: 0 !important;
+  margin-left: -2.5vw !important;
+  margin-right: -2.5vw !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  /* Einheitlicher 40px Einzug vom linken Viewport-Rand */
-  padding: 25px 40px 25px 40px !important;
+  /* Einheitlicher 40px Einzug vom linken Viewport-Rand: 2.5vw + 40px */
+  padding: 25px 40px 25px calc(2.5vw + 40px) !important;
 }
 
 /* NOCHMAL: Section-Header Farbe überschreiben */
@@ -727,15 +728,15 @@ table tr {
     display: flex !important;
     align-items: center !important;
     position: relative !important;
-    /* Print: Viewport-basiert für einheitliche Einrückung */
-    width: 100vw !important;
+    /* Print: Section ist 95% breit, Header über volle Breite */
+    width: calc(100% + 5vw) !important;
     max-width: none !important;
-    margin-left: calc(-50vw + 50%) !important;
-    margin-right: 0 !important;
+    margin-left: -2.5vw !important;
+    margin-right: -2.5vw !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     /* Print: Einheitlich 40px vom Viewport-Rand */
-    padding: 25px 40px 25px 40px !important;
+    padding: 25px 40px 25px calc(2.5vw + 40px) !important;
   }
   
   .header h1 {
