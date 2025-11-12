@@ -3784,8 +3784,14 @@ export const generateCustomerHTML = ({
             ${manualCorporateIdentityData.uniformColorScheme === 'no' || manualCorporateIdentityData.uniformColorScheme === 'unknown' ? '<li>Konsistentes Farbkonzept für alle Marketing-Materialien entwickeln</li>' : ''}
             ${manualCorporateIdentityData.uniformVehicleBranding === 'no' || manualCorporateIdentityData.uniformVehicleBranding === 'unknown' ? '<li>Firmenfahrzeuge professionell beschriften für mobile Werbung</li>' : ''}
             ${manualCorporateIdentityData.vehicleCondition === 'no' || manualCorporateIdentityData.vehicleCondition === 'unknown' ? '<li>Fahrzeugflotte regelmäßig reinigen und in gutem Zustand halten</li>' : ''}
-            ${manualCorporateIdentityData.hauszeitung === 'no' ? '<li>Newsletter oder Kundenmagazin zur Kundenbindung etablieren</li>' : ''}
-            ${manualCorporateIdentityData.bauzaunBanner === 'no' ? '<li>Baustellen-Werbung nutzen, um lokale Sichtbarkeit zu erhöhen</li>' : ''}
+            ${manualCorporateIdentityData.hauszeitung === 'no' ? '<li>Newsletter oder Kundenmagazin zur Kundenbindung etablieren (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.hauszeitung === 'unknown' ? '<li>Newsletter oder Kundenmagazin zur Kundenbindung etablieren (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.bauzaunBanner === 'no' ? '<li>Baustellen-Werbung nutzen, um lokale Sichtbarkeit zu erhöhen (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.bauzaunBanner === 'unknown' ? '<li>Baustellen-Werbung nutzen, um lokale Sichtbarkeit zu erhöhen (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.bandenWerbung === 'no' ? '<li>Banden-Werbung zur Markenbekanntheit nutzen (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.bandenWerbung === 'unknown' ? '<li>Banden-Werbung zur Markenbekanntheit nutzen (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.herstellerInfos === 'no' ? '<li>Hersteller-Infos nutzen für zusätzliche Glaubwürdigkeit (wenn noch nicht veranlasst)</li>' : ''}
+            ${manualCorporateIdentityData.herstellerInfos === 'unknown' ? '<li>Hersteller-Infos nutzen für zusätzliche Glaubwürdigkeit (wenn noch nicht veranlasst)</li>' : ''}
             <li>Corporate Design Manual erstellen für konsistente Markenkommunikation</li>
             <li>Regelmäßiges Marken-Audit durchführen, um Konsistenz sicherzustellen</li>
           </ul>
