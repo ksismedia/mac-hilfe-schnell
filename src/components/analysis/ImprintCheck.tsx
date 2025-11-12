@@ -26,7 +26,6 @@ const requiredElements = [
   'Telefonnummer',
   'E-Mail-Adresse',
   'Handelsregisternummer',
-  'Wirt. ID, sofern zugeteilt',
   'USt-IdNr.',
   'Kammerzugehörigkeit',
   'Berufsbezeichnung',
