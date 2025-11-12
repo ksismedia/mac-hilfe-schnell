@@ -714,7 +714,7 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   
   const calculateScore = (fields: Array<'yes' | 'no' | 'unknown'>) => {
     const knownFields = fields.filter(f => f !== 'unknown');
-    if (knownFields.length === 0) return 0;
+    if (knownFields.length === 0) return null; // null = keine Daten verfügbar
     const yesCount = knownFields.filter(f => f === 'yes').length;
     return Math.round((yesCount / knownFields.length) * 100);
   };
@@ -746,10 +746,14 @@ export const calculateCorporateIdentityScore = (data: any): number => {
     data.bandenWerbung
   ]);
   
-  // Immer alle 4 Bereiche berücksichtigen, auch wenn sie 0 Punkte haben
-  // Das sorgt dafür, dass fehlende Bereiche die Gesamtbewertung reduzieren
-  const totalScore = cdScore + wmScore + ffScore + awScore;
-  return Math.round(totalScore / 4);
+  // Nur bewertete Kategorien (mit tatsächlichen Daten) berücksichtigen
+  // Kategorien ohne Daten (nur unknown) werden nicht negativ gewertet
+  const scores = [cdScore, wmScore, ffScore, awScore].filter(score => score !== null);
+  
+  if (scores.length === 0) return 50; // Defaultwert wenn keine Daten
+  
+  const totalScore = scores.reduce((sum, score) => sum + score, 0);
+  return Math.round(totalScore / scores.length);
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
