@@ -111,6 +111,11 @@ section[class*="section"],
   -webkit-text-fill-color: transparent;
   font-weight: 700;
 }
+/* Kategorie-Überschriften (h2) - einheitliche 40px Einrückung */
+h2 {
+  margin-left: 40px !important;
+  box-sizing: border-box !important;
+}
 .header .subtitle { color: #d1d5db; font-size: 1.3em; font-weight: 300; }
 .logo-container { 
   display: flex; 
