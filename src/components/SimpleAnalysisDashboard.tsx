@@ -17,6 +17,7 @@ import QuoteResponseInput from './analysis/QuoteResponseInput';
 import SaveAnalysisDialog from './SaveAnalysisDialog';
 import CustomerHTMLExport from './analysis/CustomerHTMLExport';
 import OverallRating from './analysis/OverallRating';
+import { CompanyDataInput } from './analysis/CompanyDataInput';
 
 // Services
 import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -77,6 +78,19 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
   const handleKeywordDataChange = (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => {
     setManualKeywordData(keywordData);
+  };
+
+  const handleCompanyDataUpdate = (data: { phone: string; email: string }) => {
+    if (realData) {
+      setRealData({
+        ...realData,
+        company: {
+          ...realData.company,
+          phone: data.phone,
+          email: data.email
+        }
+      });
+    }
   };
   
   const { toast } = useToast();
@@ -543,6 +557,21 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             </Badge>
           </div>
         </div>
+
+        {/* Company Data Input */}
+        {realData && (
+          <div style={{ 
+            maxWidth: '800px',
+            margin: '0 auto 40px auto'
+          }}>
+            <CompanyDataInput
+              companyName={realData.company.name}
+              currentPhone={realData.company.phone}
+              currentEmail={realData.company.email}
+              onUpdate={handleCompanyDataUpdate}
+            />
+          </div>
+        )}
 
         {/* Export Buttons Section */}
         <div style={{
