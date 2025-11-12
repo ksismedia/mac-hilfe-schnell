@@ -329,6 +329,7 @@ export const generateCustomerHTML = ({
   const requiredElements = [
     'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
     'Telefonnummer', 'E-Mail-Adresse', 'Handelsregisternummer', 
+    'Wirt. ID, sofern zugeteilt',
     'USt-IdNr.', 'Kammerzugehörigkeit', 'Berufsbezeichnung', 'Aufsichtsbehörde'
   ];
   
