@@ -3771,6 +3771,20 @@ export const generateCustomerHTML = ({
       </div>
       <div class="section-content">
         ${(() => {
+          // Deutsche Bezeichnungen für Reaktionszeiten
+          const getGermanResponseTime = (time: string) => {
+            switch (time) {
+              case '1-hour': return '1 Stunde';
+              case '2-4-hours': return '2-4 Stunden';
+              case '4-8-hours': return '4-8 Stunden';
+              case '1-day': return '1 Tag';
+              case '2-3-days': return '2-3 Tage';
+              case 'over-3-days': return 'Über 3 Tage';
+              default: return time;
+            }
+          };
+          
+          const germanResponseTime = getGermanResponseTime(quoteResponseData.responseTime);
           const responseTimeHours = parseFloat(quoteResponseData.responseTime);
           const contactMethodsList = [];
           if (quoteResponseData.contactMethods.phone) contactMethodsList.push('Telefon');
@@ -3786,7 +3800,7 @@ export const generateCustomerHTML = ({
             <div>
               <h4>Reaktionszeit auf Anfragen</h4>
               <div style="font-size: 2em; font-weight: bold; color: ${responseTimeHours <= 2 ? '#10b981' : responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'};">
-                ${quoteResponseData.responseTime} Stunden
+                ${germanResponseTime}
               </div>
               <p style="margin-top: 10px; color: #6b7280;">
                 ${responseTimeHours <= 2 ? 'Exzellente Reaktionszeit' : 
