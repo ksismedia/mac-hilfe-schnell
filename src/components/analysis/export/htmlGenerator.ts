@@ -3435,32 +3435,6 @@ export const generateCustomerHTML = ({
     })()}
 
     <!-- Mitarbeiterqualifikation -->
-    ${getStaffQualificationSection()}
-
-    <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
-    </div>
-
-    <!-- Arbeitgeber-Bewertungen -->
-    ${(() => {
-      const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
-      const hasWorkplaceData = workplaceScore !== -1;
-      
-      return `
-    <div class="section">
-      <div class="section-header">
-        <span>Arbeitgeber-Bewertungen</span>
-        ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
-      </div>
-      <div class="section-content">
-        ${getWorkplaceAnalysis()}
-      </div>
-    </div>
-      `;
-    })()}
-
-    <!-- Mitarbeiterqualifikation -->
     ${(() => {
       const hasStaffData = staffQualificationData && staffQualificationData.totalEmployees > 0;
       
@@ -3581,18 +3555,10 @@ export const generateCustomerHTML = ({
       ` : '';
     })()}
 
-    <!-- Stundensatzanalyse -->
-    ${hourlyRateData ? `
-    <div class="section">
-      <div class="section-header">
-        <span>Stundensatzanalyse</span>
-        <div class="header-score-circle ${getScoreColorClass(hourlyRateScore)}">${Math.round(hourlyRateScore)}%</div>
-      </div>
-      <div class="section-content">
-        ${getPricingAnalysis()}
-      </div>
+    <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
+    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: left !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
     </div>
-    ` : ''}
 
     <!-- Reaktionszeit auf Anfragen -->
     ${quoteResponseData && quoteResponseData.responseTime ? `
