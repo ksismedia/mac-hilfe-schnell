@@ -13,6 +13,10 @@ interface ConversionOptimizationProps {
 
 const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, manualConversionData }) => {
   
+  console.log('=== ConversionOptimization Render ===');
+  console.log('URL:', url);
+  console.log('manualConversionData:', manualConversionData);
+  
   // Wenn keine manuellen Daten vorhanden sind, zeige Hinweis
   if (!manualConversionData) {
     return (

@@ -61,6 +61,9 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
 
   const handleSave = () => {
     try {
+      console.log('=== SAVING CONVERSION DATA ===');
+      console.log('Data to save:', data);
+      
       // Validate numeric fields
       conversionDataSchema.parse({
         totalCTAs: data.totalCTAs,
@@ -74,12 +77,16 @@ export const ManualConversionInput: React.FC<ManualConversionInputProps> = ({
         notes: data.notes
       });
 
+      console.log('Validation successful, calling onSave...');
       onSave(data);
+      console.log('onSave called');
+      
       toast({
         title: "Conversion-Daten gespeichert",
         description: "Die manuellen Conversion-Bewertungen wurden erfolgreich gespeichert.",
       });
     } catch (error) {
+      console.error('Validation error:', error);
       toast({
         title: "Validierungsfehler",
         description: "Bitte überprüfen Sie Ihre Eingaben.",
