@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData } from '@/hooks/useManualData';
 

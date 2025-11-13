@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Star, Users, Briefcase, AlertCircle, Edit, Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualWorkplaceData } from '@/hooks/useManualData';
 

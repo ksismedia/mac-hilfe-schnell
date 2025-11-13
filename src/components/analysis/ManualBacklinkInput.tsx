@@ -6,7 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Save, RotateCcw } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { ManualBacklinkData } from '@/hooks/useManualData';
 
 interface ManualBacklinkInputProps {

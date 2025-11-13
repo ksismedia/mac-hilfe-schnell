@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData } from '@/hooks/useManualData';
 import { Edit, Plus, Facebook, Instagram, Linkedin, Twitter, Youtube, Video } from 'lucide-react';
