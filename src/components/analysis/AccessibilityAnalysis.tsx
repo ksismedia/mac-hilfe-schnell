@@ -84,6 +84,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
       console.log('Starte WCAG 2.1 konformen Accessibility-Test...');
       const result = await AccessibilityService.analyzeAccessibility(businessData.url, realData);
       
+      if (result === null) {
+        setError('Die Barrierefreiheitsprüfung konnte nicht durchgeführt werden. Die Google PageSpeed API hat zu viele Anfragen erhalten (Rate Limit). Bitte warten Sie 1-2 Minuten und versuchen Sie es erneut.');
+        setLoading(false);
+        return;
+      }
+      
       setAccessibilityData(result);
       onDataChange?.(result);
       console.log('Accessibility-Analyse abgeschlossen:', result);
