@@ -525,59 +525,13 @@ export class BusinessAnalysisService {
   }
 
   private static async analyzeKeywordsFromContent(websiteContent: any, industry: string, url: string) {
-    console.log('=== AI-BASED KEYWORD ANALYSIS ===');
+    console.log('=== KEYWORD ANALYSIS (USING FAST FALLBACK) ===');
     console.log('Industry:', industry);
     console.log('URL:', url);
-
-    try {
-      // Sammle den gesamten Website-Content für die KI-Analyse
-      const title = websiteContent?.title || '';
-      const metaDesc = websiteContent?.metaDescription || '';
-      const content = websiteContent?.content || '';
-      const headings = [];
-      if (websiteContent?.headings) {
-        headings.push(...(websiteContent.headings.h1 || []));
-        headings.push(...(websiteContent.headings.h2 || []));
-        headings.push(...(websiteContent.headings.h3 || []));
-      }
-      const headingsText = headings.join(' ');
-      
-      // Kombiniere den Content für die KI
-      const fullContent = `Title: ${title}\nMeta: ${metaDesc}\nHeadings: ${headingsText}\nContent: ${content}`;
-      
-      console.log('Calling AI keyword analysis...');
-      console.log('Content length:', fullContent.length);
-
-      const { data, error } = await supabase.functions.invoke('analyze-keywords-ai', {
-        body: {
-          websiteContent: fullContent,
-          industry,
-          url,
-        },
-      });
-
-      if (error) {
-        console.error('AI keyword analysis error:', error);
-        throw error;
-      }
-
-      if (data?.keywords && Array.isArray(data.keywords)) {
-        console.log('AI found', data.keywords.length, 'keywords');
-        return data.keywords.map((kw: any) => ({
-          keyword: kw.keyword,
-          found: Boolean(kw.found),
-          volume: Number(kw.volume) || 100,
-          position: Number(kw.position) || 50,
-        }));
-      }
-
-      throw new Error('Invalid AI response');
-    } catch (error) {
-      console.error('AI keyword analysis failed, falling back to simple matching:', error);
-      
-      // Fallback zur alten Methode
-      return this.analyzeKeywordsFromContentFallback(websiteContent, industry);
-    }
+    
+    // TEMPORARILY SKIP AI ANALYSIS - USE FAST FALLBACK DIRECTLY
+    console.log('Using fast fallback method for keywords');
+    return this.analyzeKeywordsFromContentFallback(websiteContent, industry);
   }
 
   private static analyzeKeywordsFromContentFallback(websiteContent: any, industry: string) {
