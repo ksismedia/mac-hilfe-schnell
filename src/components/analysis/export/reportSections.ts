@@ -588,6 +588,28 @@ export const generateDataPrivacySection = (
               <div class="header-score-circle ${dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
             </div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
+                ${(() => {
+                  // Check for critical violations despite positive score
+                  const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
+                  const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
+                  const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
+                  
+                  if (dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL)) {
+                    return `
+                      <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #991b1b; font-weight: bold; margin-bottom: 8px; font-size: 15px;">
+                          <span style="font-size: 20px;">⚠️</span>
+                          Achtung: Kritische Sicherheitsmängel erkannt
+                        </div>
+                        <p style="color: #7f1d1d; font-size: 13px; margin: 0;">
+                          Trotz eines positiven Scores wurden kritische Verstöße identifiziert (z.B. fehlender HSTS-Header, mangelhaftes SSL-Rating). 
+                          Diese können zu erheblichen Sicherheitsrisiken und DSGVO-Bußgeldern führen und sollten unverzüglich behoben werden.
+                        </p>
+                      </div>
+                    `;
+                  }
+                  return '';
+                })()}
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     
                     <div class="metric-item">
