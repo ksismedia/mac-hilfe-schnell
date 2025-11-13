@@ -229,18 +229,28 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       
       if (!realData) {
         // Only load new analysis if we don't have real data yet
+        console.log('=== STARTING NEW ANALYSIS ===');
+        console.log('Business data:', businessData);
         setIsLoading(true);
         
         try {
           const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+          console.log('=== NEW ANALYSIS COMPLETED ===');
+          console.log('Analysis data:', newAnalysisData);
           setRealData(newAnalysisData);
+          toast({
+            title: "Analyse abgeschlossen",
+            description: "Die Website-Analyse wurde erfolgreich durchgeführt.",
+          });
         } catch (error) {
-          console.error('Analysis error:', error);
+          console.error('=== ANALYSIS ERROR ===');
+          console.error('Error:', error);
           toast({
             title: "Analysefehler",
-            description: "Die Website-Analyse konnte nicht durchgeführt werden.",
+            description: error instanceof Error ? error.message : "Die Website-Analyse konnte nicht durchgeführt werden. Bitte versuchen Sie es erneut.",
             variant: "destructive",
           });
+          setRealData(null);
         } finally {
           setIsLoading(false);
           setIsLoadingFromStorage(false);
@@ -249,7 +259,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [analysisData]); // Depend on analysisData instead of loadedAnalysisId
+  }, [analysisData, businessData.url, businessData.address, businessData.industry]); // Added businessData dependencies
 
   if (isLoading || isLoadingFromStorage) {
     return (

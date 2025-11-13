@@ -122,9 +122,15 @@ Analysiere diesen Inhalt und identifiziere die wichtigsten Keywords für einen $
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
+    let aiResponse = data.choices[0].message.content;
     
     console.log("AI Response:", aiResponse);
+    
+    // Remove markdown code block wrapper if present
+    if (aiResponse.includes('```json')) {
+      aiResponse = aiResponse.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      console.log("Cleaned AI Response:", aiResponse);
+    }
     
     let keywords: Keyword[];
     try {
@@ -132,6 +138,7 @@ Analysiere diesen Inhalt und identifiziere die wichtigsten Keywords für einen $
       keywords = parsed.keywords || [];
     } catch (parseError) {
       console.error("Failed to parse AI response:", parseError);
+      console.error("Problematic response:", aiResponse);
       throw new Error("Invalid AI response format");
     }
 
