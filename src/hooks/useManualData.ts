@@ -189,7 +189,7 @@ export interface ManualDataPrivacyData {
   customViolations: Array<{
     id: string;
     description: string;
-    severity: 'high' | 'medium' | 'low';
+    severity: 'critical' | 'high' | 'medium' | 'low';
     category: string;
     article?: string;
     recommendation?: string;

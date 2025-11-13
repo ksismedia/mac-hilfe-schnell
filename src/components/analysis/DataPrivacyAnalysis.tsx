@@ -81,54 +81,39 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       return manualDataPrivacyData.overallScore;
     }
     
-    // Otherwise calculate dynamic score based on violations
+    // Otherwise use the original score from the service
     if (!privacyData) return 0;
+    
+    // Start with the original calculated score
+    let score = privacyData.score;
     
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
     const totalViolations = privacyData.violations || [];
-    const activeViolations = getActiveViolations();
     
-    // If no active violations and no custom violations, return 100%
-    if (activeViolations.length === 0 && customViolations.length === 0) {
-      return 100;
-    }
+    // Add back points for deselected violations
+    totalViolations.forEach((violation, index) => {
+      if (deselectedViolations.includes(`auto-${index}`)) {
+        switch (violation.severity) {
+          case 'critical': score += 15; break;
+          case 'high': score += 10; break;
+          case 'medium': score += 5; break;
+          case 'low': score += 2; break;
+        }
+      }
+    });
     
-    // Check for critical/high severity violations in active violations
-    const activeCriticalViolations = [...activeViolations, ...customViolations].filter(
-      (v: any) => v.severity === 'critical' || v.severity === 'high'
-    );
+    // Subtract points for custom violations
+    customViolations.forEach(violation => {
+      switch (violation.severity) {
+        case 'critical': score -= 15; break;
+        case 'high': score -= 10; break;
+        case 'medium': score -= 5; break;
+        case 'low': score -= 2; break;
+      }
+    });
     
-    // If there are critical violations, cap score at 50% for one, lower for more
-    if (activeCriticalViolations.length > 0) {
-      const maxScore = Math.max(20, 50 - (activeCriticalViolations.length - 1) * 10);
-      
-      // Calculate proportional score within the limited range
-      const totalViolationCount = totalViolations.length + customViolations.length;
-      const activeViolationCount = activeViolations.length + customViolations.length;
-      
-      if (totalViolationCount === 0) return 100;
-      
-      const baseScore = Math.min(privacyData.score, maxScore);
-      const scoreRange = maxScore - baseScore;
-      const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
-      const proportionalScore = baseScore + (scoreRange * resolvedRatio);
-      
-      return Math.round(Math.max(0, Math.min(maxScore, proportionalScore)));
-    }
-    
-    // No critical violations - calculate normal proportional score
-    const totalViolationCount = totalViolations.length + customViolations.length;
-    const activeViolationCount = activeViolations.length + customViolations.length;
-    
-    if (totalViolationCount === 0) return 100;
-    
-    const baseScore = privacyData.score;
-    const scoreRange = 100 - baseScore;
-    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
-    const proportionalScore = baseScore + (scoreRange * resolvedRatio);
-    
-    return Math.round(Math.max(0, Math.min(100, proportionalScore)));
+    return Math.round(Math.max(0, Math.min(100, score)));
   };
 
   useEffect(() => {
