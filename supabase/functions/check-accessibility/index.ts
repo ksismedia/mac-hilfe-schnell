@@ -31,6 +31,17 @@ serve(async (req) => {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('PageSpeed API error:', response.status, errorText);
+      
+      if (response.status === 403) {
+        throw new Error('Google PageSpeed Insights API ist nicht aktiviert oder der API-Key ist ungültig. Bitte aktivieren Sie die PageSpeed Insights API in Ihrer Google Cloud Console: https://console.developers.google.com/apis/api/pagespeedonline.googleapis.com');
+      }
+      
+      if (response.status === 429) {
+        throw new Error('PageSpeed API Rate Limit erreicht. Bitte verwenden Sie einen eigenen Google API-Key.');
+      }
+      
       throw new Error(`PageSpeed API error: ${response.status}`);
     }
 
