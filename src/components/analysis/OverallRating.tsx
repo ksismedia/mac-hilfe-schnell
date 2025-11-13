@@ -94,7 +94,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 7, maxScore: 100 },
     { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, maxScore: 100 },
     { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
-    { name: 'Social Proof', score: realData.socialProof.overallScore, weight: 4, maxScore: 100 },
+    { name: 'Social Proof', score: realData.socialProof?.overallScore ?? 0, weight: 4, maxScore: 100 },
     { name: 'Arbeitsplatz', score: workplaceScoreRaw, weight: workplaceScoreRaw === -1 ? 0 : 2, maxScore: 100 }, // Don't count in overall if no data
     { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 1, maxScore: 100 }
   ];
