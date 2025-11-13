@@ -443,7 +443,14 @@ export const generateDataPrivacySection = (
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">
               <span>▶ DSGVO-Konformität</span>
-              <div class="header-score-circle ${dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
+              <div class="header-score-circle ${(() => {
+                const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
+                const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
+                const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
+                const hasCritical = dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL);
+                const scoreClass = dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red';
+                return hasCritical ? `${scoreClass} critical-border` : scoreClass;
+              })()}">${dataPrivacyScore}%</div>
             </div>
             <div id="dsgvo-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
