@@ -26,8 +26,12 @@ serve(async (req) => {
     // Add API key if provided by client
     if (apiKey) {
       apiUrl += `&key=${apiKey}`;
+      console.log('Using API key:', apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4));
+    } else {
+      console.log('No API key provided - using free tier');
     }
     
+    console.log('Fetching from PageSpeed API...');
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
