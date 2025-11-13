@@ -58,10 +58,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
-  console.log('🔴 SimpleAnalysisDashboard RENDER START', { businessData, hasAnalysisData: !!analysisData });
+  console.log('🔴 SimpleAnalysisDashboard RENDER', { 
+    hasAnalysisData: !!analysisData, 
+    url: businessData.url 
+  });
   
-  const [realData, setRealData] = useState<RealBusinessData | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start with true to trigger analysis
+  const [realData, setRealData] = useState<RealBusinessData | null>(analysisData?.realData || null);
+  const [isLoading, setIsLoading] = useState(!analysisData);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75);
@@ -149,126 +152,97 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // AI Review Status Hook
   const { reviewStatus } = useAIReviewStatus(analysisData?.id);
 
-  // Load analysis data or use direct analysis data
+  // Load analysis data - SIMPLE VERSION
   useEffect(() => {
-    console.log('🟢 useEffect TRIGGERED', { hasAnalysisData: !!analysisData, hasRealData: !!realData, url: businessData.url });
+    console.log('🟢 useEffect START', { hasAnalysisData: !!analysisData, hasRealData: !!realData });
     
-    // Skip if we already have realData (prevents double loading)
-    if (realData) {
-      console.log('⏭️ Already have realData, skipping load');
+    // If we have saved analysis data, load it
+    if (analysisData && !realData) {
+      console.log('📥 Loading saved analysis');
+      setIsLoadingFromStorage(true);
+      
+      // Set real data
+      setRealData(analysisData.realData);
+      
+      // Load manual data
+      if (analysisData.manualData) {
+        const md = analysisData.manualData;
+        if (md.keywordData) setManualKeywordData(md.keywordData);
+        if (md.keywordScore !== undefined) setKeywordsScore(md.keywordScore);
+        if (md.privacyData) setPrivacyData(md.privacyData);
+        if (md.accessibilityData) setAccessibilityData(md.accessibilityData);
+        if (md.staffQualificationData) updateStaffQualificationData(md.staffQualificationData);
+        if (md.hourlyRateData) updateHourlyRateData(md.hourlyRateData);
+        if (md.quoteResponseData) updateQuoteResponseData(md.quoteResponseData);
+        if (md.manualContentData) updateManualContentData(md.manualContentData);
+        if (md.manualAccessibilityData) updateManualAccessibilityData(md.manualAccessibilityData);
+        if (md.manualBacklinkData) updateManualBacklinkData(md.manualBacklinkData);
+        if (md.manualConversionData) updateManualConversionData(md.manualConversionData);
+        
+        // Load using utility
+        loadSavedAnalysisData(
+          analysisData,
+          updateImprintData,
+          updateSocialData,
+          updateWorkplaceData,
+          updateCorporateIdentityData,
+          updateCompetitors,
+          updateCompetitorServices,
+          updateCompanyServices,
+          setManualKeywordData,
+          updateStaffQualificationData,
+          updateHourlyRateData,
+          updateQuoteResponseData,
+          updateRemovedMissingServices,
+          addDeletedCompetitor,
+          updateManualContentData,
+          updateManualAccessibilityData,
+          updateManualBacklinkData,
+          updateManualDataPrivacyData,
+          updateManualLocalSEOData,
+          updateManualIndustryReviewData,
+          updateManualOnlinePresenceData,
+          updateManualConversionData
+        );
+      }
+      
+      console.log('✅ Saved analysis loaded');
+      setIsLoadingFromStorage(false);
+      setIsLoading(false);
       return;
     }
     
-    const loadAnalysisData = async () => {
-      try {
-        if (analysisData) {
-          console.log('📥 LOADING SAVED ANALYSIS');
-          setIsLoadingFromStorage(true);
-          
-          // Set real data directly from analysisData
-          setRealData(analysisData.realData);
-          
-          // Load all manual data
-          if (analysisData.manualData?.keywordData) {
-            setManualKeywordData(analysisData.manualData.keywordData);
-          }
-          if (analysisData.manualData?.keywordScore !== undefined) {
-            setKeywordsScore(analysisData.manualData.keywordScore);
-          }
-          if (analysisData.manualData?.privacyData) {
-            setPrivacyData(analysisData.manualData.privacyData);
-          }
-          if (analysisData.manualData?.accessibilityData) {
-            setAccessibilityData(analysisData.manualData.accessibilityData);
-          }
-          
-          // Load manual data for Staff/Service section
-          if (analysisData.manualData?.staffQualificationData) {
-            updateStaffQualificationData(analysisData.manualData.staffQualificationData);
-          }
-          if (analysisData.manualData?.hourlyRateData) {
-            updateHourlyRateData(analysisData.manualData.hourlyRateData);
-          }
-          if (analysisData.manualData?.quoteResponseData) {
-            updateQuoteResponseData(analysisData.manualData.quoteResponseData);
-          }
-          if (analysisData.manualData?.manualContentData) {
-            updateManualContentData(analysisData.manualData.manualContentData);
-          }
-          if (analysisData.manualData?.manualAccessibilityData) {
-            updateManualAccessibilityData(analysisData.manualData.manualAccessibilityData);
-          }
-          if (analysisData.manualData?.manualBacklinkData) {
-            updateManualBacklinkData(analysisData.manualData.manualBacklinkData);
-          }
-          if (analysisData.manualData?.manualConversionData) {
-            updateManualConversionData(analysisData.manualData.manualConversionData);
-          }
-          
-          // Load saved analysis data using utility function
-          loadSavedAnalysisData(
-            analysisData,
-            updateImprintData,
-            updateSocialData,
-            updateWorkplaceData,
-            updateCorporateIdentityData,
-            updateCompetitors,
-            updateCompetitorServices,
-            updateCompanyServices,
-            setManualKeywordData,
-            updateStaffQualificationData,
-            updateHourlyRateData,
-            updateQuoteResponseData,
-            updateRemovedMissingServices,
-            addDeletedCompetitor,
-            updateManualContentData,
-            updateManualAccessibilityData,
-            updateManualBacklinkData,
-            updateManualDataPrivacyData,
-            updateManualLocalSEOData,
-            updateManualIndustryReviewData,
-            updateManualOnlinePresenceData,
-            updateManualConversionData
-          );
-          
-          console.log('✅ Saved analysis loaded');
-          setIsLoadingFromStorage(false);
+    // If no saved data and no real data, start new analysis
+    if (!analysisData && !realData) {
+      console.log('🚀 Starting NEW analysis for:', businessData.url);
+      setIsLoading(true);
+      
+      BusinessAnalysisService.analyzeWebsite(
+        businessData.url,
+        businessData.address,
+        businessData.industry
+      )
+        .then((data) => {
+          console.log('✅ Analysis SUCCESS:', data);
+          setRealData(data);
           setIsLoading(false);
-        } else {
-          console.log('🚀 STARTING NEW ANALYSIS for:', businessData.url);
-          setIsLoading(true);
-          
-          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(
-            businessData.url, 
-            businessData.address, 
-            businessData.industry
-          );
-          
-          console.log('✅ Analysis completed:', newAnalysisData);
-          setRealData(newAnalysisData);
-          setIsLoading(false);
-          
           toast({
             title: "Analyse abgeschlossen",
             description: "Die Website-Analyse wurde erfolgreich durchgeführt.",
           });
-        }
-      } catch (error) {
-        console.error('❌ ANALYSIS ERROR:', error);
-        setIsLoading(false);
-        setIsLoadingFromStorage(false);
-        setRealData(null);
-        
-        toast({
-          title: "Analysefehler",
-          description: error instanceof Error ? error.message : "Die Website-Analyse konnte nicht durchgeführt werden.",
-          variant: "destructive",
+        })
+        .catch((error) => {
+          console.error('❌ Analysis ERROR:', error);
+          setIsLoading(false);
+          setRealData(null);
+          toast({
+            title: "Analysefehler",
+            description: error instanceof Error ? error.message : "Fehler bei der Analyse",
+            variant: "destructive",
+          });
         });
-      }
-    };
-
-    loadAnalysisData();
-  }, [analysisData, businessData.url]); // Trigger on new analysis or URL change
+    }
+  }, []); // Run once on mount - component remounts with key change
 
   console.log('🔵 Rendering state:', { isLoading, isLoadingFromStorage, hasRealData: !!realData });
   
