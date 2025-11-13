@@ -12,57 +12,21 @@ serve(async (req) => {
   }
 
   try {
-    const { url, userApiKey } = await req.json();
+    const { url } = await req.json();
     
     if (!url) {
       throw new Error('URL is required');
     }
 
-    // Use user's API key if provided, otherwise use server key
-    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
-    if (!apiKey) {
-      throw new Error('No API key available');
-    }
-
-    console.log('Checking accessibility for URL:', url, '(using', userApiKey ? 'user' : 'server', 'API key)');
+    console.log('Checking accessibility for URL:', url);
 
     // Use Google PageSpeed Insights API (free, includes Lighthouse accessibility audit)
-    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility&key=${apiKey}`;
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility`;
     
-    // Retry logic for rate limiting with longer delays
-    let response;
-    let retries = 3;
-    let delay = 5000; // Start with 5 seconds
+    const response = await fetch(apiUrl);
 
-    for (let i = 0; i < retries; i++) {
-      response = await fetch(apiUrl);
-      
-      if (response.ok) {
-        break;
-      }
-      
-      if (response.status === 429 && i < retries - 1) {
-        console.log(`Rate limited, retrying in ${delay}ms... (attempt ${i + 1}/${retries})`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        delay *= 3; // Triple the delay each time (5s, 15s, 45s)
-        continue;
-      }
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`PageSpeed API error: ${response.status}`, errorText);
-        
-        // Provide detailed error messages
-        if (response.status === 403) {
-          throw new Error(userApiKey 
-            ? 'API-Key ungültig oder PageSpeed Insights API nicht aktiviert. Bitte prüfen Sie Ihre Google Cloud Console Einstellungen oder entfernen Sie den API-Key.'
-            : 'Server-API-Key hat keine Berechtigung. Bitte verwenden Sie Ihren eigenen API-Key oder nutzen Sie die manuelle Eingabe.');
-        } else if (response.status === 429) {
-          throw new Error('API-Quota überschritten. Bitte versuchen Sie es später erneut oder nutzen Sie die manuelle Eingabe.');
-        } else {
-          throw new Error(`PageSpeed API Fehler: ${response.status}`);
-        }
-      }
+    if (!response.ok) {
+      throw new Error(`PageSpeed API error: ${response.status}`);
     }
 
     const result = await response.json();

@@ -9,7 +9,6 @@ import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { AccessibilityService, AccessibilityResult, AccessibilityViolation } from '@/services/AccessibilityService';
 import { calculateAccessibilityScore } from './export/scoreCalculations';
-import { toast } from 'sonner';
 
 interface AccessibilityAnalysisProps {
   businessData: {
@@ -30,17 +29,6 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   const [accessibilityData, setAccessibilityData] = useState<AccessibilityResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userApiKey, setUserApiKey] = useState('');
-  const [hasStoredKey, setHasStoredKey] = useState(false);
-
-  // Check for user API key on mount
-  useEffect(() => {
-    const stored = localStorage.getItem('user_google_api_key');
-    if (stored) {
-      setUserApiKey(stored);
-      setHasStoredKey(true);
-    }
-  }, []);
 
   // Helper function to merge manual and automatic accessibility data
   const getEffectiveAccessibilityData = () => {
@@ -96,30 +84,13 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
       console.log('Starte WCAG 2.1 konformen Accessibility-Test...');
       const result = await AccessibilityService.analyzeAccessibility(businessData.url, realData);
       
-      if (result === null) {
-        const errorMsg = 'Die Barrierefreiheitsprüfung konnte nicht durchgeführt werden. Die Google PageSpeed API hat zu viele Anfragen erhalten (Rate Limit). Bitte warten Sie 1-2 Minuten und versuchen Sie es erneut oder nutzen Sie die manuelle Bewertung.';
-        setError(errorMsg);
-        toast.error(errorMsg, { duration: 8000 });
-        setLoading(false);
-        return;
-      }
-      
       setAccessibilityData(result);
       onDataChange?.(result);
-      toast.success("Barrierefreiheitsanalyse erfolgreich abgeschlossen");
       console.log('Accessibility-Analyse abgeschlossen:', result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Fehler bei der Barrierefreiheitsprüfung';
+      const errorMessage = 'Fehler bei der Barrierefreiheitsprüfung: ' + (err as Error).message;
       setError(errorMessage);
       console.error('Accessibility-Test Fehler:', err);
-      
-      // Show user-friendly error message with suggestion to use manual input
-      toast.error(
-        errorMessage.includes('API-Key') || errorMessage.includes('Quota') || errorMessage.includes('Berechtigung')
-          ? `${errorMessage}\n\nTipp: Wechseln Sie zum Tab "Manuelle Bewertung" für eine manuelle Eingabe.`
-          : `Automatische Analyse fehlgeschlagen: ${errorMessage}\n\nBitte nutzen Sie die manuelle Bewertung.`,
-        { duration: 8000 }
-      );
     } finally {
       setLoading(false);
     }
@@ -221,75 +192,6 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* API Key Status Banner */}
-          <div className="mb-6 p-4 rounded-lg border" style={{
-            backgroundColor: hasStoredKey ? 'rgb(240, 253, 244)' : 'rgb(254, 252, 232)',
-            borderColor: hasStoredKey ? 'rgb(34, 197, 94)' : 'rgb(234, 179, 8)'
-          }}>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  {hasStoredKey ? (
-                    <>
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">
-                        Eigener API-Key aktiv
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="h-5 w-5 text-yellow-600" />
-                      <span className="font-semibold text-yellow-800">
-                        Zentraler API-Key (gemeinsame Limits)
-                      </span>
-                    </>
-                  )}
-                </div>
-                <p className="text-sm" style={{ color: hasStoredKey ? 'rgb(22, 101, 52)' : 'rgb(113, 63, 18)' }}>
-                  {hasStoredKey 
-                    ? 'Sie verwenden Ihren eigenen Google API-Key mit eigenen Rate-Limits (240 Anfragen/Min).'
-                    : 'Geben Sie Ihren eigenen API-Key ein, um eigene Rate-Limits zu erhalten und Wartezeiten zu vermeiden.'
-                  }
-                </p>
-              </div>
-              {!hasStoredKey && (
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="password"
-                    placeholder="AIzaSy..."
-                    value={userApiKey}
-                    onChange={(e) => setUserApiKey(e.target.value)}
-                    className="px-3 py-2 border rounded text-sm w-48"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      if (userApiKey.trim()) {
-                        localStorage.setItem('user_google_api_key', userApiKey.trim());
-                        setHasStoredKey(true);
-                      }
-                    }}
-                  >
-                    Speichern
-                  </Button>
-                </div>
-              )}
-              {hasStoredKey && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    localStorage.removeItem('user_google_api_key');
-                    setUserApiKey('');
-                    setHasStoredKey(false);
-                  }}
-                >
-                  Entfernen
-                </Button>
-              )}
-            </div>
-          </div>
-
           <Tabs defaultValue="automatic" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>

@@ -50,46 +50,24 @@ export class AccessibilityService {
   
   /**
    * Führt eine echte Barrierefreiheitsprüfung mit Google Lighthouse durch
-   * Nutzt Caching um API-Calls zu reduzieren und Rate-Limiting zu vermeiden
    */
   static async analyzeAccessibility(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
-    console.log('Starting accessibility analysis with cache check for:', url);
+    console.log('Starting real accessibility analysis with Lighthouse for:', url);
     
     try {
-      // Get user API key if available
-      const userApiKey = localStorage.getItem('user_google_api_key');
-      
-      // 1. Check cache first
-      const { supabase } = await import('@/integrations/supabase/client');
-      const { data: cachedData, error: cacheError } = await (supabase as any)
-        .from('accessibility_cache')
-        .select('result, expires_at')
-        .eq('url', url)
-        .maybeSingle();
-
-      if (!cacheError && cachedData) {
-        const expiresAt = new Date(cachedData.expires_at);
-        if (expiresAt > new Date()) {
-          console.log('✅ Using cached accessibility data (expires:', expiresAt.toISOString(), ')');
-          return cachedData.result as unknown as AccessibilityResult;
-        } else {
-          console.log('⏰ Cache expired, fetching fresh data');
-        }
-      }
-
-      // 2. No valid cache, call edge function for real Lighthouse check
-      console.log('🔍 Fetching fresh accessibility data from API', userApiKey ? '(using user API key)' : '(using server API key)');
+      // Call edge function for real Lighthouse accessibility check
       const response = await fetch(
         `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/check-accessibility`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, userApiKey })
+          body: JSON.stringify({ url })
         }
       );
 
       if (!response.ok) {
         console.error('Accessibility check failed:', response.status);
+        // No fallback - return null
         return null;
       }
 
@@ -105,32 +83,14 @@ export class AccessibilityService {
       // Calculate legal risk based on real violations
       const legalRisk = this.assessLegalRisk(result.data.violations, result.data.score);
 
-      const finalResult: AccessibilityResult = {
+      return {
         ...result.data,
         legalRisk,
         checkedWithRealAPI: true
       };
-
-      // 3. Store in cache (upsert to handle duplicates)
-      try {
-        await (supabase as any)
-          .from('accessibility_cache')
-          .upsert([{
-            url,
-            result: finalResult as any,
-            expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24h from now
-          }], {
-            onConflict: 'url'
-          });
-        console.log('💾 Cached accessibility data for 24 hours');
-      } catch (cacheWriteError) {
-        console.warn('Failed to cache result:', cacheWriteError);
-        // Continue even if caching fails
-      }
-
-      return finalResult;
     } catch (error) {
       console.error('Error during accessibility check:', error);
+      // No fallback - return null
       return null;
     }
   }
@@ -138,7 +98,7 @@ export class AccessibilityService {
   /**
    * Fallback: Simulierte Accessibility-Daten wenn API nicht verfügbar
    */
-  static async generateFallbackAccessibilityData(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
+  private static async generateFallbackAccessibilityData(url: string, realData?: RealBusinessData): Promise<AccessibilityResult> {
     console.log('Using fallback simulated accessibility data');
     await new Promise(resolve => setTimeout(resolve, 1500));
     

@@ -1,37 +1,70 @@
-import { supabase } from '@/integrations/supabase/client';
-
-// Helper to get user API key from localStorage
-const getUserApiKey = (): string | null => {
-  return localStorage.getItem('user_google_api_key');
-};
-
 export class GoogleAPIService {
-  // API Key Management ist jetzt serverseitig - diese Methoden sind nicht mehr nötig
-  static hasApiKey(): boolean {
-    // API Key ist immer verfügbar (serverseitig in Supabase oder User-Key)
-    return true;
+  private static apiKey: string = '';
+
+  static setApiKey(key: string) {
+    this.apiKey = key;
+    localStorage.setItem('google_api_key', key);
   }
 
-  // Google Places API über Edge Function
+  static getApiKey(): string {
+    if (!this.apiKey) {
+      this.apiKey = localStorage.getItem('google_api_key') || '';
+    }
+    return this.apiKey;
+  }
+
+  static hasApiKey(): boolean {
+    return this.getApiKey().length > 0;
+  }
+
+  // Verbesserte Google Places API mit CORS-Proxy - nur echte Daten
   static async getPlaceDetails(query: string): Promise<any> {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      console.warn('No Google API Key provided - cannot fetch real data');
+      return null;
+    }
+
     try {
-      const userApiKey = getUserApiKey();
-      console.log('Searching for company via Edge Function:', query, userApiKey ? '(using user API key)' : '(using server API key)');
+      console.log('Searching for company:', query);
       
-      const { data, error } = await supabase.functions.invoke('google-places-proxy', {
-        body: { query, userApiKey }
-      });
+      // Versuche verschiedene Proxy-Services für CORS
+      const proxies = [
+        (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        (url: string) => url // Direkter Aufruf als letzter Versuch
+      ];
 
-      if (error) {
-        console.error('Edge Function error:', error);
-        return null;
+      for (const proxy of proxies) {
+        try {
+          const searchUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${apiKey}`;
+          const searchResponse = await fetch(proxy(searchUrl));
+          
+          if (searchResponse.ok) {
+            const searchData = await searchResponse.json();
+            
+            if (searchData?.candidates?.length > 0) {
+              const placeId = searchData.candidates[0].place_id;
+              
+              const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,reviews,formatted_address,website,formatted_phone_number,types,business_status&key=${apiKey}`;
+              const detailsResponse = await fetch(proxy(detailsUrl));
+              
+              if (detailsResponse.ok) {
+                const detailsData = await detailsResponse.json();
+                if (detailsData?.result) {
+                  console.log('Real Google Places data retrieved successfully');
+                  return detailsData.result;
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`Proxy ${proxy.name} failed:`, error);
+          continue;
+        }
       }
-
-      if (data) {
-        console.log('Real Google Places data retrieved successfully');
-        return data;
-      }
-
+      
+      console.warn('All proxy attempts failed - no real data available');
       return null;
     } catch (error) {
       console.error('Google Places API error:', error);
@@ -39,26 +72,42 @@ export class GoogleAPIService {
     }
   }
 
-  // PageSpeed Insights API über Edge Function
+  // PageSpeed Insights API mit verbessertem CORS-Handling - nur echte Daten
   static async getPageSpeedInsights(url: string): Promise<any> {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      console.warn('No API Key - cannot fetch PageSpeed data');
+      return null;
+    }
+
     try {
-      const userApiKey = getUserApiKey();
-      console.log('Analyzing PageSpeed via Edge Function for:', url, userApiKey ? '(using user API key)' : '(using server API key)');
+      console.log('Analyzing PageSpeed for:', url);
       
-      const { data, error } = await supabase.functions.invoke('google-pagespeed-proxy', {
-        body: { url, userApiKey }
-      });
+      const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${apiKey}&category=PERFORMANCE&category=SEO&strategy=MOBILE`;
+      
+      // Versuche mit CORS-Proxy
+      const proxies = [
+        `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
+        apiUrl
+      ];
 
-      if (error) {
-        console.error('Edge Function error:', error);
-        return null;
+      for (const proxyUrl of proxies) {
+        try {
+          const response = await fetch(proxyUrl);
+          if (response.ok) {
+            const data = await response.json();
+            if (!data?.error) {
+              console.log('Real PageSpeed data retrieved successfully');
+              return data;
+            }
+          }
+        } catch (error) {
+          continue;
+        }
       }
-
-      if (data) {
-        console.log('Real PageSpeed data retrieved successfully');
-        return data;
-      }
-
+      
+      console.warn('PageSpeed API unavailable');
       return null;
     } catch (error) {
       console.error('PageSpeed API error:', error);
@@ -68,6 +117,12 @@ export class GoogleAPIService {
 
   // Verbesserte Konkurrenzsuche - nur echte Betriebe mit strengen Filtern und ohne eigene Firma
   static async getNearbyCompetitors(location: string, businessType: string, ownCompanyName?: string): Promise<any> {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      console.warn('No API Key - returning empty competitors list');
+      return { results: [] };
+    }
+
     try {
       console.log('=== SEARCHING REAL COMPETITORS ===');
       console.log('Location:', location);
@@ -157,70 +212,93 @@ export class GoogleAPIService {
     }
   }
 
-  // Koordinaten aus Adresse ermitteln über Edge Function
+  // Neue Methode: Koordinaten aus Adresse ermitteln
   private static async getCoordinatesFromAddress(address: string): Promise<{lat: number, lng: number} | null> {
+    const apiKey = this.getApiKey();
     try {
-      const userApiKey = getUserApiKey();
-      const { data, error } = await supabase.functions.invoke('google-geocoding-proxy', {
-        body: { address, userApiKey }
-      });
+      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+      
+      const proxies = [
+        `https://corsproxy.io/?${encodeURIComponent(geocodeUrl)}`,
+        geocodeUrl
+      ];
 
-      if (error) {
-        console.error('Geocoding error:', error);
-        return null;
+      for (const proxyUrl of proxies) {
+        try {
+          const response = await fetch(proxyUrl);
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.results?.length > 0) {
+              return data.results[0].geometry.location;
+            }
+          }
+        } catch (error) {
+          continue;
+        }
       }
-
-      return data?.coordinates || null;
+      return null;
     } catch (error) {
       console.error('Geocoding error:', error);
       return null;
     }
   }
 
-  // Nearby-Suche über Edge Function
-  private static async searchNearbyBusinesses(
-    coordinates: {lat: number, lng: number}, 
-    searchTerm: string, 
-    originalLocation: string, 
-    ownCompanyName?: string, 
-    businessType?: string
-  ): Promise<any[]> {
+  // Verbesserte Nearby-Suche mit kleineren Radien zuerst
+  private static async searchNearbyBusinesses(coordinates: {lat: number, lng: number}, searchTerm: string, originalLocation: string, ownCompanyName?: string, businessType?: string): Promise<any[]> {
+    const apiKey = this.getApiKey();
+    const results: any[] = [];
+
     try {
-      const userApiKey = getUserApiKey();
-      const { data, error } = await supabase.functions.invoke('google-nearby-search-proxy', {
-        body: {
-          lat: coordinates.lat,
-          lng: coordinates.lng,
-          radius: 5000, // Default radius
-          businessType: searchTerm,
-          userApiKey
+      // Kleinere Radien zuerst: 500m, 1km, 2km, 5km, 10km für bessere lokale Abdeckung
+      const radii = [500, 1000, 2000, 5000, 10000];
+      
+      for (const radius of radii) {
+        const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinates.lat},${coordinates.lng}&radius=${radius}&keyword=${encodeURIComponent(searchTerm)}&type=establishment&key=${apiKey}`;
+        
+        const proxies = [
+          `https://corsproxy.io/?${encodeURIComponent(nearbyUrl)}`,
+          nearbyUrl
+        ];
+
+        for (const proxyUrl of proxies) {
+          try {
+            const response = await fetch(proxyUrl);
+            if (response.ok) {
+              const data = await response.json();
+              if (data?.results?.length > 0) {
+                // Präzisere Filterung für echte Geschäfte der richtigen Branche
+                const relevantBusinesses = data.results.filter((place: any) => 
+                  this.isRelevantBusiness(place, searchTerm, originalLocation, businessType) &&
+                  !this.isOwnCompany(place, ownCompanyName, originalLocation)
+                );
+                
+                // PLZ und Ort zu jedem Geschäft hinzufügen
+                const businessesWithLocation = relevantBusinesses.map((place: any) => ({
+                  ...place,
+                  locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
+                  name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity),
+                  searchRadius: radius // Für Debugging
+                }));
+                
+                results.push(...businessesWithLocation);
+                console.log(`Radius ${radius/1000}km: Found ${businessesWithLocation.length} relevant businesses (excluding own company)`);
+                
+                if (results.length >= 12) break; // Sammle mehr Ergebnisse für bessere Auswahl
+              }
+            }
+          } catch (error) {
+            continue;
+          }
         }
-      });
-
-      if (error) {
-        console.error('Nearby search error:', error);
-        return [];
+        
+        if (results.length >= 12) break; // Genug gefunden
       }
-
-      const results = data?.results || [];
-      
-      // Filterung für echte Geschäfte der richtigen Branche
-      const relevantBusinesses = results.filter((place: any) => 
-        this.isRelevantBusiness(place, searchTerm, originalLocation, businessType) &&
-        !this.isOwnCompany(place, ownCompanyName, originalLocation)
-      );
-      
-      // PLZ und Ort zu jedem Geschäft hinzufügen
-      return relevantBusinesses.map((place: any) => ({
-        ...place,
-        locationInfo: this.extractLocationInfo(place.formatted_address || place.vicinity),
-        name: this.improveBusinessName(place.name, place.formatted_address || place.vicinity)
-      }));
 
     } catch (error) {
       console.error('Nearby search error:', error);
-      return [];
     }
+
+    return results;
   }
 
   // Neue präzisere Methode: Prüft Relevanz für die Branche
