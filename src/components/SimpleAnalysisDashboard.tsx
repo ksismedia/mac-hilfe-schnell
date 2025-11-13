@@ -244,7 +244,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           // Only load new analysis if we don't have real data yet
           setIsLoading(true);
           
+          console.log('🔄 Starting new analysis...');
           const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+          console.log('✅ Analysis completed, data received:', !!newAnalysisData);
           
           // Validate analysis result
           if (!newAnalysisData || !newAnalysisData.company) {
@@ -259,7 +261,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             return;
           }
           
+          console.log('📊 Setting real data to state...');
           setRealData(newAnalysisData);
+          console.log('✅ Real data set successfully');
         }
       } catch (error) {
         console.error('Analysis error:', error);
