@@ -585,7 +585,14 @@ export const generateDataPrivacySection = (
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">
               <span>▶ Datenschutz & Technische Sicherheit</span>
-              <div class="header-score-circle ${dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red'}">${dataPrivacyScore}%</div>
+              <div class="header-score-circle ${(() => {
+                const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
+                const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
+                const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
+                const hasCritical = dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL);
+                const scoreClass = dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red';
+                return hasCritical ? `${scoreClass} critical-border` : scoreClass;
+              })()}">${dataPrivacyScore}%</div>
             </div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
                 ${(() => {
