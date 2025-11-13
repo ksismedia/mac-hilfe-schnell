@@ -12,16 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, userApiKey } = await req.json();
     
     if (!url) {
       throw new Error('URL is required');
     }
 
-    console.log('Checking accessibility for URL:', url);
+    // Use user's API key if provided, otherwise use server key
+    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
+    if (!apiKey) {
+      throw new Error('No API key available');
+    }
+
+    console.log('Checking accessibility for URL:', url, '(using', userApiKey ? 'user' : 'server', 'API key)');
 
     // Use Google PageSpeed Insights API (free, includes Lighthouse accessibility audit)
-    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility`;
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility&key=${apiKey}`;
     
     // Retry logic for rate limiting with longer delays
     let response;

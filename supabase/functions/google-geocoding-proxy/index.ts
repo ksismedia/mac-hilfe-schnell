@@ -11,11 +11,11 @@ serve(async (req) => {
   }
 
   try {
-    const { address } = await req.json();
-    const apiKey = Deno.env.get('GOOGLE_API_KEY');
+    const { address, userApiKey } = await req.json();
+    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
 
     if (!apiKey) {
-      console.error('GOOGLE_API_KEY not configured');
+      console.error('No API key available');
       return new Response(
         JSON.stringify({ error: 'API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,7 +29,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Geocoding address:', address);
+    console.log('Geocoding address:', address, '(using', userApiKey ? 'user' : 'server', 'API key)');
 
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
     

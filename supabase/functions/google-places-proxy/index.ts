@@ -11,11 +11,11 @@ serve(async (req) => {
   }
 
   try {
-    const { query } = await req.json();
-    const apiKey = Deno.env.get('GOOGLE_API_KEY');
+    const { query, userApiKey } = await req.json();
+    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
 
     if (!apiKey) {
-      console.error('GOOGLE_API_KEY not configured');
+      console.error('No API key available');
       return new Response(
         JSON.stringify({ error: 'API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,7 +29,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Searching for place:', query);
+    console.log('Searching for place:', query, '(using', userApiKey ? 'user' : 'server', 'API key)');
 
     // Step 1: Find Place from Text
     const searchUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${apiKey}`;
