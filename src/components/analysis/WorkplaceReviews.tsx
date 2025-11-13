@@ -30,7 +30,10 @@ const WorkplaceReviews: React.FC<WorkplaceReviewsProps> = ({
 }) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const { toast } = useToast();
-  const workplaceData = realData.workplace;
+  const workplaceData = realData.workplace || {
+    kununu: { found: false, rating: 0, reviews: 0 },
+    glassdoor: { found: false, rating: 0, reviews: 0 }
+  };
 
   const form = useForm<ManualWorkplaceData>({
     defaultValues: {
