@@ -123,15 +123,24 @@ export class BusinessAnalysisService {
       const companyName = this.extractCompanyName(url, address);
       console.log('Extracted company name:', companyName);
       
-      // Echte Website-Inhaltsanalyse
+      // Echte Website-Inhaltsanalyse mit besserer Fehlerbehandlung
       let websiteContent;
       try {
+        console.log('Fetching website content...');
         websiteContent = await WebsiteAnalysisService.analyzeWebsite(url);
-        console.log('Website content analysis completed successfully');
+        console.log('Website content fetched - length:', websiteContent?.content?.length || 0);
+        
+        // Validiere dass genug Content vorhanden ist
+        if (!websiteContent || !websiteContent.content || websiteContent.content.length < 100) {
+          console.warn('Website content too short or invalid, using smart fallback');
+          websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
+        }
       } catch (error) {
-        console.warn('Website content analysis failed, using smart fallback:', error);
+        console.error('Website content analysis failed:', error);
         websiteContent = this.generateSmartWebsiteContent(url, companyName, industry);
       }
+      
+      console.log('Final website content ready - length:', websiteContent?.content?.length || 0);
     
     // Google Places Daten - mit Fehlerbehandlung
     let placeDetails = null;
@@ -248,19 +257,23 @@ export class BusinessAnalysisService {
       mobileData = { responsive: true, touchFriendly: true, pageSpeedMobile: 50, pageSpeedDesktop: 50, overallScore: 50, issues: [] };
     }
     
-      return {
-        company: {
-          name: placeDetails?.name || companyName,
-          address: placeDetails?.formatted_address || address,
-          url,
-          industry,
-          phone: placeDetails?.formatted_phone_number,
-        },
-        seo: seoData,
-        performance: performanceData,
-        reviews: reviewsData,
-        competitors: competitorsData,
-        keywords: keywordsData,
+    console.log('=== ANALYSIS COMPLETE - RETURNING DATA ===');
+    console.log('Keywords count:', keywordsData?.length || 0);
+    console.log('Competitors count:', competitorsData?.length || 0);
+    
+    return {
+      company: {
+        name: placeDetails?.name || companyName,
+        address: placeDetails?.formatted_address || address,
+        url,
+        industry,
+        phone: placeDetails?.formatted_phone_number,
+      },
+      seo: seoData,
+      performance: performanceData,
+      reviews: reviewsData,
+      competitors: competitorsData,
+      keywords: keywordsData,
         imprint: imprintData,
         socialMedia: socialMediaData,
         workplace: workplaceData,
