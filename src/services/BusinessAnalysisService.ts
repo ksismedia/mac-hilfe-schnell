@@ -239,6 +239,7 @@ export class BusinessAnalysisService {
       console.error('Workplace data generation failed:', error);
       workplaceData = { kununu: { found: false, rating: 0, reviews: 0 }, glassdoor: { found: false, rating: 0, reviews: 0 }, overallScore: 0 };
     }
+    console.log('🔍 DEBUG: After workplace data block');
     
     console.log('✅ Processing social proof data...');
     try {
@@ -249,6 +250,7 @@ export class BusinessAnalysisService {
       console.error('Social proof data generation failed:', error);
       socialProofData = { testimonials: 0, certifications: [], awards: [], overallScore: 0 };
     }
+    console.log('🔍 DEBUG: After social proof data block');
     
     console.log('✅ Processing mobile data...');
     try {
@@ -259,6 +261,7 @@ export class BusinessAnalysisService {
       console.error('Mobile data generation failed:', error);
       mobileData = { responsive: true, touchFriendly: true, pageSpeedMobile: 50, pageSpeedDesktop: 50, overallScore: 50, issues: [] };
     }
+    console.log('🔍 DEBUG: After mobile data block');
     console.log('✅ All data processing complete');
     
     console.log('=== ANALYSIS COMPLETE - RETURNING DATA ===');
