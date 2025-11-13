@@ -55,13 +55,16 @@ export class AccessibilityService {
     console.log('Starting real accessibility analysis with Lighthouse for:', url);
     
     try {
+      // Get API key from GoogleAPIService if available
+      const apiKey = localStorage.getItem('google_api_key') || '';
+      
       // Call edge function for real Lighthouse accessibility check
       const response = await fetch(
         `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/check-accessibility`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url, apiKey: apiKey || undefined })
         }
       );
 
