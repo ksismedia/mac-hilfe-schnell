@@ -1,19 +1,25 @@
 import { supabase } from '@/integrations/supabase/client';
 
+// Helper to get user API key from localStorage
+const getUserApiKey = (): string | null => {
+  return localStorage.getItem('user_google_api_key');
+};
+
 export class GoogleAPIService {
   // API Key Management ist jetzt serverseitig - diese Methoden sind nicht mehr nötig
   static hasApiKey(): boolean {
-    // API Key ist immer verfügbar (serverseitig in Supabase)
+    // API Key ist immer verfügbar (serverseitig in Supabase oder User-Key)
     return true;
   }
 
   // Google Places API über Edge Function
   static async getPlaceDetails(query: string): Promise<any> {
     try {
-      console.log('Searching for company via Edge Function:', query);
+      const userApiKey = getUserApiKey();
+      console.log('Searching for company via Edge Function:', query, userApiKey ? '(using user API key)' : '(using server API key)');
       
       const { data, error } = await supabase.functions.invoke('google-places-proxy', {
-        body: { query }
+        body: { query, userApiKey }
       });
 
       if (error) {
@@ -36,10 +42,11 @@ export class GoogleAPIService {
   // PageSpeed Insights API über Edge Function
   static async getPageSpeedInsights(url: string): Promise<any> {
     try {
-      console.log('Analyzing PageSpeed via Edge Function for:', url);
+      const userApiKey = getUserApiKey();
+      console.log('Analyzing PageSpeed via Edge Function for:', url, userApiKey ? '(using user API key)' : '(using server API key)');
       
       const { data, error } = await supabase.functions.invoke('google-pagespeed-proxy', {
-        body: { url }
+        body: { url, userApiKey }
       });
 
       if (error) {
@@ -153,8 +160,9 @@ export class GoogleAPIService {
   // Koordinaten aus Adresse ermitteln über Edge Function
   private static async getCoordinatesFromAddress(address: string): Promise<{lat: number, lng: number} | null> {
     try {
+      const userApiKey = getUserApiKey();
       const { data, error } = await supabase.functions.invoke('google-geocoding-proxy', {
-        body: { address }
+        body: { address, userApiKey }
       });
 
       if (error) {
@@ -178,12 +186,14 @@ export class GoogleAPIService {
     businessType?: string
   ): Promise<any[]> {
     try {
+      const userApiKey = getUserApiKey();
       const { data, error } = await supabase.functions.invoke('google-nearby-search-proxy', {
         body: {
           lat: coordinates.lat,
           lng: coordinates.lng,
           radius: 5000, // Default radius
-          businessType: searchTerm
+          businessType: searchTerm,
+          userApiKey
         }
       });
 

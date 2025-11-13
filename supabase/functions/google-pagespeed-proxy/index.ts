@@ -11,11 +11,11 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
-    const apiKey = Deno.env.get('GOOGLE_API_KEY');
+    const { url, userApiKey } = await req.json();
+    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
 
     if (!apiKey) {
-      console.error('GOOGLE_API_KEY not configured');
+      console.error('No API key available');
       return new Response(
         JSON.stringify({ error: 'API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,7 +29,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Analyzing PageSpeed for:', url);
+    console.log('Analyzing PageSpeed for:', url, '(using', userApiKey ? 'user' : 'server', 'API key)');
 
     const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${apiKey}&category=PERFORMANCE&category=SEO&strategy=MOBILE`;
     

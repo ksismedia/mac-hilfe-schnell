@@ -56,6 +56,9 @@ export class AccessibilityService {
     console.log('Starting accessibility analysis with cache check for:', url);
     
     try {
+      // Get user API key if available
+      const userApiKey = localStorage.getItem('user_google_api_key');
+      
       // 1. Check cache first
       const { supabase } = await import('@/integrations/supabase/client');
       const { data: cachedData, error: cacheError } = await (supabase as any)
@@ -75,13 +78,13 @@ export class AccessibilityService {
       }
 
       // 2. No valid cache, call edge function for real Lighthouse check
-      console.log('🔍 Fetching fresh accessibility data from API');
+      console.log('🔍 Fetching fresh accessibility data from API', userApiKey ? '(using user API key)' : '(using server API key)');
       const response = await fetch(
         `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/check-accessibility`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url, userApiKey })
         }
       );
 

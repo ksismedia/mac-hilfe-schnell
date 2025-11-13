@@ -11,11 +11,11 @@ serve(async (req) => {
   }
 
   try {
-    const { lat, lng, radius, businessType } = await req.json();
-    const apiKey = Deno.env.get('GOOGLE_API_KEY');
+    const { lat, lng, radius, businessType, userApiKey } = await req.json();
+    const apiKey = userApiKey || Deno.env.get('GOOGLE_API_KEY');
 
     if (!apiKey) {
-      console.error('GOOGLE_API_KEY not configured');
+      console.error('No API key available');
       return new Response(
         JSON.stringify({ error: 'API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,7 +29,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Searching nearby businesses:', { lat, lng, radius, businessType });
+    console.log('Searching nearby businesses:', { lat, lng, radius, businessType }, '(using', userApiKey ? 'user' : 'server', 'API key)');
 
     const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&keyword=${encodeURIComponent(businessType)}&key=${apiKey}`;
     
