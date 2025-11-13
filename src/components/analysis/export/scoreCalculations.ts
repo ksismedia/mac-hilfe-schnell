@@ -709,84 +709,44 @@ export const calculateCorporateIdentityScore = (data: any): number => {
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
   // If manual score override is set, use it
-  if (manualDataPrivacyData?.overallScore !== undefined && manualDataPrivacyData.overallScore !== privacyData?.score) {
+  if (manualDataPrivacyData?.overallScore !== undefined) {
     return manualDataPrivacyData.overallScore;
   }
   
-  // Calculate compliance bonus from manual checkboxes
-  let complianceBonus = 0;
-  if (manualDataPrivacyData) {
-    // Each positive compliance element adds points
-    if (manualDataPrivacyData.hasSSL) complianceBonus += 15;
-    if (manualDataPrivacyData.privacyPolicy) complianceBonus += 15;
-    if (manualDataPrivacyData.cookiePolicy) complianceBonus += 10;
-    if (manualDataPrivacyData.gdprCompliant) complianceBonus += 20;
-    if (manualDataPrivacyData.cookieConsent) complianceBonus += 15;
-    if (manualDataPrivacyData.dataProcessingAgreement) complianceBonus += 10;
-    if (manualDataPrivacyData.dataSubjectRights) complianceBonus += 15;
-    // Total possible bonus: 100 points
-  }
-  
-  // If all compliance elements are checked, return 100%
-  if (complianceBonus === 100) {
-    return 100;
-  }
-  
-  // Otherwise calculate dynamic score based on violations
+  // If privacyData has a score (from the service), use it as base
+  // This score already includes HSTS violations and other security checks
   if (!privacyData?.score) {
-    return Math.min(100, complianceBonus); // Use compliance bonus if no privacy data
+    return 0;
   }
+  
+  // Start with the score calculated by the service (includes HSTS, SSL, etc.)
+  let score = privacyData.score;
   
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
   const totalViolations = privacyData.violations || [];
   
-  // Calculate active violations (not deselected)
-  const activeViolations = totalViolations.filter(
-    (v: any) => !deselectedViolations.includes(v.article)
-  );
+  // Add back points for deselected violations (using index-based IDs)
+  totalViolations.forEach((violation: any, index: number) => {
+    if (deselectedViolations.includes(`auto-${index}`)) {
+      switch (violation.severity) {
+        case 'critical': score += 15; break;
+        case 'high': score += 10; break;
+        case 'medium': score += 5; break;
+        case 'low': score += 2; break;
+      }
+    }
+  });
   
-  // If no active violations and no custom violations, combine base score with compliance bonus
-  if (activeViolations.length === 0 && customViolations.length === 0) {
-    return Math.min(100, privacyData.score + complianceBonus);
-  }
+  // Subtract points for custom violations
+  customViolations.forEach((violation: any) => {
+    switch (violation.severity) {
+      case 'critical': score -= 15; break;
+      case 'high': score -= 10; break;
+      case 'medium': score -= 5; break;
+      case 'low': score -= 2; break;
+    }
+  });
   
-  // Check for critical/high severity violations in active violations
-  const activeCriticalViolations = [...activeViolations, ...customViolations].filter(
-    (v: any) => v.severity === 'critical' || v.severity === 'high'
-  );
-  
-  // If there are critical violations, cap score at 50% for one, lower for more
-  if (activeCriticalViolations.length > 0) {
-    const maxScore = Math.max(20, 50 - (activeCriticalViolations.length - 1) * 10);
-    
-    const totalViolationCount = totalViolations.length + customViolations.length;
-    const activeViolationCount = activeViolations.length + customViolations.length;
-    
-    if (totalViolationCount === 0) return Math.min(100, complianceBonus);
-    
-    const baseScore = Math.min(privacyData.score, maxScore);
-    const scoreRange = maxScore - baseScore;
-    const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
-    const proportionalScore = baseScore + (scoreRange * resolvedRatio);
-    
-    // Add compliance bonus but respect the cap
-    const finalScore = Math.min(maxScore, proportionalScore + (complianceBonus * 0.3));
-    return Math.round(Math.max(0, finalScore));
-  }
-  
-  // No critical violations - calculate normal proportional score with compliance bonus
-  const totalViolationCount = totalViolations.length + customViolations.length;
-  const activeViolationCount = activeViolations.length + customViolations.length;
-  
-  if (totalViolationCount === 0) return Math.min(100, privacyData.score + complianceBonus);
-  
-  const baseScore = privacyData.score;
-  const scoreRange = 100 - baseScore;
-  const resolvedRatio = 1 - (activeViolationCount / totalViolationCount);
-  const proportionalScore = baseScore + (scoreRange * resolvedRatio);
-  
-  // Add full compliance bonus
-  const finalScore = proportionalScore + (complianceBonus * 0.5);
-  return Math.round(Math.max(0, Math.min(100, finalScore)));
+  return Math.round(Math.max(0, Math.min(100, score)));
 };
