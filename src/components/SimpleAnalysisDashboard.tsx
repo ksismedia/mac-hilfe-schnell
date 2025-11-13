@@ -69,7 +69,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('online-quality-authority');
-  const [hasInitialized, setHasInitialized] = useState(false);
   
   const handleKeywordsScoreChange = (score: number | null) => {
     setKeywordsScore(score);
@@ -152,15 +151,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
-    console.log('🟢 useEffect TRIGGERED', { hasInitialized, hasAnalysisData: !!analysisData, hasRealData: !!realData });
+    console.log('🟢 useEffect TRIGGERED', { hasAnalysisData: !!analysisData, hasRealData: !!realData, url: businessData.url });
     
-    // Prevent double initialization
-    if (hasInitialized) {
-      console.log('⏭️ Already initialized, skipping');
+    // Skip if we already have realData (prevents double loading)
+    if (realData) {
+      console.log('⏭️ Already have realData, skipping load');
       return;
     }
-    
-    setHasInitialized(true);
     
     const loadAnalysisData = async () => {
       try {
@@ -271,7 +268,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, []); // Empty deps - runs once on mount
+  }, [analysisData, businessData.url]); // Trigger on new analysis or URL change
 
   console.log('🔵 Rendering state:', { isLoading, isLoadingFromStorage, hasRealData: !!realData });
   
