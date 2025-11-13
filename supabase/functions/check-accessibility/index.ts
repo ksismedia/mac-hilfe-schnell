@@ -12,16 +12,21 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, apiKey } = await req.json();
     
     if (!url) {
       throw new Error('URL is required');
     }
 
-    console.log('Checking accessibility for URL:', url);
+    console.log('Checking accessibility for URL:', url, apiKey ? '(with API key)' : '(without API key)');
 
-    // Use Google PageSpeed Insights API (free, includes Lighthouse accessibility audit)
-    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility`;
+    // Use Google PageSpeed Insights API - with optional API key
+    let apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility`;
+    
+    // Add API key if provided by client
+    if (apiKey) {
+      apiUrl += `&key=${apiKey}`;
+    }
     
     const response = await fetch(apiUrl);
 
