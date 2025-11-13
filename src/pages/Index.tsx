@@ -27,6 +27,11 @@ const Index = () => {
   const navigate = useNavigate();
   // Stable refs to prevent unnecessary re-renders
   const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
+  
+  // Track step changes
+  useEffect(() => {
+    console.log('📍 STEP CHANGED TO:', step);
+  }, [step]);
   const [businessData, setBusinessData] = useState<BusinessData>({
     address: '',
     url: '',
@@ -89,6 +94,8 @@ const Index = () => {
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('📝 Business submit triggered', businessData);
+    
     if (!businessData.address || !businessData.url) {
       toast({
         title: "Fehler",
@@ -104,13 +111,13 @@ const Index = () => {
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
-    console.log('Existing API key found:', !!existingKey);
+    console.log('🔑 Checking API key - exists:', !!existingKey);
     
     if (existingKey && existingKey.length > 0) {
-      console.log('Moving to results with existing API key');
+      console.log('✅ Moving to results with existing API key');
       setStep('results');
     } else {
-      console.log('No valid API key found, requesting API key input');
+      console.log('⚠️ No valid API key found, requesting API key input');
       setStep('api');
     }
   };
@@ -230,11 +237,14 @@ const Index = () => {
   };
 
   const resetToStart = () => {
+    console.log('🔄 resetToStart called');
     // Prevent multiple reset calls
     if (step === 'business' && !loadedAnalysisId && businessData.address === '' && businessData.url === '') {
+      console.log('⏭️ Reset prevented - already at start');
       return;
     }
     
+    console.log('✅ Resetting to start');
     setStep('business');
     setLoadedAnalysisId(undefined);
     setAnalysisToLoad(null);  // Clear loaded analysis
@@ -264,6 +274,7 @@ const Index = () => {
 
   // Handle extension data if available
   if (hasExtensionData && extensionData && step === 'business') {
+    console.log('🎯 Showing ExtensionDataProcessor');
     return (
       <ExtensionDataProcessor
         extensionData={extensionData}
@@ -275,7 +286,11 @@ const Index = () => {
 
   // Show results when ready
   if (step === 'results') {
-    console.log('Rendering AnalysisDashboard with key:', analysisKey);
+    console.log('🎨 Rendering AnalysisDashboard with:', { 
+      analysisKey, 
+      hasBusinessData: !!businessData, 
+      hasAnalysisToLoad: !!analysisToLoad 
+    });
     return (
       <AnalysisDashboard 
         key={analysisKey} // Force remount on new analysis
@@ -288,6 +303,7 @@ const Index = () => {
 
   // Show API Key form
   if (step === 'api') {
+    console.log('🔐 Showing API Key form');
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
         <div className="max-w-2xl mx-auto pt-8">
@@ -365,6 +381,7 @@ const Index = () => {
   }
 
   // Show business data form (default)
+  console.log('🏠 Showing business data form, current step:', step);
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-4xl mx-auto">
