@@ -66,11 +66,6 @@ const Index = () => {
   // Initialization effect - runs only once
   useEffect(() => {
     if (!isInitialized) {
-      const existingKey = GoogleAPIService.getApiKey();
-      if (existingKey) {
-        setApiKey(existingKey);
-      }
-      
       // Clean any analysis URL parameters immediately
       const url = new URL(window.location.href);
       if (url.searchParams.has('loadAnalysis') || url.searchParams.has('load') || url.searchParams.has('analysisId')) {
@@ -97,91 +92,28 @@ const Index = () => {
       return;
     }
 
-    // Clear any loaded analysis when starting new analysis
-    setAnalysisToLoad(null);
-
-    // Check if API key already exists
-    const existingKey = GoogleAPIService.getApiKey();
-    console.log('Existing API key found:', !!existingKey);
-    
-    if (existingKey && existingKey.length > 0) {
-      console.log('Moving to results with existing API key');
-      setStep('results');
-    } else {
-      console.log('No valid API key found, requesting API key input');
-      setStep('api');
-    }
+    // API Key ist jetzt serverseitig - direkt zur Analyse
+    console.log('Moving to results (API key is server-side)');
+    setStep('results');
   };
 
   const handleForceApiKeyInput = () => {
-    setStep('api');
+    // Nicht mehr benötigt
+    setStep('results');
   };
 
   const handleResetApiKey = () => {
-    // Clear stored API key
-    localStorage.removeItem('google_api_key');
-    GoogleAPIService.setApiKey('');
-    setApiKey('');
-    setStep('api');
-    
+    // Nicht mehr benötigt
     toast({
-      title: "API-Key zurückgesetzt",
-      description: "Bitte geben Sie einen neuen API-Key ein.",
+      title: "Info",
+      description: "API-Key wird serverseitig verwaltet.",
     });
   };
 
   const validateAndSaveApiKey = async (keyToValidate: string) => {
-    setIsValidatingApiKey(true);
-    console.log('Validating API key...');
-
-    try {
-      // Use CORS proxy for API validation
-      const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
-      const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(testUrl)}`;
-      
-      console.log('Testing API key with URL:', proxiedUrl);
-      const response = await fetch(proxiedUrl);
-      
-      if (!response.ok) {
-        console.error('Network error:', response.status, response.statusText);
-        throw new Error(`Network error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('API validation response:', data);
-
-      if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
-        console.log('API key is valid, saving...');
-        GoogleAPIService.setApiKey(keyToValidate);
-        setApiKey(keyToValidate);
-        
-        // Clear any loaded analysis when starting new analysis
-        setAnalysisToLoad(null);
-        
-        console.log('Moving to results step...');
-        setStep('results');
-        
-        toast({
-          title: "✅ API-Key erfolgreich",
-          description: "Der Google API-Key wurde erfolgreich validiert und gespeichert.",
-        });
-        
-        return true;
-      } else {
-        console.error('API validation failed with status:', data.status);
-        throw new Error(`API validation failed: ${data.status || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error('API Key validation error:', error);
-      toast({
-        title: "❌ Ungültiger API-Key",
-        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe und Internetverbindung.",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsValidatingApiKey(false);
-    }
+    // Nicht mehr benötigt
+    setStep('results');
+    return true;
   };
 
   const handleApiKeySubmit = async (e: React.FormEvent) => {
