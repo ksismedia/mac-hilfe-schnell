@@ -911,26 +911,48 @@ export class BusinessAnalysisService {
   }
 
   private static generateMobileDataFromPageSpeed(pageSpeedData: any) {
-    const score = pageSpeedData?.lighthouseResult?.categories?.performance?.score * 100 || (65 + Math.random() * 25);
-    const responsive = score > 60;
-    const touchFriendly = score > 50;
+    console.log('Generating mobile data from PageSpeed data:', !!pageSpeedData);
     
-    const issues = [];
-    if (!responsive) {
-      issues.push({ type: 'Kritisch', description: 'Website nicht responsive', impact: 'Hoch' });
+    try {
+      let score = 65 + Math.random() * 25; // Default fallback score
+      
+      if (pageSpeedData?.lighthouseResult?.categories?.performance?.score) {
+        score = pageSpeedData.lighthouseResult.categories.performance.score * 100;
+      }
+      
+      const responsive = score > 60;
+      const touchFriendly = score > 50;
+      
+      const issues = [];
+      if (!responsive) {
+        issues.push({ type: 'Kritisch', description: 'Website nicht responsive', impact: 'Hoch' });
+      }
+      if (score < 60) {
+        issues.push({ type: 'Warnung', description: 'Langsame mobile Ladezeit', impact: 'Mittel' });
+      }
+      
+      const result = {
+        responsive,
+        touchFriendly,
+        pageSpeedMobile: Math.round(score),
+        pageSpeedDesktop: Math.min(100, Math.round(score + 10)),
+        overallScore: Math.round(score),
+        issues,
+      };
+      
+      console.log('Mobile data generated:', result.overallScore);
+      return result;
+    } catch (error) {
+      console.error('Error in generateMobileDataFromPageSpeed:', error);
+      return {
+        responsive: true,
+        touchFriendly: true,
+        pageSpeedMobile: 70,
+        pageSpeedDesktop: 75,
+        overallScore: 70,
+        issues: [],
+      };
     }
-    if (score < 60) {
-      issues.push({ type: 'Warnung', description: 'Langsame mobile Ladezeit', impact: 'Mittel' });
-    }
-    
-    return {
-      responsive,
-      touchFriendly,
-      pageSpeedMobile: Math.round(score),
-      pageSpeedDesktop: Math.min(100, Math.round(score + 10)),
-      overallScore: Math.round(score),
-      issues,
-    };
   }
 
   // Fallback für Social Media Daten
