@@ -538,143 +538,22 @@ export class BusinessAnalysisService {
   }
 
   private static async analyzeKeywordsFromContent(websiteContent: any, industry: string, url: string) {
-    console.log('=== KEYWORD ANALYSIS (USING FAST FALLBACK) ===');
+    console.log('=== KEYWORD ANALYSIS - RETURNING PREDEFINED KEYWORDS ===');
     console.log('Industry:', industry);
-    console.log('URL:', url);
     
-    // TEMPORARILY SKIP AI ANALYSIS - USE FAST FALLBACK DIRECTLY
-    console.log('Using fast fallback method for keywords');
-    return this.analyzeKeywordsFromContentFallback(websiteContent, industry);
-  }
-
-  private static analyzeKeywordsFromContentFallback(websiteContent: any, industry: string) {
-    console.log('=== FALLBACK KEYWORD ANALYSIS START ===');
+    // Gebe nur die vordefinierten Industry-Keywords zurück
+    const industryKeywords = this.getIndustryKeywords(industry);
     
-    try {
-      const industryKeywords = this.getIndustryKeywords(industry);
-      console.log('Industry keywords count:', industryKeywords.length);
-      
-      // Sammle ALLE verfügbaren Textinhalte
-      const title = websiteContent?.title?.toLowerCase() || '';
-      const metaDesc = websiteContent?.metaDescription?.toLowerCase() || '';
-      const content = websiteContent?.content?.toLowerCase() || '';
-      
-      // Sammle alle Headings
-      const headings = [];
-      if (websiteContent?.headings) {
-        headings.push(...(websiteContent.headings.h1 || []));
-        headings.push(...(websiteContent.headings.h2 || []));
-        headings.push(...(websiteContent.headings.h3 || []));
-      }
-      const headingsText = headings.join(' ').toLowerCase();
-      
-      // Sammle alle Link-Texte
-      const linkTexts = (websiteContent?.links || []).map((link: any) => link.text || '').join(' ').toLowerCase();
-      
-      // Kombiniere ALLE Textquellen
-      const allText = `${title} ${metaDesc} ${headingsText} ${content} ${linkTexts}`;
-      
-      console.log('Total text length:', allText.length);
-      console.log('Starting keyword mapping...');
-      
-      // Verbesserte Keyword-Erkennung mit verschiedenen Varianten
-      const results = industryKeywords.map((keyword, index) => {
-        if (index % 5 === 0) {
-          console.log(`Processing keyword ${index + 1}/${industryKeywords.length}`);
-        }
-        
-        const keywordLower = keyword.toLowerCase();
-        let found = false;
-        let position = 0;
-        
-        // Erweiterte Keyword-Suche mit Varianten
-        const keywordVariants = this.generateKeywordVariants(keywordLower);
-        
-        for (const variant of keywordVariants) {
-          if (allText.includes(variant)) {
-            found = true;
-            break;
-          }
-        }
-        
-        // Realistische Positionsberechnung
-        if (found) {
-          if (title.includes(keywordLower)) {
-            position = Math.floor(Math.random() * 5) + 1;
-          } else if (metaDesc.includes(keywordLower)) {
-            position = Math.floor(Math.random() * 8) + 6;
-          } else if (headingsText.includes(keywordLower)) {
-            position = Math.floor(Math.random() * 12) + 5;
-          } else {
-            position = Math.floor(Math.random() * 20) + 11;
-          }
-        }
-        
-        return {
-          keyword,
-          position,
-          volume: this.getKeywordVolume(keyword, industry),
-          found,
-          relevance: found ? 0.7 : 0.3
-        };
-      });
-      
-      console.log('Keyword mapping complete. Results count:', results.length);
-      console.log('=== FALLBACK KEYWORD ANALYSIS END ===');
-      
-      return results;
-    } catch (error) {
-      console.error('Error in analyzeKeywordsFromContentFallback:', error);
-      return [];
-    }
-  }
-
-  private static generateKeywordVariants(keyword: string): string[] {
-    const variants = [keyword];
+    const results = industryKeywords.map((keyword) => ({
+      keyword,
+      position: 0,
+      volume: this.getKeywordVolume(keyword, industry),
+      found: false,
+      relevance: 0.5
+    }));
     
-    // Plural-Formen
-    if (!keyword.endsWith('s')) {
-      variants.push(keyword + 's');
-    }
-    
-    // Spezifische Varianten für deutsche Begriffe
-    const germanVariants: { [key: string]: string[] } = {
-      'sanitär': ['sanitaer', 'sanitaer-', 'sanitär-', 'sanitar', 'sanitärinstallation', 'sanitärtechnik'],
-      'heizung': ['heiz', 'heizungs', 'heizungsanlage', 'heizungsbau', 'heizungstechnik'],
-      'klima': ['klima-', 'klimaanlage', 'klimatechnik'],
-      'installation': ['install', 'installations', 'installateur', 'elektroinstallation', 'sanitärinstallation'],
-      'wartung': ['wartungs', 'service', 'instandhaltung'],
-      'notdienst': ['notfall', 'emergency', '24h'],
-      'bad': ['badezimmer', 'bäder', 'bad-', 'badsanierung', 'badmodernisierung', 'barrierefreies bad'],
-      'dusche': ['duschen', 'dusch-'],
-      'rohrreinigung': ['rohr', 'rohre', 'abfluss'],
-      'handwerker': ['handwerk', 'meister', 'betrieb', 'meisterbetrieb'],
-      'maler': ['malerei', 'malerbetrieb', 'malerarbeiten'],
-      'lackierung': ['lack', 'lackier'],
-      'fassade': ['fassaden', 'fassadensanierung'],
-      'anstrich': ['innenanstrich', 'außenanstrich'],
-      'wärmedämmung': ['dämmung', 'wärmedämm'],
-      'elektriker': ['elektro', 'elektrotechnik', 'elektroarbeiten', 'elektroplanung', 'elektromontage'],
-      'beleuchtung': ['licht', 'lampen'],
-      'photovoltaik': ['pv', 'solar', 'solaranlage'],
-      'dachdecker': ['dachdeckerei', 'dachbau'],
-      'dach': ['dacharbeiten', 'dacheindeckung', 'dachschutz', 'dachreparatur', 'dachmodernisierung'],
-      'abdichtung': ['abdicht'],
-      'ziegel': ['dachziegel'],
-      'stukateur': ['stuck', 'stuckarbeiten'],
-      'putz': ['verputz', 'oberputz', 'unterputz', 'fassadenputz', 'putzarbeiten'],
-      'trockenbau': ['trockenausbau'],
-      'planung': ['planungsbüro', 'fachplanung', 'projektplanung', 'bauplanung', 'technikplanung'],
-      'versorgungstechnik': ['haustechnik', 'gebäudetechnik', 'anlagenplanung'],
-      'beratung': ['energieberatung', 'technische planung'],
-      'ingenieurbüro': ['ingenieur']
-    };
-    
-    if (germanVariants[keyword]) {
-      variants.push(...germanVariants[keyword]);
-    }
-    
-    return variants;
+    console.log('Returning', results.length, 'predefined keywords for industry:', industry);
+    return results;
   }
 
   private static analyzeImprintFromContent(websiteContent: any) {
