@@ -242,39 +242,60 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         
         if (!realData) {
           // Only load new analysis if we don't have real data yet
+          console.log('🔄 Starting new analysis...');
+          console.log('Business data:', businessData);
           setIsLoading(true);
           
-          console.log('🔄 Starting new analysis...');
-          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-          console.log('✅ Analysis completed, data received:', !!newAnalysisData);
-          
-          // Validate analysis result
-          if (!newAnalysisData || !newAnalysisData.company) {
-            console.error('🚨 Invalid analysis data returned');
+          try {
+            const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+            console.log('✅ Analysis completed, data received:', !!newAnalysisData);
+            console.log('Analysis data keys:', newAnalysisData ? Object.keys(newAnalysisData) : 'none');
+            
+            // Validate analysis result
+            if (!newAnalysisData || !newAnalysisData.company) {
+              console.error('🚨 Invalid analysis data returned');
+              toast({
+                title: "Analysefehler",
+                description: "Die Website-Analyse lieferte ungültige Daten.",
+                variant: "destructive",
+              });
+              setIsLoading(false);
+              setIsLoadingFromStorage(false);
+              return;
+            }
+            
+            console.log('📊 Setting real data to state...');
+            setRealData(newAnalysisData);
+            console.log('✅ Real data set successfully');
+            console.log('✅ Loading states will be reset in finally block');
+          } catch (analysisError) {
+            console.error('❌ Analysis threw error:', analysisError);
             toast({
               title: "Analysefehler",
-              description: "Die Website-Analyse lieferte ungültige Daten.",
+              description: analysisError instanceof Error ? analysisError.message : "Die Website-Analyse konnte nicht durchgeführt werden.",
               variant: "destructive",
             });
             setIsLoading(false);
             setIsLoadingFromStorage(false);
             return;
           }
-          
-          console.log('📊 Setting real data to state...');
-          setRealData(newAnalysisData);
-          console.log('✅ Real data set successfully');
         }
       } catch (error) {
-        console.error('Analysis error:', error);
+        console.error('❌ Outer catch - Analysis error:', error);
+        console.error('Error type:', error instanceof Error ? 'Error' : typeof error);
+        console.error('Error details:', error);
         toast({
           title: "Analysefehler",
           description: "Die Website-Analyse konnte nicht durchgeführt werden.",
           variant: "destructive",
         });
-      } finally {
         setIsLoading(false);
         setIsLoadingFromStorage(false);
+      } finally {
+        console.log('🏁 Finally block - resetting loading states');
+        setIsLoading(false);
+        setIsLoadingFromStorage(false);
+        console.log('✅ Loading states reset complete');
       }
     };
 

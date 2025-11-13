@@ -260,8 +260,14 @@ export class BusinessAnalysisService {
     console.log('=== ANALYSIS COMPLETE - RETURNING DATA ===');
     console.log('Keywords count:', keywordsData?.length || 0);
     console.log('Competitors count:', competitorsData?.length || 0);
+    console.log('Company data:', {
+      name: placeDetails?.name || companyName,
+      hasAddress: !!(placeDetails?.formatted_address || address),
+      hasUrl: !!url,
+      industry
+    });
     
-    return {
+    const result = {
       company: {
         name: placeDetails?.name || companyName,
         address: placeDetails?.formatted_address || address,
@@ -274,12 +280,15 @@ export class BusinessAnalysisService {
       reviews: reviewsData,
       competitors: competitorsData,
       keywords: keywordsData,
-        imprint: imprintData,
-        socialMedia: socialMediaData,
-        workplace: workplaceData,
-        socialProof: socialProofData,
-        mobile: mobileData,
-      };
+      imprint: imprintData,
+      socialMedia: socialMediaData,
+      workplace: workplaceData,
+      socialProof: socialProofData,
+      mobile: mobileData,
+    };
+    
+    console.log('✅ Returning complete analysis result');
+    return result;
     } catch (error) {
       console.error('=== CRITICAL ANALYSIS ERROR ===');
       console.error('Error message:', error instanceof Error ? error.message : String(error));
