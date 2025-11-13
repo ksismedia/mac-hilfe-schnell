@@ -230,6 +230,7 @@ export class BusinessAnalysisService {
       reviewsData = { google: { rating: 0, count: 0, recent: [] } };
     }
     
+    console.log('✅ Processing workplace data...');
     try {
       console.log('No workplace data - API required');
       workplaceData = null;
@@ -239,6 +240,7 @@ export class BusinessAnalysisService {
       workplaceData = { kununu: { found: false, rating: 0, reviews: 0 }, glassdoor: { found: false, rating: 0, reviews: 0 }, overallScore: 0 };
     }
     
+    console.log('✅ Processing social proof data...');
     try {
       console.log('No social proof data - API required');
       socialProofData = null;
@@ -248,6 +250,7 @@ export class BusinessAnalysisService {
       socialProofData = { testimonials: 0, certifications: [], awards: [], overallScore: 0 };
     }
     
+    console.log('✅ Processing mobile data...');
     try {
       console.log('Generating mobile data...');
       mobileData = this.generateMobileDataFromPageSpeed(pageSpeedData);
@@ -256,6 +259,7 @@ export class BusinessAnalysisService {
       console.error('Mobile data generation failed:', error);
       mobileData = { responsive: true, touchFriendly: true, pageSpeedMobile: 50, pageSpeedDesktop: 50, overallScore: 50, issues: [] };
     }
+    console.log('✅ All data processing complete');
     
     console.log('=== ANALYSIS COMPLETE - RETURNING DATA ===');
     console.log('Keywords count:', keywordsData?.length || 0);
