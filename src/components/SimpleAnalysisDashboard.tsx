@@ -150,101 +150,127 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Load analysis data or use direct analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
-      if (analysisData) {
-        console.log('=== LOADING DIRECT ANALYSIS DATA ===');
-        console.log('Analysis data:', analysisData);
-        
-        setIsLoadingFromStorage(true);
-        
-        // Set real data directly from analysisData
-        setRealData(analysisData.realData);
-        
-        // Load all manual data directly
-        if (analysisData.manualData?.keywordData) {
-          setManualKeywordData(analysisData.manualData.keywordData);
-        }
-        if (analysisData.manualData?.keywordScore !== undefined) {
-          setKeywordsScore(analysisData.manualData.keywordScore);
-        }
-        if (analysisData.manualData?.privacyData) {
-          setPrivacyData(analysisData.manualData.privacyData);
-        }
-        if (analysisData.manualData?.accessibilityData) {
-          setAccessibilityData(analysisData.manualData.accessibilityData);
-        }
-        
-        // Load manual data for Staff/Service section
-        if (analysisData.manualData?.staffQualificationData) {
-          updateStaffQualificationData(analysisData.manualData.staffQualificationData);
-        }
-        if (analysisData.manualData?.hourlyRateData) {
-          updateHourlyRateData(analysisData.manualData.hourlyRateData);
-        }
-        if (analysisData.manualData?.quoteResponseData) {
-          updateQuoteResponseData(analysisData.manualData.quoteResponseData);
-        }
-        if (analysisData.manualData?.manualContentData) {
-          updateManualContentData(analysisData.manualData.manualContentData);
-        }
-        if (analysisData.manualData?.manualAccessibilityData) {
-          updateManualAccessibilityData(analysisData.manualData.manualAccessibilityData);
-        }
-        if (analysisData.manualData?.manualBacklinkData) {
-          updateManualBacklinkData(analysisData.manualData.manualBacklinkData);
-        }
-        if (analysisData.manualData?.manualConversionData) {
-          updateManualConversionData(analysisData.manualData.manualConversionData);
-        }
-        
-        // Load saved analysis data using utility function
-        loadSavedAnalysisData(
-          analysisData,
-          updateImprintData,
-          updateSocialData,
-          updateWorkplaceData,
-          updateCorporateIdentityData,
-          updateCompetitors,
-          updateCompetitorServices,
-          updateCompanyServices,
-          setManualKeywordData,
-          updateStaffQualificationData,
-          updateHourlyRateData,
-          updateQuoteResponseData,
-          updateRemovedMissingServices,
-          addDeletedCompetitor,
-          updateManualContentData,
-          updateManualAccessibilityData,
-          updateManualBacklinkData,
-          updateManualDataPrivacyData,
-          updateManualLocalSEOData,
-          updateManualIndustryReviewData,
-          updateManualOnlinePresenceData,
-          updateManualConversionData
-        );
-        
-        console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
-        setIsLoadingFromStorage(false);
-        return;
-      } 
-      
-      if (!realData) {
-        // Only load new analysis if we don't have real data yet
-        setIsLoading(true);
-        
-        try {
-          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-          setRealData(newAnalysisData);
-        } catch (error) {
-          console.error('Analysis error:', error);
-          toast({
-            title: "Analysefehler",
-            description: "Die Website-Analyse konnte nicht durchgeführt werden.",
-            variant: "destructive",
-          });
-        } finally {
-          setIsLoading(false);
+      try {
+        if (analysisData) {
+          console.log('=== LOADING DIRECT ANALYSIS DATA ===');
+          console.log('Analysis data:', analysisData);
+          
+          setIsLoadingFromStorage(true);
+          
+          // Validate realData before setting
+          if (!analysisData.realData) {
+            console.error('🚨 No realData in analysisData');
+            toast({
+              title: "Fehler",
+              description: "Analysedaten sind unvollständig.",
+              variant: "destructive",
+            });
+            setIsLoadingFromStorage(false);
+            return;
+          }
+          
+          // Set real data directly from analysisData
+          setRealData(analysisData.realData);
+          
+          // Load all manual data directly
+          if (analysisData.manualData?.keywordData) {
+            setManualKeywordData(analysisData.manualData.keywordData);
+          }
+          if (analysisData.manualData?.keywordScore !== undefined) {
+            setKeywordsScore(analysisData.manualData.keywordScore);
+          }
+          if (analysisData.manualData?.privacyData) {
+            setPrivacyData(analysisData.manualData.privacyData);
+          }
+          if (analysisData.manualData?.accessibilityData) {
+            setAccessibilityData(analysisData.manualData.accessibilityData);
+          }
+          
+          // Load manual data for Staff/Service section
+          if (analysisData.manualData?.staffQualificationData) {
+            updateStaffQualificationData(analysisData.manualData.staffQualificationData);
+          }
+          if (analysisData.manualData?.hourlyRateData) {
+            updateHourlyRateData(analysisData.manualData.hourlyRateData);
+          }
+          if (analysisData.manualData?.quoteResponseData) {
+            updateQuoteResponseData(analysisData.manualData.quoteResponseData);
+          }
+          if (analysisData.manualData?.manualContentData) {
+            updateManualContentData(analysisData.manualData.manualContentData);
+          }
+          if (analysisData.manualData?.manualAccessibilityData) {
+            updateManualAccessibilityData(analysisData.manualData.manualAccessibilityData);
+          }
+          if (analysisData.manualData?.manualBacklinkData) {
+            updateManualBacklinkData(analysisData.manualData.manualBacklinkData);
+          }
+          if (analysisData.manualData?.manualConversionData) {
+            updateManualConversionData(analysisData.manualData.manualConversionData);
+          }
+          
+          // Load saved analysis data using utility function
+          loadSavedAnalysisData(
+            analysisData,
+            updateImprintData,
+            updateSocialData,
+            updateWorkplaceData,
+            updateCorporateIdentityData,
+            updateCompetitors,
+            updateCompetitorServices,
+            updateCompanyServices,
+            setManualKeywordData,
+            updateStaffQualificationData,
+            updateHourlyRateData,
+            updateQuoteResponseData,
+            updateRemovedMissingServices,
+            addDeletedCompetitor,
+            updateManualContentData,
+            updateManualAccessibilityData,
+            updateManualBacklinkData,
+            updateManualDataPrivacyData,
+            updateManualLocalSEOData,
+            updateManualIndustryReviewData,
+            updateManualOnlinePresenceData,
+            updateManualConversionData
+          );
+          
+          console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
           setIsLoadingFromStorage(false);
+          return;
+        } 
+        
+        if (!realData) {
+          // Only load new analysis if we don't have real data yet
+          setIsLoading(true);
+          
+          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+          
+          // Validate analysis result
+          if (!newAnalysisData || !newAnalysisData.company) {
+            console.error('🚨 Invalid analysis data returned');
+            toast({
+              title: "Analysefehler",
+              description: "Die Website-Analyse lieferte ungültige Daten.",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            setIsLoadingFromStorage(false);
+            return;
+          }
+          
+          setRealData(newAnalysisData);
         }
+      } catch (error) {
+        console.error('Analysis error:', error);
+        toast({
+          title: "Analysefehler",
+          description: "Die Website-Analyse konnte nicht durchgeführt werden.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+        setIsLoadingFromStorage(false);
       }
     };
 
@@ -297,27 +323,50 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     );
   }
 
-  // Calculate category scores
+  // Calculate category scores with error handling
   // Get competitor score from competitors analysis
   const competitorScore = manualCompetitors && manualCompetitors.length > 0 ? 
     Math.min(100, 60 + (manualCompetitors.length * 5)) : null;
 
-  // Calculate new 6-category scores
-  const scores = {
-    onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
+  // Calculate new 6-category scores with fallbacks
+  let scores;
+  try {
+    const onlineQualityAuthority = calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
       manualContentData, manualBacklinkData
-    ),
-    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
-    socialMediaPerformance: calculateSocialMediaPerformanceScore(
+    );
+    const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData);
+    const socialMediaPerformance = calculateSocialMediaPerformanceScore(
       realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
-    ),
-    marketEnvironment: calculateMarketEnvironmentScore(
+    );
+    const marketEnvironment = calculateMarketEnvironmentScore(
       realData, hourlyRateData, staffQualificationData, competitorScore, manualWorkplaceData
-    ),
-    corporateAppearance: calculateCorporateAppearanceScore(manualCorporateIdentityData),
-    serviceQuality: calculateServiceQualityScore(quoteResponseData)
-  };
+    );
+    const corporateAppearance = calculateCorporateAppearanceScore(manualCorporateIdentityData);
+    const serviceQuality = calculateServiceQualityScore(quoteResponseData);
+
+    // Validate all scores
+    scores = {
+      onlineQualityAuthority: isNaN(onlineQualityAuthority) ? 50 : Math.max(0, Math.min(100, onlineQualityAuthority)),
+      websitePerformanceTech: isNaN(websitePerformanceTech) ? 50 : Math.max(0, Math.min(100, websitePerformanceTech)),
+      socialMediaPerformance: isNaN(socialMediaPerformance) ? 50 : Math.max(0, Math.min(100, socialMediaPerformance)),
+      marketEnvironment: isNaN(marketEnvironment) ? 50 : Math.max(0, Math.min(100, marketEnvironment)),
+      corporateAppearance: isNaN(corporateAppearance) ? 50 : Math.max(0, Math.min(100, corporateAppearance)),
+      serviceQuality: isNaN(serviceQuality) ? 50 : Math.max(0, Math.min(100, serviceQuality))
+    };
+
+    console.log('✅ Category scores calculated:', scores);
+  } catch (error) {
+    console.error('🚨 Error calculating category scores:', error);
+    scores = {
+      onlineQualityAuthority: 50,
+      websitePerformanceTech: 50,
+      socialMediaPerformance: 50,
+      marketEnvironment: 50,
+      corporateAppearance: 50,
+      serviceQuality: 50
+    };
+  }
 
   const categories = [
     { 

@@ -133,69 +133,76 @@ export const calculateOnlineQualityAuthorityScore = (
   manualContentData: any,
   manualBacklinkData: any
 ): number => {
-  console.log('🔍 calculateOnlineQualityAuthorityScore called with:', {
-    realData: realData ? 'present' : 'null',
-    keywordsScore,
-    businessData,
-    privacyData: privacyData ? 'present' : 'null',
-    accessibilityData: accessibilityData ? 'present' : 'null'
-  });
+  try {
+    console.log('🔍 calculateOnlineQualityAuthorityScore called');
 
-  const keywords = realData.keywords || [];
-  const keywordsFoundCount = keywords.filter(k => k.found).length;
-  const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
-  const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
-  
-  const localSEOScore = calculateLocalSEOScore(businessData, realData);
-  const contentQualityScore = calculateContentQualityScore(realData, null, businessData, manualContentData);
-  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
-  const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData);
-  const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData);
-  
-  console.log('🔍 Individual scores calculated:', {
-    seoScore: realData.seo?.score || 0,
-    currentKeywordsScore,
-    localSEOScore,
-    contentQualityScore,
-    backlinksScore,
-    accessibilityScore,
-    dataPrivacyScore,
-    imprintScore: realData.imprint?.score || 0
-  });
-  
-  const metrics = [
-    { score: realData.seo?.score || 0, weight: 20 }, // SEO-Auswertung
-    { score: currentKeywordsScore, weight: 15 }, // Keywords
-    { score: localSEOScore, weight: 20 }, // Lokale SEO
-    { score: contentQualityScore, weight: 12 }, // Content-Qualität
-    { score: backlinksScore, weight: 10 }, // Backlinks
-    { score: accessibilityScore, weight: 8 }, // Barrierefreiheit
-    { score: dataPrivacyScore, weight: 8 }, // Datenschutz
-    { score: realData.imprint?.score || 0, weight: 7 }, // Impressum
-  ];
-  
-  // Check for NaN values in metrics
-  const nanCheck = metrics.find(metric => isNaN(metric.score));
-  if (nanCheck) {
-    console.error('🚨 NaN detected in metric:', nanCheck);
+    const keywords = realData?.keywords || [];
+    const keywordsFoundCount = keywords.filter(k => k?.found).length;
+    const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
+    const currentKeywordsScore = (keywordsScore !== null && !isNaN(keywordsScore)) ? keywordsScore : defaultKeywordsScore;
+    
+    const localSEOScore = calculateLocalSEOScore(businessData, realData) || 0;
+    const contentQualityScore = calculateContentQualityScore(realData, null, businessData, manualContentData) || 0;
+    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
+    const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData) || 0;
+    const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData) || 0;
+    const seoScore = realData?.seo?.score || 0;
+    const imprintScore = realData?.imprint?.score || 0;
+    
+    // Validate all scores are numbers
+    const scores = [
+      { name: 'seo', value: seoScore },
+      { name: 'keywords', value: currentKeywordsScore },
+      { name: 'localSEO', value: localSEOScore },
+      { name: 'content', value: contentQualityScore },
+      { name: 'backlinks', value: backlinksScore },
+      { name: 'accessibility', value: accessibilityScore },
+      { name: 'privacy', value: dataPrivacyScore },
+      { name: 'imprint', value: imprintScore }
+    ];
+    
+    for (const score of scores) {
+      if (isNaN(score.value)) {
+        console.error(`🚨 NaN detected in ${score.name} score, using 0`);
+        score.value = 0;
+      }
+    }
+    
+    const metrics = [
+      { score: seoScore, weight: 20 },
+      { score: currentKeywordsScore, weight: 15 },
+      { score: localSEOScore, weight: 20 },
+      { score: contentQualityScore, weight: 12 },
+      { score: backlinksScore, weight: 10 },
+      { score: accessibilityScore, weight: 8 },
+      { score: dataPrivacyScore, weight: 8 },
+      { score: imprintScore, weight: 7 }
+    ];
+    
+    const totalWeight = metrics.reduce((sum, metric) => sum + (metric.weight || 0), 0);
+    const weightedScore = metrics.reduce((sum, metric) => {
+      const score = isNaN(metric.score) ? 0 : metric.score;
+      const weight = isNaN(metric.weight) ? 0 : metric.weight;
+      return sum + (score * weight);
+    }, 0);
+    
+    if (totalWeight === 0 || isNaN(totalWeight) || isNaN(weightedScore)) {
+      console.error('🚨 Invalid calculation, returning fallback 50');
+      return 50;
+    }
+    
+    const result = Math.round(weightedScore / totalWeight);
+    
+    if (isNaN(result) || result < 0 || result > 100) {
+      console.error('🚨 Invalid result:', result, 'returning fallback 50');
+      return 50;
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('🚨 calculateOnlineQualityAuthorityScore error:', error);
+    return 50; // Safe fallback
   }
-  
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
-  
-  console.log('🔍 Final calculation:', {
-    totalWeight,
-    weightedScore,
-    result: Math.round(weightedScore / totalWeight)
-  });
-  
-  const result = Math.round(weightedScore / totalWeight);
-  if (isNaN(result)) {
-    console.error('🚨 Final result is NaN! Returning 0 as fallback');
-    return 0;
-  }
-  
-  return result;
 };
 
 export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData): number => {
@@ -349,34 +356,28 @@ export const calculateStaffServiceScore = (
 
 // Add missing function stubs for exported functions that are expected by other files
 export const calculateLocalSEOScore = (businessData: any, realData: any, manualData?: any): number => {
-  console.log('📍 calculateLocalSEOScore called');
-  
-  const autoScore = realData?.seo?.score || 0;
-  const manualScore = manualData?.overallScore;
-  
-  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
-  if (autoScore > 0 && manualScore !== undefined) {
-    // Gewichteter Durchschnitt: 60% automatisch, 40% manuell
-    const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
-    console.log('📍 Combined Local SEO score (auto + manual):', { autoScore, manualScore, combined });
-    return combined;
+  try {
+    const autoScore = Number(realData?.seo?.score) || 0;
+    const manualScore = manualData?.overallScore;
+    
+    if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
+      const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
+      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+    }
+    
+    if (manualScore !== undefined && !isNaN(manualScore)) {
+      return Math.max(0, Math.min(100, manualScore));
+    }
+    
+    if (!isNaN(autoScore) && autoScore > 0) {
+      return Math.max(0, Math.min(100, autoScore));
+    }
+    
+    return 75;
+  } catch (error) {
+    console.error('📍 calculateLocalSEOScore error:', error);
+    return 75;
   }
-  
-  // Wenn nur manuelle Daten vorhanden
-  if (manualScore !== undefined) {
-    console.log('📍 Using manual Local SEO score:', manualScore);
-    return manualScore;
-  }
-  
-  // Wenn nur automatische Daten vorhanden
-  if (autoScore > 0) {
-    console.log('📍 Using auto Local SEO score:', autoScore);
-    return autoScore;
-  }
-  
-  // Fallback
-  console.log('📍 No data available, using default 75');
-  return 75;
 };
 
 export const calculateStaffQualificationScore = (data: any): number => {
@@ -559,153 +560,114 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
 };
 
 export const calculateContentQualityScore = (realData: any, manualKeywordData: any, businessData: any, manualContentData: any): number => {
-  console.log('📝 calculateContentQualityScore called with:', {
-    realData: realData ? 'present' : 'null',
-    manualContentData: manualContentData ? 'present' : 'null'
-  });
-  
-  const autoScore = realData?.content?.qualityScore || 0;
-  
-  // Berechne manuellen Score falls Daten vorhanden
-  let manualScore = 0;
-  if (manualContentData) {
-    const scores = [
-      manualContentData.textQuality,
-      manualContentData.contentRelevance,
-      manualContentData.expertiseLevel,
-      manualContentData.contentFreshness
-    ];
+  try {
+    const autoScore = Number(realData?.content?.qualityScore) || 0;
     
-    const hasNaN = scores.some(score => isNaN(score));
-    if (!hasNaN) {
-      manualScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+    let manualScore = 0;
+    if (manualContentData) {
+      const scores = [
+        Number(manualContentData.textQuality) || 0,
+        Number(manualContentData.contentRelevance) || 0,
+        Number(manualContentData.expertiseLevel) || 0,
+        Number(manualContentData.contentFreshness) || 0
+      ].filter(score => !isNaN(score) && score > 0);
+      
+      if (scores.length > 0) {
+        manualScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+      }
     }
+    
+    if (!isNaN(autoScore) && autoScore > 0 && !isNaN(manualScore) && manualScore > 0) {
+      const combined = Math.round(autoScore * 0.5 + manualScore * 0.5);
+      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+    }
+    
+    if (!isNaN(manualScore) && manualScore > 0) {
+      return Math.max(0, Math.min(100, manualScore));
+    }
+    
+    if (!isNaN(autoScore) && autoScore > 0) {
+      return Math.max(0, Math.min(100, autoScore));
+    }
+    
+    return 75;
+  } catch (error) {
+    console.error('📝 calculateContentQualityScore error:', error);
+    return 75;
   }
-  
-  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
-  if (autoScore > 0 && manualScore > 0) {
-    // Gewichteter Durchschnitt: 50% automatisch, 50% manuell (Content-Qualität gleichwertig)
-    const combined = Math.round(autoScore * 0.5 + manualScore * 0.5);
-    console.log('📝 Combined content score (auto + manual):', { autoScore, manualScore, combined });
-    return combined;
-  }
-  
-  // Wenn nur manuelle Daten vorhanden
-  if (manualScore > 0) {
-    console.log('📝 Using manual content score:', manualScore);
-    return manualScore;
-  }
-  
-  // Wenn nur automatische Daten vorhanden
-  if (autoScore > 0) {
-    console.log('📝 Using auto content score:', autoScore);
-    return autoScore;
-  }
-  
-  // Fallback
-  console.log('📝 No data available, using default 75');
-  return 75;
 };
 
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
-  console.log('🔗 calculateBacklinksScore called with:', {
-    realData: realData ? 'present' : 'null',
-    manualBacklinkData: manualBacklinkData ? 'present' : 'null'
-  });
-  
-  const autoScore = realData?.backlinks?.score || 0;
-  const manualScore = manualBacklinkData?.overallScore;
-  
-  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
-  if (autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
-    // Gewichteter Durchschnitt: 60% automatisch, 40% manuell
-    const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
-    console.log('🔗 Combined backlink score (auto + manual):', { autoScore, manualScore, combined });
-    return combined;
+  try {
+    const autoScore = Number(realData?.backlinks?.score) || 0;
+    const manualScore = manualBacklinkData?.overallScore;
+    
+    if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
+      const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
+      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+    }
+    
+    if (manualScore !== undefined && !isNaN(manualScore)) {
+      return Math.max(0, Math.min(100, manualScore));
+    }
+    
+    if (!isNaN(autoScore) && autoScore > 0) {
+      return Math.max(0, Math.min(100, autoScore));
+    }
+    
+    return 75;
+  } catch (error) {
+    console.error('🔗 calculateBacklinksScore error:', error);
+    return 75;
   }
-  
-  // Wenn nur manuelle Daten vorhanden
-  if (manualScore !== undefined && !isNaN(manualScore)) {
-    console.log('🔗 Using manual backlink score:', manualScore);
-    return manualScore;
-  }
-  
-  // Wenn nur automatische Daten vorhanden
-  if (autoScore > 0) {
-    console.log('🔗 Using auto backlink score:', autoScore);
-    return autoScore;
-  }
-  
-  // Fallback
-  console.log('🔗 No data available, using default 75');
-  return 75;
 };
 
 // Helper function stub for Corporate Identity (actual implementation is above)
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
-  console.log('🎯 calculateAccessibilityScore called with:', {
-    realData: realData ? 'present' : 'null',
-    manualAccessibilityData: manualAccessibilityData ? manualAccessibilityData : 'null'
-  });
-  
-  // Berechne automatischen Score
-  let autoScore = 40; // Default
-  if (realData?.violations && realData.violations.length > 0) {
-    autoScore = Math.min(59, 40); // Grundwert bei automatisch erkannten Problemen
-  } else if (realData?.violations && realData.violations.length === 0) {
-    autoScore = 85; // Keine automatisch erkannten Probleme
-  }
-  
-  // Berechne manuellen Score falls Daten vorhanden
-  let manualScore = 0;
-  if (manualAccessibilityData) {
-    const allFeaturesEnabled = 
-      manualAccessibilityData.keyboardNavigation &&
-      manualAccessibilityData.screenReaderCompatible &&
-      manualAccessibilityData.colorContrast &&
-      manualAccessibilityData.altTextsPresent &&
-      manualAccessibilityData.focusVisibility &&
-      manualAccessibilityData.textScaling;
+  try {
+    let autoScore = 40;
+    if (realData?.violations) {
+      autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
+    }
     
-    if (allFeaturesEnabled) {
-      manualScore = 100;
-    } else {
-      const missingFeatures = [
-        !manualAccessibilityData.keyboardNavigation,
-        !manualAccessibilityData.screenReaderCompatible,
-        !manualAccessibilityData.colorContrast,
-        !manualAccessibilityData.altTextsPresent,
-        !manualAccessibilityData.focusVisibility,
-        !manualAccessibilityData.textScaling
-      ].filter(Boolean).length;
+    let manualScore = 0;
+    if (manualAccessibilityData) {
+      const features = [
+        manualAccessibilityData.keyboardNavigation,
+        manualAccessibilityData.screenReaderCompatible,
+        manualAccessibilityData.colorContrast,
+        manualAccessibilityData.altTextsPresent,
+        manualAccessibilityData.focusVisibility,
+        manualAccessibilityData.textScaling
+      ];
       
-      if (missingFeatures > 0) {
-        const maxScore = Math.max(20, 50 - (missingFeatures - 1) * 8);
-        const enabledFeatures = 6 - missingFeatures;
-        manualScore = Math.round((enabledFeatures / 6) * maxScore);
+      const enabledCount = features.filter(Boolean).length;
+      const totalCount = features.length;
+      
+      if (enabledCount === totalCount) {
+        manualScore = 100;
+      } else if (enabledCount > 0) {
+        const missingCount = totalCount - enabledCount;
+        const maxScore = Math.max(20, 50 - (missingCount - 1) * 8);
+        manualScore = Math.round((enabledCount / totalCount) * maxScore);
       }
     }
+    
+    if (!isNaN(manualScore) && manualScore > 0 && !isNaN(autoScore) && autoScore > 0) {
+      const combined = Math.round(manualScore * 0.7 + autoScore * 0.3);
+      return isNaN(combined) ? 40 : Math.max(0, Math.min(100, combined));
+    }
+    
+    if (!isNaN(manualScore) && manualScore > 0) {
+      return Math.max(0, Math.min(100, manualScore));
+    }
+    
+    return Math.max(0, Math.min(100, autoScore));
+  } catch (error) {
+    console.error('🎯 calculateAccessibilityScore error:', error);
+    return 40;
   }
-  
-  // Wenn beide Datenquellen vorhanden sind, kombiniere sie
-  if (manualScore > 0 && autoScore > 0) {
-    // Nutze den höheren Wert, da manuelle Prüfung oft genauer ist
-    // Aber kombiniere mit 70% manuell, 30% auto für Ausgleich
-    const combined = Math.round(manualScore * 0.7 + autoScore * 0.3);
-    console.log('🎯 Combined accessibility score (auto + manual):', { autoScore, manualScore, combined });
-    return combined;
-  }
-  
-  // Wenn nur manuelle Daten vorhanden
-  if (manualScore > 0) {
-    console.log('🎯 Using manual accessibility score:', manualScore);
-    return manualScore;
-  }
-  
-  // Wenn nur automatische Daten vorhanden
-  console.log('🎯 Using auto accessibility score:', autoScore);
-  return autoScore;
 };
 
 export const calculateCorporateIdentityScore = (data: any): number => {
