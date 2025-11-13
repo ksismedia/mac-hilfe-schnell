@@ -58,7 +58,7 @@ export class AccessibilityService {
     try {
       // 1. Check cache first
       const { supabase } = await import('@/integrations/supabase/client');
-      const { data: cachedData, error: cacheError } = await supabase
+      const { data: cachedData, error: cacheError } = await (supabase as any)
         .from('accessibility_cache')
         .select('result, expires_at')
         .eq('url', url)
@@ -110,7 +110,7 @@ export class AccessibilityService {
 
       // 3. Store in cache (upsert to handle duplicates)
       try {
-        await supabase
+        await (supabase as any)
           .from('accessibility_cache')
           .upsert([{
             url,
