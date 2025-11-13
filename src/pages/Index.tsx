@@ -27,11 +27,6 @@ const Index = () => {
   const navigate = useNavigate();
   // Stable refs to prevent unnecessary re-renders
   const [step, setStep] = useState<'business' | 'api' | 'results'>('business');
-  
-  // Track step changes
-  useEffect(() => {
-    console.log('📍 STEP CHANGED TO:', step);
-  }, [step]);
   const [businessData, setBusinessData] = useState<BusinessData>({
     address: '',
     url: '',
@@ -43,7 +38,6 @@ const Index = () => {
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [analysisKey, setAnalysisKey] = useState(0); // Key to force component remount
   const { toast } = useToast();
   
   // Extension Data Hook
@@ -94,8 +88,6 @@ const Index = () => {
   const handleBusinessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('📝 Business submit triggered', businessData);
-    
     if (!businessData.address || !businessData.url) {
       toast({
         title: "Fehler",
@@ -107,17 +99,16 @@ const Index = () => {
 
     // Clear any loaded analysis when starting new analysis
     setAnalysisToLoad(null);
-    setAnalysisKey(prev => prev + 1); // Force component remount
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
-    console.log('🔑 Checking API key - exists:', !!existingKey);
+    console.log('Existing API key found:', !!existingKey);
     
     if (existingKey && existingKey.length > 0) {
-      console.log('✅ Moving to results with existing API key');
+      console.log('Moving to results with existing API key');
       setStep('results');
     } else {
-      console.log('⚠️ No valid API key found, requesting API key input');
+      console.log('No valid API key found, requesting API key input');
       setStep('api');
     }
   };
@@ -166,7 +157,6 @@ const Index = () => {
         
         // Clear any loaded analysis when starting new analysis
         setAnalysisToLoad(null);
-        setAnalysisKey(prev => prev + 1); // Force component remount
         
         console.log('Moving to results step...');
         setStep('results');
@@ -227,7 +217,6 @@ const Index = () => {
     console.log('Loading analysis:', analysis.name);
     setBusinessData(analysis.businessData);
     setAnalysisToLoad(analysis);  // Store complete analysis
-    setAnalysisKey(prev => prev + 1); // Force component remount
     setStep('results');
     
     toast({
@@ -237,14 +226,11 @@ const Index = () => {
   };
 
   const resetToStart = () => {
-    console.log('🔄 resetToStart called');
     // Prevent multiple reset calls
     if (step === 'business' && !loadedAnalysisId && businessData.address === '' && businessData.url === '') {
-      console.log('⏭️ Reset prevented - already at start');
       return;
     }
     
-    console.log('✅ Resetting to start');
     setStep('business');
     setLoadedAnalysisId(undefined);
     setAnalysisToLoad(null);  // Clear loaded analysis
@@ -274,7 +260,6 @@ const Index = () => {
 
   // Handle extension data if available
   if (hasExtensionData && extensionData && step === 'business') {
-    console.log('🎯 Showing ExtensionDataProcessor');
     return (
       <ExtensionDataProcessor
         extensionData={extensionData}
@@ -286,14 +271,8 @@ const Index = () => {
 
   // Show results when ready
   if (step === 'results') {
-    console.log('🎨 Rendering AnalysisDashboard with:', { 
-      analysisKey, 
-      hasBusinessData: !!businessData, 
-      hasAnalysisToLoad: !!analysisToLoad 
-    });
     return (
       <AnalysisDashboard 
-        key={analysisKey} // Force remount on new analysis
         businessData={businessData} 
         onReset={resetToStart}
         analysisData={analysisToLoad}  // Pass complete analysis
@@ -303,7 +282,6 @@ const Index = () => {
 
   // Show API Key form
   if (step === 'api') {
-    console.log('🔐 Showing API Key form');
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
         <div className="max-w-2xl mx-auto pt-8">
@@ -381,7 +359,6 @@ const Index = () => {
   }
 
   // Show business data form (default)
-  console.log('🏠 Showing business data form, current step:', step);
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4">
       <div className="max-w-4xl mx-auto">
