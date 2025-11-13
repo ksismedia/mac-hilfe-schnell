@@ -33,16 +33,39 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('PageSpeed API error:', response.status, errorText);
+      console.error('API URL used:', apiUrl.replace(/key=[^&]+/, 'key=***')); // Log URL without exposing key
       
       if (response.status === 403) {
-        throw new Error('Google PageSpeed Insights API ist nicht aktiviert oder der API-Key ist ungültig. Bitte aktivieren Sie die PageSpeed Insights API in Ihrer Google Cloud Console: https://console.developers.google.com/apis/api/pagespeedonline.googleapis.com');
+        let errorMessage = 'Google PageSpeed Insights API Fehler (403): ';
+        
+        // Try to parse the error response for more details
+        try {
+          const errorData = JSON.parse(errorText);
+          console.error('Error details:', errorData);
+          
+          if (errorData.error?.message) {
+            errorMessage += errorData.error.message;
+          } else {
+            errorMessage += 'API nicht aktiviert oder ungültiger Key.';
+          }
+        } catch {
+          errorMessage += 'API nicht aktiviert oder ungültiger Key.';
+        }
+        
+        errorMessage += '\n\nBitte überprüfen Sie:\n';
+        errorMessage += '1. PageSpeed Insights API ist aktiviert: https://console.developers.google.com/apis/api/pagespeedonline.googleapis.com\n';
+        errorMessage += '2. Billing-Konto ist verknüpft: https://console.cloud.google.com/billing\n';
+        errorMessage += '3. API-Key hat die richtigen Berechtigungen\n';
+        errorMessage += '4. API-Key-Einschränkungen (IP, Referrer) sind korrekt konfiguriert';
+        
+        throw new Error(errorMessage);
       }
       
       if (response.status === 429) {
-        throw new Error('PageSpeed API Rate Limit erreicht. Bitte verwenden Sie einen eigenen Google API-Key.');
+        throw new Error('PageSpeed API Rate Limit erreicht. Bitte warten Sie einige Minuten oder erhöhen Sie Ihr Quota in der Google Cloud Console.');
       }
       
-      throw new Error(`PageSpeed API error: ${response.status}`);
+      throw new Error(`PageSpeed API error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
