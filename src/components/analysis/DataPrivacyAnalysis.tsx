@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
   Shield, 
   Cookie, 
@@ -114,6 +115,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     });
     
     return Math.round(Math.max(0, Math.min(100, score)));
+  };
+
+  // Check if there are critical violations despite positive score
+  const hasCriticalViolationsWithPositiveScore = () => {
+    const score = getEffectiveScore();
+    const criticalViolations = getAllViolations().filter(v => v.severity === 'critical');
+    return score > 0 && criticalViolations.length > 0;
   };
 
   useEffect(() => {
@@ -363,6 +371,18 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       </div>
                     </div>
                   </div>
+
+                  {/* Warning Alert for Critical Violations despite positive score */}
+                  {hasCriticalViolationsWithPositiveScore() && (
+                    <Alert variant="destructive" className="mt-4">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTitle>Achtung: Kritische Sicherheitsmängel erkannt</AlertTitle>
+                      <AlertDescription>
+                        Trotz eines positiven Scores wurden kritische Verstöße identifiziert (z.B. fehlender HSTS-Header). 
+                        Diese können zu erheblichen Sicherheitsrisiken und DSGVO-Bußgeldern führen und sollten unverzüglich behoben werden.
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   
                   <div>
                     <div className="flex justify-between text-sm mb-2">
