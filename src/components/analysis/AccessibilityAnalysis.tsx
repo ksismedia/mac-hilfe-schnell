@@ -9,6 +9,7 @@ import { useManualData } from '@/hooks/useManualData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { AccessibilityService, AccessibilityResult, AccessibilityViolation } from '@/services/AccessibilityService';
 import { calculateAccessibilityScore } from './export/scoreCalculations';
+import { toast } from 'sonner';
 
 interface AccessibilityAnalysisProps {
   businessData: {
@@ -96,18 +97,29 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
       const result = await AccessibilityService.analyzeAccessibility(businessData.url, realData);
       
       if (result === null) {
-        setError('Die Barrierefreiheitsprüfung konnte nicht durchgeführt werden. Die Google PageSpeed API hat zu viele Anfragen erhalten (Rate Limit). Bitte warten Sie 1-2 Minuten und versuchen Sie es erneut.');
+        const errorMsg = 'Die Barrierefreiheitsprüfung konnte nicht durchgeführt werden. Die Google PageSpeed API hat zu viele Anfragen erhalten (Rate Limit). Bitte warten Sie 1-2 Minuten und versuchen Sie es erneut oder nutzen Sie die manuelle Bewertung.';
+        setError(errorMsg);
+        toast.error(errorMsg, { duration: 8000 });
         setLoading(false);
         return;
       }
       
       setAccessibilityData(result);
       onDataChange?.(result);
+      toast.success("Barrierefreiheitsanalyse erfolgreich abgeschlossen");
       console.log('Accessibility-Analyse abgeschlossen:', result);
     } catch (err) {
-      const errorMessage = 'Fehler bei der Barrierefreiheitsprüfung: ' + (err as Error).message;
+      const errorMessage = err instanceof Error ? err.message : 'Fehler bei der Barrierefreiheitsprüfung';
       setError(errorMessage);
       console.error('Accessibility-Test Fehler:', err);
+      
+      // Show user-friendly error message with suggestion to use manual input
+      toast.error(
+        errorMessage.includes('API-Key') || errorMessage.includes('Quota') || errorMessage.includes('Berechtigung')
+          ? `${errorMessage}\n\nTipp: Wechseln Sie zum Tab "Manuelle Bewertung" für eine manuelle Eingabe.`
+          : `Automatische Analyse fehlgeschlagen: ${errorMessage}\n\nBitte nutzen Sie die manuelle Bewertung.`,
+        { duration: 8000 }
+      );
     } finally {
       setLoading(false);
     }

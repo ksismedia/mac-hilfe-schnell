@@ -49,7 +49,19 @@ serve(async (req) => {
       }
       
       if (!response.ok) {
-        throw new Error(`PageSpeed API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`PageSpeed API error: ${response.status}`, errorText);
+        
+        // Provide detailed error messages
+        if (response.status === 403) {
+          throw new Error(userApiKey 
+            ? 'API-Key ungültig oder PageSpeed Insights API nicht aktiviert. Bitte prüfen Sie Ihre Google Cloud Console Einstellungen oder entfernen Sie den API-Key.'
+            : 'Server-API-Key hat keine Berechtigung. Bitte verwenden Sie Ihren eigenen API-Key oder nutzen Sie die manuelle Eingabe.');
+        } else if (response.status === 429) {
+          throw new Error('API-Quota überschritten. Bitte versuchen Sie es später erneut oder nutzen Sie die manuelle Eingabe.');
+        } else {
+          throw new Error(`PageSpeed API Fehler: ${response.status}`);
+        }
       }
     }
 
