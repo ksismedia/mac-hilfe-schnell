@@ -23,10 +23,28 @@ serve(async (req) => {
     // Use Google PageSpeed Insights API (free, includes Lighthouse accessibility audit)
     const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=accessibility`;
     
-    const response = await fetch(apiUrl);
+    // Retry logic for rate limiting
+    let response;
+    let retries = 3;
+    let delay = 2000;
 
-    if (!response.ok) {
-      throw new Error(`PageSpeed API error: ${response.status}`);
+    for (let i = 0; i < retries; i++) {
+      response = await fetch(apiUrl);
+      
+      if (response.ok) {
+        break;
+      }
+      
+      if (response.status === 429 && i < retries - 1) {
+        console.log(`Rate limited, retrying in ${delay}ms... (attempt ${i + 1}/${retries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2; // Exponential backoff
+        continue;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`PageSpeed API error: ${response.status}`);
+      }
     }
 
     const result = await response.json();
