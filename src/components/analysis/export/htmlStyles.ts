@@ -273,6 +273,10 @@ div.collapsible.section-header {
   border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+.header-score-circle.critical-border {
+  border: 3px solid #ef4444 !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5) !important;
+}
 .header-score-circle.dark-red { background: #FF0000 !important; color: white !important; }  /* 0-60% */
 .header-score-circle.red { background: #FF0000 !important; color: white !important; }      /* 0-60% */
 .header-score-circle.orange { background: #FF0000 !important; color: white !important; }   /* 0-60% */
