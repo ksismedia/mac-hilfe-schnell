@@ -58,13 +58,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   onReset, 
   analysisData 
 }) => {
-  console.log('🔴 SimpleAnalysisDashboard RENDER', { 
-    hasAnalysisData: !!analysisData, 
-    url: businessData.url 
-  });
-  
-  const [realData, setRealData] = useState<RealBusinessData | null>(analysisData?.realData || null);
-  const [isLoading, setIsLoading] = useState(!analysisData);
+  const [realData, setRealData] = useState<RealBusinessData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75);
@@ -152,19 +147,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // AI Review Status Hook
   const { reviewStatus } = useAIReviewStatus(analysisData?.id);
 
-  // Load analysis data - SIMPLE VERSION
+  // SIMPLE: Load data on mount
   useEffect(() => {
-    console.log('🟢 useEffect START', { hasAnalysisData: !!analysisData, hasRealData: !!realData });
-    
-    // If we have saved analysis data, load it
-    if (analysisData && !realData) {
-      console.log('📥 Loading saved analysis');
-      setIsLoadingFromStorage(true);
-      
-      // Set real data
+    // Saved analysis
+    if (analysisData) {
       setRealData(analysisData.realData);
-      
-      // Load manual data
       if (analysisData.manualData) {
         const md = analysisData.manualData;
         if (md.keywordData) setManualKeywordData(md.keywordData);
@@ -179,72 +166,33 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         if (md.manualBacklinkData) updateManualBacklinkData(md.manualBacklinkData);
         if (md.manualConversionData) updateManualConversionData(md.manualConversionData);
         
-        // Load using utility
         loadSavedAnalysisData(
-          analysisData,
-          updateImprintData,
-          updateSocialData,
-          updateWorkplaceData,
-          updateCorporateIdentityData,
-          updateCompetitors,
-          updateCompetitorServices,
-          updateCompanyServices,
-          setManualKeywordData,
-          updateStaffQualificationData,
-          updateHourlyRateData,
-          updateQuoteResponseData,
-          updateRemovedMissingServices,
-          addDeletedCompetitor,
-          updateManualContentData,
-          updateManualAccessibilityData,
-          updateManualBacklinkData,
-          updateManualDataPrivacyData,
-          updateManualLocalSEOData,
-          updateManualIndustryReviewData,
-          updateManualOnlinePresenceData,
-          updateManualConversionData
+          analysisData, updateImprintData, updateSocialData, updateWorkplaceData,
+          updateCorporateIdentityData, updateCompetitors, updateCompetitorServices,
+          updateCompanyServices, setManualKeywordData, updateStaffQualificationData,
+          updateHourlyRateData, updateQuoteResponseData, updateRemovedMissingServices,
+          addDeletedCompetitor, updateManualContentData, updateManualAccessibilityData,
+          updateManualBacklinkData, updateManualDataPrivacyData, updateManualLocalSEOData,
+          updateManualIndustryReviewData, updateManualOnlinePresenceData, updateManualConversionData
         );
       }
-      
-      console.log('✅ Saved analysis loaded');
-      setIsLoadingFromStorage(false);
       setIsLoading(false);
       return;
     }
     
-    // If no saved data and no real data, start new analysis
-    if (!analysisData && !realData) {
-      console.log('🚀 Starting NEW analysis for:', businessData.url);
-      setIsLoading(true);
-      
-      BusinessAnalysisService.analyzeWebsite(
-        businessData.url,
-        businessData.address,
-        businessData.industry
-      )
-        .then((data) => {
-          console.log('✅ Analysis SUCCESS:', data);
-          setRealData(data);
-          setIsLoading(false);
-          toast({
-            title: "Analyse abgeschlossen",
-            description: "Die Website-Analyse wurde erfolgreich durchgeführt.",
-          });
-        })
-        .catch((error) => {
-          console.error('❌ Analysis ERROR:', error);
-          setIsLoading(false);
-          setRealData(null);
-          toast({
-            title: "Analysefehler",
-            description: error instanceof Error ? error.message : "Fehler bei der Analyse",
-            variant: "destructive",
-          });
-        });
-    }
-  }, []); // Run once on mount - component remounts with key change
+    // New analysis
+    BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry)
+      .then(data => {
+        setRealData(data);
+        setIsLoading(false);
+        toast({ title: "Analyse abgeschlossen", description: "Website-Analyse erfolgreich." });
+      })
+      .catch(error => {
+        setIsLoading(false);
+        toast({ title: "Analysefehler", description: String(error.message || error), variant: "destructive" });
+      });
+  }, []);
 
-  console.log('🔵 Rendering state:', { isLoading, isLoadingFromStorage, hasRealData: !!realData });
   
   if (isLoading || isLoadingFromStorage) {
     return (
