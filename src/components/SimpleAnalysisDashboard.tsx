@@ -149,6 +149,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
+    console.log('=== SimpleAnalysisDashboard useEffect triggered ===');
+    console.log('analysisData:', analysisData ? 'present' : 'null');
+    console.log('realData:', realData ? 'present' : 'null');
+    console.log('businessData:', businessData);
+    
     const loadAnalysisData = async () => {
       if (analysisData) {
         console.log('=== LOADING DIRECT ANALYSIS DATA ===');
@@ -227,39 +232,37 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
         return;
       } 
       
-      if (!realData) {
-        // Only load new analysis if we don't have real data yet
-        console.log('=== STARTING NEW ANALYSIS ===');
-        console.log('Business data:', businessData);
-        setIsLoading(true);
-        
-        try {
-          const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
-          console.log('=== NEW ANALYSIS COMPLETED ===');
-          console.log('Analysis data:', newAnalysisData);
-          setRealData(newAnalysisData);
-          toast({
-            title: "Analyse abgeschlossen",
-            description: "Die Website-Analyse wurde erfolgreich durchgeführt.",
-          });
-        } catch (error) {
-          console.error('=== ANALYSIS ERROR ===');
-          console.error('Error:', error);
-          toast({
-            title: "Analysefehler",
-            description: error instanceof Error ? error.message : "Die Website-Analyse konnte nicht durchgeführt werden. Bitte versuchen Sie es erneut.",
-            variant: "destructive",
-          });
-          setRealData(null);
-        } finally {
-          setIsLoading(false);
-          setIsLoadingFromStorage(false);
-        }
+      // Start new analysis - removed the !realData check to always start fresh
+      console.log('=== STARTING NEW ANALYSIS ===');
+      console.log('Business data:', businessData);
+      setIsLoading(true);
+      
+      try {
+        const newAnalysisData = await BusinessAnalysisService.analyzeWebsite(businessData.url, businessData.address, businessData.industry);
+        console.log('=== NEW ANALYSIS COMPLETED ===');
+        console.log('Analysis data:', newAnalysisData);
+        setRealData(newAnalysisData);
+        toast({
+          title: "Analyse abgeschlossen",
+          description: "Die Website-Analyse wurde erfolgreich durchgeführt.",
+        });
+      } catch (error) {
+        console.error('=== ANALYSIS ERROR ===');
+        console.error('Error:', error);
+        toast({
+          title: "Analysefehler",
+          description: error instanceof Error ? error.message : "Die Website-Analyse konnte nicht durchgeführt werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+        setRealData(null);
+      } finally {
+        setIsLoading(false);
+        setIsLoadingFromStorage(false);
       }
     };
 
     loadAnalysisData();
-  }, [analysisData, businessData.url, businessData.address, businessData.industry]); // Added businessData dependencies
+  }, []); // Run only on mount - component remounts with key change
 
   if (isLoading || isLoadingFromStorage) {
     return (

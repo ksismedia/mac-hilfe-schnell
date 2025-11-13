@@ -38,6 +38,7 @@ const Index = () => {
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [analysisKey, setAnalysisKey] = useState(0); // Key to force component remount
   const { toast } = useToast();
   
   // Extension Data Hook
@@ -99,6 +100,7 @@ const Index = () => {
 
     // Clear any loaded analysis when starting new analysis
     setAnalysisToLoad(null);
+    setAnalysisKey(prev => prev + 1); // Force component remount
 
     // Check if API key already exists
     const existingKey = GoogleAPIService.getApiKey();
@@ -157,6 +159,7 @@ const Index = () => {
         
         // Clear any loaded analysis when starting new analysis
         setAnalysisToLoad(null);
+        setAnalysisKey(prev => prev + 1); // Force component remount
         
         console.log('Moving to results step...');
         setStep('results');
@@ -217,6 +220,7 @@ const Index = () => {
     console.log('Loading analysis:', analysis.name);
     setBusinessData(analysis.businessData);
     setAnalysisToLoad(analysis);  // Store complete analysis
+    setAnalysisKey(prev => prev + 1); // Force component remount
     setStep('results');
     
     toast({
@@ -271,8 +275,10 @@ const Index = () => {
 
   // Show results when ready
   if (step === 'results') {
+    console.log('Rendering AnalysisDashboard with key:', analysisKey);
     return (
       <AnalysisDashboard 
+        key={analysisKey} // Force remount on new analysis
         businessData={businessData} 
         onReset={resetToStart}
         analysisData={analysisToLoad}  // Pass complete analysis
