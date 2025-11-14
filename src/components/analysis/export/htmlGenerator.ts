@@ -670,7 +670,7 @@ export const generateCustomerHTML = ({
   
   // Determine review count status
   const reviewCount = realData.reviews.google.count;
-  const hasLowReviewCount = reviewCount < 50;
+  const hasLowReviewCount = reviewCount < 25;
   const reviewCountWarning = hasLowReviewCount 
     ? ` <span style="color: #f59e0b; font-weight: bold;">⚠️ Zu wenige Bewertungen!</span>` 
     : '';
