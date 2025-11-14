@@ -1328,13 +1328,14 @@ export const generateCustomerHTML = ({
     
     const isManual = !!manualMobileData;
 
-    return `
+     return `
       <div class="metric-card ${scoreClass}">
-        <h3>Mobile Optimierung</h3>
+        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombinierte Daten)</span>' : ''}</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+            ${isManual ? '<p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">Basierend auf manuellen Eingaben und automatischer Analyse</p>' : ''}
           </div>
         </div>
         ${generateProgressBar(

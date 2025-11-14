@@ -365,7 +365,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
       manualContentData, manualBacklinkData, manualLocalSEOData
     );
-    const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData);
+    const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
     const socialMediaPerformance = calculateSocialMediaPerformanceScore(
       realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
     );
