@@ -9,10 +9,11 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 interface MobileOptimizationProps {
   url: string;
   realData: RealBusinessData;
+  manualMobileData?: any;
 }
 
-const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }) => {
-  const mobileData = realData.mobile;
+const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, manualMobileData }) => {
+  const mobileData = manualMobileData || realData.mobile;
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
@@ -194,10 +195,14 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData }
 
           {/* Echte Daten Hinweis */}
           <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-semibold text-green-800 mb-2">✓ Live Mobile-Optimierungsanalyse</h4>
+            <h4 className="font-semibold text-green-800 mb-2">
+              {manualMobileData ? '📝 Manuelle Dateneingabe' : '✓ Live Mobile-Optimierungsanalyse'}
+            </h4>
             <p className="text-sm text-green-700">
-              Diese Analyse basiert auf einer automatischen Überprüfung der Website {url} 
-              auf mobile Kompatibilität, Viewport-Einstellungen und responsive Design-Elemente.
+              {manualMobileData 
+                ? 'Diese Analyse basiert auf manuell erfassten Daten zur mobilen Optimierung.'
+                : `Diese Analyse basiert auf einer automatischen Überprüfung der Website ${url} auf mobile Kompatibilität, Viewport-Einstellungen und responsive Design-Elemente.`
+              }
             </p>
           </div>
         </CardContent>

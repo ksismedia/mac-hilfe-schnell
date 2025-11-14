@@ -143,6 +143,7 @@ export const generateCustomerHTML = ({
   manualIndustryReviewData,
   manualOnlinePresenceData,
   manualConversionData,
+  manualMobileData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
@@ -1321,8 +1322,11 @@ export const generateCustomerHTML = ({
 
   // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
-    const mobileScore = realData.mobile.overallScore;
+    // Use manual data if available, otherwise use realData
+    const mobileScore = manualMobileData?.overallScore || realData.mobile.overallScore;
     const scoreClass = mobileScore >= 80 ? 'yellow' : mobileScore >= 60 ? 'green' : 'red';
+    
+    const isManual = !!manualMobileData;
 
     return `
       <div class="metric-card ${scoreClass}">

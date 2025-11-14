@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -38,6 +38,7 @@ interface CustomerHTMLExportProps {
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualConversionData?: ManualConversionData | null;
+  manualMobileData?: ManualMobileData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   privacyData?: any;
@@ -68,6 +69,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualIndustryReviewData,
   manualOnlinePresenceData,
   manualConversionData,
+  manualMobileData,
   manualKeywordData,
   keywordScore,
   privacyData,
@@ -241,6 +243,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualIndustryReviewData: currentManualIndustryReviewData || manualIndustryReviewData,
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       manualConversionData: currentManualConversionData || manualConversionData,
+      manualMobileData: manualMobileData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
@@ -332,6 +335,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualIndustryReviewData: currentManualIndustryReviewData || manualIndustryReviewData,
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       manualConversionData: currentManualConversionData || manualConversionData,
+      manualMobileData: manualMobileData,
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
