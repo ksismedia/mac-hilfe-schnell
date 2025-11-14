@@ -2333,7 +2333,7 @@ export const generateCustomerHTML = ({
                   onlinePresenceScore
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
+                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}" style="background: ${getScoreColor(avg)} !important; color: ${avg >= 90 ? '#000' : '#fff'} !important;">${avg}%</div>` : '';
               })()}
             </div>
           </div>
@@ -2351,7 +2351,7 @@ export const generateCustomerHTML = ({
                   staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
+                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}" style="background: ${getScoreColor(avg)} !important; color: ${avg >= 90 ? '#000' : '#fff'} !important;">${avg}%</div>` : '';
               })()}
             </div>
           </div>
@@ -2413,7 +2413,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>SEO-Bestandsanalyse</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}" style="background: ${getScoreColor(realData.seo.score)} !important; color: ${realData.seo.score >= 90 ? '#000' : '#fff'} !important;">${realData.seo.score}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -2814,7 +2814,7 @@ export const generateCustomerHTML = ({
     <div class="section">
         <div class="section-header">
           <span>Barrierefreiheit & Zugänglichkeit</span>
-          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
+          <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}" style="background: ${getScoreColor(actualAccessibilityScore)} !important; color: ${actualAccessibilityScore >= 90 ? '#000' : '#fff'} !important;">${actualAccessibilityScore}%</div>
         </div>
       <div class="section-content">
         <!-- Hauptbewertung sichtbar -->
@@ -2956,7 +2956,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Website Performance</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}">${realData.performance.score}%</div>
+        <div class="header-score-circle ${getScoreColorClass(realData.performance.score)}" style="background: ${getScoreColor(realData.performance.score)} !important; color: ${realData.performance.score >= 90 ? '#000' : '#fff'} !important;">${realData.performance.score}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -3128,7 +3128,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Conversion-Optimierung & User Journey</span>
-        <div class="header-score-circle ${getScoreColorClass(Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2))}">${Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2)}%</div>
+        <div class="header-score-circle ${getScoreColorClass(Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2))}" style="background: ${getScoreColor(Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2))} !important; color: ${Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2) >= 90 ? '#000' : '#fff'} !important;">${Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2)}%</div>
       </div>
       <div class="section-content">
         
