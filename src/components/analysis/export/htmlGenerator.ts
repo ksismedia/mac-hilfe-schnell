@@ -166,6 +166,9 @@ export const generateCustomerHTML = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   
+  // Calculate Local SEO score with manual data
+  const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData);
+  
   // Accessibility scores müssen erst berechnet werden
   const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
   const accessibilityScore = actualAccessibilityScore;
@@ -182,6 +185,9 @@ export const generateCustomerHTML = ({
     : '–';
   const displayAccessibilityScore = accessibilityScore > 0 
     ? `${Math.round(accessibilityScore)}%` 
+    : '–';
+  const displayLocalSEOScore = localSEOScore > 0 
+    ? `${Math.round(localSEOScore)}%` 
     : '–';
   
   // Calculate data privacy score using manual data if available
@@ -1120,7 +1126,7 @@ export const generateCustomerHTML = ({
         localContent: manualLocalSEOData.localContentScore
       }
     } : {
-      overallScore: calculateLocalSEOScore(businessData, realData, null),
+      overallScore: calculateLocalSEOScore(businessData, realData, manualLocalSEOData),
       googleMyBusiness: {
         score: 82,
         claimed: true,
@@ -2541,7 +2547,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Lokale SEO & Regionale Sichtbarkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(74)}">74%</div>
+        <div class="header-score-circle ${getScoreColorClass(localSEOScore)}">${displayLocalSEOScore}</div>
       </div>
       <div class="section-content">
         ${getLocalSEOAnalysis()}
