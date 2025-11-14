@@ -143,7 +143,7 @@ export const calculateOnlineQualityAuthorityScore = (
     const currentKeywordsScore = (keywordsScore !== null && !isNaN(keywordsScore)) ? keywordsScore : defaultKeywordsScore;
     
     const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
-    const contentQualityScore = calculateContentQualityScore(realData, null, businessData, manualContentData) || 0;
+    const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData) || 0;
     const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
     const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData) || 0;
     const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData) || 0;
@@ -153,7 +153,6 @@ export const calculateOnlineQualityAuthorityScore = (
     // Validate all scores are numbers
     const scores = [
       { name: 'seo', value: seoScore },
-      { name: 'keywords', value: currentKeywordsScore },
       { name: 'localSEO', value: localSEOScore },
       { name: 'content', value: contentQualityScore },
       { name: 'backlinks', value: backlinksScore },
@@ -169,11 +168,11 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    // NEUE LOGIK: Einfacher arithmetischer Durchschnitt aller vorhandenen Scores (wie htmlGenerator.ts)
+    // NEUE LOGIK: Einfacher arithmetischer Durchschnitt aller vorhandenen Scores
+    // Content enthält jetzt Keywords, daher wird Keywords NICHT mehr separat gezählt
     const cat1Scores = [
       seoScore,
       localSEOScore,
-      currentKeywordsScore,
       imprintScore
     ].filter(s => s > 0);
     
@@ -565,9 +564,15 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   return rateScore;
 };
 
-export const calculateContentQualityScore = (realData: any, manualKeywordData: any, businessData: any, manualContentData: any): number => {
+export const calculateContentQualityScore = (realData: any, keywordScore: number | null, businessData: any, manualContentData: any): number => {
   try {
     const autoScore = Number(realData?.content?.qualityScore) || 0;
+    
+    // Keywords Score (Teil des Contents)
+    const keywords = realData?.keywords || [];
+    const keywordsFoundCount = keywords.filter(k => k?.found).length;
+    const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
+    const currentKeywordsScore = (keywordScore !== null && !isNaN(keywordScore)) ? keywordScore : defaultKeywordsScore;
     
     let manualScore = 0;
     if (manualContentData) {
@@ -583,17 +588,26 @@ export const calculateContentQualityScore = (realData: any, manualKeywordData: a
       }
     }
     
+    // Content Score berechnen (mit oder ohne manuelle Eingabe)
+    let contentScore = 0;
     if (!isNaN(autoScore) && autoScore > 0 && !isNaN(manualScore) && manualScore > 0) {
-      const combined = Math.round(autoScore * 0.5 + manualScore * 0.5);
-      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+      contentScore = Math.round(autoScore * 0.5 + manualScore * 0.5);
+    } else if (!isNaN(manualScore) && manualScore > 0) {
+      contentScore = manualScore;
+    } else if (!isNaN(autoScore) && autoScore > 0) {
+      contentScore = autoScore;
+    } else {
+      contentScore = 75;
     }
     
-    if (!isNaN(manualScore) && manualScore > 0) {
-      return Math.max(0, Math.min(100, manualScore));
-    }
+    // Keywords in Content-Score integrieren (arithmetischer Durchschnitt)
+    const finalScores = [];
+    if (currentKeywordsScore > 0) finalScores.push(currentKeywordsScore);
+    if (contentScore > 0) finalScores.push(contentScore);
     
-    if (!isNaN(autoScore) && autoScore > 0) {
-      return Math.max(0, Math.min(100, autoScore));
+    if (finalScores.length > 0) {
+      const result = Math.round(finalScores.reduce((sum, s) => sum + s, 0) / finalScores.length);
+      return Math.max(0, Math.min(100, result));
     }
     
     return 75;

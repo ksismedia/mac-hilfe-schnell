@@ -231,7 +231,7 @@ export const generateCustomerHTML = ({
   const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
-  const contentQualityScore = calculateContentQualityScore(realData, manualKeywordData, businessData, manualContentData);
+  const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
