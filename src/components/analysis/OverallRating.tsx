@@ -139,6 +139,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   
   if (staffQualificationScore !== null) cat4Scores.push(staffQualificationScore);
   if (hourlyRateScore !== null) cat4Scores.push(hourlyRateScore);
+  if (quoteResponseScore !== null) cat4Scores.push(quoteResponseScore);
   
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
