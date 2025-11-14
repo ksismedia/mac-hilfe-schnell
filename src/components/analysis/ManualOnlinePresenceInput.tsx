@@ -68,44 +68,52 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       const ownTotal = (counts.ownImages || 0) + (counts.ownVideos || 0) + (counts.ownShorts || 0);
       const foreignTotal = (counts.foreignImages || 0) + (counts.foreignVideos || 0) + (counts.foreignShorts || 0);
       
-      // Basis-Score: Content-Vielfalt (max 40 Punkte)
+      // Basis-Score: Content-Vielfalt (max 30 Punkte)
       let diversityScore = 0;
-      if (counts.images > 0) diversityScore += 15;
-      if (counts.videos > 0) diversityScore += 15;
-      if (counts.shorts > 0) diversityScore += 10;
+      const hasImages = counts.images > 0;
+      const hasVideos = counts.videos > 0;
+      const hasShorts = counts.shorts > 0;
+      const typeCount = (hasImages ? 1 : 0) + (hasVideos ? 1 : 0) + (hasShorts ? 1 : 0);
+      
+      if (typeCount === 3) diversityScore = 30; // Alle drei Typen vorhanden
+      else if (typeCount === 2) diversityScore = 20; // Zwei Typen
+      else if (typeCount === 1) diversityScore = 10; // Ein Typ
       
       // Content-Menge Score (max 40 Punkte)
       let quantityScore = 0;
-      if (totalCount >= 50) quantityScore = 40;
-      else if (totalCount >= 30) quantityScore = 35;
-      else if (totalCount >= 20) quantityScore = 30;
-      else if (totalCount >= 10) quantityScore = 20;
-      else if (totalCount >= 5) quantityScore = 10;
-      else quantityScore = totalCount * 2;
+      if (totalCount >= 100) quantityScore = 40;
+      else if (totalCount >= 75) quantityScore = 35;
+      else if (totalCount >= 50) quantityScore = 30;
+      else if (totalCount >= 30) quantityScore = 25;
+      else if (totalCount >= 20) quantityScore = 20;
+      else if (totalCount >= 10) quantityScore = 12;
+      else if (totalCount >= 5) quantityScore = 6;
+      else quantityScore = totalCount;
       
-      // Relevanz-Score (max 30 Punkte) - Eigene Inhalte zählen höher
-      const relevanceWeights = { high: 2, medium: 1, low: 0.5 };
-      let relevanceScore = 0;
+      // Relevanz & Qualität Score (max 30 Punkte)
+      let qualityScore = 0;
       
-      // Eigene Inhalte: Volle Gewichtung nach Relevanz
-      const ownImagesWeight = relevanceWeights[counts.imageRelevance || 'medium'];
-      const ownVideosWeight = relevanceWeights[counts.videoRelevance || 'medium'];
-      const ownShortsWeight = relevanceWeights[counts.shortRelevance || 'medium'];
+      // Eigene vs. fremde Inhalte berücksichtigen
+      const ownRatio = ownTotal / Math.max(1, totalCount);
       
-      relevanceScore += (counts.ownImages || 0) * ownImagesWeight;
-      relevanceScore += (counts.ownVideos || 0) * ownVideosWeight;
-      relevanceScore += (counts.ownShorts || 0) * ownShortsWeight;
+      // Basis-Qualität durch eigene Inhalte (max 15 Punkte)
+      qualityScore += ownRatio * 15;
       
-      // Fremde Inhalte: Nur 50% der Gewichtung
-      relevanceScore += (counts.foreignImages || 0) * ownImagesWeight * 0.5;
-      relevanceScore += (counts.foreignVideos || 0) * ownVideosWeight * 0.5;
-      relevanceScore += (counts.foreignShorts || 0) * ownShortsWeight * 0.5;
+      // Relevanz-Bonus (max 15 Punkte)
+      const relevanceWeights = { high: 1, medium: 0.6, low: 0.3 };
       
-      relevanceScore = Math.min(30, relevanceScore);
+      const imageRelevanceScore = (counts.ownImages || 0) * relevanceWeights[counts.imageRelevance || 'medium'];
+      const videoRelevanceScore = (counts.ownVideos || 0) * relevanceWeights[counts.videoRelevance || 'medium'];
+      const shortRelevanceScore = (counts.ownShorts || 0) * relevanceWeights[counts.shortRelevance || 'medium'];
       
-      // Gesamt: max 110 Punkte (40 + 40 + 30), normalisiert auf 100
-      const totalScore = diversityScore + quantityScore + relevanceScore;
-      return Math.round((totalScore / 110) * 100);
+      const maxRelevancePoints = Math.max(ownTotal * 1, 1); // Maximum wenn alle "high"
+      const actualRelevancePoints = imageRelevanceScore + videoRelevanceScore + shortRelevanceScore;
+      
+      qualityScore += (actualRelevancePoints / maxRelevancePoints) * 15;
+      
+      // Gesamt: max 100 Punkte (30 + 40 + 30)
+      const totalScore = diversityScore + quantityScore + qualityScore;
+      return Math.round(totalScore);
     }
     
     // Detaillierte Eingabe (alte Logik)
