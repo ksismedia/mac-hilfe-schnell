@@ -470,6 +470,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             onNavigateToCategory={(categoryId: string) => setActiveCategory(categoryId)}
             manualDataPrivacyData={manualDataPrivacyData}
             updateManualDataPrivacyData={updateManualDataPrivacyData}
+            manualLocalSEOData={manualLocalSEOData}
+            onManualLocalSEOChange={updateManualLocalSEOData}
           />
         );
       case 'website-performance-tech':
