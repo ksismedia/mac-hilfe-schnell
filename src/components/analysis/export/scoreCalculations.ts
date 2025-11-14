@@ -132,7 +132,8 @@ export const calculateOnlineQualityAuthorityScore = (
   accessibilityData: any,
   manualContentData: any,
   manualBacklinkData: any,
-  manualLocalSEOData?: any
+  manualLocalSEOData?: any,
+  manualDataPrivacyData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -146,7 +147,11 @@ export const calculateOnlineQualityAuthorityScore = (
     const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData) || 0;
     const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
     const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData) || 0;
-    const dataPrivacyScore = calculateDataPrivacyScore(realData, privacyData) || 0;
+    
+    // GETRENNTE SCORES für DSGVO und Technische Sicherheit
+    const dsgvoScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) || 0;
+    const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData) || 0;
+    
     const seoScore = realData?.seo?.score || 0;
     const imprintScore = realData?.imprint?.score || 0;
     
@@ -157,7 +162,8 @@ export const calculateOnlineQualityAuthorityScore = (
       { name: 'content', value: contentQualityScore },
       { name: 'backlinks', value: backlinksScore },
       { name: 'accessibility', value: accessibilityScore },
-      { name: 'privacy', value: dataPrivacyScore },
+      { name: 'dsgvo', value: dsgvoScore },
+      { name: 'technicalSecurity', value: technicalSecurityScore },
       { name: 'imprint', value: imprintScore }
     ];
     
@@ -168,8 +174,7 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    // NEUE LOGIK: Einfacher arithmetischer Durchschnitt aller vorhandenen Scores
-    // Content enthält jetzt Keywords, daher wird Keywords NICHT mehr separat gezählt
+    // Durchschnitt aus allen 8 Bereichen
     const cat1Scores = [
       seoScore,
       localSEOScore,
@@ -179,7 +184,8 @@ export const calculateOnlineQualityAuthorityScore = (
     if (contentQualityScore > 0) cat1Scores.push(contentQualityScore);
     if (accessibilityScore > 0) cat1Scores.push(accessibilityScore);
     if (backlinksScore > 0) cat1Scores.push(backlinksScore);
-    if (dataPrivacyScore > 0) cat1Scores.push(dataPrivacyScore);
+    if (dsgvoScore > 0) cat1Scores.push(dsgvoScore);
+    if (technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
     
     const result = cat1Scores.length > 0 
       ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) 
@@ -300,7 +306,7 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null);
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
@@ -727,33 +733,30 @@ export const calculateCorporateIdentityScore = (data: any): number => {
   return Math.round(score);
 };
 
+// Berechnet nur DSGVO-Compliance (rechtliche Aspekte, Cookie-Banner, Violations)
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
-  // If manual score override is set, use it (but still cap at 59% if critical violations exist)
   const hasManualOverride = manualDataPrivacyData?.overallScore !== undefined;
   
-  // If privacyData has a score (from the service), use it as base
-  // This score already includes HSTS violations and other security checks
-  if (!privacyData?.score && !hasManualOverride) {
+  if (!privacyData && !hasManualOverride) {
     return 0;
   }
   
-  // Start with the score calculated by the service (includes HSTS, SSL, etc.) or manual override
-  let score = hasManualOverride ? manualDataPrivacyData.overallScore : privacyData.score;
+  // Start with 100 base score for DSGVO (legal aspects only)
+  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
   
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
   const totalViolations = privacyData?.violations || [];
   
-  // Only apply violation adjustments if not using manual override
   if (!hasManualOverride) {
-    // Add back points for deselected violations (using index-based IDs)
+    // Subtract points for violations (not deselected)
     totalViolations.forEach((violation: any, index: number) => {
-      if (deselectedViolations.includes(`auto-${index}`)) {
+      if (!deselectedViolations.includes(`auto-${index}`)) {
         switch (violation.severity) {
-          case 'critical': score += 15; break;
-          case 'high': score += 10; break;
-          case 'medium': score += 5; break;
-          case 'low': score += 2; break;
+          case 'critical': score -= 15; break;
+          case 'high': score -= 10; break;
+          case 'medium': score -= 5; break;
+          case 'low': score -= 2; break;
         }
       }
     });
@@ -771,12 +774,10 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   // Check if there are any critical violations (not deselected)
   const hasCriticalViolations = () => {
-    // Check active auto violations
     const activeCriticalAuto = totalViolations.some((violation: any, index: number) => 
       violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
     );
     
-    // Check custom violations
     const criticalCustom = customViolations.some((violation: any) => 
       violation.severity === 'critical'
     );
@@ -788,6 +789,70 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   // Cap at 59% if there are any critical violations
   if (hasCriticalViolations()) {
+    return Math.min(59, finalScore);
+  }
+  
+  return finalScore;
+};
+
+// Berechnet Datenschutz & Technische Sicherheit (SSL, Security Headers)
+export const calculateTechnicalSecurityScore = (privacyData: any): number => {
+  if (!privacyData) {
+    return 0;
+  }
+  
+  let score = 0;
+  let componentCount = 0;
+  
+  // SSL Score (60% Gewichtung)
+  if (privacyData.sslGrade) {
+    componentCount++;
+    const sslScore = (() => {
+      switch (privacyData.sslGrade) {
+        case 'A+': return 100;
+        case 'A': return 95;
+        case 'A-': return 90;
+        case 'B': return 80;
+        case 'C': return 70;
+        case 'D': return 50;
+        case 'E': return 30;
+        case 'F': return 10;
+        case 'T': return 5; // Certificate not trusted
+        default: return 0;
+      }
+    })();
+    score += sslScore * 0.6;
+  }
+  
+  // Security Headers Score (40% Gewichtung)
+  if (privacyData.securityHeaders) {
+    componentCount++;
+    const headers = privacyData.securityHeaders;
+    let headerScore = 100;
+    
+    // Deduct points for missing headers
+    if (!headers.hsts) headerScore -= 30; // HSTS most important
+    if (!headers.xFrameOptions) headerScore -= 15;
+    if (!headers.xContentTypeOptions) headerScore -= 10;
+    if (!headers.csp) headerScore -= 20;
+    if (!headers.referrerPolicy) headerScore -= 10;
+    if (!headers.permissionsPolicy) headerScore -= 15;
+    
+    score += Math.max(0, headerScore) * 0.4;
+  }
+  
+  if (componentCount === 0) {
+    return 0;
+  }
+  
+  const finalScore = Math.round(score);
+  
+  // Cap at 59% if critical technical issues exist
+  const hasCriticalTechnicalIssues = 
+    (privacyData.sslGrade && ['D', 'E', 'F', 'T'].includes(privacyData.sslGrade)) ||
+    (privacyData.securityHeaders && !privacyData.securityHeaders.hsts);
+  
+  if (hasCriticalTechnicalIssues) {
     return Math.min(59, finalScore);
   }
   
