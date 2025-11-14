@@ -2044,7 +2044,7 @@ export const generateCustomerHTML = ({
     googleReviewScore,
     impressumScore,
     accessibilityScore,
-    actualDataPrivacyScore
+    dsgvoScore
   ].filter(score => score !== undefined && score !== null);
   
   // Calculate overall score as true average of all sections (excluding Corporate Identity)
@@ -2114,7 +2114,7 @@ export const generateCustomerHTML = ({
                   realData.seo.score,
                   74, // Lokale SEO
                   accessibilityScore > 0 ? accessibilityScore : 0,
-                  actualDataPrivacyScore > 0 ? actualDataPrivacyScore : 0,
+                  dsgvoScore > 0 ? dsgvoScore : 0,
                   dsgvoScore > 0 ? dsgvoScore : 0,
                   impressumScore
                 ].filter(s => s > 0);
@@ -2590,7 +2590,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(actualDataPrivacyScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
+    ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
