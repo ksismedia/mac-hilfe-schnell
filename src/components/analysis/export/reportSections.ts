@@ -1,6 +1,6 @@
-
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor } from '@/hooks/useManualData';
+import { calculateTechnicalSecurityScore } from './scoreCalculations';
 
 // ============= Berechnungsfunktionen für echte Metriken =============
 
@@ -433,38 +433,7 @@ export const generateDataPrivacySection = (
   const dsgvoScore = hasCriticalViolations ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
   
   // Technische Sicherheit-Score (SSL, HSTS, Security Headers)
-  const calculateTechnicalSecurityScore = () => {
-    const sslData = privacyData?.realApiData?.ssl;
-    const sslRating = privacyData?.sslRating || 'F';
-    const securityHeaders = privacyData?.realApiData?.securityHeaders || {};
-    
-    let sslScore = 0;
-    if (sslRating === 'A+' || sslRating === 'A') sslScore = 100;
-    else if (sslRating === 'A-') sslScore = 95;
-    else if (sslRating === 'B') sslScore = 85;
-    else if (sslRating === 'C') sslScore = 70;
-    else if (sslRating === 'D') sslScore = 50;
-    else if (sslRating === 'E') sslScore = 30;
-    else sslScore = 20;
-    
-    // Security Headers Score
-    const headerCount = [
-      securityHeaders.csp,
-      securityHeaders.xFrameOptions,
-      securityHeaders.xContentTypeOptions,
-      sslData?.hasHSTS,
-      securityHeaders.referrerPolicy
-    ].filter(Boolean).length;
-    const headerScore = Math.round((headerCount / 5) * 100);
-    
-    // Gewichtung: SSL 60%, Headers 40%
-    const techScore = Math.round(sslScore * 0.6 + headerScore * 0.4);
-    
-    // Cap bei kritischen Mängeln
-    return (hasNoHSTS || hasPoorSSL) ? Math.min(59, techScore) : techScore;
-  };
-  
-  const technicalSecurityScore = calculateTechnicalSecurityScore();
+  const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
   
   // Calculate cookie score based on whether cookie-related violations are active
   const hasCookieViolations = activeViolations.some(v => v.cookieRelated);

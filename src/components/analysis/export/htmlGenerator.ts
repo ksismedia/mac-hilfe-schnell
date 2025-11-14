@@ -4,7 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
-import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
+import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateWorkplaceScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { getLogoHTML } from './logoData';
 import { getCollapsibleComplianceSectionHTML } from './aiActDisclaimer';
@@ -198,37 +198,13 @@ export const generateCustomerHTML = ({
     ? `${Math.round(actualDataPrivacyScore)}%` 
     : '–';
   
-  // Calculate DSGVO score - cap at 59% if there are critical violations
-  const calculateDSGVOScore = () => {
-    if (!privacyData) return 75; // Default score
-    
-    const violations = privacyData.violations || [];
-    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
-    const customViolations = manualDataPrivacyData?.customViolations || [];
-    
-    // Filter out deselected violations to get active violations
-    const activeViolations = violations.filter((violation: any, index: number) => 
-      !deselectedViolations.includes(`auto-${index}`)
-    );
-    
-    // Check for critical violations (severity === 'critical')
-    const hasCriticalViolations = activeViolations.some((violation: any) => 
-      violation.severity === 'critical'
-    ) || customViolations.some((violation: any) => 
-      violation.severity === 'critical'
-    );
-    
-    // If there's 1 or more critical violations, cap at 59%
-    if (hasCriticalViolations) {
-      return Math.min(59, actualDataPrivacyScore);
-    }
-    
-    // Otherwise use the regular data privacy score
-    return actualDataPrivacyScore;
-  };
-  
-  const dsgvoScore = calculateDSGVOScore();
+  // DSGVO-Score (rechtliche Aspekte)
+  const dsgvoScore = actualDataPrivacyScore;
   const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
+  
+  // Technische Sicherheit Score (SSL, Security Headers)
+  const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
+  const displayTechnicalSecurityScore = technicalSecurityScore > 0 ? `${Math.round(technicalSecurityScore)}%` : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData);
@@ -415,7 +391,7 @@ export const generateCustomerHTML = ({
   
   // Berechne Kategorie-Scores (ungewichteter Durchschnitt innerhalb jeder Kategorie)
   
-  // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
+  // Kategorie 1: Online-Qualität · Relevanz · Autorität (inkl. DSGVO + Technische Sicherheit)
   const cat1Scores = [
     realData.seo.score,
     localSEOScore,
@@ -427,6 +403,7 @@ export const generateCustomerHTML = ({
   if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
   if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
   if (dsgvoScore !== null && dsgvoScore > 0) cat1Scores.push(dsgvoScore);
+  if (technicalSecurityScore !== null && technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
   
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
