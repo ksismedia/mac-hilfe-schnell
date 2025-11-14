@@ -187,8 +187,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   if (quoteResponseScore !== null) cat6Scores.push(quoteResponseScore);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
-  // Gewichteter Gesamtscore aus den 6 Kategorien
-  const totalCategoryWeight = 100;
+  // Gewichteter Gesamtscore aus den 6 Kategorien (IDENTISCH mit htmlGenerator.ts)
+  const totalCategoryWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
   const overallScore = Math.round((
     cat1Avg * cat1Weight +
     cat2Avg * cat2Weight +
@@ -198,65 +198,71 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     cat6Avg * cat6Weight
   ) / totalCategoryWeight);
 
-  // Alle Metriken für die Detail-Anzeige (mit ursprünglichen Gewichten als Prozentangabe)
+  // Alle Metriken für die Detail-Anzeige - GEWICHTE BASIEREN AUF KATEGORIE-ZUGEHÖRIGKEIT
   const baseMetrics = [
-    { name: 'Local SEO', score: localSEOScore, weight: 24, maxScore: 100 },
-    { name: 'SEO', score: realData.seo.score, weight: 14, maxScore: 100 },
-    { name: 'Performance', score: realData.performance.score, weight: 11, maxScore: 100 },
-    { name: 'Impressum', score: realData.imprint.score, weight: 9, maxScore: 100 },
-    { name: 'Keywords', score: currentKeywordsScore, weight: 8, maxScore: 100 },
-    { name: 'Bewertungen', score: realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0, weight: 7, maxScore: 100 },
-    { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, maxScore: 100 },
-    { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
-    { name: 'Social Proof', score: realData.socialProof?.overallScore ?? 0, weight: 4, maxScore: 100 },
-    { name: 'Arbeitsplatz', score: workplaceScoreRaw, weight: workplaceScoreRaw === -1 ? 0 : 2, maxScore: 100 },
-    { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 1, maxScore: 100 }
+    // Kategorie 1 Metriken (30% Gewicht total)
+    { name: 'Local SEO', score: localSEOScore, weight: 0, maxScore: 100 },
+    { name: 'SEO', score: realData.seo.score, weight: 0, maxScore: 100 },
+    { name: 'Impressum', score: realData.imprint.score, weight: 0, maxScore: 100 },
+    { name: 'Keywords', score: currentKeywordsScore, weight: 0, maxScore: 100 },
+    // Kategorie 2 Metriken (20% Gewicht total)
+    { name: 'Performance', score: realData.performance.score, weight: 0, maxScore: 100 },
+    { name: 'Mobile', score: realData.mobile.overallScore, weight: 0, maxScore: 100 },
+    // Kategorie 3 Metriken (20% Gewicht total)
+    { name: 'Bewertungen', score: googleReviewsScore, weight: 0, maxScore: 100 },
+    { name: 'Social Media', score: socialMediaScore, weight: 0, maxScore: 100 },
+    { name: 'Social Proof', score: realData.socialProof?.overallScore ?? 0, weight: 0, maxScore: 100 },
+    // Kategorie 4 Metriken (10% Gewicht total)
+    { name: 'Arbeitsplatz', score: workplaceScoreRaw, weight: 0, maxScore: 100 },
+    { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 0, maxScore: 100 }
   ];
 
   // Füge nur bewertete Bereiche hinzu
   const metrics = [...baseMetrics];
   
+  // Kategorie 4 (Markt) - zusätzliche Metriken
   if (staffQualificationScore !== null) {
-    metrics.push({ name: 'Personal', score: staffQualificationScore, weight: 8, maxScore: 100 });
+    metrics.push({ name: 'Personal', score: staffQualificationScore, weight: 0, maxScore: 100 });
   }
   
-  if (quoteResponseData && quoteResponseData.responseTime) {
-    metrics.push({ name: 'Angebotsbearbeitung', score: quoteResponseScore, weight: 6, maxScore: 100 });
-  }
-  
-  // Stundensatz - nur bewerten wenn tatsächlich eingegeben
   if (hourlyRateScore !== null) {
-    metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 4, maxScore: 100 });
+    metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 0, maxScore: 100 });
   }
   
-  // Content Quality - wenn manuell eingegeben
+  // Kategorie 6 (Service) - zusätzliche Metriken
+  if (quoteResponseData && quoteResponseData.responseTime) {
+    metrics.push({ name: 'Angebotsbearbeitung', score: quoteResponseScore, weight: 0, maxScore: 100 });
+  }
+  
+  // Kategorie 1 (Online-Qualität) - zusätzliche Metriken
   if (contentScore !== null) {
-    metrics.push({ name: 'Content-Qualität', score: contentScore, weight: 5, maxScore: 100 });
+    metrics.push({ name: 'Content-Qualität', score: contentScore, weight: 0, maxScore: 100 });
   }
   
-  // Accessibility - wenn manuell eingegeben oder automatisch analysiert
   if (accessibilityScore !== null) {
-    metrics.push({ name: 'Barrierefreiheit', score: accessibilityScore, weight: 4, maxScore: 100 });
+    metrics.push({ name: 'Barrierefreiheit', score: accessibilityScore, weight: 0, maxScore: 100 });
   }
   
-  // Backlinks - wenn manuell eingegeben
   if (backlinksScore !== null) {
-    metrics.push({ name: 'Backlinks', score: backlinksScore, weight: 5, maxScore: 100 });
+    metrics.push({ name: 'Backlinks', score: backlinksScore, weight: 0, maxScore: 100 });
   }
   
-  // Data Privacy - wenn manuell eingegeben oder automatisch analysiert
   if (dataPrivacyScore !== null) {
-    metrics.push({ name: 'Datenschutz', score: dataPrivacyScore, weight: 6, maxScore: 100 });
+    metrics.push({ name: 'Datenschutz', score: dataPrivacyScore, weight: 0, maxScore: 100 });
   }
   
-  // Industry Reviews - wenn manuell eingegeben
+  // Kategorie 2 (Performance) - zusätzliche Metriken
+  if (conversionScore > 0) {
+    metrics.push({ name: 'Conversion', score: conversionScore, weight: 0, maxScore: 100 });
+  }
+  
+  // Kategorie 3 (Social Media) - zusätzliche Metriken
   if (industryReviewScore !== null && industryReviewScore > 0) {
-    metrics.push({ name: 'Branchenplattformen', score: industryReviewScore, weight: 4, maxScore: 100 });
+    metrics.push({ name: 'Branchenplattformen', score: industryReviewScore, weight: 0, maxScore: 100 });
   }
   
-  // Online Presence - wenn manuell eingegeben
   if (onlinePresenceScore !== null && onlinePresenceScore > 0) {
-    metrics.push({ name: 'Online-Präsenz', score: onlinePresenceScore, weight: 3, maxScore: 100 });
+    metrics.push({ name: 'Online-Präsenz', score: onlinePresenceScore, weight: 0, maxScore: 100 });
   }
 
   const getScoreColor = (score: number) => {
@@ -324,9 +330,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{metric.name}</span>
-              <Badge variant="outline" className="text-xs">
-                {metric.weight}% Gewichtung
-              </Badge>
                       {metric.name === 'Social Media' && (
                         <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
                           {hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten'}
