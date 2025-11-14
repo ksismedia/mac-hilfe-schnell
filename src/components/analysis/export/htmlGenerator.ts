@@ -1322,11 +1322,11 @@ export const generateCustomerHTML = ({
 
   // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
-    // Kombiniere automatische und manuelle Scores (40% auto + 60% manuell)
+    // Kombiniere automatische und manuelle Scores (50% auto + 50% manuell)
     const autoScore = realData.mobile.overallScore;
     const manualScore = manualMobileData?.overallScore || 0;
     const mobileScore = manualMobileData 
-      ? Math.round(autoScore * 0.4 + manualScore * 0.6)
+      ? Math.round((autoScore + manualScore) / 2)
       : autoScore;
     const scoreClass = mobileScore >= 80 ? 'yellow' : mobileScore >= 60 ? 'green' : 'red';
     
@@ -1334,7 +1334,7 @@ export const generateCustomerHTML = ({
 
      return `
       <div class="metric-card ${scoreClass}">
-        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert: 40% Auto + 60% Manuell)</span>' : ''}</h3>
+        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert: 50% Auto + 50% Manuell)</span>' : ''}</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
