@@ -204,17 +204,17 @@ export const calculateOnlineQualityAuthorityScore = (
 };
 
 export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
-  // NEUE LOGIK: Einfacher arithmetischer Durchschnitt (wie htmlGenerator.ts)
+  // Durchschnitt aus Performance, Mobile und Conversion
+  const performanceScore = realData.performance?.score || 0;
+  const mobileScore = manualMobileData?.overallScore || realData.mobile?.overallScore || 0;
   const conversionScore = manualConversionData?.overallScore || 0;
   
-  const cat2Scores = [
-    realData.performance?.score || 0,
-    realData.mobile?.overallScore || 0
-  ];
+  const cat2Scores = [];
   
-  if (conversionScore > 0) {
-    cat2Scores.push(conversionScore);
-  }
+  // Nur Scores > 0 berücksichtigen
+  if (performanceScore > 0) cat2Scores.push(performanceScore);
+  if (mobileScore > 0) cat2Scores.push(mobileScore);
+  if (conversionScore > 0) cat2Scores.push(conversionScore);
   
   return cat2Scores.length > 0 
     ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) 
