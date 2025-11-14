@@ -3270,9 +3270,32 @@ export const generateCustomerHTML = ({
         const videoCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.videos : manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
         const shortCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.shorts : manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
         
-        const highRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
-        const mediumRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
-        const lowRelevance = useSimpleCounts ? 0 : manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+        // Relevanz-Daten (auch für simpleCounts verfügbar)
+        let highRelevance = 0;
+        let mediumRelevance = 0;
+        let lowRelevance = 0;
+        
+        if (useSimpleCounts) {
+          // Bei einfacher Eingabe: Relevanz aus simpleCounts
+          const relevanceWeights = { high: 1, medium: 0, low: 0 };
+          if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.images;
+          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.images;
+          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.images;
+          
+          if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.videos;
+          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.videos;
+          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.videos;
+          
+          if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.shorts;
+          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.shorts;
+          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.shorts;
+        } else {
+          // Bei detaillierter Eingabe: Relevanz aus items
+          highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
+          mediumRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
+          lowRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+        }
+        
         const totalContent = imageCount + videoCount + shortCount;
         
         // Calculate scoring components
@@ -3291,9 +3314,7 @@ export const generateCustomerHTML = ({
         else if (totalContent >= 5) quantityScore = 15;
         else quantityScore = totalContent * 3;
         
-        const relevanceScore = useSimpleCounts 
-          ? Math.min(30, totalContent * 1.5) 
-          : Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
+        const relevanceScore = Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
         
         // KORREKTUR: Berechne overallScore AUS den drei Komponenten
         let calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
@@ -3434,19 +3455,59 @@ export const generateCustomerHTML = ({
           <div class="metric-card" style="text-align: center;">
             <h4>Bilder</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
+            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.imageRelevance ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.imageRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.imageRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
+              </p>
+            ` : ''}
             <p style="margin: 0; font-size: 0.9em;">${imageCount === 0 ? 'Noch keine Bilder' : imageCount < 5 ? 'Ausbaufähig' : imageCount < 15 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
           <div class="metric-card" style="text-align: center;">
             <h4>Videos</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
+            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.videoRelevance ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.videoRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.videoRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
+              </p>
+            ` : ''}
             <p style="margin: 0; font-size: 0.9em;">${videoCount === 0 ? 'Noch keine Videos' : videoCount < 3 ? 'Ausbaufähig' : videoCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
           <div class="metric-card" style="text-align: center;">
             <h4>Shorts</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
+            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.shortRelevance ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.shortRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.shortRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
+              </p>
+            ` : ''}
             <p style="margin: 0; font-size: 0.9em;">${shortCount === 0 ? 'Noch keine Shorts' : shortCount < 3 ? 'Ausbaufähig' : shortCount < 8 ? 'Guter Start' : 'Sehr gut!'}</p>
           </div>
         </div>
+
+        <!-- Relevanz-Breakdown -->
+        ${(highRelevance > 0 || mediumRelevance > 0 || lowRelevance > 0) ? `
+        <div class="metric-card">
+          <h4>Relevanz-Verteilung</h4>
+          <p style="margin-bottom: 15px; color: #64748b;">Hochrelevante Inhalte (eigene Inhalte, Firmen-Content) werden stärker gewichtet:</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: #f0fdf4; border-radius: 8px; border: 2px solid #10b981;">
+              <p style="margin: 0; font-size: 0.9em; color: #065f46; font-weight: bold;">Hohe Relevanz</p>
+              <p style="font-size: 2em; font-weight: bold; margin: 5px 0; color: #10b981;">${highRelevance}</p>
+              <p style="margin: 0; font-size: 0.8em; color: #065f46;">Gewichtung: 2x</p>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #fffbeb; border-radius: 8px; border: 2px solid #fbbf24;">
+              <p style="margin: 0; font-size: 0.9em; color: #92400e; font-weight: bold;">Mittlere Relevanz</p>
+              <p style="font-size: 2em; font-weight: bold; margin: 5px 0; color: #fbbf24;">${mediumRelevance}</p>
+              <p style="margin: 0; font-size: 0.8em; color: #92400e;">Gewichtung: 1x</p>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #fef2f2; border-radius: 8px; border: 2px solid #ef4444;">
+              <p style="margin: 0; font-size: 0.9em; color: #991b1b; font-weight: bold;">Niedrige Relevanz</p>
+              <p style="font-size: 2em; font-weight: bold; margin: 5px 0; color: #ef4444;">${lowRelevance}</p>
+              <p style="margin: 0; font-size: 0.8em; color: #991b1b;">Gewichtung: 0.5x</p>
+            </div>
+          </div>
+        </div>
+        ` : ''}
 
         ${!useSimpleCounts && manualOnlinePresenceData.items && manualOnlinePresenceData.items.length > 0 ? `
         <!-- Detaillierte Content-Liste -->
