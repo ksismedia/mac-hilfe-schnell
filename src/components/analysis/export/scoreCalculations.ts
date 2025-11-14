@@ -805,10 +805,12 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   let componentCount = 0;
   
   // SSL Score (60% Gewichtung)
-  if (privacyData.sslGrade) {
+  // Support both data structures: sslGrade and sslRating
+  const sslGrade = privacyData.sslGrade || privacyData?.sslRating;
+  if (sslGrade) {
     componentCount++;
     const sslScore = (() => {
-      switch (privacyData.sslGrade) {
+      switch (sslGrade) {
         case 'A+': return 100;
         case 'A': return 95;
         case 'A-': return 90;
@@ -825,13 +827,16 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   }
   
   // Security Headers Score (40% Gewichtung)
-  if (privacyData.securityHeaders) {
+  // Support both data structures: securityHeaders and realApiData.securityHeaders
+  const headers = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
+  const hasHSTS = headers?.hsts || privacyData?.realApiData?.ssl?.hasHSTS;
+  
+  if (headers) {
     componentCount++;
-    const headers = privacyData.securityHeaders;
     let headerScore = 100;
     
     // Deduct points for missing headers
-    if (!headers.hsts) headerScore -= 30; // HSTS most important
+    if (!hasHSTS) headerScore -= 30; // HSTS most important
     if (!headers.xFrameOptions) headerScore -= 15;
     if (!headers.xContentTypeOptions) headerScore -= 10;
     if (!headers.csp) headerScore -= 20;
@@ -849,8 +854,8 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   
   // Cap at 59% if critical technical issues exist
   const hasCriticalTechnicalIssues = 
-    (privacyData.sslGrade && ['D', 'E', 'F', 'T'].includes(privacyData.sslGrade)) ||
-    (privacyData.securityHeaders && !privacyData.securityHeaders.hsts);
+    (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
+    !hasHSTS;
   
   if (hasCriticalTechnicalIssues) {
     return Math.min(59, finalScore);
