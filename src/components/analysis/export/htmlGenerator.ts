@@ -1087,43 +1087,45 @@ export const generateCustomerHTML = ({
   const getLocalSEOAnalysis = () => {
     // Verwende manuelle Daten wenn vorhanden, sonst Fallback
     const localSEOData = manualLocalSEOData ? {
-      overallScore: manualLocalSEOData.overallScore,
+      overallScore: manualLocalSEOData.overallScore || 0,
       googleMyBusiness: {
         score: Math.round((manualLocalSEOData.gmbCompleteness + (manualLocalSEOData.gmbVerified ? 20 : 0) + (manualLocalSEOData.gmbClaimed ? 10 : 0)) / 1.3),
         claimed: manualLocalSEOData.gmbClaimed,
         verified: manualLocalSEOData.gmbVerified,
         complete: manualLocalSEOData.gmbCompleteness,
-        photos: manualLocalSEOData.gmbPhotos,
-        posts: manualLocalSEOData.gmbPosts,
-        lastUpdate: manualLocalSEOData.gmbLastUpdate
+        photos: manualLocalSEOData.gmbPhotos || 0,
+        posts: manualLocalSEOData.gmbPosts || 0,
+        lastUpdate: manualLocalSEOData.gmbLastUpdate || 'Unbekannt'
       },
       localCitations: {
-        score: Math.round((manualLocalSEOData.directories.filter(d => d.status === 'complete').length / Math.max(1, manualLocalSEOData.directories.length)) * 100),
-        totalCitations: manualLocalSEOData.directories.length,
-        consistent: manualLocalSEOData.directories.filter(d => d.status === 'complete').length,
-        inconsistent: manualLocalSEOData.directories.filter(d => d.status === 'incomplete').length,
-        topDirectories: manualLocalSEOData.directories.slice(0, 5).map(d => ({
+        score: (manualLocalSEOData.directories && manualLocalSEOData.directories.length > 0) 
+          ? Math.round((manualLocalSEOData.directories.filter(d => d.status === 'complete').length / manualLocalSEOData.directories.length) * 100)
+          : 0,
+        totalCitations: manualLocalSEOData.directories ? manualLocalSEOData.directories.length : 0,
+        consistent: manualLocalSEOData.directories ? manualLocalSEOData.directories.filter(d => d.status === 'complete').length : 0,
+        inconsistent: manualLocalSEOData.directories ? manualLocalSEOData.directories.filter(d => d.status === 'incomplete').length : 0,
+        topDirectories: (manualLocalSEOData.directories || []).slice(0, 5).map(d => ({
           name: d.name,
           status: d.status === 'complete' ? 'vollständig' : d.status === 'incomplete' ? 'unvollständig' : 'nicht gefunden'
         }))
       },
       localKeywords: {
-        score: manualLocalSEOData.localKeywordRankings.length > 0 ? Math.round(
-          manualLocalSEOData.localKeywordRankings.reduce((acc, kw) => acc + (100 - kw.position), 0) / manualLocalSEOData.localKeywordRankings.length
-        ) : 0,
-        ranking: manualLocalSEOData.localKeywordRankings.map(kw => ({
+        score: (manualLocalSEOData.localKeywordRankings && manualLocalSEOData.localKeywordRankings.length > 0) 
+          ? Math.round(manualLocalSEOData.localKeywordRankings.reduce((acc, kw) => acc + (100 - kw.position), 0) / manualLocalSEOData.localKeywordRankings.length)
+          : 0,
+        ranking: (manualLocalSEOData.localKeywordRankings || []).map(kw => ({
           keyword: kw.keyword,
           position: kw.position,
           volume: kw.searchVolume === 'high' ? 'hoch' : kw.searchVolume === 'medium' ? 'mittel' : 'niedrig'
         }))
       },
       onPageLocal: {
-        score: manualLocalSEOData.localContentScore,
-        addressVisible: manualLocalSEOData.addressVisible,
-        phoneVisible: manualLocalSEOData.phoneVisible,
-        openingHours: manualLocalSEOData.openingHoursVisible,
-        localSchema: manualLocalSEOData.hasLocalBusinessSchema,
-        localContent: manualLocalSEOData.localContentScore
+        score: manualLocalSEOData.localContentScore || 0,
+        addressVisible: manualLocalSEOData.addressVisible || false,
+        phoneVisible: manualLocalSEOData.phoneVisible || false,
+        openingHours: manualLocalSEOData.openingHoursVisible || false,
+        localSchema: manualLocalSEOData.hasLocalBusinessSchema || false,
+        localContent: manualLocalSEOData.localContentScore || 0
       }
     } : {
       // No manual data and no automatic data available - show that data is missing
@@ -1136,8 +1138,8 @@ export const generateCustomerHTML = ({
 
     const scoreClass = localSEOData.overallScore >= 90 ? 'yellow' : localSEOData.overallScore >= 61 ? 'green' : 'red';
 
-    // Check if we have any actual data (manual or real)
-    const hasData = localSEOData.googleMyBusiness || localSEOData.localCitations || localSEOData.localKeywords || localSEOData.onPageLocal;
+    // Check if we have any actual data (manual or real) - improved check
+    const hasData = manualLocalSEOData || (localSEOData.googleMyBusiness || localSEOData.localCitations || localSEOData.localKeywords || localSEOData.onPageLocal);
 
     if (!hasData) {
       return `
