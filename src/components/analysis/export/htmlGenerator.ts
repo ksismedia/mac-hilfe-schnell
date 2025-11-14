@@ -425,8 +425,7 @@ export const generateCustomerHTML = ({
     marketComparisonScore,
     hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
     workplaceScore !== -1 ? workplaceScore : 0,
-    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0,
-    quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
+    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
   ].filter(s => s > 0);
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
@@ -2233,8 +2232,7 @@ export const generateCustomerHTML = ({
                 allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
                 hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
                 workplaceScore !== -1 ? workplaceScore : 0,
-                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0,
-                quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
+                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
               ].filter(s => s > 0);
               const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
 
