@@ -3481,12 +3481,17 @@ export const generateCustomerHTML = ({
         
         relevanceScore = Math.min(30, relevanceScore);
         
-        // KORREKTUR: Berechne overallScore AUS den drei Komponenten
-        let calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
+        // Verwende den bereits berechneten Score aus manualOnlinePresenceData, falls vorhanden
+        const hasPreCalculatedScore = !!manualOnlinePresenceData.overallScore;
+        let calculatedOverallScore = hasPreCalculatedScore 
+          ? manualOnlinePresenceData.overallScore 
+          : Math.round(diversityScore + quantityScore + relevanceScore);
         
-        // WICHTIG: Bei nur einem Content-Typ maximal 70%
+        // Content-Type Count für spätere Verwendung
         const contentTypeCount = [imageCount > 0, videoCount > 0, shortCount > 0].filter(Boolean).length;
-        if (contentTypeCount === 1) {
+        
+        // WICHTIG: Bei nur einem Content-Typ maximal 70% (nur wenn nicht bereits berechnet)
+        if (!hasPreCalculatedScore && contentTypeCount === 1) {
           calculatedOverallScore = Math.min(calculatedOverallScore, 70);
         }
         
