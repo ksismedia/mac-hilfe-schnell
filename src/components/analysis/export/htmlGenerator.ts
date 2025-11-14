@@ -2302,7 +2302,7 @@ export const generateCustomerHTML = ({
                   impressumScore
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
+                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}" style="background: ${getScoreColor(avg)} !important; color: ${avg >= 90 ? '#000' : '#fff'} !important;">${avg}%</div>` : '';
               })()}
             </div>
           </div>
@@ -2314,7 +2314,7 @@ export const generateCustomerHTML = ({
               ${(() => {
                 const conversionScore = 67; // Simulierter Conversion-Score
                 const avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
-                return `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>`;
+                return `<div class="header-score-circle ${getScoreColorClass(avg)}" style="background: ${getScoreColor(avg)} !important; color: ${avg >= 90 ? '#000' : '#fff'} !important;">${avg}%</div>`;
               })()}
             </div>
           </div>
@@ -2360,7 +2360,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
-              <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
+              <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}" style="background: ${getScoreColor(corporateIdentityScore)} !important; color: ${corporateIdentityScore >= 90 ? '#000' : '#fff'} !important;">${Math.round(corporateIdentityScore)}%</div>
             </div>
           </div>
 
@@ -2373,7 +2373,7 @@ export const generateCustomerHTML = ({
                   quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
                 ].filter(s => s > 0);
                 const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
+                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}" style="background: ${getScoreColor(avg)} !important; color: ${avg >= 90 ? '#000' : '#fff'} !important;">${avg}%</div>` : '';
               })()}
             </div>
           </div>
@@ -2779,7 +2779,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Rechtssicherheit & Impressum</span>
-        <div class="header-score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(impressumScore)}" style="background: ${getScoreColor(impressumScore)} !important; color: ${impressumScore >= 90 ? '#000' : '#fff'} !important;">${impressumScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
@@ -3089,7 +3089,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Mobile Optimierung</span>
-        <div class="header-score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(mobileScore)}" style="background: ${getScoreColor(mobileScore)} !important; color: ${mobileScore >= 90 ? '#000' : '#fff'} !important;">${mobileScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
