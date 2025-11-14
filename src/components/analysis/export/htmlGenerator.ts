@@ -406,8 +406,19 @@ export const generateCustomerHTML = ({
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
   // Kategorie 2: Webseiten-Performance & Technik
-  const conversionScore = 67;
-  const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
+  const conversionScore = manualConversionData?.overallScore || 0;
+  const hasConversionData = conversionScore > 0;
+  
+  const cat2Scores = [
+    realData.performance.score,
+    realData.mobile.overallScore
+  ];
+  
+  if (hasConversionData) {
+    cat2Scores.push(conversionScore);
+  }
+  
+  const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
   
   // Kategorie 3: Online-/Web-/Social-Media Performance
   const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
@@ -2212,8 +2223,19 @@ export const generateCustomerHTML = ({
               const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
 
               // Kategorie 2: Webseiten-Performance & Technik
-              const conversionScore = 67;
-              const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
+              const conversionScore = manualConversionData?.overallScore || 0;
+              const hasConversionData = conversionScore > 0;
+              
+              const cat2Scores = [
+                realData.performance.score,
+                realData.mobile.overallScore
+              ];
+              
+              if (hasConversionData) {
+                cat2Scores.push(conversionScore);
+              }
+              
+              const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
 
               // Kategorie 3: Online-/Web-/Social-Media Performance
               const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
@@ -2297,8 +2319,11 @@ export const generateCustomerHTML = ({
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
               ${(() => {
-                const conversionScore = 67; // Simulierter Conversion-Score
-                const avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
+                const conversionScore = manualConversionData?.overallScore || 0;
+                const hasConversionData = conversionScore > 0;
+                const scores = [realData.performance.score, realData.mobile.overallScore];
+                if (hasConversionData) scores.push(conversionScore);
+                const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
                 return `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>`;
               })()}
             </div>
