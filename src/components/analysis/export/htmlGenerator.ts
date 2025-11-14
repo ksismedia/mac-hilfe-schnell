@@ -2722,7 +2722,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Lokale SEO & Regionale Sichtbarkeit</span>
-        <div class="header-score-circle ${getScoreColorClass(localSEOScore)}">${displayLocalSEOScore}</div>
+        <div class="header-score-circle ${getScoreColorClass(localSEOScore)}" style="background: ${getScoreColor(localSEOScore)} !important; color: ${localSEOScore >= 90 ? '#000' : '#fff'} !important;">${displayLocalSEOScore}</div>
       </div>
       <div class="section-content">
         ${getLocalSEOAnalysis()}
@@ -2733,7 +2733,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header collapsible" onclick="toggleSection('backlinks-content')" style="cursor: pointer;">
         <span>▶ Backlinks Übersicht</span>
-        <div class="header-score-circle ${getScoreColorClass(backlinksScore)}">${backlinksScore}%</div>
+        <div class="header-score-circle ${getScoreColorClass(backlinksScore)}" style="background: ${getScoreColor(backlinksScore)} !important; color: ${backlinksScore >= 90 ? '#000' : '#fff'} !important;">${backlinksScore}%</div>
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         <div class="metric-card warning">
