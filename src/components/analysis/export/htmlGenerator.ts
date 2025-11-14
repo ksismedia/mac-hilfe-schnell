@@ -2127,7 +2127,7 @@ export const generateCustomerHTML = ({
               let cat2Weight = 11 + 6; // Performance + Mobile = 17
               let cat3Weight = 7 + 6 + 4; // Bewertungen + Social Media + Social Proof = 17
               let cat4Weight = 1 + 2; // Konkurrenz + Arbeitsplatz = 3 (Arbeitsplatz kann 0 sein)
-              let cat5Weight = 0; // Corporate Identity ist nicht in OverallRating
+              let cat5Weight = 0; // Corporate Identity
               let cat6Weight = 0; // Angebotsbearbeitung
               
               // Optionale Metriken hinzufügen
@@ -2141,6 +2141,8 @@ export const generateCustomerHTML = ({
               
               if (hourlyRateData) cat4Weight += 4; // Preispositionierung
               if (staffQualificationData && staffQualificationData.totalEmployees > 0) cat4Weight += 8; // Personal
+              
+              if (manualCorporateIdentityData) cat5Weight += 5; // Corporate Identity
               
               if (quoteResponseData && quoteResponseData.responseTime) cat6Weight += 6; // Angebotsbearbeitung
               
