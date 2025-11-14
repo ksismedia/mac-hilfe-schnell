@@ -55,20 +55,23 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, ma
     return "bg-red-500 text-white";
   };
 
+  // Gemeinsamer Score aus Conversion-Rate und User Journey
+  const combinedScore = Math.round((manualConversionData.overallScore + manualConversionData.userJourneyScore) / 2);
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Conversion-Optimierung
+            Conversion-Optimierung & User Journey
             <div 
-              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${getScoreColorClass(manualConversionData.overallScore)}`}
+              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${getScoreColorClass(combinedScore)}`}
             >
-              {manualConversionData.overallScore}%
+              {combinedScore}%
             </div>
           </CardTitle>
           <CardDescription>
-            Manuelle Conversion-Analyse für {url}
+            Kombinierte Analyse: Conversion-Rate ({manualConversionData.overallScore}%) und User Journey ({manualConversionData.userJourneyScore}%)
           </CardDescription>
         </CardHeader>
         <CardContent>

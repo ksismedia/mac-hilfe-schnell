@@ -235,30 +235,11 @@ export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData,
 const calculateConversionScore = (data: any): number => {
   if (!data) return 0;
   
-  let score = 0;
+  // Kombinierter Score aus Conversion-Rate und User Journey
+  const conversionScore = data.overallScore || 0;
+  const userJourneyScore = data.userJourneyScore || 0;
   
-  // CTA Score (40% weight)
-  if (data.totalCTAs > 0) {
-    const ctaEffectiveness = (data.effectiveCTAs / data.totalCTAs) * 100;
-    score += ctaEffectiveness * 0.4;
-  }
-  
-  // Form Score (30% weight)
-  if (data.contactForms > 0) {
-    const formEffectiveness = (data.workingForms / data.contactForms) * 100;
-    score += formEffectiveness * 0.3;
-  }
-  
-  // Contact Options Score (30% weight)
-  const contactOptions = [
-    data.phoneClickable,
-    data.emailClickable,
-    data.chatAvailable,
-    data.callbackOption
-  ].filter(Boolean).length;
-  score += (contactOptions / 4) * 100 * 0.3;
-  
-  return Math.round(Math.min(score, 100));
+  return Math.round((conversionScore + userJourneyScore) / 2);
 };
 
 export const calculateSocialMediaPerformanceScore = (
