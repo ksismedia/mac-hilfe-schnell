@@ -169,30 +169,22 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    const metrics = [
-      { score: seoScore, weight: 20 },
-      { score: currentKeywordsScore, weight: 15 },
-      { score: localSEOScore, weight: 20 },
-      { score: contentQualityScore, weight: 12 },
-      { score: backlinksScore, weight: 10 },
-      { score: accessibilityScore, weight: 8 },
-      { score: dataPrivacyScore, weight: 8 },
-      { score: imprintScore, weight: 7 }
-    ];
+    // NEUE LOGIK: Einfacher arithmetischer Durchschnitt aller vorhandenen Scores (wie htmlGenerator.ts)
+    const cat1Scores = [
+      seoScore,
+      localSEOScore,
+      currentKeywordsScore,
+      imprintScore
+    ].filter(s => s > 0);
     
-    const totalWeight = metrics.reduce((sum, metric) => sum + (metric.weight || 0), 0);
-    const weightedScore = metrics.reduce((sum, metric) => {
-      const score = isNaN(metric.score) ? 0 : metric.score;
-      const weight = isNaN(metric.weight) ? 0 : metric.weight;
-      return sum + (score * weight);
-    }, 0);
+    if (contentQualityScore > 0) cat1Scores.push(contentQualityScore);
+    if (accessibilityScore > 0) cat1Scores.push(accessibilityScore);
+    if (backlinksScore > 0) cat1Scores.push(backlinksScore);
+    if (dataPrivacyScore > 0) cat1Scores.push(dataPrivacyScore);
     
-    if (totalWeight === 0 || isNaN(totalWeight) || isNaN(weightedScore)) {
-      console.error('🚨 Invalid calculation, returning fallback 50');
-      return 50;
-    }
-    
-    const result = Math.round(weightedScore / totalWeight);
+    const result = cat1Scores.length > 0 
+      ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) 
+      : 0;
     
     if (isNaN(result) || result < 0 || result > 100) {
       console.error('🚨 Invalid result:', result, 'returning fallback 50');
@@ -207,28 +199,21 @@ export const calculateOnlineQualityAuthorityScore = (
 };
 
 export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
-  // Calculate conversion score from manual data if available
-  const conversionScore = manualConversionData ? 
-    calculateConversionScore(manualConversionData) : 0;
+  // NEUE LOGIK: Einfacher arithmetischer Durchschnitt (wie htmlGenerator.ts)
+  const conversionScore = manualConversionData?.overallScore || 0;
   
-  // Kombiniere automatische und manuelle Mobile-Scores (50% auto + 50% manuell)
-  // Nur kombinieren wenn manuelle Daten vorhanden UND Score > 0
-  const autoMobileScore = realData.mobile?.overallScore || 0;
-  const manualMobileScore = manualMobileData?.overallScore || 0;
-  const mobileScore = (manualMobileData && manualMobileScore > 0)
-    ? Math.round((autoMobileScore + manualMobileScore) / 2)
-    : autoMobileScore;
-  
-  const metrics = [
-    { score: realData.performance?.score || 0, weight: 50 }, // Website-Performance
-    { score: mobileScore, weight: 35 }, // Mobile-Optimierung (kombiniert)
-    { score: conversionScore, weight: 15 }, // Conversion-Optimierung from manual data
+  const cat2Scores = [
+    realData.performance?.score || 0,
+    realData.mobile?.overallScore || 0
   ];
   
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
+  if (conversionScore > 0) {
+    cat2Scores.push(conversionScore);
+  }
   
-  return Math.round(weightedScore / totalWeight);
+  return cat2Scores.length > 0 
+    ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) 
+    : 0;
 };
 
 // Helper function to calculate conversion score from manual data
@@ -248,32 +233,24 @@ export const calculateSocialMediaPerformanceScore = (
   manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null,
   manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
 ): number => {
+  // NEUE LOGIK: Einfacher arithmetischer Durchschnitt (wie htmlGenerator.ts)
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
-  const googleReviewsScore = (realData.reviews?.google?.count || 0) > 0 ? 
-    Math.min(100, (realData.reviews?.google?.rating || 0) * 20) : 0;
+  const googleReviewsScore = calculateGoogleReviewsScore(realData);
   const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
   const onlinePresenceScore = calculateOnlinePresenceScore(manualOnlinePresenceData);
   
-  const metrics = [
-    { score: socialMediaScore, weight: 30 }, // Social Media (reduced from 40)
-    { score: realData.socialProof?.overallScore || 0, weight: 20 }, // Social Proof (reduced from 25)
-    { score: googleReviewsScore, weight: 15 }, // Google-Bewertungen
-  ];
+  const cat3Scores = [
+    googleReviewsScore,
+    socialMediaScore,
+    realData.socialProof?.overallScore || 0
+  ].filter(s => s > 0);
   
-  // Add Industry Review score if available
-  if (industryReviewScore > 0) {
-    metrics.push({ score: industryReviewScore, weight: 20 }); // Branchenplattformen
-  }
+  if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
+  if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
   
-  // Add Online Presence score if available
-  if (onlinePresenceScore > 0) {
-    metrics.push({ score: onlinePresenceScore, weight: 15 }); // Online-Präsenz
-  }
-  
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
-  
-  return Math.round(weightedScore / totalWeight);
+  return cat3Scores.length > 0 
+    ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) 
+    : 0;
 };
 
 export const calculateMarketEnvironmentScore = (
@@ -283,37 +260,27 @@ export const calculateMarketEnvironmentScore = (
   competitorScore: number | null,
   manualWorkplaceData: any
 ): number => {
-  const metrics = [];
+  // NEUE LOGIK: Einfacher arithmetischer Durchschnitt (wie htmlGenerator.ts)
+  const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
   
-  // Stundensatzanalyse
-  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0)) {
-    const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
-    metrics.push({ score: hourlyRateScore, weight: 30 });
-  }
+  const cat4Scores = [
+    competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors?.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30),
+    workplaceScoreRaw !== -1 ? workplaceScoreRaw : 0
+  ].filter(s => s > 0);
   
-  // Mitarbeiterqualifikation
   if (staffQualificationData && staffQualificationData.totalEmployees > 0) {
     const staffScore = calculateStaffQualificationScore(staffQualificationData);
-    metrics.push({ score: staffScore, weight: 35 });
+    cat4Scores.push(staffScore);
   }
   
-  // Konkurrenz in Wettbewerbsanalyse
-  const competitorAnalysisScore = competitorScore !== null && competitorScore !== undefined ? 
-    competitorScore : (realData.competitors?.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30);
-  metrics.push({ score: competitorAnalysisScore, weight: 20 });
-  
-  // Arbeitsplatz-Bewertungen
-  const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
-  if (workplaceScore !== -1) {
-    metrics.push({ score: workplaceScore, weight: 15 });
+  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0)) {
+    const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+    cat4Scores.push(hourlyRateScore);
   }
   
-  if (metrics.length === 0) return 0;
-  
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
-  
-  return Math.round(weightedScore / totalWeight);
+  return cat4Scores.length > 0 
+    ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) 
+    : 0;
 };
 
 export const calculateCorporateAppearanceScore = (manualCorporateIdentityData: any): number => {
