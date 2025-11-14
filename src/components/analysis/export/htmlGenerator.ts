@@ -3966,7 +3966,7 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>Arbeitgeber-Bewertungen</span>
-        ${hasWorkplaceData ? `<div class="header-score-circle ${getScoreColorClass(workplaceScore)}">${workplaceScore}%</div>` : ''}
+        <div class="header-score-circle ${hasWorkplaceData ? getScoreColorClass(workplaceScore) : 'red'}">${hasWorkplaceData ? workplaceScore + '%' : '–'}</div>
       </div>
       <div class="section-content">
         ${getWorkplaceAnalysis()}
