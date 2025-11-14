@@ -71,21 +71,12 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
   };
 
   const handleManualDataSave = (data: ManualLocalSEOData) => {
-    console.log('🔧 handleManualDataSave called with data:', data);
-    console.log('🔧 onManualDataChange exists?', !!onManualDataChange);
     if (onManualDataChange) {
       onManualDataChange(data);
       setIsEditMode(false);
       toast({
         title: "Gespeichert",
         description: "Manuelle Local SEO Daten wurden gespeichert"
-      });
-    } else {
-      console.error('❌ onManualDataChange is not defined!');
-      toast({
-        title: "Fehler",
-        description: "Speichern nicht möglich - Callback fehlt",
-        variant: "destructive"
       });
     }
   };
@@ -347,11 +338,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              console.log('🔧 Bearbeiten button clicked');
-              console.log('🔧 onManualDataChange defined?', !!onManualDataChange);
-              setIsEditMode(true);
-            }}
+            onClick={() => setIsEditMode(true)}
           >
             <Edit className="h-4 w-4 mr-2" />
             Bearbeiten
