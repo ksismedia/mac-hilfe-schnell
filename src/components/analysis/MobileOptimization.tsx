@@ -13,10 +13,10 @@ interface MobileOptimizationProps {
 }
 
 const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, manualMobileData }) => {
-  // Kombiniere automatische und manuelle Daten
-  const hasManualData = !!manualMobileData;
+  // Prüfe ob valide manuelle Daten vorhanden sind (nicht nur null/undefined, sondern auch Score > 0)
+  const hasManualData = !!(manualMobileData && manualMobileData.overallScore > 0);
   
-  // Berechne kombinierten Score: Wenn beide vorhanden, gewichteter Durchschnitt (50% auto + 50% manuell)
+  // Berechne Score: Wenn manuelle Daten vorhanden -> 50/50 Kombination, sonst nur automatisch
   const autoScore = realData.mobile.overallScore;
   const manualScore = hasManualData ? manualMobileData.overallScore : 0;
   const overallScore = hasManualData 
@@ -76,8 +76,8 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
           </CardTitle>
           <CardDescription>
             {hasManualData 
-              ? `Kombinierter Score (Auto: ${autoScore}% + Manuell: ${manualScore}%) für ${url}`
-              : `Live-Analyse der mobilen Benutzerfreundlichkeit für ${url}`
+              ? `Kombinierter Score aus automatischer und manueller Analyse (je 50%) für ${url}`
+              : `Automatische Analyse der mobilen Benutzerfreundlichkeit für ${url}`
             }
           </CardDescription>
         </CardHeader>

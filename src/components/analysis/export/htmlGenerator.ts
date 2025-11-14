@@ -1323,14 +1323,15 @@ export const generateCustomerHTML = ({
   // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
     // Kombiniere automatische und manuelle Scores (50% auto + 50% manuell)
+    // Nur kombinieren wenn manuelle Daten vorhanden UND Score > 0
     const autoScore = realData.mobile.overallScore;
     const manualScore = manualMobileData?.overallScore || 0;
-    const mobileScore = manualMobileData 
+    const mobileScore = (manualMobileData && manualScore > 0)
       ? Math.round((autoScore + manualScore) / 2)
       : autoScore;
     const scoreClass = mobileScore >= 80 ? 'yellow' : mobileScore >= 60 ? 'green' : 'red';
     
-    const isManual = !!manualMobileData;
+    const isManual = !!(manualMobileData && manualScore > 0);
 
      return `
       <div class="metric-card ${scoreClass}">
