@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/hooks/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 import { AIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,6 +42,7 @@ interface SaveAnalysisDialogProps {
   manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
+  manualConversionData?: ManualConversionData | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -71,6 +72,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualLocalSEOData,
   manualIndustryReviewData,
   manualOnlinePresenceData,
+  manualConversionData,
   privacyData,
   accessibilityData,
   reviewStatus
@@ -122,6 +124,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualLocalSEOData: manualLocalSEOData || undefined,
         manualIndustryReviewData: manualIndustryReviewData || undefined,
         manualOnlinePresenceData: manualOnlinePresenceData || undefined,
+        manualConversionData: manualConversionData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined
       };
