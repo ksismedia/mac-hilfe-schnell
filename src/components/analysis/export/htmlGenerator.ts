@@ -373,25 +373,13 @@ export const generateCustomerHTML = ({
   // KATEGORIE-BASIERTE GESAMTSCORE-BERECHNUNG
   // ========================================
   
-  // Berechne Gewichte basierend auf den tatsächlichen Metriken
-  let cat1Weight = 24 + 14 + 9 + 8; // Local SEO + SEO + Impressum + Keywords = 55
-  let cat2Weight = 11 + 6; // Performance + Mobile = 17
-  let cat3Weight = 7 + 6 + 4; // Bewertungen + Social Media + Social Proof = 17
-  let cat4Weight = 1 + 2; // Konkurrenz + Arbeitsplatz = 3
-  let cat5Weight = 0; // Corporate Identity
-  let cat6Weight = 0; // Angebotsbearbeitung
-  
-  // Optionale Metriken hinzufügen
-  if (manualContentData) cat1Weight += 5;
-  if (manualAccessibilityData || accessibilityData) cat1Weight += 4;
-  if (manualBacklinkData) cat1Weight += 5;
-  if (manualDataPrivacyData || privacyData) cat1Weight += 6;
-  if (manualIndustryReviewData?.overallScore > 0) cat3Weight += 4;
-  if (manualOnlinePresenceData?.overallScore > 0) cat3Weight += 3;
-  if (hourlyRateData) cat4Weight += 4;
-  if (staffQualificationData && staffQualificationData.totalEmployees > 0) cat4Weight += 8;
-  if (manualCorporateIdentityData) cat5Weight += 5;
-  if (quoteResponseData && quoteResponseData.responseTime) cat6Weight += 6;
+  // Feste Gewichtungen für die 6 Hauptkategorien
+  const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+  const cat2Weight = 20; // Webseiten-Performance & Technik
+  const cat3Weight = 20; // Online-/Web-/Social-Media Performance
+  const cat4Weight = 10; // Markt & Marktumfeld
+  const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
+  const cat6Weight = 10; // Qualität · Service · Kundenorientierung
   
   // Berechne Kategorie-Scores (ungewichteter Durchschnitt innerhalb jeder Kategorie)
   
@@ -2188,32 +2176,15 @@ export const generateCustomerHTML = ({
           <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
           <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
             ${(() => {
-              // Berechne Gewichte basierend auf den tatsächlichen Metriken aus OverallRating
-              // Basis-Metriken (immer vorhanden):
-              let cat1Weight = 24 + 14 + 9 + 8; // Local SEO + SEO + Impressum + Keywords = 55
-              let cat2Weight = 11 + 6; // Performance + Mobile = 17
-              let cat3Weight = 7 + 6 + 4; // Bewertungen + Social Media + Social Proof = 17
-              let cat4Weight = 1 + 2; // Konkurrenz + Arbeitsplatz = 3 (Arbeitsplatz kann 0 sein)
-              let cat5Weight = 0; // Corporate Identity
-              let cat6Weight = 0; // Angebotsbearbeitung
+              // Feste Gewichtungen für die 6 Hauptkategorien (entspricht den neuen Vorgaben)
+              const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+              const cat2Weight = 20; // Webseiten-Performance & Technik
+              const cat3Weight = 20; // Online-/Web-/Social-Media Performance
+              const cat4Weight = 10; // Markt & Marktumfeld
+              const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
+              const cat6Weight = 10; // Qualität · Service · Kundenorientierung
               
-              // Optionale Metriken hinzufügen
-              if (manualContentData) cat1Weight += 5; // Content
-              if (manualAccessibilityData || accessibilityData) cat1Weight += 4; // Barrierefreiheit
-              if (manualBacklinkData) cat1Weight += 5; // Backlinks
-              if (manualDataPrivacyData || privacyData) cat1Weight += 6; // Datenschutz
-              
-              if (manualIndustryReviewData?.overallScore > 0) cat3Weight += 4; // Industry Reviews
-              if (manualOnlinePresenceData?.overallScore > 0) cat3Weight += 3; // Online Presence
-              
-              if (hourlyRateData) cat4Weight += 4; // Preispositionierung
-              if (staffQualificationData && staffQualificationData.totalEmployees > 0) cat4Weight += 8; // Personal
-              
-              if (manualCorporateIdentityData) cat5Weight += 5; // Corporate Identity
-              
-              if (quoteResponseData && quoteResponseData.responseTime) cat6Weight += 6; // Angebotsbearbeitung
-              
-              const totalWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
+              const totalWeight = 100; // Summe aller Gewichtungen
               
               // Kategorie 1: Online-Qualität · Relevanz · Autorität
               const cat1Scores = [

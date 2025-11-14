@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      accessibility_cache: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          result: Json
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          result: Json
+          url: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          result?: Json
+          url?: string
+        }
+        Relationships: []
+      }
       ai_review_status: {
         Row: {
           analysis_id: string
@@ -232,6 +256,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_accessibility_cache: { Args: never; Returns: undefined }
       cleanup_old_data: { Args: never; Returns: undefined }
     }
     Enums: {
