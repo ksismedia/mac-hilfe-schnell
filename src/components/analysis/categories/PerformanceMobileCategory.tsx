@@ -4,25 +4,27 @@ import PerformanceAnalysis from '../PerformanceAnalysis';
 import MobileOptimization from '../MobileOptimization';
 import ConversionOptimization from '../ConversionOptimization';
 import ManualConversionInput from '../ManualConversionInput';
+import ManualMobileInput from '../ManualMobileInput';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualConversionData } from '@/hooks/useManualData';
+import { ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
 
 interface PerformanceMobileCategoryProps {
   realData: RealBusinessData;
   businessData: any;
   manualConversionData?: ManualConversionData | null;
   updateManualConversionData?: (data: ManualConversionData) => void;
+  manualMobileData?: ManualMobileData | null;
+  updateManualMobileData?: (data: ManualMobileData) => void;
 }
 
 const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
   realData,
   businessData,
   manualConversionData,
-  updateManualConversionData
+  updateManualConversionData,
+  manualMobileData,
+  updateManualMobileData
 }) => {
-  console.log('=== PerformanceMobileCategory Render ===');
-  console.log('manualConversionData:', manualConversionData);
-  console.log('updateManualConversionData exists:', !!updateManualConversionData);
   
   return (
     <div className="space-y-6">
@@ -32,11 +34,12 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
       </div>
       
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid grid-cols-4 mb-6">
+        <TabsList className="grid grid-cols-5 mb-6">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="mobile">Mobile</TabsTrigger>
+          <TabsTrigger value="mobile-manual">Mobile Manual</TabsTrigger>
           <TabsTrigger value="conversion">Conversion</TabsTrigger>
-          <TabsTrigger value="conversion-manual">Manuelle Eingabe</TabsTrigger>
+          <TabsTrigger value="conversion-manual">Conversion Manual</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance">
@@ -45,6 +48,19 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
 
         <TabsContent value="mobile">
           <MobileOptimization realData={realData} url={businessData.url} />
+        </TabsContent>
+
+        <TabsContent value="mobile-manual">
+          {updateManualMobileData ? (
+            <ManualMobileInput
+              onDataChange={updateManualMobileData}
+              initialData={manualMobileData}
+            />
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Manuelle Eingabe nicht verfügbar
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="conversion">

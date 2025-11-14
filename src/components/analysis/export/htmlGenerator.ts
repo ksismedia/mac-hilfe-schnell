@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateWorkplaceScore } from './scoreCalculations';
@@ -39,6 +39,7 @@ interface CustomerReportData {
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualConversionData?: ManualConversionData | null;
+  manualMobileData?: ManualMobileData | null;
   privacyData?: any;
   accessibilityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
