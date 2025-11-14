@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/hooks/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 import { AIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,6 +43,7 @@ interface SaveAnalysisDialogProps {
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualConversionData?: ManualConversionData | null;
+  manualMobileData?: ManualMobileData | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -73,6 +74,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualIndustryReviewData,
   manualOnlinePresenceData,
   manualConversionData,
+  manualMobileData,
   privacyData,
   accessibilityData,
   reviewStatus
@@ -125,6 +127,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualIndustryReviewData: manualIndustryReviewData || undefined,
         manualOnlinePresenceData: manualOnlinePresenceData || undefined,
         manualConversionData: manualConversionData || undefined,
+        manualMobileData: manualMobileData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined
       };

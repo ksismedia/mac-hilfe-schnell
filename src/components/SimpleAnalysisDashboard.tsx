@@ -138,7 +138,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateManualIndustryReviewData,
     updateManualOnlinePresenceData,
     manualConversionData,
-    updateManualConversionData
+    updateManualConversionData,
+    manualMobileData,
+    updateManualMobileData
   } = useManualData();
 
   // Access saved analyses hook
@@ -207,6 +209,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           }
           if (analysisData.manualData?.manualConversionData) {
             updateManualConversionData(analysisData.manualData.manualConversionData);
+          }
+          if (analysisData.manualData?.manualMobileData) {
+            updateManualMobileData(analysisData.manualData.manualMobileData);
           }
           
           // Load saved analysis data using utility function
@@ -481,6 +486,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             businessData={businessData}
             manualConversionData={manualConversionData}
             updateManualConversionData={updateManualConversionData}
+            manualMobileData={manualMobileData}
+            updateManualMobileData={updateManualMobileData}
           />
         );
       case 'social-media-performance':
@@ -694,6 +701,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualIndustryReviewData={manualIndustryReviewData}
               manualOnlinePresenceData={manualOnlinePresenceData}
               manualConversionData={manualConversionData}
+              manualMobileData={manualMobileData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
             />
@@ -720,6 +728,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualLocalSEOData={manualLocalSEOData}
               manualIndustryReviewData={manualIndustryReviewData}
               manualOnlinePresenceData={manualOnlinePresenceData}
+              manualMobileData={manualMobileData}
               calculatedOwnCompanyScore={currentOwnCompanyScore}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}

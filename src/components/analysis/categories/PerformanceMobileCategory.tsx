@@ -47,7 +47,11 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="mobile">
-          <MobileOptimization realData={realData} url={businessData.url} />
+          <MobileOptimization 
+            realData={realData} 
+            url={businessData.url}
+            manualMobileData={manualMobileData}
+          />
         </TabsContent>
 
         <TabsContent value="mobile-manual">
