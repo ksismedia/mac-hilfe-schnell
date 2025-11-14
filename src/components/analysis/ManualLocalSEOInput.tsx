@@ -66,10 +66,8 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
     trend: 'stable' 
   });
 
-  useEffect(() => {
-    onDataChange(formData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  // Entferne das automatische Speichern bei jeder Änderung
+  // Die Daten werden nur beim Klick auf "Speichern" übertragen
 
   const addDirectory = () => {
     if (newDirectory.name) {
@@ -542,6 +540,19 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
         isReviewed={reviewStatus['Lokales SEO']?.isReviewed || false}
         onReviewChange={(reviewed) => updateReviewStatus('Lokales SEO', reviewed)}
       />
+
+      {/* Speichern Button */}
+      <div className="flex justify-end gap-2 mt-6">
+        <Button
+          variant="default"
+          onClick={() => {
+            console.log('💾 Speichern button clicked, sending data:', formData);
+            onDataChange(formData);
+          }}
+        >
+          Speichern
+        </Button>
+      </div>
     </div>
   );
 };
