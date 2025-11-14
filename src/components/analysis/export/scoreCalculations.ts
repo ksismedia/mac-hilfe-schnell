@@ -206,14 +206,17 @@ export const calculateOnlineQualityAuthorityScore = (
   }
 };
 
-export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData, manualConversionData?: any): number => {
+export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
   // Calculate conversion score from manual data if available
   const conversionScore = manualConversionData ? 
     calculateConversionScore(manualConversionData) : 0;
   
+  // Use manual mobile score if available, otherwise use automatic
+  const mobileScore = manualMobileData?.overallScore || realData.mobile?.overallScore || 0;
+  
   const metrics = [
     { score: realData.performance?.score || 0, weight: 50 }, // Website-Performance
-    { score: realData.mobile?.overallScore || 0, weight: 35 }, // Mobile-Optimierung
+    { score: mobileScore, weight: 35 }, // Mobile-Optimierung (manuell oder automatisch)
     { score: conversionScore, weight: 15 }, // Conversion-Optimierung from manual data
   ];
   
@@ -348,8 +351,8 @@ export const calculateSEOContentScore = (
   return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null);
 };
 
-export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any): number => {
-  return calculateWebsitePerformanceTechScore(realData, manualConversionData);
+export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
+  return calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
 };
 
 export const calculateStaffServiceScore = (

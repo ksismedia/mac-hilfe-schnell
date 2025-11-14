@@ -13,7 +13,16 @@ interface MobileOptimizationProps {
 }
 
 const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, manualMobileData }) => {
-  const mobileData = manualMobileData || realData.mobile;
+  // Kombiniere automatische und manuelle Daten - Manuelle Daten haben Priorität
+  const hasManualData = !!manualMobileData;
+  
+  // Berechne kombinierten Score
+  const overallScore = hasManualData ? manualMobileData.overallScore : realData.mobile.overallScore;
+  
+  // Verwende manuelle Daten wo verfügbar, sonst automatische
+  const responsiveDesignScore = hasManualData ? manualMobileData.responsiveDesignScore : (realData.mobile.responsive ? 80 : 40);
+  const performanceScore = hasManualData ? manualMobileData.performanceScore : realData.mobile.overallScore;
+  const touchOptimizationScore = hasManualData ? manualMobileData.touchOptimizationScore : (realData.mobile.touchFriendly ? 80 : 50);
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
@@ -40,23 +49,82 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Mobile-Optimierung Check (Echte Daten)
+            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Mit manuellen Daten</Badge>}
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                mobileData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                mobileData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                overallScore >= 90 ? 'bg-yellow-400 text-black' : 
+                overallScore >= 61 ? 'bg-green-500 text-white' : 
                 'bg-red-500 text-white'
               }`}
             >
-              {mobileData.overallScore}%
+              {overallScore}%
             </div>
           </CardTitle>
           <CardDescription>
-            Live-Analyse der mobilen Benutzerfreundlichkeit für {url}
+            {hasManualData 
+              ? `Kombinierte Analyse (automatisch + manuell) für ${url}`
+              : `Live-Analyse der mobilen Benutzerfreundlichkeit für ${url}`
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Performance-Übersicht */}
+          {/* Score-Übersicht */}
+          <Card className="mb-6 bg-blue-50 dark:bg-blue-950">
+            <CardHeader>
+              <CardTitle className="text-lg">Gesamtbewertung</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium">📱 Responsive Design</span>
+                    <Badge variant={getScoreBadge(responsiveDesignScore)}>
+                      {responsiveDesignScore} Punkte
+                    </Badge>
+                  </div>
+                  <Progress value={responsiveDesignScore} className="h-2" />
+                  {hasManualData && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Viewport: {manualMobileData.viewportConfig}, Layouts: {manualMobileData.flexibleLayouts}%, Bilder: {manualMobileData.imageOptimization}%
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium">⚡ Mobile Performance</span>
+                    <Badge variant={getScoreBadge(performanceScore)}>
+                      {performanceScore} Punkte
+                    </Badge>
+                  </div>
+                  <Progress value={performanceScore} className="h-2" />
+                  {hasManualData && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Ladezeit: {manualMobileData.mobileLoadTime}s, LCP: {manualMobileData.coreWebVitals.lcp}s
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium">👆 Touch-Optimierung</span>
+                    <Badge variant={getScoreBadge(touchOptimizationScore)}>
+                      {touchOptimizationScore} Punkte
+                    </Badge>
+                  </div>
+                  <Progress value={touchOptimizationScore} className="h-2" />
+                  {hasManualData && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Buttons: {manualMobileData.buttonSize}, Abstände: {manualMobileData.tapDistance}, Scroll: {manualMobileData.scrollBehavior}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance-Übersicht - nur wenn keine manuellen Daten */}
+          {!hasManualData && (
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -69,40 +137,42 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Mobile Geschwindigkeit</span>
-                    <span className={`font-bold ${getScoreColor(mobileData.pageSpeedMobile)}`}>
-                      {mobileData.pageSpeedMobile}/100
+                    <span className={`font-bold ${getScoreColor(realData.mobile.pageSpeedMobile)}`}>
+                      {realData.mobile.pageSpeedMobile}/100
                     </span>
                   </div>
-                  <Progress value={mobileData.pageSpeedMobile} className="h-2 mb-4" />
+                  <Progress value={realData.mobile.pageSpeedMobile} className="h-2 mb-4" />
                   
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Desktop Geschwindigkeit</span>
-                    <span className={`font-bold ${getScoreColor(mobileData.pageSpeedDesktop)}`}>
-                      {mobileData.pageSpeedDesktop}/100
+                    <span className={`font-bold ${getScoreColor(realData.mobile.pageSpeedDesktop)}`}>
+                      {realData.mobile.pageSpeedDesktop}/100
                     </span>
                   </div>
-                  <Progress value={mobileData.pageSpeedDesktop} className="h-2" />
+                  <Progress value={realData.mobile.pageSpeedDesktop} className="h-2" />
                 </div>
                 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Responsive Design:</span>
-                    <Badge variant={mobileData.responsive ? "default" : "destructive"}>
-                      {mobileData.responsive ? "Erkannt" : "Nicht erkannt"}
+                    <Badge variant={realData.mobile.responsive ? "default" : "destructive"}>
+                      {realData.mobile.responsive ? "Erkannt" : "Nicht erkannt"}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Touch-freundlich:</span>
-                    <Badge variant={mobileData.touchFriendly ? "default" : "destructive"}>
-                      {mobileData.touchFriendly ? "Ja" : "Nein"}
+                    <Badge variant={realData.mobile.touchFriendly ? "default" : "destructive"}>
+                      {realData.mobile.touchFriendly ? "Ja" : "Nein"}
                     </Badge>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
+          )}
 
-          {/* Mobile Kompatibilität */}
+          {/* Mobile Kompatibilität - nur wenn keine manuellen Daten */}
+          {!hasManualData && (
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -115,15 +185,15 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
                 <div className="text-center p-3 border rounded-lg">
                   <Smartphone className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                   <p className="font-medium">Mobile</p>
-                  <Badge variant={mobileData.responsive ? "default" : "destructive"}>
-                    {mobileData.responsive ? "Optimiert" : "Nicht optimiert"}
+                  <Badge variant={realData.mobile.responsive ? "default" : "destructive"}>
+                    {realData.mobile.responsive ? "Optimiert" : "Nicht optimiert"}
                   </Badge>
                 </div>
                 <div className="text-center p-3 border rounded-lg">
                   <Tablet className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                   <p className="font-medium">Tablet</p>
-                  <Badge variant={mobileData.responsive ? "default" : "secondary"}>
-                    {mobileData.responsive ? "Kompatibel" : "Unbekannt"}
+                  <Badge variant={realData.mobile.responsive ? "default" : "secondary"}>
+                    {realData.mobile.responsive ? "Kompatibel" : "Unbekannt"}
                   </Badge>
                 </div>
                 <div className="text-center p-3 border rounded-lg">
@@ -138,21 +208,23 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
               <div className="space-y-3 text-sm">
                    <div className="flex justify-between">
                      <span className="text-gray-600">Viewport Meta-Tag:</span>
-                     <span className={`font-medium ${mobileData.touchFriendly ? 'score-text-medium' : 'score-text-low'}`}>
-                       {mobileData.touchFriendly ? "Vorhanden" : "Fehlt"}
+                     <span className={`font-medium ${realData.mobile.touchFriendly ? 'score-text-medium' : 'score-text-low'}`}>
+                       {realData.mobile.touchFriendly ? "Vorhanden" : "Fehlt"}
                      </span>
                    </div>
                    <div className="flex justify-between">
                      <span className="text-gray-600">Responsive CSS:</span>
-                     <span className={`font-medium ${mobileData.responsive ? 'score-text-medium' : 'score-text-low'}`}>
-                       {mobileData.responsive ? "Erkannt" : "Nicht erkannt"}
+                     <span className={`font-medium ${realData.mobile.responsive ? 'score-text-medium' : 'score-text-low'}`}>
+                       {realData.mobile.responsive ? "Erkannt" : "Nicht erkannt"}
                      </span>
                    </div>
               </div>
             </CardContent>
           </Card>
+          )}
 
-          {/* Erkannte Probleme */}
+          {/* Erkannte Probleme - nur wenn keine manuellen Daten und Issues vorhanden */}
+          {!hasManualData && realData.mobile.issues && realData.mobile.issues.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -164,9 +236,9 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {mobileData.issues.length > 0 ? (
+              {realData.mobile.issues.length > 0 ? (
                 <div className="space-y-3">
-                  {mobileData.issues.map((issue, index) => (
+                  {realData.mobile.issues.map((issue, index) => (
                     <div key={index} className="p-3 border rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <Badge variant={getIssueColor(issue.type)}>
@@ -192,16 +264,17 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
               )}
             </CardContent>
           </Card>
+          )}
 
-          {/* Echte Daten Hinweis */}
-          <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-semibold text-green-800 mb-2">
-              {manualMobileData ? '📝 Manuelle Dateneingabe' : '✓ Live Mobile-Optimierungsanalyse'}
+          {/* Datenquelle Hinweis */}
+          <div className={`mt-6 border rounded-lg p-4 ${hasManualData ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'}`}>
+            <h4 className={`font-semibold mb-2 ${hasManualData ? 'text-blue-800' : 'text-green-800'}`}>
+              {hasManualData ? '📝 Kombinierte Analyse' : '✓ Live Mobile-Optimierungsanalyse'}
             </h4>
-            <p className="text-sm text-green-700">
-              {manualMobileData 
-                ? 'Diese Analyse basiert auf manuell erfassten Daten zur mobilen Optimierung.'
-                : `Diese Analyse basiert auf einer automatischen Überprüfung der Website ${url} auf mobile Kompatibilität, Viewport-Einstellungen und responsive Design-Elemente.`
+            <p className={`text-sm ${hasManualData ? 'text-blue-700' : 'text-green-700'}`}>
+              {hasManualData 
+                ? `Diese Analyse kombiniert automatisch erfasste Daten mit Ihren manuellen Eingaben. Der Gesamtscore von ${overallScore}% basiert auf den manuellen Daten. Sie können die manuellen Daten im Tab "Mobile Manual" bearbeiten.`
+                : `Diese Analyse basiert auf einer automatischen Überprüfung der Website ${url} auf mobile Kompatibilität, Viewport-Einstellungen und responsive Design-Elemente. Für eine detailliertere Analyse können Sie manuelle Daten im Tab "Mobile Manual" erfassen.`
               }
             </p>
           </div>

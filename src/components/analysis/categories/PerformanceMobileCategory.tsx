@@ -34,12 +34,11 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
       </div>
       
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid grid-cols-5 mb-6">
+        <TabsList className="grid grid-cols-4 mb-6">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="mobile">Mobile</TabsTrigger>
-          <TabsTrigger value="mobile-manual">Mobile Manual</TabsTrigger>
           <TabsTrigger value="conversion">Conversion</TabsTrigger>
-          <TabsTrigger value="conversion-manual">Conversion Manual</TabsTrigger>
+          <TabsTrigger value="conversion-manual">Manuelle Daten</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance">
@@ -54,19 +53,6 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
           />
         </TabsContent>
 
-        <TabsContent value="mobile-manual">
-          {updateManualMobileData ? (
-            <ManualMobileInput
-              onDataChange={updateManualMobileData}
-              initialData={manualMobileData}
-            />
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Manuelle Eingabe nicht verfügbar
-            </div>
-          )}
-        </TabsContent>
-
         <TabsContent value="conversion">
           <ConversionOptimization 
             url={businessData.url} 
@@ -76,16 +62,40 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="conversion-manual">
-          {updateManualConversionData ? (
-            <ManualConversionInput
-              onSave={updateManualConversionData}
-              initialData={manualConversionData}
-            />
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Manuelle Eingabe nicht verfügbar
-            </div>
-          )}
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold">Manuelle Dateneingabe</h3>
+            <p className="text-muted-foreground">
+              Erfassen Sie hier zusätzliche Daten für Mobile-Optimierung und Conversion, die automatisch mit den erfassten Daten kombiniert werden.
+            </p>
+            
+            {/* Mobile Manual Input */}
+            {updateManualMobileData ? (
+              <div className="mb-8">
+                <h4 className="text-lg font-semibold mb-4">Mobile-Optimierung</h4>
+                <ManualMobileInput
+                  onDataChange={updateManualMobileData}
+                  initialData={manualMobileData}
+                />
+              </div>
+            ) : null}
+            
+            {/* Conversion Manual Input */}
+            {updateManualConversionData ? (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Conversion-Optimierung</h4>
+                <ManualConversionInput
+                  onSave={updateManualConversionData}
+                  initialData={manualConversionData}
+                />
+              </div>
+            ) : null}
+            
+            {!updateManualMobileData && !updateManualConversionData && (
+              <div className="text-center py-8 text-muted-foreground">
+                Manuelle Eingabe nicht verfügbar
+              </div>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
