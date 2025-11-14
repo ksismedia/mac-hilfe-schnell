@@ -3270,30 +3270,52 @@ export const generateCustomerHTML = ({
         const videoCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.videos : manualOnlinePresenceData.items.filter(i => i.type === 'video').length;
         const shortCount = useSimpleCounts ? manualOnlinePresenceData.simpleCounts.shorts : manualOnlinePresenceData.items.filter(i => i.type === 'short').length;
         
-        // Relevanz-Daten (auch für simpleCounts verfügbar)
+        // Eigene vs. Fremde Inhalte
+        let ownImages = 0, ownVideos = 0, ownShorts = 0;
+        let foreignImages = 0, foreignVideos = 0, foreignShorts = 0;
+        
+        if (useSimpleCounts) {
+          ownImages = manualOnlinePresenceData.simpleCounts.ownImages || 0;
+          ownVideos = manualOnlinePresenceData.simpleCounts.ownVideos || 0;
+          ownShorts = manualOnlinePresenceData.simpleCounts.ownShorts || 0;
+          foreignImages = manualOnlinePresenceData.simpleCounts.foreignImages || 0;
+          foreignVideos = manualOnlinePresenceData.simpleCounts.foreignVideos || 0;
+          foreignShorts = manualOnlinePresenceData.simpleCounts.foreignShorts || 0;
+        } else {
+          ownImages = manualOnlinePresenceData.items.filter(i => i.type === 'image' && i.isOwn).length;
+          ownVideos = manualOnlinePresenceData.items.filter(i => i.type === 'video' && i.isOwn).length;
+          ownShorts = manualOnlinePresenceData.items.filter(i => i.type === 'short' && i.isOwn).length;
+          foreignImages = manualOnlinePresenceData.items.filter(i => i.type === 'image' && !i.isOwn).length;
+          foreignVideos = manualOnlinePresenceData.items.filter(i => i.type === 'video' && !i.isOwn).length;
+          foreignShorts = manualOnlinePresenceData.items.filter(i => i.type === 'short' && !i.isOwn).length;
+        }
+        
+        const ownTotal = ownImages + ownVideos + ownShorts;
+        const foreignTotal = foreignImages + foreignVideos + foreignShorts;
+        
+        // Relevanz-Daten
         let highRelevance = 0;
         let mediumRelevance = 0;
         let lowRelevance = 0;
         
         if (useSimpleCounts) {
           // Bei einfacher Eingabe: Relevanz aus simpleCounts
-          const relevanceWeights = { high: 1, medium: 0, low: 0 };
-          if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.images;
-          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.images;
-          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.images;
+          if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'high') highRelevance += ownImages;
+          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'medium') mediumRelevance += ownImages;
+          else if (manualOnlinePresenceData.simpleCounts.imageRelevance === 'low') lowRelevance += ownImages;
           
-          if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.videos;
-          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.videos;
-          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.videos;
+          if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'high') highRelevance += ownVideos;
+          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'medium') mediumRelevance += ownVideos;
+          else if (manualOnlinePresenceData.simpleCounts.videoRelevance === 'low') lowRelevance += ownVideos;
           
-          if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'high') highRelevance += manualOnlinePresenceData.simpleCounts.shorts;
-          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'medium') mediumRelevance += manualOnlinePresenceData.simpleCounts.shorts;
-          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'low') lowRelevance += manualOnlinePresenceData.simpleCounts.shorts;
+          if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'high') highRelevance += ownShorts;
+          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'medium') mediumRelevance += ownShorts;
+          else if (manualOnlinePresenceData.simpleCounts.shortRelevance === 'low') lowRelevance += ownShorts;
         } else {
-          // Bei detaillierter Eingabe: Relevanz aus items
-          highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high').length;
-          mediumRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'medium').length;
-          lowRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'low').length;
+          // Bei detaillierter Eingabe: Relevanz aus items (nur eigene!)
+          highRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'high' && i.isOwn).length;
+          mediumRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'medium' && i.isOwn).length;
+          lowRelevance = manualOnlinePresenceData.items.filter(i => i.relevance === 'low' && i.isOwn).length;
         }
         
         const totalContent = imageCount + videoCount + shortCount;
@@ -3314,7 +3336,21 @@ export const generateCustomerHTML = ({
         else if (totalContent >= 5) quantityScore = 15;
         else quantityScore = totalContent * 3;
         
-        const relevanceScore = Math.min(30, (highRelevance * 2) + (mediumRelevance * 1) + (lowRelevance * 0.5));
+        // Relevanz-Score: Eigene Inhalte volle Gewichtung, fremde nur 50%
+        const relevanceWeights = { high: 2, medium: 1, low: 0.5 };
+        const imageWeight = useSimpleCounts ? relevanceWeights[manualOnlinePresenceData.simpleCounts.imageRelevance || 'medium'] : 1;
+        const videoWeight = useSimpleCounts ? relevanceWeights[manualOnlinePresenceData.simpleCounts.videoRelevance || 'medium'] : 1;
+        const shortWeight = useSimpleCounts ? relevanceWeights[manualOnlinePresenceData.simpleCounts.shortRelevance || 'medium'] : 1;
+        
+        let relevanceScore = 0;
+        relevanceScore += ownImages * imageWeight;
+        relevanceScore += ownVideos * videoWeight;
+        relevanceScore += ownShorts * shortWeight;
+        relevanceScore += foreignImages * imageWeight * 0.5;
+        relevanceScore += foreignVideos * videoWeight * 0.5;
+        relevanceScore += foreignShorts * shortWeight * 0.5;
+        
+        relevanceScore = Math.min(30, relevanceScore);
         
         // KORREKTUR: Berechne overallScore AUS den drei Komponenten
         let calculatedOverallScore = Math.round(diversityScore + quantityScore + relevanceScore);
@@ -3425,7 +3461,7 @@ export const generateCustomerHTML = ({
                 <tr>
                   <td style="padding: 12px;">
                     <strong>Content-Relevanz</strong><br>
-                    <small style="color: #64748b;">Hochrelevante, eigene Inhalte werden besser bewertet</small>
+                    <small style="color: #64748b;">Eigene Inhalte: ${ownTotal}, Fremde: ${foreignTotal} – Fremde zählen nur 50%</small>
                   </td>
                   <td style="text-align: center; padding: 12px; font-size: 1.3em; font-weight: bold; color: ${relevanceScore < 15 ? '#ef4444' : '#10b981'};">
                     ${Math.round(relevanceScore)}
@@ -3455,7 +3491,10 @@ export const generateCustomerHTML = ({
           <div class="metric-card" style="text-align: center;">
             <h4>Bilder</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${imageCount}</p>
-            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.imageRelevance ? `
+            ${useSimpleCounts ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Eigene: ${ownImages} | Fremde: ${foreignImages}
+              </p>
               <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
                 Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.imageRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.imageRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
               </p>
@@ -3465,7 +3504,10 @@ export const generateCustomerHTML = ({
           <div class="metric-card" style="text-align: center;">
             <h4>Videos</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${videoCount}</p>
-            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.videoRelevance ? `
+            ${useSimpleCounts ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Eigene: ${ownVideos} | Fremde: ${foreignVideos}
+              </p>
               <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
                 Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.videoRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.videoRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
               </p>
@@ -3475,7 +3517,10 @@ export const generateCustomerHTML = ({
           <div class="metric-card" style="text-align: center;">
             <h4>Shorts</h4>
             <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">${shortCount}</p>
-            ${useSimpleCounts && manualOnlinePresenceData.simpleCounts.shortRelevance ? `
+            ${useSimpleCounts ? `
+              <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
+                Eigene: ${ownShorts} | Fremde: ${foreignShorts}
+              </p>
               <p style="margin: 5px 0; font-size: 0.85em; color: #64748b;">
                 Relevanz: <strong>${manualOnlinePresenceData.simpleCounts.shortRelevance === 'high' ? 'Hoch' : manualOnlinePresenceData.simpleCounts.shortRelevance === 'medium' ? 'Mittel' : 'Niedrig'}</strong>
               </p>

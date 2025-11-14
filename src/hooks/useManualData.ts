@@ -277,6 +277,7 @@ export interface ManualOnlinePresenceData {
     url: string;
     type: 'image' | 'video' | 'short';
     relevance: 'high' | 'medium' | 'low';
+    isOwn?: boolean;
   }>;
   overallScore?: number;
   simpleCounts?: {
@@ -286,6 +287,13 @@ export interface ManualOnlinePresenceData {
     imageRelevance?: 'high' | 'medium' | 'low';
     videoRelevance?: 'high' | 'medium' | 'low';
     shortRelevance?: 'high' | 'medium' | 'low';
+    // Neue Felder für eigene/fremde Inhalte
+    ownImages?: number;
+    ownVideos?: number;
+    ownShorts?: number;
+    foreignImages?: number;
+    foreignVideos?: number;
+    foreignShorts?: number;
   };
 }
 

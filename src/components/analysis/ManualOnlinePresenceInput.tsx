@@ -19,6 +19,12 @@ interface SimpleCounts {
   imageRelevance?: 'high' | 'medium' | 'low';
   videoRelevance?: 'high' | 'medium' | 'low';
   shortRelevance?: 'high' | 'medium' | 'low';
+  ownImages?: number;
+  ownVideos?: number;
+  ownShorts?: number;
+  foreignImages?: number;
+  foreignVideos?: number;
+  foreignShorts?: number;
 }
 
 interface ManualOnlinePresenceInputProps {
@@ -38,7 +44,13 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       shorts: 0,
       imageRelevance: 'medium',
       videoRelevance: 'medium',
-      shortRelevance: 'medium'
+      shortRelevance: 'medium',
+      ownImages: 0,
+      ownVideos: 0,
+      ownShorts: 0,
+      foreignImages: 0,
+      foreignVideos: 0,
+      foreignShorts: 0
     }
   );
   const [useSimpleInput, setUseSimpleInput] = useState(true);
@@ -53,6 +65,8 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
     // Wenn einfache Eingabe verwendet wird
     if (counts && (counts.images > 0 || counts.videos > 0 || counts.shorts > 0)) {
       const totalCount = counts.images + counts.videos + counts.shorts;
+      const ownTotal = (counts.ownImages || 0) + (counts.ownVideos || 0) + (counts.ownShorts || 0);
+      const foreignTotal = (counts.foreignImages || 0) + (counts.foreignVideos || 0) + (counts.foreignShorts || 0);
       
       // Basis-Score: Content-Vielfalt (max 40 Punkte)
       let diversityScore = 0;
@@ -68,22 +82,23 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       else if (totalCount >= 5) quantityScore = 15;
       else quantityScore = totalCount * 3;
       
-      // Relevanz-Score (max 30 Punkte) - mit gewichteten Relevanz-Werten
+      // Relevanz-Score (max 30 Punkte) - Eigene Inhalte zählen höher
       const relevanceWeights = { high: 2, medium: 1, low: 0.5 };
       let relevanceScore = 0;
       
-      if (counts.images > 0) {
-        const weight = relevanceWeights[counts.imageRelevance || 'medium'];
-        relevanceScore += counts.images * weight;
-      }
-      if (counts.videos > 0) {
-        const weight = relevanceWeights[counts.videoRelevance || 'medium'];
-        relevanceScore += counts.videos * weight;
-      }
-      if (counts.shorts > 0) {
-        const weight = relevanceWeights[counts.shortRelevance || 'medium'];
-        relevanceScore += counts.shorts * weight;
-      }
+      // Eigene Inhalte: Volle Gewichtung nach Relevanz
+      const ownImagesWeight = relevanceWeights[counts.imageRelevance || 'medium'];
+      const ownVideosWeight = relevanceWeights[counts.videoRelevance || 'medium'];
+      const ownShortsWeight = relevanceWeights[counts.shortRelevance || 'medium'];
+      
+      relevanceScore += (counts.ownImages || 0) * ownImagesWeight;
+      relevanceScore += (counts.ownVideos || 0) * ownVideosWeight;
+      relevanceScore += (counts.ownShorts || 0) * ownShortsWeight;
+      
+      // Fremde Inhalte: Nur 50% der Gewichtung
+      relevanceScore += (counts.foreignImages || 0) * ownImagesWeight * 0.5;
+      relevanceScore += (counts.foreignVideos || 0) * ownVideosWeight * 0.5;
+      relevanceScore += (counts.foreignShorts || 0) * ownShortsWeight * 0.5;
       
       relevanceScore = Math.min(30, relevanceScore);
       
@@ -312,7 +327,13 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                         shorts: 0,
                         imageRelevance: 'medium',
                         videoRelevance: 'medium',
-                        shortRelevance: 'medium'
+                        shortRelevance: 'medium',
+                        ownImages: 1,
+                        ownVideos: 0,
+                        ownShorts: 0,
+                        foreignImages: 1,
+                        foreignVideos: 1,
+                        foreignShorts: 0
                       })}
                     >
                       <span className="text-xs font-semibold text-red-700">Schwach</span>
@@ -329,7 +350,13 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                         shorts: 2,
                         imageRelevance: 'medium',
                         videoRelevance: 'medium',
-                        shortRelevance: 'medium'
+                        shortRelevance: 'medium',
+                        ownImages: 5,
+                        ownVideos: 2,
+                        ownShorts: 1,
+                        foreignImages: 3,
+                        foreignVideos: 1,
+                        foreignShorts: 1
                       })}
                     >
                       <span className="text-xs font-semibold text-yellow-700">Mittel</span>
@@ -346,7 +373,13 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                         shorts: 4,
                         imageRelevance: 'high',
                         videoRelevance: 'high',
-                        shortRelevance: 'high'
+                        shortRelevance: 'high',
+                        ownImages: 10,
+                        ownVideos: 5,
+                        ownShorts: 3,
+                        foreignImages: 2,
+                        foreignVideos: 1,
+                        foreignShorts: 1
                       })}
                     >
                       <span className="text-xs font-semibold text-green-700">Stark</span>
@@ -356,112 +389,166 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-3">
-                    <Label htmlFor="simple-images" className="flex items-center gap-2">
-                      📷 Bilder
-                    </Label>
-                    <Input
-                      id="simple-images"
-                      type="number"
-                      min="0"
-                      value={simpleCounts.images}
-                      onChange={(e) => setSimpleCounts({ 
-                        ...simpleCounts, 
-                        images: parseInt(e.target.value) || 0 
-                      })}
-                      placeholder="0"
-                      className="text-center text-lg font-bold"
-                    />
-                    <div className="space-y-1">
-                      <Label htmlFor="image-relevance" className="text-xs text-muted-foreground">
-                        Relevanz
-                      </Label>
-                      <select
-                        id="image-relevance"
-                        value={simpleCounts.imageRelevance || 'medium'}
-                        onChange={(e) => setSimpleCounts({ 
-                          ...simpleCounts, 
-                          imageRelevance: e.target.value as 'high' | 'medium' | 'low'
-                        })}
-                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
-                      >
-                        <option value="high">Hoch</option>
-                        <option value="medium">Mittel</option>
-                        <option value="low">Niedrig</option>
-                      </select>
+                <div className="space-y-6">
+                  <div>
+                    <Label className="text-base font-semibold mb-3 block">Bilder</Label>
+                    <div className="space-y-2 ml-4">
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Eigene Bilder</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={simpleCounts.ownImages || 0}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              setSimpleCounts(prev => ({ 
+                                ...prev, 
+                                ownImages: val,
+                                images: val + (prev.foreignImages || 0)
+                              }));
+                            }}
+                            placeholder="Anzahl"
+                            min="0"
+                          />
+                          <select
+                            className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={simpleCounts.imageRelevance || 'medium'}
+                            onChange={(e) => setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              imageRelevance: e.target.value as 'high' | 'medium' | 'low' 
+                            }))}
+                          >
+                            <option value="high">Hoch relevant</option>
+                            <option value="medium">Mittel relevant</option>
+                            <option value="low">Niedrig relevant</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Fremde Bilder (z.B. Hersteller)</Label>
+                        <Input
+                          type="number"
+                          value={simpleCounts.foreignImages || 0}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              foreignImages: val,
+                              images: (prev.ownImages || 0) + val
+                            }));
+                          }}
+                          placeholder="Anzahl"
+                          min="0"
+                        />
+                      </div>
                     </div>
                   </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="simple-videos" className="flex items-center gap-2">
-                      🎥 Videos
-                    </Label>
-                    <Input
-                      id="simple-videos"
-                      type="number"
-                      min="0"
-                      value={simpleCounts.videos}
-                      onChange={(e) => setSimpleCounts({ 
-                        ...simpleCounts, 
-                        videos: parseInt(e.target.value) || 0 
-                      })}
-                      placeholder="0"
-                      className="text-center text-lg font-bold"
-                    />
-                    <div className="space-y-1">
-                      <Label htmlFor="video-relevance" className="text-xs text-muted-foreground">
-                        Relevanz
-                      </Label>
-                      <select
-                        id="video-relevance"
-                        value={simpleCounts.videoRelevance || 'medium'}
-                        onChange={(e) => setSimpleCounts({ 
-                          ...simpleCounts, 
-                          videoRelevance: e.target.value as 'high' | 'medium' | 'low'
-                        })}
-                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
-                      >
-                        <option value="high">Hoch</option>
-                        <option value="medium">Mittel</option>
-                        <option value="low">Niedrig</option>
-                      </select>
+                  
+                  <div>
+                    <Label className="text-base font-semibold mb-3 block">Videos</Label>
+                    <div className="space-y-2 ml-4">
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Eigene Videos</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={simpleCounts.ownVideos || 0}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              setSimpleCounts(prev => ({ 
+                                ...prev, 
+                                ownVideos: val,
+                                videos: val + (prev.foreignVideos || 0)
+                              }));
+                            }}
+                            placeholder="Anzahl"
+                            min="0"
+                          />
+                          <select
+                            className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={simpleCounts.videoRelevance || 'medium'}
+                            onChange={(e) => setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              videoRelevance: e.target.value as 'high' | 'medium' | 'low' 
+                            }))}
+                          >
+                            <option value="high">Hoch relevant</option>
+                            <option value="medium">Mittel relevant</option>
+                            <option value="low">Niedrig relevant</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Fremde Videos (z.B. Hersteller)</Label>
+                        <Input
+                          type="number"
+                          value={simpleCounts.foreignVideos || 0}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              foreignVideos: val,
+                              videos: (prev.ownVideos || 0) + val
+                            }));
+                          }}
+                          placeholder="Anzahl"
+                          min="0"
+                        />
+                      </div>
                     </div>
                   </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="simple-shorts" className="flex items-center gap-2">
-                      📱 Shorts/Reels
-                    </Label>
-                    <Input
-                      id="simple-shorts"
-                      type="number"
-                      min="0"
-                      value={simpleCounts.shorts}
-                      onChange={(e) => setSimpleCounts({ 
-                        ...simpleCounts, 
-                        shorts: parseInt(e.target.value) || 0 
-                      })}
-                      placeholder="0"
-                      className="text-center text-lg font-bold"
-                    />
-                    <div className="space-y-1">
-                      <Label htmlFor="short-relevance" className="text-xs text-muted-foreground">
-                        Relevanz
-                      </Label>
-                      <select
-                        id="short-relevance"
-                        value={simpleCounts.shortRelevance || 'medium'}
-                        onChange={(e) => setSimpleCounts({ 
-                          ...simpleCounts, 
-                          shortRelevance: e.target.value as 'high' | 'medium' | 'low'
-                        })}
-                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
-                      >
-                        <option value="high">Hoch</option>
-                        <option value="medium">Mittel</option>
-                        <option value="low">Niedrig</option>
-                      </select>
+                  
+                  <div>
+                    <Label className="text-base font-semibold mb-3 block">Shorts/Reels</Label>
+                    <div className="space-y-2 ml-4">
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Eigene Shorts/Reels</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={simpleCounts.ownShorts || 0}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              setSimpleCounts(prev => ({ 
+                                ...prev, 
+                                ownShorts: val,
+                                shorts: val + (prev.foreignShorts || 0)
+                              }));
+                            }}
+                            placeholder="Anzahl"
+                            min="0"
+                          />
+                          <select
+                            className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={simpleCounts.shortRelevance || 'medium'}
+                            onChange={(e) => setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              shortRelevance: e.target.value as 'high' | 'medium' | 'low' 
+                            }))}
+                          >
+                            <option value="high">Hoch relevant</option>
+                            <option value="medium">Mittel relevant</option>
+                            <option value="low">Niedrig relevant</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-muted-foreground">Fremde Shorts/Reels (z.B. Hersteller)</Label>
+                        <Input
+                          type="number"
+                          value={simpleCounts.foreignShorts || 0}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setSimpleCounts(prev => ({ 
+                              ...prev, 
+                              foreignShorts: val,
+                              shorts: (prev.ownShorts || 0) + val
+                            }));
+                          }}
+                          placeholder="Anzahl"
+                          min="0"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
