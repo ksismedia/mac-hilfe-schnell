@@ -376,6 +376,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             onCompanyScoreChange={handleCompanyScoreChange}
             manualDataPrivacyData={manualDataPrivacyData}
             updateManualDataPrivacyData={updateManualDataPrivacyData}
+            manualLocalSEOData={manualLocalSEOData}
+            onManualLocalSEOChange={updateManualLocalSEOData}
           />
         );
       case 'website-performance-tech':
