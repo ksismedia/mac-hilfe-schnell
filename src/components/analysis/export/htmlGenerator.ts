@@ -667,6 +667,26 @@ export const generateCustomerHTML = ({
     return Math.min(score, 100);
   })();
   const reputationScore = googleReviewsScore;
+  
+  // Determine review count status
+  const reviewCount = realData.reviews.google.count;
+  const hasLowReviewCount = reviewCount < 50;
+  const reviewCountWarning = hasLowReviewCount 
+    ? ` <span style="color: #f59e0b; font-weight: bold;">⚠️ Zu wenige Bewertungen!</span>` 
+    : '';
+  
+  // Build quality description
+  const qualityText = realData.reviews.google.rating >= 4.5 
+    ? 'Sehr gute Bewertungsqualität' 
+    : realData.reviews.google.rating >= 4.0 
+      ? 'Gute Bewertungsqualität' 
+      : realData.reviews.google.rating >= 3.0 
+        ? 'Ausbaufähige Bewertungsqualität' 
+        : 'Bewertungen dringend verbessern';
+  
+  // Build full description with review count context
+  const fullDescription = `${realData.reviews.google.rating}/5 Sterne (${reviewCount} Bewertungen)${reviewCountWarning} - ${qualityText}${hasLowReviewCount ? '. Empfehlung: Mehr Kundenbewertungen aktiv einholen, um Vertrauenswürdigkeit zu erhöhen.' : ''}`;
+  
     return `
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
         <h3>Google Bewertungen</h3>
@@ -675,7 +695,7 @@ export const generateCustomerHTML = ({
         </div>
         ${generateProgressBar(
           reputationScore,
-          `${realData.reviews.google.rating}/5 Sterne (${realData.reviews.google.count} Bewertungen) - ${realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}`
+          fullDescription
         )}
       </div>
     `;
