@@ -396,6 +396,9 @@ export const generateCustomerHTML = ({
   const cat1Scores = [
     realData.seo.score,
     localSEOScore,
+    keywordScore,
+    contentQualityScore,
+    backlinksScore,
     accessibilityScore > 0 ? accessibilityScore : 0,
     dsgvoScore > 0 ? dsgvoScore : 0,
     impressumScore
@@ -422,7 +425,8 @@ export const generateCustomerHTML = ({
     marketComparisonScore,
     hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
     workplaceScore !== -1 ? workplaceScore : 0,
-    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0,
+    quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
   ].filter(s => s > 0);
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
@@ -2198,9 +2202,11 @@ export const generateCustomerHTML = ({
               // Kategorie 1: Online-Qualität · Relevanz · Autorität
               const cat1Scores = [
                 realData.seo.score,
-                74, // Lokale SEO
+                localSEOScore,
+                keywordScore,
+                contentQualityScore,
+                backlinksScore,
                 accessibilityScore > 0 ? accessibilityScore : 0,
-                dsgvoScore > 0 ? dsgvoScore : 0,
                 dsgvoScore > 0 ? dsgvoScore : 0,
                 impressumScore
               ].filter(s => s > 0);
@@ -2227,7 +2233,8 @@ export const generateCustomerHTML = ({
                 allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
                 hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
                 workplaceScore !== -1 ? workplaceScore : 0,
-                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0,
+                quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
               ].filter(s => s > 0);
               const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
 
