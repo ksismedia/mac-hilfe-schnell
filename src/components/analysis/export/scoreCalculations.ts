@@ -211,11 +211,11 @@ export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData,
   const conversionScore = manualConversionData ? 
     calculateConversionScore(manualConversionData) : 0;
   
-  // Kombiniere automatische und manuelle Mobile-Scores (40% auto + 60% manuell)
+  // Kombiniere automatische und manuelle Mobile-Scores (50% auto + 50% manuell)
   const autoMobileScore = realData.mobile?.overallScore || 0;
   const manualMobileScore = manualMobileData?.overallScore || 0;
   const mobileScore = manualMobileData 
-    ? Math.round(autoMobileScore * 0.4 + manualMobileScore * 0.6)
+    ? Math.round((autoMobileScore + manualMobileScore) / 2)
     : autoMobileScore;
   
   const metrics = [

@@ -16,11 +16,11 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
   // Kombiniere automatische und manuelle Daten
   const hasManualData = !!manualMobileData;
   
-  // Berechne kombinierten Score: Wenn beide vorhanden, gewichteter Durchschnitt (40% auto + 60% manuell)
+  // Berechne kombinierten Score: Wenn beide vorhanden, gewichteter Durchschnitt (50% auto + 50% manuell)
   const autoScore = realData.mobile.overallScore;
   const manualScore = hasManualData ? manualMobileData.overallScore : 0;
   const overallScore = hasManualData 
-    ? Math.round(autoScore * 0.4 + manualScore * 0.6)
+    ? Math.round((autoScore + manualScore) / 2)
     : autoScore;
   
   // Kombiniere Scores für Detailbereiche
@@ -29,13 +29,13 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
   const autoTouchScore = realData.mobile.touchFriendly ? 80 : 50;
   
   const responsiveDesignScore = hasManualData 
-    ? Math.round(autoResponsiveScore * 0.4 + manualMobileData.responsiveDesignScore * 0.6)
+    ? Math.round((autoResponsiveScore + manualMobileData.responsiveDesignScore) / 2)
     : autoResponsiveScore;
   const performanceScore = hasManualData 
-    ? Math.round(autoPerformanceScore * 0.4 + manualMobileData.performanceScore * 0.6)
+    ? Math.round((autoPerformanceScore + manualMobileData.performanceScore) / 2)
     : autoPerformanceScore;
   const touchOptimizationScore = hasManualData 
-    ? Math.round(autoTouchScore * 0.4 + manualMobileData.touchOptimizationScore * 0.6)
+    ? Math.round((autoTouchScore + manualMobileData.touchOptimizationScore) / 2)
     : autoTouchScore;
 
   const getScoreColor = (score: number) => {
@@ -63,7 +63,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Kombiniert (40% Auto + 60% Manuell)</Badge>}
+            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Kombiniert (50% Auto + 50% Manuell)</Badge>}
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                 overallScore >= 90 ? 'bg-yellow-400 text-black' : 
