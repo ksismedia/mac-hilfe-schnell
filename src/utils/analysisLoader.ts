@@ -1,6 +1,6 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
 
 export const loadCompetitorServices = (
   competitorServices: CompetitorServices,
@@ -33,7 +33,8 @@ export const loadSavedAnalysisData = (
   updateManualLocalSEOData?: (data: any) => void,
   updateManualIndustryReviewData?: (data: any) => void,
   updateManualOnlinePresenceData?: (data: any) => void,
-  updateManualConversionData?: (data: ManualConversionData) => void
+  updateManualConversionData?: (data: ManualConversionData) => void,
+  updateManualMobileData?: (data: ManualMobileData) => void
 ) => {
   console.log('Loading saved analysis data:', savedAnalysis.id);
   
@@ -150,6 +151,11 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.manualConversionData && updateManualConversionData) {
     console.log('Loading manual conversion data');
     updateManualConversionData(savedAnalysis.manualData.manualConversionData);
+  }
+  
+  if (savedAnalysis.manualData?.manualMobileData && updateManualMobileData) {
+    console.log('Loading manual mobile data');
+    updateManualMobileData(savedAnalysis.manualData.manualMobileData);
   }
   
   console.log('Saved analysis data loaded successfully');

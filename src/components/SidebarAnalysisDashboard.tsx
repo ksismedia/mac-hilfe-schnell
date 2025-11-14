@@ -123,7 +123,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateManualIndustryReviewData,
     updateManualOnlinePresenceData,
     manualConversionData,
-    updateManualConversionData
+    updateManualConversionData,
+    manualMobileData,
+    updateManualMobileData
   } = useManualData();
 
   // Access saved analyses hook
@@ -187,7 +189,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateManualDataPrivacyData,
               updateManualLocalSEOData,
               updateManualIndustryReviewData,
-              updateManualOnlinePresenceData
+              updateManualOnlinePresenceData,
+              updateManualConversionData,
+              updateManualMobileData
             );
             
             console.log('Saved analysis loaded successfully');
@@ -387,6 +391,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             businessData={businessData}
             manualConversionData={manualConversionData}
             updateManualConversionData={updateManualConversionData}
+            manualMobileData={manualMobileData}
+            updateManualMobileData={updateManualMobileData}
           />
         );
       case 'social-media-performance':
