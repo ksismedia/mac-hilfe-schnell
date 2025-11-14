@@ -708,45 +708,68 @@ export const calculateCorporateIdentityScore = (data: any): number => {
 };
 
 export const calculateDataPrivacyScore = (realData: any, privacyData: any, manualDataPrivacyData?: any): number => {
-  // If manual score override is set, use it
-  if (manualDataPrivacyData?.overallScore !== undefined) {
-    return manualDataPrivacyData.overallScore;
-  }
+  // If manual score override is set, use it (but still cap at 59% if critical violations exist)
+  const hasManualOverride = manualDataPrivacyData?.overallScore !== undefined;
   
   // If privacyData has a score (from the service), use it as base
   // This score already includes HSTS violations and other security checks
-  if (!privacyData?.score) {
+  if (!privacyData?.score && !hasManualOverride) {
     return 0;
   }
   
-  // Start with the score calculated by the service (includes HSTS, SSL, etc.)
-  let score = privacyData.score;
+  // Start with the score calculated by the service (includes HSTS, SSL, etc.) or manual override
+  let score = hasManualOverride ? manualDataPrivacyData.overallScore : privacyData.score;
   
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
-  const totalViolations = privacyData.violations || [];
+  const totalViolations = privacyData?.violations || [];
   
-  // Add back points for deselected violations (using index-based IDs)
-  totalViolations.forEach((violation: any, index: number) => {
-    if (deselectedViolations.includes(`auto-${index}`)) {
-      switch (violation.severity) {
-        case 'critical': score += 15; break;
-        case 'high': score += 10; break;
-        case 'medium': score += 5; break;
-        case 'low': score += 2; break;
+  // Only apply violation adjustments if not using manual override
+  if (!hasManualOverride) {
+    // Add back points for deselected violations (using index-based IDs)
+    totalViolations.forEach((violation: any, index: number) => {
+      if (deselectedViolations.includes(`auto-${index}`)) {
+        switch (violation.severity) {
+          case 'critical': score += 15; break;
+          case 'high': score += 10; break;
+          case 'medium': score += 5; break;
+          case 'low': score += 2; break;
+        }
       }
-    }
-  });
+    });
+    
+    // Subtract points for custom violations
+    customViolations.forEach((violation: any) => {
+      switch (violation.severity) {
+        case 'critical': score -= 15; break;
+        case 'high': score -= 10; break;
+        case 'medium': score -= 5; break;
+        case 'low': score -= 2; break;
+      }
+    });
+  }
   
-  // Subtract points for custom violations
-  customViolations.forEach((violation: any) => {
-    switch (violation.severity) {
-      case 'critical': score -= 15; break;
-      case 'high': score -= 10; break;
-      case 'medium': score -= 5; break;
-      case 'low': score -= 2; break;
-    }
-  });
+  // Check if there are any critical violations (not deselected)
+  const hasCriticalViolations = () => {
+    // Check active auto violations
+    const activeCriticalAuto = totalViolations.some((violation: any, index: number) => 
+      violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
+    );
+    
+    // Check custom violations
+    const criticalCustom = customViolations.some((violation: any) => 
+      violation.severity === 'critical'
+    );
+    
+    return activeCriticalAuto || criticalCustom;
+  };
   
-  return Math.round(Math.max(0, Math.min(100, score)));
+  const finalScore = Math.round(Math.max(0, Math.min(100, score)));
+  
+  // Cap at 59% if there are any critical violations
+  if (hasCriticalViolations()) {
+    return Math.min(59, finalScore);
+  }
+  
+  return finalScore;
 };
