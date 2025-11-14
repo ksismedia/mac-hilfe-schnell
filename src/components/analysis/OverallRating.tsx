@@ -83,10 +83,89 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   // Industry Reviews and Online Presence
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
   const onlinePresenceScore = manualOnlinePresenceData ? calculateOnlinePresenceScore(manualOnlinePresenceData) : null;
+  
+  // Hourly Rate Score
+  const hourlyRateScore = hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0)
+    ? calculateHourlyRateScore(hourlyRateData)
+    : null;
 
-  // Alle Metriken - MIT MITARBEITERQUALIFIZIERUNG (nur wenn Daten vorhanden)
+  // ========================================
+  // KATEGORISIERUNG DER METRIKEN (wie in htmlGenerator.ts)
+  // ========================================
+  
+  // Feste Gewichtungen für die 6 Hauptkategorien
+  const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+  const cat2Weight = 20; // Webseiten-Performance & Technik
+  const cat3Weight = 20; // Online-/Web-/Social-Media Performance
+  const cat4Weight = 10; // Markt & Marktumfeld
+  const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
+  const cat6Weight = 10; // Qualität · Service · Kundenorientierung
+  
+  // Kategorie 1: Online-Qualität · Relevanz · Autorität
+  const cat1Scores = [
+    realData.seo.score,
+    localSEOScore,
+    currentKeywordsScore,
+    realData.imprint.score
+  ].filter(s => s > 0);
+  
+  if (contentScore !== null) cat1Scores.push(contentScore);
+  if (accessibilityScore !== null) cat1Scores.push(accessibilityScore);
+  if (backlinksScore !== null) cat1Scores.push(backlinksScore);
+  if (dataPrivacyScore !== null) cat1Scores.push(dataPrivacyScore);
+  
+  const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
+  
+  // Kategorie 2: Webseiten-Performance & Technik
+  const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore) / 2);
+  
+  // Kategorie 3: Online-/Web-/Social-Media Performance
+  const cat3Scores = [
+    realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0,
+    socialMediaScore,
+    realData.socialProof?.overallScore ?? 0
+  ].filter(s => s > 0);
+  
+  if (industryReviewScore !== null && industryReviewScore > 0) cat3Scores.push(industryReviewScore);
+  if (onlinePresenceScore !== null && onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
+  
+  const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
+  
+  // Kategorie 4: Markt & Marktumfeld
+  const cat4Scores = [
+    competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30),
+    workplaceScoreRaw !== -1 ? workplaceScoreRaw : 0
+  ].filter(s => s > 0);
+  
+  if (staffQualificationScore !== null) cat4Scores.push(staffQualificationScore);
+  if (hourlyRateScore !== null) cat4Scores.push(hourlyRateScore);
+  
+  const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+  
+  // Kategorie 5: Außendarstellung & Erscheinungsbild
+  const cat5Scores = [];
+  // Hier könnte Corporate Identity Score rein, wenn vorhanden
+  const cat5Avg = cat5Scores.length > 0 ? Math.round(cat5Scores.reduce((a, b) => a + b, 0) / cat5Scores.length) : 0;
+  
+  // Kategorie 6: Qualität · Service · Kundenorientierung
+  const cat6Scores = [];
+  if (quoteResponseData && quoteResponseData.responseTime) cat6Scores.push(quoteResponseScore);
+  const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
+  
+  // Gewichteter Gesamtscore aus den 6 Kategorien
+  const totalCategoryWeight = 100;
+  const overallScore = Math.round((
+    cat1Avg * cat1Weight +
+    cat2Avg * cat2Weight +
+    cat3Avg * cat3Weight +
+    cat4Avg * cat4Weight +
+    cat5Avg * cat5Weight +
+    cat6Avg * cat6Weight
+  ) / totalCategoryWeight);
+
+  // Alle Metriken für die Detail-Anzeige (mit ursprünglichen Gewichten als Prozentangabe)
   const baseMetrics = [
-    { name: 'Local SEO', score: localSEOScore, weight: 24, maxScore: 100 }, // HÖCHSTE GEWICHTUNG für Handwerk
+    { name: 'Local SEO', score: localSEOScore, weight: 24, maxScore: 100 },
     { name: 'SEO', score: realData.seo.score, weight: 14, maxScore: 100 },
     { name: 'Performance', score: realData.performance.score, weight: 11, maxScore: 100 },
     { name: 'Impressum', score: realData.imprint.score, weight: 9, maxScore: 100 },
@@ -95,7 +174,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     { name: 'Mobile', score: realData.mobile.overallScore, weight: 6, maxScore: 100 },
     { name: 'Social Media', score: socialMediaScore, weight: 6, maxScore: 100 },
     { name: 'Social Proof', score: realData.socialProof?.overallScore ?? 0, weight: 4, maxScore: 100 },
-    { name: 'Arbeitsplatz', score: workplaceScoreRaw, weight: workplaceScoreRaw === -1 ? 0 : 2, maxScore: 100 }, // Don't count in overall if no data
+    { name: 'Arbeitsplatz', score: workplaceScoreRaw, weight: workplaceScoreRaw === -1 ? 0 : 2, maxScore: 100 },
     { name: 'Konkurrenz', score: competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30), weight: 1, maxScore: 100 }
   ];
 
@@ -111,8 +190,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   }
   
   // Stundensatz - nur bewerten wenn tatsächlich eingegeben
-  if (hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0)) {
-    const hourlyRateScore = calculateHourlyRateScore(hourlyRateData);
+  if (hourlyRateScore !== null) {
     metrics.push({ name: 'Preispositionierung', score: hourlyRateScore, weight: 4, maxScore: 100 });
   }
   
@@ -145,11 +223,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   if (onlinePresenceScore !== null && onlinePresenceScore > 0) {
     metrics.push({ name: 'Online-Präsenz', score: onlinePresenceScore, weight: 3, maxScore: 100 });
   }
-
-  // Gewichteter Gesamtscore
-  const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
-  const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
-  const overallScore = Math.round(weightedScore / totalWeight);
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'score-text-high';   // 90-100% gold
