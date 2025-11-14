@@ -438,13 +438,15 @@ export const generateDataPrivacySection = (
     cookieScore = Math.max(30, Math.round((dataPrivacyScore + 15) * 0.8));
   }
   
+  // Check for critical violations in activeViolations (which already filters out deselected ones)
+  const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
+  
   return `
         <!-- DSGVO-Konformität -->
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">
               <span>▶ DSGVO-Konformität</span>
               <div class="header-score-circle ${(() => {
-                const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
                 const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
                 const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
                 const hasCritical = dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL);
