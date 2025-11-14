@@ -1667,11 +1667,11 @@ export const generateCustomerHTML = ({
                     <strong>Wettbewerber ${String.fromCharCode(65 + index)}</strong>
                   </td>
                   <td class="table-text" style="padding: 12px; text-align: center;">
-                    <span class="score-badge ${competitor.rating >= 4 ? 'green' : competitor.rating >= 3 ? 'yellow' : 'red'}" style="color: ${competitor.rating >= 4 ? '#22c55e' : competitor.rating >= 3 ? '#FFD700' : '#FF0000'} !important; font-weight: bold;">${competitor.rating}/5</span>
+                    <span class="score-badge ${competitor.rating >= 4 ? 'green' : competitor.rating >= 3 ? 'yellow' : 'red'}">${competitor.rating}/5</span>
                   </td>
                   <td class="table-text" style="padding: 12px; text-align: center;">${competitor.reviews}</td>
                   <td class="table-text" style="padding: 12px; text-align: center;">
-                    <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}" style="color: ${estimatedScore >= 80 ? '#FFD700' : estimatedScore >= 60 ? '#22c55e' : '#FF0000'} !important; font-weight: bold;">${Math.round(estimatedScore)}</span>
+                    <span class="score-badge ${estimatedScore >= 80 ? 'yellow' : estimatedScore >= 60 ? 'green' : 'red'}">${Math.round(estimatedScore)}</span>
                     <br><small class="secondary-text">${serviceCount} Services</small>
                     <br><small class="secondary-text">Services: ${serviceCount}</small>
                   </td>

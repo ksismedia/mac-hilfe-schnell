@@ -1061,9 +1061,21 @@ table tr {
   }
 
   /* Score Badge Farben für Wettbewerber */
-  .score-badge.red { color: #FF0000 !important; font-weight: bold; }
-  .score-badge.green { color: #22c55e !important; font-weight: bold; }  
-  .score-badge.yellow { color: #FFD700 !important; font-weight: bold; }
+  .score-badge.red { 
+    background-color: #dc2626 !important; 
+    color: #ffffff !important; 
+    font-weight: bold !important; 
+  }
+  .score-badge.green { 
+    background-color: #16a34a !important; 
+    color: #ffffff !important; 
+    font-weight: bold !important; 
+  }
+  .score-badge.yellow { 
+    background-color: #eab308 !important; 
+    color: #000000 !important; 
+    font-weight: bold !important; 
+  }
   
   /* Neutral styles for missing data display */
   .score-tile.neutral, .score-circle.neutral { 
