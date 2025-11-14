@@ -2109,11 +2109,81 @@ export const generateCustomerHTML = ({
       <div class="section-header"><span>Executive Summary</span></div>
       <div class="section-content">
         <!-- Gesamtscore als erstes -->
-        <div class="score-overview" style="margin-bottom: 30px;">
+        <div class="score-overview" style="margin-bottom: 20px;">
           <div class="score-card">
             <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
             <div class="score-label">Gesamtscore</div>
           </div>
+        </div>
+
+        <!-- Kompakte Kategorie-Aufschlüsselung -->
+        <div style="margin-bottom: 30px; padding: 15px; background: rgba(251, 191, 36, 0.05); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">
+          <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; font-size: 0.85rem;">
+            ${(() => {
+              // Kategorie 1: Online-Qualität · Relevanz · Autorität
+              const cat1Scores = [
+                realData.seo.score,
+                74, // Lokale SEO
+                accessibilityScore > 0 ? accessibilityScore : 0,
+                dsgvoScore > 0 ? dsgvoScore : 0,
+                dsgvoScore > 0 ? dsgvoScore : 0,
+                impressumScore
+              ].filter(s => s > 0);
+              const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
+
+              // Kategorie 2: Webseiten-Performance & Technik
+              const conversionScore = 67;
+              const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
+
+              // Kategorie 3: Online-/Web-/Social-Media Performance
+              const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
+              const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+              const cat3Scores = [
+                socialMediaScore > 0 ? socialMediaScore : 0,
+                googleReviewScore,
+                industryReviewScore,
+                onlinePresenceScore
+              ].filter(s => s > 0);
+              const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
+
+              // Kategorie 4: Markt & Marktumfeld
+              const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+              const cat4Scores = [
+                allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
+                hourlyRateData ? Math.round(pricingScore) : 0,
+                workplaceScore !== -1 ? workplaceScore : 0,
+                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+              ].filter(s => s > 0);
+              const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+
+              // Kategorie 5: Außendarstellung & Erscheinungsbild
+              const cat5Avg = Math.round(corporateIdentityScore);
+
+              // Kategorie 6: Qualität · Service · Kundenorientierung
+              const cat6Scores = [
+                quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
+              ].filter(s => s > 0);
+              const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
+
+              const categories = [
+                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg },
+                { name: 'Webseiten-Performance & Technik', score: cat2Avg },
+                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg },
+                { name: 'Markt & Marktumfeld', score: cat4Avg },
+                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg },
+                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg }
+              ].filter(cat => cat.score > 0);
+
+              return categories.map(cat => `
+                <div style="color: #374151;">${cat.name}</div>
+                <div style="text-align: right;">
+                  <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
+                </div>
+              `).join('');
+            })()}
+          </div>
+          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Der Gesamtscore ist ein gewichteter Durchschnitt aller Einzelmetriken, nicht der arithmetische Mittelwert der Kategorien.</p>
         </div>
 
         <!-- Kategorisierte Score-Übersicht -->
