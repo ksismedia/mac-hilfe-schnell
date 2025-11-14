@@ -77,44 +77,54 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
 
   // Calculate effective score considering manual overrides and violation changes
   const getEffectiveScore = () => {
-    // If manual score override is set, use it
-    if (manualDataPrivacyData?.overallScore !== undefined) {
-      return manualDataPrivacyData.overallScore;
-    }
+    // If manual score override is set, use it (but still cap at 59% if critical violations exist)
+    const hasManualOverride = manualDataPrivacyData?.overallScore !== undefined;
     
     // Otherwise use the original score from the service
-    if (!privacyData) return 0;
+    if (!privacyData && !hasManualOverride) return 0;
     
-    // Start with the original calculated score
-    let score = privacyData.score;
+    // Start with the original calculated score or manual override
+    let score = hasManualOverride ? manualDataPrivacyData.overallScore : privacyData.score;
     
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
-    const totalViolations = privacyData.violations || [];
+    const totalViolations = privacyData?.violations || [];
     
-    // Add back points for deselected violations
-    totalViolations.forEach((violation, index) => {
-      if (deselectedViolations.includes(`auto-${index}`)) {
-        switch (violation.severity) {
-          case 'critical': score += 15; break;
-          case 'high': score += 10; break;
-          case 'medium': score += 5; break;
-          case 'low': score += 2; break;
+    // Only apply violation adjustments if not using manual override
+    if (!hasManualOverride) {
+      // Add back points for deselected violations
+      totalViolations.forEach((violation, index) => {
+        if (deselectedViolations.includes(`auto-${index}`)) {
+          switch (violation.severity) {
+            case 'critical': score += 15; break;
+            case 'high': score += 10; break;
+            case 'medium': score += 5; break;
+            case 'low': score += 2; break;
+          }
         }
-      }
-    });
+      });
+      
+      // Subtract points for custom violations
+      customViolations.forEach(violation => {
+        switch (violation.severity) {
+          case 'critical': score -= 15; break;
+          case 'high': score -= 10; break;
+          case 'medium': score -= 5; break;
+          case 'low': score -= 2; break;
+        }
+      });
+    }
     
-    // Subtract points for custom violations
-    customViolations.forEach(violation => {
-      switch (violation.severity) {
-        case 'critical': score -= 15; break;
-        case 'high': score -= 10; break;
-        case 'medium': score -= 5; break;
-        case 'low': score -= 2; break;
-      }
-    });
+    // Check if there are any critical violations (not deselected)
+    const criticalViolations = getAllViolations().filter(v => v.severity === 'critical');
+    const finalScore = Math.round(Math.max(0, Math.min(100, score)));
     
-    return Math.round(Math.max(0, Math.min(100, score)));
+    // Cap at 59% if there are any critical violations
+    if (criticalViolations.length > 0) {
+      return Math.min(59, finalScore);
+    }
+    
+    return finalScore;
   };
 
   // Check if there are critical violations despite positive score

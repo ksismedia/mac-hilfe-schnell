@@ -190,7 +190,7 @@ export const generateCustomerHTML = ({
     ? `${Math.round(actualDataPrivacyScore)}%` 
     : '–';
   
-  // Calculate DSGVO score - red if there are critical violations
+  // Calculate DSGVO score - cap at 59% if there are critical violations
   const calculateDSGVOScore = () => {
     if (!privacyData) return 75; // Default score
     
@@ -199,17 +199,20 @@ export const generateCustomerHTML = ({
     const customViolations = manualDataPrivacyData?.customViolations || [];
     
     // Filter out deselected violations to get active violations
-    const activeViolations = violations.filter((violation: any) => 
-      !deselectedViolations.includes(violation.id)
+    const activeViolations = violations.filter((violation: any, index: number) => 
+      !deselectedViolations.includes(`auto-${index}`)
     );
     
-    // Count critical violations (high severity)
-    const criticalViolations = [...activeViolations, ...customViolations]
-      .filter((violation: any) => violation.severity === 'high');
+    // Check for critical violations (severity === 'critical')
+    const hasCriticalViolations = activeViolations.some((violation: any) => 
+      violation.severity === 'critical'
+    ) || customViolations.some((violation: any) => 
+      violation.severity === 'critical'
+    );
     
-    // If there's 1 or more critical violations, score should be in red range (under 60%)
-    if (criticalViolations.length >= 1) {
-      return Math.max(25, 55 - (criticalViolations.length * 10)); // 25-55% range
+    // If there's 1 or more critical violations, cap at 59%
+    if (hasCriticalViolations) {
+      return Math.min(59, actualDataPrivacyScore);
     }
     
     // Otherwise use the regular data privacy score
