@@ -360,7 +360,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
       manualContentData, manualBacklinkData, manualLocalSEOData
     );
-    const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData);
+    const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData);
     const socialMediaPerformance = calculateSocialMediaPerformanceScore(
       realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
     );

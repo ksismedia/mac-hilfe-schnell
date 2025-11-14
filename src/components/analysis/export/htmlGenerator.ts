@@ -1126,49 +1126,33 @@ export const generateCustomerHTML = ({
         localContent: manualLocalSEOData.localContentScore
       }
     } : {
+      // No manual data and no automatic data available - show that data is missing
       overallScore: calculateLocalSEOScore(businessData, realData, manualLocalSEOData),
-      googleMyBusiness: {
-        score: 82,
-        claimed: true,
-        verified: true,
-        complete: 75,
-        photos: 12,
-        posts: 3,
-        lastUpdate: "vor 2 Wochen"
-      },
-      localCitations: {
-        score: 68,
-        totalCitations: 15,
-        consistent: 12,
-        inconsistent: 3,
-        topDirectories: [
-          { name: "Google My Business", status: "vollständig" },
-          { name: "Bing Places", status: "unvollständig" },
-          { name: "Yelp", status: "nicht gefunden" },
-          { name: "Gelbe Seiten", status: "vollständig" },
-          { name: "WerkenntdenBesten", status: "vollständig" }
-        ]
-      },
-      localKeywords: {
-        score: 71,
-        ranking: [
-          { keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim() || 'regional'}`, position: 8, volume: "hoch" },
-          { keyword: `Handwerker ${businessData.address.split(',')[1]?.trim() || 'regional'}`, position: 15, volume: "mittel" },
-          { keyword: `${businessData.industry} Notdienst`, position: 12, volume: "mittel" },
-          { keyword: `${businessData.industry} in der Nähe`, position: 6, volume: "hoch" }
-        ]
-      },
-      onPageLocal: {
-        score: 78,
-        addressVisible: true,
-        phoneVisible: true,
-        openingHours: true,
-        localSchema: false,
-        localContent: 65
-      }
+      googleMyBusiness: null,
+      localCitations: null,
+      localKeywords: null,
+      onPageLocal: null
     };
 
     const scoreClass = localSEOData.overallScore >= 90 ? 'yellow' : localSEOData.overallScore >= 61 ? 'green' : 'red';
+
+    // Check if we have any actual data (manual or real)
+    const hasData = localSEOData.googleMyBusiness || localSEOData.localCitations || localSEOData.localKeywords || localSEOData.onPageLocal;
+
+    if (!hasData) {
+      return `
+        <div class="metric-card">
+          <div class="score-details" style="padding: 20px; background: rgba(255,255,255,0.5); border-radius: 8px; text-align: center;">
+            <p style="color: #6b7280; font-size: 1rem; margin-bottom: 10px;">
+              <strong>ℹ️ Keine Local SEO Daten verfügbar</strong>
+            </p>
+            <p style="color: #6b7280; font-size: 0.9rem;">
+              Bitte führen Sie eine manuelle Eingabe durch oder starten Sie die automatische Analyse.
+            </p>
+          </div>
+        </div>
+      `;
+    }
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -1179,6 +1163,7 @@ export const generateCustomerHTML = ({
         
 
         <!-- Google My Business -->
+        ${localSEOData.googleMyBusiness ? `
         <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
           <h4>🏢 Google My Business</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
@@ -1198,8 +1183,10 @@ export const generateCustomerHTML = ({
           </div>
           ${generateProgressBar(localSEOData.googleMyBusiness.score, `Gesamtbewertung der Vollständigkeit und Aktualität Ihres Google-Unternehmensprofils`)}
         </div>
+        ` : ''}
 
         <!-- Lokale Verzeichnisse (Citations) -->
+        ${localSEOData.localCitations ? `
         <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
           <h4>🌐 Lokale Verzeichnisse & Citations</h4>
           <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten (Name, Adresse, Telefon) in Online-Verzeichnissen erscheinen</p>
@@ -1234,8 +1221,10 @@ export const generateCustomerHTML = ({
           
           ${generateProgressBar(localSEOData.localCitations.score, `Bewertet die Einheitlichkeit Ihrer Firmendaten über alle Verzeichnisse hinweg`)}
         </div>
+        ` : ''}
 
         <!-- Lokale Keywords -->
+        ${localSEOData.localKeywords && localSEOData.localKeywords.ranking && localSEOData.localKeywords.ranking.length > 0 ? `
         <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
           <h4>🎯 Lokale Keyword-Rankings</h4>
           <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Zeigt Ihre Platzierung in Google bei lokalen Suchbegriffen (z.B. "SHK Bahnhofstraße 15")</p>
@@ -1256,8 +1245,10 @@ export const generateCustomerHTML = ({
           
           ${generateProgressBar(localSEOData.localKeywords.score, `Durchschnittliche Ranking-Position über alle lokalen Suchbegriffe hinweg`)}
         </div>
+        ` : ''}
 
         <!-- On-Page Local Faktoren -->
+        ${localSEOData.onPageLocal ? `
         <div style="margin-top: 15px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px;">
           <h4>📍 On-Page Local Faktoren</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
@@ -1280,15 +1271,16 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen für lokale SEO:</h4>
           <ul>
-            ${localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
-            ${localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
-            ${localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren (z.B. "Handwerker in [Stadt]")</li>' : ''}
-            ${!localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren (strukturierte Daten für Google)</li>' : ''}
+            ${localSEOData.googleMyBusiness && localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
+            ${localSEOData.localCitations && localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
+            ${localSEOData.localKeywords && localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren (z.B. "Handwerker in [Stadt]")</li>' : ''}
+            ${localSEOData.onPageLocal && !localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren (strukturierte Daten für Google)</li>' : ''}
             <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken (Stadtteilnamen, lokale Projekte zeigen)</li>
             <li>Kundenbewertungen aktiv sammeln und beantworten (baut Vertrauen und Sichtbarkeit auf)</li>
             <li>Lokale Backlinks durch Partnerschaften und Events aufbauen (Vernetzung mit lokalen Unternehmen)</li>
           </ul>
         </div>
+        ` : ''}
       </div>
     `;
   };

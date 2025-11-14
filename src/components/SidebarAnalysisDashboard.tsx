@@ -280,7 +280,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
       manualContentData, manualBacklinkData, manualLocalSEOData
     ),
-    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
+    websitePerformanceTech: calculateWebsitePerformanceTechScore(realData, manualConversionData),
     socialMediaPerformance: calculateSocialMediaPerformanceScore(
       realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
     ),

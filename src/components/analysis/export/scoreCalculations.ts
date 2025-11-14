@@ -206,17 +206,51 @@ export const calculateOnlineQualityAuthorityScore = (
   }
 };
 
-export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData): number => {
+export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData, manualConversionData?: any): number => {
+  // Calculate conversion score from manual data if available
+  const conversionScore = manualConversionData ? 
+    calculateConversionScore(manualConversionData) : 0;
+  
   const metrics = [
     { score: realData.performance?.score || 0, weight: 50 }, // Website-Performance
     { score: realData.mobile?.overallScore || 0, weight: 35 }, // Mobile-Optimierung
-    { score: 75, weight: 15 }, // Conversion-Optimierung (placeholder)
+    { score: conversionScore, weight: 15 }, // Conversion-Optimierung from manual data
   ];
   
   const totalWeight = metrics.reduce((sum, metric) => sum + metric.weight, 0);
   const weightedScore = metrics.reduce((sum, metric) => sum + (metric.score * metric.weight), 0);
   
   return Math.round(weightedScore / totalWeight);
+};
+
+// Helper function to calculate conversion score from manual data
+const calculateConversionScore = (data: any): number => {
+  if (!data) return 0;
+  
+  let score = 0;
+  
+  // CTA Score (40% weight)
+  if (data.totalCTAs > 0) {
+    const ctaEffectiveness = (data.effectiveCTAs / data.totalCTAs) * 100;
+    score += ctaEffectiveness * 0.4;
+  }
+  
+  // Form Score (30% weight)
+  if (data.contactForms > 0) {
+    const formEffectiveness = (data.workingForms / data.contactForms) * 100;
+    score += formEffectiveness * 0.3;
+  }
+  
+  // Contact Options Score (30% weight)
+  const contactOptions = [
+    data.phoneClickable,
+    data.emailClickable,
+    data.chatAvailable,
+    data.callbackOption
+  ].filter(Boolean).length;
+  score += (contactOptions / 4) * 100 * 0.3;
+  
+  return Math.round(Math.min(score, 100));
 };
 
 export const calculateSocialMediaPerformanceScore = (
@@ -314,8 +348,8 @@ export const calculateSEOContentScore = (
   return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null);
 };
 
-export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
-  return calculateWebsitePerformanceTechScore(realData);
+export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any): number => {
+  return calculateWebsitePerformanceTechScore(realData, manualConversionData);
 };
 
 export const calculateStaffServiceScore = (
@@ -512,11 +546,26 @@ export const calculateQuoteResponseScore = (data: any): number => {
 };
 
 export const calculateOverallScore = (scores: any): number => {
-  return 75; // Default score
+  // Calculate weighted average from all category scores if available
+  if (!scores) return 0;
+  
+  const categoryScores = [
+    scores.onlineQualityAuthority,
+    scores.websitePerformanceTech,
+    scores.socialMediaPerformance,
+    scores.marketEnvironment,
+    scores.corporateAppearance,
+    scores.serviceQuality
+  ].filter(score => score > 0); // Only include scores that have data
+  
+  if (categoryScores.length === 0) return 0;
+  
+  const average = categoryScores.reduce((sum, score) => sum + score, 0) / categoryScores.length;
+  return Math.round(average);
 };
 
 export const calculateHourlyRateScore = (hourlyRateData: any): number => {
-  if (!hourlyRateData) return 75;
+  if (!hourlyRateData) return 0; // No data = no score
   
   // Calculate average own rate and regional average from all available rates
   const ownRates = [
