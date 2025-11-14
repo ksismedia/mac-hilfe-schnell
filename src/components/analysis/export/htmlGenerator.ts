@@ -2356,18 +2356,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Online-Qualität · Relevanz · Autorität</h3>
-              ${(() => {
-                const scores = [
-                  realData.seo.score,
-                  74, // Lokale SEO
-                  accessibilityScore > 0 ? accessibilityScore : 0,
-                  dsgvoScore > 0 ? dsgvoScore : 0,
-                  dsgvoScore > 0 ? dsgvoScore : 0,
-                  impressumScore
-                ].filter(s => s > 0);
-                const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
-              })()}
+              ${cat1Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat1Avg)}">${cat1Avg}%</div>` : ''}
             </div>
           </div>
 
@@ -2375,14 +2364,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
-              ${(() => {
-                const conversionScore = manualConversionData?.overallScore || 0;
-                const hasConversionData = conversionScore > 0;
-                const scores = [realData.performance.score, realData.mobile.overallScore];
-                if (hasConversionData) scores.push(conversionScore);
-                const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-                return `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>`;
-              })()}
+              <div class="header-score-circle ${getScoreColorClass(cat2Avg)}">${cat2Avg}%</div>
             </div>
           </div>
 
@@ -2390,18 +2372,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
-              ${(() => {
-                const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
-                const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
-                const scores = [
-                  socialMediaScore > 0 ? socialMediaScore : 0,
-                  googleReviewScore,
-                  industryReviewScore,
-                  onlinePresenceScore
-                ].filter(s => s > 0);
-                const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
-              })()}
+              ${cat3Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat3Avg)}">${cat3Avg}%</div>` : ''}
             </div>
           </div>
 
@@ -2409,17 +2380,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Markt & Marktumfeld</h3>
-              ${(() => {
-                const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
-                const scores = [
-                  allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
-                  hourlyRateData ? Math.round(pricingScore) : 0,
-                  workplaceScore !== -1 ? workplaceScore : 0,
-                  staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
-                ].filter(s => s > 0);
-                const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
-              })()}
+              ${cat4Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat4Avg)}">${cat4Avg}%</div>` : ''}
             </div>
           </div>
 
@@ -2427,7 +2388,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
-              <div class="header-score-circle ${getScoreColorClass(corporateIdentityScore)}">${Math.round(corporateIdentityScore)}%</div>
+              ${cat5Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat5Avg)}">${cat5Avg}%</div>` : ''}
             </div>
           </div>
 
@@ -2435,13 +2396,7 @@ export const generateCustomerHTML = ({
           <div class="score-category">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
-              ${(() => {
-                const scores = [
-                  quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
-                ].filter(s => s > 0);
-                const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-                return avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(avg)}">${avg}%</div>` : '';
-              })()}
+              ${cat6Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat6Avg)}">${cat6Avg}%</div>` : ''}
             </div>
           </div>
 
