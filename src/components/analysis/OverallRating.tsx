@@ -9,6 +9,28 @@ import { calculateSimpleSocialScore } from './export/simpleSocialScore';
 import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateIndustryReviewScore, calculateOnlinePresenceScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
+// Helper function to calculate Google Reviews Score (same as in scoreCalculations.ts)
+const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
+  const reviews = realData.reviews?.google?.count || 0;
+  const rating = realData.reviews?.google?.rating || 0;
+  let score = 0;
+  
+  if (rating > 0) {
+    score += (rating / 5) * 50;
+  }
+  if (reviews > 0) {
+    if (reviews >= 500) score += 50;
+    else if (reviews >= 200) score += 45;
+    else if (reviews >= 100) score += 40;
+    else if (reviews >= 50) score += 35;
+    else if (reviews >= 20) score += 25;
+    else if (reviews >= 10) score += 15;
+    else score += Math.min(reviews, 10);
+  }
+  
+  return Math.min(score, 100);
+};
+
 interface OverallRatingProps {
   businessData: {
     address: string;
@@ -132,8 +154,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat2Avg = cat2Scores.length > 0 ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) : 0;
   
   // Kategorie 3: Online-/Web-/Social-Media Performance
+  const googleReviewsScore = calculateGoogleReviewsScore(realData);
   const cat3Scores = [
-    realData.reviews.google.count > 0 ? Math.min(100, realData.reviews.google.rating * 20) : 0,
+    googleReviewsScore,
     socialMediaScore,
     realData.socialProof?.overallScore ?? 0
   ].filter(s => s > 0);

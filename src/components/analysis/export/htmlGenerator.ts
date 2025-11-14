@@ -374,7 +374,30 @@ export const generateCustomerHTML = ({
     actualPricingScore === 50 ? 'Region/unterer Durchschnitt' : 
     actualPricingScore === 30 ? 'Region/unterdurchschnittlich' : `${actualPricingScore}/100`;
   const workplaceScore = calculateWorkplaceScore(realData, manualWorkplaceData);
-  const reputationScore = realData.reviews.google.rating * 20;
+  
+  // Calculate Google Reviews Score (same logic as in scoreCalculations.ts)
+  const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
+    const reviews = realData.reviews?.google?.count || 0;
+    const rating = realData.reviews?.google?.rating || 0;
+    let score = 0;
+    
+    if (rating > 0) {
+      score += (rating / 5) * 50;
+    }
+    if (reviews > 0) {
+      if (reviews >= 500) score += 50;
+      else if (reviews >= 200) score += 45;
+      else if (reviews >= 100) score += 40;
+      else if (reviews >= 50) score += 35;
+      else if (reviews >= 20) score += 25;
+      else if (reviews >= 10) score += 15;
+      else score += Math.min(reviews, 10);
+    }
+    
+    return Math.min(score, 100);
+  };
+  
+  const reputationScore = calculateGoogleReviewsScore(realData);
   
   const legalScore = impressumScore;
   
@@ -392,17 +415,19 @@ export const generateCustomerHTML = ({
   
   // Berechne Kategorie-Scores (ungewichteter Durchschnitt innerhalb jeder Kategorie)
   
-  // Kategorie 1: Online-Qualität · Relevanz · Autorität
+  // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
   const cat1Scores = [
     realData.seo.score,
     localSEOScore,
     keywordScore,
-    contentQualityScore,
-    backlinksScore,
-    accessibilityScore > 0 ? accessibilityScore : 0,
-    dsgvoScore > 0 ? dsgvoScore : 0,
     impressumScore
   ].filter(s => s > 0);
+  
+  if (contentQualityScore !== null && contentQualityScore > 0) cat1Scores.push(contentQualityScore);
+  if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
+  if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
+  if (dsgvoScore !== null && dsgvoScore > 0) cat1Scores.push(dsgvoScore);
+  
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
   // Kategorie 2: Webseiten-Performance & Technik
@@ -420,15 +445,20 @@ export const generateCustomerHTML = ({
   
   const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
   
-  // Kategorie 3: Online-/Web-/Social-Media Performance
+  // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
   const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
   const onlinePresenceScoreCalc = manualOnlinePresenceData?.overallScore || 0;
+  const socialProofScore = realData.socialProof?.overallScore ?? 0;
+  
   const cat3Scores = [
-    socialMediaScore > 0 ? socialMediaScore : 0,
     reputationScore,
-    industryReviewScore,
-    onlinePresenceScoreCalc
+    socialMediaScore,
+    socialProofScore
   ].filter(s => s > 0);
+  
+  if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
+  if (onlinePresenceScoreCalc > 0) cat3Scores.push(onlinePresenceScoreCalc);
+  
   const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
   
   // Kategorie 4: Markt & Marktumfeld
@@ -2209,17 +2239,19 @@ export const generateCustomerHTML = ({
               
               const totalWeight = 100; // Summe aller Gewichtungen
               
-              // Kategorie 1: Online-Qualität · Relevanz · Autorität
+              // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
               const cat1Scores = [
                 realData.seo.score,
                 localSEOScore,
                 keywordScore,
-                contentQualityScore,
-                backlinksScore,
-                accessibilityScore > 0 ? accessibilityScore : 0,
-                dsgvoScore > 0 ? dsgvoScore : 0,
                 impressumScore
               ].filter(s => s > 0);
+              
+              if (contentQualityScore !== null && contentQualityScore > 0) cat1Scores.push(contentQualityScore);
+              if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
+              if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
+              if (dsgvoScore !== null && dsgvoScore > 0) cat1Scores.push(dsgvoScore);
+              
               const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
 
               // Kategorie 2: Webseiten-Performance & Technik
@@ -2237,15 +2269,20 @@ export const generateCustomerHTML = ({
               
               const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
 
-              // Kategorie 3: Online-/Web-/Social-Media Performance
+              // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
               const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
               const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+              const socialProofScore = realData.socialProof?.overallScore ?? 0;
+              
               const cat3Scores = [
-                socialMediaScore > 0 ? socialMediaScore : 0,
                 googleReviewScore,
-                industryReviewScore,
-                onlinePresenceScore
+                socialMediaScore,
+                socialProofScore
               ].filter(s => s > 0);
+              
+              if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
+              if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
+              
               const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
 
               // Kategorie 4: Markt & Marktumfeld
