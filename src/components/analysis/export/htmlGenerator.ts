@@ -2121,6 +2121,31 @@ export const generateCustomerHTML = ({
           <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
           <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
             ${(() => {
+              // Berechne Gewichte basierend auf den tatsächlichen Metriken aus OverallRating
+              // Basis-Metriken (immer vorhanden):
+              let cat1Weight = 24 + 14 + 9 + 8; // Local SEO + SEO + Impressum + Keywords = 55
+              let cat2Weight = 11 + 6; // Performance + Mobile = 17
+              let cat3Weight = 7 + 6 + 4; // Bewertungen + Social Media + Social Proof = 17
+              let cat4Weight = 1 + 2; // Konkurrenz + Arbeitsplatz = 3 (Arbeitsplatz kann 0 sein)
+              let cat5Weight = 0; // Corporate Identity ist nicht in OverallRating
+              let cat6Weight = 0; // Angebotsbearbeitung
+              
+              // Optionale Metriken hinzufügen
+              if (manualContentData) cat1Weight += 5; // Content
+              if (manualAccessibilityData || accessibilityData) cat1Weight += 4; // Barrierefreiheit
+              if (manualBacklinkData) cat1Weight += 5; // Backlinks
+              if (manualDataPrivacyData || privacyData) cat1Weight += 6; // Datenschutz
+              
+              if (manualIndustryReviewData?.overallScore > 0) cat3Weight += 4; // Industry Reviews
+              if (manualOnlinePresenceData?.overallScore > 0) cat3Weight += 3; // Online Presence
+              
+              if (hourlyRateData) cat4Weight += 4; // Preispositionierung
+              if (staffQualificationData && staffQualificationData.totalEmployees > 0) cat4Weight += 8; // Personal
+              
+              if (quoteResponseData && quoteResponseData.responseTime) cat6Weight += 6; // Angebotsbearbeitung
+              
+              const totalWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
+              
               // Kategorie 1: Online-Qualität · Relevanz · Autorität
               const cat1Scores = [
                 realData.seo.score,
@@ -2167,29 +2192,29 @@ export const generateCustomerHTML = ({
               const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
 
               const categories = [
-                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg },
-                { name: 'Webseiten-Performance & Technik', score: cat2Avg },
-                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg },
-                { name: 'Markt & Marktumfeld', score: cat4Avg },
-                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg },
-                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg }
+                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg, weight: cat1Weight },
+                { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: cat2Weight },
+                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: cat3Weight },
+                { name: 'Markt & Marktumfeld', score: cat4Avg, weight: cat4Weight },
+                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: cat5Weight },
+                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: cat6Weight }
               ].filter(cat => cat.score > 0);
 
-              // Berechne die Gewichtung (alle Kategorien sind gleich gewichtet)
-              const weightPerCategory = categories.length > 0 ? Math.round(100 / categories.length * 10) / 10 : 0;
-
-              return categories.map(cat => `
-                <div style="color: #374151;">${cat.name}</div>
-                <div style="text-align: right;">
-                  <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
-                </div>
-                <div style="text-align: right; padding-left: 12px;">
-                  <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPerCategory}%)</span>
-                </div>
-              `).join('');
+              return categories.map(cat => {
+                const weightPercent = totalWeight > 0 ? Math.round(cat.weight / totalWeight * 1000) / 10 : 0;
+                return `
+                  <div style="color: #374151;">${cat.name}</div>
+                  <div style="text-align: right;">
+                    <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
+                  </div>
+                  <div style="text-align: right; padding-left: 12px;">
+                    <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPercent}%)</span>
+                  </div>
+                `;
+              }).join('');
             })()}
           </div>
-          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore.</p>
+          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore basierend auf den enthaltenen Einzelmetriken.</p>
         </div>
 
         <!-- Kategorisierte Score-Übersicht -->
