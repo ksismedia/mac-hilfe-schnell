@@ -278,7 +278,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   const scores = {
     onlineQualityAuthority: calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData
+      manualContentData, manualBacklinkData, manualLocalSEOData
     ),
     websitePerformanceTech: calculateWebsitePerformanceTechScore(realData),
     socialMediaPerformance: calculateSocialMediaPerformanceScore(

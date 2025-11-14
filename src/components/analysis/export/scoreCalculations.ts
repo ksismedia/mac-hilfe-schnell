@@ -131,7 +131,8 @@ export const calculateOnlineQualityAuthorityScore = (
   privacyData: any,
   accessibilityData: any,
   manualContentData: any,
-  manualBacklinkData: any
+  manualBacklinkData: any,
+  manualLocalSEOData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -141,7 +142,7 @@ export const calculateOnlineQualityAuthorityScore = (
     const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
     const currentKeywordsScore = (keywordsScore !== null && !isNaN(keywordsScore)) ? keywordsScore : defaultKeywordsScore;
     
-    const localSEOScore = calculateLocalSEOScore(businessData, realData) || 0;
+    const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
     const contentQualityScore = calculateContentQualityScore(realData, null, businessData, manualContentData) || 0;
     const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
     const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData) || 0;
@@ -310,7 +311,7 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null);
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData): number => {
