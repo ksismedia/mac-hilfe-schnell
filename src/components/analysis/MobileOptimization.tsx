@@ -63,7 +63,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Kombiniert (50% Auto + 50% Manuell)</Badge>}
+            Mobile-Optimierung Check
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                 overallScore >= 90 ? 'bg-yellow-400 text-black' : 
@@ -75,10 +75,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
             </div>
           </CardTitle>
           <CardDescription>
-            {hasManualData 
-              ? `Kombinierter Score aus automatischer und manueller Analyse (je 50%) für ${url}`
-              : `Automatische Analyse der mobilen Benutzerfreundlichkeit für ${url}`
-            }
+            Analyse der mobilen Benutzerfreundlichkeit für {url}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,7 +140,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Smartphone className="h-5 w-5" />
-                Performance-Vergleich (Live-Messung)
+                Performance-Vergleich
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -191,7 +188,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Monitor className="h-5 w-5" />
-                Mobile Kompatibilität (Live-Analyse)
+                Mobile Kompatibilität
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -243,10 +240,10 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
-                Erkannte Probleme (Live-Analyse)
+                Erkannte Probleme
               </CardTitle>
               <CardDescription>
-                Automatisch identifizierte Verbesserungsmöglichkeiten
+                Identifizierte Verbesserungsmöglichkeiten
               </CardDescription>
             </CardHeader>
             <CardContent>
