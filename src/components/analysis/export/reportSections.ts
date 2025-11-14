@@ -423,6 +423,15 @@ export const generateDataPrivacySection = (
   manualDataPrivacyData?: any,
   privacyData?: any
 ) => {
+  // Check for critical technical issues
+  const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
+  const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
+  const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
+  const hasCriticalIssues = hasCriticalViolations || hasNoHSTS || hasPoorSSL;
+  
+  // Cap score at 59% if critical issues are present
+  const displayScore = hasCriticalIssues ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
+  
   // Calculate cookie score based on whether cookie-related violations are active
   const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
   let cookieScore: number;
@@ -438,37 +447,31 @@ export const generateDataPrivacySection = (
     cookieScore = Math.max(30, Math.round((dataPrivacyScore + 15) * 0.8));
   }
   
-  // Check for critical violations in activeViolations (which already filters out deselected ones)
-  const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
-  
   return `
         <!-- DSGVO-Konformität -->
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">
               <span>▶ DSGVO-Konformität</span>
               <div class="header-score-circle ${(() => {
-                const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
-                const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
-                const hasCritical = dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL);
-                const scoreClass = dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red';
-                return hasCritical ? `${scoreClass} critical-border` : scoreClass;
-              })()}">${dataPrivacyScore}%</div>
+                const scoreClass = displayScore >= 90 ? 'yellow' : displayScore >= 61 ? 'green' : 'red';
+                return hasCriticalIssues ? `${scoreClass} critical-border` : scoreClass;
+              })()}">${displayScore}%</div>
             </div>
             <div id="dsgvo-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     
                     <div class="metric-item">
                         <div class="metric-title">DSGVO-Score</div>
-                        <div class="metric-value ${dataPrivacyScore >= 80 ? 'excellent' : dataPrivacyScore >= 60 ? 'good' : dataPrivacyScore >= 40 ? 'warning' : 'danger'}">
-                            ${dataPrivacyScore >= 80 ? 'Vollständig konform' : dataPrivacyScore >= 60 ? 'Grundlegend konform' : dataPrivacyScore >= 40 ? 'Verbesserung nötig' : 'Kritische Mängel'}
+                        <div class="metric-value ${displayScore >= 80 ? 'excellent' : displayScore >= 60 ? 'good' : displayScore >= 40 ? 'warning' : 'danger'}">
+                            ${displayScore >= 80 ? 'Vollständig konform' : displayScore >= 60 ? 'Grundlegend konform' : displayScore >= 40 ? 'Verbesserung nötig' : 'Kritische Mängel'}
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>DSGVO Art. 5-22 Compliance <span style="font-size: 11px; color: #6b7280;">(Einhaltung der Datenschutzgrundsätze und Nutzerrechte gemäß DSGVO, z. B. Rechtmäßigkeit, Transparenz, Löschung und Auskunftspflicht)</span></span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" data-score="${dataPrivacyScore < 60 ? '0-60' : dataPrivacyScore < 80 ? '60-80' : '80-100'}" style="width: ${dataPrivacyScore}%; display: flex; align-items: center; justify-content: center;">
-                                    <span style="color: ${dataPrivacyScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${dataPrivacyScore}%</span>
+                                <div class="progress-fill" data-score="${displayScore < 60 ? '0-60' : displayScore < 80 ? '60-80' : '80-100'}" style="width: ${displayScore}%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${displayScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${displayScore}%</span>
                                 </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
@@ -595,22 +598,13 @@ export const generateDataPrivacySection = (
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">
               <span>▶ Datenschutz & Technische Sicherheit</span>
               <div class="header-score-circle ${(() => {
-                const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
-                const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
-                const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
-                const hasCritical = dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL);
-                const scoreClass = dataPrivacyScore >= 90 ? 'yellow' : dataPrivacyScore >= 61 ? 'green' : 'red';
-                return hasCritical ? `${scoreClass} critical-border` : scoreClass;
-              })()}">${dataPrivacyScore}%</div>
+                const scoreClass = displayScore >= 90 ? 'yellow' : displayScore >= 61 ? 'green' : 'red';
+                return hasCriticalIssues ? `${scoreClass} critical-border` : scoreClass;
+              })()}">${displayScore}%</div>
             </div>
             <div id="datenschutz-content" class="section-content" style="display: none;">
                 ${(() => {
-                  // Check for critical violations despite positive score
-                  const hasCriticalViolations = privacyData?.violations?.some((v: any) => v.severity === 'critical') || false;
-                  const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
-                  const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
-                  
-                  if (dataPrivacyScore > 0 && (hasCriticalViolations || hasNoHSTS || hasPoorSSL)) {
+                  if (hasCriticalIssues) {
                     return `
                       <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 8px; color: #991b1b; font-weight: bold; margin-bottom: 8px; font-size: 15px;">
