@@ -341,6 +341,41 @@ export interface ManualConversionData {
   notes?: string;
 }
 
+export interface ManualMobileData {
+  // Responsive Design
+  viewportConfig: 'correct' | 'incorrect' | 'missing';
+  flexibleLayouts: number; // 0-100%
+  imageOptimization: number; // 0-100%
+  
+  // Mobile Performance
+  mobileLoadTime: number; // seconds
+  coreWebVitals: {
+    lcp: number; // Largest Contentful Paint in seconds
+    fid: number; // First Input Delay in ms
+    cls: number; // Cumulative Layout Shift
+  };
+  mobileFirstIndex: boolean;
+  
+  // Touch Optimization
+  buttonSize: 'touch-friendly' | 'too-small' | 'acceptable';
+  tapDistance: 'sufficient' | 'insufficient' | 'good';
+  scrollBehavior: 'smooth' | 'jerky' | 'acceptable';
+  
+  // Mobile UX
+  navigationMobileFriendly: boolean;
+  readableTextSize: boolean;
+  noHorizontalScrolling: boolean;
+  appropriateInteractiveElements: boolean;
+  
+  // Scores
+  responsiveDesignScore: number; // 0-100
+  performanceScore: number; // 0-100
+  touchOptimizationScore: number; // 0-100
+  overallScore: number; // 0-100
+  
+  notes?: string;
+}
+
 export const useManualData = () => {
   const [manualImprintData, setManualImprintData] = useState<ManualImprintData | null>(null);
   const [manualSocialData, setManualSocialData] = useState<ManualSocialData | null>(null);
@@ -362,6 +397,7 @@ export const useManualData = () => {
   const [manualIndustryReviewData, setManualIndustryReviewData] = useState<ManualIndustryReviewData | null>(null);
   const [manualOnlinePresenceData, setManualOnlinePresenceData] = useState<ManualOnlinePresenceData | null>(null);
   const [manualConversionData, setManualConversionData] = useState<ManualConversionData | null>(null);
+  const [manualMobileData, setManualMobileData] = useState<ManualMobileData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -490,6 +526,11 @@ export const useManualData = () => {
     console.log('Manual Conversion Data Updated:', data);
   }, []);
 
+  const updateManualMobileData = useCallback((data: ManualMobileData | null) => {
+    setManualMobileData(data);
+    console.log('Manual Mobile Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -532,6 +573,8 @@ export const useManualData = () => {
     manualOnlinePresenceData,
     updateManualOnlinePresenceData,
     manualConversionData,
-    updateManualConversionData
+    updateManualConversionData,
+    manualMobileData,
+    updateManualMobileData
   };
 };
