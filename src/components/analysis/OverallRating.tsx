@@ -139,7 +139,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   
   if (staffQualificationScore !== null) cat4Scores.push(staffQualificationScore);
   if (hourlyRateScore !== null) cat4Scores.push(hourlyRateScore);
-  if (quoteResponseScore !== null) cat4Scores.push(quoteResponseScore);
   
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
@@ -150,7 +149,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   
   // Kategorie 6: Qualität · Service · Kundenorientierung
   const cat6Scores = [];
-  if (quoteResponseData && quoteResponseData.responseTime) cat6Scores.push(quoteResponseScore);
+  if (quoteResponseScore !== null) cat6Scores.push(quoteResponseScore);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
   // Gewichteter Gesamtscore aus den 6 Kategorien
