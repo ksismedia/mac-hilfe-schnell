@@ -74,13 +74,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       if (counts.videos > 0) diversityScore += 15;
       if (counts.shorts > 0) diversityScore += 10;
       
-      // Content-Menge Score (max 30 Punkte)
+      // Content-Menge Score (max 40 Punkte)
       let quantityScore = 0;
-      if (totalCount >= 20) quantityScore = 30;
-      else if (totalCount >= 15) quantityScore = 25;
+      if (totalCount >= 50) quantityScore = 40;
+      else if (totalCount >= 30) quantityScore = 35;
+      else if (totalCount >= 20) quantityScore = 30;
       else if (totalCount >= 10) quantityScore = 20;
-      else if (totalCount >= 5) quantityScore = 15;
-      else quantityScore = totalCount * 3;
+      else if (totalCount >= 5) quantityScore = 10;
+      else quantityScore = totalCount * 2;
       
       // Relevanz-Score (max 30 Punkte) - Eigene Inhalte zählen höher
       const relevanceWeights = { high: 2, medium: 1, low: 0.5 };
@@ -102,7 +103,9 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       
       relevanceScore = Math.min(30, relevanceScore);
       
-      return Math.min(100, Math.round(diversityScore + quantityScore + relevanceScore));
+      // Gesamt: max 110 Punkte (40 + 40 + 30), normalisiert auf 100
+      const totalScore = diversityScore + quantityScore + relevanceScore;
+      return Math.round((totalScore / 110) * 100);
     }
     
     // Detaillierte Eingabe (alte Logik)
