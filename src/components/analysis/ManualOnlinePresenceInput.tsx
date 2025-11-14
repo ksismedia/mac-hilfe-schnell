@@ -16,6 +16,9 @@ interface SimpleCounts {
   images: number;
   videos: number;
   shorts: number;
+  imageRelevance?: 'high' | 'medium' | 'low';
+  videoRelevance?: 'high' | 'medium' | 'low';
+  shortRelevance?: 'high' | 'medium' | 'low';
 }
 
 interface ManualOnlinePresenceInputProps {
@@ -29,7 +32,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
 }) => {
   const [items, setItems] = useState<OnlinePresenceItem[]>(initialData?.items || []);
   const [simpleCounts, setSimpleCounts] = useState<SimpleCounts>(
-    initialData?.simpleCounts || { images: 0, videos: 0, shorts: 0 }
+    initialData?.simpleCounts || { 
+      images: 0, 
+      videos: 0, 
+      shorts: 0,
+      imageRelevance: 'medium',
+      videoRelevance: 'medium',
+      shortRelevance: 'medium'
+    }
   );
   const [useSimpleInput, setUseSimpleInput] = useState(true);
   const [isEditing, setIsEditing] = useState(!initialData?.items?.length && !initialData?.simpleCounts);
@@ -58,8 +68,24 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
       else if (totalCount >= 5) quantityScore = 15;
       else quantityScore = totalCount * 3;
       
-      // Relevanz-Score (max 30 Punkte) - bei einfacher Eingabe angenommen als mittel
-      const relevanceScore = Math.min(30, totalCount * 1.5);
+      // Relevanz-Score (max 30 Punkte) - mit gewichteten Relevanz-Werten
+      const relevanceWeights = { high: 2, medium: 1, low: 0.5 };
+      let relevanceScore = 0;
+      
+      if (counts.images > 0) {
+        const weight = relevanceWeights[counts.imageRelevance || 'medium'];
+        relevanceScore += counts.images * weight;
+      }
+      if (counts.videos > 0) {
+        const weight = relevanceWeights[counts.videoRelevance || 'medium'];
+        relevanceScore += counts.videos * weight;
+      }
+      if (counts.shorts > 0) {
+        const weight = relevanceWeights[counts.shortRelevance || 'medium'];
+        relevanceScore += counts.shorts * weight;
+      }
+      
+      relevanceScore = Math.min(30, relevanceScore);
       
       return Math.min(100, Math.round(diversityScore + quantityScore + relevanceScore));
     }
@@ -280,7 +306,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       type="button"
                       variant="outline"
                       className="flex flex-col items-center p-3 h-auto border-2 border-red-300 hover:bg-red-50 hover:border-red-400"
-                      onClick={() => setSimpleCounts({ images: 2, videos: 1, shorts: 0 })}
+                      onClick={() => setSimpleCounts({ 
+                        images: 2, 
+                        videos: 1, 
+                        shorts: 0,
+                        imageRelevance: 'medium',
+                        videoRelevance: 'medium',
+                        shortRelevance: 'medium'
+                      })}
                     >
                       <span className="text-xs font-semibold text-red-700">Schwach</span>
                       <span className="text-2xl font-bold text-red-600 my-1">~44%</span>
@@ -290,7 +323,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       type="button"
                       variant="outline"
                       className="flex flex-col items-center p-3 h-auto border-2 border-yellow-300 hover:bg-yellow-50 hover:border-yellow-400"
-                      onClick={() => setSimpleCounts({ images: 8, videos: 3, shorts: 2 })}
+                      onClick={() => setSimpleCounts({ 
+                        images: 8, 
+                        videos: 3, 
+                        shorts: 2,
+                        imageRelevance: 'medium',
+                        videoRelevance: 'medium',
+                        shortRelevance: 'medium'
+                      })}
                     >
                       <span className="text-xs font-semibold text-yellow-700">Mittel</span>
                       <span className="text-2xl font-bold text-yellow-600 my-1">~80%</span>
@@ -300,7 +340,14 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       type="button"
                       variant="outline"
                       className="flex flex-col items-center p-3 h-auto border-2 border-green-300 hover:bg-green-50 hover:border-green-400"
-                      onClick={() => setSimpleCounts({ images: 12, videos: 6, shorts: 4 })}
+                      onClick={() => setSimpleCounts({ 
+                        images: 12, 
+                        videos: 6, 
+                        shorts: 4,
+                        imageRelevance: 'high',
+                        videoRelevance: 'high',
+                        shortRelevance: 'high'
+                      })}
                     >
                       <span className="text-xs font-semibold text-green-700">Stark</span>
                       <span className="text-2xl font-bold text-green-600 my-1">100%</span>
@@ -310,7 +357,7 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="simple-images" className="flex items-center gap-2">
                       📷 Bilder
                     </Label>
@@ -326,9 +373,27 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       placeholder="0"
                       className="text-center text-lg font-bold"
                     />
+                    <div className="space-y-1">
+                      <Label htmlFor="image-relevance" className="text-xs text-muted-foreground">
+                        Relevanz
+                      </Label>
+                      <select
+                        id="image-relevance"
+                        value={simpleCounts.imageRelevance || 'medium'}
+                        onChange={(e) => setSimpleCounts({ 
+                          ...simpleCounts, 
+                          imageRelevance: e.target.value as 'high' | 'medium' | 'low'
+                        })}
+                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
+                      >
+                        <option value="high">Hoch</option>
+                        <option value="medium">Mittel</option>
+                        <option value="low">Niedrig</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="simple-videos" className="flex items-center gap-2">
                       🎥 Videos
                     </Label>
@@ -344,9 +409,27 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       placeholder="0"
                       className="text-center text-lg font-bold"
                     />
+                    <div className="space-y-1">
+                      <Label htmlFor="video-relevance" className="text-xs text-muted-foreground">
+                        Relevanz
+                      </Label>
+                      <select
+                        id="video-relevance"
+                        value={simpleCounts.videoRelevance || 'medium'}
+                        onChange={(e) => setSimpleCounts({ 
+                          ...simpleCounts, 
+                          videoRelevance: e.target.value as 'high' | 'medium' | 'low'
+                        })}
+                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
+                      >
+                        <option value="high">Hoch</option>
+                        <option value="medium">Mittel</option>
+                        <option value="low">Niedrig</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="simple-shorts" className="flex items-center gap-2">
                       📱 Shorts/Reels
                     </Label>
@@ -362,6 +445,24 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                       placeholder="0"
                       className="text-center text-lg font-bold"
                     />
+                    <div className="space-y-1">
+                      <Label htmlFor="short-relevance" className="text-xs text-muted-foreground">
+                        Relevanz
+                      </Label>
+                      <select
+                        id="short-relevance"
+                        value={simpleCounts.shortRelevance || 'medium'}
+                        onChange={(e) => setSimpleCounts({ 
+                          ...simpleCounts, 
+                          shortRelevance: e.target.value as 'high' | 'medium' | 'low'
+                        })}
+                        className="w-full px-3 py-2 text-sm border rounded-md bg-background"
+                      >
+                        <option value="high">Hoch</option>
+                        <option value="medium">Mittel</option>
+                        <option value="low">Niedrig</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 

@@ -283,6 +283,9 @@ export interface ManualOnlinePresenceData {
     images: number;
     videos: number;
     shorts: number;
+    imageRelevance?: 'high' | 'medium' | 'low';
+    videoRelevance?: 'high' | 'medium' | 'low';
+    shortRelevance?: 'high' | 'medium' | 'low';
   };
 }
 
