@@ -13,16 +13,30 @@ interface MobileOptimizationProps {
 }
 
 const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, manualMobileData }) => {
-  // Kombiniere automatische und manuelle Daten - Manuelle Daten haben Priorität
+  // Kombiniere automatische und manuelle Daten
   const hasManualData = !!manualMobileData;
   
-  // Berechne kombinierten Score
-  const overallScore = hasManualData ? manualMobileData.overallScore : realData.mobile.overallScore;
+  // Berechne kombinierten Score: Wenn beide vorhanden, gewichteter Durchschnitt (40% auto + 60% manuell)
+  const autoScore = realData.mobile.overallScore;
+  const manualScore = hasManualData ? manualMobileData.overallScore : 0;
+  const overallScore = hasManualData 
+    ? Math.round(autoScore * 0.4 + manualScore * 0.6)
+    : autoScore;
   
-  // Verwende manuelle Daten wo verfügbar, sonst automatische
-  const responsiveDesignScore = hasManualData ? manualMobileData.responsiveDesignScore : (realData.mobile.responsive ? 80 : 40);
-  const performanceScore = hasManualData ? manualMobileData.performanceScore : realData.mobile.overallScore;
-  const touchOptimizationScore = hasManualData ? manualMobileData.touchOptimizationScore : (realData.mobile.touchFriendly ? 80 : 50);
+  // Kombiniere Scores für Detailbereiche
+  const autoResponsiveScore = realData.mobile.responsive ? 80 : 40;
+  const autoPerformanceScore = realData.mobile.overallScore;
+  const autoTouchScore = realData.mobile.touchFriendly ? 80 : 50;
+  
+  const responsiveDesignScore = hasManualData 
+    ? Math.round(autoResponsiveScore * 0.4 + manualMobileData.responsiveDesignScore * 0.6)
+    : autoResponsiveScore;
+  const performanceScore = hasManualData 
+    ? Math.round(autoPerformanceScore * 0.4 + manualMobileData.performanceScore * 0.6)
+    : autoPerformanceScore;
+  const touchOptimizationScore = hasManualData 
+    ? Math.round(autoTouchScore * 0.4 + manualMobileData.touchOptimizationScore * 0.6)
+    : autoTouchScore;
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
@@ -49,7 +63,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Mit manuellen Daten</Badge>}
+            Mobile-Optimierung Check {hasManualData && <Badge variant="outline" className="ml-2">Kombiniert (40% Auto + 60% Manuell)</Badge>}
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                 overallScore >= 90 ? 'bg-yellow-400 text-black' : 
@@ -62,7 +76,7 @@ const MobileOptimization: React.FC<MobileOptimizationProps> = ({ url, realData, 
           </CardTitle>
           <CardDescription>
             {hasManualData 
-              ? `Kombinierte Analyse (automatisch + manuell) für ${url}`
+              ? `Kombinierter Score (Auto: ${autoScore}% + Manuell: ${manualScore}%) für ${url}`
               : `Live-Analyse der mobilen Benutzerfreundlichkeit für ${url}`
             }
           </CardDescription>

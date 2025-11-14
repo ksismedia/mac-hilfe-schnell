@@ -1322,20 +1322,24 @@ export const generateCustomerHTML = ({
 
   // Mobile Optimization Analysis - Enhanced
   const getMobileOptimizationAnalysis = () => {
-    // Use manual data if available, otherwise use realData
-    const mobileScore = manualMobileData?.overallScore || realData.mobile.overallScore;
+    // Kombiniere automatische und manuelle Scores (40% auto + 60% manuell)
+    const autoScore = realData.mobile.overallScore;
+    const manualScore = manualMobileData?.overallScore || 0;
+    const mobileScore = manualMobileData 
+      ? Math.round(autoScore * 0.4 + manualScore * 0.6)
+      : autoScore;
     const scoreClass = mobileScore >= 80 ? 'yellow' : mobileScore >= 60 ? 'green' : 'red';
     
     const isManual = !!manualMobileData;
 
      return `
       <div class="metric-card ${scoreClass}">
-        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombinierte Daten)</span>' : ''}</h3>
+        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert: 40% Auto + 60% Manuell)</span>' : ''}</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-            ${isManual ? '<p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">Basierend auf manuellen Eingaben und automatischer Analyse</p>' : ''}
+            ${isManual ? `<p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">Automatisch: ${autoScore}% | Manuell: ${manualScore}% → Kombiniert: ${mobileScore}%</p>` : ''}
           </div>
         </div>
         ${generateProgressBar(
