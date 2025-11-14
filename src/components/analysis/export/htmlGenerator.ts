@@ -1335,12 +1335,11 @@ export const generateCustomerHTML = ({
 
      return `
       <div class="metric-card ${scoreClass}">
-        <h3>Mobile Optimierung ${isManual ? '<span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert: 50% Auto + 50% Manuell)</span>' : ''}</h3>
+        <h3>Mobile Optimierung</h3>
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
             <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-            ${isManual ? `<p style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">Automatisch: ${autoScore}% | Manuell: ${manualScore}% → Kombiniert: ${mobileScore}%</p>` : ''}
           </div>
         </div>
         ${generateProgressBar(
@@ -3021,18 +3020,17 @@ export const generateCustomerHTML = ({
       return `
     <div class="section">
       <div class="section-header">
-        <span>Mobile Optimierung${isManual ? ' <span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert: 50% + 50%)</span>' : ''}</span>
+        <span>Mobile Optimierung</span>
         <div class="header-score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Mobile Optimierung${isManual ? ' <span style="font-size: 0.8em; color: #3b82f6;">(Kombiniert)</span>' : ''}</h3>
+          <h3>Mobile Optimierung</h3>
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(mobileScore)}">${mobileScore}%</div>
             <div class="score-details">
               <p><strong>Mobile-Friendly:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${mobileScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
-              ${isManual ? `<p style="font-size: 0.85rem; color: #6b7280;">Automatisch: ${autoMobileScore}% | Manuell: ${manualMobileScore}% → ${mobileScore}%</p>` : ''}
             </div>
           </div>`;
     })()}
