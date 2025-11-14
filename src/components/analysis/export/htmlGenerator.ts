@@ -1329,12 +1329,12 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
-            <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 70 ? 'Hoch' : mobileScore >= 40 ? 'Mittel' : 'Niedrig'}</p>
+            <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
           </div>
         </div>
         ${generateProgressBar(
           mobileScore,
-          `${mobileScore >= 70 ? 'Sehr gute mobile Optimierung' : 'Mobile Optimierung verbessern für mehr Nutzer'}`
+          `${mobileScore >= 90 ? 'Exzellente mobile Optimierung' : mobileScore >= 61 ? 'Gute mobile Optimierung' : 'Mobile Optimierung sollte verbessert werden'}`
         )}
         
         <!-- Responsive Design -->
@@ -1342,7 +1342,7 @@ export const generateCustomerHTML = ({
           <h4>Responsive Design</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
-              <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 70 ? 'Korrekt' : 'Fehlerhaft'}</p>
+              <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore))}" style="width: ${Math.max(40, mobileScore)}%; display: flex; align-items: center; justify-content: center;">
