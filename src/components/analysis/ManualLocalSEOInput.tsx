@@ -68,7 +68,8 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
 
   useEffect(() => {
     onDataChange(formData);
-  }, [formData, onDataChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   const addDirectory = () => {
     if (newDirectory.name) {
