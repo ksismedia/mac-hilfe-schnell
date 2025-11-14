@@ -521,6 +521,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualLocalSEOData={manualLocalSEOData}
                   manualIndustryReviewData={manualIndustryReviewData}
                   manualOnlinePresenceData={manualOnlinePresenceData}
+                  manualConversionData={manualConversionData}
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
                 />
