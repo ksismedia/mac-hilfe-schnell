@@ -356,7 +356,16 @@ export const generateCustomerHTML = ({
   const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
   
   // Calculate additional scores - use proper calculation
-  const actualPricingScore = calculateHourlyRateScore(hourlyRateData);
+  // Hourly Rate Score - nur berechnen wenn gültige Daten vorhanden
+  const hasValidHourlyRateData = hourlyRateData && (
+    hourlyRateData.meisterRate > 0 || 
+    hourlyRateData.facharbeiterRate > 0 || 
+    hourlyRateData.azubiRate > 0 || 
+    hourlyRateData.helferRate > 0 || 
+    hourlyRateData.serviceRate > 0 || 
+    hourlyRateData.installationRate > 0
+  );
+  const actualPricingScore = hasValidHourlyRateData ? calculateHourlyRateScore(hourlyRateData) : 0;
   const pricingScore = actualPricingScore;
   const pricingText = 
     actualPricingScore === 100 ? 'Region/Top-Niveau' : 
@@ -411,7 +420,7 @@ export const generateCustomerHTML = ({
   // Kategorie 4: Markt & Marktumfeld
   const cat4Scores = [
     marketComparisonScore,
-    hourlyRateData ? Math.round(pricingScore) : 0,
+    hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
     workplaceScore !== -1 ? workplaceScore : 0,
     staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
   ].filter(s => s > 0);
@@ -2216,7 +2225,7 @@ export const generateCustomerHTML = ({
               const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
               const cat4Scores = [
                 allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
-                hourlyRateData ? Math.round(pricingScore) : 0,
+                hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
                 workplaceScore !== -1 ? workplaceScore : 0,
                 staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
               ].filter(s => s > 0);

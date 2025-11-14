@@ -575,7 +575,7 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
     hourlyRateData.regionalInstallationRate
   ].filter(rate => rate > 0);
   
-  if (ownRates.length === 0 || regionalRates.length === 0) return 75;
+  if (ownRates.length === 0 || regionalRates.length === 0) return 0; // Keine Daten = kein Score
   
   const avgOwnRate = ownRates.reduce((sum, rate) => sum + rate, 0) / ownRates.length;
   const avgRegionalRate = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
