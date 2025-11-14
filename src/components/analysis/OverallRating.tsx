@@ -30,6 +30,7 @@ interface OverallRatingProps {
   manualLocalSEOData?: ManualLocalSEOData | null;
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
+  manualConversionData?: any | null;
   privacyData?: any;
   accessibilityData?: any;
 }
@@ -51,6 +52,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   manualLocalSEOData,
   manualIndustryReviewData,
   manualOnlinePresenceData,
+  manualConversionData,
   privacyData,
   accessibilityData
 }) => {
@@ -117,7 +119,17 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
   // Kategorie 2: Webseiten-Performance & Technik
-  const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore) / 2);
+  const conversionScore = manualConversionData ? (manualConversionData.overallScore || 0) : 0;
+  const cat2Scores = [
+    realData.performance.score,
+    realData.mobile.overallScore
+  ];
+  
+  if (conversionScore > 0) {
+    cat2Scores.push(conversionScore);
+  }
+  
+  const cat2Avg = cat2Scores.length > 0 ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) : 0;
   
   // Kategorie 3: Online-/Web-/Social-Media Performance
   const cat3Scores = [
