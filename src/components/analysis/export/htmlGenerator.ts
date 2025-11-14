@@ -2119,7 +2119,7 @@ export const generateCustomerHTML = ({
         <!-- Kompakte Kategorie-Aufschlüsselung -->
         <div style="margin-bottom: 30px; padding: 15px; background: rgba(251, 191, 36, 0.05); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">
           <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
-          <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; font-size: 0.85rem;">
+          <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
             ${(() => {
               // Kategorie 1: Online-Qualität · Relevanz · Autorität
               const cat1Scores = [
@@ -2175,15 +2175,21 @@ export const generateCustomerHTML = ({
                 { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg }
               ].filter(cat => cat.score > 0);
 
+              // Berechne die Gewichtung (alle Kategorien sind gleich gewichtet)
+              const weightPerCategory = categories.length > 0 ? Math.round(100 / categories.length * 10) / 10 : 0;
+
               return categories.map(cat => `
                 <div style="color: #374151;">${cat.name}</div>
                 <div style="text-align: right;">
                   <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
                 </div>
+                <div style="text-align: right; padding-left: 12px;">
+                  <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPerCategory}%)</span>
+                </div>
               `).join('');
             })()}
           </div>
-          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Der Gesamtscore ist ein gewichteter Durchschnitt aller Einzelmetriken, nicht der arithmetische Mittelwert der Kategorien.</p>
+          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore.</p>
         </div>
 
         <!-- Kategorisierte Score-Übersicht -->
