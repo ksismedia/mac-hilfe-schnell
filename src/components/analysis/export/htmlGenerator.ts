@@ -369,17 +369,85 @@ export const generateCustomerHTML = ({
   
   const legalScore = impressumScore;
   
+  // ========================================
+  // KATEGORIE-BASIERTE GESAMTSCORE-BERECHNUNG
+  // ========================================
   
-  // Calculate overall score
+  // Berechne Gewichte basierend auf den tatsächlichen Metriken
+  let cat1Weight = 24 + 14 + 9 + 8; // Local SEO + SEO + Impressum + Keywords = 55
+  let cat2Weight = 11 + 6; // Performance + Mobile = 17
+  let cat3Weight = 7 + 6 + 4; // Bewertungen + Social Media + Social Proof = 17
+  let cat4Weight = 1 + 2; // Konkurrenz + Arbeitsplatz = 3
+  let cat5Weight = 0; // Corporate Identity
+  let cat6Weight = 0; // Angebotsbearbeitung
+  
+  // Optionale Metriken hinzufügen
+  if (manualContentData) cat1Weight += 5;
+  if (manualAccessibilityData || accessibilityData) cat1Weight += 4;
+  if (manualBacklinkData) cat1Weight += 5;
+  if (manualDataPrivacyData || privacyData) cat1Weight += 6;
+  if (manualIndustryReviewData?.overallScore > 0) cat3Weight += 4;
+  if (manualOnlinePresenceData?.overallScore > 0) cat3Weight += 3;
+  if (hourlyRateData) cat4Weight += 4;
+  if (staffQualificationData && staffQualificationData.totalEmployees > 0) cat4Weight += 8;
+  if (manualCorporateIdentityData) cat5Weight += 5;
+  if (quoteResponseData && quoteResponseData.responseTime) cat6Weight += 6;
+  
+  // Berechne Kategorie-Scores (ungewichteter Durchschnitt innerhalb jeder Kategorie)
+  
+  // Kategorie 1: Online-Qualität · Relevanz · Autorität
+  const cat1Scores = [
+    realData.seo.score,
+    localSEOScore,
+    accessibilityScore > 0 ? accessibilityScore : 0,
+    dsgvoScore > 0 ? dsgvoScore : 0,
+    impressumScore
+  ].filter(s => s > 0);
+  const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
+  
+  // Kategorie 2: Webseiten-Performance & Technik
+  const conversionScore = 67;
+  const cat2Avg = Math.round((realData.performance.score + realData.mobile.overallScore + conversionScore) / 3);
+  
+  // Kategorie 3: Online-/Web-/Social-Media Performance
+  const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
+  const onlinePresenceScoreCalc = manualOnlinePresenceData?.overallScore || 0;
+  const cat3Scores = [
+    socialMediaScore > 0 ? socialMediaScore : 0,
+    reputationScore,
+    industryReviewScore,
+    onlinePresenceScoreCalc
+  ].filter(s => s > 0);
+  const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
+  
+  // Kategorie 4: Markt & Marktumfeld
+  const cat4Scores = [
+    marketComparisonScore,
+    hourlyRateData ? Math.round(pricingScore) : 0,
+    workplaceScore !== -1 ? workplaceScore : 0,
+    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+  ].filter(s => s > 0);
+  const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+  
+  // Kategorie 5: Außendarstellung & Erscheinungsbild
+  const cat5Avg = Math.round(corporateIdentityScore);
+  
+  // Kategorie 6: Qualität · Service · Kundenorientierung
+  const cat6Scores = [
+    quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
+  ].filter(s => s > 0);
+  const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
+  
+  // Gewichteter Gesamtscore aus den 6 Kategorien
+  const totalCategoryWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
   const overallScore = Math.round((
-    realData.seo.score * 0.2 + 
-    realData.performance.score * 0.15 + 
-    realData.mobile.overallScore * 0.15 +
-    socialMediaScore * 0.15 +
-    reputationScore * 0.15 +
-    impressumScore * 0.1 +
-    accessibilityScore * 0.1
-  ));
+    cat1Avg * cat1Weight +
+    cat2Avg * cat2Weight +
+    cat3Avg * cat3Weight +
+    cat4Avg * cat4Weight +
+    cat5Avg * cat5Weight +
+    cat6Avg * cat6Weight
+  ) / totalCategoryWeight);
   
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
