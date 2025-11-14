@@ -212,9 +212,10 @@ export const calculateWebsitePerformanceTechScore = (realData: RealBusinessData,
     calculateConversionScore(manualConversionData) : 0;
   
   // Kombiniere automatische und manuelle Mobile-Scores (50% auto + 50% manuell)
+  // Nur kombinieren wenn manuelle Daten vorhanden UND Score > 0
   const autoMobileScore = realData.mobile?.overallScore || 0;
   const manualMobileScore = manualMobileData?.overallScore || 0;
-  const mobileScore = manualMobileData 
+  const mobileScore = (manualMobileData && manualMobileScore > 0)
     ? Math.round((autoMobileScore + manualMobileScore) / 2)
     : autoMobileScore;
   
