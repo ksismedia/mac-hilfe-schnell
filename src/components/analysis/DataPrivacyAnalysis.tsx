@@ -115,12 +115,21 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       });
     }
     
-    // Check if there are any critical violations (not deselected)
+    // Check for critical issues - both legal violations AND technical problems
     const criticalViolations = getAllViolations().filter(v => v.severity === 'critical');
+    
+    // Check for critical technical issues
+    const securityHeaders = privacyData?.realApiData?.securityHeaders;
+    const hasNoHSTS = !securityHeaders?.headers?.['Strict-Transport-Security']?.present && 
+                       !privacyData?.realApiData?.ssl?.hasHSTS;
+    const sslRating = privacyData?.sslRating;
+    const hasPoorSSL = sslRating === 'F' || sslRating === 'D';
+    const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
+    
     const finalScore = Math.round(Math.max(0, Math.min(100, score)));
     
-    // Cap at 59% if there are any critical violations
-    if (criticalViolations.length > 0) {
+    // Cap at 59% if there are any critical violations OR critical technical issues
+    if (criticalViolations.length > 0 || hasCriticalTechnicalIssues) {
       return Math.min(59, finalScore);
     }
     
