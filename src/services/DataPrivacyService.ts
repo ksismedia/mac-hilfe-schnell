@@ -390,22 +390,26 @@ export class DataPrivacyService {
       score -= 30;
     }
 
-    // Violations
+    // Violations - Kritische Fehler deutlich schwerer gewichten
     violations.forEach(v => {
       switch (v.severity) {
-        case 'critical': score -= 15; break;
-        case 'high': score -= 10; break;
-        case 'medium': score -= 5; break;
-        case 'low': score -= 2; break;
+        case 'critical': score -= 30; break;  // Kritisch: 30 Punkte Abzug (statt 15)
+        case 'high': score -= 15; break;      // Hoch: 15 Punkte Abzug (statt 10)
+        case 'medium': score -= 8; break;     // Mittel: 8 Punkte Abzug (statt 5)
+        case 'low': score -= 3; break;        // Niedrig: 3 Punkte Abzug (statt 2)
       }
     });
 
     const finalScore = Math.max(0, Math.min(100, Math.round(score)));
     
-    // Cap at 59% if there are any critical violations
-    const hasCriticalViolations = violations.some(v => v.severity === 'critical');
-    if (hasCriticalViolations) {
-      return Math.min(59, finalScore);
+    // Bei mehreren kritischen Verstößen deutlich schärfere Caps
+    const criticalCount = violations.filter(v => v.severity === 'critical').length;
+    if (criticalCount >= 3) {
+      return Math.min(20, finalScore);  // 3+ kritische = max 20%
+    } else if (criticalCount === 2) {
+      return Math.min(35, finalScore);  // 2 kritische = max 35%
+    } else if (criticalCount === 1) {
+      return Math.min(50, finalScore);  // 1 kritischer = max 50%
     }
 
     return finalScore;
