@@ -137,6 +137,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
       console.log('Analysis Name:', analysisName);
       console.log('Business Data:', businessData);
       console.log('Manual Data:', manualData);
+      console.log('📍 Local SEO Data being saved:', manualLocalSEOData);
+      console.log('📍 Directories being saved:', manualLocalSEOData?.directories);
 
       let analysisId = currentAnalysisId;
       
