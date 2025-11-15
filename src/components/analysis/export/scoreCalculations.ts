@@ -775,11 +775,11 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // Check if there are any critical violations (not deselected)
   const hasCriticalViolations = () => {
     const activeCriticalAuto = totalViolations.some((violation: any, index: number) => 
-      violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
+      (violation.severity === 'critical' || violation.severity === 'high') && !deselectedViolations.includes(`auto-${index}`)
     );
     
     const criticalCustom = customViolations.some((violation: any) => 
-      violation.severity === 'critical'
+      violation.severity === 'critical' || violation.severity === 'high'
     );
     
     return activeCriticalAuto || criticalCustom;
@@ -787,9 +787,9 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   const finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // Cap at 59% if there are any critical violations
+  // Set to exactly 59% if there are any critical violations
   if (hasCriticalViolations()) {
-    return Math.min(59, finalScore);
+    return 59;
   }
   
   return finalScore;
@@ -858,13 +858,13 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   
   const finalScore = Math.round(score);
   
-  // Cap at 59% if critical technical issues exist
+  // Set to exactly 59% if critical technical issues exist
   const hasCriticalTechnicalIssues = 
     (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
     !hasHSTS;
   
   if (hasCriticalTechnicalIssues) {
-    return Math.min(59, finalScore);
+    return 59;
   }
   
   return finalScore;
