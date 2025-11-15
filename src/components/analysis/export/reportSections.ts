@@ -433,8 +433,8 @@ export const generateDataPrivacySection = (
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
   // GETRENNTE BEWERTUNG:
-  // DSGVO-Score (rechtliche Aspekte) - bei kritischen rechtlichen Verstößen auf genau 59% setzen
-  const dsgvoScore = hasCriticalViolations ? 59 : dataPrivacyScore;
+  // DSGVO-Score (rechtliche Aspekte) - Nutze dataPrivacyScore direkt (Caps werden in calculateDataPrivacyScore angewendet)
+  const dsgvoScore = dataPrivacyScore;
   
   // Technische Sicherheit-Score (SSL, HSTS, Security Headers) - bei kritischen technischen Problemen auf genau 59% setzen
   let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData);
