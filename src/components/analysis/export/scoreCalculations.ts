@@ -948,7 +948,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   return finalScore;
 };
 
-// Berechnet Datenschutz & Technische Sicherheit (SSL, Security Headers)
+// Berechnet Technische Sicherheit (SSL, Security Headers)
 export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   if (!privacyData) {
     return 0;
