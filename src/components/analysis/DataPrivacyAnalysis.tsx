@@ -75,31 +75,28 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     }
   };
 
-  // Calculate effective score considering manual overrides and violation changes
-  const getEffectiveScore = () => {
-    // If manual score override is set, use it (but still cap at 59% if critical violations exist)
+  // Calculate DSGVO score (only legal violations)
+  const getDSGVOScore = () => {
     const hasManualOverride = manualDataPrivacyData?.overallScore !== undefined;
     
-    // Otherwise use the original score from the service
     if (!privacyData && !hasManualOverride) return 0;
     
-    // Start with the original calculated score or manual override
-    let score = hasManualOverride ? manualDataPrivacyData.overallScore : privacyData.score;
+    // Start with 100 base score for DSGVO (legal aspects only)
+    let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
     
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const customViolations = manualDataPrivacyData?.customViolations || [];
     const totalViolations = privacyData?.violations || [];
     
-    // Only apply violation adjustments if not using manual override
     if (!hasManualOverride) {
-      // Add back points for deselected violations
+      // Subtract points for violations (not deselected)
       totalViolations.forEach((violation, index) => {
-        if (deselectedViolations.includes(`auto-${index}`)) {
+        if (!deselectedViolations.includes(`auto-${index}`)) {
           switch (violation.severity) {
-            case 'critical': score += 15; break;
-            case 'high': score += 10; break;
-            case 'medium': score += 5; break;
-            case 'low': score += 2; break;
+            case 'critical': score -= 15; break;
+            case 'high': score -= 10; break;
+            case 'medium': score -= 5; break;
+            case 'low': score -= 2; break;
           }
         }
       });
@@ -115,21 +112,87 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       });
     }
     
-    // Check for critical issues - both legal violations AND technical problems
-    const criticalViolations = getAllViolations().filter(v => v.severity === 'critical');
-    
-    // Check for critical technical issues
-    const securityHeaders = privacyData?.realApiData?.securityHeaders;
-    const hasNoHSTS = !securityHeaders?.headers?.['Strict-Transport-Security']?.present && 
-                       !privacyData?.realApiData?.ssl?.hasHSTS;
-    const sslRating = privacyData?.sslRating;
-    const hasPoorSSL = sslRating === 'F' || sslRating === 'D' || sslRating === 'E' || sslRating === 'T';
-    const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
+    // Check if there are any critical violations (not deselected)
+    const hasCriticalViolations = () => {
+      const activeCriticalAuto = totalViolations.some((violation, index) => 
+        violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
+      );
+      
+      const criticalCustom = customViolations.some(violation => 
+        violation.severity === 'critical'
+      );
+      
+      return activeCriticalAuto || criticalCustom;
+    };
     
     const finalScore = Math.round(Math.max(0, Math.min(100, score)));
     
-    // Cap at 59% if there are any critical violations OR critical technical issues
-    if (criticalViolations.length > 0 || hasCriticalTechnicalIssues) {
+    // Cap at 59% if there are any critical legal violations
+    if (hasCriticalViolations()) {
+      return Math.min(59, finalScore);
+    }
+    
+    return finalScore;
+  };
+
+  // Calculate Technical Security score (only technical issues)
+  const getTechnicalSecurityScore = () => {
+    if (!privacyData) return 0;
+    
+    let score = 0;
+    let componentCount = 0;
+    
+    // SSL Score (60% weight)
+    const sslGrade = privacyData?.sslRating;
+    if (sslGrade) {
+      componentCount++;
+      const sslScore = (() => {
+        switch (sslGrade) {
+          case 'A+': return 100;
+          case 'A': return 95;
+          case 'B': return 80;
+          case 'C': return 70;
+          case 'D': return 50;
+          case 'E': return 30;
+          case 'F': return 10;
+          case 'T': return 5;
+          default: return 0;
+        }
+      })();
+      score += sslScore * 0.6;
+    }
+    
+    // Security Headers Score (40% weight)
+    const securityHeaders = privacyData?.realApiData?.securityHeaders;
+    const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
+                     privacyData?.realApiData?.ssl?.hasHSTS;
+    
+    if (securityHeaders) {
+      componentCount++;
+      let headerScore = 0;
+      
+      const headers = securityHeaders.headers || {};
+      const csp = headers['Content-Security-Policy']?.present;
+      const xFrame = headers['X-Frame-Options']?.present;
+      const xContent = headers['X-Content-Type-Options']?.present;
+      const referrer = headers['Referrer-Policy']?.present;
+      
+      const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
+      headerScore = Math.round((presentHeaders / 5) * 100);
+      
+      score += headerScore * 0.4;
+    }
+    
+    if (componentCount === 0) return 0;
+    
+    const finalScore = Math.round(score);
+    
+    // Cap at 59% if critical technical issues exist
+    const hasCriticalTechnicalIssues = 
+      (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
+      !hasHSTS;
+    
+    if (hasCriticalTechnicalIssues) {
       return Math.min(59, finalScore);
     }
     
@@ -138,14 +201,14 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
 
   // Check if there are critical violations despite positive score
   const hasCriticalViolationsWithPositiveScore = () => {
-    const score = getEffectiveScore();
+    const score = getDSGVOScore();
     const criticalViolations = getAllViolations().filter(v => v.severity === 'critical');
     return score > 0 && criticalViolations.length > 0;
   };
 
   useEffect(() => {
     if (privacyData && onDataChange) {
-      const effectiveScore = getEffectiveScore();
+      const effectiveScore = getDSGVOScore();
       const activeViolations = getAllViolations();
       
       // Always update when manual data changes to ensure export gets correct score and violations
@@ -173,7 +236,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   // Initial update when privacyData is first loaded
   useEffect(() => {
     if (privacyData && onDataChange && !manualDataPrivacyData?.overallScore) {
-      const effectiveScore = getEffectiveScore();
+      const effectiveScore = getDSGVOScore();
       const activeViolations = getAllViolations();
       
       const updatedData = {
@@ -306,7 +369,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
               
               <TabsContent value="analysis" className="space-y-6">
                 {/* Legal Warning for Data Privacy Issues */}
-                {(getAllViolations().length > 0 || getEffectiveScore() < 90) && (
+                {(getAllViolations().length > 0 || getDSGVOScore() < 90) && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                       <Scale className="h-5 w-5" />
@@ -331,12 +394,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     DSGVO-Konformität
                     <div 
                       className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                        getEffectiveScore() >= 90 ? 'bg-yellow-400 text-black' : 
-                        getEffectiveScore() >= 61 ? 'bg-green-500 text-white' : 
+                        getDSGVOScore() >= 90 ? 'bg-yellow-400 text-black' : 
+                        getDSGVOScore() >= 61 ? 'bg-green-500 text-white' : 
                         'bg-red-500 text-white'
                       }`}
                     >
-                      {getEffectiveScore()}%
+                      {getDSGVOScore()}%
                     </div>
                   </CardTitle>
                   <CardDescription>
@@ -368,10 +431,10 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className={`text-4xl font-bold ${getScoreColor(getEffectiveScore())} mb-2`}>
-                        {getEffectiveScore()}%
+                      <div className={`text-4xl font-bold ${getScoreColor(getDSGVOScore())} mb-2`}>
+                        {getDSGVOScore()}%
                       </div>
-                      <Badge variant={getScoreBadge(getEffectiveScore())}>
+                      <Badge variant={getScoreBadge(getDSGVOScore())}>
                         {privacyData.gdprComplianceLevel}
                       </Badge>
                     </div>
@@ -406,11 +469,11 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>DSGVO-Konformität</span>
-                      <span className={getScoreColor(getEffectiveScore())}>
-                        {getEffectiveScore()}/100
+                      <span className={getScoreColor(getDSGVOScore())}>
+                        {getDSGVOScore()}/100
                       </span>
                     </div>
-                    <Progress value={getEffectiveScore()} className="h-3" />
+                    <Progress value={getDSGVOScore()} className="h-3" />
                   </div>
 
                   {/* DSGVO Parameters */}
@@ -469,12 +532,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     Datenschutz & Technische Sicherheit
                     <div 
                       className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                        getEffectiveScore() >= 90 ? 'bg-yellow-400 text-black' : 
-                        getEffectiveScore() >= 61 ? 'bg-green-500 text-white' : 
+                        getTechnicalSecurityScore() >= 90 ? 'bg-yellow-400 text-black' : 
+                        getTechnicalSecurityScore() >= 61 ? 'bg-green-500 text-white' : 
                         'bg-red-500 text-white'
                       }`}
                     >
-                      {getEffectiveScore()}%
+                      {getTechnicalSecurityScore()}%
                     </div>
                   </CardTitle>
                   <CardDescription>
@@ -528,7 +591,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         } else if (!hasCookieViolations) {
                           cookieScore = 100;
                         } else {
-                          cookieScore = Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
+                          cookieScore = Math.max(30, Math.round((getTechnicalSecurityScore() + 15) * 0.8));
                         }
                         
                         return cookieScore >= 70 ? 'text-green-600' : cookieScore >= 50 ? 'text-yellow-600' : 'text-red-600';
@@ -542,7 +605,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                           } else if (!hasCookieViolations) {
                             return '100%';
                           } else {
-                            return `${Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8))}%`;
+                            return `${Math.max(30, Math.round((getTechnicalSecurityScore() + 15) * 0.8))}%`;
                           }
                         })()}
                       </span>
@@ -557,7 +620,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         } else if (!hasCookieViolations) {
                           return 100;
                         } else {
-                          return Math.max(30, Math.round((getEffectiveScore() + 15) * 0.8));
+                          return Math.max(30, Math.round((getTechnicalSecurityScore() + 15) * 0.8));
                         }
                       })()} 
                       className="h-3" 
