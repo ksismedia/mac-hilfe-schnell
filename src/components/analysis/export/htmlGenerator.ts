@@ -4204,9 +4204,11 @@ export const generateCustomerHTML = ({
     })()}
 
     <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
+    ${cat6Avg > 0 ? `
     <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
       <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
     </div>
+    ` : ''}
 
     <!-- Reaktionszeit auf Anfragen -->
     ${quoteResponseData && quoteResponseData.responseTime ? `
