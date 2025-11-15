@@ -654,22 +654,30 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   const avgOwnRate = ownRates.reduce((sum, rate) => sum + rate, 0) / ownRates.length;
   const avgRegionalRate = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
   
-  const rateDifference = avgOwnRate - avgRegionalRate;
-  let rateScore = 0;
+  const ratio = avgOwnRate / avgRegionalRate;
+  let score = 0;
 
-  if (rateDifference < -10) {
-    rateScore = 30; // Region/unterdurchschnittlich
-  } else if (rateDifference >= -10 && rateDifference < 0) {
-    rateScore = 50; // Region/unterer Durchschnitt
-  } else if (rateDifference >= 0 && rateDifference <= 10) {
-    rateScore = 85; // Region/marktüblich
-  } else if (rateDifference > 10 && rateDifference <= 20) {
-    rateScore = 100; // Region/Top-Niveau
+  // NEW SCORING LOGIC:
+  // 85-100 Punkte: +10% und mehr vom Markt = Optimal
+  // 60-84 Punkte: -10% bis +9% vom Markt = Akzeptabel
+  // 40-59 Punkte: unter -10% vom Markt = Überprüfung nötig
+  
+  if (ratio >= 1.10) {
+    // +10% oder mehr über Markt = OPTIMAL (85-100 Punkte)
+    // Je höher über 1.10, desto besser der Score
+    const bonus = Math.min((ratio - 1.10) * 50, 15); // Max +15 Punkte für sehr hohe Preise
+    score = Math.min(100, 85 + bonus);
+  } else if (ratio >= 0.90 && ratio < 1.10) {
+    // -10% bis +9% vom Markt = AKZEPTABEL (60-84 Punkte)
+    // Linear zwischen 60 (bei 0.90) und 84 (bei 1.09)
+    score = 60 + ((ratio - 0.90) * 120); // 0.20 Range → 24 Punkte Range (60-84)
   } else {
-    rateScore = 70; // Über 20€ teurer
+    // Unter -10% vom Markt = ÜBERPRÜFUNG NÖTIG (40-59 Punkte)
+    // Je niedriger unter 0.90, desto schlechter
+    score = Math.max(40, 60 + ((ratio - 0.90) * 100));
   }
 
-  return rateScore;
+  return Math.round(Math.max(40, Math.min(100, score)));
 };
 
 export const calculateContentQualityScore = (realData: any, keywordScore: number | null, businessData: any, manualContentData: any): number => {

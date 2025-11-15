@@ -129,15 +129,15 @@ const generateHourlyRateProgressBar = (ratio: number, description: string) => {
   let scoreRange: string;
   
   if (ratio < 0.9) {
-    // Unter 90% des regionalen Durchschnitts → ROT (zu niedrig)
+    // Unter 90% des regionalen Durchschnitts → ROT (zu niedrig, Überprüfung nötig)
     barColor = '#FF0000';
     scoreRange = '0-60';
   } else if (ratio <= 1.1) {
-    // 90-110% des regionalen Durchschnitts → GRÜN (optimal)
+    // 90-110% des regionalen Durchschnitts → GRÜN (akzeptabel)
     barColor = '#22c55e';
     scoreRange = '61-89';
   } else {
-    // Über 110% des regionalen Durchschnitts → GELB (zu hoch)
+    // Über 110% des regionalen Durchschnitts → GOLD (optimal positioniert)
     barColor = '#FFD700';
     scoreRange = '90-100';
   }
@@ -808,28 +808,34 @@ export const generateCustomerHTML = ({
     
     // Calculate competitive score if both company and regional data available
     let localPricingScore = 75; // Default score
-    let localPricingText = 'Über Marktniveau';
+    let localPricingText = 'Akzeptabel';
+    let percentDiff = 0;
+    
     if (companyAvg > 0 && regionalAvg > 0) {
-      const difference = companyAvg - regionalAvg;
+      const ratio = companyAvg / regionalAvg;
+      percentDiff = ((ratio - 1) * 100);
       
-      // Neue Bewertungslogik basierend auf der Differenz
-      if (difference >= -10 && difference < 0) {
-        localPricingScore = 50;
-        localPricingText = 'Region/unterer Durchschnitt';
-      } else if (difference >= 0 && difference <= 10) {
-        localPricingScore = 85;
-        localPricingText = 'Region/marktüblich';
-      } else if (difference > 10 && difference <= 20) {
-        localPricingScore = 100;
-        localPricingText = 'Region/Top-Niveau';
-      } else if (difference > 20) {
-        localPricingScore = 70;
-        localPricingText = 'Über Marktniveau';
+      // NEW SCORING LOGIC:
+      // 85-100 Punkte: +10% und mehr vom Markt = Optimal
+      // 60-84 Punkte: -10% bis +9% vom Markt = Akzeptabel
+      // 40-59 Punkte: unter -10% vom Markt = Überprüfung nötig
+      
+      if (ratio >= 1.10) {
+        // +10% oder mehr über Markt = OPTIMAL (85-100 Punkte)
+        const bonus = Math.min((ratio - 1.10) * 50, 15);
+        localPricingScore = Math.min(100, 85 + bonus);
+        localPricingText = 'Optimal positioniert';
+      } else if (ratio >= 0.90 && ratio < 1.10) {
+        // -10% bis +9% vom Markt = AKZEPTABEL (60-84 Punkte)
+        localPricingScore = 60 + ((ratio - 0.90) * 120);
+        localPricingText = 'Akzeptabel, Optimierung empfohlen';
       } else {
-        // Difference < -10
-        localPricingScore = 30;
-        localPricingText = 'Region/unterdurchschnittlich';
+        // Unter -10% vom Markt = ÜBERPRÜFUNG NÖTIG (40-59 Punkte)
+        localPricingScore = Math.max(40, 60 + ((ratio - 0.90) * 100));
+        localPricingText = 'Zu niedrig, Überprüfung nötig';
       }
+      
+      localPricingScore = Math.round(Math.max(40, Math.min(100, localPricingScore)));
     }
     return `
       <div class="metric-card">
@@ -895,9 +901,11 @@ export const generateCustomerHTML = ({
       <div class="metric-card">
         <h3>Bewertung der Preisstrategie</h3>
         <p>${
-          localPricingScore >= 85 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes und sind wettbewerbsfähig.' :
-          localPricingScore >= 50 ? 'Ihre Preise sind grundsätzlich wettbewerbsfähig, haben aber Optimierungspotenzial.' :
-          'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Eine Überprüfung Ihrer Preispositionierung wird empfohlen.'
+          localPricingScore >= 85 ? 
+            `Ausgezeichnet! Ihre Preisstrategie ist optimal positioniert (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt). Sie liegen mindestens 10% über dem regionalen Durchschnitt und können damit höhere Margen erzielen.` :
+          localPricingScore >= 60 ? 
+            `Ihre Preise sind akzeptabel (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt), aber es gibt Optimierungspotenzial. Prüfen Sie, ob Preiserhöhungen möglich sind, um näher an oder über 10% über dem Markt zu kommen.` :
+            `Achtung: Ihre Preise liegen deutlich unter dem Markt (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt). Sie verschenken Gewinnpotenzial. Eine Preiserhöhung sollte dringend geprüft werden.`
         }</p>
       </div>
       ` : ''}
