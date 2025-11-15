@@ -433,13 +433,13 @@ export const generateDataPrivacySection = (
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
   // GETRENNTE BEWERTUNG:
-  // DSGVO-Score (rechtliche Aspekte) - NUR bei kritischen rechtlichen Verstößen auf 59% begrenzt
-  const dsgvoScore = hasCriticalViolations ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
+  // DSGVO-Score (rechtliche Aspekte) - bei kritischen rechtlichen Verstößen auf genau 59% setzen
+  const dsgvoScore = hasCriticalViolations ? 59 : dataPrivacyScore;
   
-  // Technische Sicherheit-Score (SSL, HSTS, Security Headers) - NUR bei kritischen technischen Problemen auf 59% begrenzt
+  // Technische Sicherheit-Score (SSL, HSTS, Security Headers) - bei kritischen technischen Problemen auf genau 59% setzen
   let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
   if (hasCriticalTechnicalIssues) {
-    technicalSecurityScore = Math.min(59, technicalSecurityScore);
+    technicalSecurityScore = 59;
   }
   
   // Calculate cookie score based on whether cookie-related violations are active
