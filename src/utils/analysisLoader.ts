@@ -135,6 +135,8 @@ export const loadSavedAnalysisData = (
   
   if (savedAnalysis.manualData?.manualLocalSEOData && updateManualLocalSEOData) {
     console.log('Loading manual local SEO data');
+    console.log('📍 Local SEO Data from saved analysis:', JSON.stringify(savedAnalysis.manualData.manualLocalSEOData, null, 2));
+    console.log('📍 Directories in saved data:', savedAnalysis.manualData.manualLocalSEOData.directories);
     updateManualLocalSEOData(savedAnalysis.manualData.manualLocalSEOData);
   }
   

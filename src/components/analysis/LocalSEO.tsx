@@ -71,6 +71,8 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
   };
 
   const handleManualDataSave = (data: ManualLocalSEOData) => {
+    console.log('📍 LocalSEO handleManualDataSave called with:', data);
+    console.log('📍 Directories in data:', data.directories);
     if (onManualDataChange) {
       onManualDataChange(data);
       setIsEditMode(false);
