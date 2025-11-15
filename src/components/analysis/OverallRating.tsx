@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateIndustryReviewScore, calculateOnlinePresenceScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateIndustryReviewScore, calculateOnlinePresenceScore, calculateCorporateIdentityScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 // Helper function to calculate Google Reviews Score (same as in scoreCalculations.ts)
@@ -55,6 +55,7 @@ interface OverallRatingProps {
   manualConversionData?: any | null;
   privacyData?: any;
   accessibilityData?: any;
+  manualCorporateIdentityData?: ManualCorporateIdentityData | null;
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ 
@@ -76,7 +77,8 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   manualOnlinePresenceData,
   manualConversionData,
   privacyData,
-  accessibilityData
+  accessibilityData,
+  manualCorporateIdentityData
 }) => {
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
@@ -132,6 +134,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat1Scores = [
     realData.seo.score,
     localSEOScore,
+    currentKeywordsScore,
     realData.imprint.score
   ].filter(s => s > 0);
   
@@ -181,8 +184,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
   // Kategorie 5: Außendarstellung & Erscheinungsbild
+  const corporateIdentityScore = manualCorporateIdentityData ? calculateCorporateIdentityScore(manualCorporateIdentityData) : null;
   const cat5Scores = [];
-  // Hier könnte Corporate Identity Score rein, wenn vorhanden
+  if (corporateIdentityScore !== null) cat5Scores.push(corporateIdentityScore);
   const cat5Avg = cat5Scores.length > 0 ? Math.round(cat5Scores.reduce((a, b) => a + b, 0) / cat5Scores.length) : 0;
   
   // Kategorie 6: Qualität · Service · Kundenorientierung
