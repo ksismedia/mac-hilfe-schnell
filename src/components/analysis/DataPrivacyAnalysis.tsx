@@ -123,7 +123,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     const hasNoHSTS = !securityHeaders?.headers?.['Strict-Transport-Security']?.present && 
                        !privacyData?.realApiData?.ssl?.hasHSTS;
     const sslRating = privacyData?.sslRating;
-    const hasPoorSSL = sslRating === 'F' || sslRating === 'D';
+    const hasPoorSSL = sslRating === 'F' || sslRating === 'D' || sslRating === 'E' || sslRating === 'T';
     const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
     
     const finalScore = Math.round(Math.max(0, Math.min(100, score)));
