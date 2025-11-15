@@ -247,8 +247,8 @@ export const generateCustomerHTML = ({
   const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
-  // DSGVO-Score: bei kritischen rechtlichen Verstößen auf genau 59% setzen
-  const dsgvoScore = hasCriticalViolations ? 59 : actualDataPrivacyScore;
+  // DSGVO-Score: Nutze calculateDataPrivacyScore (wendet automatisch Caps an: 59%/35%/20%)
+  const dsgvoScore = actualDataPrivacyScore;
   const displayDataPrivacyScore = dsgvoScore > 0 
     ? `${Math.round(dsgvoScore)}%` 
     : '–';
