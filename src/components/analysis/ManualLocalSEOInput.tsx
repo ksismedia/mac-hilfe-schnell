@@ -27,6 +27,10 @@ interface ManualLocalSEOInputProps {
 
 const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, onDataChange }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  
+  console.log('💾 ManualLocalSEOInput - initialData received:', initialData);
+  console.log('💾 ManualLocalSEOInput - directories in initialData:', initialData?.directories);
+  
   const [formData, setFormData] = useState<ManualLocalSEOData>(
     initialData || {
       gmbClaimed: false,
@@ -49,6 +53,9 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
       overallScore: 60
     }
   );
+  
+  console.log('💾 ManualLocalSEOInput - formData after init:', formData);
+  console.log('💾 ManualLocalSEOInput - directories in formData:', formData.directories);
 
   const [newDirectory, setNewDirectory] = useState<{ name: string; status: 'complete' | 'incomplete' | 'not-found' }>({ 
     name: '', 
@@ -71,16 +78,22 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
 
   const addDirectory = () => {
     if (newDirectory.name) {
-      setFormData(prev => ({
-        ...prev,
-        directories: [...prev.directories, {
-          name: newDirectory.name,
-          status: newDirectory.status,
-          claimedByOwner: false,
-          verified: false,
-          completeness: 0
-        }]
-      }));
+      const newDir = {
+        name: newDirectory.name,
+        status: newDirectory.status,
+        claimedByOwner: false,
+        verified: false,
+        completeness: 0
+      };
+      console.log('➕ Adding directory:', newDir);
+      setFormData(prev => {
+        const updated = {
+          ...prev,
+          directories: [...prev.directories, newDir]
+        };
+        console.log('➕ Updated formData directories:', updated.directories);
+        return updated;
+      });
       setNewDirectory({ name: '', status: 'not-found' });
     }
   };
