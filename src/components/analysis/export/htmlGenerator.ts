@@ -381,13 +381,13 @@ export const generateCustomerHTML = ({
   // KATEGORIE-BASIERTE GESAMTSCORE-BERECHNUNG
   // ========================================
   
-  // Feste Gewichtungen für die 6 Hauptkategorien
-  const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
-  const cat2Weight = 20; // Webseiten-Performance & Technik
-  const cat3Weight = 20; // Online-/Web-/Social-Media Performance
-  const cat4Weight = 10; // Markt & Marktumfeld
-  const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
-  const cat6Weight = 10; // Qualität · Service · Kundenorientierung
+  // Basis-Gewichtungen für die 6 Hauptkategorien
+  const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+  const baseCat2Weight = 20; // Webseiten-Performance & Technik
+  const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
+  const baseCat4Weight = 10; // Markt & Marktumfeld
+  const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
+  const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
   
   // Berechne Kategorie-Scores (ungewichteter Durchschnitt innerhalb jeder Kategorie)
   
@@ -456,16 +456,81 @@ export const generateCustomerHTML = ({
   ].filter(s => s > 0);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
-  // Gewichteter Gesamtscore aus den 6 Kategorien
-  const totalCategoryWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
-  const overallScore = Math.round((
-    cat1Avg * cat1Weight +
-    cat2Avg * cat2Weight +
-    cat3Avg * cat3Weight +
-    cat4Avg * cat4Weight +
-    cat5Avg * cat5Weight +
-    cat6Avg * cat6Weight
-  ) / totalCategoryWeight);
+  // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
+  let adjustedCat1Weight = baseCat1Weight;
+  let adjustedCat2Weight = baseCat2Weight;
+  let adjustedCat3Weight = baseCat3Weight;
+  let adjustedCat4Weight = baseCat4Weight;
+  let adjustedCat5Weight = baseCat5Weight;
+  let adjustedCat6Weight = baseCat6Weight;
+
+  // Berechne fehlende Gewichte
+  let missingWeight = 0;
+  const categoriesWithData = [];
+  
+  if (cat1Avg > 0) {
+    categoriesWithData.push('cat1');
+  } else {
+    missingWeight += adjustedCat1Weight;
+    adjustedCat1Weight = 0;
+  }
+  
+  if (cat2Avg > 0) {
+    categoriesWithData.push('cat2');
+  } else {
+    missingWeight += adjustedCat2Weight;
+    adjustedCat2Weight = 0;
+  }
+  
+  if (cat3Avg > 0) {
+    categoriesWithData.push('cat3');
+  } else {
+    missingWeight += adjustedCat3Weight;
+    adjustedCat3Weight = 0;
+  }
+  
+  if (cat4Avg > 0) {
+    categoriesWithData.push('cat4');
+  } else {
+    missingWeight += adjustedCat4Weight;
+    adjustedCat4Weight = 0;
+  }
+  
+  if (cat5Avg > 0) {
+    categoriesWithData.push('cat5');
+  } else {
+    missingWeight += adjustedCat5Weight;
+    adjustedCat5Weight = 0;
+  }
+  
+  if (cat6Avg > 0) {
+    categoriesWithData.push('cat6');
+  } else {
+    missingWeight += adjustedCat6Weight;
+    adjustedCat6Weight = 0;
+  }
+
+  // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
+  if (categoriesWithData.length > 0 && missingWeight > 0) {
+    const additionalWeight = missingWeight / categoriesWithData.length;
+    if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
+    if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
+    if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
+    if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
+    if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
+    if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
+  }
+
+  // Gewichteter Gesamtscore aus den 6 Kategorien mit angepassten Gewichten
+  const totalCategoryWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
+  const overallScore = totalCategoryWeight > 0 ? Math.round((
+    cat1Avg * adjustedCat1Weight +
+    cat2Avg * adjustedCat2Weight +
+    cat3Avg * adjustedCat3Weight +
+    cat4Avg * adjustedCat4Weight +
+    cat5Avg * adjustedCat5Weight +
+    cat6Avg * adjustedCat6Weight
+  ) / totalCategoryWeight) : 0;
   
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
@@ -2226,15 +2291,13 @@ export const generateCustomerHTML = ({
           <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
           <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
             ${(() => {
-              // Feste Gewichtungen für die 6 Hauptkategorien (entspricht den neuen Vorgaben)
-              const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
-              const cat2Weight = 20; // Webseiten-Performance & Technik
-              const cat3Weight = 20; // Online-/Web-/Social-Media Performance
-              const cat4Weight = 10; // Markt & Marktumfeld
-              const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
-              const cat6Weight = 10; // Qualität · Service · Kundenorientierung
-              
-              const totalWeight = 100; // Summe aller Gewichtungen
+              // Basis-Gewichtungen für die 6 Hauptkategorien
+              const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+              const baseCat2Weight = 20; // Webseiten-Performance & Technik
+              const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
+              const baseCat4Weight = 10; // Markt & Marktumfeld
+              const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
+              const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
               
               // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
               const cat1Scores = [
@@ -2301,13 +2364,80 @@ export const generateCustomerHTML = ({
               ].filter(s => s > 0);
               const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
 
+              // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
+              let adjustedCat1Weight = baseCat1Weight;
+              let adjustedCat2Weight = baseCat2Weight;
+              let adjustedCat3Weight = baseCat3Weight;
+              let adjustedCat4Weight = baseCat4Weight;
+              let adjustedCat5Weight = baseCat5Weight;
+              let adjustedCat6Weight = baseCat6Weight;
+
+              // Berechne fehlende Gewichte
+              let missingWeight = 0;
+              const categoriesWithData = [];
+              
+              if (cat1Avg > 0) {
+                categoriesWithData.push('cat1');
+              } else {
+                missingWeight += adjustedCat1Weight;
+                adjustedCat1Weight = 0;
+              }
+              
+              if (cat2Avg > 0) {
+                categoriesWithData.push('cat2');
+              } else {
+                missingWeight += adjustedCat2Weight;
+                adjustedCat2Weight = 0;
+              }
+              
+              if (cat3Avg > 0) {
+                categoriesWithData.push('cat3');
+              } else {
+                missingWeight += adjustedCat3Weight;
+                adjustedCat3Weight = 0;
+              }
+              
+              if (cat4Avg > 0) {
+                categoriesWithData.push('cat4');
+              } else {
+                missingWeight += adjustedCat4Weight;
+                adjustedCat4Weight = 0;
+              }
+              
+              if (cat5Avg > 0) {
+                categoriesWithData.push('cat5');
+              } else {
+                missingWeight += adjustedCat5Weight;
+                adjustedCat5Weight = 0;
+              }
+              
+              if (cat6Avg > 0) {
+                categoriesWithData.push('cat6');
+              } else {
+                missingWeight += adjustedCat6Weight;
+                adjustedCat6Weight = 0;
+              }
+
+              // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
+              if (categoriesWithData.length > 0 && missingWeight > 0) {
+                const additionalWeight = missingWeight / categoriesWithData.length;
+                if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
+                if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
+                if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
+                if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
+                if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
+                if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
+              }
+
+              const totalWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
+
               const categories = [
-                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg, weight: cat1Weight },
-                { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: cat2Weight },
-                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: cat3Weight },
-                { name: 'Markt & Marktumfeld', score: cat4Avg, weight: cat4Weight },
-                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: cat5Weight },
-                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: cat6Weight }
+                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg, weight: adjustedCat1Weight },
+                { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: adjustedCat2Weight },
+                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: adjustedCat3Weight },
+                { name: 'Markt & Marktumfeld', score: cat4Avg, weight: adjustedCat4Weight },
+                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: adjustedCat5Weight },
+                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: adjustedCat6Weight }
               ].filter(cat => cat.score > 0);
 
               return categories.map(cat => {
