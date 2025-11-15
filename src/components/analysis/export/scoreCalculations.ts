@@ -762,16 +762,25 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
   try {
-    // Only set autoScore if we actually have real accessibility data
+    // Calculate automatic score if we have realData
     let autoScore = null;
     let hasAutoData = false;
     
-    if (realData?.violations !== undefined) {
+    if (realData && realData !== null && typeof realData === 'object') {
       hasAutoData = true;
-      autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
+      if (realData.violations !== undefined) {
+        autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
+      } else if (realData.score !== undefined) {
+        autoScore = realData.score;
+      } else {
+        autoScore = 40; // Default if we have realData but no specific scores
+      }
     }
     
+    // Calculate manual score
     let manualScore = 0;
+    let hasManualData = false;
+    
     if (manualAccessibilityData) {
       // Calculate score from checkboxes
       const features = [
@@ -801,30 +810,38 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       // Combine checkbox score (50%) and slider score (50%)
       if (sliderScore > 0 && checkboxScore > 0) {
         manualScore = Math.round(checkboxScore * 0.5 + sliderScore * 0.5);
+        hasManualData = true;
       } else if (sliderScore > 0) {
         manualScore = sliderScore;
+        hasManualData = true;
       } else if (checkboxScore > 0) {
         manualScore = checkboxScore;
+        hasManualData = true;
       }
     }
     
-    // If we have both manual and auto data, combine them
-    if (!isNaN(manualScore) && manualScore > 0 && hasAutoData && autoScore !== null) {
+    // Combine scores based on what data we have
+    if (hasManualData && hasAutoData && autoScore !== null) {
+      // Both data sources: combine them (30% manual, 70% auto)
       const combined = Math.round(manualScore * 0.3 + autoScore * 0.7);
-      return isNaN(combined) ? 40 : Math.max(0, Math.min(100, combined));
+      console.log('🎯 Accessibility: Combining manual (' + manualScore + ') and auto (' + autoScore + ') = ' + combined);
+      return Math.max(0, Math.min(100, combined));
     }
     
-    // If we only have manual data, use it
-    if (!isNaN(manualScore) && manualScore > 0) {
+    if (hasManualData) {
+      // Only manual data available
+      console.log('🎯 Accessibility: Using only manual score: ' + manualScore);
       return Math.max(0, Math.min(100, manualScore));
     }
     
-    // If we only have auto data, use it
     if (hasAutoData && autoScore !== null) {
+      // Only auto data available
+      console.log('🎯 Accessibility: Using only auto score: ' + autoScore);
       return Math.max(0, Math.min(100, autoScore));
     }
     
-    // Default fallback
+    // No data available
+    console.log('🎯 Accessibility: No data available, using default 40');
     return 40;
   } catch (error) {
     console.error('🎯 calculateAccessibilityScore error:', error);
