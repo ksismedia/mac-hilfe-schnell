@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateIndustryReviewScore, calculateOnlinePresenceScore } from './export/scoreCalculations';
+import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateIndustryReviewScore, calculateOnlinePresenceScore } from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 // Helper function to calculate Google Reviews Score (same as in scoreCalculations.ts)
@@ -104,6 +104,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData) : null;
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
   
+  // Technical Security Score (separate from DSGVO)
+  const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData) : null;
+  
   // Industry Reviews and Online Presence
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
   const onlinePresenceScore = manualOnlinePresenceData ? calculateOnlinePresenceScore(manualOnlinePresenceData) : null;
@@ -137,6 +140,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   if (accessibilityScore !== null) cat1Scores.push(accessibilityScore);
   if (backlinksScore !== null) cat1Scores.push(backlinksScore);
   if (dataPrivacyScore !== null) cat1Scores.push(dataPrivacyScore);
+  if (technicalSecurityScore !== null) cat1Scores.push(technicalSecurityScore);
   
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
