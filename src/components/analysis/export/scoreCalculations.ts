@@ -356,11 +356,19 @@ export const calculateLocalSEOScore = (businessData: any, realData: any, manualD
     const autoScore = Number(realData?.seo?.score) || 0;
     
     // Wenn detaillierte manuelle Daten vorhanden sind, berechne Score aus diesen
-    if (manualData && Object.keys(manualData).length > 1) {
+    // Prüfe auf wichtige Felder anstatt nur auf Object.keys().length
+    const hasDetailedData = manualData && (
+      manualData.directories?.length > 0 ||
+      manualData.localKeywordRankings?.length > 0 ||
+      manualData.gmbClaimed !== undefined ||
+      manualData.napConsistencyScore !== undefined
+    );
+    
+    if (hasDetailedData) {
       let detailedScore = 0;
       
       // 1. Google My Business (30 Punkte)
-      if (manualData.gmbClaimed || manualData.gmbVerified) {
+      if (manualData.gmbClaimed !== undefined || manualData.gmbVerified !== undefined) {
         let gmbScore = 0;
         if (manualData.gmbClaimed) gmbScore += 5;
         if (manualData.gmbVerified) gmbScore += 10;
@@ -420,6 +428,13 @@ export const calculateLocalSEOScore = (businessData: any, realData: any, manualD
       
       // Verwende berechneten Score, außer es gibt einen expliziten overallScore
       const calculatedScore = Math.round(Math.min(detailedScore, 100));
+      
+      console.log('📍 Local SEO Score Details:', {
+        hasDetailedData,
+        directories: manualData.directories?.length || 0,
+        calculatedScore,
+        overallScore: manualData.overallScore
+      });
       
       // Wenn ein overallScore gesetzt ist, bevorzuge diesen, sonst nutze den berechneten
       if (manualData.overallScore !== undefined && !isNaN(manualData.overallScore)) {

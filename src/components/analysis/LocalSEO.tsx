@@ -127,24 +127,26 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       lastUpdate: manualData.gmbLastUpdate
     },
     localCitations: {
-      score: Math.round((manualData.directories.filter(d => d.status === 'complete').length / Math.max(1, manualData.directories.length)) * 100),
-      totalCitations: manualData.directories.length,
-      consistent: manualData.directories.filter(d => d.status === 'complete').length,
-      inconsistent: manualData.directories.filter(d => d.status === 'incomplete').length,
-      topDirectories: manualData.directories.map(d => ({
+      score: manualData.directories && manualData.directories.length > 0 
+        ? Math.round((manualData.directories.filter(d => d.status === 'complete').length / Math.max(1, manualData.directories.length)) * 100)
+        : 0,
+      totalCitations: manualData.directories?.length || 0,
+      consistent: manualData.directories?.filter(d => d.status === 'complete').length || 0,
+      inconsistent: manualData.directories?.filter(d => d.status === 'incomplete').length || 0,
+      topDirectories: manualData.directories?.map(d => ({
         name: d.name,
         status: d.status === 'complete' ? 'vollständig' : d.status === 'incomplete' ? 'unvollständig' : 'nicht gefunden'
-      }))
+      })) || []
     },
     localKeywords: {
-      score: manualData.localKeywordRankings.length > 0 ? Math.round(
+      score: manualData.localKeywordRankings && manualData.localKeywordRankings.length > 0 ? Math.round(
         manualData.localKeywordRankings.reduce((acc, kw) => acc + (100 - kw.position), 0) / manualData.localKeywordRankings.length
       ) : 0,
-      ranking: manualData.localKeywordRankings.map(kw => ({
+      ranking: manualData.localKeywordRankings?.map(kw => ({
         keyword: kw.keyword,
         position: kw.position,
         volume: kw.searchVolume === 'high' ? 'hoch' : kw.searchVolume === 'medium' ? 'mittel' : 'niedrig'
-      }))
+      })) || []
     },
     onPageLocal: {
       score: manualData.localContentScore,
