@@ -135,64 +135,50 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     return finalScore;
   };
 
-  // Calculate Technical Security score (only technical issues)
+  // Calculate Technical Security score (technical issues + cookie compliance)
   const getTechnicalSecurityScore = () => {
     if (!privacyData) return 0;
     
-    let score = 0;
-    let componentCount = 0;
+    // Base score depends on cookie banner presence
+    const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || false;
+    let score = hasCookieBanner ? 90 : 40; // Start with 90% if cookie banner present, 40% if not
     
-    // SSL Score (60% weight)
+    // SSL Score adjustment
     const sslGrade = privacyData?.sslRating;
     if (sslGrade) {
-      componentCount++;
-      const sslScore = (() => {
+      const sslBonus = (() => {
         switch (sslGrade) {
-          case 'A+': return 100;
-          case 'A': return 95;
-          case 'B': return 80;
-          case 'C': return 70;
-          case 'D': return 50;
-          case 'E': return 30;
-          case 'F': return 10;
-          case 'T': return 5;
+          case 'A+': return 10;
+          case 'A': return 5;
+          case 'B': return 0;
+          case 'C': return -10;
+          case 'D': return -20;
+          case 'E': return -30;
+          case 'F': return -40;
+          case 'T': return -45;
           default: return 0;
         }
       })();
-      score += sslScore * 0.6;
+      score += sslBonus;
     }
     
-    // Security Headers Score (40% weight)
+    // Security Headers adjustment
     const securityHeaders = privacyData?.realApiData?.securityHeaders;
     const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
                      privacyData?.realApiData?.ssl?.hasHSTS;
     
-    if (securityHeaders) {
-      componentCount++;
-      let headerScore = 0;
-      
-      const headers = securityHeaders.headers || {};
-      const csp = headers['Content-Security-Policy']?.present;
-      const xFrame = headers['X-Frame-Options']?.present;
-      const xContent = headers['X-Content-Type-Options']?.present;
-      const referrer = headers['Referrer-Policy']?.present;
-      
-      const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
-      headerScore = Math.round((presentHeaders / 5) * 100);
-      
-      score += headerScore * 0.4;
+    if (!hasHSTS) {
+      score -= 10; // Penalty for missing HSTS
     }
     
-    if (componentCount === 0) return 0;
-    
-    const finalScore = Math.round(score);
+    const finalScore = Math.round(Math.max(0, Math.min(100, score)));
     
     // Cap at 59% if critical technical issues exist, but allow lower scores
     const hasCriticalTechnicalIssues = 
       (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
       !hasHSTS;
     
-    if (hasCriticalTechnicalIssues) {
+    if (hasCriticalTechnicalIssues && hasCookieBanner) {
       return Math.min(finalScore, 59);
     }
     
@@ -529,7 +515,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-green-600">
                     <Shield className="h-5 w-5" />
-                    Technische Sicherheit
+                    Datenschutz & Technische Sicherheit
                     <div 
                       className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                         getTechnicalSecurityScore() >= 90 ? 'bg-yellow-400 text-black' : 
