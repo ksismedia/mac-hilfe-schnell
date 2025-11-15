@@ -804,6 +804,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             manualConversionData={manualConversionData}
             privacyData={privacyData}
             accessibilityData={accessibilityData}
+            manualCorporateIdentityData={manualCorporateIdentityData}
           />
         </div>
 
