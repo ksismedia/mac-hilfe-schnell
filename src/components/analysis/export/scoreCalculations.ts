@@ -948,75 +948,56 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   return finalScore;
 };
 
-// Berechnet Technische Sicherheit (SSL, Security Headers)
+// Berechnet Technische Sicherheit (SSL, Security Headers, Cookie-Compliance)
 export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   if (!privacyData) {
     return 0;
   }
   
-  let score = 0;
-  let componentCount = 0;
+  // Base score depends on cookie banner presence
+  const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                          privacyData?.cookieBanner?.detected || 
+                          false;
+  let score = hasCookieBanner ? 90 : 40; // Start with 90% if cookie banner present, 40% if not
   
-  // SSL Score (60% Gewichtung)
-  // Support both data structures: sslGrade and sslRating
+  // SSL Score adjustment
   const sslGrade = privacyData.sslGrade || privacyData?.sslRating;
   if (sslGrade) {
-    componentCount++;
-    const sslScore = (() => {
+    const sslBonus = (() => {
       switch (sslGrade) {
-        case 'A+': return 100;
-        case 'A': return 95;
-        case 'A-': return 90;
-        case 'B': return 80;
-        case 'C': return 70;
-        case 'D': return 50;
-        case 'E': return 30;
-        case 'F': return 10;
-        case 'T': return 5; // Certificate not trusted
+        case 'A+': return 10;
+        case 'A': return 5;
+        case 'A-': return 0;
+        case 'B': return 0;
+        case 'C': return -10;
+        case 'D': return -20;
+        case 'E': return -30;
+        case 'F': return -40;
+        case 'T': return -45; // Certificate not trusted
         default: return 0;
       }
     })();
-    score += sslScore * 0.6;
+    score += sslBonus;
   }
   
-  // Security Headers Score (40% Gewichtung)
-  // Support both data structures: securityHeaders and realApiData.securityHeaders
+  // Security Headers adjustment
   const securityHeaders = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
   const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
                    securityHeaders?.hsts || 
                    privacyData?.realApiData?.ssl?.hasHSTS;
   
-  if (securityHeaders) {
-    componentCount++;
-    let headerScore = 0;
-    
-    // Check for headers using the correct structure
-    const headers = securityHeaders.headers || {};
-    const csp = headers['Content-Security-Policy']?.present || securityHeaders.csp;
-    const xFrame = headers['X-Frame-Options']?.present || securityHeaders.xFrameOptions;
-    const xContent = headers['X-Content-Type-Options']?.present || securityHeaders.xContentTypeOptions;
-    const referrer = headers['Referrer-Policy']?.present || securityHeaders.referrerPolicy;
-    const permissions = headers['Permissions-Policy']?.present || securityHeaders.permissionsPolicy;
-    
-    // Count present headers
-    const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
-    headerScore = Math.round((presentHeaders / 5) * 100);
-    
-    score += headerScore * 0.4;
+  if (!hasHSTS) {
+    score -= 10; // Penalty for missing HSTS
   }
   
-  if (componentCount === 0) {
-    return 0;
-  }
+  const finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  const finalScore = Math.round(score);
-  
-  // Cap at 59% if critical technical issues exist, but allow lower scores
+  // Cap at 59% if critical technical issues exist AND cookie banner is present, but allow lower scores
   const hasCriticalTechnicalIssues = 
     (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
     !hasHSTS;
   
-  if (hasCriticalTechnicalIssues) {
+  if (hasCriticalTechnicalIssues && hasCookieBanner) {
     return Math.min(finalScore, 59);
   }
   

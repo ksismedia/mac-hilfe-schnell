@@ -603,10 +603,10 @@ export const generateDataPrivacySection = (
             </div>
         </div>
 
-        <!-- Technische Sicherheit -->
+        <!-- Datenschutz & Technische Sicherheit -->
         <div class="section">
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">
-              <span>▶ Technische Sicherheit</span>
+              <span>▶ Datenschutz & Technische Sicherheit</span>
               <div class="header-score-circle ${(() => {
                 const scoreClass = technicalSecurityScore >= 90 ? 'yellow' : technicalSecurityScore >= 61 ? 'green' : 'red';
                 return (hasNoHSTS || hasPoorSSL) ? `${scoreClass} critical-border` : scoreClass;
