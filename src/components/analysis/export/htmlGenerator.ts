@@ -117,8 +117,43 @@ const generateProgressBar = (score: number, description: string) => {
           <span style="color: ${textColor}; font-weight: bold; font-size: 12px;">${score}%</span>
         </div>
       </div>
+      <p style="margin-top: 5px; font-size: 12px; color: #666;">${description}</p>
     </div>
-    ${description ? `<small style="font-size: 11px; color: #9ca3af; display: block; margin-top: 6px; line-height: 1.4;">${description}</small>` : ''}
+  `;
+};
+
+// Spezielle Progress-Bar für Stundensätze mit korrekter Farblogik
+const generateHourlyRateProgressBar = (ratio: number, description: string) => {
+  // ratio ist ownRate / regionalRate (z.B. 69/80 = 0.8625)
+  let barColor: string;
+  let scoreRange: string;
+  
+  if (ratio < 0.9) {
+    // Unter 90% des regionalen Durchschnitts → ROT (zu niedrig)
+    barColor = '#FF0000';
+    scoreRange = '0-60';
+  } else if (ratio <= 1.1) {
+    // 90-110% des regionalen Durchschnitts → GRÜN (optimal)
+    barColor = '#22c55e';
+    scoreRange = '61-89';
+  } else {
+    // Über 110% des regionalen Durchschnitts → GELB (zu hoch)
+    barColor = '#FFD700';
+    scoreRange = '90-100';
+  }
+  
+  const percentage = Math.round(ratio * 100);
+  const textColor = ratio > 1.1 ? '#000' : '#fff';
+  
+  return `
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" data-score="${scoreRange}" style="width: ${percentage}%; background-color: ${barColor}; display: flex; align-items: center; justify-content: center;">
+          <span style="color: ${textColor}; font-weight: bold; font-size: 12px;">${percentage}%</span>
+        </div>
+      </div>
+      <p style="margin-top: 5px; font-size: 12px; color: #666;">${description}</p>
+    </div>
   `;
 };
 
@@ -814,42 +849,42 @@ export const generateCustomerHTML = ({
         ${hourlyRateData.meisterRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Meister:</strong> ${hourlyRateData.meisterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalMeisterRate > 0 ? `(Regional: ${hourlyRateData.regionalMeisterRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalMeisterRate > 0 ? generateProgressBar((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate) * 100, `${((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.meisterRate > hourlyRateData.regionalMeisterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalMeisterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate), `${((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.meisterRate > hourlyRateData.regionalMeisterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.facharbeiterRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalFacharbeiterRate > 0 ? `(Regional: ${hourlyRateData.regionalFacharbeiterRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalFacharbeiterRate > 0 ? generateProgressBar((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate) * 100, `${((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.facharbeiterRate > hourlyRateData.regionalFacharbeiterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalFacharbeiterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate), `${((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.facharbeiterRate > hourlyRateData.regionalFacharbeiterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.azubiRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalAzubiRate > 0 ? `(Regional: ${hourlyRateData.regionalAzubiRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalAzubiRate > 0 ? generateProgressBar((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate) * 100, `${((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate - 1) * 100).toFixed(1)}% ${hourlyRateData.azubiRate > hourlyRateData.regionalAzubiRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalAzubiRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate), `${((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate - 1) * 100).toFixed(1)}% ${hourlyRateData.azubiRate > hourlyRateData.regionalAzubiRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.helferRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Helfer:</strong> ${hourlyRateData.helferRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalHelferRate > 0 ? `(Regional: ${hourlyRateData.regionalHelferRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalHelferRate > 0 ? generateProgressBar((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate) * 100, `${((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate - 1) * 100).toFixed(1)}% ${hourlyRateData.helferRate > hourlyRateData.regionalHelferRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalHelferRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate), `${((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate - 1) * 100).toFixed(1)}% ${hourlyRateData.helferRate > hourlyRateData.regionalHelferRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.serviceRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Service:</strong> ${hourlyRateData.serviceRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalServiceRate > 0 ? `(Regional: ${hourlyRateData.regionalServiceRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalServiceRate > 0 ? generateProgressBar((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate) * 100, `${((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate - 1) * 100).toFixed(1)}% ${hourlyRateData.serviceRate > hourlyRateData.regionalServiceRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalServiceRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate), `${((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate - 1) * 100).toFixed(1)}% ${hourlyRateData.serviceRate > hourlyRateData.regionalServiceRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.installationRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Installation:</strong> ${hourlyRateData.installationRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalInstallationRate > 0 ? `(Regional: ${hourlyRateData.regionalInstallationRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalInstallationRate > 0 ? generateProgressBar((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate) * 100, `${((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate - 1) * 100).toFixed(1)}% ${hourlyRateData.installationRate > hourlyRateData.regionalInstallationRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalInstallationRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate), `${((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate - 1) * 100).toFixed(1)}% ${hourlyRateData.installationRate > hourlyRateData.regionalInstallationRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
       </div>
