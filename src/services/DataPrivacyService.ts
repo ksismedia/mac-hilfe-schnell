@@ -409,7 +409,7 @@ export class DataPrivacyService {
     } else if (criticalCount === 2) {
       return Math.min(35, finalScore);  // 2 kritische = max 35%
     } else if (criticalCount === 1) {
-      return Math.min(50, finalScore);  // 1 kritischer = max 50%
+      return Math.min(59, finalScore);  // 1 kritischer = max 59%
     }
 
     return finalScore;
