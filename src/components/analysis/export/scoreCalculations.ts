@@ -820,10 +820,17 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
-    // Manual data always takes priority if available
+    // Combine scores: auto data is base, manual data can only improve
+    if (hasAutoData && autoScore !== null && hasManualData) {
+      // Use the better score (manual can only improve, not worsen)
+      const finalScore = Math.max(autoScore, manualScore);
+      console.log('🎯 Accessibility: Auto score (' + autoScore + ') vs Manual score (' + manualScore + ') = Using better: ' + finalScore);
+      return Math.max(0, Math.min(100, finalScore));
+    }
+    
     if (hasManualData) {
-      // Manual data takes full priority
-      console.log('🎯 Accessibility: Using manual score (full priority): ' + manualScore);
+      // Only manual data available
+      console.log('🎯 Accessibility: Using only manual score: ' + manualScore);
       return Math.max(0, Math.min(100, manualScore));
     }
     
