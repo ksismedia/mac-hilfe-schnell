@@ -209,7 +209,7 @@ export const generateCustomerHTML = ({
   const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData);
   
   // Accessibility scores müssen erst berechnet werden
-  const actualAccessibilityScore = calculateAccessibilityScore(realData, manualAccessibilityData);
+  const actualAccessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData);
   const accessibilityScore = actualAccessibilityScore;
   
   // Helper functions for display - zeige Querstrich für fehlende Daten oder bei 0%
