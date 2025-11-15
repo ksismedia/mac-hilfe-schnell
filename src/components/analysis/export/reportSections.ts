@@ -424,16 +424,25 @@ export const generateDataPrivacySection = (
   privacyData?: any
 ) => {
   // Check for critical technical issues
-  const hasNoHSTS = !privacyData?.realApiData?.ssl?.hasHSTS;
-  const hasPoorSSL = privacyData?.sslRating === 'F' || privacyData?.sslRating === 'D';
+  const securityHeaders = privacyData?.realApiData?.securityHeaders;
+  const hasNoHSTS = !securityHeaders?.headers?.['Strict-Transport-Security']?.present && 
+                     !privacyData?.realApiData?.ssl?.hasHSTS;
+  const sslGrade = privacyData?.sslGrade || privacyData?.sslRating;
+  const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
   const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
-  const hasCriticalIssues = hasCriticalViolations || hasNoHSTS || hasPoorSSL;
+  const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
+  const hasCriticalIssues = hasCriticalViolations || hasCriticalTechnicalIssues;
   
   // DSGVO-Score (rechtliche Aspekte) - basiert auf Verstößen
   const dsgvoScore = hasCriticalViolations ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
   
   // Technische Sicherheit-Score (SSL, HSTS, Security Headers)
-  const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
+  let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
+  
+  // Cap technical security score at 59% if ANY critical technical issue exists
+  if (hasCriticalTechnicalIssues) {
+    technicalSecurityScore = Math.min(59, technicalSecurityScore);
+  }
   
   // Calculate cookie score based on whether cookie-related violations are active
   const hasCookieViolations = activeViolations.some(v => v.cookieRelated);
