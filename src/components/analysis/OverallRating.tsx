@@ -317,7 +317,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   }
   
   if (dataPrivacyScore !== null) {
-    metrics.push({ name: 'Datenschutz', score: dataPrivacyScore, weight: 0, maxScore: 100 });
+    metrics.push({ name: 'Datenschutz (DSGVO)', score: dataPrivacyScore, weight: 0, maxScore: 100 });
+  }
+  
+  if (technicalSecurityScore !== null) {
+    metrics.push({ name: 'Technische Sicherheit', score: technicalSecurityScore, weight: 0, maxScore: 100 });
   }
   
   // Kategorie 2 (Performance) - zusätzliche Metriken
