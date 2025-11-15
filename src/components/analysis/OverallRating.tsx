@@ -132,7 +132,6 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat1Scores = [
     realData.seo.score,
     localSEOScore,
-    currentKeywordsScore,
     realData.imprint.score
   ].filter(s => s > 0);
   
