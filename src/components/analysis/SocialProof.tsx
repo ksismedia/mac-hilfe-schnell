@@ -15,7 +15,15 @@ interface SocialProofProps {
 }
 
 const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => {
-  const socialProofData = realData.socialProof;
+  const socialProofData = realData.socialProof || {
+    overallScore: 0,
+    testimonials: 0,
+    certifications: [],
+    trustSignals: [],
+    socialMediaMentions: 0,
+    pressReferences: 0,
+    awards: []
+  };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return "secondary";        // gelb (90-100%)
@@ -67,13 +75,13 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-3 border rounded-lg">
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-2xl font-bold">{realData.reviews.google.rating || 0}</span>
+                    <span className="text-2xl font-bold">{realData?.reviews?.google?.rating || 0}</span>
                     <div className="flex">
-                      {renderStars(Math.round(realData.reviews.google.rating || 0))}
+                      {renderStars(Math.round(realData?.reviews?.google?.rating || 0))}
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Google ({realData.reviews.google.count} Bewertungen)
+                    Google ({realData?.reviews?.google?.count || 0} Bewertungen)
                   </p>
                 </div>
                 <div className="text-center p-3 border rounded-lg">
