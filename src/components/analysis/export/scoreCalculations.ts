@@ -659,6 +659,7 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     
     let manualScore = 0;
     if (manualAccessibilityData) {
+      // Calculate score from checkboxes
       const features = [
         manualAccessibilityData.keyboardNavigation,
         manualAccessibilityData.screenReaderCompatible,
@@ -671,12 +672,25 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       const enabledCount = features.filter(Boolean).length;
       const totalCount = features.length;
       
+      let checkboxScore = 0;
       if (enabledCount === totalCount) {
-        manualScore = 100;
+        checkboxScore = 100;
       } else if (enabledCount > 0) {
         const missingCount = totalCount - enabledCount;
         const maxScore = Math.max(20, 50 - (missingCount - 1) * 8);
-        manualScore = Math.round((enabledCount / totalCount) * maxScore);
+        checkboxScore = Math.round((enabledCount / totalCount) * maxScore);
+      }
+      
+      // Get slider score (overall score from manual input)
+      const sliderScore = manualAccessibilityData.overallScore || 0;
+      
+      // Combine checkbox score (50%) and slider score (50%)
+      if (sliderScore > 0 && checkboxScore > 0) {
+        manualScore = Math.round(checkboxScore * 0.5 + sliderScore * 0.5);
+      } else if (sliderScore > 0) {
+        manualScore = sliderScore;
+      } else if (checkboxScore > 0) {
+        manualScore = checkboxScore;
       }
     }
     
