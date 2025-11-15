@@ -524,12 +524,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 </CardContent>
               </Card>
 
-              {/* Datenschutz Section */}
+              {/* Technical Security Section */}
               <Card className="border-blue-200">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-green-600">
                     <Shield className="h-5 w-5" />
-                    Datenschutz & Technische Sicherheit
+                    Technische Sicherheit
                     <div 
                       className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                         getTechnicalSecurityScore() >= 90 ? 'bg-yellow-400 text-black' : 
