@@ -354,6 +354,93 @@ export const calculateStaffServiceScore = (
 export const calculateLocalSEOScore = (businessData: any, realData: any, manualData?: any): number => {
   try {
     const autoScore = Number(realData?.seo?.score) || 0;
+    
+    // Wenn detaillierte manuelle Daten vorhanden sind, berechne Score aus diesen
+    if (manualData && Object.keys(manualData).length > 1) {
+      let detailedScore = 0;
+      
+      // 1. Google My Business (30 Punkte)
+      if (manualData.gmbClaimed || manualData.gmbVerified) {
+        let gmbScore = 0;
+        if (manualData.gmbClaimed) gmbScore += 5;
+        if (manualData.gmbVerified) gmbScore += 10;
+        gmbScore += (manualData.gmbCompleteness || 0) * 0.15; // max 15 Punkte
+        detailedScore += gmbScore;
+      }
+      
+      // 2. Lokale Verzeichnisse (25 Punkte)
+      if (manualData.directories && manualData.directories.length > 0) {
+        const totalDirs = manualData.directories.length;
+        const completeDirs = manualData.directories.filter((d: any) => d.status === 'complete').length;
+        const incompleteDirs = manualData.directories.filter((d: any) => d.status === 'incomplete').length;
+        const verifiedDirs = manualData.directories.filter((d: any) => d.verified).length;
+        
+        // Basis-Punkte für Präsenz
+        let dirScore = Math.min(totalDirs * 3, 10); // max 10 Punkte für Präsenz
+        // Bonus für vollständige Einträge
+        dirScore += (completeDirs / Math.max(totalDirs, 1)) * 10; // max 10 Punkte
+        // Bonus für verifizierte Einträge
+        dirScore += (verifiedDirs / Math.max(totalDirs, 1)) * 5; // max 5 Punkte
+        
+        detailedScore += Math.min(dirScore, 25);
+      }
+      
+      // 3. NAP Konsistenz (15 Punkte)
+      if (manualData.napConsistencyScore !== undefined) {
+        detailedScore += (manualData.napConsistencyScore / 100) * 15;
+      }
+      
+      // 4. Lokale Keywords (15 Punkte)
+      if (manualData.localKeywordRankings && manualData.localKeywordRankings.length > 0) {
+        const keywords = manualData.localKeywordRankings;
+        let keywordScore = 0;
+        
+        // Bewerte nach Positionen
+        keywords.forEach((kw: any) => {
+          if (kw.position <= 3) keywordScore += 3;
+          else if (kw.position <= 10) keywordScore += 2;
+          else if (kw.position <= 20) keywordScore += 1;
+        });
+        
+        detailedScore += Math.min(keywordScore, 15);
+      }
+      
+      // 5. Schema & On-Page (15 Punkte)
+      let schemaScore = 0;
+      if (manualData.hasLocalBusinessSchema) schemaScore += 8;
+      if (manualData.hasOrganizationSchema) schemaScore += 3;
+      if (manualData.addressVisible) schemaScore += 2;
+      if (manualData.phoneVisible) schemaScore += 2;
+      detailedScore += schemaScore;
+      
+      // 6. Lokaler Content (10 Punkte) - falls separat bewertet
+      if (manualData.localContentScore !== undefined) {
+        detailedScore += (manualData.localContentScore / 100) * 10;
+      }
+      
+      // Verwende berechneten Score, außer es gibt einen expliziten overallScore
+      const calculatedScore = Math.round(Math.min(detailedScore, 100));
+      
+      // Wenn ein overallScore gesetzt ist, bevorzuge diesen, sonst nutze den berechneten
+      if (manualData.overallScore !== undefined && !isNaN(manualData.overallScore)) {
+        // Wenn auto-Score vorhanden, kombiniere mit manuellem overallScore
+        if (!isNaN(autoScore) && autoScore > 0) {
+          const combined = Math.round(autoScore * 0.6 + manualData.overallScore * 0.4);
+          return Math.max(0, Math.min(100, combined));
+        }
+        return Math.max(0, Math.min(100, manualData.overallScore));
+      }
+      
+      // Kombiniere berechneten Score mit Auto-Score falls vorhanden
+      if (!isNaN(autoScore) && autoScore > 0) {
+        const combined = Math.round(autoScore * 0.6 + calculatedScore * 0.4);
+        return Math.max(0, Math.min(100, combined));
+      }
+      
+      return calculatedScore;
+    }
+    
+    // Fallback auf alte Logik wenn keine detaillierten Daten
     const manualScore = manualData?.overallScore;
     
     if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
