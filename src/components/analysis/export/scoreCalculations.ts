@@ -940,9 +940,9 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   const finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // Set to exactly 59% if there are any critical violations
+  // Cap at 59% if there are any critical violations, but allow lower scores
   if (hasCriticalViolations()) {
-    return 59;
+    return Math.min(finalScore, 59);
   }
   
   return finalScore;
@@ -1011,13 +1011,13 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   
   const finalScore = Math.round(score);
   
-  // Set to exactly 59% if critical technical issues exist
+  // Cap at 59% if critical technical issues exist, but allow lower scores
   const hasCriticalTechnicalIssues = 
     (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
     !hasHSTS;
   
   if (hasCriticalTechnicalIssues) {
-    return 59;
+    return Math.min(finalScore, 59);
   }
   
   return finalScore;
