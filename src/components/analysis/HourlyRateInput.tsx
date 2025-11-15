@@ -87,34 +87,33 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
     const companyAvg = companyRates.reduce((sum, rate) => sum + rate, 0) / companyRates.length;
     const regionalAvg = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
     
-    // Score calculation with more realistic thresholds
     const ratio = companyAvg / regionalAvg;
     const percentDiff = ((ratio - 1) * 100);
     
     let score;
     let positioning;
     
-    // More forgiving scoring system
-    if (ratio >= 0.85 && ratio <= 1.15) {
-      // Within ±15% = excellent (85-100 points)
-      score = 100 - Math.abs(percentDiff) * 1.5;
-      positioning = 'marktkonform';
-    } else if (ratio >= 0.7 && ratio < 0.85) {
-      // 15-30% below = okay (60-85 points)
-      score = 85 - ((0.85 - ratio) * 166);
-      positioning = 'günstig-positioniert';
-    } else if (ratio > 1.15 && ratio <= 1.3) {
-      // 15-30% above = okay (60-85 points)
-      score = 85 - ((ratio - 1.15) * 166);
-      positioning = 'premium-positioniert';
-    } else if (ratio < 0.7) {
-      // More than 30% below = needs attention (40-60 points)
-      score = Math.max(40, 60 - ((0.7 - ratio) * 100));
-      positioning = 'deutlich-unter-markt';
+    // NEW SCORING LOGIC:
+    // 85-100 Punkte: +10% und mehr vom Markt = Optimal
+    // 60-84 Punkte: -10% bis +9% vom Markt = Akzeptabel
+    // 40-59 Punkte: unter -10% vom Markt = Überprüfung nötig
+    
+    if (ratio >= 1.10) {
+      // +10% oder mehr über Markt = OPTIMAL (85-100 Punkte)
+      // Je höher über 1.10, desto besser der Score
+      const bonus = Math.min((ratio - 1.10) * 50, 15); // Max +15 Punkte für sehr hohe Preise
+      score = Math.min(100, 85 + bonus);
+      positioning = 'optimal-positioniert';
+    } else if (ratio >= 0.90 && ratio < 1.10) {
+      // -10% bis +9% vom Markt = AKZEPTABEL (60-84 Punkte)
+      // Linear zwischen 60 (bei 0.90) und 84 (bei 1.09)
+      score = 60 + ((ratio - 0.90) * 120); // 0.20 Range → 24 Punkte Range (60-84)
+      positioning = 'akzeptabel-optimierung-empfohlen';
     } else {
-      // More than 30% above = may impact competitiveness (40-60 points)
-      score = Math.max(40, 60 - ((ratio - 1.3) * 100));
-      positioning = 'deutlich-über-markt';
+      // Unter -10% vom Markt = ÜBERPRÜFUNG NÖTIG (40-59 Punkte)
+      // Je niedriger unter 0.90, desto schlechter
+      score = Math.max(40, 60 + ((ratio - 0.90) * 100));
+      positioning = 'zu-niedrig';
     }
     
     return {
@@ -309,7 +308,7 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
                 <Calculator className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
               </div>
-              <Badge variant={comparisonResult.score >= 85 ? "secondary" : comparisonResult.score >= 70 ? "default" : "destructive"}>
+              <Badge variant={comparisonResult.score >= 85 ? "secondary" : comparisonResult.score >= 60 ? "default" : "destructive"}>
                 Score: {comparisonResult.score}/100
               </Badge>
             </div>
@@ -329,20 +328,18 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">Preisdifferenz</span>
                 <span className={`text-lg font-bold ${
-                  Math.abs(parseFloat(comparisonResult.percentDiff)) <= 15 ? 'text-green-600 dark:text-green-400' : 
-                  Math.abs(parseFloat(comparisonResult.percentDiff)) <= 25 ? 'text-yellow-600 dark:text-yellow-400' : 
-                  'text-orange-600 dark:text-orange-400'
+                  parseFloat(comparisonResult.percentDiff) >= 10 ? 'text-green-600 dark:text-green-400' : 
+                  parseFloat(comparisonResult.percentDiff) >= -10 ? 'text-yellow-600 dark:text-yellow-400' : 
+                  'text-red-600 dark:text-red-400'
                 }`}>
                   {parseFloat(comparisonResult.percentDiff) > 0 ? '+' : ''}{comparisonResult.percentDiff}%
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">
                 {
-                  comparisonResult.positioning === 'marktkonform' ? '✓ Ihre Preise liegen im marktüblichen Bereich (±15%)' :
-                  comparisonResult.positioning === 'günstig-positioniert' ? '↓ Ihre Preise liegen moderat unter dem Durchschnitt' :
-                  comparisonResult.positioning === 'premium-positioniert' ? '↑ Ihre Preise liegen im Premium-Segment' :
-                  comparisonResult.positioning === 'deutlich-unter-markt' ? '⚠ Ihre Preise liegen deutlich unter dem Markt' :
-                  '⚠ Ihre Preise liegen deutlich über dem Markt'
+                  comparisonResult.positioning === 'optimal-positioniert' ? '✓ Optimal: Ihre Preise liegen 10% oder mehr über dem Markt' :
+                  comparisonResult.positioning === 'akzeptabel-optimierung-empfohlen' ? '→ Akzeptabel: Preise im Bereich -10% bis +9% vom Markt' :
+                  '⚠ Zu niedrig: Ihre Preise liegen mehr als 10% unter dem Markt'
                 }
               </p>
             </div>
@@ -352,12 +349,10 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
               <p className="text-sm">
                 {
                   comparisonResult.score >= 85 ? 
-                    'Ihre Preisstrategie ist gut positioniert. Sie liegen nahe am regionalen Durchschnitt und sind damit wettbewerbsfähig.' :
-                  comparisonResult.score >= 70 ? 
-                    'Ihre Preise weichen moderat ab. Prüfen Sie, ob dies Ihrer gewünschten Marktstrategie entspricht.' :
-                  comparisonResult.ratio < 0.85 ?
-                    'Ihre Preise liegen deutlich unter dem Markt. Prüfen Sie, ob Sie Potenzial für Preiserhöhungen haben.' :
-                    'Ihre Preise liegen im Premium-Bereich. Stellen Sie sicher, dass Ihre Leistung dies rechtfertigt.'
+                    'Ausgezeichnet! Ihre Preisstrategie ist optimal positioniert. Sie liegen mindestens 10% über dem regionalen Durchschnitt und können damit höhere Margen erzielen.' :
+                  comparisonResult.score >= 60 ? 
+                    'Ihre Preise sind akzeptabel, aber es gibt Optimierungspotenzial. Prüfen Sie, ob Preiserhöhungen möglich sind, um näher an oder über 10% über dem Markt zu kommen.' :
+                    'Achtung: Ihre Preise liegen deutlich unter dem Markt. Sie verschenken Gewinnpotenzial. Eine Preiserhöhung sollte dringend geprüft werden.'
                 }
               </p>
             </div>
