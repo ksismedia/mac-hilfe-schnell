@@ -437,7 +437,7 @@ export const generateDataPrivacySection = (
   const dsgvoScore = hasCriticalViolations ? 59 : dataPrivacyScore;
   
   // Technische Sicherheit-Score (SSL, HSTS, Security Headers) - bei kritischen technischen Problemen auf genau 59% setzen
-  let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
+  let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData);
   if (hasCriticalTechnicalIssues) {
     technicalSecurityScore = 59;
   }

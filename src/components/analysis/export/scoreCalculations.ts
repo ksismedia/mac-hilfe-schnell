@@ -150,7 +150,7 @@ export const calculateOnlineQualityAuthorityScore = (
     
     // GETRENNTE SCORES für DSGVO und Technische Sicherheit
     const dsgvoScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) || 0;
-    const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData) || 0;
+    const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) || 0;
     
     const seoScore = realData?.seo?.score || 0;
     const imprintScore = realData?.imprint?.score || 0;
@@ -949,14 +949,39 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
 };
 
 // Berechnet Technische Sicherheit
-export const calculateTechnicalSecurityScore = (privacyData: any): number => {
+export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPrivacyData?: any): number => {
   if (!privacyData) {
     return 0;
   }
   
-  const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+  // Check if cookie banner is present based on:
+  // 1. Automatic detection
+  // 2. Manual override: if "no cookie banner" violation is deselected AND manual checkboxes indicate compliance
+  const autoCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
                           privacyData?.cookieBanner?.detected || 
                           false;
+  const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
+  const totalViolations = privacyData?.violations || [];
+  
+  // Find the "no cookie banner" violation
+  const noCookieBannerViolationIndex = totalViolations.findIndex((v: any) => 
+    v.description?.includes('Cookie-Consent-Banner') || 
+    v.description?.includes('Cookie-Banner')
+  );
+  
+  const cookieBannerViolationDeselected = noCookieBannerViolationIndex >= 0 && 
+    deselectedViolations.includes(`auto-${noCookieBannerViolationIndex}`);
+  
+  // Check manual cookie compliance indicators
+  const manualCookieCompliance = manualDataPrivacyData?.cookiePolicy || 
+                                 manualDataPrivacyData?.cookieConsent;
+  
+  // Cookie banner is considered present if:
+  // - Auto-detected OR
+  // - The "no banner" violation was deselected AND manual data indicates compliance
+  const hasCookieBanner = autoCookieBanner || 
+                         (cookieBannerViolationDeselected && manualCookieCompliance);
+  
   const sslGrade = privacyData.sslGrade || privacyData?.sslRating;
   const securityHeaders = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
   const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
