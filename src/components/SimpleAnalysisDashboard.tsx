@@ -363,7 +363,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   try {
     const onlineQualityAuthority = calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData
+      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData
     );
     const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
     const socialMediaPerformance = calculateSocialMediaPerformanceScore(

@@ -133,7 +133,8 @@ export const calculateOnlineQualityAuthorityScore = (
   manualContentData: any,
   manualBacklinkData: any,
   manualLocalSEOData?: any,
-  manualDataPrivacyData?: any
+  manualDataPrivacyData?: any,
+  manualAccessibilityData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -146,7 +147,7 @@ export const calculateOnlineQualityAuthorityScore = (
     const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
     const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData) || 0;
     const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
-    const accessibilityScore = calculateAccessibilityScore(realData, accessibilityData) || 0;
+    const accessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData) || 0;
     
     // GETRENNTE SCORES für DSGVO und Technische Sicherheit
     const dsgvoScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) || 0;
@@ -306,7 +307,7 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null);
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null, null);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
