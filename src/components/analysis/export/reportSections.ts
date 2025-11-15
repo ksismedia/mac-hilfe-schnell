@@ -429,7 +429,7 @@ export const generateDataPrivacySection = (
                      !privacyData?.realApiData?.ssl?.hasHSTS;
   const sslGrade = privacyData?.sslGrade || privacyData?.sslRating;
   const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
-  const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
+  const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical' || v.severity === 'high');
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
   // GETRENNTE BEWERTUNG:
