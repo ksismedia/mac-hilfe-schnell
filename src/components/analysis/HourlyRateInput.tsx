@@ -87,22 +87,43 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
     const companyAvg = companyRates.reduce((sum, rate) => sum + rate, 0) / companyRates.length;
     const regionalAvg = regionalRates.reduce((sum, rate) => sum + rate, 0) / regionalRates.length;
     
-    // Score calculation: 100% = exactly regional average, higher/lower rates adjust score
+    // Score calculation with more realistic thresholds
     const ratio = companyAvg / regionalAvg;
+    const percentDiff = ((ratio - 1) * 100);
+    
     let score;
-    if (ratio >= 0.9 && ratio <= 1.1) {
-      score = 100; // Within 10% of regional average = perfect score
-    } else if (ratio < 0.9) {
-      score = Math.max(20, 100 - ((0.9 - ratio) * 400)); // Too low = reduced score
+    let positioning;
+    
+    // More forgiving scoring system
+    if (ratio >= 0.85 && ratio <= 1.15) {
+      // Within ±15% = excellent (85-100 points)
+      score = 100 - Math.abs(percentDiff) * 1.5;
+      positioning = 'marktkonform';
+    } else if (ratio >= 0.7 && ratio < 0.85) {
+      // 15-30% below = okay (60-85 points)
+      score = 85 - ((0.85 - ratio) * 166);
+      positioning = 'günstig-positioniert';
+    } else if (ratio > 1.15 && ratio <= 1.3) {
+      // 15-30% above = okay (60-85 points)
+      score = 85 - ((ratio - 1.15) * 166);
+      positioning = 'premium-positioniert';
+    } else if (ratio < 0.7) {
+      // More than 30% below = needs attention (40-60 points)
+      score = Math.max(40, 60 - ((0.7 - ratio) * 100));
+      positioning = 'deutlich-unter-markt';
     } else {
-      score = Math.max(20, 100 - ((ratio - 1.1) * 200)); // Too high = reduced score
+      // More than 30% above = may impact competitiveness (40-60 points)
+      score = Math.max(40, 60 - ((ratio - 1.3) * 100));
+      positioning = 'deutlich-über-markt';
     }
     
     return {
-      score: Math.round(score),
+      score: Math.round(Math.max(40, Math.min(100, score))),
       companyAvg,
       regionalAvg,
-      ratio
+      ratio,
+      percentDiff: percentDiff.toFixed(1),
+      positioning
     };
   };
 
@@ -282,38 +303,61 @@ const HourlyRateInput: React.FC<HourlyRateInputProps> = ({ data, onDataChange })
 
         {/* Comparison Results */}
         {comparisonResult && (
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border">
-            <div className="flex items-center gap-2 mb-4">
-              <Calculator className="h-5 w-5 text-blue-600" />
-              <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
-              <Badge variant={comparisonResult.score >= 90 ? "secondary" : comparisonResult.score >= 61 ? "default" : "destructive"}>
-                {getScoreTextDescription(comparisonResult.score, 'hourlyRate')}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 p-6 rounded-lg border">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <span className="font-semibold text-lg">Wettbewerbsanalyse</span>
+              </div>
+              <Badge variant={comparisonResult.score >= 85 ? "secondary" : comparisonResult.score >= 70 ? "default" : "destructive"}>
+                Score: {comparisonResult.score}/100
               </Badge>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Ihr Durchschnitt</p>
-                <p className="text-xl font-bold text-blue-600">{comparisonResult.companyAvg.toFixed(2)} €</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border">
+                <p className="text-sm text-muted-foreground mb-1">Ihr Durchschnittssatz</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{comparisonResult.companyAvg.toFixed(2)}€/h</p>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Regional üblich</p>
-                <p className="text-xl font-bold text-green-600">{comparisonResult.regionalAvg.toFixed(2)} €</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Positionierung</p>
-                <p className={`text-xl font-bold ${comparisonResult.ratio > 1.1 ? 'text-red-600' : comparisonResult.ratio < 0.9 ? 'text-orange-600' : 'text-green-600'}`}>
-                  {comparisonResult.ratio > 1.1 ? 'Überdurchschnittlich' : comparisonResult.ratio < 0.9 ? 'Unterdurchschnittlich' : 'Marktkonform'}
-                </p>
+              <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border">
+                <p className="text-sm text-muted-foreground mb-1">Regionaler Durchschnitt</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{comparisonResult.regionalAvg.toFixed(2)}€/h</p>
               </div>
             </div>
             
-            <div className="mt-4 p-3 bg-white rounded border-l-4 border-blue-500">
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Preisdifferenz</span>
+                <span className={`text-lg font-bold ${
+                  Math.abs(parseFloat(comparisonResult.percentDiff)) <= 15 ? 'text-green-600 dark:text-green-400' : 
+                  Math.abs(parseFloat(comparisonResult.percentDiff)) <= 25 ? 'text-yellow-600 dark:text-yellow-400' : 
+                  'text-orange-600 dark:text-orange-400'
+                }`}>
+                  {parseFloat(comparisonResult.percentDiff) > 0 ? '+' : ''}{comparisonResult.percentDiff}%
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {
+                  comparisonResult.positioning === 'marktkonform' ? '✓ Ihre Preise liegen im marktüblichen Bereich (±15%)' :
+                  comparisonResult.positioning === 'günstig-positioniert' ? '↓ Ihre Preise liegen moderat unter dem Durchschnitt' :
+                  comparisonResult.positioning === 'premium-positioniert' ? '↑ Ihre Preise liegen im Premium-Segment' :
+                  comparisonResult.positioning === 'deutlich-unter-markt' ? '⚠ Ihre Preise liegen deutlich unter dem Markt' :
+                  '⚠ Ihre Preise liegen deutlich über dem Markt'
+                }
+              </p>
+            </div>
+            
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm font-medium mb-2">💡 Empfehlung</p>
               <p className="text-sm">
-                <strong>Bewertung:</strong> {
-                  comparisonResult.score >= 90 ? 'Ihre Preise liegen im optimalen Bereich des regionalen Marktes.' :
-                  comparisonResult.score >= 61 ? 'Ihre Preise weichen moderat vom regionalen Durchschnitt ab.' :
-                  'Ihre Preise weichen deutlich vom regionalen Durchschnitt ab. Prüfen Sie Ihre Preispositionierung.'
+                {
+                  comparisonResult.score >= 85 ? 
+                    'Ihre Preisstrategie ist gut positioniert. Sie liegen nahe am regionalen Durchschnitt und sind damit wettbewerbsfähig.' :
+                  comparisonResult.score >= 70 ? 
+                    'Ihre Preise weichen moderat ab. Prüfen Sie, ob dies Ihrer gewünschten Marktstrategie entspricht.' :
+                  comparisonResult.ratio < 0.85 ?
+                    'Ihre Preise liegen deutlich unter dem Markt. Prüfen Sie, ob Sie Potenzial für Preiserhöhungen haben.' :
+                    'Ihre Preise liegen im Premium-Bereich. Stellen Sie sicher, dass Ihre Leistung dies rechtfertigt.'
                 }
               </p>
             </div>
