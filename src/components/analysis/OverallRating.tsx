@@ -137,11 +137,11 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     realData.imprint.score
   ].filter(s => s > 0);
   
-  if (contentScore !== null) cat1Scores.push(contentScore);
-  if (accessibilityScore !== null) cat1Scores.push(accessibilityScore);
-  if (backlinksScore !== null) cat1Scores.push(backlinksScore);
-  if (dataPrivacyScore !== null) cat1Scores.push(dataPrivacyScore);
-  if (technicalSecurityScore !== null) cat1Scores.push(technicalSecurityScore);
+  if (contentScore !== null && contentScore > 0) cat1Scores.push(contentScore);
+  if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
+  if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
+  if (dataPrivacyScore !== null && dataPrivacyScore > 0) cat1Scores.push(dataPrivacyScore);
+  if (technicalSecurityScore !== null && technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
   
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
@@ -150,7 +150,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const cat2Scores = [
     realData.performance.score,
     realData.mobile.overallScore
-  ];
+  ].filter(s => s > 0);
   
   if (conversionScore > 0) {
     cat2Scores.push(conversionScore);
@@ -177,20 +177,20 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     workplaceScoreRaw !== -1 ? workplaceScoreRaw : 0
   ].filter(s => s > 0);
   
-  if (staffQualificationScore !== null) cat4Scores.push(staffQualificationScore);
-  if (hourlyRateScore !== null) cat4Scores.push(hourlyRateScore);
+  if (staffQualificationScore !== null && staffQualificationScore > 0) cat4Scores.push(staffQualificationScore);
+  if (hourlyRateScore !== null && hourlyRateScore > 0) cat4Scores.push(hourlyRateScore);
   
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
   // Kategorie 5: Außendarstellung & Erscheinungsbild
   const corporateIdentityScore = manualCorporateIdentityData ? calculateCorporateIdentityScore(manualCorporateIdentityData) : null;
   const cat5Scores = [];
-  if (corporateIdentityScore !== null) cat5Scores.push(corporateIdentityScore);
+  if (corporateIdentityScore !== null && corporateIdentityScore > 0) cat5Scores.push(corporateIdentityScore);
   const cat5Avg = cat5Scores.length > 0 ? Math.round(cat5Scores.reduce((a, b) => a + b, 0) / cat5Scores.length) : 0;
   
   // Kategorie 6: Qualität · Service · Kundenorientierung
   const cat6Scores = [];
-  if (quoteResponseScore !== null) cat6Scores.push(quoteResponseScore);
+  if (quoteResponseScore !== null && quoteResponseScore > 0) cat6Scores.push(quoteResponseScore);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
   // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
