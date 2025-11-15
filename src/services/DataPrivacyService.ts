@@ -292,8 +292,9 @@ export class DataPrivacyService {
       });
     }
 
-    // SSL/TLS Probleme
-    if (!sslResult?.hasSSL || sslResult?.grade === 'F') {
+    // SSL/TLS Probleme - Grade D, E, F und T sind kritisch
+    const criticalSSLGrades = ['D', 'E', 'F', 'T'];
+    if (!sslResult?.hasSSL || (sslResult?.grade && criticalSSLGrades.includes(sslResult.grade))) {
       violations.push({
         article: 'Art. 32 DSGVO',
         severity: 'critical',
@@ -308,11 +309,11 @@ export class DataPrivacyService {
     if (sslResult && !sslResult.hasHSTS) {
       violations.push({
         article: 'Art. 32 DSGVO',
-        severity: 'high',
+        severity: 'critical',
         category: 'security',
         description: 'HSTS-Header fehlt (HTTP Strict Transport Security)',
         recommendation: 'HSTS-Header auf dem Server konfigurieren',
-        fineRisk: 'Bis zu 2% des Jahresumsatzes',
+        fineRisk: 'Bis zu 4% des Jahresumsatzes',
         legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_32'
       });
     }
