@@ -529,7 +529,7 @@ export const useSavedAnalyses = () => {
   }, [savedAnalyses, user]);
 
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
-    console.log('Loading analysis with ID:', id);
+    console.log('🔍 Loading analysis with ID:', id);
     
     // FIRST: Always check localStorage directly - most reliable
     try {
@@ -540,6 +540,8 @@ export const useSavedAnalyses = () => {
           const localFound = localAnalyses.find((analysis: any) => analysis.id === id);
           if (localFound) {
             console.log('Found analysis in localStorage:', localFound.name);
+            console.log('📍 LocalSEO data in localStorage:', localFound.manualData?.manualLocalSEOData);
+            console.log('📍 Directories in localStorage:', localFound.manualData?.manualLocalSEOData?.directories);
             const completeAnalysis = {
               ...localFound,
               realData: { ...createDefaultRealData(), ...localFound.realData },
@@ -547,7 +549,7 @@ export const useSavedAnalyses = () => {
                 competitors: [], 
                 competitorServices: {}, 
                 removedMissingServices: [], 
-                ...localFound.manualData 
+                ...localFound.manualData
               }
             };
             return completeAnalysis;
@@ -561,6 +563,9 @@ export const useSavedAnalyses = () => {
     // SECOND: Check in current savedAnalyses (database)
     const found = savedAnalyses.find(analysis => analysis.id === id);
     if (found) {
+      console.log('Found analysis in savedAnalyses (database):', found.name);
+      console.log('📍 LocalSEO data in database:', found.manualData?.manualLocalSEOData);
+      console.log('📍 Directories in database:', found.manualData?.manualLocalSEOData?.directories);
       const completeAnalysis = {
         ...found,
         realData: { ...createDefaultRealData(), ...found.realData },
@@ -571,7 +576,8 @@ export const useSavedAnalyses = () => {
           ...found.manualData 
         }
       };
-      console.log('Found analysis in savedAnalyses (database):', completeAnalysis.name);
+      console.log('📍 Complete analysis manualData:', completeAnalysis.manualData);
+      console.log('📍 Complete analysis LocalSEO:', completeAnalysis.manualData?.manualLocalSEOData);
       return completeAnalysis;
     }
     
