@@ -41,7 +41,7 @@ export interface DataPrivacyResult {
   cookieCount: number;
   trackingScripts: TrackingScript[];
   cookies: CookieInfo[];
-  sslRating: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F';
+  sslRating: 'A+' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'T';
   hasConsentBanner: boolean;
   hasPrivacyPolicy: boolean;
   hasCookiePolicy: boolean;
@@ -376,6 +376,8 @@ export class DataPrivacyService {
       else if (sslResult.grade === 'B') score -= 10;
       else if (sslResult.grade === 'C') score -= 20;
       else if (sslResult.grade === 'D') score -= 30;
+      else if (sslResult.grade === 'E') score -= 35;
+      else if (sslResult.grade === 'T') score -= 40;
       else score -= 40; // F oder schlechter
     } else {
       score -= 40; // Keine SSL-Daten = schlecht
@@ -398,18 +400,28 @@ export class DataPrivacyService {
       }
     });
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+    
+    // Cap at 59% if there are any critical violations
+    const hasCriticalViolations = violations.some(v => v.severity === 'critical');
+    if (hasCriticalViolations) {
+      return Math.min(59, finalScore);
+    }
+
+    return finalScore;
   }
 
   /**
    * Mapped SSL Labs Grade zu Standard-Rating
    */
-  private static mapSSLGrade(grade: string): 'A+' | 'A' | 'B' | 'C' | 'D' | 'F' {
+  private static mapSSLGrade(grade: string): 'A+' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'T' {
     if (grade === 'A+') return 'A+';
     if (grade === 'A' || grade === 'A-') return 'A';
     if (grade.startsWith('B')) return 'B';
     if (grade.startsWith('C')) return 'C';
     if (grade.startsWith('D')) return 'D';
+    if (grade.startsWith('E')) return 'E';
+    if (grade === 'T') return 'T';
     return 'F';
   }
   
