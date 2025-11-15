@@ -56,6 +56,12 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
   
   console.log('💾 ManualLocalSEOInput - formData after init:', formData);
   console.log('💾 ManualLocalSEOInput - directories in formData:', formData.directories);
+  
+  // Log changes to directories
+  useEffect(() => {
+    console.log('🔄 formData.directories changed:', formData.directories);
+    console.log('🔄 Directories count:', formData.directories.length);
+  }, [formData.directories]);
 
   const [newDirectory, setNewDirectory] = useState<{ name: string; status: 'complete' | 'incomplete' | 'not-found' }>({ 
     name: '', 
@@ -559,7 +565,10 @@ const ManualLocalSEOInput: React.FC<ManualLocalSEOInputProps> = ({ initialData, 
         <Button
           variant="default"
           onClick={() => {
-            console.log('💾 Speichern button clicked, sending data:', formData);
+            console.log('💾💾💾 SPEICHERN BUTTON CLICKED 💾💾💾');
+            console.log('💾 Current formData:', JSON.stringify(formData, null, 2));
+            console.log('💾 Directories count:', formData.directories.length);
+            console.log('💾 Directories:', formData.directories);
             onDataChange(formData);
           }}
         >
