@@ -762,8 +762,12 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any):
 
 export const calculateAccessibilityScore = (realData: any, manualAccessibilityData: any): number => {
   try {
-    let autoScore = 40;
-    if (realData?.violations) {
+    // Only set autoScore if we actually have real accessibility data
+    let autoScore = null;
+    let hasAutoData = false;
+    
+    if (realData?.violations !== undefined) {
+      hasAutoData = true;
       autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
     }
     
@@ -804,16 +808,24 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
-    if (!isNaN(manualScore) && manualScore > 0 && !isNaN(autoScore) && autoScore > 0) {
+    // If we have both manual and auto data, combine them
+    if (!isNaN(manualScore) && manualScore > 0 && hasAutoData && autoScore !== null) {
       const combined = Math.round(manualScore * 0.3 + autoScore * 0.7);
       return isNaN(combined) ? 40 : Math.max(0, Math.min(100, combined));
     }
     
+    // If we only have manual data, use it
     if (!isNaN(manualScore) && manualScore > 0) {
       return Math.max(0, Math.min(100, manualScore));
     }
     
-    return Math.max(0, Math.min(100, autoScore));
+    // If we only have auto data, use it
+    if (hasAutoData && autoScore !== null) {
+      return Math.max(0, Math.min(100, autoScore));
+    }
+    
+    // Default fallback
+    return 40;
   } catch (error) {
     console.error('🎯 calculateAccessibilityScore error:', error);
     return 40;
