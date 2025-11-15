@@ -100,7 +100,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   
   // Content, Accessibility, Backlinks, Privacy Scores
   const contentScore = manualContentData ? calculateContentQualityScore(realData, null, businessData, manualContentData) : null;
-  const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(realData, manualAccessibilityData || accessibilityData) : null;
+  const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(accessibilityData, manualAccessibilityData) : null;
   const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData) : null;
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
   
