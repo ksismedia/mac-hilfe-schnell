@@ -828,22 +828,28 @@ export const calculateTechnicalSecurityScore = (privacyData: any): number => {
   
   // Security Headers Score (40% Gewichtung)
   // Support both data structures: securityHeaders and realApiData.securityHeaders
-  const headers = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
-  const hasHSTS = headers?.hsts || privacyData?.realApiData?.ssl?.hasHSTS;
+  const securityHeaders = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
+  const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
+                   securityHeaders?.hsts || 
+                   privacyData?.realApiData?.ssl?.hasHSTS;
   
-  if (headers) {
+  if (securityHeaders) {
     componentCount++;
-    let headerScore = 100;
+    let headerScore = 0;
     
-    // Deduct points for missing headers
-    if (!hasHSTS) headerScore -= 30; // HSTS most important
-    if (!headers.xFrameOptions) headerScore -= 15;
-    if (!headers.xContentTypeOptions) headerScore -= 10;
-    if (!headers.csp) headerScore -= 20;
-    if (!headers.referrerPolicy) headerScore -= 10;
-    if (!headers.permissionsPolicy) headerScore -= 15;
+    // Check for headers using the correct structure
+    const headers = securityHeaders.headers || {};
+    const csp = headers['Content-Security-Policy']?.present || securityHeaders.csp;
+    const xFrame = headers['X-Frame-Options']?.present || securityHeaders.xFrameOptions;
+    const xContent = headers['X-Content-Type-Options']?.present || securityHeaders.xContentTypeOptions;
+    const referrer = headers['Referrer-Policy']?.present || securityHeaders.referrerPolicy;
+    const permissions = headers['Permissions-Policy']?.present || securityHeaders.permissionsPolicy;
     
-    score += Math.max(0, headerScore) * 0.4;
+    // Count present headers
+    const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
+    headerScore = Math.round((presentHeaders / 5) * 100);
+    
+    score += headerScore * 0.4;
   }
   
   if (componentCount === 0) {
