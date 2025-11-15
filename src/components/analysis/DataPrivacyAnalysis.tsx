@@ -139,7 +139,32 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   const getTechnicalSecurityScore = () => {
     if (!privacyData) return 0;
     
-    const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || false;
+    // Check if cookie banner is present based on:
+    // 1. Automatic detection
+    // 2. Manual override: if "no cookie banner" violation is deselected AND manual checkboxes indicate compliance
+    const autoCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || false;
+    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
+    const totalViolations = privacyData?.violations || [];
+    
+    // Find the "no cookie banner" violation
+    const noCookieBannerViolationIndex = totalViolations.findIndex(v => 
+      v.description?.includes('Cookie-Consent-Banner') || 
+      v.description?.includes('Cookie-Banner')
+    );
+    
+    const cookieBannerViolationDeselected = noCookieBannerViolationIndex >= 0 && 
+      deselectedViolations.includes(`auto-${noCookieBannerViolationIndex}`);
+    
+    // Check manual cookie compliance indicators
+    const manualCookieCompliance = manualDataPrivacyData?.cookiePolicy || 
+                                   manualDataPrivacyData?.cookieConsent;
+    
+    // Cookie banner is considered present if:
+    // - Auto-detected OR
+    // - The "no banner" violation was deselected AND manual data indicates compliance
+    const hasCookieBanner = autoCookieBanner || 
+                           (cookieBannerViolationDeselected && manualCookieCompliance);
+    
     const sslGrade = privacyData?.sslRating;
     const securityHeaders = privacyData?.realApiData?.securityHeaders;
     const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 

@@ -105,7 +105,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
   
   // Technical Security Score (separate from DSGVO)
-  const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData) : null;
+  const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) : null;
   
   // Industry Reviews and Online Presence
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;

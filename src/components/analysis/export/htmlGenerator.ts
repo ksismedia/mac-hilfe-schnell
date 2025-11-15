@@ -255,7 +255,7 @@ export const generateCustomerHTML = ({
   const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
   
   // Technische Sicherheit Score: bei kritischen technischen Problemen auf genau 59% setzen
-  let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
+  let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData);
   technicalSecurityScore = hasCriticalTechnicalIssues ? 59 : technicalSecurityScore;
   const displayTechnicalSecurityScore = technicalSecurityScore > 0 ? `${Math.round(technicalSecurityScore)}%` : '–';
   
