@@ -115,11 +115,11 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     // Check if there are any critical violations (not deselected)
     const hasCriticalViolations = () => {
       const activeCriticalAuto = totalViolations.some((violation, index) => 
-        violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
+        (violation.severity === 'critical' || violation.severity === 'high') && !deselectedViolations.includes(`auto-${index}`)
       );
       
       const criticalCustom = customViolations.some(violation => 
-        violation.severity === 'critical'
+        violation.severity === 'critical' || violation.severity === 'high'
       );
       
       return activeCriticalAuto || criticalCustom;

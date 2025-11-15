@@ -199,8 +199,8 @@ export const generateCustomerHTML = ({
   const hasCriticalViolations = privacyData?.violations?.some((v: any) => {
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const violationIndex = privacyData.violations.indexOf(v);
-    return v.severity === 'critical' && !deselectedViolations.includes(`auto-${violationIndex}`);
-  }) || manualDataPrivacyData?.customViolations?.some((v: any) => v.severity === 'critical');
+    return (v.severity === 'critical' || v.severity === 'high') && !deselectedViolations.includes(`auto-${violationIndex}`);
+  }) || manualDataPrivacyData?.customViolations?.some((v: any) => v.severity === 'critical' || v.severity === 'high');
   
   // GETRENNTE PRÜFUNG: Kritische technische Probleme
   const securityHeaders = privacyData?.realApiData?.securityHeaders;
