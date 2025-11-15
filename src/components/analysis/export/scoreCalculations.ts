@@ -695,7 +695,7 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     }
     
     if (!isNaN(manualScore) && manualScore > 0 && !isNaN(autoScore) && autoScore > 0) {
-      const combined = Math.round(manualScore * 0.7 + autoScore * 0.3);
+      const combined = Math.round(manualScore * 0.3 + autoScore * 0.7);
       return isNaN(combined) ? 40 : Math.max(0, Math.min(100, combined));
     }
     
