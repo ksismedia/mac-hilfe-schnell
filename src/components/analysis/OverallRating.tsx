@@ -117,13 +117,13 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   // KATEGORISIERUNG DER METRIKEN (wie in htmlGenerator.ts)
   // ========================================
   
-  // Feste Gewichtungen für die 6 Hauptkategorien
-  const cat1Weight = 30; // Online-Qualität · Relevanz · Autorität
-  const cat2Weight = 20; // Webseiten-Performance & Technik
-  const cat3Weight = 20; // Online-/Web-/Social-Media Performance
-  const cat4Weight = 10; // Markt & Marktumfeld
-  const cat5Weight = 10; // Außendarstellung & Erscheinungsbild
-  const cat6Weight = 10; // Qualität · Service · Kundenorientierung
+  // Basis-Gewichtungen für die 6 Hauptkategorien
+  const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+  const baseCat2Weight = 20; // Webseiten-Performance & Technik
+  const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
+  const baseCat4Weight = 10; // Markt & Marktumfeld
+  const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
+  const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
   
   // Kategorie 1: Online-Qualität · Relevanz · Autorität
   const cat1Scores = [
@@ -187,16 +187,81 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   if (quoteResponseScore !== null) cat6Scores.push(quoteResponseScore);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
-  // Gewichteter Gesamtscore aus den 6 Kategorien (IDENTISCH mit htmlGenerator.ts)
-  const totalCategoryWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
-  const overallScore = Math.round((
-    cat1Avg * cat1Weight +
-    cat2Avg * cat2Weight +
-    cat3Avg * cat3Weight +
-    cat4Avg * cat4Weight +
-    cat5Avg * cat5Weight +
-    cat6Avg * cat6Weight
-  ) / totalCategoryWeight);
+  // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
+  let adjustedCat1Weight = baseCat1Weight;
+  let adjustedCat2Weight = baseCat2Weight;
+  let adjustedCat3Weight = baseCat3Weight;
+  let adjustedCat4Weight = baseCat4Weight;
+  let adjustedCat5Weight = baseCat5Weight;
+  let adjustedCat6Weight = baseCat6Weight;
+
+  // Berechne fehlende Gewichte
+  let missingWeight = 0;
+  const categoriesWithData = [];
+  
+  if (cat1Avg > 0) {
+    categoriesWithData.push('cat1');
+  } else {
+    missingWeight += adjustedCat1Weight;
+    adjustedCat1Weight = 0;
+  }
+  
+  if (cat2Avg > 0) {
+    categoriesWithData.push('cat2');
+  } else {
+    missingWeight += adjustedCat2Weight;
+    adjustedCat2Weight = 0;
+  }
+  
+  if (cat3Avg > 0) {
+    categoriesWithData.push('cat3');
+  } else {
+    missingWeight += adjustedCat3Weight;
+    adjustedCat3Weight = 0;
+  }
+  
+  if (cat4Avg > 0) {
+    categoriesWithData.push('cat4');
+  } else {
+    missingWeight += adjustedCat4Weight;
+    adjustedCat4Weight = 0;
+  }
+  
+  if (cat5Avg > 0) {
+    categoriesWithData.push('cat5');
+  } else {
+    missingWeight += adjustedCat5Weight;
+    adjustedCat5Weight = 0;
+  }
+  
+  if (cat6Avg > 0) {
+    categoriesWithData.push('cat6');
+  } else {
+    missingWeight += adjustedCat6Weight;
+    adjustedCat6Weight = 0;
+  }
+
+  // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
+  if (categoriesWithData.length > 0 && missingWeight > 0) {
+    const additionalWeight = missingWeight / categoriesWithData.length;
+    if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
+    if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
+    if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
+    if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
+    if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
+    if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
+  }
+
+  // Gewichteter Gesamtscore aus den 6 Kategorien mit angepassten Gewichten
+  const totalCategoryWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
+  const overallScore = totalCategoryWeight > 0 ? Math.round((
+    cat1Avg * adjustedCat1Weight +
+    cat2Avg * adjustedCat2Weight +
+    cat3Avg * adjustedCat3Weight +
+    cat4Avg * adjustedCat4Weight +
+    cat5Avg * adjustedCat5Weight +
+    cat6Avg * adjustedCat6Weight
+  ) / totalCategoryWeight) : 0;
 
   // Alle Metriken für die Detail-Anzeige - GEWICHTE BASIEREN AUF KATEGORIE-ZUGEHÖRIGKEIT
   const baseMetrics = [
