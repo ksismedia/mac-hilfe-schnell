@@ -210,16 +210,16 @@ export const generateCustomerHTML = ({
   const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
-  // DSGVO-Score: NUR bei kritischen rechtlichen Verstößen auf 59% begrenzt
-  const dsgvoScore = hasCriticalViolations ? Math.min(59, actualDataPrivacyScore) : actualDataPrivacyScore;
+  // DSGVO-Score: bei kritischen rechtlichen Verstößen auf genau 59% setzen
+  const dsgvoScore = hasCriticalViolations ? 59 : actualDataPrivacyScore;
   const displayDataPrivacyScore = dsgvoScore > 0 
     ? `${Math.round(dsgvoScore)}%` 
     : '–';
   const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
   
-  // Technische Sicherheit Score: NUR bei kritischen technischen Problemen auf 59% begrenzt
+  // Technische Sicherheit Score: bei kritischen technischen Problemen auf genau 59% setzen
   let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
-  technicalSecurityScore = hasCriticalTechnicalIssues ? Math.min(59, technicalSecurityScore) : technicalSecurityScore;
+  technicalSecurityScore = hasCriticalTechnicalIssues ? 59 : technicalSecurityScore;
   const displayTechnicalSecurityScore = technicalSecurityScore > 0 ? `${Math.round(technicalSecurityScore)}%` : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN

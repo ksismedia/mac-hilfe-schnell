@@ -127,9 +127,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     
     const finalScore = Math.round(Math.max(0, Math.min(100, score)));
     
-    // Cap at 59% if there are any critical legal violations
+    // Set to exactly 59% if there are any critical legal violations
     if (hasCriticalViolations()) {
-      return Math.min(59, finalScore);
+      return 59;
     }
     
     return finalScore;
@@ -187,13 +187,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     
     const finalScore = Math.round(score);
     
-    // Cap at 59% if critical technical issues exist
+    // Set to exactly 59% if critical technical issues exist
     const hasCriticalTechnicalIssues = 
       (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
       !hasHSTS;
     
     if (hasCriticalTechnicalIssues) {
-      return Math.min(59, finalScore);
+      return 59;
     }
     
     return finalScore;
