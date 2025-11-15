@@ -456,16 +456,18 @@ export const generateCustomerHTML = ({
   ].filter(s => s > 0);
   const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
   
-  // Gewichteter Gesamtscore aus den 6 Kategorien
-  const totalCategoryWeight = cat1Weight + cat2Weight + cat3Weight + cat4Weight + cat5Weight + cat6Weight;
-  const overallScore = Math.round((
-    cat1Avg * cat1Weight +
-    cat2Avg * cat2Weight +
-    cat3Avg * cat3Weight +
-    cat4Avg * cat4Weight +
-    cat5Avg * cat5Weight +
-    cat6Avg * cat6Weight
-  ) / totalCategoryWeight);
+  // Gewichteter Gesamtscore aus den 6 Kategorien - nur Kategorien mit Daten berücksichtigen
+  let totalCategoryWeight = 0;
+  let weightedSum = 0;
+  
+  if (cat1Avg > 0) { totalCategoryWeight += cat1Weight; weightedSum += cat1Avg * cat1Weight; }
+  if (cat2Avg > 0) { totalCategoryWeight += cat2Weight; weightedSum += cat2Avg * cat2Weight; }
+  if (cat3Avg > 0) { totalCategoryWeight += cat3Weight; weightedSum += cat3Avg * cat3Weight; }
+  if (cat4Avg > 0) { totalCategoryWeight += cat4Weight; weightedSum += cat4Avg * cat4Weight; }
+  if (cat5Avg > 0) { totalCategoryWeight += cat5Weight; weightedSum += cat5Avg * cat5Weight; }
+  if (cat6Avg > 0) { totalCategoryWeight += cat6Weight; weightedSum += cat6Avg * cat6Weight; }
+  
+  const overallScore = totalCategoryWeight > 0 ? Math.round(weightedSum / totalCategoryWeight) : 0;
   
   console.log('Calculated impressumScore:', impressumScore);
   console.log('finalMissingImprintElements.length:', finalMissingImprintElements.length);
