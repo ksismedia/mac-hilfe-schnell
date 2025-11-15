@@ -431,17 +431,14 @@ export const generateDataPrivacySection = (
   const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
   const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical');
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
-  const hasAnyCriticalIssue = hasCriticalViolations || hasCriticalTechnicalIssues;
   
-  // BEIDE Scores auf 59% begrenzen wenn IRGENDEIN kritisches Problem vorliegt
-  // DSGVO-Score (rechtliche Aspekte) - basiert auf Verstößen
-  const dsgvoScore = hasAnyCriticalIssue ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
+  // GETRENNTE BEWERTUNG:
+  // DSGVO-Score (rechtliche Aspekte) - NUR bei kritischen rechtlichen Verstößen auf 59% begrenzt
+  const dsgvoScore = hasCriticalViolations ? Math.min(59, dataPrivacyScore) : dataPrivacyScore;
   
-  // Technische Sicherheit-Score (SSL, HSTS, Security Headers)
+  // Technische Sicherheit-Score (SSL, HSTS, Security Headers) - NUR bei kritischen technischen Problemen auf 59% begrenzt
   let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
-  
-  // Cap technical security score at 59% if ANY critical issue exists (legal OR technical)
-  if (hasAnyCriticalIssue) {
+  if (hasCriticalTechnicalIssues) {
     technicalSecurityScore = Math.min(59, technicalSecurityScore);
   }
   

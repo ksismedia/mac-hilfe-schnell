@@ -195,30 +195,31 @@ export const generateCustomerHTML = ({
   // Calculate data privacy score using manual data if available
   const actualDataPrivacyScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
   
-  // Check for ANY critical issue (legal OR technical)
+  // GETRENNTE PRÜFUNG: Kritische rechtliche Verstöße
   const hasCriticalViolations = privacyData?.violations?.some((v: any) => {
     const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
     const violationIndex = privacyData.violations.indexOf(v);
     return v.severity === 'critical' && !deselectedViolations.includes(`auto-${violationIndex}`);
   }) || manualDataPrivacyData?.customViolations?.some((v: any) => v.severity === 'critical');
   
+  // GETRENNTE PRÜFUNG: Kritische technische Probleme
   const securityHeaders = privacyData?.realApiData?.securityHeaders;
   const hasNoHSTS = !securityHeaders?.headers?.['Strict-Transport-Security']?.present && 
                      !privacyData?.realApiData?.ssl?.hasHSTS;
   const sslGrade = privacyData?.sslGrade || privacyData?.sslRating;
   const hasPoorSSL = sslGrade === 'F' || sslGrade === 'D' || sslGrade === 'E' || sslGrade === 'T';
-  const hasAnyCriticalIssue = hasCriticalViolations || hasNoHSTS || hasPoorSSL;
+  const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
-  // Apply 59% cap if ANY critical issue exists
-  const dsgvoScore = hasAnyCriticalIssue ? Math.min(59, actualDataPrivacyScore) : actualDataPrivacyScore;
+  // DSGVO-Score: NUR bei kritischen rechtlichen Verstößen auf 59% begrenzt
+  const dsgvoScore = hasCriticalViolations ? Math.min(59, actualDataPrivacyScore) : actualDataPrivacyScore;
   const displayDataPrivacyScore = dsgvoScore > 0 
     ? `${Math.round(dsgvoScore)}%` 
     : '–';
   const displayDSGVOScore = dsgvoScore > 0 ? `${Math.round(dsgvoScore)}%` : '–';
   
-  // Technische Sicherheit Score (SSL, Security Headers) - also capped at 59% if ANY critical issue
+  // Technische Sicherheit Score: NUR bei kritischen technischen Problemen auf 59% begrenzt
   let technicalSecurityScore = calculateTechnicalSecurityScore(privacyData);
-  technicalSecurityScore = hasAnyCriticalIssue ? Math.min(59, technicalSecurityScore) : technicalSecurityScore;
+  technicalSecurityScore = hasCriticalTechnicalIssues ? Math.min(59, technicalSecurityScore) : technicalSecurityScore;
   const displayTechnicalSecurityScore = technicalSecurityScore > 0 ? `${Math.round(technicalSecurityScore)}%` : '–';
   
   // Calculate additional scores - MIT MANUELLEN DATEN
