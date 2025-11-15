@@ -143,13 +143,15 @@ const generateHourlyRateProgressBar = (ratio: number, description: string) => {
   }
   
   const percentage = Math.round(ratio * 100);
+  const deviation = ((ratio - 1) * 100).toFixed(1);
+  const deviationText = ratio > 1 ? `+${deviation}%` : `${deviation}%`;
   const textColor = ratio > 1.1 ? '#000' : '#fff';
   
   return `
     <div class="progress-container">
       <div class="progress-bar">
         <div class="progress-fill" data-score="${scoreRange}" style="width: ${percentage}%; background-color: ${barColor}; display: flex; align-items: center; justify-content: center;">
-          <span style="color: ${textColor}; font-weight: bold; font-size: 12px;">${percentage}%</span>
+          <span style="color: ${textColor}; font-weight: bold; font-size: 12px;">${deviationText}</span>
         </div>
       </div>
       <p style="margin-top: 5px; font-size: 12px; color: #666;">${description}</p>
