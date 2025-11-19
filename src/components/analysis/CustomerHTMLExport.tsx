@@ -43,6 +43,7 @@ interface CustomerHTMLExportProps {
   keywordScore?: number;
   privacyData?: any;
   accessibilityData?: any;
+  securityData?: any;
   calculatedOwnCompanyScore?: number; // DIREKT AUS COMPETITOR ANALYSIS
 }
 

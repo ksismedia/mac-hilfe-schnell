@@ -57,6 +57,7 @@ interface OverallRatingProps {
   manualConversionData?: any | null;
   privacyData?: any;
   accessibilityData?: any;
+  securityData?: any;
   manualCorporateIdentityData?: ManualCorporateIdentityData | null;
 }
 
@@ -80,6 +81,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   manualConversionData,
   privacyData,
   accessibilityData,
+  securityData,
   manualCorporateIdentityData
 }) => {
   // Keywords-Score - use provided score or calculate default
@@ -111,6 +113,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   // Technical Security Score (separate from DSGVO)
   const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) : null;
   
+  // Website Security Score (Safe Browsing)
+  const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : null;
+  
   // Industry Reviews and Online Presence
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
   const onlinePresenceScore = manualOnlinePresenceData ? calculateOnlinePresenceScore(manualOnlinePresenceData) : null;
@@ -137,13 +142,14 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     realData.seo.score,
     localSEOScore,
     realData.imprint.score
-  ].filter(s => s > 0);
+  ].filter(s => s !== null && s !== undefined && s > 0);
   
   if (contentScore !== null && contentScore > 0) cat1Scores.push(contentScore);
   if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
   if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
   if (dataPrivacyScore !== null && dataPrivacyScore > 0) cat1Scores.push(dataPrivacyScore);
   if (technicalSecurityScore !== null && technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
+  if (websiteSecurityScore !== null && websiteSecurityScore > 0) cat1Scores.push(websiteSecurityScore);
   
   const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
   
