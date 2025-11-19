@@ -15,5 +15,8 @@ verify_jwt = false
 [functions.google-nearby-proxy]
 verify_jwt = false
 
+[functions.google-search-proxy]
+verify_jwt = false
+
 [functions.check-safe-browsing]
 verify_jwt = false
