@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.check-accessibility]
 verify_jwt = false
+
+[functions.google-places-proxy]
+verify_jwt = false
+
+[functions.google-pagespeed-proxy]
+verify_jwt = false
+
+[functions.google-nearby-proxy]
+verify_jwt = false

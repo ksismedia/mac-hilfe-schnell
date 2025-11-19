@@ -14,9 +14,32 @@ serve(async (req) => {
   try {
     const { url } = await req.json();
 
-    if (!url) {
+    // Input validation
+    if (!url || typeof url !== 'string') {
       return new Response(
-        JSON.stringify({ success: false, error: 'URL is required' }),
+        JSON.stringify({ success: false, error: 'URL is required and must be a string' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    
+    // Validate URL format and length
+    if (url.length > 2048) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'URL exceeds maximum length of 2048 characters' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    
+    // Validate URL format and protocol
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        throw new Error('Invalid protocol');
+      }
+    } catch {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid URL format. Must be http:// or https://' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
