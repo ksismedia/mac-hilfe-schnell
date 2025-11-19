@@ -92,21 +92,34 @@ export const calculateOnlinePresenceScore = (
   return manualOnlinePresenceData.overallScore;
 };
 
+// Calculate reputation monitoring score
+export const calculateReputationScore = (
+  manualReputationData?: { reputationScore: number } | null
+): number => {
+  if (!manualReputationData || !manualReputationData.reputationScore) {
+    return 0;
+  }
+  return manualReputationData.reputationScore;
+};
+
 export const calculateSocialMediaCategoryScore = (
   realData: RealBusinessData,
   manualSocialData?: ManualSocialData | null,
   manualWorkplaceData?: ManualWorkplaceData | null,
   manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null,
-  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
+  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null,
+  manualReputationData?: { reputationScore: number } | null
 ): number => {
   const socialMediaScore = calculateSocialMediaPerformanceScore(realData, manualSocialData);
   const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
   const onlinePresenceScore = calculateOnlinePresenceScore(manualOnlinePresenceData);
+  const reputationScore = calculateReputationScore(manualReputationData);
   
   // Collect all scores that exist
   const scores = [socialMediaScore];
   if (industryReviewScore > 0) scores.push(industryReviewScore);
   if (onlinePresenceScore > 0) scores.push(onlinePresenceScore);
+  if (reputationScore > 0) scores.push(reputationScore);
   
   // Return average of all available scores
   return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);

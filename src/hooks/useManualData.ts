@@ -297,6 +297,20 @@ export interface ManualOnlinePresenceData {
   };
 }
 
+export interface ManualReputationData {
+  searchResults: Array<{
+    title: string;
+    link: string;
+    snippet: string;
+    displayLink: string;
+  }>;
+  reputationScore: number; // 0-100
+  webMentionsCount: number;
+  sentiment: 'positive' | 'neutral' | 'negative';
+  lastChecked?: string;
+  notes?: string;
+}
+
 export interface ManualConversionData {
   // Call-to-Action
   totalCTAs: number;
@@ -398,6 +412,7 @@ export const useManualData = () => {
   const [manualOnlinePresenceData, setManualOnlinePresenceData] = useState<ManualOnlinePresenceData | null>(null);
   const [manualConversionData, setManualConversionData] = useState<ManualConversionData | null>(null);
   const [manualMobileData, setManualMobileData] = useState<ManualMobileData | null>(null);
+  const [manualReputationData, setManualReputationData] = useState<ManualReputationData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -531,6 +546,11 @@ export const useManualData = () => {
     console.log('Manual Mobile Data Updated:', data);
   }, []);
 
+  const updateManualReputationData = useCallback((data: ManualReputationData | null) => {
+    setManualReputationData(data);
+    console.log('Manual Reputation Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -575,6 +595,8 @@ export const useManualData = () => {
     manualConversionData,
     updateManualConversionData,
     manualMobileData,
-    updateManualMobileData
+    updateManualMobileData,
+    manualReputationData,
+    updateManualReputationData,
   };
 };
