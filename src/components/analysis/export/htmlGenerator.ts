@@ -2347,175 +2347,193 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-        <!-- Kompakte Kategorie-Aufschlüsselung -->
-        <div style="margin-bottom: 30px; padding: 15px; background: rgba(251, 191, 36, 0.05); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">
-          <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #6b7280; font-weight: 500;">Bewertung der Hauptkategorien:</p>
-          <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
-            ${(() => {
-              // Basis-Gewichtungen für die 6 Hauptkategorien
-              const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
-              const baseCat2Weight = 20; // Webseiten-Performance & Technik
-              const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
-              const baseCat4Weight = 10; // Markt & Marktumfeld
-              const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
-              const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
-              
-              // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
-              const cat1Scores = [
-                realData.seo.score,
-                localSEOScore,
-                keywordScore,
-                impressumScore
-              ].filter(s => s > 0);
-              
-              if (contentQualityScore !== null && contentQualityScore > 0) cat1Scores.push(contentQualityScore);
-              if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
-              if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
-              if (dsgvoScore !== null && dsgvoScore > 0) cat1Scores.push(dsgvoScore);
-              
-              const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
-
-              // Kategorie 2: Webseiten-Performance & Technik
-              const conversionScore = manualConversionData?.overallScore || 0;
-              const hasConversionData = conversionScore > 0;
-              
-              const cat2Scores = [
-                realData.performance.score,
-                realData.mobile.overallScore
-              ];
-              
-              if (hasConversionData) {
-                cat2Scores.push(conversionScore);
-              }
-              
-              const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
-
-              // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
-              const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
-              const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
-              const socialProofScore = realData.socialProof?.overallScore ?? 0;
-              
-              const cat3Scores = [
-                googleReviewScore,
-                socialMediaScore,
-                socialProofScore
-              ].filter(s => s > 0);
-              
-              if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
-              if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
-              
-              const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
-
-              // Kategorie 4: Markt & Marktumfeld
-              const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
-              const cat4Scores = [
-                allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
-                hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
-                workplaceScore !== -1 ? workplaceScore : 0,
-                staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
-              ].filter(s => s > 0);
-              const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
-
-              // Kategorie 5: Außendarstellung & Erscheinungsbild
-              const cat5Avg = Math.round(corporateIdentityScore);
-
-              // Kategorie 6: Qualität · Service · Kundenorientierung
-              const cat6Scores = [
-                quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
-              ].filter(s => s > 0);
-              const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
-
-              // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
-              let adjustedCat1Weight = baseCat1Weight;
-              let adjustedCat2Weight = baseCat2Weight;
-              let adjustedCat3Weight = baseCat3Weight;
-              let adjustedCat4Weight = baseCat4Weight;
-              let adjustedCat5Weight = baseCat5Weight;
-              let adjustedCat6Weight = baseCat6Weight;
-
-              // Berechne fehlende Gewichte
-              let missingWeight = 0;
-              const categoriesWithData = [];
-              
-              if (cat1Avg > 0) {
-                categoriesWithData.push('cat1');
-              } else {
-                missingWeight += adjustedCat1Weight;
-                adjustedCat1Weight = 0;
-              }
-              
-              if (cat2Avg > 0) {
-                categoriesWithData.push('cat2');
-              } else {
-                missingWeight += adjustedCat2Weight;
-                adjustedCat2Weight = 0;
-              }
-              
-              if (cat3Avg > 0) {
-                categoriesWithData.push('cat3');
-              } else {
-                missingWeight += adjustedCat3Weight;
-                adjustedCat3Weight = 0;
-              }
-              
-              if (cat4Avg > 0) {
-                categoriesWithData.push('cat4');
-              } else {
-                missingWeight += adjustedCat4Weight;
-                adjustedCat4Weight = 0;
-              }
-              
-              if (cat5Avg > 0) {
-                categoriesWithData.push('cat5');
-              } else {
-                missingWeight += adjustedCat5Weight;
-                adjustedCat5Weight = 0;
-              }
-              
-              if (cat6Avg > 0) {
-                categoriesWithData.push('cat6');
-              } else {
-                missingWeight += adjustedCat6Weight;
-                adjustedCat6Weight = 0;
-              }
-
-              // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
-              if (categoriesWithData.length > 0 && missingWeight > 0) {
-                const additionalWeight = missingWeight / categoriesWithData.length;
-                if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
-                if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
-                if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
-                if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
-                if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
-                if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
-              }
-
-              const totalWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
-
-              const categories = [
-                { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg, weight: adjustedCat1Weight },
-                { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: adjustedCat2Weight },
-                { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: adjustedCat3Weight },
-                { name: 'Markt & Marktumfeld', score: cat4Avg, weight: adjustedCat4Weight },
-                { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: adjustedCat5Weight },
-                { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: adjustedCat6Weight }
-              ].filter(cat => cat.score > 0);
-
-              return categories.map(cat => {
-                const weightPercent = totalWeight > 0 ? Math.round(cat.weight / totalWeight * 1000) / 10 : 0;
-                return `
-                  <div style="color: #374151;">${cat.name}</div>
-                  <div style="text-align: right;">
-                    <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
-                  </div>
-                  <div style="text-align: right; padding-left: 12px;">
-                    <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPercent}%)</span>
-                  </div>
-                `;
-              }).join('');
-            })()}
+        <!-- Collapsible Kategorie-Aufschlüsselung -->
+        <div style="margin-bottom: 30px;">
+          <div 
+            onclick="toggleSection('main-categories-content')" 
+            style="cursor: pointer; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 18px 25px; border-radius: 12px; border: 2px solid rgba(251, 191, 36, 0.5); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
+            onmouseover="this.style.background='linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(17, 24, 39, 1) 100%)'; this.style.borderColor='rgba(251, 191, 36, 0.7)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.3)';"
+            onmouseout="this.style.background='linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%)'; this.style.borderColor='rgba(251, 191, 36, 0.5)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)';"
+          >
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="main-categories-toggle" style="color: #fbbf24; font-size: 20px; transition: transform 0.3s ease; font-weight: bold;">▶</span>
+              <h3 style="margin: 0; color: #fbbf24; font-size: 18px; font-weight: 700;">
+                Bewertung der Hauptkategorien
+              </h3>
+            </div>
+            <div style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+              Details anzeigen
+            </div>
           </div>
-          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore basierend auf den enthaltenen Einzelmetriken.</p>
+          
+          <div id="main-categories-content" style="display: none; margin-top: 15px; padding: 20px; background: rgba(251, 191, 36, 0.05); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">
+            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; font-size: 0.85rem; align-items: center;">
+              ${(() => {
+                // Basis-Gewichtungen für die 6 Hauptkategorien
+                const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+                const baseCat2Weight = 20; // Webseiten-Performance & Technik
+                const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
+                const baseCat4Weight = 10; // Markt & Marktumfeld
+                const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
+                const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
+                
+                // Kategorie 1: Online-Qualität · Relevanz · Autorität (same logic as OverallRating.tsx)
+                const cat1Scores = [
+                  realData.seo.score,
+                  localSEOScore,
+                  keywordScore,
+                  impressumScore
+                ].filter(s => s > 0);
+                
+                if (contentQualityScore !== null && contentQualityScore > 0) cat1Scores.push(contentQualityScore);
+                if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
+                if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
+                if (dsgvoScore !== null && dsgvoScore > 0) cat1Scores.push(dsgvoScore);
+                
+                const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
+
+                // Kategorie 2: Webseiten-Performance & Technik
+                const conversionScore = manualConversionData?.overallScore || 0;
+                const hasConversionData = conversionScore > 0;
+                
+                const cat2Scores = [
+                  realData.performance.score,
+                  realData.mobile.overallScore
+                ];
+                
+                if (hasConversionData) {
+                  cat2Scores.push(conversionScore);
+                }
+                
+                const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
+
+                // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
+                const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
+                const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+                const socialProofScore = realData.socialProof?.overallScore ?? 0;
+                
+                const cat3Scores = [
+                  googleReviewScore,
+                  socialMediaScore,
+                  socialProofScore
+                ].filter(s => s > 0);
+                
+                if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
+                if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
+                
+                const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
+
+                // Kategorie 4: Markt & Marktumfeld
+                const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                const cat4Scores = [
+                  allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
+                  hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
+                  workplaceScore !== -1 ? workplaceScore : 0,
+                  staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+                ].filter(s => s > 0);
+                const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+
+                // Kategorie 5: Außendarstellung & Erscheinungsbild
+                const cat5Avg = Math.round(corporateIdentityScore);
+
+                // Kategorie 6: Qualität · Service · Kundenorientierung
+                const cat6Scores = [
+                  quoteResponseData && quoteResponseData.responseTime ? quoteResponseScore : 0
+                ].filter(s => s > 0);
+                const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
+
+                // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
+                let adjustedCat1Weight = baseCat1Weight;
+                let adjustedCat2Weight = baseCat2Weight;
+                let adjustedCat3Weight = baseCat3Weight;
+                let adjustedCat4Weight = baseCat4Weight;
+                let adjustedCat5Weight = baseCat5Weight;
+                let adjustedCat6Weight = baseCat6Weight;
+
+                // Berechne fehlende Gewichte
+                let missingWeight = 0;
+                const categoriesWithData = [];
+                
+                if (cat1Avg > 0) {
+                  categoriesWithData.push('cat1');
+                } else {
+                  missingWeight += adjustedCat1Weight;
+                  adjustedCat1Weight = 0;
+                }
+                
+                if (cat2Avg > 0) {
+                  categoriesWithData.push('cat2');
+                } else {
+                  missingWeight += adjustedCat2Weight;
+                  adjustedCat2Weight = 0;
+                }
+                
+                if (cat3Avg > 0) {
+                  categoriesWithData.push('cat3');
+                } else {
+                  missingWeight += adjustedCat3Weight;
+                  adjustedCat3Weight = 0;
+                }
+                
+                if (cat4Avg > 0) {
+                  categoriesWithData.push('cat4');
+                } else {
+                  missingWeight += adjustedCat4Weight;
+                  adjustedCat4Weight = 0;
+                }
+                
+                if (cat5Avg > 0) {
+                  categoriesWithData.push('cat5');
+                } else {
+                  missingWeight += adjustedCat5Weight;
+                  adjustedCat5Weight = 0;
+                }
+                
+                if (cat6Avg > 0) {
+                  categoriesWithData.push('cat6');
+                } else {
+                  missingWeight += adjustedCat6Weight;
+                  adjustedCat6Weight = 0;
+                }
+
+                // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
+                if (categoriesWithData.length > 0 && missingWeight > 0) {
+                  const additionalWeight = missingWeight / categoriesWithData.length;
+                  if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
+                  if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
+                  if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
+                  if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
+                  if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
+                  if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
+                }
+
+                const totalWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
+
+                const categories = [
+                  { name: 'Online-Qualität · Relevanz · Autorität', score: cat1Avg, weight: adjustedCat1Weight },
+                  { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: adjustedCat2Weight },
+                  { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: adjustedCat3Weight },
+                  { name: 'Markt & Marktumfeld', score: cat4Avg, weight: adjustedCat4Weight },
+                  { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: adjustedCat5Weight },
+                  { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: adjustedCat6Weight }
+                ].filter(cat => cat.score > 0);
+
+                return categories.map(cat => {
+                  const weightPercent = totalWeight > 0 ? Math.round(cat.weight / totalWeight * 1000) / 10 : 0;
+                  return `
+                    <div style="color: #374151;">${cat.name}</div>
+                    <div style="text-align: right;">
+                      <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
+                    </div>
+                    <div style="text-align: right; padding-left: 12px;">
+                      <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPercent}%)</span>
+                    </div>
+                  `;
+                }).join('');
+              })()}
+            </div>
+            <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore basierend auf den enthaltenen Einzelmetriken.</p>
+          </div>
         </div>
 
         <!-- Kategorisierte Score-Übersicht -->

@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronRight } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -371,6 +373,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     manualSocialData.linkedinUrl || manualSocialData.twitterUrl || manualSocialData.youtubeUrl
   ));
 
+  // State für Collapsible
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -399,28 +404,61 @@ const OverallRating: React.FC<OverallRatingProps> = ({
               </div>
             </div>
 
-            <div className="space-y-4">
-              {metrics.map((metric, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{metric.name}</span>
-                      {metric.name === 'Social Media' && (
-                        <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
-                          {hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten'}
-                        </Badge>
-                      )}
+            <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
+              <CollapsibleTrigger asChild>
+                <div 
+                  className="cursor-pointer rounded-lg p-4 transition-all duration-300 hover:scale-[1.01] mb-4"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%)',
+                    border: '2px solid rgba(251, 191, 36, 0.5)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <ChevronRight 
+                        className={`h-5 w-5 text-[#fbbf24] transition-transform duration-300 ${isCategoriesOpen ? 'rotate-90' : ''}`}
+                      />
+                      <h3 className="text-[#fbbf24] font-bold text-lg m-0">
+                        Bewertung der Hauptkategorien
+                      </h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
-                        {metric.name === 'Preispositionierung' ? getScoreTextDescription(metric.score, 'hourlyRate') : (metric.score > 0 ? `${Math.round(metric.score)}/100` : '—')}
-                      </span>
+                    <div 
+                      className="px-3 py-1.5 rounded-md text-sm font-semibold"
+                      style={{
+                        background: 'rgba(251, 191, 36, 0.2)',
+                        color: '#fbbf24'
+                      }}
+                    >
+                      Details anzeigen
                     </div>
                   </div>
-                  <Progress value={metric.score > 0 ? metric.score : 0} className="h-2" />
                 </div>
-              ))}
-            </div>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent className="space-y-4 px-1">
+                {metrics.map((metric, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{metric.name}</span>
+                        {metric.name === 'Social Media' && (
+                          <Badge variant={hasSocialData ? "default" : "destructive"} className="text-xs">
+                            {hasSocialData ? `✅ ${socialMediaScore} Punkte` : '❌ Keine Daten'}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-semibold ${getScoreColor(metric.score)}`}>
+                          {metric.name === 'Preispositionierung' ? getScoreTextDescription(metric.score, 'hourlyRate') : (metric.score > 0 ? `${Math.round(metric.score)}/100` : '—')}
+                        </span>
+                      </div>
+                    </div>
+                    <Progress value={metric.score > 0 ? metric.score : 0} className="h-2" />
+                  </div>
+                ))}
+              </CollapsibleContent>
+            </Collapsible>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
               <div className="text-center">
