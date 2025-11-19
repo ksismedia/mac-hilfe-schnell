@@ -141,7 +141,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualConversionData,
     updateManualConversionData,
     manualMobileData,
-    updateManualMobileData
+    updateManualMobileData,
+    updateManualReputationData
   } = useManualData();
 
   // Access saved analyses hook
@@ -240,6 +241,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualOnlinePresenceData,
             updateManualConversionData,
             updateManualMobileData,
+            updateManualReputationData,
             setPrivacyData,
             setAccessibilityData,
             setSecurityData
