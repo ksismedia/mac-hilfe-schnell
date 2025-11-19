@@ -40,6 +40,7 @@ export interface SavedAnalysis {
     manualMobileData?: ManualMobileData;
     privacyData?: any;
     accessibilityData?: any;
+    securityData?: any;
   };
 }
 

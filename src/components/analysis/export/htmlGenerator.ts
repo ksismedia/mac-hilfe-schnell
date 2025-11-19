@@ -6,6 +6,7 @@ import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateWorkplaceScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
+import { generateWebsiteSecuritySection } from './websiteSecuritySection';
 import { getLogoHTML } from './logoData';
 import { getCollapsibleComplianceSectionHTML } from './aiActDisclaimer';
 
@@ -42,6 +43,7 @@ interface CustomerReportData {
   manualMobileData?: ManualMobileData | null;
   privacyData?: any;
   accessibilityData?: any;
+  securityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
   calculatedOwnCompanyScore?: number;
   // KI-VO Compliance
@@ -188,6 +190,7 @@ export const generateCustomerHTML = ({
   manualAccessibilityData,
   manualBacklinkData,
   accessibilityData,
+  securityData,
   calculatedOwnCompanyScore,
   hasUnreviewedAIContent = false
 }: CustomerReportData): string => {
@@ -2982,6 +2985,8 @@ export const generateCustomerHTML = ({
     </div>
 
     ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
+
+    ${generateWebsiteSecuritySection(securityData)}
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
