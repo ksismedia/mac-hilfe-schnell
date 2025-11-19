@@ -5,6 +5,7 @@ import SocialMediaSimple from '../SocialMediaSimple';
 import SocialProof from '../SocialProof';
 import GoogleReviews from '../GoogleReviews';
 import WorkplaceReviews from '../WorkplaceReviews';
+import ReputationMonitoring from '../ReputationMonitoring';
 import { ManualIndustryReviewInput } from '../ManualIndustryReviewInput';
 import ManualOnlinePresenceInput from '../ManualOnlinePresenceInput';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
@@ -43,8 +44,9 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
       </div>
       
       <Tabs defaultValue="social-simple" className="w-full">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-7 mb-6">
+        <TabsList className="grid grid-cols-2 lg:grid-cols-8 mb-6">
           <TabsTrigger value="social-simple">Social Media</TabsTrigger>
+          <TabsTrigger value="reputation">Reputation</TabsTrigger>
           <TabsTrigger value="social-proof">Social Proof</TabsTrigger>
           <TabsTrigger value="reviews">Google Reviews</TabsTrigger>
           <TabsTrigger value="workplace">Arbeitsplatz</TabsTrigger>
@@ -59,6 +61,14 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
             realData={realData}
             manualData={manualSocialData}
             onManualDataChange={updateSocialData}
+          />
+        </TabsContent>
+
+        <TabsContent value="reputation">
+          <ReputationMonitoring 
+            companyName={realData?.company?.name || businessData.address}
+            url={businessData.url}
+            industry={businessData.industry}
           />
         </TabsContent>
 

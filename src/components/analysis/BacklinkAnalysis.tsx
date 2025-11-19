@@ -1,13 +1,16 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ExternalLink, Link, AlertCircle, CheckCircle, Edit } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface BacklinkAnalysisProps {
   url: string;
@@ -15,6 +18,9 @@ interface BacklinkAnalysisProps {
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
+  const [webMentions, setWebMentions] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Helper function to merge manual and automatic backlink data
   const getEffectiveBacklinkData = () => {
@@ -74,6 +80,34 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
 
   // Get the effective backlink data (manual overrides automatic)
   const backlinkData = getEffectiveBacklinkData();
+
+  // Search for web mentions of the URL
+  const searchBacklinks = async () => {
+    setIsSearching(true);
+    setHasSearched(true);
+
+    try {
+      const domain = url.replace('https://', '').replace('http://', '').replace('www.', '');
+      const searchQuery = `link:${domain} OR "${domain}"`;
+      const results = await GoogleAPIService.searchWeb(searchQuery, 10);
+
+      if (results && results.items) {
+        setWebMentions(results.items);
+      } else {
+        setWebMentions([]);
+      }
+    } catch (error) {
+      console.error('Backlink search error:', error);
+      setWebMentions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-start search on mount
+    searchBacklinks();
+  }, [url]);
 
   const getQualityColor = (quality: string) => {
     switch (quality) {

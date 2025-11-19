@@ -18,6 +18,32 @@ export class GoogleAPIService {
     return true;
   }
 
+  // Google Custom Search API via edge function
+  static async searchWeb(query: string, num: number = 10): Promise<any> {
+    try {
+      console.log('Performing web search via edge function:', query);
+      
+      const { data, error } = await supabase.functions.invoke('google-search-proxy', {
+        body: { query, num }
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        return null;
+      }
+      
+      if (data && data.items) {
+        console.log('Custom Search data retrieved successfully:', data.items.length, 'results');
+        return data;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Google Custom Search API error:', error);
+      return null;
+    }
+  }
+
   // Secure Google Places API via edge function
   static async getPlaceDetails(query: string): Promise<any> {
     try {
