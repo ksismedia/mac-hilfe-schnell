@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Search, ExternalLink, AlertCircle, CheckCircle, TrendingUp, MessageSquare } from 'lucide-react';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useManualData } from '@/hooks/useManualData';
 
 interface ReputationMonitoringProps {
   companyName: string;
@@ -21,10 +22,11 @@ interface SearchResult {
 }
 
 const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName, url, industry }) => {
+  const { manualReputationData, updateManualReputationData } = useManualData();
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [reputationScore, setReputationScore] = useState(0);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>(manualReputationData?.searchResults || []);
+  const [hasSearched, setHasSearched] = useState(!!manualReputationData);
+  const [reputationScore, setReputationScore] = useState(manualReputationData?.reputationScore || 0);
 
   const performReputationSearch = async () => {
     setIsSearching(true);
@@ -61,9 +63,30 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
         const finalScore = Math.min(Math.round(baseScore + sentimentBonus), 100);
         
         setReputationScore(finalScore);
+        setSearchResults(results.items);
+        
+        // Determine sentiment
+        const sentimentValue = positiveCount > negativeCount ? 'positive' : 
+                              negativeCount > positiveCount ? 'negative' : 'neutral';
+        
+        // Save to manual data
+        updateManualReputationData({
+          searchResults: results.items,
+          reputationScore: finalScore,
+          webMentionsCount: results.items.length,
+          sentiment: sentimentValue,
+          lastChecked: new Date().toISOString(),
+        });
       } else {
         setSearchResults([]);
-        setReputationScore(30); // Niedrige Score wenn keine Erwähnungen gefunden
+        setReputationScore(30);
+        updateManualReputationData({
+          searchResults: [],
+          reputationScore: 30,
+          webMentionsCount: 0,
+          sentiment: 'neutral',
+          lastChecked: new Date().toISOString(),
+        });
       }
     } catch (error) {
       console.error('Reputation search error:', error);
