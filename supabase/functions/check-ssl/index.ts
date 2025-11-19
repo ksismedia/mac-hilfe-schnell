@@ -14,8 +14,21 @@ serve(async (req) => {
   try {
     const { hostname } = await req.json();
     
-    if (!hostname) {
-      throw new Error('Hostname is required');
+    // Input validation
+    if (!hostname || typeof hostname !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Hostname is required and must be a string' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Validate hostname format (allow domain names, not IPs or special chars)
+    const hostnameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if (!hostnameRegex.test(hostname) || hostname.length > 253) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid hostname format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Checking SSL for hostname:', hostname);

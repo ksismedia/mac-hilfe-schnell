@@ -1,70 +1,42 @@
-export class GoogleAPIService {
-  private static apiKey: string = '';
+import { supabase } from '@/integrations/supabase/client';
 
+export class GoogleAPIService {
+  // No longer storing API key in client - using secure edge functions instead
+  
   static setApiKey(key: string) {
-    this.apiKey = key;
-    localStorage.setItem('google_api_key', key);
+    // Deprecated - API key now managed server-side
+    console.warn('setApiKey is deprecated - API key is now managed server-side');
   }
 
   static getApiKey(): string {
-    if (!this.apiKey) {
-      this.apiKey = localStorage.getItem('google_api_key') || '';
-    }
-    return this.apiKey;
+    // Deprecated - API key now managed server-side
+    return '';
   }
 
   static hasApiKey(): boolean {
-    return this.getApiKey().length > 0;
+    // Edge functions have the key, so we can always return true
+    return true;
   }
 
-  // Verbesserte Google Places API mit CORS-Proxy - nur echte Daten
+  // Secure Google Places API via edge function
   static async getPlaceDetails(query: string): Promise<any> {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      console.warn('No Google API Key provided - cannot fetch real data');
-      return null;
-    }
-
     try {
-      console.log('Searching for company:', query);
+      console.log('Searching for company via edge function:', query);
       
-      // Versuche verschiedene Proxy-Services für CORS
-      const proxies = [
-        (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        (url: string) => url // Direkter Aufruf als letzter Versuch
-      ];
+      const { data, error } = await supabase.functions.invoke('google-places-proxy', {
+        body: { query }
+      });
 
-      for (const proxy of proxies) {
-        try {
-          const searchUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${apiKey}`;
-          const searchResponse = await fetch(proxy(searchUrl));
-          
-          if (searchResponse.ok) {
-            const searchData = await searchResponse.json();
-            
-            if (searchData?.candidates?.length > 0) {
-              const placeId = searchData.candidates[0].place_id;
-              
-              const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,reviews,formatted_address,website,formatted_phone_number,types,business_status&key=${apiKey}`;
-              const detailsResponse = await fetch(proxy(detailsUrl));
-              
-              if (detailsResponse.ok) {
-                const detailsData = await detailsResponse.json();
-                if (detailsData?.result) {
-                  console.log('Real Google Places data retrieved successfully');
-                  return detailsData.result;
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.warn(`Proxy ${proxy.name} failed:`, error);
-          continue;
-        }
+      if (error) {
+        console.error('Edge function error:', error);
+        return null;
       }
       
-      console.warn('All proxy attempts failed - no real data available');
+      if (data?.candidates?.length > 0) {
+        console.log('Real Google Places data retrieved successfully');
+        return data.candidates[0];
+      }
+      
       return null;
     } catch (error) {
       console.error('Google Places API error:', error);
@@ -72,42 +44,25 @@ export class GoogleAPIService {
     }
   }
 
-  // PageSpeed Insights API mit verbessertem CORS-Handling - nur echte Daten
+  // Secure PageSpeed Insights API via edge function
   static async getPageSpeedInsights(url: string): Promise<any> {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      console.warn('No API Key - cannot fetch PageSpeed data');
-      return null;
-    }
-
     try {
-      console.log('Analyzing PageSpeed for:', url);
+      console.log('Analyzing PageSpeed via edge function:', url);
       
-      const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${apiKey}&category=PERFORMANCE&category=SEO&strategy=MOBILE`;
-      
-      // Versuche mit CORS-Proxy
-      const proxies = [
-        `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
-        apiUrl
-      ];
+      const { data, error } = await supabase.functions.invoke('google-pagespeed-proxy', {
+        body: { url, strategy: 'mobile' }
+      });
 
-      for (const proxyUrl of proxies) {
-        try {
-          const response = await fetch(proxyUrl);
-          if (response.ok) {
-            const data = await response.json();
-            if (!data?.error) {
-              console.log('Real PageSpeed data retrieved successfully');
-              return data;
-            }
-          }
-        } catch (error) {
-          continue;
-        }
+      if (error) {
+        console.error('Edge function error:', error);
+        return null;
       }
       
-      console.warn('PageSpeed API unavailable');
+      if (data && !data.error) {
+        console.log('Real PageSpeed data retrieved successfully');
+        return data;
+      }
+      
       return null;
     } catch (error) {
       console.error('PageSpeed API error:', error);
@@ -115,75 +70,40 @@ export class GoogleAPIService {
     }
   }
 
-  // Verbesserte Konkurrenzsuche - nur echte Betriebe mit strengen Filtern und ohne eigene Firma
+  // Secure Nearby Competitors API via edge function
   static async getNearbyCompetitors(location: string, businessType: string, ownCompanyName?: string): Promise<any> {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      console.warn('No API Key - returning empty competitors list');
-      return { results: [] };
-    }
-
     try {
-      console.log('=== SEARCHING REAL COMPETITORS ===');
+      console.log('=== SEARCHING REAL COMPETITORS VIA EDGE FUNCTION ===');
       console.log('Location:', location);
       console.log('Business Type:', businessType);
       console.log('Own Company (to exclude):', ownCompanyName);
       
-      // Erst Geocoding für exakte Koordinaten
-      const coordinates = await this.getCoordinatesFromAddress(location);
-      if (!coordinates) {
+      // First get coordinates from address via edge function
+      const { data: placesData, error: placesError } = await supabase.functions.invoke('google-places-proxy', {
+        body: { query: location }
+      });
+      
+      if (placesError || !placesData?.candidates?.length) {
         console.warn('Could not get coordinates for address:', location);
         return { results: [] };
       }
+      
+      const firstPlace = placesData.candidates[0];
+      if (!firstPlace.geometry?.location) {
+        return { results: [] };
+      }
 
+      const coordinates = firstPlace.geometry.location;
       console.log('Found coordinates:', coordinates);
 
-      // Spezifischere Suchbegriffe pro Branche - mehr Varianten aber präziser
-      const industrySearchTerms = {
-        'shk': [
-          'Sanitär Heizung Klima',
-          'SHK Betrieb',
-          'Heizungsbau',
-          'Sanitärinstallation',
-          'Installateur Sanitär',
-          'Klempner',
-          'Heizung Sanitär',
-          'Sanitärtechnik'
-        ],
-        'maler': [
-          'Malerbetrieb',
-          'Maler Lackierer',
-          'Malerei',
-          'Anstrich Maler',
-          'Maler Handwerk',
-          'Lackierer'
-        ],
-        'elektriker': [
-          'Elektrobetrieb',
-          'Elektriker',
-          'Elektroinstallation',
-          'Elektrotechnik Betrieb',
-          'Elektro Handwerk'
-        ],
-        'dachdecker': [
-          'Dachdeckerei',
-          'Dachdecker',
-          'Bedachung',
-          'Dachbau Betrieb',
-          'Dach Handwerk'
-        ],
-        'stukateur': [
-          'Stuckateur',
-          'Trockenbau',
-          'Putzarbeit',
-          'Stuck Handwerk'
-        ],
-        'planungsbuero': [
-          'Planungsbüro',
-          'Ingenieurbüro',
-          'Architekturbüro',
-          'Planung Büro'
-        ]
+      // Industry-specific search terms
+      const industrySearchTerms: {[key: string]: string[]} = {
+        'shk': ['Sanitär Heizung Klima', 'SHK Betrieb', 'Heizungsbau', 'Sanitärinstallation', 'Installateur Sanitär', 'Klempner', 'Heizung Sanitär', 'Sanitärtechnik'],
+        'maler': ['Malerbetrieb', 'Maler Lackierer', 'Malerei', 'Anstrich Maler', 'Maler Handwerk', 'Lackierer'],
+        'elektriker': ['Elektrobetrieb', 'Elektriker', 'Elektroinstallation', 'Elektrotechnik Betrieb', 'Elektro Handwerk'],
+        'dachdecker': ['Dachdeckerei', 'Dachdecker', 'Bedachung', 'Dachbau Betrieb', 'Dach Handwerk'],
+        'stukateur': ['Stuckateur', 'Trockenbau', 'Putzarbeit', 'Stuck Handwerk'],
+        'planungsbuero': ['Planungsbüro', 'Ingenieurbüro', 'Architekturbüro', 'Planung Büro']
       };
 
       const searchTerms = industrySearchTerms[businessType as keyof typeof industrySearchTerms] || [businessType];
@@ -191,20 +111,33 @@ export class GoogleAPIService {
 
       let allCompetitors: any[] = [];
 
-      // Durchsuche mit verschiedenen Suchbegriffen
+      // Search with different terms
       for (const searchTerm of searchTerms) {
-        const competitors = await this.searchNearbyBusinesses(coordinates, searchTerm, location, ownCompanyName, businessType);
-        if (competitors.length > 0) {
-          allCompetitors.push(...competitors);
-          console.log(`Found ${competitors.length} competitors with term: ${searchTerm}`);
+        const { data: nearbyData, error: nearbyError } = await supabase.functions.invoke('google-nearby-proxy', {
+          body: {
+            lat: coordinates.lat,
+            lng: coordinates.lng,
+            radius: 5000,
+            keyword: searchTerm,
+            type: 'establishment'
+          }
+        });
+        
+        if (!nearbyError && nearbyData?.results) {
+          const filtered = nearbyData.results.filter((place: any) => 
+            this.isRelevantBusiness(place, searchTerm, location, businessType) &&
+            !this.isOwnCompany(place, ownCompanyName, location)
+          );
+          allCompetitors.push(...filtered);
+          console.log(`Found ${filtered.length} competitors with term: ${searchTerm}`);
         }
       }
 
-      // Duplikate entfernen und nach Qualität filtern
+      // Remove duplicates and filter by quality
       const uniqueCompetitors = this.filterAndDeduplicateCompetitors(allCompetitors, location, ownCompanyName, businessType);
       
       console.log(`Final result: ${uniqueCompetitors.length} real competitors found`);
-      return { results: uniqueCompetitors.slice(0, 8) }; // Mehr Ergebnisse zurückgeben
+      return { results: uniqueCompetitors.slice(0, 8) };
 
     } catch (error) {
       console.error('Competitor search error:', error);
@@ -212,35 +145,10 @@ export class GoogleAPIService {
     }
   }
 
-  // Neue Methode: Koordinaten aus Adresse ermitteln
+  // Deprecated - coordinates now fetched via edge function
   private static async getCoordinatesFromAddress(address: string): Promise<{lat: number, lng: number} | null> {
-    const apiKey = this.getApiKey();
-    try {
-      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-      
-      const proxies = [
-        `https://corsproxy.io/?${encodeURIComponent(geocodeUrl)}`,
-        geocodeUrl
-      ];
-
-      for (const proxyUrl of proxies) {
-        try {
-          const response = await fetch(proxyUrl);
-          if (response.ok) {
-            const data = await response.json();
-            if (data?.results?.length > 0) {
-              return data.results[0].geometry.location;
-            }
-          }
-        } catch (error) {
-          continue;
-        }
-      }
-      return null;
-    } catch (error) {
-      console.error('Geocoding error:', error);
-      return null;
-    }
+    console.warn('getCoordinatesFromAddress is deprecated - use edge function');
+    return null;
   }
 
   // Verbesserte Nearby-Suche mit kleineren Radien zuerst

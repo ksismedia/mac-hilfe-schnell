@@ -26,6 +26,35 @@ Deno.serve(async (req) => {
 
   try {
     const { websiteContent, industry, url }: KeywordRequest = await req.json();
+    
+    // Input validation
+    if (!websiteContent || typeof websiteContent !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "websiteContent is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (websiteContent.length > 100000) { // 100KB limit
+      return new Response(
+        JSON.stringify({ error: "websiteContent exceeds maximum size of 100KB" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (!industry || typeof industry !== 'string' || industry.length > 100) {
+      return new Response(
+        JSON.stringify({ error: "industry is required and must be less than 100 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (!url || typeof url !== 'string' || url.length > 2048) {
+      return new Response(
+        JSON.stringify({ error: "url is required and must be less than 2048 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {

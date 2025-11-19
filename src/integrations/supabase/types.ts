@@ -258,6 +258,18 @@ export type Database = {
     Functions: {
       cleanup_expired_accessibility_cache: { Args: never; Returns: undefined }
       cleanup_old_data: { Args: never; Returns: undefined }
+      create_audit_log: {
+        Args: {
+          p_action: string
+          p_details?: Json
+          p_ip_address?: string
+          p_resource_id?: string
+          p_resource_name?: string
+          p_resource_type: string
+          p_user_agent?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

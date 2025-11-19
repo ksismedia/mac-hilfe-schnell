@@ -35,15 +35,15 @@ export class AuditLogService {
 
       const ipAddress = await this.getIPAddress();
 
-      await supabase.from('audit_logs').insert({
-        user_id: user.id,
-        action: data.action,
-        resource_type: data.resourceType,
-        resource_id: data.resourceId,
-        resource_name: data.resourceName,
-        details: data.details || {},
-        ip_address: ipAddress,
-        user_agent: this.getUserAgent()
+      // Use secure RPC function instead of direct insert
+      await supabase.rpc('create_audit_log', {
+        p_action: data.action,
+        p_resource_type: data.resourceType,
+        p_resource_id: data.resourceId || null,
+        p_resource_name: data.resourceName || null,
+        p_details: data.details || null,
+        p_ip_address: ipAddress,
+        p_user_agent: this.getUserAgent(),
       });
     } catch (error) {
       console.error('Failed to create audit log:', error);
