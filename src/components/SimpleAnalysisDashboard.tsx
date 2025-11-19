@@ -237,7 +237,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualLocalSEOData,
             updateManualIndustryReviewData,
             updateManualOnlinePresenceData,
-            updateManualConversionData
+            updateManualConversionData,
+            updateManualMobileData
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
