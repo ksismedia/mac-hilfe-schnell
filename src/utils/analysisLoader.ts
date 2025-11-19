@@ -1,6 +1,6 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData } from '@/hooks/useManualData';
 
 export const loadCompetitorServices = (
   competitorServices: CompetitorServices,
@@ -35,6 +35,7 @@ export const loadSavedAnalysisData = (
   updateManualOnlinePresenceData?: (data: any) => void,
   updateManualConversionData?: (data: ManualConversionData) => void,
   updateManualMobileData?: (data: ManualMobileData) => void,
+  updateManualReputationData?: (data: ManualReputationData) => void,
   setPrivacyData?: (data: any) => void,
   setAccessibilityData?: (data: any) => void,
   setSecurityData?: (data: any) => void
@@ -161,6 +162,11 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.manualMobileData && updateManualMobileData) {
     console.log('Loading manual mobile data');
     updateManualMobileData(savedAnalysis.manualData.manualMobileData);
+  }
+  
+  if (savedAnalysis.manualData?.manualReputationData && updateManualReputationData) {
+    console.log('Loading manual reputation data');
+    updateManualReputationData(savedAnalysis.manualData.manualReputationData);
   }
   
   // Load cached analysis data (privacy, accessibility, security)

@@ -125,7 +125,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualConversionData,
     updateManualConversionData,
     manualMobileData,
-    updateManualMobileData
+    updateManualMobileData,
+    updateManualReputationData
   } = useManualData();
 
   // Access saved analyses hook
@@ -191,7 +192,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateManualIndustryReviewData,
               updateManualOnlinePresenceData,
               updateManualConversionData,
-              updateManualMobileData
+              updateManualMobileData,
+              updateManualReputationData
             );
             
             console.log('Saved analysis loaded successfully');
