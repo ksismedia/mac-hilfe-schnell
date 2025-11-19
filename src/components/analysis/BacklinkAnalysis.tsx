@@ -161,8 +161,12 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="automatic" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>
+              <TabsTrigger value="web-mentions" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Web-Erwähnungen
+              </TabsTrigger>
               <TabsTrigger value="manual" className="flex items-center gap-2">
                 <Edit className="h-4 w-4" />
                 Manuelle Bewertung
@@ -298,6 +302,98 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
               </CardContent>
             </Card>
           </div>
+            </TabsContent>
+            
+            <TabsContent value="web-mentions" className="space-y-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    Web-Erwähnungen
+                    <Button 
+                      onClick={searchBacklinks} 
+                      disabled={isSearching}
+                      size="sm"
+                      variant="outline"
+                    >
+                      <Search className="h-4 w-4 mr-2" />
+                      {isSearching ? 'Suche läuft...' : 'Erneut suchen'}
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Online-Erwähnungen Ihrer Website auf anderen Domains
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isSearching ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="space-y-2">
+                          <Skeleton className="h-5 w-3/4" />
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-1/2" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : hasSearched && webMentions.length === 0 ? (
+                    <div className="text-center py-8 space-y-4">
+                      <AlertCircle className="h-12 w-12 mx-auto text-yellow-500" />
+                      <div>
+                        <p className="font-semibold text-gray-700">Keine Web-Erwähnungen gefunden</p>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Dies kann folgende Ursachen haben:
+                        </p>
+                        <ul className="text-sm text-gray-500 mt-2 space-y-1 text-left max-w-md mx-auto">
+                          <li>• Die Google Custom Search API ist nicht aktiviert</li>
+                          <li>• Die Website ist noch sehr neu</li>
+                          <li>• Es gibt tatsächlich keine externen Erwähnungen</li>
+                        </ul>
+                        <p className="text-sm text-blue-600 mt-4">
+                          💡 Prüfen Sie die API-Einstellungen in den Projekteinstellungen
+                        </p>
+                      </div>
+                    </div>
+                  ) : webMentions.length > 0 ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <span className="font-semibold text-green-700">
+                          {webMentions.length} Web-Erwähnung(en) gefunden
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {webMentions.map((mention, index) => (
+                          <Card key={index} className="border-l-4 border-l-blue-500">
+                            <CardContent className="pt-4">
+                              <div className="space-y-2">
+                                <a 
+                                  href={mention.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="font-semibold text-blue-600 hover:underline flex items-center gap-2"
+                                >
+                                  {mention.title}
+                                  <ExternalLink className="h-4 w-4" />
+                                </a>
+                                <p className="text-sm text-gray-600">
+                                  {mention.snippet}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                  {mention.displayLink}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      Klicken Sie auf "Erneut suchen", um Web-Erwähnungen zu finden
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
             
             <TabsContent value="manual" className="mt-6">
