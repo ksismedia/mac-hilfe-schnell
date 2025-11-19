@@ -10,6 +10,7 @@ import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
 import CompetitorAnalysis from '../CompetitorAnalysis';
 import IndustryFeatures from '../IndustryFeatures';
+import { SecurityCheck } from '../SecurityCheck';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface SEOContentCategoryProps {
@@ -99,6 +100,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             { id: 'content', label: 'Content' },
             { id: 'local-seo', label: 'Local SEO' },
             { id: 'backlinks', label: 'Backlinks' },
+            { id: 'security', label: 'Sicherheit' },
             { id: 'accessibility', label: 'Barrierefreiheit' },
             { id: 'privacy', label: 'Datenschutz' },
             { id: 'imprint', label: 'Impressum' },
@@ -160,6 +162,10 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 
           {activeTab === 'backlinks' && (
             <BacklinkAnalysis url={businessData.url} />
+          )}
+
+          {activeTab === 'security' && (
+            <SecurityCheck url={businessData.url} />
           )}
 
           {activeTab === 'accessibility' && (
