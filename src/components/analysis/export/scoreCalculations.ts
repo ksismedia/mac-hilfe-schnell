@@ -134,7 +134,8 @@ export const calculateOnlineQualityAuthorityScore = (
   manualBacklinkData: any,
   manualLocalSEOData?: any,
   manualDataPrivacyData?: any,
-  manualAccessibilityData?: any
+  manualAccessibilityData?: any,
+  securityData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -149,9 +150,10 @@ export const calculateOnlineQualityAuthorityScore = (
     const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
     const accessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData) || 0;
     
-    // GETRENNTE SCORES für DSGVO und Technische Sicherheit
+    // GETRENNTE SCORES für DSGVO, Technische Sicherheit und Website-Sicherheit
     const dsgvoScore = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) || 0;
     const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) || 0;
+    const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : 0;
     
     const seoScore = realData?.seo?.score || 0;
     const imprintScore = realData?.imprint?.score || 0;
@@ -165,6 +167,7 @@ export const calculateOnlineQualityAuthorityScore = (
       { name: 'accessibility', value: accessibilityScore },
       { name: 'dsgvo', value: dsgvoScore },
       { name: 'technicalSecurity', value: technicalSecurityScore },
+      { name: 'websiteSecurity', value: websiteSecurityScore },
       { name: 'imprint', value: imprintScore }
     ];
     
@@ -175,7 +178,7 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    // Durchschnitt aus allen 8 Bereichen
+    // Durchschnitt aus allen 9 Bereichen
     const cat1Scores = [
       seoScore,
       localSEOScore,
@@ -187,6 +190,7 @@ export const calculateOnlineQualityAuthorityScore = (
     if (backlinksScore > 0) cat1Scores.push(backlinksScore);
     if (dsgvoScore > 0) cat1Scores.push(dsgvoScore);
     if (technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
+    if (websiteSecurityScore > 0) cat1Scores.push(websiteSecurityScore);
     
     const result = cat1Scores.length > 0 
       ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) 

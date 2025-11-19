@@ -9,9 +9,10 @@ import { Progress } from '@/components/ui/progress';
 
 interface SecurityCheckProps {
   url: string;
+  onDataLoaded?: (result: SafeBrowsingResult) => void;
 }
 
-export const SecurityCheck = ({ url }: SecurityCheckProps) => {
+export const SecurityCheck = ({ url, onDataLoaded }: SecurityCheckProps) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SafeBrowsingResult | null>(null);
 
@@ -26,6 +27,9 @@ export const SecurityCheck = ({ url }: SecurityCheckProps) => {
     try {
       const data = await SafeBrowsingService.checkUrl(url);
       setResult(data);
+      if (onDataLoaded) {
+        onDataLoaded(data);
+      }
     } finally {
       setLoading(false);
     }

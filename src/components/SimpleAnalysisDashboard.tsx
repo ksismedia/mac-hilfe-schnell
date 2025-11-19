@@ -66,6 +66,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
+  const [securityData, setSecurityData] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('online-quality-authority');
   
   const handleKeywordsScoreChange = (score: number | null) => {
@@ -364,7 +365,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   try {
     const onlineQualityAuthority = calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData
+      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData, securityData
     );
     const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
     const socialMediaPerformance = calculateSocialMediaPerformanceScore(
@@ -478,6 +479,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualDataPrivacyData={updateManualDataPrivacyData}
             manualLocalSEOData={manualLocalSEOData}
             onManualLocalSEOChange={updateManualLocalSEOData}
+            securityData={securityData}
+            onSecurityDataChange={setSecurityData}
           />
         );
       case 'website-performance-tech':
@@ -705,6 +708,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualMobileData={manualMobileData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
+              securityData={securityData}
             />
             <CustomerHTMLExport
               businessData={businessData}
@@ -735,6 +739,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualKeywordData={manualKeywordData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
+              securityData={securityData}
             />
           </div>
         </div>

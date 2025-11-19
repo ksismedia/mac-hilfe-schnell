@@ -46,6 +46,7 @@ interface SaveAnalysisDialogProps {
   manualMobileData?: ManualMobileData | null;
   privacyData?: any;
   accessibilityData?: any;
+  securityData?: any;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -77,6 +78,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualMobileData,
   privacyData,
   accessibilityData,
+  securityData,
   reviewStatus
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -129,7 +131,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualConversionData: manualConversionData || undefined,
         manualMobileData: manualMobileData || undefined,
         privacyData: privacyData || undefined,
-        accessibilityData: accessibilityData || undefined
+        accessibilityData: accessibilityData || undefined,
+        securityData: securityData || undefined
       };
 
       console.log('=== SAVE ANALYSIS DEBUG ===');
