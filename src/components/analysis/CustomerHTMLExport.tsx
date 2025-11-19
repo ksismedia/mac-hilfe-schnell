@@ -75,6 +75,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   keywordScore,
   privacyData,
   accessibilityData,
+  securityData,
   calculatedOwnCompanyScore
 }) => {
   const { toast } = useToast();
@@ -247,6 +248,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualMobileData: manualMobileData,
       privacyData,
       accessibilityData,
+      securityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       hasUnreviewedAIContent: hasUnreviewedContent
     });

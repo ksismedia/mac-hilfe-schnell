@@ -34,7 +34,10 @@ export const loadSavedAnalysisData = (
   updateManualIndustryReviewData?: (data: any) => void,
   updateManualOnlinePresenceData?: (data: any) => void,
   updateManualConversionData?: (data: ManualConversionData) => void,
-  updateManualMobileData?: (data: ManualMobileData) => void
+  updateManualMobileData?: (data: ManualMobileData) => void,
+  setPrivacyData?: (data: any) => void,
+  setAccessibilityData?: (data: any) => void,
+  setSecurityData?: (data: any) => void
 ) => {
   console.log('Loading saved analysis data:', savedAnalysis.id);
   
@@ -158,6 +161,22 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.manualMobileData && updateManualMobileData) {
     console.log('Loading manual mobile data');
     updateManualMobileData(savedAnalysis.manualData.manualMobileData);
+  }
+  
+  // Load cached analysis data (privacy, accessibility, security)
+  if (savedAnalysis.manualData?.privacyData && setPrivacyData) {
+    console.log('Loading privacy data');
+    setPrivacyData(savedAnalysis.manualData.privacyData);
+  }
+  
+  if (savedAnalysis.manualData?.accessibilityData && setAccessibilityData) {
+    console.log('Loading accessibility data');
+    setAccessibilityData(savedAnalysis.manualData.accessibilityData);
+  }
+  
+  if (savedAnalysis.manualData?.securityData && setSecurityData) {
+    console.log('Loading security data');
+    setSecurityData(savedAnalysis.manualData.securityData);
   }
   
   console.log('Saved analysis data loaded successfully');
