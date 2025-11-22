@@ -24,9 +24,18 @@ interface SearchResult {
 const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName, url, industry }) => {
   const { manualReputationData, updateManualReputationData } = useManualData();
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>(manualReputationData?.searchResults || []);
-  const [hasSearched, setHasSearched] = useState(!!manualReputationData);
-  const [reputationScore, setReputationScore] = useState(manualReputationData?.reputationScore || 0);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [reputationScore, setReputationScore] = useState(0);
+
+  // Initialize from saved data
+  useEffect(() => {
+    if (manualReputationData) {
+      setSearchResults(manualReputationData.searchResults || []);
+      setReputationScore(manualReputationData.reputationScore || 0);
+      setHasSearched(true);
+    }
+  }, []);
 
   const performReputationSearch = async () => {
     setIsSearching(true);
@@ -98,9 +107,11 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
   };
 
   useEffect(() => {
-    // Auto-start search on mount
-    performReputationSearch();
-  }, [companyName, url]);
+    // Auto-start search only if no data is available
+    if (!manualReputationData && companyName && url) {
+      performReputationSearch();
+    }
+  }, []);
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-yellow-400 text-black';
