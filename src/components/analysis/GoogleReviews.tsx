@@ -11,9 +11,10 @@ import { GoogleAPIService } from '@/services/GoogleAPIService';
 interface GoogleReviewsProps {
   address: string;
   realData: RealBusinessData;
+  onReviewsUpdate?: (reviews: { rating: number; count: number; recent: any[] }) => void;
 }
 
-const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData }) => {
+const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData, onReviewsUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
   const [realTimeData, setRealTimeData] = useState<any>(null);
@@ -38,22 +39,29 @@ const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData }) => {
       if (placeData) {
         console.log('Google Places Daten erfolgreich geladen:', placeData);
         
+        const googleReviewsData = {
+          count: placeData.user_ratings_total || 0,
+          rating: placeData.rating || 0,
+          recent: placeData.reviews?.slice(0, 5).map((review: any) => ({
+            author: review.author_name,
+            rating: review.rating,
+            text: review.text,
+            date: new Date(review.time * 1000).toLocaleDateString('de-DE')
+          })) || []
+        };
+        
         const processedData = {
           reviews: {
-            google: {
-              count: placeData.user_ratings_total || 0,
-              rating: placeData.rating || 0,
-              recent: placeData.reviews?.slice(0, 5).map((review: any) => ({
-                author: review.author_name,
-                rating: review.rating,
-                text: review.text,
-                date: new Date(review.time * 1000).toLocaleDateString('de-DE')
-              })) || []
-            }
+            google: googleReviewsData
           }
         };
         
         setRealTimeData(processedData);
+        
+        // Propagate updated reviews to parent
+        if (onReviewsUpdate) {
+          onReviewsUpdate(googleReviewsData);
+        }
       } else {
         console.warn('Keine Google Places Daten verfügbar');
       }
