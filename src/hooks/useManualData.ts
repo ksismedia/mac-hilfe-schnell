@@ -308,6 +308,7 @@ export interface ManualReputationData {
   webMentionsCount: number;
   sentiment: 'positive' | 'neutral' | 'negative';
   lastChecked?: string;
+  additionalSearchTerms?: string;
   notes?: string;
 }
 
