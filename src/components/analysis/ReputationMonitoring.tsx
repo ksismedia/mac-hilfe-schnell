@@ -44,9 +44,13 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
     try {
       // Suche nach Erwähnungen des Unternehmens
       const searchQuery = `"${companyName}" OR "${url.replace('https://', '').replace('http://', '')}" Bewertung Erfahrung Meinung`;
+      console.log('Starting reputation search with query:', searchQuery);
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
-      if (results && results.items) {
+      console.log('Search results received:', results);
+      console.log('Has items?', results?.items?.length);
+
+      if (results && results.items && results.items.length > 0) {
         setSearchResults(results.items);
         
         // Berechne Reputation Score basierend auf Anzahl und Art der Erwähnungen
@@ -87,6 +91,8 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
           lastChecked: new Date().toISOString(),
         });
       } else {
+        console.warn('No results found or empty results array');
+        console.log('Search API response:', JSON.stringify(results, null, 2));
         setSearchResults([]);
         setReputationScore(30);
         updateManualReputationData({

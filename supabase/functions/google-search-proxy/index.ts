@@ -64,6 +64,15 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
+    // Log response details for debugging
+    console.log('Search results count:', data.items?.length || 0);
+    console.log('Total results:', data.searchInformation?.totalResults || 0);
+    
+    if (!data.items || data.items.length === 0) {
+      console.warn('No search results found for query:', query);
+      console.log('Search info:', JSON.stringify(data.searchInformation));
+    }
+    
     return new Response(
       JSON.stringify(data),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
