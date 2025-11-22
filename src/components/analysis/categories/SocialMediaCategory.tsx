@@ -22,6 +22,7 @@ interface SocialMediaCategoryProps {
   updateIndustryReviewData: (data: ManualIndustryReviewData | null) => void;
   manualOnlinePresenceData: ManualOnlinePresenceData | null;
   updateOnlinePresenceData: (data: ManualOnlinePresenceData | null) => void;
+  onReviewsUpdate?: (reviews: { rating: number; count: number; recent: any[] }) => void;
 }
 
 const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
@@ -35,6 +36,7 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
   updateIndustryReviewData,
   manualOnlinePresenceData,
   updateOnlinePresenceData,
+  onReviewsUpdate,
 }) => {
   return (
     <div className="space-y-6">
@@ -77,7 +79,11 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="reviews">
-          <GoogleReviews realData={realData} address={businessData.address} />
+          <GoogleReviews 
+            realData={realData} 
+            address={businessData.address} 
+            onReviewsUpdate={onReviewsUpdate}
+          />
         </TabsContent>
 
         <TabsContent value="workplace">

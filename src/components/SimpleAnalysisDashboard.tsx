@@ -93,6 +93,17 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       });
     }
   };
+
+  const handleReviewsUpdate = (reviews: { rating: number; count: number; recent: any[] }) => {
+    if (realData) {
+      setRealData({
+        ...realData,
+        reviews: {
+          google: reviews
+        }
+      });
+    }
+  };
   
   const { toast } = useToast();
 
@@ -512,6 +523,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateIndustryReviewData={updateManualIndustryReviewData}
             manualOnlinePresenceData={manualOnlinePresenceData}
             updateOnlinePresenceData={updateManualOnlinePresenceData}
+            onReviewsUpdate={handleReviewsUpdate}
           />
         );
       case 'market-environment':
