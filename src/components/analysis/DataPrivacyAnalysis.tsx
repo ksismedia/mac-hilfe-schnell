@@ -23,12 +23,15 @@ import {
   AlertCircle,
   Info,
   Settings,
-  Edit
+  Edit,
+  ShieldAlert,
+  RefreshCw
 } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { DataPrivacyService, DataPrivacyResult, GDPRViolation } from '@/services/DataPrivacyService';
 import { ManualDataPrivacyData } from '@/hooks/useManualData';
 import ManualDataPrivacyInput from './ManualDataPrivacyInput';
+import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
 
 interface DataPrivacyAnalysisProps {
   businessData: {
@@ -39,6 +42,8 @@ interface DataPrivacyAnalysisProps {
   onDataChange?: (data: DataPrivacyResult) => void;
   manualDataPrivacyData?: ManualDataPrivacyData | null;
   onManualDataChange?: (data: ManualDataPrivacyData) => void;
+  securityData?: SafeBrowsingResult | null;
+  onSecurityDataChange?: (data: SafeBrowsingResult) => void;
 }
 
 const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({ 
@@ -47,11 +52,14 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   savedData, 
   onDataChange,
   manualDataPrivacyData,
-  onManualDataChange
+  onManualDataChange,
+  securityData,
+  onSecurityDataChange
 }) => {
   const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [securityLoading, setSecurityLoading] = useState(false);
 
   const runPrivacyAnalysis = async () => {
     if (!businessData.url) return;
@@ -74,6 +82,30 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
       setLoading(false);
     }
   };
+
+  const runSecurityCheck = async () => {
+    if (!businessData.url) return;
+    
+    setSecurityLoading(true);
+    
+    try {
+      console.log('Starte Safe Browsing-Prüfung...');
+      const result = await SafeBrowsingService.checkUrl(businessData.url);
+      onSecurityDataChange?.(result);
+      console.log('Safe Browsing-Prüfung abgeschlossen:', result);
+    } catch (err) {
+      console.error('Safe Browsing-Prüfung Fehler:', err);
+    } finally {
+      setSecurityLoading(false);
+    }
+  };
+
+  // Auto-load security data on mount if not already loaded
+  useEffect(() => {
+    if (!securityData && businessData.url && onSecurityDataChange) {
+      runSecurityCheck();
+    }
+  }, [businessData.url]);
 
   // Calculate DSGVO score (only legal violations)
   const getDSGVOScore = () => {
@@ -568,6 +600,106 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Website Security (Safe Browsing) Section */}
+              <Card className="border-primary">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-primary">
+                    <ShieldAlert className="h-5 w-5" />
+                    Website-Sicherheit (Google Safe Browsing)
+                    <div 
+                      className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                        !securityData ? 'bg-gray-400 text-white' :
+                        securityData.isSafe === true ? 'bg-green-500 text-white' :
+                        securityData.isSafe === false ? 'bg-red-500 text-white' :
+                        'bg-gray-400 text-white'
+                      }`}
+                    >
+                      {!securityData ? 'N/A' :
+                       securityData.isSafe === true ? '100%' :
+                       securityData.isSafe === false ? '0%' :
+                       '50%'}
+                    </div>
+                  </CardTitle>
+                  <CardDescription>
+                    Prüfung auf Malware, Phishing und schädliche Inhalte
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {securityLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                      <p className="text-sm text-muted-foreground">Prüfe Website-Sicherheit...</p>
+                    </div>
+                  ) : !securityData ? (
+                    <div className="text-center py-4">
+                      <Button onClick={runSecurityCheck} variant="outline">
+                        <ShieldAlert className="h-4 w-4 mr-2" />
+                        Sicherheitsprüfung starten
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      {securityData.isSafe === true ? (
+                        <Alert className="bg-green-50 border-green-200">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <AlertTitle className="text-green-800">Keine Bedrohungen gefunden</AlertTitle>
+                          <AlertDescription className="text-green-700">
+                            Die Website wurde von Google Safe Browsing als sicher eingestuft. Es wurden keine Malware, Phishing-Versuche oder andere schädliche Inhalte erkannt.
+                          </AlertDescription>
+                        </Alert>
+                      ) : securityData.isSafe === false ? (
+                        <>
+                          <Alert variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Sicherheitsbedrohungen erkannt!</AlertTitle>
+                            <AlertDescription>
+                              Google Safe Browsing hat {securityData.threats.length} Bedrohung{securityData.threats.length > 1 ? 'en' : ''} auf dieser Website identifiziert.
+                            </AlertDescription>
+                          </Alert>
+                          
+                          <div className="space-y-3">
+                            <h4 className="font-semibold text-destructive">Erkannte Bedrohungen:</h4>
+                            {securityData.threats.map((threat: any, index: number) => (
+                              <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <div className="flex items-start gap-2">
+                                  <XCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <p className="font-semibold text-red-800">{threat.type}</p>
+                                    <p className="text-sm text-red-700">{threat.description}</p>
+                                    <p className="text-xs text-red-600 mt-1">Plattform: {threat.platform}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                            <strong>⚠️ Dringende Handlungsempfehlung:</strong> Kontaktieren Sie umgehend einen IT-Sicherheitsexperten, um die identifizierten Bedrohungen zu beseitigen. Der Betrieb einer Website mit erkannten Sicherheitsbedrohungen kann rechtliche Konsequenzen haben und das Vertrauen Ihrer Kunden gefährden.
+                          </div>
+                        </>
+                      ) : (
+                        <Alert>
+                          <Info className="h-4 w-4" />
+                          <AlertTitle>Status unbekannt</AlertTitle>
+                          <AlertDescription>
+                            Der Sicherheitsstatus konnte nicht eindeutig ermittelt werden. {securityData.error && `Fehler: ${securityData.error}`}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      <div className="text-sm text-muted-foreground">
+                        <p>Letzte Prüfung: {new Date(securityData.checkedAt).toLocaleString('de-DE')}</p>
+                      </div>
+                      
+                      <Button onClick={runSecurityCheck} variant="outline" size="sm">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Erneut prüfen
+                      </Button>
+                    </>
+                  )}
                 </CardContent>
               </Card>
 
