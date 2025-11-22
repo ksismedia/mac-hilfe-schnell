@@ -39,15 +39,42 @@ Deno.serve(async (req) => {
 
     console.log('Fetching place details for:', query);
 
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id,name,formatted_address,rating,user_ratings_total,opening_hours,website,formatted_phone_number&key=${GOOGLE_API_KEY}`
+    // Step 1: Find the place and get place_id
+    const findPlaceResponse = await fetch(
+      `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${GOOGLE_API_KEY}`
     );
 
-    if (!response.ok) {
-      throw new Error(`Google API error: ${response.status}`);
+    if (!findPlaceResponse.ok) {
+      throw new Error(`Google API error: ${findPlaceResponse.status}`);
     }
 
-    const data = await response.json();
+    const findPlaceData = await findPlaceResponse.json();
+    
+    if (!findPlaceData.candidates || findPlaceData.candidates.length === 0) {
+      return new Response(
+        JSON.stringify({ candidates: [] }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const placeId = findPlaceData.candidates[0].place_id;
+    console.log('Found place_id:', placeId);
+
+    // Step 2: Get detailed place information including reviews
+    const detailsResponse = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=place_id,name,formatted_address,rating,user_ratings_total,opening_hours,website,formatted_phone_number,reviews,geometry&key=${GOOGLE_API_KEY}`
+    );
+
+    if (!detailsResponse.ok) {
+      throw new Error(`Google API error: ${detailsResponse.status}`);
+    }
+
+    const detailsData = await detailsResponse.json();
+    
+    // Format the response to match the expected structure
+    const data = {
+      candidates: detailsData.result ? [detailsData.result] : []
+    };
     
     return new Response(
       JSON.stringify(data),
