@@ -184,6 +184,7 @@ export const generateCustomerHTML = ({
   manualOnlinePresenceData,
   manualConversionData,
   manualMobileData,
+  manualReputationData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
@@ -3658,6 +3659,102 @@ export const generateCustomerHTML = ({
         </div>
       </div>
     </div>
+
+    ${(() => {
+      // Reputation Monitoring Sektion
+      if (manualReputationData && manualReputationData.reputationScore > 0) {
+        const repScore = manualReputationData.reputationScore || 0;
+        const mentionsCount = manualReputationData.webMentionsCount || 0;
+        const sentiment = manualReputationData.sentiment || 'neutral';
+        const searchResults = manualReputationData.searchResults || [];
+        
+        const sentimentLabel = sentiment === 'positive' ? 'Positiv' : 
+                              sentiment === 'negative' ? 'Negativ' : 'Neutral';
+        const sentimentColor = sentiment === 'positive' ? '#10b981' : 
+                              sentiment === 'negative' ? '#ef4444' : '#6b7280';
+        
+        return `
+    <!-- Reputation Monitoring (Web-Erwähnungen) -->
+    <div class="section">
+      <div class="section-header">
+        <span>Reputation Monitoring (Web-Erwähnungen)</span>
+        <div class="header-score-circle ${getScoreColorClass(repScore)}">${repScore}%</div>
+      </div>
+      <div class="section-content">
+        <div class="metric-card">
+          <h3>Online-Reputation und Web-Präsenz</h3>
+          
+          <div class="metric-grid">
+            <div class="metric-item">
+              <div class="metric-title">Reputation Score</div>
+              <div class="metric-value ${repScore >= 80 ? 'excellent' : repScore >= 60 ? 'good' : 'warning'}">
+                ${repScore >= 80 ? 'Ausgezeichnet' : repScore >= 60 ? 'Gut' : 'Ausbaufähig'}
+              </div>
+              ${generateProgressBar(repScore, 'Basierend auf Anzahl und Sentiment der Web-Erwähnungen')}
+            </div>
+            
+            <div class="metric-item">
+              <div class="metric-title">Web-Erwähnungen</div>
+              <div class="metric-value ${mentionsCount >= 10 ? 'excellent' : mentionsCount >= 5 ? 'good' : 'warning'}">
+                ${mentionsCount} gefunden
+              </div>
+              <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
+                ${mentionsCount >= 10 ? 'Sehr gute Online-Sichtbarkeit' : 
+                  mentionsCount >= 5 ? 'Solide Online-Präsenz' : 
+                  'Verbesserungspotenzial bei Online-Sichtbarkeit'}
+              </p>
+            </div>
+            
+            <div class="metric-item">
+              <div class="metric-title">Sentiment-Analyse</div>
+              <div class="metric-value" style="color: ${sentimentColor};">
+                ${sentimentLabel}
+              </div>
+              <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
+                ${sentiment === 'positive' ? 'Überwiegend positive Erwähnungen' :
+                  sentiment === 'negative' ? 'Kritische Erwähnungen vorhanden' :
+                  'Neutrale bis gemischte Erwähnungen'}
+              </p>
+            </div>
+          </div>
+          
+          ${searchResults.length > 0 ? `
+          <div style="margin-top: 20px;">
+            <h4 style="color: #374151; margin-bottom: 12px;">Gefundene Erwähnungen (Auswahl)</h4>
+            ${searchResults.slice(0, 5).map((result: any) => `
+              <div style="background: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 10px; border-left: 3px solid #3b82f6;">
+                <h5 style="color: #1f2937; margin: 0 0 6px 0; font-size: 0.95em;">${result.title}</h5>
+                <p style="color: #6b7280; font-size: 0.85em; margin: 0 0 6px 0;">${result.snippet}</p>
+                <p style="color: #9ca3af; font-size: 0.8em; margin: 0;">
+                  <strong>Quelle:</strong> ${result.displayLink}
+                </p>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+          
+          ${repScore < 70 ? `
+          <div class="recommendations">
+            <h4>Empfehlungen zur Verbesserung der Online-Reputation:</h4>
+            <ul>
+              <li><strong>Aktive Online-Präsenz aufbauen</strong><br>
+              <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Regelmäßige Social Media Aktivitäten und Content-Marketing erhöhen Ihre Sichtbarkeit und schaffen positive Erwähnungen.</span></li>
+              <li><strong>Kundenbewertungen fördern</strong><br>
+              <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Bitten Sie zufriedene Kunden um Bewertungen auf Google und Branchenportalen - positive Bewertungen verbessern Ihre Online-Reputation nachhaltig.</span></li>
+              <li><strong>Content-Strategie entwickeln</strong><br>
+              <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Blogbeiträge, Fachartikel und Pressemitteilungen sorgen für mehr positive Web-Erwähnungen und stärken Ihre Expertise.</span></li>
+              <li><strong>Monitoring einrichten</strong><br>
+              <span style="font-size: 14px; color: #666; display: block; margin-top: 4px;">Überwachen Sie regelmäßig, was über Ihr Unternehmen online geschrieben wird, um zeitnah auf negative Erwähnungen reagieren zu können.</span></li>
+            </ul>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+        `;
+      }
+      return '';
+    })()}
 
     ${(() => {
       // Online-Präsenz Sektion
