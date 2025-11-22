@@ -42,8 +42,9 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
     setHasSearched(true);
 
     try {
-      // Suche nach Erwähnungen des Unternehmens
-      const searchQuery = `"${companyName}" OR "${url.replace('https://', '').replace('http://', '')}" Bewertung Erfahrung Meinung`;
+      // Vereinfachte Suche nach Erwähnungen des Unternehmens
+      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '');
+      const searchQuery = `"${companyName}" OR ${cleanUrl}`;
       console.log('Starting reputation search with query:', searchQuery);
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
