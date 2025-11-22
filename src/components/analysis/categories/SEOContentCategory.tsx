@@ -37,11 +37,13 @@ interface SEOContentCategoryProps {
   addDeletedCompetitor: (competitorName: string) => void;
   removeDeletedCompetitor: (competitorName: string) => void;
   onCompanyScoreChange?: (score: number) => void;
-  onNavigateToCategory?: (categoryId: string) => void; // Neue Prop für Navigation
+  onNavigateToCategory?: (categoryId: string) => void;
   manualDataPrivacyData?: any;
   updateManualDataPrivacyData?: (data: any) => void;
   manualLocalSEOData?: any;
   onManualLocalSEOChange?: (data: any) => void;
+  securityData?: any;
+  onSecurityDataChange?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -74,6 +76,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateManualDataPrivacyData,
   manualLocalSEOData,
   onManualLocalSEOChange,
+  securityData,
+  onSecurityDataChange,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -179,6 +183,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               savedData={privacyData}
               manualDataPrivacyData={manualDataPrivacyData}
               onManualDataChange={updateManualDataPrivacyData}
+              securityData={securityData}
+              onSecurityDataChange={onSecurityDataChange}
             />
           )}
 
