@@ -7,6 +7,8 @@ import { Search, ExternalLink, AlertCircle, CheckCircle, TrendingUp, MessageSqua
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useManualData } from '@/hooks/useManualData';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface ReputationMonitoringProps {
   companyName: string;
@@ -27,6 +29,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [reputationScore, setReputationScore] = useState(0);
+  const [additionalSearchTerms, setAdditionalSearchTerms] = useState<string>('');
 
   // Initialize from saved data
   useEffect(() => {
@@ -34,6 +37,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
       setSearchResults(manualReputationData.searchResults || []);
       setReputationScore(manualReputationData.reputationScore || 0);
       setHasSearched(true);
+      setAdditionalSearchTerms(manualReputationData.additionalSearchTerms || '');
     }
   }, []);
 
@@ -44,7 +48,25 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
     try {
       // Erweiterte Suche nach Erwähnungen des Unternehmens
       const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '');
-      const searchQuery = `"${companyName}" OR ${cleanUrl} OR "Barwig Group" OR "Tobias Barwig"`;
+      
+      // Build search query with additional terms
+      let searchQuery = `"${companyName}" OR ${cleanUrl}`;
+      
+      // Add user-defined additional search terms (sanitized)
+      if (additionalSearchTerms.trim()) {
+        const sanitizedTerms = additionalSearchTerms
+          .trim()
+          .split(',')
+          .map(term => term.trim())
+          .filter(term => term.length > 0 && term.length <= 100)
+          .map(term => `"${term.replace(/"/g, '')}"`)
+          .join(' OR ');
+        
+        if (sanitizedTerms) {
+          searchQuery += ` OR ${sanitizedTerms}`;
+        }
+      }
+      
       console.log('Starting reputation search with query:', searchQuery);
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
@@ -90,6 +112,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
           webMentionsCount: results.items.length,
           sentiment: sentimentValue,
           lastChecked: new Date().toISOString(),
+          additionalSearchTerms: additionalSearchTerms,
         });
       } else {
         console.warn('No results found or empty results array');
@@ -102,6 +125,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
           webMentionsCount: 0,
           sentiment: 'neutral',
           lastChecked: new Date().toISOString(),
+          additionalSearchTerms: additionalSearchTerms,
         });
       }
     } catch (error) {
@@ -147,6 +171,22 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          {/* Additional Search Terms Input */}
+          <div className="space-y-2">
+            <Label htmlFor="additionalSearchTerms">
+              Zusätzliche Suchbegriffe (kommagetrennt)
+            </Label>
+            <Input
+              id="additionalSearchTerms"
+              placeholder='z.B. "Firmenname GmbH", "Geschäftsführer Name"'
+              value={additionalSearchTerms}
+              onChange={(e) => setAdditionalSearchTerms(e.target.value.slice(0, 500))}
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground">
+              Geben Sie zusätzliche Namen oder Begriffe ein, nach denen gesucht werden soll
+            </p>
+          </div>
           {/* Score Overview */}
           {hasSearched && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
