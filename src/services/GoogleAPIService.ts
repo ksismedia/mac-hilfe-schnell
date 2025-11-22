@@ -4,13 +4,16 @@ export class GoogleAPIService {
   // No longer storing API key in client - using secure edge functions instead
   
   static setApiKey(key: string) {
-    // Deprecated - API key now managed server-side
-    console.warn('setApiKey is deprecated - API key is now managed server-side');
+    // Store API key in localStorage for client-side edge function calls
+    if (key && key.trim()) {
+      localStorage.setItem('google_api_key', key.trim());
+      console.log('API key saved to localStorage');
+    }
   }
 
   static getApiKey(): string {
-    // Deprecated - API key now managed server-side
-    return '';
+    // Retrieve API key from localStorage
+    return localStorage.getItem('google_api_key') || '';
   }
 
   static hasApiKey(): boolean {

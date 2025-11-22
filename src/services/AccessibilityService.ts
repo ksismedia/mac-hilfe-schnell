@@ -55,8 +55,9 @@ export class AccessibilityService {
     console.log('Starting real accessibility analysis with Lighthouse for:', url);
     
     try {
-      // Get API key from GoogleAPIService if available
+      // Get API key from localStorage
       const apiKey = localStorage.getItem('google_api_key') || '';
+      console.log('🔑 API Key status:', apiKey ? `Found (${apiKey.substring(0, 10)}...)` : 'Not found - using Free Tier');
       
       // Call edge function for real Lighthouse accessibility check
       const response = await fetch(
@@ -64,7 +65,10 @@ export class AccessibilityService {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, apiKey: apiKey || undefined })
+          body: JSON.stringify({ 
+            url, 
+            apiKey: apiKey && apiKey.trim() ? apiKey.trim() : undefined 
+          })
         }
       );
 
