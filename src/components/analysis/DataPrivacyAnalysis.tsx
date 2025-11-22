@@ -100,12 +100,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     }
   };
 
-  // Auto-load security data on mount if not already loaded
   useEffect(() => {
+    // Auto-load security check on mount if no data exists
     if (!securityData && businessData.url && onSecurityDataChange) {
       runSecurityCheck();
     }
   }, [businessData.url]);
+
 
   // Calculate DSGVO score (only legal violations)
   const getDSGVOScore = () => {
