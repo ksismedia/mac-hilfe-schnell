@@ -10,7 +10,6 @@ import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
 import CompetitorAnalysis from '../CompetitorAnalysis';
 import IndustryFeatures from '../IndustryFeatures';
-import { SecurityCheckWithData } from '../SecurityCheckWithData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
 interface SEOContentCategoryProps {
@@ -43,8 +42,6 @@ interface SEOContentCategoryProps {
   updateManualDataPrivacyData?: (data: any) => void;
   manualLocalSEOData?: any;
   onManualLocalSEOChange?: (data: any) => void;
-  securityData?: any;
-  onSecurityDataChange?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -77,8 +74,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateManualDataPrivacyData,
   manualLocalSEOData,
   onManualLocalSEOChange,
-  securityData,
-  onSecurityDataChange,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -104,7 +99,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             { id: 'content', label: 'Content' },
             { id: 'local-seo', label: 'Local SEO' },
             { id: 'backlinks', label: 'Backlinks' },
-            { id: 'security', label: 'Sicherheit' },
             { id: 'accessibility', label: 'Barrierefreiheit' },
             { id: 'privacy', label: 'Datenschutz' },
             { id: 'imprint', label: 'Impressum' },
@@ -166,14 +160,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 
           {activeTab === 'backlinks' && (
             <BacklinkAnalysis url={businessData.url} />
-          )}
-
-          {activeTab === 'security' && (
-            <SecurityCheckWithData 
-              url={businessData.url}
-              securityData={securityData}
-              onSecurityDataChange={onSecurityDataChange}
-            />
           )}
 
           {activeTab === 'accessibility' && (
