@@ -42,9 +42,9 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
     setHasSearched(true);
 
     try {
-      // Vereinfachte Suche nach Erwähnungen des Unternehmens
+      // Erweiterte Suche nach Erwähnungen des Unternehmens
       const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '');
-      const searchQuery = `"${companyName}" OR ${cleanUrl}`;
+      const searchQuery = `"${companyName}" OR ${cleanUrl} OR "Barwig Group" OR "Tobias Barwig"`;
       console.log('Starting reputation search with query:', searchQuery);
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
