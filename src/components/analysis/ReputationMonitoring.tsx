@@ -112,12 +112,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
     }
   };
 
-  useEffect(() => {
-    // Auto-start search only if no data is available
-    if (!manualReputationData && companyName && url) {
-      performReputationSearch();
-    }
-  }, []);
+  // Removed auto-start - user must click button to search
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-yellow-400 text-black';
