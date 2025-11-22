@@ -421,7 +421,8 @@ export const generateDataPrivacySection = (
   dataPrivacyScore: number = 75, 
   activeViolations: any[] = [],
   manualDataPrivacyData?: any,
-  privacyData?: any
+  privacyData?: any,
+  securityData?: any
 ) => {
   // Check for critical technical issues
   const securityHeaders = privacyData?.realApiData?.securityHeaders;
@@ -815,6 +816,85 @@ export const generateDataPrivacySection = (
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> CSP ${csp ? '✓' : '✗'}, X-Frame-Options ${xFrame ? '✓' : '✗'}, X-Content-Type ${xContent ? '✓' : '✗'}, HSTS ${hsts ? '✓' : '✗'}, Referrer-Policy ${referrer ? '✓' : '✗'}
+                            </div>
+                        </div>
+                          `;
+                        })()}
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Website-Sicherheit (Google Safe Browsing)</div>
+                        ${(() => {
+                          if (!securityData) {
+                            return `
+                        <div class="metric-value" style="color: #9ca3af;">
+                            Keine Daten verfügbar
+                        </div>
+                        <div class="progress-container">
+                            <p style="color: #9ca3af; margin: 0;">Keine Sicherheitsdaten verfügbar</p>
+                        </div>
+                            `;
+                          }
+                          
+                          const websiteSecurityScore = securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50;
+                          
+                          if (securityData.isSafe === true) {
+                            return `
+                        <div class="metric-value excellent">
+                            ✓ Website ist sicher
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Google Safe Browsing Prüfung</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="90-100" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #000; font-weight: bold; font-size: 12px;">100%</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #059669;">
+                                <strong>Status:</strong> Keine bekannten Sicherheitsbedrohungen gefunden
+                            </div>
+                        </div>
+                            `;
+                          } else if (securityData.isSafe === false && securityData.threats && securityData.threats.length > 0) {
+                            const threatsHTML = securityData.threats.map((threat: any) => `
+                              • ${threat.threatType || 'Unbekannte Bedrohung'}
+                            `).join('<br>');
+                            
+                            return `
+                        <div class="metric-value danger">
+                            ⚠️ ${securityData.threats.length} Bedrohung${securityData.threats.length > 1 ? 'en' : ''} erkannt
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Google Safe Browsing Prüfung</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="0-60" style="width: 0%; background-color: #dc2626;"></div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #991b1b;">
+                                <strong>Erkannte Bedrohungen:</strong><br>${threatsHTML}
+                            </div>
+                        </div>
+                            `;
+                          }
+                          
+                          return `
+                        <div class="metric-value warning">
+                            Status unbekannt
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Google Safe Browsing Prüfung</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-score="60-80" style="width: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #fff; font-weight: bold; font-size: 12px;">50%</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 11px; color: #9ca3af;">
+                                <strong>Status:</strong> Prüfung konnte nicht durchgeführt werden
                             </div>
                         </div>
                           `;

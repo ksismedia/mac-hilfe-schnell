@@ -2985,9 +2985,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData)}
-
-    ${generateWebsiteSecuritySection(securityData)}
+    ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData, securityData)}
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
