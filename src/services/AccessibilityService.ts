@@ -69,16 +69,16 @@ export class AccessibilityService {
       );
 
       if (!response.ok) {
-        console.error('Accessibility check failed:', response.status);
-        // No fallback - return null
-        return null;
+        console.error('Accessibility check failed:', response.status, '- Using fallback data');
+        // Use fallback when API fails
+        return this.generateFallbackAccessibilityData(url, realData);
       }
 
       const result = await response.json();
       
       if (!result.success || !result.data) {
-        console.error('Invalid accessibility check response');
-        return null;
+        console.error('Invalid accessibility check response - Using fallback data');
+        return this.generateFallbackAccessibilityData(url, realData);
       }
 
       console.log('Real accessibility data received:', result.data);
@@ -92,9 +92,9 @@ export class AccessibilityService {
         checkedWithRealAPI: true
       };
     } catch (error) {
-      console.error('Error during accessibility check:', error);
-      // No fallback - return null
-      return null;
+      console.error('Error during accessibility check:', error, '- Using fallback data');
+      // Use fallback on error
+      return this.generateFallbackAccessibilityData(url, realData);
     }
   }
 
