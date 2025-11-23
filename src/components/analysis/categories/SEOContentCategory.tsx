@@ -44,6 +44,8 @@ interface SEOContentCategoryProps {
   onManualLocalSEOChange?: (data: any) => void;
   securityData?: any;
   onSecurityDataChange?: (data: any) => void;
+  manualAccessibilityData?: any;
+  updateManualAccessibilityData?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -78,6 +80,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   onManualLocalSEOChange,
   securityData,
   onSecurityDataChange,
+  manualAccessibilityData,
+  updateManualAccessibilityData,
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -172,6 +176,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               realData={realData} 
               onDataChange={setAccessibilityData}
               savedData={accessibilityData}
+              manualAccessibilityData={manualAccessibilityData}
+              updateManualAccessibilityData={updateManualAccessibilityData}
             />
           )}
 
