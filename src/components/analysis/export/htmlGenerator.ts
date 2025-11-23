@@ -3006,15 +3006,8 @@ export const generateCustomerHTML = ({
           
           ${(() => {
             // Web-Erwähnungen Integration in Backlinks Sektion
-            console.log('🔍 Backlink Section - manualReputationData:', manualReputationData);
-            console.log('🔍 Backlink Section - searchResults:', manualReputationData?.searchResults);
-            console.log('🔍 Backlink Section - webMentionsCount:', manualReputationData?.webMentionsCount);
-            
             const webMentions = manualReputationData?.searchResults || [];
             const mentionsCount = manualReputationData?.webMentionsCount || webMentions.length || 0;
-            
-            console.log('🔍 Calculated webMentions length:', webMentions.length);
-            console.log('🔍 Calculated mentionsCount:', mentionsCount);
             
             if (mentionsCount > 0 && webMentions.length > 0) {
               return `
@@ -3035,7 +3028,6 @@ export const generateCustomerHTML = ({
               </div>
               `;
             } else {
-              console.log('⚠️ Web-Erwähnungen werden nicht angezeigt - mentionsCount:', mentionsCount, 'webMentions.length:', webMentions.length);
               return `
               <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
                 <h4 style="color: #9ca3af; margin-bottom: 12px;">🌐 Web-Erwähnungen</h4>
