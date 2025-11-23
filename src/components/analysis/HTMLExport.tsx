@@ -25,6 +25,7 @@ interface HTMLExportProps {
   hourlyRateData?: { meisterRate: number; facharbeiterRate: number; azubiRate: number; helferRate: number };
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
+  manualReputationData?: any;
 }
 
 const HTMLExport: React.FC<HTMLExportProps> = ({ 
@@ -38,7 +39,8 @@ const HTMLExport: React.FC<HTMLExportProps> = ({
   deletedCompetitors = new Set(),
   hourlyRateData,
   manualKeywordData,
-  keywordScore
+  keywordScore,
+  manualReputationData
 }) => {
   // Calculate scores based on available data
   const calculateOverallScore = () => {
