@@ -39,7 +39,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({ companyName
       setHasSearched(true);
       setAdditionalSearchTerms(manualReputationData.additionalSearchTerms || '');
     }
-  }, []);
+  }, [manualReputationData]);
 
   const performReputationSearch = async () => {
     setIsSearching(true);

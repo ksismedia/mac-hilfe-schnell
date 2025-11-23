@@ -260,6 +260,20 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
+          
+          // Automatisch Google Safe Browsing Prüfung starten, wenn keine Daten vorhanden
+          if (!analysisData.manualData?.securityData) {
+            console.log('🔒 No security data found, starting Google Safe Browsing check...');
+            try {
+              const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+              const securityResult = await SafeBrowsingService.checkUrl(businessData.url);
+              setSecurityData(securityResult);
+              console.log('✅ Google Safe Browsing check completed:', securityResult);
+            } catch (secError) {
+              console.error('❌ Google Safe Browsing check failed:', secError);
+            }
+          }
+          
           setIsLoadingFromStorage(false);
           return;
         } 
