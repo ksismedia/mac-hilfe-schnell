@@ -755,7 +755,23 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
 export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any): number => {
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
-    const manualScore = manualBacklinkData?.overallScore;
+    
+    // Calculate manual score using the same logic as in BacklinkAnalysis.tsx
+    let manualScore: number | undefined = undefined;
+    if (manualBacklinkData && manualBacklinkData.qualityScore !== undefined) {
+      const qualityScore = Math.round(
+        (manualBacklinkData.qualityScore + 
+         manualBacklinkData.domainAuthority + 
+         manualBacklinkData.localRelevance) / 3
+      );
+
+      // Calculate spam penalty
+      const spamPenalty = manualBacklinkData.totalBacklinks > 0 
+        ? (manualBacklinkData.spamLinks / manualBacklinkData.totalBacklinks) * 30 
+        : 0;
+      
+      manualScore = Math.max(0, qualityScore - spamPenalty);
+    }
     
     // Web-Erwähnungen berücksichtigen
     const webMentionsCount = manualReputationData?.webMentionsCount || 0;
@@ -767,7 +783,7 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
     }
     
     if (manualScore !== undefined && !isNaN(manualScore)) {
-      return Math.max(0, Math.min(100, manualScore + webMentionsBonus));
+      return Math.max(0, Math.min(100, Math.round(manualScore + webMentionsBonus)));
     }
     
     if (!isNaN(autoScore) && autoScore > 0) {
