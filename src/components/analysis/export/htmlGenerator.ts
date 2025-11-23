@@ -497,12 +497,92 @@ export const generateCustomerHTML = ({
   const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
   
   // Kategorie 4: Markt & Marktumfeld
+  // Berechne Wettbewerbs-Score basierend auf relativer Marktposition
+  let competitorPositionScore = 0;
+  const allCompetitorsForCalc = manualCompetitors || [];
+  
+  if (allCompetitorsForCalc.length > 0) {
+    // Berechne avgCompetitorScore
+    const avgCompetitorScore = allCompetitorsForCalc.reduce((acc, comp) => {
+      const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
+      const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
+      
+      const ratingScore = rating >= 4.5 
+        ? 80 + ((rating - 4.5) / 0.5) * 15
+        : rating >= 3.5 
+          ? 60 + ((rating - 3.5) * 20)
+          : rating >= 2.5 
+            ? 40 + ((rating - 2.5) * 20)
+            : rating * 16;
+      
+      const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0;
+      const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+      
+      const reviewScore = reviews <= 25 
+        ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)
+        : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5);
+      
+      const compServices = Array.isArray(comp.services) ? comp.services : [];
+      const serviceCount = compServices.length;
+      let serviceScore;
+      if (serviceCount === 0) {
+        serviceScore = 15;
+      } else if (serviceCount <= 3) {
+        serviceScore = 30 + (serviceCount * 15);
+      } else if (serviceCount <= 8) {
+        serviceScore = 75 + ((serviceCount - 3) * 2);
+      } else if (serviceCount <= 15) {
+        serviceScore = 85 + ((serviceCount - 8) * 0.7);
+      } else {
+        serviceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);
+      }
+      
+      const ratingWeight = Math.min(0.40 + (serviceCount * 0.020), 0.65);
+      const serviceWeight = Math.max(0.30 - (serviceCount * 0.015), 0.15);
+      const reviewWeight = 1 - ratingWeight - serviceWeight;
+      
+      const totalScore = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight), 96);
+      
+      return acc + totalScore;
+    }, 0) / allCompetitorsForCalc.length;
+    
+    // Berechne relativen Score: Differenz zum Markt-Durchschnitt
+    const scoreDifference = marketComparisonScore - avgCompetitorScore;
+    
+    // Normalisiere auf 0-100% Skala
+    if (scoreDifference >= 20) {
+      competitorPositionScore = 100;
+    } else if (scoreDifference >= 10) {
+      competitorPositionScore = 85 + ((scoreDifference - 10) / 10) * 15;
+    } else if (scoreDifference >= 0) {
+      competitorPositionScore = 70 + (scoreDifference / 10) * 15;
+    } else if (scoreDifference >= -10) {
+      competitorPositionScore = 50 + ((scoreDifference + 10) / 10) * 20;
+    } else if (scoreDifference >= -20) {
+      competitorPositionScore = 30 + ((scoreDifference + 20) / 10) * 20;
+    } else {
+      competitorPositionScore = Math.max(0, 30 + scoreDifference + 20);
+    }
+    
+    competitorPositionScore = Math.round(competitorPositionScore);
+  }
+  
   const cat4Scores = [
-    marketComparisonScore,
+    allCompetitorsForCalc.length > 0 ? competitorPositionScore : 0,
     hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
     workplaceScore !== -1 ? workplaceScore : 0,
     staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
   ].filter(s => s > 0);
+  
+  console.log('🎯 Cat4 (Markt & Marktumfeld) Scores:', {
+    competitorPositionScore,
+    pricingScore,
+    workplaceScore,
+    staffQualificationScore,
+    allScores: cat4Scores,
+    avg: cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0
+  });
+  
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
   
   // Kategorie 5: Außendarstellung & Erscheinungsbild
