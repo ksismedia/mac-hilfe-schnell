@@ -266,7 +266,7 @@ export const generateCustomerHTML = ({
   
   // Calculate additional scores - MIT MANUELLEN DATEN
   const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData);
-  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData);
+  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   
@@ -2973,6 +2973,36 @@ export const generateCustomerHTML = ({
               </div>
             </div>
           </div>
+          
+          ${(() => {
+            // Web-Erwähnungen Integration in Backlinks Sektion
+            const webMentions = manualReputationData?.searchResults || [];
+            const mentionsCount = manualReputationData?.webMentionsCount || webMentions.length || 0;
+            
+            if (mentionsCount > 0) {
+              return `
+              <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <h4 style="color: #374151; margin-bottom: 12px;">🌐 Web-Erwähnungen (${mentionsCount})</h4>
+                <p style="color: #6b7280; font-size: 0.9em; margin-bottom: 12px;">
+                  Erwähnungen Ihrer Website auf anderen Plattformen und in Suchergebnissen
+                </p>
+                ${webMentions.length > 0 ? `
+                  ${webMentions.slice(0, 5).map((result: any) => `
+                    <div style="background: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 10px; border-left: 3px solid #3b82f6;">
+                      <h5 style="color: #1f2937; margin: 0 0 6px 0; font-size: 0.95em;">${result.title || 'Unbekannter Titel'}</h5>
+                      <p style="color: #6b7280; font-size: 0.85em; margin: 0 0 6px 0;">${result.snippet || result.description || 'Keine Beschreibung verfügbar'}</p>
+                      <p style="color: #9ca3af; font-size: 0.8em; margin: 0;">
+                        <strong>Quelle:</strong> ${result.displayLink || result.link || 'Unbekannte Quelle'}
+                      </p>
+                    </div>
+                  `).join('')}
+                ` : ''}
+              </div>
+              `;
+            }
+            return '';
+          })()}
+          
           <div class="recommendations">
             <h4>Backlink-Strategien:</h4>
             <ul>
@@ -2980,6 +3010,7 @@ export const generateCustomerHTML = ({
               <li>Lokale Partnerschaften aufbauen</li>
               <li>Content-Marketing für natürliche Links</li>
               <li>Gastbeiträge in Fachmagazinen</li>
+              <li>Web-Erwähnungen durch aktive PR-Arbeit erhöhen</li>
             </ul>
           </div>
         </div>
