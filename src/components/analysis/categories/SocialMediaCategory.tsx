@@ -9,7 +9,7 @@ import ReputationMonitoring from '../ReputationMonitoring';
 import { ManualIndustryReviewInput } from '../ManualIndustryReviewInput';
 import ManualOnlinePresenceInput from '../ManualOnlinePresenceInput';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualWorkplaceData, ManualIndustryReviewData, ManualOnlinePresenceData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualWorkplaceData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualReputationData } from '@/hooks/useManualData';
 
 interface SocialMediaCategoryProps {
   realData: RealBusinessData;
@@ -22,6 +22,8 @@ interface SocialMediaCategoryProps {
   updateIndustryReviewData: (data: ManualIndustryReviewData | null) => void;
   manualOnlinePresenceData: ManualOnlinePresenceData | null;
   updateOnlinePresenceData: (data: ManualOnlinePresenceData | null) => void;
+  manualReputationData?: ManualReputationData | null;
+  updateReputationData?: (data: ManualReputationData | null) => void;
   onReviewsUpdate?: (reviews: { rating: number; count: number; recent: any[] }) => void;
 }
 
@@ -36,6 +38,8 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
   updateIndustryReviewData,
   manualOnlinePresenceData,
   updateOnlinePresenceData,
+  manualReputationData,
+  updateReputationData,
   onReviewsUpdate,
 }) => {
   return (
@@ -71,6 +75,8 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
             companyName={realData?.company?.name || businessData.address}
             url={businessData.url}
             industry={businessData.industry}
+            manualReputationData={manualReputationData}
+            updateReputationData={updateReputationData}
           />
         </TabsContent>
 

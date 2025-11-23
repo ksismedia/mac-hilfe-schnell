@@ -550,6 +550,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateIndustryReviewData={updateManualIndustryReviewData}
             manualOnlinePresenceData={manualOnlinePresenceData}
             updateOnlinePresenceData={updateManualOnlinePresenceData}
+            manualReputationData={manualReputationData}
+            updateReputationData={updateManualReputationData}
             onReviewsUpdate={handleReviewsUpdate}
           />
         );
