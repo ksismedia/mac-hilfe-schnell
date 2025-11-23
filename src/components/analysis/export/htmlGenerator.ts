@@ -2458,8 +2458,79 @@ export const generateCustomerHTML = ({
 
                 // Kategorie 4: Markt & Marktumfeld
                 const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                
+                // Berechne relativen Market Position Score basierend auf Wettbewerber-Durchschnitt
+                let marketPositionScore = 0;
+                if (allCompetitors.length > 0) {
+                  // Berechne avgCompetitorScore wie in der Wettbewerbsanalyse
+                  const avgCompetitorScore = allCompetitors.reduce((acc, comp) => {
+                    const rating = typeof comp.rating === 'number' && !isNaN(comp.rating) ? comp.rating : 0;
+                    const reviews = typeof comp.reviews === 'number' && !isNaN(comp.reviews) ? comp.reviews : 0;
+                    
+                    const ratingScore = rating >= 4.5 
+                      ? 80 + ((rating - 4.5) / 0.5) * 15
+                      : rating >= 3.5 
+                        ? 60 + ((rating - 3.5) * 20)
+                        : rating >= 2.5 
+                          ? 40 + ((rating - 2.5) * 20)
+                          : rating * 16;
+                    
+                    const positiveReviewsRatio = rating > 0 ? Math.min((rating - 1) / 4, 1) : 0;
+                    const estimatedPositiveReviews = Math.round(reviews * positiveReviewsRatio);
+                    
+                    const reviewScore = reviews <= 25 
+                      ? Math.min(50 + estimatedPositiveReviews * 1.6, 90)
+                      : Math.min(95, 90 + Math.log10(estimatedPositiveReviews / 25) * 5);
+                    
+                    const compServices = Array.isArray(comp.services) ? comp.services : [];
+                    const serviceCount = compServices.length;
+                    let serviceScore;
+                    if (serviceCount === 0) {
+                      serviceScore = 15;
+                    } else if (serviceCount <= 3) {
+                      serviceScore = 30 + (serviceCount * 15);
+                    } else if (serviceCount <= 8) {
+                      serviceScore = 75 + ((serviceCount - 3) * 2);
+                    } else if (serviceCount <= 15) {
+                      serviceScore = 85 + ((serviceCount - 8) * 0.7);
+                    } else {
+                      serviceScore = Math.min(90 + ((serviceCount - 15) * 0.3), 93);
+                    }
+                    
+                    const ratingWeight = Math.min(0.40 + (serviceCount * 0.020), 0.65);
+                    const serviceWeight = Math.max(0.30 - (serviceCount * 0.015), 0.15);
+                    const reviewWeight = 1 - ratingWeight - serviceWeight;
+                    
+                    const totalScore = Math.min((ratingScore * ratingWeight) + (reviewScore * reviewWeight) + (serviceScore * serviceWeight), 96);
+                    
+                    return acc + totalScore;
+                  }, 0) / allCompetitors.length;
+                  
+                  // Berechne relativen Score: Wie gut steht man im Vergleich zum Markt?
+                  // Score basiert auf Differenz zum Durchschnitt
+                  const scoreDifference = marketComparisonScore - avgCompetitorScore;
+                  
+                  // Normalisiere: +20 Punkte Vorsprung = 100%, -20 Punkte Rückstand = 0%
+                  // 0 Punkte Differenz (genau Durchschnitt) = 70%
+                  if (scoreDifference >= 20) {
+                    marketPositionScore = 100;
+                  } else if (scoreDifference >= 10) {
+                    marketPositionScore = 85 + ((scoreDifference - 10) / 10) * 15; // 85-100%
+                  } else if (scoreDifference >= 0) {
+                    marketPositionScore = 70 + (scoreDifference / 10) * 15; // 70-85%
+                  } else if (scoreDifference >= -10) {
+                    marketPositionScore = 50 + ((scoreDifference + 10) / 10) * 20; // 50-70%
+                  } else if (scoreDifference >= -20) {
+                    marketPositionScore = 30 + ((scoreDifference + 20) / 10) * 20; // 30-50%
+                  } else {
+                    marketPositionScore = Math.max(0, 30 + scoreDifference + 20); // <30%
+                  }
+                  
+                  marketPositionScore = Math.round(marketPositionScore);
+                }
+                
                 const cat4Scores = [
-                  allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
+                  allCompetitors.length > 0 ? marketPositionScore : 0,
                   hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
                   workplaceScore !== -1 ? workplaceScore : 0,
                   staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
