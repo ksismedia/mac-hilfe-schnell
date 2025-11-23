@@ -5,7 +5,6 @@ import ContentAnalysis from '../ContentAnalysis';
 import KeywordAnalysis from '../KeywordAnalysis';
 import LocalSEO from '../LocalSEO';
 import BacklinkAnalysis from '../BacklinkAnalysis';
-import ReputationMonitoring from '../ReputationMonitoring';
 import AccessibilityAnalysis from '../AccessibilityAnalysis';
 import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
@@ -104,7 +103,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
             { id: 'content', label: 'Content' },
             { id: 'local-seo', label: 'Local SEO' },
             { id: 'backlinks', label: 'Backlinks' },
-            { id: 'reputation', label: 'Reputation' },
             { id: 'accessibility', label: 'Barrierefreiheit' },
             { id: 'privacy', label: 'Datenschutz' },
             { id: 'imprint', label: 'Impressum' },
@@ -166,14 +164,6 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 
           {activeTab === 'backlinks' && (
             <BacklinkAnalysis url={businessData.url} />
-          )}
-
-          {activeTab === 'reputation' && (
-            <ReputationMonitoring 
-              companyName={realData?.company?.name || businessData.url}
-              url={businessData.url}
-              industry={businessData.industry}
-            />
           )}
 
           {activeTab === 'accessibility' && (
