@@ -148,7 +148,8 @@ export const calculateOnlineQualityAuthorityScore = (
   manualLocalSEOData?: any,
   manualDataPrivacyData?: any,
   manualAccessibilityData?: any,
-  securityData?: any
+  securityData?: any,
+  manualReputationData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -160,7 +161,7 @@ export const calculateOnlineQualityAuthorityScore = (
     
     const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
     const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData) || 0;
-    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData) || 0;
+    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData) || 0;
     const accessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData) || 0;
     
     // GETRENNTE SCORES für DSGVO, Technische Sicherheit und Website-Sicherheit
@@ -324,7 +325,7 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null, null);
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null, null, null, null);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {
@@ -751,22 +752,26 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
   }
 };
 
-export const calculateBacklinksScore = (realData: any, manualBacklinkData: any): number => {
+export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any): number => {
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
     const manualScore = manualBacklinkData?.overallScore;
     
+    // Web-Erwähnungen berücksichtigen
+    const webMentionsCount = manualReputationData?.webMentionsCount || 0;
+    const webMentionsBonus = Math.min(10, webMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
+    
     if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
-      const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
+      const combined = Math.round(autoScore * 0.6 + manualScore * 0.4 + webMentionsBonus);
       return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
     }
     
     if (manualScore !== undefined && !isNaN(manualScore)) {
-      return Math.max(0, Math.min(100, manualScore));
+      return Math.max(0, Math.min(100, manualScore + webMentionsBonus));
     }
     
     if (!isNaN(autoScore) && autoScore > 0) {
-      return Math.max(0, Math.min(100, autoScore));
+      return Math.max(0, Math.min(100, autoScore + webMentionsBonus));
     }
     
     return 75;
