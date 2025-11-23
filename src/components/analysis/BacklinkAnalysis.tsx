@@ -17,7 +17,7 @@ interface BacklinkAnalysisProps {
 }
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
-  const { manualBacklinkData, updateManualBacklinkData } = useManualData();
+  const { manualBacklinkData, updateManualBacklinkData, manualReputationData } = useManualData();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -105,9 +105,15 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   };
 
   useEffect(() => {
-    // Auto-start search on mount
-    searchBacklinks();
-  }, [url]);
+    // Load Web-Erwähnungen from Reputation Monitoring data if available
+    if (manualReputationData?.searchResults && manualReputationData.searchResults.length > 0) {
+      setWebMentions(manualReputationData.searchResults);
+      setHasSearched(true);
+    } else {
+      // Auto-start search on mount only if no saved data
+      searchBacklinks();
+    }
+  }, [url, manualReputationData]);
 
   const getQualityColor = (quality: string) => {
     switch (quality) {
