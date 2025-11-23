@@ -3048,6 +3048,8 @@ export const generateCustomerHTML = ({
 
     ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData, securityData)}
 
+    ${generateWebsiteSecuritySection(securityData)}
+
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
       <div class="section-header">

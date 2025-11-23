@@ -1,4 +1,4 @@
-import { SafeBrowsingResult } from '@/services/SafeBrowsingService';
+import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
 
 const getScoreColor = (score: number) => {
   if (score <= 60) return '#FF0000';   // 0-60% rot
@@ -26,7 +26,7 @@ export const generateWebsiteSecuritySection = (
       <div class="section-content">
         <div class="metric-card">
           <p style="color: #9ca3af; text-align: center; padding: 20px;">
-            Keine Sicherheitsdaten verfügbar
+            Keine Sicherheitsdaten verfügbar - Bitte über "Aktualisieren" Button in der Analyse die Prüfung starten
           </p>
         </div>
       </div>
@@ -34,10 +34,8 @@ export const generateWebsiteSecuritySection = (
     `;
   }
 
-  // Calculate security score
-  const securityScore = securityData.isSafe === true ? 100 : 
-                       securityData.isSafe === false ? 0 : 
-                       50;
+  // Use SafeBrowsingService for consistent scoring
+  const securityScore = SafeBrowsingService.calculateSecurityScore(securityData);
 
   const securityColor = getScoreColor(securityScore);
   const securityColorClass = getScoreColorClass(securityScore);
