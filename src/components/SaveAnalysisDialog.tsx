@@ -44,6 +44,7 @@ interface SaveAnalysisDialogProps {
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualConversionData?: ManualConversionData | null;
   manualMobileData?: ManualMobileData | null;
+  manualReputationData?: any;
   privacyData?: any;
   accessibilityData?: any;
   securityData?: any;
@@ -76,6 +77,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualOnlinePresenceData,
   manualConversionData,
   manualMobileData,
+  manualReputationData,
   privacyData,
   accessibilityData,
   securityData,
@@ -130,6 +132,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualOnlinePresenceData: manualOnlinePresenceData || undefined,
         manualConversionData: manualConversionData || undefined,
         manualMobileData: manualMobileData || undefined,
+        manualReputationData: manualReputationData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined,
         securityData: securityData || undefined

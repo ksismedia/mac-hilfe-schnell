@@ -153,6 +153,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateManualConversionData,
     manualMobileData,
     updateManualMobileData,
+    manualReputationData,
     updateManualReputationData
   } = useManualData();
 
@@ -723,6 +724,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualOnlinePresenceData={manualOnlinePresenceData}
               manualConversionData={manualConversionData}
               manualMobileData={manualMobileData}
+              manualReputationData={manualReputationData}
               privacyData={privacyData}
               accessibilityData={accessibilityData}
               securityData={securityData}
@@ -751,6 +753,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               manualIndustryReviewData={manualIndustryReviewData}
               manualOnlinePresenceData={manualOnlinePresenceData}
               manualMobileData={manualMobileData}
+              manualReputationData={manualReputationData}
               calculatedOwnCompanyScore={currentOwnCompanyScore}
               keywordScore={keywordsScore}
               manualKeywordData={manualKeywordData}
