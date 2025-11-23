@@ -3705,15 +3705,15 @@ export const generateCustomerHTML = ({
                               sentiment === 'negative' ? '#ef4444' : '#6b7280';
         
         return `
-    <!-- Reputation Monitoring (Web-Erwähnungen) -->
+    <!-- Reputation Monitoring -->
     <div class="section">
       <div class="section-header">
-        <span>Reputation Monitoring (Web-Erwähnungen)</span>
+        <span>📢 Reputation Monitoring</span>
         <div class="header-score-circle ${getScoreColorClass(repScore)}">${repScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
-          <h3>Online-Reputation und Web-Präsenz</h3>
+          <h3>Online-Reputation und Markenwahrnehmung</h3>
           
           <div class="metric-grid">
             <div class="metric-item">
@@ -3721,18 +3721,18 @@ export const generateCustomerHTML = ({
               <div class="metric-value ${repScore >= 80 ? 'excellent' : repScore >= 60 ? 'good' : 'warning'}">
                 ${repScore >= 80 ? 'Ausgezeichnet' : repScore >= 60 ? 'Gut' : 'Ausbaufähig'}
               </div>
-              ${generateProgressBar(repScore, 'Basierend auf Anzahl und Sentiment der Web-Erwähnungen')}
+              ${generateProgressBar(repScore, 'Basierend auf Anzahl und Sentiment der gefundenen Erwähnungen')}
             </div>
             
             <div class="metric-item">
-              <div class="metric-title">Web-Erwähnungen</div>
+              <div class="metric-title">Gefundene Erwähnungen</div>
               <div class="metric-value ${mentionsCount >= 10 ? 'excellent' : mentionsCount >= 5 ? 'good' : 'warning'}">
-                ${mentionsCount} gefunden
+                ${mentionsCount} Suchergebnisse
               </div>
               <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
-                ${mentionsCount >= 10 ? 'Sehr gute Online-Sichtbarkeit' : 
+                ${mentionsCount >= 10 ? 'Sehr gute Sichtbarkeit in Suchergebnissen' : 
                   mentionsCount >= 5 ? 'Solide Online-Präsenz' : 
-                  'Verbesserungspotenzial bei Online-Sichtbarkeit'}
+                  'Verbesserungspotenzial bei Sichtbarkeit'}
               </p>
             </div>
             
@@ -3742,16 +3742,16 @@ export const generateCustomerHTML = ({
                 ${sentimentLabel}
               </div>
               <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
-                ${sentiment === 'positive' ? 'Überwiegend positive Erwähnungen' :
+                ${sentiment === 'positive' ? 'Überwiegend positive Markenwahrnehmung' :
                   sentiment === 'negative' ? 'Kritische Erwähnungen vorhanden' :
-                  'Neutrale bis gemischte Erwähnungen'}
+                  'Neutrale bis gemischte Markenwahrnehmung'}
               </p>
             </div>
           </div>
           
           ${searchResults.length > 0 ? `
           <div style="margin-top: 20px;">
-            <h4 style="color: #374151; margin-bottom: 12px;">Gefundene Erwähnungen (Auswahl)</h4>
+            <h4 style="color: #374151; margin-bottom: 12px;">Top 5 Suchergebnisse zur Marke</h4>
             ${searchResults.slice(0, 5).map((result: any) => `
               <div style="background: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 10px; border-left: 3px solid #3b82f6;">
                 <h5 style="color: #1f2937; margin: 0 0 6px 0; font-size: 0.95em;">${result.title}</h5>
