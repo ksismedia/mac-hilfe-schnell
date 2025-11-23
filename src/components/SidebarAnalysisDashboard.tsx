@@ -62,6 +62,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
+  const [securityData, setSecurityData] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('online-quality-authority');
   const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75); // Score aus CompetitorAnalysis
   
@@ -126,6 +127,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     updateManualConversionData,
     manualMobileData,
     updateManualMobileData,
+    manualReputationData,
     updateManualReputationData
   } = useManualData();
 
@@ -552,6 +554,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualKeywordData={manualKeywordData}
                   keywordScore={keywordsScore}
                   staffQualificationData={staffQualificationData}
+                  quoteResponseData={quoteResponseData}
                   manualContentData={manualContentData}
                   manualAccessibilityData={manualAccessibilityData}
                   manualBacklinkData={manualBacklinkData}
@@ -559,6 +562,11 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualLocalSEOData={manualLocalSEOData}
                   manualIndustryReviewData={manualIndustryReviewData}
                   manualOnlinePresenceData={manualOnlinePresenceData}
+                  manualMobileData={manualMobileData}
+                  manualReputationData={manualReputationData}
+                  privacyData={privacyData}
+                  accessibilityData={accessibilityData}
+                  securityData={securityData}
                   calculatedOwnCompanyScore={currentOwnCompanyScore}
                 />
               </div>

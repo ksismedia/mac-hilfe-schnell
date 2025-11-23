@@ -23,6 +23,11 @@ interface PDFExportProps {
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   staffQualificationData?: any;
+  privacyData?: any;
+  accessibilityData?: any;
+  securityData?: any;
+  calculatedOwnCompanyScore?: number;
+  removedMissingServices?: string[];
 }
 
 const PDFExport: React.FC<PDFExportProps> = ({ 
@@ -36,9 +41,29 @@ const PDFExport: React.FC<PDFExportProps> = ({
   deletedCompetitors = new Set(),
   manualKeywordData,
   keywordScore,
-  staffQualificationData
+  staffQualificationData,
+  privacyData,
+  accessibilityData,
+  securityData,
+  calculatedOwnCompanyScore,
+  removedMissingServices = []
 }) => {
-  const { hourlyRateData, quoteResponseData } = useManualData();
+  const { 
+    hourlyRateData, 
+    quoteResponseData,
+    manualWorkplaceData,
+    manualCorporateIdentityData,
+    manualContentData,
+    manualAccessibilityData,
+    manualBacklinkData,
+    manualDataPrivacyData,
+    manualLocalSEOData,
+    manualIndustryReviewData,
+    manualOnlinePresenceData,
+    manualConversionData,
+    manualMobileData,
+    manualReputationData
+  } = useManualData();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -73,16 +98,32 @@ const PDFExport: React.FC<PDFExportProps> = ({
                 realData={realData}
                 manualImprintData={manualImprintData}
                 manualSocialData={manualSocialData}
-                manualWorkplaceData={null}
-                manualCorporateIdentityData={null}
+                manualWorkplaceData={manualWorkplaceData}
+                manualCorporateIdentityData={manualCorporateIdentityData}
                 manualCompetitors={manualCompetitors}
                 competitorServices={competitorServices}
                 companyServices={companyServices}
                 deletedCompetitors={deletedCompetitors}
+                removedMissingServices={removedMissingServices}
                 manualKeywordData={manualKeywordData}
                 keywordScore={keywordScore}
                 staffQualificationData={staffQualificationData}
                 hourlyRateData={hourlyRateData}
+                quoteResponseData={quoteResponseData}
+                manualContentData={manualContentData}
+                manualAccessibilityData={manualAccessibilityData}
+                manualBacklinkData={manualBacklinkData}
+                manualDataPrivacyData={manualDataPrivacyData}
+                manualLocalSEOData={manualLocalSEOData}
+                manualIndustryReviewData={manualIndustryReviewData}
+                manualOnlinePresenceData={manualOnlinePresenceData}
+                manualConversionData={manualConversionData}
+                manualMobileData={manualMobileData}
+                manualReputationData={manualReputationData}
+                privacyData={privacyData}
+                accessibilityData={accessibilityData}
+                securityData={securityData}
+                calculatedOwnCompanyScore={calculatedOwnCompanyScore}
               />
             </CardContent>
           </Card>
@@ -111,6 +152,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
                 manualKeywordData={manualKeywordData}
                 keywordScore={keywordScore}
                 hourlyRateData={hourlyRateData}
+                manualReputationData={manualReputationData}
               />
             </CardContent>
           </Card>
