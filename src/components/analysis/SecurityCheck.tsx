@@ -10,17 +10,18 @@ import { Progress } from '@/components/ui/progress';
 interface SecurityCheckProps {
   url: string;
   onDataLoaded?: (result: SafeBrowsingResult) => void;
+  existingData?: SafeBrowsingResult | null;
 }
 
-export const SecurityCheck = ({ url, onDataLoaded }: SecurityCheckProps) => {
+export const SecurityCheck = ({ url, onDataLoaded, existingData }: SecurityCheckProps) => {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<SafeBrowsingResult | null>(null);
+  const [result, setResult] = useState<SafeBrowsingResult | null>(existingData || null);
 
   useEffect(() => {
-    if (url) {
-      checkSecurity();
+    if (existingData) {
+      setResult(existingData);
     }
-  }, [url]);
+  }, [existingData]);
 
   const checkSecurity = async () => {
     setLoading(true);
