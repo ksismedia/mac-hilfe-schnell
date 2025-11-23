@@ -497,13 +497,30 @@ export const generateCustomerHTML = ({
   const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
   
   // Kategorie 4: Markt & Marktumfeld
+  const allCompetitorsForCat4 = manualCompetitors || [];
+  const cat4Components = {
+    wettbewerb: allCompetitorsForCat4.length > 0 ? Math.round(marketComparisonScore) : 0,
+    stundensatz: hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
+    arbeitgeber: workplaceScore !== -1 ? workplaceScore : 0,
+    personal: staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+  };
+  
   const cat4Scores = [
-    marketComparisonScore,
-    hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
-    workplaceScore !== -1 ? workplaceScore : 0,
-    staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+    cat4Components.wettbewerb,
+    cat4Components.stundensatz,
+    cat4Components.arbeitgeber,
+    cat4Components.personal
   ].filter(s => s > 0);
+  
   const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+  
+  console.log('📊 Markt & Marktumfeld Berechnung:', {
+    einzelScores: cat4Components,
+    verwendeteScores: cat4Scores,
+    anzahlScores: cat4Scores.length,
+    summe: cat4Scores.reduce((a, b) => a + b, 0),
+    durchschnitt: cat4Avg
+  });
   
   // Kategorie 5: Außendarstellung & Erscheinungsbild
   const cat5Avg = Math.round(corporateIdentityScore);
@@ -2458,13 +2475,30 @@ export const generateCustomerHTML = ({
 
                 // Kategorie 4: Markt & Marktumfeld
                 const allCompetitors = (window as any).globalAllCompetitors || manualCompetitors || [];
+                
+                const cat4ComponentsExec = {
+                  wettbewerb: allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
+                  stundensatz: hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
+                  arbeitgeber: workplaceScore !== -1 ? workplaceScore : 0,
+                  personal: staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+                };
+                
                 const cat4Scores = [
-                  allCompetitors.length > 0 ? Math.round(marketComparisonScore) : 0,
-                  hasValidHourlyRateData && pricingScore > 0 ? Math.round(pricingScore) : 0,
-                  workplaceScore !== -1 ? workplaceScore : 0,
-                  staffQualificationData && staffQualificationData.totalEmployees > 0 ? staffQualificationScore : 0
+                  cat4ComponentsExec.wettbewerb,
+                  cat4ComponentsExec.stundensatz,
+                  cat4ComponentsExec.arbeitgeber,
+                  cat4ComponentsExec.personal
                 ].filter(s => s > 0);
+                
                 const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
+                
+                console.log('📊 Executive Summary - Markt & Marktumfeld:', {
+                  einzelScores: cat4ComponentsExec,
+                  verwendeteScores: cat4Scores,
+                  anzahl: cat4Scores.length,
+                  summe: cat4Scores.reduce((a, b) => a + b, 0),
+                  durchschnitt: cat4Avg
+                });
 
                 // Kategorie 5: Außendarstellung & Erscheinungsbild
                 const cat5Avg = Math.round(corporateIdentityScore);
