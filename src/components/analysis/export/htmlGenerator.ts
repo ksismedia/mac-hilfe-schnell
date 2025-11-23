@@ -1011,22 +1011,15 @@ export const generateCustomerHTML = ({
       return acc;
     }, {});
     
-    // Erstelle Violations-Array für die Anzeige
+    // Erstelle Violations-Array für die Anzeige - IMMER aus echten Daten
     const violations = Object.entries(violationsByImpact).map(([impact, vList]: [string, any]) => ({
       impact,
       description: vList[0]?.description || `${impact} Probleme`,
-      count: vList.length
+      count: vList.length,
+      nodes: vList[0]?.nodes?.length || 0,
+      help: vList[0]?.help || vList[0]?.description,
+      helpUrl: vList[0]?.helpUrl
     }));
-    
-    // Falls keine echten Daten, verwende Fallback
-    if (violations.length === 0 && !manualAccessibilityData) {
-      violations.push(
-        { impact: 'critical', description: 'Bilder ohne Alt-Text', count: 3 },
-        { impact: 'serious', description: 'Unzureichender Farbkontrast', count: 5 },
-        { impact: 'moderate', description: 'Fehlerhafte Überschriftenstruktur', count: 2 },
-        { impact: 'minor', description: 'Fehlende Fokus-Indikatoren', count: 4 }
-      );
-    }
     
     const realPasses = accessibilityData?.passes || [];
     const passes = realPasses.length > 0 
@@ -1045,12 +1038,17 @@ export const generateCustomerHTML = ({
         ${violations.length > 0 || accessibilityScore < 90 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
             <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-              RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
+              ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
             </h4>
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
-              <strong>Warnung:</strong> Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+              <strong>Warnung:</strong> Die automatisierte Analyse hat <strong>${violations.length} Barrierefreiheit-Probleme</strong> identifiziert. 
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
             </p>
+            ${hasRealData ? `
+              <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 13px;">
+                Diese Probleme wurden durch <strong>automatisierte PageSpeed Insights Tests</strong> ermittelt und sollten dringend überprüft werden.
+              </p>
+            ` : ''}
             <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
               <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
             </div>
@@ -1075,22 +1073,52 @@ export const generateCustomerHTML = ({
         
         <div id="wcag-details" style="display: none;">
           <!-- Violations Overview -->
-          <div class="violations-box" style="margin-top: 20px; padding: 15px; border-radius: 8px;">
-            <h4>🚨 Erkannte Probleme</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-              ${violations.map(v => `
-                  <div class="violation-${v.impact}" style="padding: 8px; border-radius: 6px;">
-                  <p class="${
-                    v.impact === 'critical' ? 'error-text' :
-                    v.impact === 'serious' ? 'error-text' :
-                    v.impact === 'moderate' ? 'section-text' : ''
-                  }" style="font-weight: bold;">${v.impact.toUpperCase()}</p>
-                  <p style="font-size: 0.9em;">${v.description}</p>
-                  <p style="font-size: 0.8em;">${v.count} Vorkommen</p>
-                </div>
-              `).join('')}
+          ${violations.length > 0 ? `
+            <div class="violations-box" style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #fef2f2; border: 2px solid #fca5a5;">
+              <h4 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Automatisch erkannte Probleme ${hasRealData ? '<span style="color: #10b981; font-size: 12px;">(PageSpeed Insights)</span>' : ''}</h4>
+              <div style="display: grid; gap: 15px;">
+                ${violations.map(v => `
+                  <div style="padding: 15px; border-radius: 8px; background: white; border-left: 4px solid ${
+                    v.impact === 'critical' ? '#dc2626' :
+                    v.impact === 'serious' ? '#ea580c' :
+                    v.impact === 'moderate' ? '#d97706' : '#059669'
+                  };">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                      <p style="font-weight: bold; color: ${
+                        v.impact === 'critical' ? '#dc2626' :
+                        v.impact === 'serious' ? '#ea580c' :
+                        v.impact === 'moderate' ? '#d97706' : '#059669'
+                      }; margin: 0; font-size: 14px;">
+                        ${v.impact === 'critical' ? '🔴 KRITISCH' :
+                          v.impact === 'serious' ? '🟠 ERNST' :
+                          v.impact === 'moderate' ? '🟡 MODERAT' : '🟢 GERING'}
+                      </p>
+                      <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #6b7280;">
+                        ${v.count} ${v.count === 1 ? 'Vorkommen' : 'Vorkommen'}
+                      </span>
+                    </div>
+                    <p style="margin: 8px 0; font-size: 14px; color: #374151;"><strong>${v.help || v.description}</strong></p>
+                    ${v.nodes > 0 ? `<p style="margin: 4px 0; font-size: 12px; color: #6b7280;">${v.nodes} betroffene Elemente</p>` : ''}
+                    ${v.helpUrl ? `<p style="margin: 8px 0 0 0;"><a href="${v.helpUrl}" target="_blank" style="color: #2563eb; font-size: 12px; text-decoration: none;">📚 Mehr erfahren</a></p>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+              <div style="margin-top: 15px; padding: 12px; background: #fee2e2; border-radius: 6px; border: 1px solid #fca5a5;">
+                <p style="margin: 0; font-size: 13px; color: #7f1d1d;">
+                  <strong>⚠️ Wichtig:</strong> Diese Probleme wurden automatisch erkannt und erfordern manuelle Überprüfung. 
+                  ${manualAccessibilityData ? 'Ihre manuellen Eingaben ergänzen diese Bewertung.' : 'Ergänzen Sie diese Analyse durch manuelle Überprüfung in der Eingabemaske.'}
+                </p>
+              </div>
             </div>
-          </div>
+          ` : `
+            <div class="success-box" style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0fdf4; border: 2px solid #86efac;">
+              <h4 style="color: #059669; margin: 0 0 10px 0;">✅ Keine kritischen Probleme erkannt</h4>
+              <p style="margin: 0; color: #065f46; font-size: 14px;">
+                Die automatische Analyse hat keine Barrierefreiheit-Verstöße gefunden. 
+                ${manualAccessibilityData ? 'Ihre manuellen Eingaben ergänzen diese positive Bewertung.' : 'Führen Sie dennoch eine manuelle Überprüfung durch.'}
+              </p>
+            </div>
+          `}
 
           <!-- Successful Tests -->
           <div class="success-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">

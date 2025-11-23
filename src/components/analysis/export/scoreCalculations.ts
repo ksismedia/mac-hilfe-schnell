@@ -807,14 +807,23 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     
     // Only consider auto data if it has actual accessibility information
     if (realData && realData !== null && typeof realData === 'object') {
-      if (realData.violations !== undefined) {
+      if (realData.violations !== undefined && Array.isArray(realData.violations)) {
         hasAutoData = true;
-        autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
+        // More granular auto scoring based on violations count and severity
+        const violationCount = realData.violations.length;
+        if (violationCount === 0) {
+          autoScore = 95; // Perfect auto score
+        } else if (violationCount <= 3) {
+          autoScore = 75; // Minor issues
+        } else if (violationCount <= 7) {
+          autoScore = 55; // Moderate issues
+        } else {
+          autoScore = 40; // Major issues
+        }
       } else if (realData.score !== undefined && realData.score !== null) {
         hasAutoData = true;
         autoScore = realData.score;
       }
-      // Remove the default 40 fallback - empty objects should not count as auto data
     }
     
     // Calculate manual score
@@ -860,15 +869,15 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
-    // Combine scores: auto data is base, manual data can only improve
-    if (hasAutoData && autoScore !== null && hasManualData) {
-      // Use the better score (manual can only improve, not worsen)
-      const finalScore = Math.max(autoScore, manualScore);
-      console.log('🎯 Accessibility: Auto score (' + autoScore + ') vs Manual score (' + manualScore + ') = Using better: ' + finalScore);
-      return Math.max(0, Math.min(100, finalScore));
+    // COMBINE scores: Both auto and manual data contribute
+    if (hasAutoData && autoScore !== null && hasManualData && manualScore > 0) {
+      // When both available: 60% auto (objective) + 40% manual (expert review)
+      const combinedScore = Math.round(autoScore * 0.6 + manualScore * 0.4);
+      console.log('🎯 Accessibility: Combined score - Auto (' + autoScore + ') 60% + Manual (' + manualScore + ') 40% = ' + combinedScore);
+      return Math.max(0, Math.min(100, combinedScore));
     }
     
-    if (hasManualData) {
+    if (hasManualData && manualScore > 0) {
       // Only manual data available
       console.log('🎯 Accessibility: Using only manual score: ' + manualScore);
       return Math.max(0, Math.min(100, manualScore));
