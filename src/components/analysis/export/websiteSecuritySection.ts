@@ -1,15 +1,15 @@
 import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
 
 const getScoreColor = (score: number) => {
-  if (score <= 60) return '#FF0000';   // 0-60% rot
-  if (score <= 89) return '#22c55e';   // 61-89% grün
-  return '#FFD700';                    // 90-100% gold
+  if (score <= 60) return '#FF0000';   // Red for 0-60
+  if (score <= 89) return '#22c55e';   // Green for 61-89
+  return '#FFD700';                    // Gold for 90-100
 };
 
 const getScoreColorClass = (score: number) => {
-  if (score < 61) return "red";
-  if (score < 90) return "green";
-  return "yellow";
+  if (score < 61) return "red";       // 0-60% rot
+  if (score < 90) return "green";     // 61-89% grün
+  return "yellow";                    // 90-100% gold
 };
 
 export const generateWebsiteSecuritySection = (

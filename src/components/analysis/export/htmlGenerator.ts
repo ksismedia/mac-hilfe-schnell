@@ -7,6 +7,7 @@ import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateOverallScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateLocalSEOScore, calculateCorporateIdentityScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateWorkplaceScore } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { generateWebsiteSecuritySection } from './websiteSecuritySection';
+import { generateReputationMonitoringSection } from './reputationMonitoringSection';
 import { getLogoHTML } from './logoData';
 import { getCollapsibleComplianceSectionHTML } from './aiActDisclaimer';
 
@@ -3049,6 +3050,8 @@ export const generateCustomerHTML = ({
     ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData, securityData)}
 
     ${generateWebsiteSecuritySection(securityData)}
+
+    ${generateReputationMonitoringSection(manualReputationData)}
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
