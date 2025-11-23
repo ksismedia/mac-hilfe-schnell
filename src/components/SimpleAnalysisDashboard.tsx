@@ -292,6 +292,18 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             setRealData(newAnalysisData);
             console.log('✅ Real data set successfully');
             console.log('✅ Loading states will be reset in finally block');
+            
+            // Automatisch Google Safe Browsing Prüfung beim Start
+            console.log('🔒 Starting Google Safe Browsing check...');
+            try {
+              const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+              const securityResult = await SafeBrowsingService.checkUrl(businessData.url);
+              setSecurityData(securityResult);
+              console.log('✅ Google Safe Browsing check completed:', securityResult);
+            } catch (secError) {
+              console.error('❌ Google Safe Browsing check failed:', secError);
+            }
+            
           } catch (analysisError) {
             console.error('❌ Analysis threw error:', analysisError);
             toast({
