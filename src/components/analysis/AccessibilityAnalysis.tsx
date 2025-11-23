@@ -17,15 +17,23 @@ interface AccessibilityAnalysisProps {
   realData?: RealBusinessData;
   savedData?: AccessibilityResult;
   onDataChange?: (data: AccessibilityResult) => void;
+  manualAccessibilityData?: any;
+  updateManualAccessibilityData?: (data: any) => void;
 }
 
 const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({ 
   businessData, 
   realData, 
   savedData, 
-  onDataChange 
+  onDataChange,
+  manualAccessibilityData: propsManualData,
+  updateManualAccessibilityData: propsUpdateManualData
 }) => {
-  const { manualAccessibilityData, updateManualAccessibilityData } = useManualData();
+  const { manualAccessibilityData: hookManualData, updateManualAccessibilityData: hookUpdateManualData } = useManualData();
+  
+  // Use props if provided, otherwise fall back to hook
+  const manualAccessibilityData = propsManualData ?? hookManualData;
+  const updateManualAccessibilityData = propsUpdateManualData ?? hookUpdateManualData;
   const [accessibilityData, setAccessibilityData] = useState<AccessibilityResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

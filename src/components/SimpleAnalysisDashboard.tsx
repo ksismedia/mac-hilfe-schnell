@@ -524,6 +524,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             onManualLocalSEOChange={updateManualLocalSEOData}
             securityData={securityData}
             onSecurityDataChange={setSecurityData}
+            manualAccessibilityData={manualAccessibilityData}
+            updateManualAccessibilityData={updateManualAccessibilityData}
           />
         );
       case 'website-performance-tech':

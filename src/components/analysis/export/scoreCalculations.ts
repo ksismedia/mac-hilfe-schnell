@@ -805,15 +805,16 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     let autoScore = null;
     let hasAutoData = false;
     
+    // Only consider auto data if it has actual accessibility information
     if (realData && realData !== null && typeof realData === 'object') {
-      hasAutoData = true;
       if (realData.violations !== undefined) {
+        hasAutoData = true;
         autoScore = realData.violations.length > 0 ? Math.min(59, 40) : 85;
-      } else if (realData.score !== undefined) {
+      } else if (realData.score !== undefined && realData.score !== null) {
+        hasAutoData = true;
         autoScore = realData.score;
-      } else {
-        autoScore = 40; // Default if we have realData but no specific scores
       }
+      // Remove the default 40 fallback - empty objects should not count as auto data
     }
     
     // Calculate manual score
