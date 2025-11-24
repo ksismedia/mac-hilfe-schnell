@@ -787,7 +787,12 @@ export const generateCustomerHTML = ({
         : 'Bewertungen dringend verbessern';
   
   // Build full description with review count context
-  const fullDescription = `${realData.reviews.google.rating}/5 Sterne (${reviewCount} Bewertungen)${reviewCountWarning} - ${qualityText}${hasLowReviewCount ? '. Empfehlung: Mehr Kundenbewertungen aktiv einholen, um Vertrauenswürdigkeit zu erhöhen.' : ''}`;
+  const recommendationText = googleReviewsScore >= 90 
+    ? '. Ausgezeichnete Bewertungsqualität – Behalten Sie Ihren hervorragenden Service bei!'
+    : hasLowReviewCount 
+      ? '. Empfehlung: Mehr Kundenbewertungen aktiv einholen, um Vertrauenswürdigkeit zu erhöhen.'
+      : '';
+  const fullDescription = `${realData.reviews.google.rating}/5 Sterne (${reviewCount} Bewertungen)${reviewCountWarning} - ${qualityText}${recommendationText}`;
   
     return `
       <div class="metric-card ${realData.reviews.google.count > 0 ? 'good' : 'warning'}">
@@ -1429,7 +1434,7 @@ export const generateCustomerHTML = ({
       <div class="metric-card ${scoreClass}">
         <div class="score-details" style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-bottom: 15px;">
           <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOData.overallScore >= 90 ? 'Exzellent' : localSEOData.overallScore >= 61 ? 'Sehr gut' : 'Verbesserungsbedarf'}</p>
-          <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 90 ? 'Hervorragende lokale Präsenz' : localSEOData.overallScore >= 61 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
+          <p><strong>Empfehlung:</strong> ${localSEOData.overallScore >= 90 ? 'Hervorragende lokale Präsenz – Behalten Sie diesen Standard bei!' : localSEOData.overallScore >= 61 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
         </div>
         
 
@@ -1542,13 +1547,20 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen für lokale SEO:</h4>
           <ul>
-            ${localSEOData.googleMyBusiness && localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
-            ${localSEOData.localCitations && localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
-            ${localSEOData.localKeywords && localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren (z.B. "Handwerker in [Stadt]")</li>' : ''}
-            ${localSEOData.onPageLocal && !localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren (strukturierte Daten für Google)</li>' : ''}
-            <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken (Stadtteilnamen, lokale Projekte zeigen)</li>
-            <li>Kundenbewertungen aktiv sammeln und beantworten (baut Vertrauen und Sichtbarkeit auf)</li>
-            <li>Lokale Backlinks durch Partnerschaften und Events aufbauen (Vernetzung mit lokalen Unternehmen)</li>
+            ${localSEOData.overallScore >= 90 ? `
+              <li>✅ Behalten Sie Ihre exzellente lokale Online-Präsenz bei</li>
+              <li>✅ Pflegen Sie weiterhin Ihr Google My Business Profil aktiv</li>
+              <li>✅ Bleiben Sie mit positiven Kundenbewertungen im Dialog</li>
+              <li>✅ Nutzen Sie Ihre starke Position für weiteres Wachstum</li>
+            ` : `
+              ${localSEOData.googleMyBusiness && localSEOData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
+              ${localSEOData.localCitations && localSEOData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
+              ${localSEOData.localKeywords && localSEOData.localKeywords.score < 80 ? '<li>Lokale Keywords in Content und Meta-Tags integrieren (z.B. "Handwerker in [Stadt]")</li>' : ''}
+              ${localSEOData.onPageLocal && !localSEOData.onPageLocal.localSchema ? '<li>Local Business Schema Markup implementieren (strukturierte Daten für Google)</li>' : ''}
+              <li>Lokale Inhalte und regionale Bezüge auf der Website verstärken (Stadtteilnamen, lokale Projekte zeigen)</li>
+              <li>Kundenbewertungen aktiv sammeln und beantworten (baut Vertrauen und Sichtbarkeit auf)</li>
+              <li>Lokale Backlinks durch Partnerschaften und Events aufbauen (Vernetzung mit lokalen Unternehmen)</li>
+            `}
           </ul>
         </div>
         ` : ''}
@@ -1577,10 +1589,16 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Bilder komprimieren und optimieren (Dateigröße reduzieren ohne sichtbaren Qualitätsverlust)</li>
-            <li>Browser-Caching aktivieren (Inhalte beim ersten Besuch speichern für schnelleren Seitenaufbau bei erneutem Besuch)</li>
-            <li>CSS und JavaScript minimieren (Überflüssige Leerzeichen und Kommentare aus Code entfernen)</li>
-            <li>Content Delivery Network nutzen (Inhalte weltweit auf Servern verteilen für schnellere Ladezeiten)</li>
+            ${performanceScore >= 90 ? `
+              <li>✅ Exzellente Performance – Behalten Sie Ihre Optimierungen bei!</li>
+              <li>✅ Überwachen Sie die Ladezeiten regelmäßig, um dieses hohe Niveau zu halten</li>
+              <li>✅ Ihre schnelle Website bietet Besuchern ein erstklassiges Nutzererlebnis</li>
+            ` : `
+              <li>Bilder komprimieren und optimieren (Dateigröße reduzieren ohne sichtbaren Qualitätsverlust)</li>
+              <li>Browser-Caching aktivieren (Inhalte beim ersten Besuch speichern für schnelleren Seitenaufbau bei erneutem Besuch)</li>
+              <li>CSS und JavaScript minimieren (Überflüssige Leerzeichen und Kommentare aus Code entfernen)</li>
+              <li>Content Delivery Network nutzen (Inhalte weltweit auf Servern verteilen für schnellere Ladezeiten)</li>
+            `}
           </ul>
         </div>
       </div>
@@ -1731,10 +1749,17 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Mobile-First Design-Strategie implementieren (Website zuerst für Smartphones entwickeln, dann für Desktop anpassen)</li>
-            <li>Touch-Interfaces optimieren (min. 44px Buttons) (Schaltflächen groß genug für bequeme Fingerbedienung machen)</li>
-            <li>Progressive Web App (PWA) Features hinzufügen (App-ähnliches Erlebnis im Browser, auch offline nutzbar)</li>
-            <li>Mobile Performance kontinuierlich überwachen (Regelmäßig Ladezeiten auf Smartphones prüfen und verbessern)</li>
+            ${mobileScore >= 90 ? `
+              <li>✅ Hervorragende mobile Optimierung – Top-Erlebnis auf allen Geräten!</li>
+              <li>✅ Behalten Sie Ihre Mobile-First Strategie bei</li>
+              <li>✅ Testen Sie regelmäßig neue mobile Geräte und Bildschirmgrößen</li>
+              <li>✅ Ihre mobile Website ist ein Wettbewerbsvorteil</li>
+            ` : `
+              <li>Mobile-First Design-Strategie implementieren (Website zuerst für Smartphones entwickeln, dann für Desktop anpassen)</li>
+              <li>Touch-Interfaces optimieren (min. 44px Buttons) (Schaltflächen groß genug für bequeme Fingerbedienung machen)</li>
+              <li>Progressive Web App (PWA) Features hinzufügen (App-ähnliches Erlebnis im Browser, auch offline nutzbar)</li>
+              <li>Mobile Performance kontinuierlich überwachen (Regelmäßig Ladezeiten auf Smartphones prüfen und verbessern)</li>
+            `}
           </ul>
         </div>
       </div>
@@ -2266,7 +2291,12 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            ${socialMediaScore < 60 ? `
+            ${socialMediaScore >= 90 ? `
+              <li>✅ Exzellente Social Media Präsenz – Bleiben Sie so aktiv!</li>
+              <li>✅ Nutzen Sie Ihre starke Community für weiteres Wachstum</li>
+              <li>✅ Erwägen Sie innovative Formate (Live-Videos, Reels, Stories)</li>
+              <li>✅ Ihre Reichweite ist ein großer Wettbewerbsvorteil</li>
+            ` : socialMediaScore < 60 ? `
               <li>Erhöhung der Posting-Frequenz</li>
               <li>Aufbau einer größeren Follower-Basis</li>
               <li>Diversifizierung auf weitere Plattformen</li>
@@ -2665,7 +2695,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</div>
             <div class="score-details">
               <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 90 ? 'Exzellent' : realData.seo.score >= 61 ? 'Hoch' : 'Niedrig'}</p>
-              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 90 ? 'Hervorragende SEO-Basis' : realData.seo.score >= 61 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 90 ? 'Exzellente SEO-Basis – Behalten Sie diesen Standard bei!' : realData.seo.score >= 61 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -3072,7 +3102,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
             <div class="score-details">
               <p><strong>Impressum:</strong> ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
-              <p><strong>Empfehlung:</strong> ${impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+              <p><strong>Empfehlung:</strong> ${impressumScore >= 90 ? 'Vollständig rechtlich abgesichert – Weiter so!' : impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -3249,7 +3279,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle" data-score="${getScoreRange(realData.performance.score)}">${realData.performance.score}%</div>
             <div class="score-details">
               <p><strong>Ladezeit:</strong> ${realData.performance.loadTime}s</p>
-              <p><strong>Empfehlung:</strong> ${realData.performance.score >= 80 ? 'Sehr gute Performance' : 'Performance optimieren'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.performance.score >= 90 ? 'Exzellente Performance – Top-Niveau erreicht!' : realData.performance.score >= 80 ? 'Sehr gute Performance' : 'Performance optimieren'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -3382,7 +3412,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle" data-score="${getScoreRange(mobileScore)}">${mobileScore}%</div>
             <div class="score-details">
               <p><strong>Mobile-Friendly:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
-              <p><strong>Empfehlung:</strong> ${mobileScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
+              <p><strong>Empfehlung:</strong> ${mobileScore >= 90 ? 'Exzellente mobile Optimierung – Hervorragend!' : mobileScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
             </div>
           </div>`;
     })()}
@@ -3709,7 +3739,7 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
             <div class="score-details">
               <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}</p>
+              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.7 && googleReviewScore >= 90 ? 'Exzellente Reputation – Weiter so!' : realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -4116,17 +4146,24 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Empfehlungen für Ihre Online-Präsenz</h4>
           <ul>
-            ${imageCount === 0 ? '<li><strong>Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in 3 Monaten</li>' : ''}
-            ${imageCount > 0 && imageCount < 10 ? '<li><strong>Bilder-Portfolio erweitern:</strong> Erhöhen Sie auf 15-20 Fotos mit Vorher-Nachher-Vergleichen</li>' : ''}
-            ${videoCount === 0 ? '<li><strong>Video-Content einführen:</strong> Erstellen Sie erste Projekt-Videos. Bereits 2-3 Videos steigern die Sichtbarkeit</li>' : ''}
-            ${videoCount > 0 && videoCount < 5 ? '<li><strong>Video-Präsenz ausbauen:</strong> Produzieren Sie regelmäßig kurze Videos (1-2 Minuten)</li>' : ''}
-            ${shortCount === 0 ? '<li><strong>Shorts/Reels nutzen:</strong> Starten Sie mit 30-60 Sekunden Videos für schnelle Projekt-Einblicke</li>' : ''}
-            ${highRelevance < totalContent * 0.5 ? '<li><strong>Relevanz steigern:</strong> Fokus auf eigenen Content statt Erwähnungen durch Dritte</li>' : ''}
-            <li><strong>Optimierung für Auffindbarkeit:</strong> Beschreibende Dateinamen verwenden (z.B. "Dachsanierung-2024.jpg")</li>
-            <li><strong>Content-Kalender:</strong> Wöchentlich 1-2 neue Inhalte planen</li>
-            ${overallScore < 80 ? '<li><strong>Vielfalt erhöhen:</strong> Alle drei Content-Typen kombinieren für maximale Reichweite</li>' : ''}
-            <li><strong>Regelmäßige Aktualisierung:</strong> Veraltete Inhalte durch aktuelle Projekte ersetzen</li>
-            ${totalContent < 15 ? '<li><strong>Kurzziel:</strong> In 3 Monaten mindestens 15 Inhalte erreichen</li>' : ''}
+            ${overallScore >= 90 ? `
+              <li>✅ Exzellente Online-Präsenz – Behalten Sie Ihre Content-Strategie bei!</li>
+              <li>✅ Ihre vielfältigen Inhalte sind ein großer Wettbewerbsvorteil</li>
+              <li>✅ Pflegen Sie weiterhin regelmäßig neue Inhalte ein</li>
+              <li>✅ Erwägen Sie innovative Formate für noch mehr Reichweite</li>
+            ` : `
+              ${imageCount === 0 ? '<li><strong>Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in 3 Monaten</li>' : ''}
+              ${imageCount > 0 && imageCount < 10 ? '<li><strong>Bilder-Portfolio erweitern:</strong> Erhöhen Sie auf 15-20 Fotos mit Vorher-Nachher-Vergleichen</li>' : ''}
+              ${videoCount === 0 ? '<li><strong>Video-Content einführen:</strong> Erstellen Sie erste Projekt-Videos. Bereits 2-3 Videos steigern die Sichtbarkeit</li>' : ''}
+              ${videoCount > 0 && videoCount < 5 ? '<li><strong>Video-Präsenz ausbauen:</strong> Produzieren Sie regelmäßig kurze Videos (1-2 Minuten)</li>' : ''}
+              ${shortCount === 0 ? '<li><strong>Shorts/Reels nutzen:</strong> Starten Sie mit 30-60 Sekunden Videos für schnelle Projekt-Einblicke</li>' : ''}
+              ${highRelevance < totalContent * 0.5 ? '<li><strong>Relevanz steigern:</strong> Fokus auf eigenen Content statt Erwähnungen durch Dritte</li>' : ''}
+              <li><strong>Optimierung für Auffindbarkeit:</strong> Beschreibende Dateinamen verwenden (z.B. "Dachsanierung-2024.jpg")</li>
+              <li><strong>Content-Kalender:</strong> Wöchentlich 1-2 neue Inhalte planen</li>
+              ${overallScore < 80 ? '<li><strong>Vielfalt erhöhen:</strong> Alle drei Content-Typen kombinieren für maximale Reichweite</li>' : ''}
+              <li><strong>Regelmäßige Aktualisierung:</strong> Veraltete Inhalte durch aktuelle Projekte ersetzen</li>
+              ${totalContent < 15 ? '<li><strong>Kurzziel:</strong> In 3 Monaten mindestens 15 Inhalte erreichen</li>' : ''}
+            `}
           </ul>
         </div>
       </div>
@@ -4191,11 +4228,18 @@ export const generateCustomerHTML = ({
         <div class="recommendations">
           <h4>Empfehlungen für Branchenplattformen:</h4>
           <ul>
-            <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
-            <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
-            <li>Auf Bewertungen zeitnah und professionell reagieren</li>
-            <li>Profile verifizieren lassen für höhere Glaubwürdigkeit</li>
-            <li>Referenzprojekte und Zertifikate hinterlegen</li>
+            ${overallScore >= 90 ? `
+              <li>✅ Exzellente Präsenz auf Branchenplattformen – Weiter so!</li>
+              <li>✅ Ihre hohe Bewertungsqualität ist ein starkes Aushängeschild</li>
+              <li>✅ Bleiben Sie im Dialog mit Ihren Kunden und antworten Sie weiterhin auf Bewertungen</li>
+              <li>✅ Nutzen Sie Ihre gute Reputation für weitere Empfehlungen</li>
+            ` : `
+              <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
+              <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
+              <li>Auf Bewertungen zeitnah und professionell reagieren</li>
+              <li>Profile verifizieren lassen für höhere Glaubwürdigkeit</li>
+              <li>Referenzprojekte und Zertifikate hinterlegen</li>
+            `}
           </ul>
         </div>
       </div>
