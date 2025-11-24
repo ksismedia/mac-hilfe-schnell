@@ -263,7 +263,7 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                  <CardTitle className="text-lg">Handlungsempfehlungen</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">

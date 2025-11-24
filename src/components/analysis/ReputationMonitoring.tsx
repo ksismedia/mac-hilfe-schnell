@@ -283,7 +283,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           {hasSearched && (
             <Card className="bg-muted/50">
               <CardHeader>
-                <CardTitle className="text-base">Empfehlungen</CardTitle>
+                <CardTitle className="text-base">Handlungsempfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">

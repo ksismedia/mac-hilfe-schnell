@@ -103,7 +103,7 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
             {performanceData.score < 60 && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg text-red-600">Verbesserungsempfehlungen</CardTitle>
+                  <CardTitle className="text-lg text-red-600">Handlungsempfehlungen zur Verbesserung</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">

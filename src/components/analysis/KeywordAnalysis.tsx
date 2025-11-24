@@ -322,7 +322,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             {/* Empfehlungen */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Handlungsempfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
