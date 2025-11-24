@@ -3960,12 +3960,28 @@ export const generateCustomerHTML = ({
           </div>
           
           <div style="background: ${categoryColor}15; padding: 20px; border-radius: 8px; border-left: 4px solid ${categoryColor};">
-            <p style="margin: 0; font-size: 1.1em;">
-              <strong>Gesamt-Score:</strong> 
-              ${diversityScore} + ${quantityScore} + ${Math.round(relevanceScore)} = 
-              <strong style="font-size: 1.4em; color: ${categoryColor};">${calculatedOverallScore} Punkte</strong>
+            <p style="margin: 0 0 12px 0; font-size: 1.1em;">
+              <strong>Gesamt-Score:</strong>
             </p>
-            <p style="margin: 10px 0 0 0; color: #64748b;">
+            <div style="display: grid; gap: 6px; margin-bottom: 12px; font-size: 0.95em;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Content-Vielfalt:</span>
+                <span style="font-weight: bold;">${diversityScore} Punkte</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Content-Menge:</span>
+                <span style="font-weight: bold;">${quantityScore} Punkte</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Content-Relevanz:</span>
+                <span style="font-weight: bold;">${Math.round(relevanceScore)} Punkte</span>
+              </div>
+              <div style="border-top: 2px solid ${categoryColor}; padding-top: 8px; margin-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold;">Gesamt:</span>
+                <span style="font-size: 1.4em; font-weight: bold; color: ${categoryColor};">${calculatedOverallScore} Punkte</span>
+              </div>
+            </div>
+            <p style="margin: 0; color: #64748b;">
               <strong>Bewertung:</strong> ${categoryName} – ${categoryDescription}
             </p>
           </div>
