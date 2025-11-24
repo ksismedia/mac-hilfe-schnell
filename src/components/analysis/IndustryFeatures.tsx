@@ -346,7 +346,7 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
             {/* Branchenspezifische Empfehlungen */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Branchenspezifische Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Branchenspezifische Handlungsempfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">

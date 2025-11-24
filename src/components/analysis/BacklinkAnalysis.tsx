@@ -282,7 +282,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
             {/* Empfehlungen */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Empfehlungen</CardTitle>
+                <CardTitle className="text-lg">Handlungsempfehlungen</CardTitle>
               </CardHeader>
               <CardContent>
                  <ul className="space-y-2 text-sm">

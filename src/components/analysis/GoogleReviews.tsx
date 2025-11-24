@@ -173,7 +173,7 @@ const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData, onRevi
               </div>
 
               <div className="bg-blue-50 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen:</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Handlungsempfehlungen:</h4>
                 <ul className="text-sm text-blue-800 text-left space-y-1">
                   <li>• Google My Business Profil erstellen/beanspruchen</li>
                   <li>• Kunden aktiv um Bewertungen bitten</li>

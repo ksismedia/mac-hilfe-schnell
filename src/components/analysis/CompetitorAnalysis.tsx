@@ -519,7 +519,7 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
                 Automatische Suche konnte keine direkten Wettbewerber in der Nähe finden.
               </p>
               <div className="bg-blue-50 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">Empfehlungen:</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Handlungsempfehlungen:</h4>
                 <ul className="text-sm text-blue-800 text-left space-y-1">
                   <li>• Erweitern Sie Ihren Suchradius</li>
                   <li>• Nutzen Sie die manuelle Wettbewerbereingabe</li>

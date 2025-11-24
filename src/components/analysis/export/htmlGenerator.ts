@@ -2865,7 +2865,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="recommendations">
-            <h4>Textqualität-Empfehlungen:</h4>
+            <h4>Handlungsempfehlungen zur Textqualität:</h4>
             <ul>
               <li>Texte in kurze, verständliche Absätze gliedern</li>
               <li>Fachbegriffe erklären und für Laien verständlich machen</li>
@@ -2926,7 +2926,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="recommendations">
-            <h4>Branchenrelevanz-Empfehlungen:</h4>
+            <h4>Handlungsempfehlungen zur Branchenrelevanz:</h4>
             <ul>
               <li>Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe verwenden</li>
               <li>Lokale Referenzen und Projekte hervorheben</li>
@@ -2978,7 +2978,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="recommendations">
-            <h4>Aktualitäts-Empfehlungen:</h4>
+            <h4>Handlungsempfehlungen zur Aktualität:</h4>
             <ul>
               <li>Regelmäßige Content-Updates (mindestens quartalsweise)</li>
               <li>Blog oder News-Bereich für aktuelle Themen einrichten</li>
@@ -4144,7 +4144,7 @@ export const generateCustomerHTML = ({
 
         <!-- Empfehlungen -->
         <div class="recommendations">
-          <h4>Empfehlungen für Ihre Online-Präsenz</h4>
+          <h4>Handlungsempfehlungen für Ihre Online-Präsenz</h4>
           <ul>
             ${overallScore >= 90 ? `
               <li>✅ Exzellente Online-Präsenz – Behalten Sie Ihre Content-Strategie bei!</li>
@@ -4226,7 +4226,7 @@ export const generateCustomerHTML = ({
         `}
 
         <div class="recommendations">
-          <h4>Empfehlungen für Branchenplattformen:</h4>
+          <h4>Handlungsempfehlungen für Branchenplattformen:</h4>
           <ul>
             ${overallScore >= 90 ? `
               <li>✅ Exzellente Präsenz auf Branchenplattformen – Weiter so!</li>
@@ -4405,7 +4405,7 @@ export const generateCustomerHTML = ({
         </div>
 
         <div class="recommendations">
-          <h4>Empfehlungen zur Personalentwicklung</h4>
+          <h4>Handlungsempfehlungen zur Personalentwicklung</h4>
           <ul>
             ${staffQualificationData.apprentices === 0 ? '<li>Priorität: Qualifikationsgrad der Mitarbeiter erhöhen</li>' : ''}
             ${!staffQualificationData.certifications.digital_skills ? '<li>Zusätzliche Zertifizierungen erwerben (Sicherheit, Digitalisierung)</li>' : ''}
@@ -4541,7 +4541,7 @@ export const generateCustomerHTML = ({
           ` : ''}
           
           <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 8px;">
-            <h4 style="margin-top: 0;">Empfehlungen zur Optimierung</h4>
+            <h4 style="margin-top: 0;">Handlungsempfehlungen zur Optimierung</h4>
             <ul style="margin: 10px 0; padding-left: 20px;">
               ${responseTimeHours > 24 ? '<li>Reaktionszeit auf unter 24 Stunden reduzieren für bessere Kundenzufriedenheit</li>' : ''}
               ${responseTimeHours > 2 && responseTimeHours <= 24 ? '<li>Noch schnellere Reaktionszeiten (unter 2 Stunden) können Ihre Conversion-Rate deutlich steigern</li>' : ''}
@@ -4643,7 +4643,7 @@ export const generateCustomerHTML = ({
         ` : ''}
 
         <div class="recommendations">
-          <h4>Empfehlungen zur Optimierung</h4>
+          <h4>Handlungsempfehlungen zur Optimierung</h4>
           <ul>
             ${manualCorporateIdentityData.uniformLogo === 'no' || manualCorporateIdentityData.uniformLogo === 'unknown' ? '<li>Einheitliches Logo auf allen Kommunikationskanälen verwenden</li>' : ''}
             ${manualCorporateIdentityData.uniformWorkClothing === 'no' || manualCorporateIdentityData.uniformWorkClothing === 'unknown' ? '<li>Einheitliche Arbeitskleidung mit Firmenlogo für professionellen Auftritt einführen</li>' : ''}
