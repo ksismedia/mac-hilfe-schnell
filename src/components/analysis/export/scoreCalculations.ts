@@ -192,7 +192,7 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    // Durchschnitt aus allen 9 Bereichen
+    // Durchschnitt aus allen 9 Bereichen - nur Scores > 0 berücksichtigen
     const cat1Scores = [
       seoScore,
       localSEOScore,
@@ -211,14 +211,14 @@ export const calculateOnlineQualityAuthorityScore = (
       : 0;
     
     if (isNaN(result) || result < 0 || result > 100) {
-      console.error('🚨 Invalid result:', result, 'returning fallback 50');
-      return 50;
+      console.error('🚨 Invalid result:', result, 'returning 0');
+      return 0;
     }
     
     return result;
   } catch (error) {
     console.error('🚨 calculateOnlineQualityAuthorityScore error:', error);
-    return 50; // Safe fallback
+    return 0;
   }
 };
 
@@ -627,23 +627,99 @@ export const calculateQuoteResponseScore = (data: any): number => {
   return Math.min(score, 100);
 };
 
-export const calculateOverallScore = (scores: any): number => {
-  // Calculate weighted average from all category scores if available
-  if (!scores) return 0;
+export const calculateOverallScore = (
+  cat1Avg: number, // Online-Qualität · Relevanz · Autorität
+  cat2Avg: number, // Webseiten-Performance & Technik
+  cat3Avg: number, // Online-/Web-/Social-Media Performance
+  cat4Avg: number, // Markt & Marktumfeld
+  cat5Avg: number, // Außendarstellung & Erscheinungsbild
+  cat6Avg: number  // Qualität · Service · Kundenorientierung
+): number => {
+  // Basis-Gewichtungen für die 6 Hauptkategorien
+  const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
+  const baseCat2Weight = 20; // Webseiten-Performance & Technik
+  const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
+  const baseCat4Weight = 10; // Markt & Marktumfeld
+  const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
+  const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
   
-  const categoryScores = [
-    scores.onlineQualityAuthority,
-    scores.websitePerformanceTech,
-    scores.socialMediaPerformance,
-    scores.marketEnvironment,
-    scores.corporateAppearance,
-    scores.serviceQuality
-  ].filter(score => score > 0); // Only include scores that have data
+  // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
+  let adjustedCat1Weight = baseCat1Weight;
+  let adjustedCat2Weight = baseCat2Weight;
+  let adjustedCat3Weight = baseCat3Weight;
+  let adjustedCat4Weight = baseCat4Weight;
+  let adjustedCat5Weight = baseCat5Weight;
+  let adjustedCat6Weight = baseCat6Weight;
+
+  // Berechne fehlende Gewichte
+  let missingWeight = 0;
+  const categoriesWithData = [];
   
-  if (categoryScores.length === 0) return 0;
+  if (cat1Avg > 0) {
+    categoriesWithData.push('cat1');
+  } else {
+    missingWeight += adjustedCat1Weight;
+    adjustedCat1Weight = 0;
+  }
   
-  const average = categoryScores.reduce((sum, score) => sum + score, 0) / categoryScores.length;
-  return Math.round(average);
+  if (cat2Avg > 0) {
+    categoriesWithData.push('cat2');
+  } else {
+    missingWeight += adjustedCat2Weight;
+    adjustedCat2Weight = 0;
+  }
+  
+  if (cat3Avg > 0) {
+    categoriesWithData.push('cat3');
+  } else {
+    missingWeight += adjustedCat3Weight;
+    adjustedCat3Weight = 0;
+  }
+  
+  if (cat4Avg > 0) {
+    categoriesWithData.push('cat4');
+  } else {
+    missingWeight += adjustedCat4Weight;
+    adjustedCat4Weight = 0;
+  }
+  
+  if (cat5Avg > 0) {
+    categoriesWithData.push('cat5');
+  } else {
+    missingWeight += adjustedCat5Weight;
+    adjustedCat5Weight = 0;
+  }
+  
+  if (cat6Avg > 0) {
+    categoriesWithData.push('cat6');
+  } else {
+    missingWeight += adjustedCat6Weight;
+    adjustedCat6Weight = 0;
+  }
+
+  // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
+  if (categoriesWithData.length > 0 && missingWeight > 0) {
+    const additionalWeight = missingWeight / categoriesWithData.length;
+    if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
+    if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
+    if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
+    if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
+    if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
+    if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
+  }
+
+  // Gewichteter Gesamtscore aus den 6 Kategorien mit angepassten Gewichten
+  const totalCategoryWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
+  const overallScore = totalCategoryWeight > 0 ? Math.round((
+    cat1Avg * adjustedCat1Weight +
+    cat2Avg * adjustedCat2Weight +
+    cat3Avg * adjustedCat3Weight +
+    cat4Avg * adjustedCat4Weight +
+    cat5Avg * adjustedCat5Weight +
+    cat6Avg * adjustedCat6Weight
+  ) / totalCategoryWeight) : 0;
+  
+  return overallScore;
 };
 
 export const calculateHourlyRateScore = (hourlyRateData: any): number => {
