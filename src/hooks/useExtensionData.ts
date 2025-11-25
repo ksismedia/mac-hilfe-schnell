@@ -59,51 +59,45 @@ export const useExtensionData = () => {
   useEffect(() => {
     console.log('🚀 Extension Hook gestartet');
 
-    // Prüfe URL Parameter beim Laden
+    // 1. Prüfe URL Parameter (Meta-Daten)
     const urlParams = new URLSearchParams(window.location.search);
     const extData = urlParams.get('extData');
     
     if (extData) {
       try {
         console.log('📦 Extension-Daten in URL gefunden');
-        // UNICODE-SICHERE DEKODIERUNG (für deutsche Umlaute)
-        const decodedData = JSON.parse(decodeURIComponent(escape(atob(extData))));
-        console.log('✅ Daten dekodiert:', decodedData.url);
+        const metaData = JSON.parse(decodeURIComponent(escape(atob(extData))));
+        console.log('✅ Meta-Daten dekodiert:', metaData.url);
         
-        setExtensionData(decodedData);
+        // 2. Prüfe ob komplette Daten im localStorage sind
+        const fullDataStr = localStorage.getItem('fullExtensionData');
+        if (fullDataStr) {
+          try {
+            const fullDataObj = JSON.parse(fullDataStr);
+            const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+            
+            if (fullDataObj.timestamp > fiveMinutesAgo) {
+              console.log('✅ Komplette Daten aus localStorage geladen');
+              setExtensionData(fullDataObj.data);
+              setIsFromExtension(true);
+              localStorage.removeItem('fullExtensionData');
+              window.history.replaceState({}, '', window.location.pathname);
+              setIsInitialized(true);
+              return;
+            }
+          } catch (e) {
+            console.log('⚠️ Kein vollständiger Datensatz verfügbar');
+          }
+        }
+        
+        // 3. Falls nur Meta-Daten: Verwende diese
+        setExtensionData(metaData);
         setIsFromExtension(true);
-        
-        // Speichere in localStorage
-        localStorage.setItem('extensionWebsiteData', JSON.stringify({
-          data: decodedData,
-          timestamp: Date.now()
-        }));
-        
-        // Entferne URL Parameter
         window.history.replaceState({}, '', window.location.pathname);
+        console.log('✅ Extension-Daten geladen (Meta-Daten only)');
         
-        console.log('✅ Extension-Daten erfolgreich geladen!');
       } catch (error) {
         console.error('❌ Fehler beim Dekodieren:', error);
-      }
-    } else {
-      // Prüfe localStorage als Fallback
-      const storedData = localStorage.getItem('extensionWebsiteData');
-      if (storedData) {
-        try {
-          const parsed = JSON.parse(storedData);
-          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-          
-          if (parsed.timestamp > fiveMinutesAgo) {
-            console.log('📦 Daten aus localStorage geladen');
-            setExtensionData(parsed.data);
-            setIsFromExtension(true);
-          } else {
-            localStorage.removeItem('extensionWebsiteData');
-          }
-        } catch (error) {
-          console.error('❌ Fehler beim Laden aus localStorage:', error);
-        }
       }
     }
     

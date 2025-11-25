@@ -27,7 +27,7 @@ async function displayCurrentUrl() {
   }
 }
 
-// FINALE LÖSUNG: Unicode-sichere Kodierung für deutsche Umlaute
+// FINALE LÖSUNG: Nur wichtige Meta-Daten via URL (nicht kompletten Content)
 async function openLovableApp(websiteData) {
   console.log('Öffne App...');
   
@@ -35,11 +35,29 @@ async function openLovableApp(websiteData) {
     let targetUrl = LOVABLE_APP_URL;
     
     if (websiteData && websiteData.url) {
-      // UNICODE-SICHERE KODIERUNG (funktioniert mit ä, ö, ü)
-      const jsonString = JSON.stringify(websiteData);
+      // NUR WICHTIGE DATEN (URL ist sonst zu lang!)
+      const compactData = {
+        url: websiteData.url,
+        domain: websiteData.domain,
+        title: websiteData.title,
+        seo: {
+          titleTag: websiteData.seo?.titleTag || '',
+          metaDescription: websiteData.seo?.metaDescription || '',
+          h1: websiteData.seo?.headings?.h1 || []
+        }
+      };
+      
+      const jsonString = JSON.stringify(compactData);
       const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
       targetUrl = `${LOVABLE_APP_URL}?extData=${encodedData}`;
-      console.log('✅ Daten kodiert (Unicode-sicher)');
+      console.log('✅ Meta-Daten kodiert');
+      
+      // SPEICHERE KOMPLETTE DATEN IN LOCALSTORAGE
+      localStorage.setItem('fullExtensionData', JSON.stringify({
+        data: websiteData,
+        timestamp: Date.now()
+      }));
+      console.log('✅ Komplette Daten in localStorage gespeichert');
     }
 
     await chrome.tabs.create({ 
@@ -47,7 +65,6 @@ async function openLovableApp(websiteData) {
       active: true
     });
     
-    console.log('✅ Tab erstellt');
     return { success: true };
     
   } catch (error) {
