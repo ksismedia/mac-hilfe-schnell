@@ -1077,10 +1077,11 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   totalViolations.forEach((violation: any, index: number) => {
     if (!deselectedViolations.includes(`auto-${index}`)) {
       // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
-      const isSSLViolation = violation.description?.includes('SSL') || 
+      // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+      const isSSLViolation = (violation.description?.includes('SSL') || 
                             violation.description?.includes('TLS') ||
-                            violation.description?.includes('HSTS') ||
-                            violation.description?.includes('Verschlüsselung');
+                            violation.description?.includes('Verschlüsselung')) &&
+                            !violation.description?.includes('HSTS');
       
       // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
       const isCookieViolation = violation.description?.includes('Cookie') && 
