@@ -149,7 +149,8 @@ export const calculateOnlineQualityAuthorityScore = (
   manualDataPrivacyData?: any,
   manualAccessibilityData?: any,
   securityData?: any,
-  manualReputationData?: any
+  manualReputationData?: any,
+  extensionData?: any
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -160,8 +161,8 @@ export const calculateOnlineQualityAuthorityScore = (
     const currentKeywordsScore = (keywordsScore !== null && !isNaN(keywordsScore)) ? keywordsScore : defaultKeywordsScore;
     
     const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
-    const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData) || 0;
-    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData) || 0;
+    const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData, extensionData) || 0;
+    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData) || 0;
     const accessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData) || 0;
     
     // GETRENNTE SCORES für DSGVO, Technische Sicherheit und Website-Sicherheit
@@ -775,9 +776,27 @@ export const calculateHourlyRateScore = (hourlyRateData: any): number => {
   return Math.round(Math.max(40, Math.min(100, score)));
 };
 
-export const calculateContentQualityScore = (realData: any, keywordScore: number | null, businessData: any, manualContentData: any): number => {
+export const calculateContentQualityScore = (realData: any, keywordScore: number | null, businessData: any, manualContentData: any, extensionData?: any): number => {
   try {
     const autoScore = Number(realData?.content?.qualityScore) || 0;
+    
+    // Extension Data Score - wenn wordCount vorhanden ist, bewerten wir das positiv
+    let extensionScore = 0;
+    if (extensionData?.content?.wordCount) {
+      const wordCount = extensionData.content.wordCount;
+      // Bewertung basierend auf Wortanzahl (optimal: 300-800 Wörter)
+      if (wordCount >= 300 && wordCount <= 800) {
+        extensionScore = 90; // Optimal
+      } else if (wordCount >= 200 && wordCount < 300) {
+        extensionScore = 75; // Gut
+      } else if (wordCount >= 100 && wordCount < 200) {
+        extensionScore = 60; // Ausreichend
+      } else if (wordCount > 800) {
+        extensionScore = 80; // Viel Content (gut, aber könnte zu viel sein)
+      } else {
+        extensionScore = 40; // Zu wenig Content
+      }
+    }
     
     // Keywords Score (Teil des Contents)
     const keywords = realData?.keywords || [];
@@ -799,14 +818,17 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
       }
     }
     
-    // Content Score berechnen (mit oder ohne manuelle Eingabe)
+    // Content Score berechnen (mit Extension, Auto und manuellen Daten)
     let contentScore = 0;
-    if (!isNaN(autoScore) && autoScore > 0 && !isNaN(manualScore) && manualScore > 0) {
-      contentScore = Math.round(autoScore * 0.5 + manualScore * 0.5);
-    } else if (!isNaN(manualScore) && manualScore > 0) {
-      contentScore = manualScore;
-    } else if (!isNaN(autoScore) && autoScore > 0) {
-      contentScore = autoScore;
+    const availableScores = [];
+    
+    if (!isNaN(extensionScore) && extensionScore > 0) availableScores.push({ score: extensionScore, weight: 0.3 });
+    if (!isNaN(autoScore) && autoScore > 0) availableScores.push({ score: autoScore, weight: 0.3 });
+    if (!isNaN(manualScore) && manualScore > 0) availableScores.push({ score: manualScore, weight: 0.4 });
+    
+    if (availableScores.length > 0) {
+      const totalWeight = availableScores.reduce((sum, item) => sum + item.weight, 0);
+      contentScore = Math.round(availableScores.reduce((sum, item) => sum + (item.score * item.weight), 0) / totalWeight);
     } else {
       contentScore = 75;
     }
@@ -828,9 +850,34 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
   }
 };
 
-export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any): number => {
+export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any, extensionData?: any): number => {
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
+    
+    // Extension Data Score - wenn Links vorhanden sind
+    let extensionScore = 0;
+    if (extensionData?.content?.links) {
+      const internalLinks = extensionData.content.links.internal?.length || 0;
+      const externalLinks = extensionData.content.links.external?.length || 0;
+      
+      // Bewertung basierend auf Link-Struktur
+      // Ideal: 10-50 interne Links, 3-10 externe Links
+      let linkScore = 50; // Basis
+      
+      if (internalLinks >= 10 && internalLinks <= 50) {
+        linkScore += 25; // Gute interne Struktur
+      } else if (internalLinks > 0) {
+        linkScore += 15; // Einige interne Links
+      }
+      
+      if (externalLinks >= 3 && externalLinks <= 10) {
+        linkScore += 25; // Gute externe Links
+      } else if (externalLinks > 0) {
+        linkScore += 10; // Einige externe Links
+      }
+      
+      extensionScore = Math.min(100, linkScore);
+    }
     
     // Calculate manual score using the same logic as in BacklinkAnalysis.tsx
     let manualScore: number | undefined = undefined;
@@ -853,20 +900,16 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
     const webMentionsCount = manualReputationData?.webMentionsCount || 0;
     const webMentionsBonus = Math.min(10, webMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
     
-    // Both automatic and manual scores available
-    if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
-      const combined = Math.round(autoScore * 0.6 + manualScore * 0.4 + webMentionsBonus);
-      return Math.max(0, Math.min(100, combined));
-    }
+    // Kombiniere alle verfügbaren Scores gewichtet
+    const availableScores = [];
+    if (!isNaN(extensionScore) && extensionScore > 0) availableScores.push({ score: extensionScore, weight: 0.3 });
+    if (!isNaN(autoScore) && autoScore > 0) availableScores.push({ score: autoScore, weight: 0.3 });
+    if (manualScore !== undefined && !isNaN(manualScore)) availableScores.push({ score: manualScore, weight: 0.4 });
     
-    // Only manual score available
-    if (manualScore !== undefined && !isNaN(manualScore)) {
-      return Math.max(0, Math.min(100, Math.round(manualScore + webMentionsBonus)));
-    }
-    
-    // Only automatic score available
-    if (!isNaN(autoScore) && autoScore > 0) {
-      return Math.max(0, Math.min(100, autoScore + webMentionsBonus));
+    if (availableScores.length > 0) {
+      const totalWeight = availableScores.reduce((sum, item) => sum + item.weight, 0);
+      const combined = Math.round(availableScores.reduce((sum, item) => sum + (item.score * item.weight), 0) / totalWeight);
+      return Math.max(0, Math.min(100, combined + webMentionsBonus));
     }
     
     // No data available - return 0 instead of arbitrary 75

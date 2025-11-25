@@ -911,9 +911,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             manualIndustryReviewData={manualIndustryReviewData}
             manualOnlinePresenceData={manualOnlinePresenceData}
             manualConversionData={manualConversionData}
+            manualMobileData={manualMobileData}
+            manualReputationData={manualReputationData}
             privacyData={privacyData}
             accessibilityData={accessibilityData}
+            securityData={securityData}
             manualCorporateIdentityData={manualCorporateIdentityData}
+            extensionData={savedExtensionData}
           />
         </div>
 
