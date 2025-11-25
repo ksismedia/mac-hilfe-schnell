@@ -50,6 +50,7 @@ interface SEOContentCategoryProps {
   updateManualContentData?: (data: any) => void;
   manualBacklinkData?: any;
   updateManualBacklinkData?: (data: any) => void;
+  manualReputationData?: any;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -89,7 +90,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   manualContentData,
   updateManualContentData,
   manualBacklinkData,
-  updateManualBacklinkData
+  updateManualBacklinkData,
+  manualReputationData
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -184,6 +186,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               url={businessData.url}
               manualBacklinkData={manualBacklinkData}
               updateManualBacklinkData={updateManualBacklinkData}
+              realData={realData}
+              manualReputationData={manualReputationData}
             />
           )}
 
