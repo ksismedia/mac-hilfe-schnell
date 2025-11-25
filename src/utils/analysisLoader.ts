@@ -202,12 +202,15 @@ export const loadSavedAnalysisData = (
     const loadedPrivacyData = savedAnalysis.manualData.privacyData;
     const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
     
-    // KRITISCH: Kappe den manuellen overallScore BEVOR er an calculateDataPrivacyScore übergeben wird
-    // Berücksichtige dabei manuelle Neutralisierungen
+    // KRITISCH: Bei Neutralisierungen muss der Score IMMER neu berechnet werden
+    // Gespeicherte overallScore-Werte ignorieren wir in diesem Fall
     let cappedManualData = manualDataPrivacy;
-    if (manualDataPrivacy?.overallScore !== undefined && loadedPrivacyData?.violations) {
+    let shouldRecalculate = false;
+    
+    if (loadedPrivacyData?.violations) {
       const deselected = manualDataPrivacy?.deselectedViolations || [];
       let criticalCount = 0;
+      let neutralizedCount = 0;
       
       // Zähle nicht-deselektierte und nicht-neutralisierte kritische/high Violations
       loadedPrivacyData.violations.forEach((v: any, i: number) => {
@@ -225,10 +228,11 @@ export const loadSavedAnalysisData = (
           const neutralizedBySSL = isSSLViolation && manualDataPrivacy?.hasSSL === true;
           const neutralizedByCookie = isCookieViolation && manualDataPrivacy?.cookieConsent === true;
           
-          if (!neutralizedBySSL && !neutralizedByCookie) {
-            if (v.severity === 'critical' || v.severity === 'high') {
-              criticalCount++;
-            }
+          if (neutralizedBySSL || neutralizedByCookie) {
+            neutralizedCount++;
+            shouldRecalculate = true; // Force recalculation wenn Neutralisierungen existieren
+          } else if (v.severity === 'critical' || v.severity === 'high') {
+            criticalCount++;
           }
         }
       });
@@ -242,23 +246,33 @@ export const loadSavedAnalysisData = (
         });
       }
       
-      // Bestimme maximalen Score basierend auf VERBLEIBENDEN kritischen Fehlern
-      let maxScore = 100;
-      if (criticalCount >= 3) maxScore = 20;
-      else if (criticalCount === 2) maxScore = 35;
-      else if (criticalCount === 1) maxScore = 59;
-      
-      if (manualDataPrivacy.overallScore > maxScore) {
-        // Gekappte Version erstellen
+      // Wenn Neutralisierungen existieren, lösche den manuellen overallScore
+      // damit der Score neu berechnet wird
+      if (shouldRecalculate && manualDataPrivacy?.overallScore !== undefined) {
+        console.log(`🔄 Neutralisierungen erkannt (${neutralizedCount} Fehler neutralisiert), Score wird neu berechnet statt ${manualDataPrivacy.overallScore}% zu verwenden`);
         cappedManualData = {
           ...manualDataPrivacy,
-          overallScore: maxScore
+          overallScore: undefined // Entferne manuellen Score bei Neutralisierungen
         };
+      } else if (manualDataPrivacy?.overallScore !== undefined) {
+        // Kein Recalculation nötig, aber Score könnte trotzdem gekappt werden müssen
+        let maxScore = 100;
+        if (criticalCount >= 3) maxScore = 20;
+        else if (criticalCount === 2) maxScore = 35;
+        else if (criticalCount === 1) maxScore = 59;
         
-        // Auch im State updaten
-        if (updateManualDataPrivacyData) {
-          updateManualDataPrivacyData(cappedManualData);
+        if (manualDataPrivacy.overallScore > maxScore) {
+          console.log(`⚠️ Manueller Score ${manualDataPrivacy.overallScore}% wird auf ${maxScore}% gekappt (${criticalCount} kritische Fehler verbleibend)`);
+          cappedManualData = {
+            ...manualDataPrivacy,
+            overallScore: maxScore
+          };
         }
+      }
+      
+      // Update State
+      if (cappedManualData !== manualDataPrivacy && updateManualDataPrivacyData) {
+        updateManualDataPrivacyData(cappedManualData);
       }
     }
     
