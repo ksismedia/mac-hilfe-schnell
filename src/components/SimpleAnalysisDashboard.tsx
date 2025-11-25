@@ -597,6 +597,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             onSecurityDataChange={setSecurityData}
             manualAccessibilityData={manualAccessibilityData}
             updateManualAccessibilityData={updateManualAccessibilityData}
+            manualContentData={manualContentData}
+            updateManualContentData={updateManualContentData}
+            manualBacklinkData={manualBacklinkData}
+            updateManualBacklinkData={updateManualBacklinkData}
           />
         );
       case 'website-performance-tech':
