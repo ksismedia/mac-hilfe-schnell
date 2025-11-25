@@ -1066,27 +1066,39 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     return 0;
   }
   
-  // Start with 100 base score for DSGVO (legal aspects only)
-  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
-  
   const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
   const customViolations = manualDataPrivacyData?.customViolations || [];
   const totalViolations = privacyData?.violations || [];
   
+  // SCHRITT 1: Zähle kritische Violations ZUERST
+  let criticalCount = 0;
+  totalViolations.forEach((violation: any, index: number) => {
+    if (violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)) {
+      criticalCount++;
+    }
+  });
+  customViolations.forEach((violation: any) => {
+    if (violation.severity === 'critical') {
+      criticalCount++;
+    }
+  });
+  
+  // SCHRITT 2: Berechne Basis-Score
+  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
+  
   if (!hasManualOverride) {
-    // Subtract points for violations (not deselected) - NEUE GEWICHTUNG wie DataPrivacyService
+    // Subtract points for violations (not deselected)
     totalViolations.forEach((violation: any, index: number) => {
       if (!deselectedViolations.includes(`auto-${index}`)) {
         switch (violation.severity) {
-          case 'critical': score -= 30; break;  // Kritisch: 30 Punkte (statt 15)
-          case 'high': score -= 15; break;      // Hoch: 15 Punkte (statt 10)
-          case 'medium': score -= 8; break;     // Mittel: 8 Punkte (statt 5)
-          case 'low': score -= 3; break;        // Niedrig: 3 Punkte (statt 2)
+          case 'critical': score -= 30; break;
+          case 'high': score -= 15; break;
+          case 'medium': score -= 8; break;
+          case 'low': score -= 3; break;
         }
       }
     });
     
-    // Subtract points for custom violations
     customViolations.forEach((violation: any) => {
       switch (violation.severity) {
         case 'critical': score -= 30; break;
@@ -1097,24 +1109,10 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     });
   }
   
-  // KRITISCH: Zähle kritische Violations - NUR explizites Deselektieren neutralisiert sie
-  const criticalCount = (() => {
-    const activeCriticalAuto = totalViolations.filter((violation: any, index: number) => 
-      violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
-    ).length;
-    
-    const criticalCustom = customViolations.filter((violation: any) => 
-      violation.severity === 'critical'
-    ).length;
-    
-    return activeCriticalAuto + criticalCustom;
-  })();
-  
-  // Score berechnen und dabei auf 100 begrenzen
+  // SCHRITT 3: Begrenze auf 0-100
   let finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // DSGVO-Score-Caps - IMMER anwenden, AUCH bei manueller Bewertung
-  // Diese Kappung ist NICHT verhandelbar und wird IMMER durchgesetzt
+  // SCHRITT 4: ABSOLUTE KAPPUNG - NICHT VERHANDELBAR
   if (criticalCount >= 3) {
     finalScore = Math.min(20, finalScore);
   } else if (criticalCount === 2) {
