@@ -32,71 +32,67 @@ async function displayCurrentUrl() {
   }
 }
 
-// Neue Edge Function Bridge Methode - sendet Daten über Supabase
+// Vereinfachte Methode - speichert Daten direkt in localStorage
 async function openLovableApp(websiteData = null) {
-  console.log('Öffne Lovable App mit Edge Function Bridge:', websiteData);
+  console.log('Öffne Lovable App:', websiteData ? 'mit Daten' : 'ohne Daten');
   
   try {
-    if (!websiteData || !websiteData.url) {
-      // Keine Daten, öffne einfach die App
-      await chrome.tabs.create({ 
-        url: LOVABLE_APP_URL,
-        active: true
-      });
-      return { success: true };
-    }
-
-    // Generiere eindeutige Session-ID
-    const sessionId = `ext_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    console.log('📦 Session ID generiert:', sessionId);
-
-    // Sende Daten an Edge Function
-    console.log('📤 Sende Daten an Edge Function...');
-    const response = await fetch('https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/extension-data-bridge', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'store',
-        sessionId: sessionId,
-        data: websiteData
-      })
-    });
-
-    const result = await response.json();
-    console.log('📥 Edge Function Antwort:', result);
-
-    if (!result.success) {
-      throw new Error('Edge Function speichern fehlgeschlagen');
-    }
-
-    // Öffne Lovable App mit Session-ID als URL Parameter
-    const appUrlWithSession = `${LOVABLE_APP_URL}?extensionSession=${sessionId}`;
-    console.log('🚀 Öffne App mit URL:', appUrlWithSession);
-
     // Suche nach bereits geöffneten Lovable-Tabs
     const existingTabs = await chrome.tabs.query({});
     const lovableTabs = existingTabs.filter(tab => 
       tab.url && tab.url.includes('lovable.app')
     );
 
+    let targetTab = null;
+
     if (lovableTabs.length > 0) {
-      // Update existierenden Tab
-      const targetTab = lovableTabs[0];
-      await chrome.tabs.update(targetTab.id, { 
-        url: appUrlWithSession,
-        active: true 
-      });
+      // Verwende existierenden Tab
+      targetTab = lovableTabs[0];
+      console.log('✓ Existierender Lovable-Tab gefunden:', targetTab.id);
+      await chrome.tabs.update(targetTab.id, { active: true });
       await chrome.windows.update(targetTab.windowId, { focused: true });
-      console.log('✅ Existierender Tab aktualisiert:', targetTab.id);
     } else {
       // Erstelle neuen Tab
-      await chrome.tabs.create({ 
-        url: appUrlWithSession,
+      targetTab = await chrome.tabs.create({ 
+        url: LOVABLE_APP_URL,
         active: true
       });
-      console.log('✅ Neuer Tab erstellt');
+      console.log('✓ Neuer Lovable-Tab erstellt:', targetTab.id);
+    }
+
+    // Wenn wir Daten haben, speichere sie direkt im Tab
+    if (websiteData && websiteData.url && targetTab.id) {
+      const waitTime = lovableTabs.length > 0 ? 500 : 3000;
+      
+      setTimeout(async () => {
+        try {
+          console.log('📤 Übertrage Daten an Tab:', websiteData.url);
+          
+          await chrome.scripting.executeScript({
+            target: { tabId: targetTab.id },
+            func: (data) => {
+              // Speichere direkt in localStorage mit Timestamp
+              const payload = {
+                data: data,
+                timestamp: Date.now()
+              };
+              localStorage.setItem('extensionWebsiteData', JSON.stringify(payload));
+              
+              // Trigger Event für sofortige Verarbeitung
+              window.dispatchEvent(new CustomEvent('extensionDataReceived', { 
+                detail: payload 
+              }));
+              
+              console.log('✅ Extension-Daten gespeichert:', data.url);
+            },
+            args: [websiteData]
+          });
+          
+          console.log('✅ Daten erfolgreich übertragen');
+        } catch (error) {
+          console.error('❌ Fehler beim Datenübertrag:', error);
+        }
+      }, waitTime);
     }
 
     return { success: true };
