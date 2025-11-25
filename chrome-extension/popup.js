@@ -91,32 +91,38 @@ async function extractWebsiteData() {
     // Versuche Content Script zu kontaktieren
     const response = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
     
-    if (response && response.success) {
+    if (response?.success && response?.data) {
       console.log('Website-Daten erfolgreich extrahiert:', response.data);
       return response.data;
-    } else {
-      throw new Error('Content Script antwortet nicht');
     }
     
+    throw new Error('Content Script antwortet nicht korrekt');
+    
   } catch (error) {
-    console.log('Content Script nicht verfügbar, versuche Injection...');
+    console.log('Content Script nicht verfügbar, versuche Injection...', error.message);
     
-    // Injiziere Content Script
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['content.js']
-    });
-    
-    // Warte kurz und versuche erneut
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const retryResponse = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
-    
-    if (retryResponse && retryResponse.success) {
-      console.log('Website-Daten nach Injection erfolgreich extrahiert:', retryResponse.data);
-      return retryResponse.data;
-    } else {
-      throw new Error('Content Script funktioniert nicht');
+    try {
+      // Injiziere Content Script
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content.js']
+      });
+      
+      // Warte kurz und versuche erneut
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const retryResponse = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
+      
+      if (retryResponse?.success && retryResponse?.data) {
+        console.log('Website-Daten nach Injection erfolgreich extrahiert:', retryResponse.data);
+        return retryResponse.data;
+      }
+      
+      throw new Error('Content Script funktioniert nicht korrekt');
+      
+    } catch (injectionError) {
+      console.error('Injection fehlgeschlagen:', injectionError);
+      throw new Error('Content Script konnte nicht geladen werden');
     }
   }
 }
@@ -146,14 +152,19 @@ async function analyzeWebsite() {
     // Öffne Lovable App (mit oder ohne Daten)
     const result = await openLovableApp(websiteData);
     
-    if (result.success) {
-      if (websiteData && websiteData.url) {
+    if (result?.success) {
+      if (websiteData?.url) {
         showStatus('✓ Daten an App übertragen!', 'success');
       } else {
         showStatus('✓ App geöffnet', 'success');
       }
       
       // Schließe Popup nach 2 Sekunden
+      setTimeout(() => {
+        window.close();
+      }, 2000);
+    } else {
+      showStatus('✓ App geöffnet', 'success');
       setTimeout(() => {
         window.close();
       }, 2000);
