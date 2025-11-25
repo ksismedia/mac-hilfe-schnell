@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
@@ -14,6 +15,11 @@ interface SEOAnalysisProps {
 
 const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  const { extensionData } = useExtensionData();
+  
+  // Get extension SEO data
+  const hasExtensionData = extensionData !== null;
+  const extensionSEO = extensionData?.seo;
   
   // Prüfe ob Fallback-Daten verwendet werden
   const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||
@@ -167,6 +173,53 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {/* Chrome Extension SEO-Daten (wenn verfügbar) */}
+            {hasExtensionData && extensionSEO && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle className="h-5 w-5 text-blue-600" />
+                  <h4 className="font-semibold text-blue-800">SEO-Daten von Chrome Extension erkannt</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-blue-900">Title:</span>
+                    <p className="text-blue-700 bg-white p-2 rounded mt-1 text-xs">
+                      {extensionSEO.titleTag || 'Nicht gefunden'}
+                    </p>
+                    <span className="text-xs text-blue-600">Länge: {extensionSEO.titleTag?.length || 0} Zeichen</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-900">Meta Description:</span>
+                    <p className="text-blue-700 bg-white p-2 rounded mt-1 text-xs">
+                      {extensionSEO.metaDescription || 'Nicht gefunden'}
+                    </p>
+                    <span className="text-xs text-blue-600">Länge: {extensionSEO.metaDescription?.length || 0} Zeichen</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-900">Überschriften:</span>
+                    <div className="bg-white p-2 rounded mt-1 space-y-1">
+                      <div className="text-xs text-blue-700">H1: {extensionSEO.headings?.h1?.length || 0}</div>
+                      <div className="text-xs text-blue-700">H2: {extensionSEO.headings?.h2?.length || 0}</div>
+                      <div className="text-xs text-blue-700">H3: {extensionSEO.headings?.h3?.length || 0}</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-900">Alt-Tags:</span>
+                    <div className="bg-white p-2 rounded mt-1">
+                      <div className="text-xs text-blue-700">
+                        {extensionSEO.altTags?.withAlt || 0} von {extensionSEO.altTags?.total || 0} Bildern
+                      </div>
+                      <div className="text-xs text-blue-600 mt-1">
+                        {extensionSEO.altTags?.total > 0 
+                          ? `${Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100)}% abgedeckt`
+                          : 'Keine Bilder gefunden'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Globale Warnung bei Fallback-Daten */}
             {isUsingFallbackData && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
