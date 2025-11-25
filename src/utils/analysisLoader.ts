@@ -216,10 +216,11 @@ export const loadSavedAnalysisData = (
       loadedPrivacyData.violations.forEach((v: any, i: number) => {
         if (!deselected.includes(`auto-${i}`)) {
           // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
-          const isSSLViolation = v.description?.includes('SSL') || 
+          // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+          const isSSLViolation = (v.description?.includes('SSL') || 
                                 v.description?.includes('TLS') ||
-                                v.description?.includes('HSTS') ||
-                                v.description?.includes('Verschlüsselung');
+                                v.description?.includes('Verschlüsselung')) &&
+                                !v.description?.includes('HSTS');
           
           // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
           const isCookieViolation = v.description?.includes('Cookie') && 
