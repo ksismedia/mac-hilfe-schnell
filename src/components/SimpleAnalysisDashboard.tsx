@@ -181,6 +181,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Use active extension data (live or saved)
   const activeExtensionData = extensionData || savedExtensionData;
   
+  // Force re-render when extension data changes
+  useEffect(() => {
+    if (savedExtensionData) {
+      console.log('🔄 Extension data changed, component will re-render with new scores');
+    }
+  }, [savedExtensionData]);
+  
   // Sync extension data from hook to context
   useEffect(() => {
     console.log('📥 Extension data changed:', {
@@ -461,10 +468,19 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Calculate new 6-category scores with fallbacks
   let scores;
   try {
+    console.log('🔢 Calculating scores with extensionData:', {
+      hasExtensionData: !!savedExtensionData,
+      wordCount: savedExtensionData?.content?.wordCount,
+      internalLinks: savedExtensionData?.content?.links?.internal?.length,
+      externalLinks: savedExtensionData?.content?.links?.external?.length
+    });
+    
     const onlineQualityAuthority = calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData, securityData
+      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData, securityData, savedExtensionData
     );
+    
+    console.log('✅ onlineQualityAuthority score:', onlineQualityAuthority);
     const websitePerformanceTech = calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
     const socialMediaPerformance = calculateSocialMediaPerformanceScore(
       realData, manualSocialData, manualIndustryReviewData, manualOnlinePresenceData
