@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit, AlertCircle } from 'lucide-react';
 import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
@@ -16,7 +17,13 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
+  const { extensionData } = useExtensionData();
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  
+  // Get automatic content data from extension
+  const hasExtensionData = extensionData !== null;
+  const contentText = extensionData?.content?.fullText || '';
+  const wordCount = extensionData?.content?.wordCount || 0;
   
   // Branchenspezifische Content-Themen
   const industryContentTopics = {
@@ -157,6 +164,52 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
             </TabsList>
             
             <TabsContent value="automatic" className="space-y-6 mt-6">
+              {/* Automatische Content-Daten von Extension */}
+              {hasExtensionData && (
+                <Card className="mb-6">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Content-Struktur (Automatisch erkannt)
+                    </CardTitle>
+                    <CardDescription>
+                      Von der Chrome Extension automatisch extrahierte Content-Daten
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {wordCount}
+                        </div>
+                        <div className="text-sm text-gray-600">Wörter gesamt</div>
+                      </div>
+                      <div className="text-center p-4 bg-purple-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {Math.round(wordCount / 200)}
+                        </div>
+                        <div className="text-sm text-gray-600">Geschätzte Lesezeit (Min.)</div>
+                      </div>
+                    </div>
+                    
+                    {contentText && (
+                      <div className="mt-4">
+                        <h4 className="font-semibold text-sm mb-2">Content-Vorschau:</h4>
+                        <div className="p-3 bg-gray-50 rounded text-xs text-gray-700 max-h-32 overflow-y-auto">
+                          {contentText.slice(0, 500)}...
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                      <p className="text-xs text-blue-700">
+                        💡 <strong>Hinweis:</strong> Dies sind automatisch erkannte Daten. Für eine detaillierte Qualitätsbewertung nutzen Sie bitte den Tab "Manuelle Bewertung".
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              
               {hasContentData ? (
                 <Card className="mb-6">
                   <CardHeader>

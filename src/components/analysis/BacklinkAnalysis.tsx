@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -18,9 +19,15 @@ interface BacklinkAnalysisProps {
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
+  const { extensionData } = useExtensionData();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  
+  // Get automatic link data from extension
+  const hasExtensionData = extensionData !== null;
+  const internalLinks = extensionData?.content?.links?.internal || [];
+  const externalLinks = extensionData?.content?.links?.external || [];
 
   // Calculate backlink score from manual data
   const calculateBacklinkScore = () => {
@@ -147,6 +154,63 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
             
             <TabsContent value="automatic" className="space-y-6 mt-6">
           <div className="space-y-6">
+            {/* Automatische Link-Daten von Extension */}
+            {hasExtensionData && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Link className="h-5 w-5" />
+                    Link-Struktur (Automatisch erkannt)
+                  </CardTitle>
+                  <CardDescription>
+                    Von der Chrome Extension automatisch extrahierte Link-Daten
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {internalLinks.length}
+                      </div>
+                      <div className="text-sm text-gray-600">Interne Links</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {externalLinks.length}
+                      </div>
+                      <div className="text-sm text-gray-600">Externe Links</div>
+                    </div>
+                  </div>
+                  
+                  {externalLinks.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Externe Links:</h4>
+                      <div className="max-h-40 overflow-y-auto space-y-1">
+                        {externalLinks.slice(0, 10).map((link: any, idx: number) => (
+                          <div key={idx} className="text-xs p-2 bg-gray-50 rounded flex items-center gap-2">
+                            <ExternalLink className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                            <a 
+                              href={link.href} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline truncate"
+                            >
+                              {link.text || link.href}
+                            </a>
+                          </div>
+                        ))}
+                        {externalLinks.length > 10 && (
+                          <p className="text-xs text-gray-500 italic">
+                            ... und {externalLinks.length - 10} weitere
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Backlink-Profil - Mit manuellen Daten wenn vorhanden */}
             {manualBacklinkData ? (
               <Card>
