@@ -32,74 +32,50 @@ async function displayCurrentUrl() {
   }
 }
 
-// Vereinfachte Methode - speichert Daten direkt in localStorage
+// EINFACHSTE LÖSUNG - Daten als URL Parameter
 async function openLovableApp(websiteData = null) {
   console.log('Öffne Lovable App:', websiteData ? 'mit Daten' : 'ohne Daten');
   
   try {
+    let targetUrl = LOVABLE_APP_URL;
+    
+    // Wenn wir Daten haben, kodiere sie als URL Parameter
+    if (websiteData && websiteData.url) {
+      console.log('📦 Kodiere Website-Daten...');
+      const encodedData = btoa(JSON.stringify(websiteData));
+      targetUrl = `${LOVABLE_APP_URL}?extData=${encodedData}`;
+      console.log('✅ Daten kodiert, Länge:', encodedData.length);
+    }
+
     // Suche nach bereits geöffneten Lovable-Tabs
     const existingTabs = await chrome.tabs.query({});
     const lovableTabs = existingTabs.filter(tab => 
       tab.url && tab.url.includes('lovable.app')
     );
 
-    let targetTab = null;
-
     if (lovableTabs.length > 0) {
-      // Verwende existierenden Tab
-      targetTab = lovableTabs[0];
-      console.log('✓ Existierender Lovable-Tab gefunden:', targetTab.id);
-      await chrome.tabs.update(targetTab.id, { active: true });
+      // Update existierenden Tab
+      const targetTab = lovableTabs[0];
+      await chrome.tabs.update(targetTab.id, { 
+        url: targetUrl,
+        active: true 
+      });
       await chrome.windows.update(targetTab.windowId, { focused: true });
+      console.log('✅ Existierender Tab aktualisiert');
     } else {
       // Erstelle neuen Tab
-      targetTab = await chrome.tabs.create({ 
-        url: LOVABLE_APP_URL,
+      await chrome.tabs.create({ 
+        url: targetUrl,
         active: true
       });
-      console.log('✓ Neuer Lovable-Tab erstellt:', targetTab.id);
-    }
-
-    // Wenn wir Daten haben, speichere sie direkt im Tab
-    if (websiteData && websiteData.url && targetTab.id) {
-      const waitTime = lovableTabs.length > 0 ? 500 : 3000;
-      
-      setTimeout(async () => {
-        try {
-          console.log('📤 Übertrage Daten an Tab:', websiteData.url);
-          
-          await chrome.scripting.executeScript({
-            target: { tabId: targetTab.id },
-            func: (data) => {
-              // Speichere direkt in localStorage mit Timestamp
-              const payload = {
-                data: data,
-                timestamp: Date.now()
-              };
-              localStorage.setItem('extensionWebsiteData', JSON.stringify(payload));
-              
-              // Trigger Event für sofortige Verarbeitung
-              window.dispatchEvent(new CustomEvent('extensionDataReceived', { 
-                detail: payload 
-              }));
-              
-              console.log('✅ Extension-Daten gespeichert:', data.url);
-            },
-            args: [websiteData]
-          });
-          
-          console.log('✅ Daten erfolgreich übertragen');
-        } catch (error) {
-          console.error('❌ Fehler beim Datenübertrag:', error);
-        }
-      }, waitTime);
+      console.log('✅ Neuer Tab erstellt');
     }
 
     return { success: true };
     
   } catch (error) {
-    console.error('❌ Fehler in openLovableApp:', error);
-    throw new Error(`App konnte nicht geöffnet werden: ${error.message}`);
+    console.error('❌ Fehler:', error);
+    throw new Error(`Fehler: ${error.message}`);
   }
 }
 

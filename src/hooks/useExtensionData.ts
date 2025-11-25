@@ -1,6 +1,4 @@
-
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -53,121 +51,63 @@ interface ExtensionWebsiteData {
   extractedAt: string;
 }
 
-interface ExtensionMessage {
-  type: string;
-  source: string;
-  data: ExtensionWebsiteData;
-}
-
 export const useExtensionData = () => {
   const [extensionData, setExtensionData] = useState<ExtensionWebsiteData | null>(null);
   const [isFromExtension, setIsFromExtension] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialisierung
   useEffect(() => {
-    setIsInitialized(true);
-  }, []);
+    console.log('🚀 Extension Hook gestartet');
 
-  useEffect(() => {
-    console.log('🚀 useExtensionData Hook initialized');
+    // Prüfe URL Parameter beim Laden
+    const urlParams = new URLSearchParams(window.location.search);
+    const extData = urlParams.get('extData');
     
-    // 1. Überprüfe localStorage sofort beim Laden
-    const checkLocalStorage = () => {
+    if (extData) {
       try {
-        const storedData = localStorage.getItem('extensionWebsiteData');
-        console.log('🔍 Checking localStorage for extension data:', !!storedData);
+        console.log('📦 Extension-Daten in URL gefunden');
+        const decodedData = JSON.parse(atob(extData));
+        console.log('✅ Daten dekodiert:', decodedData.url);
         
-        if (storedData) {
-          const parsedData = JSON.parse(storedData);
-          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-          
-          console.log('📦 Found stored data:', {
-            url: parsedData.data?.url,
-            timestamp: parsedData.timestamp,
-            isRecent: parsedData.timestamp > fiveMinutesAgo
-          });
-          
-          if (parsedData.timestamp > fiveMinutesAgo) {
-            console.log('✅ Loading fresh extension data from localStorage');
-            setExtensionData(parsedData.data);
-            setIsFromExtension(true);
-            return true;
-          } else {
-            console.log('⏰ Stored data too old, removing');
-            localStorage.removeItem('extensionWebsiteData');
-          }
-        }
-      } catch (error) {
-        console.warn('❌ Error loading from localStorage:', error);
-      }
-      return false;
-    };
-
-    // 2. CustomEvent-Listener für Extension-Daten
-    const handleExtensionEvent = (event: CustomEvent) => {
-      if (event.detail?.data) {
-        console.log('🎉 Extension data received:', event.detail.data.url);
-        
-        // Save to state
-        setExtensionData(event.detail.data);
+        setExtensionData(decodedData);
         setIsFromExtension(true);
         
-        console.log('✅ Extension data loaded successfully');
+        // Speichere in localStorage
+        localStorage.setItem('extensionWebsiteData', JSON.stringify({
+          data: decodedData,
+          timestamp: Date.now()
+        }));
+        
+        // Entferne URL Parameter
+        window.history.replaceState({}, '', window.location.pathname);
+        
+        console.log('✅ Extension-Daten erfolgreich geladen!');
+      } catch (error) {
+        console.error('❌ Fehler beim Dekodieren:', error);
       }
-    };
-
-    // 3. Polling nur beim ersten Laden
-    let pollCount = 0;
-    const maxPolls = 10;
-    let pollTimeout: NodeJS.Timeout;
-    
-    const pollForData = () => {
-      if (pollCount >= maxPolls || isInitialized) {
-        setIsInitialized(true);
-        return;
-      }
-      
-      if (checkLocalStorage()) {
-        setIsInitialized(true);
-        return;
-      }
-      
-      pollCount++;
-      pollTimeout = setTimeout(pollForData, 1000);
-    };
-
-    // Immediate check nur beim ersten Laden
-    if (!isInitialized) {
-      console.log('🔎 Initial check for stored data...');
-      const immediateSuccess = checkLocalStorage();
-      if (immediateSuccess) {
-        console.log('✅ Found data immediately');
-        setIsInitialized(true);
-      } else {
-        console.log('⏳ Starting polling for data...');
-        pollTimeout = setTimeout(pollForData, 1000);
+    } else {
+      // Prüfe localStorage als Fallback
+      const storedData = localStorage.getItem('extensionWebsiteData');
+      if (storedData) {
+        try {
+          const parsed = JSON.parse(storedData);
+          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+          
+          if (parsed.timestamp > fiveMinutesAgo) {
+            console.log('📦 Daten aus localStorage geladen');
+            setExtensionData(parsed.data);
+            setIsFromExtension(true);
+          } else {
+            localStorage.removeItem('extensionWebsiteData');
+          }
+        } catch (error) {
+          console.error('❌ Fehler beim Laden aus localStorage:', error);
+        }
       }
     }
     
-    // Register event listener
-    console.log('👂 Registering event listener...');
-    window.addEventListener('extensionDataReceived', handleExtensionEvent as EventListener);
-    
-    // Polling für neue Daten auch nach Initialisierung
-    const continuousCheckInterval = setInterval(() => {
-      checkLocalStorage();
-    }, 2000);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('extensionDataReceived', handleExtensionEvent as EventListener);
-      clearInterval(continuousCheckInterval);
-      if (pollTimeout) {
-        clearTimeout(pollTimeout);
-      }
-    };
-  }, [isInitialized]);
+    setIsInitialized(true);
+  }, []);
 
   const clearExtensionData = () => {
     setExtensionData(null);
