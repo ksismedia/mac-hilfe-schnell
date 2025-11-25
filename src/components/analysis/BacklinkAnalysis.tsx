@@ -92,7 +92,18 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
       if (results && results.items) {
-        setWebMentions(results.items);
+        // Filter out results from the own domain
+        const filteredResults = results.items.filter((item: any) => {
+          const itemDomain = (item.displayLink || item.link || '')
+            .replace('https://', '')
+            .replace('http://', '')
+            .replace('www.', '')
+            .split('/')[0];
+          
+          return itemDomain !== domain;
+        });
+        
+        setWebMentions(filteredResults);
       } else {
         setWebMentions([]);
       }
