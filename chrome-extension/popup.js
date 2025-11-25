@@ -5,8 +5,6 @@ const analyzeBtn = document.getElementById('analyzeBtn');
 const statusDiv = document.getElementById('status');
 const currentUrlDiv = document.getElementById('currentUrl');
 
-const LOVABLE_APP_URL = 'https://id-preview--25bfc271-cf93-4b75-85b5-47a649c1832b.lovable.app';
-
 function showStatus(message, type = 'loading') {
   statusDiv.textContent = message;
   statusDiv.className = `status ${type}`;
@@ -27,48 +25,33 @@ async function displayCurrentUrl() {
   }
 }
 
-// FINALE LÖSUNG: Nur wichtige Meta-Daten via URL (nicht kompletten Content)
-async function openLovableApp(websiteData) {
-  console.log('Öffne App...');
-  
-  try {
-    let targetUrl = LOVABLE_APP_URL;
-    
-    if (websiteData && websiteData.url) {
-      // NUR WICHTIGE DATEN (URL ist sonst zu lang!)
-      const compactData = {
-        url: websiteData.url,
-        domain: websiteData.domain,
-        title: websiteData.title,
-        seo: {
-          titleTag: websiteData.seo?.titleTag || '',
-          metaDescription: websiteData.seo?.metaDescription || '',
-          h1: websiteData.seo?.headings?.h1 || []
-        }
-      };
-      
-      const jsonString = JSON.stringify(compactData);
-      const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
-      targetUrl = `${LOVABLE_APP_URL}?extData=${encodedData}`;
-      console.log('✅ Meta-Daten kodiert');
-      
-      // SPEICHERE KOMPLETTE DATEN IN LOCALSTORAGE
-      localStorage.setItem('fullExtensionData', JSON.stringify({
-        data: websiteData,
-        timestamp: Date.now()
-      }));
-      console.log('✅ Komplette Daten in localStorage gespeichert');
-    }
+const SUPABASE_URL = 'https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/extension-data-bridge';
 
-    await chrome.tabs.create({ 
-      url: targetUrl,
-      active: true
+// NEU: Speichere Daten in Supabase (kein neuer Tab!)
+async function storeDataInSupabase(websiteData) {
+  try {
+    const sessionId = crypto.randomUUID();
+    console.log('📤 Speichere Daten in Supabase...');
+    
+    const response = await fetch(SUPABASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'store',
+        sessionId: sessionId,
+        data: websiteData
+      })
     });
     
-    return { success: true };
+    if (!response.ok) {
+      throw new Error('Speichern fehlgeschlagen');
+    }
+    
+    console.log('✅ Daten gespeichert mit Session ID:', sessionId);
+    return { success: true, sessionId };
     
   } catch (error) {
-    console.error('❌ Fehler:', error);
+    console.error('❌ Fehler beim Speichern:', error);
     return { success: false, error: error.message };
   }
 }
@@ -124,29 +107,23 @@ async function analyzeWebsite() {
     showStatus('Extrahiere Daten...', 'loading');
     analyzeBtn.disabled = true;
     
-    let websiteData = null;
-    try {
-      websiteData = await extractWebsiteData();
-      showStatus('✓ Daten extrahiert! Öffne App...', 'loading');
-    } catch (extractError) {
-      console.log('⚠️ Keine Daten');
-      showStatus('⚠️ Öffne App...', 'loading');
-    }
+    const websiteData = await extractWebsiteData();
+    showStatus('Speichere Daten...', 'loading');
     
-    const result = await openLovableApp(websiteData);
+    const result = await storeDataInSupabase(websiteData);
     
     if (result && result.success) {
-      showStatus('✅ Erfolgreich!', 'success');
-      setTimeout(() => window.close(), 1500);
+      showStatus('✅ Daten gespeichert! Jetzt in der App "Daten laden" klicken.', 'success');
+      // KEIN neuer Tab! User geht zur bereits geöffneten Analyse
     } else {
-      showStatus('❌ Fehler', 'error');
+      showStatus('❌ Fehler beim Speichern', 'error');
     }
     
   } catch (error) {
     console.error('❌ Fehler:', error);
     showStatus('❌ Fehler: ' + error.message, 'error');
   } finally {
-    setTimeout(() => analyzeBtn.disabled = false, 3000);
+    setTimeout(() => analyzeBtn.disabled = false, 2000);
   }
 }
 
