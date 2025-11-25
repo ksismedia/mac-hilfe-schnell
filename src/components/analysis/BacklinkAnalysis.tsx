@@ -44,6 +44,14 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
     }
   };
   
+  // Automatically show extension data if available from saved analysis
+  useEffect(() => {
+    if (savedExtensionData && !showExtensionData) {
+      console.log('🔄 Auto-enabling backlink extension data display from saved analysis');
+      setShowExtensionData(true);
+    }
+  }, [savedExtensionData, showExtensionData]);
+  
   // Save extension data to current analysis
   const handleSaveExtensionData = async () => {
     if (!currentAnalysis || !savedExtensionData) {
@@ -366,6 +374,37 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                       <p className="text-sm text-blue-700">{manualBacklinkData.notes}</p>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            ) : hasExtensionData ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">📊 Backlink-Übersicht (Extension-Daten)</CardTitle>
+                  <CardDescription>
+                    Automatisch erkannte Link-Struktur verfügbar
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <div className="text-lg font-semibold text-blue-900">Interne Links</div>
+                      <div className="text-3xl font-bold text-blue-600">{internalLinks.length}</div>
+                      <div className="text-sm text-blue-700 mt-1">Innerhalb der Website</div>
+                    </div>
+                    <div className="p-4 bg-purple-50 rounded-lg">
+                      <div className="text-lg font-semibold text-purple-900">Externe Links</div>
+                      <div className="text-3xl font-bold text-purple-600">{externalLinks.length}</div>
+                      <div className="text-sm text-purple-700 mt-1">Zu anderen Websites</div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                    <p className="text-sm text-green-800">
+                      <strong>💡 Hinweis:</strong> Diese Daten wurden automatisch von der Chrome Extension erkannt. 
+                      Für eine detaillierte Backlink-Bewertung nutzen Sie bitte den Tab "Manuelle Bewertung", 
+                      um Backlink-Qualität, Domain Authority und lokale Relevanz zu bewerten.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
