@@ -209,8 +209,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           
           setIsLoadingFromStorage(true);
           
-          // Clear previous saved extension data first
-          setSavedExtensionData(null);
+          // Only clear extension data if loading a DIFFERENT analysis
+          if (savedExtensionData && (!analysisData.manualData?.extensionData || 
+              savedExtensionData.url !== analysisData.manualData.extensionData.url)) {
+            console.log('🧹 Clearing extension data for different analysis');
+            setSavedExtensionData(null);
+          }
           
           // Validate realData before setting
           if (!analysisData.realData) {
