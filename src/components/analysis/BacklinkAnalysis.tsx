@@ -15,14 +15,23 @@ import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { toast } from 'sonner';
 import { Save } from 'lucide-react';
+import { calculateBacklinksScore } from './export/scoreCalculations';
 
 interface BacklinkAnalysisProps {
   url: string;
   manualBacklinkData?: any;
   updateManualBacklinkData?: (data: any) => void;
+  realData?: any;
+  manualReputationData?: any;
 }
 
-const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url, manualBacklinkData: propManualBacklinkData, updateManualBacklinkData: propUpdateManualBacklinkData }) => {
+const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ 
+  url, 
+  manualBacklinkData: propManualBacklinkData, 
+  updateManualBacklinkData: propUpdateManualBacklinkData,
+  realData,
+  manualReputationData
+}) => {
   // Use props if provided, otherwise fall back to hook
   const hookData = useManualData();
   const manualBacklinkData = propManualBacklinkData ?? hookData.manualBacklinkData;
@@ -98,25 +107,13 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url, manualBacklink
   const internalLinks = hasExtensionData ? savedExtensionData.content?.links?.internal || [] : [];
   const externalLinks = hasExtensionData ? savedExtensionData.content?.links?.external || [] : [];
 
-  // Calculate backlink score from manual data
-  const calculateBacklinkScore = () => {
-    if (!manualBacklinkData) return 0;
-    
-    const qualityScore = Math.round(
-      (manualBacklinkData.qualityScore + 
-       manualBacklinkData.domainAuthority + 
-       manualBacklinkData.localRelevance) / 3
-    );
-
-    // Calculate spam penalty
-    const spamPenalty = manualBacklinkData.totalBacklinks > 0 
-      ? (manualBacklinkData.spamLinks / manualBacklinkData.totalBacklinks) * 30 
-      : 0;
-    
-    return Math.max(0, Math.round(qualityScore - spamPenalty));
-  };
-
-  const backlinkScore = calculateBacklinkScore();
+  // Calculate backlink score using centralized function
+  const backlinkScore = calculateBacklinksScore(
+    realData,
+    manualBacklinkData,
+    manualReputationData,
+    savedExtensionData
+  );
 
   // Search for web mentions of the URL
   const searchBacklinks = async () => {

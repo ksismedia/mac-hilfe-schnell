@@ -601,6 +601,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualContentData={updateManualContentData}
             manualBacklinkData={manualBacklinkData}
             updateManualBacklinkData={updateManualBacklinkData}
+            manualReputationData={manualReputationData}
           />
         );
       case 'website-performance-tech':
