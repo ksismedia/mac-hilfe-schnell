@@ -83,6 +83,15 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   const [currentAnalysis, setCurrentAnalysis] = useState<SavedAnalysis | null>(null);
   const [savedExtensionData, setSavedExtensionData] = useState<ExtensionWebsiteData | null>(null);
   
+  // Clear saved extension data when current analysis changes
+  React.useEffect(() => {
+    console.log('📊 Current analysis changed:', currentAnalysis?.id);
+    if (!currentAnalysis) {
+      console.log('🧹 Clearing saved extension data (no current analysis)');
+      setSavedExtensionData(null);
+    }
+  }, [currentAnalysis]);
+  
   // AI Review Status für KI-VO Compliance
   const {
     reviewStatus,
@@ -109,6 +118,8 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
 
   const clearAnalysis = () => {
     setCurrentAnalysis(null);
+    setSavedExtensionData(null);
+    console.log('🧹 Analysis and extension data cleared');
   };
 
   return (

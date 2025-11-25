@@ -29,6 +29,18 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   // Use live extension data or fallback to saved extension data
   const activeExtensionData = extensionData || savedExtensionData;
   
+  // Debug: Log when extension data changes
+  React.useEffect(() => {
+    console.log('🔗 BacklinkAnalysis - Extension data status:');
+    console.log('  - Live extension data:', !!extensionData);
+    console.log('  - Saved extension data:', !!savedExtensionData);
+    console.log('  - Active extension data:', !!activeExtensionData);
+    if (activeExtensionData) {
+      console.log('  - Internal links:', activeExtensionData.content?.links?.internal?.length || 0);
+      console.log('  - External links:', activeExtensionData.content?.links?.external?.length || 0);
+    }
+  }, [extensionData, savedExtensionData, activeExtensionData]);
+  
   // Get automatic link data from extension
   const hasExtensionData = activeExtensionData !== null;
   const internalLinks = activeExtensionData?.content?.links?.internal || [];
