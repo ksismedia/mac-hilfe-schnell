@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +19,7 @@ interface BacklinkAnalysisProps {
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
-  const { savedExtensionData } = useAnalysisContext();
+  const { savedExtensionData, setSavedExtensionData } = useAnalysisContext();
   const { toast } = useToast();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -31,17 +30,49 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   
   // Load extension data manually
   const handleLoadExtensionData = () => {
-    if (savedExtensionData) {
-      setShowExtensionData(true);
-      const externalLinksCount = savedExtensionData.content?.links?.external?.length || 0;
+    try {
+      // Read directly from localStorage
+      const storedData = localStorage.getItem('seo_extension_data');
+      
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+        
+        if (parsed.timestamp > fiveMinutesAgo && parsed.data) {
+          setShowExtensionData(true);
+          // Also save to context for persistence
+          if (setSavedExtensionData) {
+            setSavedExtensionData(parsed.data);
+          }
+          const externalLinksCount = parsed.data.content?.links?.external?.length || 0;
+          toast({
+            title: "Extension-Daten geladen",
+            description: `${externalLinksCount} externe Links gefunden`,
+          });
+          return;
+        }
+      }
+      
+      // Check if already in context
+      if (savedExtensionData) {
+        setShowExtensionData(true);
+        const externalLinksCount = savedExtensionData.content?.links?.external?.length || 0;
+        toast({
+          title: "Extension-Daten geladen",
+          description: `${externalLinksCount} externe Links gefunden`,
+        });
+      } else {
+        toast({
+          title: "Keine Daten verfügbar",
+          description: "Führen Sie zuerst die Chrome Extension aus",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error loading extension data:', error);
       toast({
-        title: "Extension-Daten geladen",
-        description: `${externalLinksCount} externe Links gefunden`,
-      });
-    } else {
-      toast({
-        title: "Keine Daten verfügbar",
-        description: "Bitte führen Sie zuerst die Chrome Extension aus",
+        title: "Fehler",
+        description: "Daten konnten nicht geladen werden",
         variant: "destructive"
       });
     }
@@ -181,25 +212,19 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {savedExtensionData ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <AlertCircle className="h-5 w-5 text-yellow-500" />
-                      )}
+                      <CheckCircle className="h-5 w-5 text-green-500" />
                       <div>
                         <p className="font-semibold">
-                          {savedExtensionData ? 'Extension-Daten verfügbar' : 'Keine Extension-Daten'}
+                          Extension-Daten laden
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {savedExtensionData 
-                            ? 'Klicken Sie auf "Daten laden", um die automatisch erkannten Links anzuzeigen'
-                            : 'Führen Sie die Chrome Extension auf der Website aus'}
+                          Klicken Sie auf "Daten laden", um automatisch erkannte Links anzuzeigen
                         </p>
                       </div>
                     </div>
                     <Button
                       onClick={handleLoadExtensionData}
-                      disabled={!savedExtensionData || showExtensionData}
+                      disabled={showExtensionData}
                       variant={showExtensionData ? "secondary" : "default"}
                     >
                       <RefreshCw className="h-4 w-4 mr-2" />
