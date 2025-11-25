@@ -199,9 +199,42 @@ export const loadSavedAnalysisData = (
   // Load cached analysis data (privacy, accessibility, security)
   if (savedAnalysis.manualData?.privacyData && setPrivacyData) {
     console.log('Loading privacy data');
-    // KRITISCH: Score muss neu berechnet werden mit Kappung
     const loadedPrivacyData = savedAnalysis.manualData.privacyData;
     const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
+    
+    // KRITISCH: Kappe auch den manuellen overallScore falls vorhanden
+    if (manualDataPrivacy?.overallScore !== undefined && loadedPrivacyData?.violations) {
+      const deselected = manualDataPrivacy?.deselectedViolations || [];
+      let criticalCount = 0;
+      
+      loadedPrivacyData.violations.forEach((v: any, i: number) => {
+        if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
+          criticalCount++;
+        }
+      });
+      
+      if (manualDataPrivacy.customViolations) {
+        manualDataPrivacy.customViolations.forEach((v: any) => {
+          if (v.severity === 'critical') criticalCount++;
+        });
+      }
+      
+      // Kappe manuellen Score
+      let maxScore = 100;
+      if (criticalCount >= 3) maxScore = 20;
+      else if (criticalCount === 2) maxScore = 35;
+      else if (criticalCount === 1) maxScore = 59;
+      
+      if (manualDataPrivacy.overallScore > maxScore) {
+        // Manuelle Daten mit gekapptem Score laden
+        if (updateManualDataPrivacyData) {
+          updateManualDataPrivacyData({
+            ...manualDataPrivacy,
+            overallScore: maxScore
+          });
+        }
+      }
+    }
     
     // Berechne Score mit Kappung
     const recalculatedScore = calculateDataPrivacyScore(
