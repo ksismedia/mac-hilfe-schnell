@@ -66,7 +66,8 @@ export const useExtensionData = () => {
     if (extData) {
       try {
         console.log('📦 Extension-Daten in URL gefunden');
-        const decodedData = JSON.parse(atob(extData));
+        // UNICODE-SICHERE DEKODIERUNG (für deutsche Umlaute)
+        const decodedData = JSON.parse(decodeURIComponent(escape(atob(extData))));
         console.log('✅ Daten dekodiert:', decodedData.url);
         
         setExtensionData(decodedData);
