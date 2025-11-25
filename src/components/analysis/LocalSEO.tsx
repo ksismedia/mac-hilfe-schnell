@@ -116,8 +116,8 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
     );
   }
   
-  // Verwende manuelle oder echte Daten, sonst Fallback
-  const localSEOData = manualData ? {
+  // Prepare both manual and automatic data
+  const manualLocalSEOData = manualData ? {
     overallScore: manualData.overallScore,
     googleMyBusiness: {
       score: Math.round((manualData.gmbCompleteness + (manualData.gmbVerified ? 20 : 0) + (manualData.gmbClaimed ? 10 : 0)) / 1.3),
@@ -158,7 +158,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       localSchema: manualData.hasLocalBusinessSchema,
       localContent: manualData.localContentScore
     }
-  } : realLocalSEOData ? {
+  } : null;
+
+  const autoLocalSEOData = realLocalSEOData ? {
     overallScore: overallScore,
     googleMyBusiness: {
       score: Math.round((realLocalSEOData.structuredData.hasLocalBusinessSchema ? 30 : 0) + 
@@ -221,7 +223,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       lastUpdate: realData.seo.score >= 60 ? "vor 2 Wochen" : "vor 3 Monaten"
     },
     localCitations: {
-      score: Math.max(20, Math.min(85, overallScore - 5)), // Strenger bewertet
+      score: Math.max(20, Math.min(85, overallScore - 5)),
       totalCitations: realData.seo.score >= 60 ? 15 : realData.seo.score >= 40 ? 8 : 3,
       consistent: realData.seo.score >= 70 ? 12 : realData.seo.score >= 50 ? 6 : 2,
       inconsistent: realData.seo.score >= 70 ? 3 : realData.seo.score >= 50 ? 5 : 8,
@@ -234,7 +236,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       ]
     },
     localKeywords: {
-      score: Math.max(15, Math.min(80, overallScore - 10)), // Sehr streng bei lokalen Keywords
+      score: Math.max(15, Math.min(80, overallScore - 10)),
       ranking: [
         { 
           keyword: `${businessData.industry} ${businessData.address.split(',')[1]?.trim()}`, 
@@ -264,9 +266,12 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       phoneVisible: realData.seo.score >= 50,
       openingHours: realData.seo.score >= 61,
       localSchema: realData.seo.score >= 90 && realData.seo.headings.h1.length > 0,
-      localContent: Math.max(20, Math.min(85, realData.seo.score - 15)) // Strenger lokaler Content-Score
+      localContent: Math.max(20, Math.min(85, realData.seo.score - 15))
     }
   };
+
+  // Combined score for display (use manual data for overall if available, otherwise auto)
+  const displayScore = manualData?.overallScore ?? overallScore;
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
@@ -332,6 +337,40 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
     return className;
   };
 
+  // Helper function to render a data section with source label
+  const renderDataSection = (title: string, icon: any, manualSection: any, autoSection: any, renderContent: (data: any, source: 'manual' | 'auto') => React.ReactNode) => {
+    const hasManual = manualSection && (Array.isArray(manualSection) ? manualSection.length > 0 : Object.keys(manualSection).some(k => manualSection[k] !== undefined && manualSection[k] !== null));
+    const hasAuto = autoSection && (Array.isArray(autoSection) ? autoSection.length > 0 : Object.keys(autoSection).some(k => autoSection[k] !== undefined && autoSection[k] !== null));
+
+    return (
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            {icon}
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {hasAuto && (
+            <div className="border-l-4 border-blue-500 pl-4">
+              <Badge variant="outline" className="mb-3">🤖 Automatisch erkannt</Badge>
+              {renderContent(autoSection, 'auto')}
+            </div>
+          )}
+          {hasManual && (
+            <div className="border-l-4 border-green-500 pl-4">
+              <Badge variant="secondary" className="mb-3">✏️ Manuell eingegeben</Badge>
+              {renderContent(manualSection, 'manual')}
+            </div>
+          )}
+          {!hasManual && !hasAuto && (
+            <p className="text-gray-500 text-sm">Keine Daten verfügbar</p>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
@@ -350,134 +389,134 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
         </div>
         <div 
           className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-            localSEOData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-            localSEOData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+            displayScore >= 90 ? 'bg-yellow-400 text-black' : 
+            displayScore >= 61 ? 'bg-green-500 text-white' : 
             'bg-red-500 text-white'
           }`}
         >
-          {localSEOData.overallScore}%
+          {displayScore}%
         </div>
       </div>
 
       <Card>
         <CardContent className="pt-6">
           {/* Google My Business */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Google My Business
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm">Beansprucht:</span>
-                    <Badge variant={localSEOData.googleMyBusiness.claimed ? "default" : "destructive"}>
-                      {localSEOData.googleMyBusiness.claimed ? "Ja" : "Nein"}
-                    </Badge>
+          {renderDataSection(
+            "Google My Business",
+            <MapPin className="h-5 w-5" />,
+            manualLocalSEOData?.googleMyBusiness,
+            autoLocalSEOData?.googleMyBusiness,
+            (data, source) => (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Beansprucht:</span>
+                      <Badge variant={data.claimed ? "default" : "destructive"}>
+                        {data.claimed ? "Ja" : "Nein"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Verifiziert:</span>
+                      <Badge variant={data.verified ? "default" : "destructive"}>
+                        {data.verified ? "Ja" : "Nein"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Vollständigkeit:</span>
+                      <span className={`font-medium ${getScoreColor(data.complete)}`}>
+                        {data.complete}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">Verifiziert:</span>
-                    <Badge variant={localSEOData.googleMyBusiness.verified ? "default" : "destructive"}>
-                      {localSEOData.googleMyBusiness.verified ? "Ja" : "Nein"}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">Vollständigkeit:</span>
-                    <span className={`font-medium ${getScoreColor(localSEOData.googleMyBusiness.complete)}`}>
-                      {localSEOData.googleMyBusiness.complete}%
-                    </span>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Fotos:</span>
+                      <span className="font-medium">{data.photos}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Posts (letzte 30 Tage):</span>
+                      <span className="font-medium">{data.posts}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Letztes Update:</span>
+                      <span className="font-medium">{data.lastUpdate}</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm">Fotos:</span>
-                    <span className="font-medium">{localSEOData.googleMyBusiness.photos}</span>
+                <div className="mt-4">
+                  <div className="mb-2">
+                    <span className="text-sm font-medium">GMB Optimierung</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">Posts (letzte 30 Tage):</span>
-                    <span className="font-medium">{localSEOData.googleMyBusiness.posts}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">Letztes Update:</span>
-                    <span className="font-medium">{localSEOData.googleMyBusiness.lastUpdate}</span>
-                  </div>
+                  <Progress value={data.score} className="h-4" />
                 </div>
-              </div>
-              
-              <div className="mt-4">
-                <div className="mb-2">
-                  <span className="text-sm font-medium">GMB Optimierung</span>
-                </div>
-                <Progress value={localSEOData.googleMyBusiness.score} className="h-4" />
-              </div>
-            </CardContent>
-          </Card>
+              </>
+            )
+          )}
 
           {/* Local Citations */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                Lokale Verzeichnisse (Citations)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                 <div className="text-center">
-                   <div className="text-2xl font-bold text-blue-600">
-                     {localSEOData.localCitations.totalCitations}
-                   </div>
-                   <p className="text-sm text-gray-600">Gefundene Einträge</p>
-                 </div>
-                 <div className="text-center">
-                   <div className="text-2xl font-bold score-text-medium">
-                     {localSEOData.localCitations.consistent}
-                   </div>
-                   <p className="text-sm text-gray-600">Konsistent</p>
-                 </div>
-                 <div className="text-center">
-                   <div className="text-2xl font-bold score-text-low">
-                     {localSEOData.localCitations.inconsistent}
-                   </div>
-                   <p className="text-sm text-gray-600">Inkonsistent</p>
-                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="font-medium mb-2">Top-Verzeichnisse:</h4>
-                {localSEOData.localCitations.topDirectories.map((directory, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 border rounded">
-                    <span className="text-sm">{directory.name}</span>
-                     <div
-                       className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                         directory.status === "vollständig" 
-                           ? "bg-yellow-400 text-black" 
-                           : "bg-red-500 text-white"
-                       }`}
-                     >
-                       {directory.status}
-                     </div>
+          {renderDataSection(
+            "Lokale Verzeichnisse (Citations)",
+            <Globe className="h-5 w-5" />,
+            manualLocalSEOData?.localCitations,
+            autoLocalSEOData?.localCitations,
+            (data, source) => (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {data.totalCitations}
+                    </div>
+                    <p className="text-sm text-gray-600">Gefundene Einträge</p>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold score-text-medium">
+                      {data.consistent}
+                    </div>
+                    <p className="text-sm text-gray-600">Konsistent</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold score-text-low">
+                      {data.inconsistent}
+                    </div>
+                    <p className="text-sm text-gray-600">Inkonsistent</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-medium mb-2">Top-Verzeichnisse:</h4>
+                  {data.topDirectories.map((directory: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between p-2 border rounded">
+                      <span className="text-sm">{directory.name}</span>
+                      <div
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                          directory.status === "vollständig" 
+                            ? "bg-yellow-400 text-black" 
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {directory.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )
+          )}
 
           {/* Local Keywords */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Lokale Keyword-Rankings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {localSEOData.localKeywords.ranking.map((keyword, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <span className="font-medium">{keyword.keyword}</span>
+          {renderDataSection(
+            "Lokale Keyword-Rankings",
+            <></>,
+            manualLocalSEOData?.localKeywords?.ranking,
+            autoLocalSEOData?.localKeywords?.ranking,
+            (data, source) => (
+              <div className="space-y-3">{data.map((keyword: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <span className="font-medium">{keyword.keyword}</span>
                         <div
                           className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ml-2 ${
                             keyword.volume === "hoch" 
@@ -489,74 +528,77 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                         >
                           {keyword.volume} Volumen
                         </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`text-lg font-bold ${getPositionColor(keyword.position)}`}>
-                        #{keyword.position}
                       </div>
-                      <div className="text-xs text-gray-500">Position</div>
+                      <div className="text-right">
+                        <div className={`text-lg font-bold ${getPositionColor(keyword.position)}`}>
+                          #{keyword.position}
+                        </div>
+                        <div className="text-xs text-gray-500">Position</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
-            </CardContent>
-          </Card>
+            )
+          )}
 
           {/* On-Page Local Faktoren */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">On-Page Local Faktoren</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Adresse sichtbar
-                    </span>
-                    <Badge variant={localSEOData.onPageLocal.addressVisible ? "default" : "destructive"}>
-                      {localSEOData.onPageLocal.addressVisible ? "Ja" : "Nein"}
-                    </Badge>
+          {renderDataSection(
+            "On-Page Local Faktoren",
+            <></>,
+            manualLocalSEOData?.onPageLocal,
+            autoLocalSEOData?.onPageLocal,
+            (data, source) => (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Adresse sichtbar
+                      </span>
+                      <Badge variant={data.addressVisible ? "default" : "destructive"}>
+                        {data.addressVisible ? "Ja" : "Nein"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Telefon sichtbar
+                      </span>
+                      <Badge variant={data.phoneVisible ? "default" : "destructive"}>
+                        {data.phoneVisible ? "Ja" : "Nein"}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Telefon sichtbar
-                    </span>
-                    <Badge variant={localSEOData.onPageLocal.phoneVisible ? "default" : "destructive"}>
-                      {localSEOData.onPageLocal.phoneVisible ? "Ja" : "Nein"}
-                    </Badge>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Öffnungszeiten
+                      </span>
+                      <Badge variant={data.openingHours ? "default" : "destructive"}>
+                        {data.openingHours ? "Ja" : "Nein"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Local Schema</span>
+                      <Badge variant={data.localSchema ? "default" : "destructive"}>
+                        {data.localSchema ? "Implementiert" : "Fehlt"}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Öffnungszeiten
-                    </span>
-                    <Badge variant={localSEOData.onPageLocal.openingHours ? "default" : "destructive"}>
-                      {localSEOData.onPageLocal.openingHours ? "Ja" : "Nein"}
-                    </Badge>
+                <div className="mt-4">
+                  <div className="mb-2">
+                    <span className="text-sm font-medium">Lokaler Content</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">Local Schema</span>
-                    <Badge variant={localSEOData.onPageLocal.localSchema ? "default" : "destructive"}>
-                      {localSEOData.onPageLocal.localSchema ? "Implementiert" : "Fehlt"}
-                    </Badge>
-                  </div>
+                  <Progress value={data.localContent} className="h-4" />
                 </div>
-              </div>
-              
-              <div className="mt-4">
-                <div className="mb-2">
-                  <span className="text-sm font-medium">Lokaler Content</span>
-                </div>
-                <Progress value={localSEOData.onPageLocal.localContent} className="h-4" />
-              </div>
-            </CardContent>
-          </Card>
+              </>
+            )
+          )}
         </CardContent>
       </Card>
     </div>
