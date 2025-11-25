@@ -23,6 +23,17 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   // Use live extension data or fallback to saved extension data
   const activeExtensionData = extensionData || savedExtensionData;
   
+  // Debug: Log when extension data changes
+  React.useEffect(() => {
+    console.log('📝 ContentAnalysis - Extension data status:');
+    console.log('  - Live extension data:', !!extensionData);
+    console.log('  - Saved extension data:', !!savedExtensionData);
+    console.log('  - Active extension data:', !!activeExtensionData);
+    if (activeExtensionData) {
+      console.log('  - Word count:', activeExtensionData.content?.wordCount);
+    }
+  }, [extensionData, savedExtensionData, activeExtensionData]);
+  
   // Get automatic content data from extension
   const hasExtensionData = activeExtensionData !== null;
   const contentText = activeExtensionData?.content?.fullText || '';

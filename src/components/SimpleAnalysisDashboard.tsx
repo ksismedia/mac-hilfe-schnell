@@ -169,7 +169,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const { extensionData } = useExtensionData();
 
   // Analysis Context for saved extension data
-  const { setSavedExtensionData } = useAnalysisContext();
+  const { setSavedExtensionData, savedExtensionData } = useAnalysisContext();
+  
+  // Use active extension data (live or saved)
+  const activeExtensionData = extensionData || savedExtensionData;
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
@@ -180,6 +183,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           console.log('Analysis data:', analysisData);
           
           setIsLoadingFromStorage(true);
+          
+          // Clear previous saved extension data first
+          setSavedExtensionData(null);
           
           // Validate realData before setting
           if (!analysisData.realData) {
@@ -269,6 +275,18 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
+          console.log('🔍 Checking for saved extension data in analysis');
+          console.log('Has extensionData in manualData:', !!analysisData.manualData?.extensionData);
+          
+          // Load extension data into context AFTER all other data is loaded
+          if (analysisData.manualData?.extensionData) {
+            console.log('✅ Setting saved extension data to context');
+            console.log('Extension data content:', analysisData.manualData.extensionData);
+            setSavedExtensionData(analysisData.manualData.extensionData);
+          } else {
+            console.log('⚠️ No extension data found in saved analysis');
+            setSavedExtensionData(null);
+          }
           
           // Automatisch Google Safe Browsing Prüfung starten, wenn keine Daten vorhanden
           if (!analysisData.manualData?.securityData) {
@@ -359,7 +377,13 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [analysisData]); // Depend on analysisData instead of loadedAnalysisId
+    
+    // Cleanup: Reset saved extension data when analysis changes
+    return () => {
+      console.log('🧹 Cleaning up - resetting saved extension data');
+      setSavedExtensionData(null);
+    };
+  }, [analysisData, setSavedExtensionData]); // Depend on analysisData and setter
 
   if (isLoading || isLoadingFromStorage) {
     return (
@@ -767,7 +791,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
               securityData={securityData}
-              extensionData={extensionData}
+              extensionData={activeExtensionData}
             />
             <CustomerHTMLExport
               businessData={businessData}

@@ -59,8 +59,13 @@ export const loadSavedAnalysisData = (
 
   // Restore extension data if available
   if (savedAnalysis.manualData.extensionData && setSavedExtensionData) {
-    console.log('Restoring extension data from saved analysis');
+    console.log('🔄 Restoring extension data from saved analysis');
+    console.log('Extension data:', savedAnalysis.manualData.extensionData);
     setSavedExtensionData(savedAnalysis.manualData.extensionData);
+  } else {
+    console.log('⚠️ No extension data found in saved analysis or no setter provided');
+    console.log('Has extensionData:', !!savedAnalysis.manualData.extensionData);
+    console.log('Has setter:', !!setSavedExtensionData);
   }
   
   // Load manual data

@@ -148,6 +148,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
       console.log('Manual Data:', manualData);
       console.log('📍 Local SEO Data being saved:', manualLocalSEOData);
       console.log('📍 Directories being saved:', manualLocalSEOData?.directories);
+      console.log('🔍 Extension Data being saved:', extensionData);
+      console.log('🔍 Has extension data:', !!extensionData);
 
       let analysisId = currentAnalysisId;
       
