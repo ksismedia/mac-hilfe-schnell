@@ -176,24 +176,34 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   
   // Automatically save new extension data to context when received
   useEffect(() => {
+    console.log('🔍 SimpleAnalysisDashboard Extension Data Check:');
+    console.log('  - extensionData:', extensionData ? `${extensionData.url} (${extensionData.content?.wordCount} words)` : 'NULL');
+    console.log('  - savedExtensionData:', savedExtensionData ? `${savedExtensionData.url} (${savedExtensionData.content?.wordCount} words)` : 'NULL');
+    console.log('  - activeExtensionData:', activeExtensionData ? `${activeExtensionData.url}` : 'NULL');
+    
     if (extensionData) {
       const currentUrl = extensionData.url;
       const savedUrl = savedExtensionData?.url;
       
       // Only update if URL is different or no saved data exists
       if (currentUrl !== savedUrl) {
-        console.log('🔄 New extension data received, saving to context:', currentUrl);
-        console.log('  Previous URL:', savedUrl);
-        console.log('  Extension data:', extensionData);
+        console.log('✅ Saving extension data to context:', currentUrl);
+        console.log('   Content word count:', extensionData.content?.wordCount);
+        console.log('   Internal links:', extensionData.content?.links?.internal?.length);
+        console.log('   External links:', extensionData.content?.links?.external?.length);
         setSavedExtensionData(extensionData);
         
         toast({
           title: "Extension-Daten empfangen",
           description: `Website-Daten von ${extensionData.url} wurden automatisch geladen.`,
         });
+      } else {
+        console.log('⏭️ Extension data already saved, skipping');
       }
+    } else {
+      console.log('❌ No extension data available');
     }
-  }, [extensionData, savedExtensionData, setSavedExtensionData]);
+  }, [extensionData, savedExtensionData, setSavedExtensionData, activeExtensionData]);
   
   // Debug: Log extension data status on every render
   console.log('🔍 Extension Data Status in SimpleAnalysisDashboard:');
