@@ -28,7 +28,9 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
   const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||
                                realData?.seo.metaDescription === 'Website-Inhalte konnten nicht abgerufen werden';
 
-  // Verwende echte Daten wenn verfügbar, sonst Fallback
+  // Priorisiere Extension-Daten wenn verfügbar, sonst verwende realData, sonst Fallback
+  const useExtensionAltTags = hasExtensionData && extensionSEO?.altTags;
+  
   const seoData = realData ? {
     titleTag: {
       present: realData.seo.titleTag !== 'Kein Title-Tag gefunden',
@@ -56,14 +58,25 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
         realData.seo.headings.h1.length > 1 ? 60 : 30,
       isRealData: !isUsingFallbackData
     },
-    altTags: {
+    // PRIORISIERE Extension-Daten für Alt-Tags wenn verfügbar
+    altTags: useExtensionAltTags ? {
+      imagesTotal: extensionSEO.altTags.total,
+      imagesWithAlt: extensionSEO.altTags.withAlt,
+      coverage: extensionSEO.altTags.total > 0 ? 
+        Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100) : 100,
+      score: extensionSEO.altTags.total > 0 ? 
+        Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100) : 100,
+      isRealData: true,
+      source: 'extension'
+    } : {
       imagesTotal: realData.seo.altTags.total,
       imagesWithAlt: realData.seo.altTags.withAlt,
       coverage: realData.seo.altTags.total > 0 ? 
         Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
       score: realData.seo.altTags.total > 0 ? 
         Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
-      isRealData: !isUsingFallbackData
+      isRealData: !isUsingFallbackData,
+      source: 'pagespeed'
     },
     overallScore: realData.seo.score
   } : {
@@ -346,7 +359,14 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                     {getStatusIcon(seoData.altTags.score)}
                     Alt-Tags für Bilder
                   </h3>
-                  {getDataSourceBadge(seoData.altTags.isRealData)}
+                  {seoData.altTags.source === 'extension' ? (
+                    <Badge variant="default" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                      <Database className="h-3 w-3 mr-1" />
+                      Chrome Extension
+                    </Badge>
+                  ) : (
+                    getDataSourceBadge(seoData.altTags.isRealData)
+                  )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.altTags.score)}`}>
                   {seoData.altTags.score}/100
