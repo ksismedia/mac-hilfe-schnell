@@ -85,6 +85,15 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   reviewStatus,
   extensionData
 }) => {
+  console.log('🔍 SaveAnalysisDialog Props:');
+  console.log('  - extensionData prop:', extensionData ? 'RECEIVED' : 'NULL/UNDEFINED');
+  if (extensionData) {
+    console.log('  - Extension data content:', {
+      url: extensionData.url,
+      wordCount: extensionData.content?.wordCount,
+      hasLinks: !!extensionData.content?.links
+    });
+  }
   const [isOpen, setIsOpen] = useState(false);
   const [analysisName, setAnalysisName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
