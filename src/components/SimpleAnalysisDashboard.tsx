@@ -173,6 +173,28 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   
   // Use active extension data (live or saved)
   const activeExtensionData = extensionData || savedExtensionData;
+  
+  // Debug: Log extension data status on every render
+  console.log('🔍 Extension Data Status in SimpleAnalysisDashboard:');
+  console.log('  - extensionData (live):', extensionData ? 'AVAILABLE' : 'null');
+  console.log('  - savedExtensionData:', savedExtensionData ? 'AVAILABLE' : 'null');
+  console.log('  - activeExtensionData:', activeExtensionData ? 'AVAILABLE' : 'null');
+  if (extensionData) {
+    console.log('  - Live Extension Data Details:', {
+      url: extensionData.url,
+      wordCount: extensionData.content?.wordCount,
+      internalLinks: extensionData.content?.links?.internal?.length,
+      externalLinks: extensionData.content?.links?.external?.length
+    });
+  }
+  if (savedExtensionData) {
+    console.log('  - Saved Extension Data Details:', {
+      url: savedExtensionData.url,
+      wordCount: savedExtensionData.content?.wordCount,
+      internalLinks: savedExtensionData.content?.links?.internal?.length,
+      externalLinks: savedExtensionData.content?.links?.external?.length
+    });
+  }
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
