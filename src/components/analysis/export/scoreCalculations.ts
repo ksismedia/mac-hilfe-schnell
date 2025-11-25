@@ -1099,7 +1099,8 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   const finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // NEUE CAPS: Zähle nur kritische Violations (nicht high)
+  // KRITISCH: Zähle kritische Violations IMMER - auch bei manueller Bewertung!
+  // Dies stellt sicher, dass kritische Fehler IMMER die Score-Kappung erzwingen
   const criticalCount = (() => {
     const activeCriticalAuto = totalViolations.filter((violation: any, index: number) => 
       violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
@@ -1112,7 +1113,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     return activeCriticalAuto + criticalCustom;
   })();
   
-  // DSGVO-Score-Caps wie in DataPrivacyService
+  // DSGVO-Score-Caps - IMMER anwenden, auch bei manueller Bewertung
   if (criticalCount >= 3) {
     return Math.min(20, finalScore);  // 3+ kritische = max 20%
   } else if (criticalCount === 2) {
