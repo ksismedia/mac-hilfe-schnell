@@ -5,7 +5,7 @@ const analyzeBtn = document.getElementById('analyzeBtn');
 const statusDiv = document.getElementById('status');
 const currentUrlDiv = document.getElementById('currentUrl');
 
-const LOVABLE_APP_URL = 'https://25bfc271-cf93-4b75-85b5-47a649c1832b.lovable.app';
+const LOVABLE_APP_URL = 'https://id-preview--25bfc271-cf93-4b75-85b5-47a649c1832b.lovable.app';
 
 function showStatus(message, type = 'loading') {
   statusDiv.textContent = message;
