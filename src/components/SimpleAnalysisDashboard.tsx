@@ -171,20 +171,33 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Analysis Context for saved extension data
   const { setSavedExtensionData, savedExtensionData } = useAnalysisContext();
   
+  console.log('🔍 SimpleAnalysisDashboard - Extension Data Status:', {
+    hasExtensionData: !!extensionData,
+    hasSavedExtensionData: !!savedExtensionData,
+    extensionDataUrl: extensionData?.url,
+    savedExtensionDataUrl: savedExtensionData?.url
+  });
+  
   // Use active extension data (live or saved)
   const activeExtensionData = extensionData || savedExtensionData;
   
   // Sync extension data from hook to context
   useEffect(() => {
+    console.log('📥 Extension data changed:', {
+      hasData: !!extensionData,
+      url: extensionData?.url,
+      wordCount: extensionData?.content?.wordCount
+    });
+    
     if (extensionData) {
-      console.log('🔄 Syncing extension data to context:', extensionData.url);
+      console.log('✅ Saving extension data to context');
       setSavedExtensionData(extensionData);
       toast({
         title: "Extension-Daten empfangen",
         description: `${extensionData.url.split('/')[2]} Daten geladen`,
       });
     }
-  }, [extensionData]);
+  }, [extensionData, setSavedExtensionData]);
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
