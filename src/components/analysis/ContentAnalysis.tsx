@@ -27,14 +27,20 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   // Load extension data manually
   const handleLoadExtensionData = () => {
     try {
+      console.log('🔍 Button clicked - checking for extension data...');
+      console.log('localStorage keys:', Object.keys(localStorage));
+      
       // Read directly from localStorage
       const storedData = localStorage.getItem('seo_extension_data');
+      console.log('Raw localStorage data:', storedData);
       
       if (storedData) {
         const parsed = JSON.parse(storedData);
+        console.log('Parsed data:', parsed);
         const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
         
         if (parsed.timestamp > fiveMinutesAgo && parsed.data) {
+          console.log('✅ Valid extension data found');
           setShowExtensionData(true);
           // Also save to context for persistence
           if (setSavedExtensionData) {
@@ -44,18 +50,27 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
             title: "Extension-Daten geladen",
             description: `${parsed.data.content?.wordCount || 0} Wörter gefunden`,
           });
+          // Remove after successful load
+          localStorage.removeItem('seo_extension_data');
           return;
+        } else {
+          console.log('⏰ Data too old or invalid');
         }
+      } else {
+        console.log('❌ No data in localStorage');
       }
       
       // Check if already in context
+      console.log('Checking savedExtensionData in context:', !!savedExtensionData);
       if (savedExtensionData) {
+        console.log('✅ Found data in context');
         setShowExtensionData(true);
         toast({
           title: "Extension-Daten geladen",
           description: `${savedExtensionData.content?.wordCount || 0} Wörter gefunden`,
         });
       } else {
+        console.log('❌ No data in context either');
         toast({
           title: "Keine Daten verfügbar",
           description: "Führen Sie zuerst die Chrome Extension aus",
@@ -63,7 +78,7 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
         });
       }
     } catch (error) {
-      console.error('Error loading extension data:', error);
+      console.error('❌ Error loading extension data:', error);
       toast({
         title: "Fehler",
         description: "Daten konnten nicht geladen werden",
