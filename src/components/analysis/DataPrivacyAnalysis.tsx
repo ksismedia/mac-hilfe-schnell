@@ -1048,6 +1048,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <ManualDataPrivacyInput
                     data={manualDataPrivacyData}
                     onDataChange={onManualDataChange}
+                    privacyData={privacyData}
                   />
                 )}
               </TabsContent>

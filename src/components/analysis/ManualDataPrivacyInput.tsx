@@ -16,10 +16,38 @@ import { ManualDataPrivacyData } from '@/hooks/useManualData';
 interface ManualDataPrivacyInputProps {
   data: ManualDataPrivacyData | null;
   onDataChange: (data: ManualDataPrivacyData) => void;
+  privacyData?: any; // Benötigt für Violations-Check
 }
 
-const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange }) => {
+const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange, privacyData }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  
+  // Berechne maximalen erlaubten Score basierend auf kritischen Violations
+  const getMaxAllowedScore = () => {
+    if (!privacyData?.violations) return 100;
+    
+    const deselected = data?.deselectedViolations || [];
+    let criticalCount = 0;
+    
+    privacyData.violations.forEach((v: any, i: number) => {
+      if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
+        criticalCount++;
+      }
+    });
+    
+    if (data?.customViolations) {
+      data.customViolations.forEach((v: any) => {
+        if (v.severity === 'critical') criticalCount++;
+      });
+    }
+    
+    if (criticalCount >= 3) return 20;
+    if (criticalCount === 2) return 35;
+    if (criticalCount === 1) return 59;
+    return 100;
+  };
+  
+  const maxScore = getMaxAllowedScore();
   const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(data || {
     hasSSL: true,
     cookiePolicy: false,
@@ -220,20 +248,30 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
 
         {/* Overall Score Slider */}
         <div className="space-y-2">
-          <Label htmlFor="overall-score">Gesamt-Score überschreiben (0-100)</Label>
+          <Label htmlFor="overall-score">Gesamt-Score überschreiben (0-{maxScore})</Label>
+          {maxScore < 100 && (
+            <div className="bg-amber-50 border border-amber-200 rounded p-2 mb-2">
+              <p className="text-xs text-amber-800">
+                ⚠️ Score ist auf max. {maxScore}% begrenzt durch {privacyData?.violations?.filter((v: any, i: number) => v.severity === 'critical' && !(data?.deselectedViolations || []).includes(`auto-${i}`)).length || 0} kritische Fehler
+              </p>
+            </div>
+          )}
           <div className="px-2">
             <Slider
               id="overall-score"
-              value={[currentData.overallScore ?? 50]}
-              onValueChange={(value) => updateData({ overallScore: value[0] })}
-              max={100}
+              value={[Math.min(currentData.overallScore ?? 50, maxScore)]}
+              onValueChange={(value) => {
+                const cappedValue = Math.min(value[0], maxScore);
+                updateData({ overallScore: cappedValue });
+              }}
+              max={maxScore}
               min={0}
               step={1}
               className="w-full"
             />
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            Aktueller Score: {currentData.overallScore ?? 'Automatisch berechnet'}/100
+            Aktueller Score: {currentData.overallScore ?? 'Automatisch berechnet'}/{maxScore}
           </div>
         </div>
 
