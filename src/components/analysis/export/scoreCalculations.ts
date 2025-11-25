@@ -1106,11 +1106,11 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     }
   });
   
-  // SCHRITT 2: Berechne Basis-Score
+  // SCHRITT 2: Berechne Basis-Score - KEINE ABZÜGE für neutralisierte Violations
   let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
   
   if (!hasManualOverride) {
-    // Subtract points for violations (not deselected and not neutralized)
+    // Subtract points ONLY for violations that are NOT deselected AND NOT neutralized
     totalViolations.forEach((violation: any, index: number) => {
       if (!deselectedViolations.includes(`auto-${index}`)) {
         const isSSLViolation = violation.description?.includes('SSL') || 
@@ -1123,6 +1123,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
         const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
         const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
         
+        // NUR Abzug wenn NICHT neutralisiert
         if (!neutralizedBySSL && !neutralizedByCookie) {
           switch (violation.severity) {
             case 'critical': score -= 30; break;
@@ -1134,6 +1135,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       }
     });
     
+    // Custom violations ziehen immer Punkte ab (können nicht neutralisiert werden)
     customViolations.forEach((violation: any) => {
       switch (violation.severity) {
         case 'critical': score -= 30; break;
