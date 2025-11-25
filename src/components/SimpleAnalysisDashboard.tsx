@@ -29,7 +29,7 @@ import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
-import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
+import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore, calculateDataPrivacyScore } from './analysis/export/scoreCalculations';
 
 interface BusinessData {
   address: string;
@@ -246,7 +246,22 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             setKeywordsScore(analysisData.manualData.keywordScore);
           }
           if (analysisData.manualData?.privacyData) {
-            setPrivacyData(analysisData.manualData.privacyData);
+            // KRITISCH: Score muss neu berechnet werden mit Kappung
+            const loadedPrivacyData = analysisData.manualData.privacyData;
+            const manualDataPrivacy = analysisData.manualData?.manualDataPrivacyData;
+            
+            // Berechne Score mit Kappung
+            const recalculatedScore = calculateDataPrivacyScore(
+              analysisData.realData, 
+              loadedPrivacyData, 
+              manualDataPrivacy
+            );
+            
+            // Setze korrigierten Score
+            setPrivacyData({
+              ...loadedPrivacyData,
+              score: recalculatedScore
+            });
           }
           if (analysisData.manualData?.accessibilityData) {
             setAccessibilityData(analysisData.manualData.accessibilityData);
