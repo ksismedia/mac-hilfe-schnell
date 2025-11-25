@@ -1097,15 +1097,12 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     });
   }
   
-  // KRITISCH: Zähle kritische Violations ZUERST - NUR explizites Deselektieren neutralisiert sie
-  // Manuelle Checkboxen beeinflussen die Score-Berechnung, aber nicht die Kappung
+  // KRITISCH: Zähle kritische Violations - NUR explizites Deselektieren neutralisiert sie
   const criticalCount = (() => {
-    // Alle nicht-deselektierten kritischen Auto-Violations zählen
     const activeCriticalAuto = totalViolations.filter((violation: any, index: number) => 
       violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
     ).length;
     
-    // Custom kritische Violations zählen immer
     const criticalCustom = customViolations.filter((violation: any) => 
       violation.severity === 'critical'
     ).length;
@@ -1116,35 +1113,15 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // Score berechnen und dabei auf 100 begrenzen
   let finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // DEBUG: Log critical count
-  console.log('🔴 DSGVO Critical Count:', {
-    criticalCount,
-    totalViolations: totalViolations.length,
-    allViolations: totalViolations.map((v: any, i: number) => ({
-      index: i,
-      severity: v.severity,
-      description: v.description?.substring(0, 50),
-      deselected: deselectedViolations.includes(`auto-${i}`)
-    })),
-    hasManualOverride,
-    manualScore: manualDataPrivacyData?.overallScore,
-    scoreBeforeCap: finalScore
-  });
-  
   // DSGVO-Score-Caps - IMMER anwenden, AUCH bei manueller Bewertung
+  // Diese Kappung ist NICHT verhandelbar und wird IMMER durchgesetzt
   if (criticalCount >= 3) {
-    finalScore = Math.min(20, finalScore);  // 3+ kritische = max 20%
+    finalScore = Math.min(20, finalScore);
   } else if (criticalCount === 2) {
-    finalScore = Math.min(35, finalScore);  // 2 kritische = max 35%
+    finalScore = Math.min(35, finalScore);
   } else if (criticalCount === 1) {
-    finalScore = Math.min(59, finalScore);  // 1 kritischer = max 59%
+    finalScore = Math.min(59, finalScore);
   }
-  
-  console.log('🔴 DSGVO Final Score:', {
-    criticalCount,
-    scoreAfterCap: finalScore,
-    wasCapped: criticalCount > 0 && finalScore !== Math.round(Math.max(0, Math.min(100, score)))
-  });
   
   return finalScore;
 };

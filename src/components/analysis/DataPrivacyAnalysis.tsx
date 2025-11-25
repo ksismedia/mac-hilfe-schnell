@@ -121,9 +121,28 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   }, [businessData.url]);
 
 
-  // Calculate DSGVO score using centralized function
+  // Calculate DSGVO score using centralized function with CAP enforcement
   const getDSGVOScore = () => {
-    return calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
+    let score = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
+    
+    // DOPPELTE ABSICHERUNG: Kappung auch hier enforc wenn kritische Violations existieren
+    if (privacyData?.violations) {
+      const deselected = manualDataPrivacyData?.deselectedViolations || [];
+      const criticalCount = privacyData.violations.filter((v: any, i: number) => 
+        v.severity === 'critical' && !deselected.includes(`auto-${i}`)
+      ).length + (manualDataPrivacyData?.customViolations?.filter((v: any) => v.severity === 'critical').length || 0);
+      
+      // Erzwinge Kappung als Fallback
+      if (criticalCount >= 3) {
+        score = Math.min(20, score);
+      } else if (criticalCount === 2) {
+        score = Math.min(35, score);
+      } else if (criticalCount === 1) {
+        score = Math.min(59, score);
+      }
+    }
+    
+    return score;
   };
 
   // Calculate Technical Security score
