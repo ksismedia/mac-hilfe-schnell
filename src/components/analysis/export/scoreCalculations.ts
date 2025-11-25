@@ -777,23 +777,27 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
     const webMentionsCount = manualReputationData?.webMentionsCount || 0;
     const webMentionsBonus = Math.min(10, webMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
     
+    // Both automatic and manual scores available
     if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
       const combined = Math.round(autoScore * 0.6 + manualScore * 0.4 + webMentionsBonus);
-      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+      return Math.max(0, Math.min(100, combined));
     }
     
+    // Only manual score available
     if (manualScore !== undefined && !isNaN(manualScore)) {
       return Math.max(0, Math.min(100, Math.round(manualScore + webMentionsBonus)));
     }
     
+    // Only automatic score available
     if (!isNaN(autoScore) && autoScore > 0) {
       return Math.max(0, Math.min(100, autoScore + webMentionsBonus));
     }
     
-    return 75;
+    // No data available - return 0 instead of arbitrary 75
+    return 0;
   } catch (error) {
     console.error('🔗 calculateBacklinksScore error:', error);
-    return 75;
+    return 0;
   }
 };
 
