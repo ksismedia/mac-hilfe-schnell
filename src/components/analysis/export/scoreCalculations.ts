@@ -1112,7 +1112,25 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       violation.severity === 'critical'
     ).length;
     
-    return activeCriticalAuto + criticalCustom;
+    const total = activeCriticalAuto + criticalCustom;
+    
+    // DEBUG: Log critical count
+    console.log('🔴 DSGVO Critical Count:', {
+      activeCriticalAuto,
+      criticalCustom,
+      total,
+      allViolations: totalViolations.map((v: any, i: number) => ({
+        index: i,
+        severity: v.severity,
+        description: v.description,
+        deselected: deselectedViolations.includes(`auto-${i}`)
+      })),
+      hasManualOverride: hasManualOverride,
+      manualScore: manualDataPrivacyData?.overallScore,
+      calculatedScore: finalScore
+    });
+    
+    return total;
   })();
   
   // DSGVO-Score-Caps - IMMER anwenden, auch bei manueller Bewertung
