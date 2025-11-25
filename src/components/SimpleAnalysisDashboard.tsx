@@ -176,7 +176,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   
   // Automatically save new extension data to context when received
   useEffect(() => {
-    if (extensionData && extensionData !== savedExtensionData) {
+    if (extensionData && !savedExtensionData) {
       console.log('🔄 New extension data received, saving to context:', extensionData.url);
       setSavedExtensionData(extensionData);
       
