@@ -28,6 +28,14 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   // Local state to control when to display extension data
   const [showExtensionData, setShowExtensionData] = useState(false);
   
+  // Automatically show extension data if available from saved analysis
+  React.useEffect(() => {
+    if (savedExtensionData && !showExtensionData) {
+      console.log('🔄 Auto-enabling extension data display from saved analysis');
+      setShowExtensionData(true);
+    }
+  }, [savedExtensionData, showExtensionData]);
+  
   // Load extension data from Supabase
   const handleLoadExtensionData = async () => {
     const data = await loadLatestExtensionData();
@@ -39,6 +47,14 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
       }
     }
   };
+  
+  // Automatically show extension data if available from saved analysis
+  React.useEffect(() => {
+    if (savedExtensionData && !showExtensionData) {
+      console.log('🔄 Auto-enabling extension data display from saved analysis');
+      setShowExtensionData(true);
+    }
+  }, [savedExtensionData, showExtensionData]);
   
   // Save extension data to current analysis
   const handleSaveExtensionData = async () => {
@@ -368,6 +384,44 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                         <p className="text-sm text-blue-700">{manualContentData!.notes}</p>
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+              ) : hasExtensionData ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Content-Analyse (Extension-Daten)
+                    </CardTitle>
+                    <CardDescription>
+                      Automatisch erkannte Content-Daten sind verfügbar
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-blue-50 rounded-lg">
+                          <div className="text-lg font-semibold text-blue-900">Wortanzahl</div>
+                          <div className="text-3xl font-bold text-blue-600">{wordCount}</div>
+                          <div className="text-sm text-blue-700 mt-1">
+                            {wordCount > 500 ? '✓ Gute Content-Länge' : '⚠ Content könnte ausführlicher sein'}
+                          </div>
+                        </div>
+                        <div className="p-4 bg-purple-50 rounded-lg">
+                          <div className="text-lg font-semibold text-purple-900">Lesezeit</div>
+                          <div className="text-3xl font-bold text-purple-600">~{Math.round(wordCount / 200)} Min.</div>
+                          <div className="text-sm text-purple-700 mt-1">Durchschnittliche Lesedauer</div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                        <p className="text-sm text-green-800">
+                          <strong>💡 Hinweis:</strong> Diese Daten wurden automatisch von der Chrome Extension erkannt. 
+                          Für eine detaillierte qualitative Bewertung nutzen Sie bitte den Tab "Manuelle Bewertung", 
+                          um die Content-Qualität, Relevanz, Expertise und Aktualität zu bewerten.
+                        </p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ) : (
