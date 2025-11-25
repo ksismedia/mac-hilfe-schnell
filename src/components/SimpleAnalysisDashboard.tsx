@@ -174,42 +174,17 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Use active extension data (live or saved)
   const activeExtensionData = extensionData || savedExtensionData;
   
-  // Automatically save new extension data to context when received
+  // Sync extension data from hook to context
   useEffect(() => {
     if (extensionData) {
-      console.log('✅ New extension data received:', extensionData.url);
-      console.log('   Words:', extensionData.content?.wordCount);
-      console.log('   Links:', extensionData.content?.links?.external?.length);
+      console.log('🔄 Syncing extension data to context:', extensionData.url);
       setSavedExtensionData(extensionData);
-      
       toast({
         title: "Extension-Daten empfangen",
-        description: `Daten von ${extensionData.url} geladen`,
+        description: `${extensionData.url.split('/')[2]} Daten geladen`,
       });
     }
-  }, [extensionData, setSavedExtensionData]);
-  
-  // Debug: Log extension data status on every render
-  console.log('🔍 Extension Data Status in SimpleAnalysisDashboard:');
-  console.log('  - extensionData (live):', extensionData ? 'AVAILABLE' : 'null');
-  console.log('  - savedExtensionData:', savedExtensionData ? 'AVAILABLE' : 'null');
-  console.log('  - activeExtensionData:', activeExtensionData ? 'AVAILABLE' : 'null');
-  if (extensionData) {
-    console.log('  - Live Extension Data Details:', {
-      url: extensionData.url,
-      wordCount: extensionData.content?.wordCount,
-      internalLinks: extensionData.content?.links?.internal?.length,
-      externalLinks: extensionData.content?.links?.external?.length
-    });
-  }
-  if (savedExtensionData) {
-    console.log('  - Saved Extension Data Details:', {
-      url: savedExtensionData.url,
-      wordCount: savedExtensionData.content?.wordCount,
-      internalLinks: savedExtensionData.content?.links?.internal?.length,
-      externalLinks: savedExtensionData.content?.links?.external?.length
-    });
-  }
+  }, [extensionData]);
 
   // Load analysis data or use direct analysis data
   useEffect(() => {
@@ -312,17 +287,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
-          console.log('🔍 Checking for saved extension data in analysis');
-          console.log('Has extensionData in manualData:', !!analysisData.manualData?.extensionData);
-          
-          // Load extension data into context AFTER all other data is loaded
+          // Restore extension data from saved analysis
           if (analysisData.manualData?.extensionData) {
-            console.log('✅ Setting saved extension data to context');
-            console.log('Extension data content:', analysisData.manualData.extensionData);
+            console.log('📥 Restoring extension data:', analysisData.manualData.extensionData.url);
             setSavedExtensionData(analysisData.manualData.extensionData);
-          } else {
-            console.log('⚠️ No extension data found in saved analysis');
-            setSavedExtensionData(null);
           }
           
           // Automatisch Google Safe Browsing Prüfung starten, wenn keine Daten vorhanden
