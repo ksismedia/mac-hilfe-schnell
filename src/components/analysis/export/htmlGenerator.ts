@@ -287,9 +287,9 @@ export const generateCustomerHTML = ({
   technicalSecurityScore = hasCriticalTechnicalIssues ? 59 : technicalSecurityScore;
   const displayTechnicalSecurityScore = technicalSecurityScore > 0 ? `${Math.round(technicalSecurityScore)}%` : '–';
   
-  // Calculate additional scores - MIT MANUELLEN DATEN
-  const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData);
-  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData);
+  // Calculate additional scores - MIT MANUELLEN DATEN UND EXTENSION DATEN
+  const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData, extensionData);
+  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   

@@ -76,10 +76,13 @@ interface OverallRatingProps {
   manualIndustryReviewData?: ManualIndustryReviewData | null;
   manualOnlinePresenceData?: ManualOnlinePresenceData | null;
   manualConversionData?: any | null;
+  manualMobileData?: any | null;
+  manualReputationData?: any | null;
   privacyData?: any;
   accessibilityData?: any;
   securityData?: any;
   manualCorporateIdentityData?: ManualCorporateIdentityData | null;
+  extensionData?: any | null;
 }
 
 const OverallRating: React.FC<OverallRatingProps> = ({ 
@@ -103,7 +106,10 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   privacyData,
   accessibilityData,
   securityData,
-  manualCorporateIdentityData
+  manualCorporateIdentityData,
+  manualMobileData,
+  manualReputationData,
+  extensionData
 }) => {
   // Keywords-Score - use provided score or calculate default
   const keywords = realData.keywords || [];
@@ -166,9 +172,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
-  const contentScore = manualContentData ? calculateContentQualityScore(realData, null, businessData, manualContentData) : null;
+  const contentScore = (manualContentData || extensionData) ? calculateContentQualityScore(realData, null, businessData, manualContentData, extensionData) : null;
   const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(accessibilityData, manualAccessibilityData) : null;
-  const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData) : null;
+  const backlinksScore = (manualBacklinkData || extensionData) ? calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData) : null;
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
   const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) : null;
   const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : null;
