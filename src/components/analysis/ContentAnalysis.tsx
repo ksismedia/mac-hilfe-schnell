@@ -18,7 +18,7 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
-  const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
+  const { reviewStatus, updateReviewStatus, savedExtensionData, setSavedExtensionData } = useAnalysisContext();
   const { toast } = useToast();
   
   // Local state to control when to display extension data
@@ -26,16 +26,47 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   
   // Load extension data manually
   const handleLoadExtensionData = () => {
-    if (savedExtensionData) {
-      setShowExtensionData(true);
+    try {
+      // Read directly from localStorage
+      const storedData = localStorage.getItem('seo_extension_data');
+      
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+        
+        if (parsed.timestamp > fiveMinutesAgo && parsed.data) {
+          setShowExtensionData(true);
+          // Also save to context for persistence
+          if (setSavedExtensionData) {
+            setSavedExtensionData(parsed.data);
+          }
+          toast({
+            title: "Extension-Daten geladen",
+            description: `${parsed.data.content?.wordCount || 0} Wörter gefunden`,
+          });
+          return;
+        }
+      }
+      
+      // Check if already in context
+      if (savedExtensionData) {
+        setShowExtensionData(true);
+        toast({
+          title: "Extension-Daten geladen",
+          description: `${savedExtensionData.content?.wordCount || 0} Wörter gefunden`,
+        });
+      } else {
+        toast({
+          title: "Keine Daten verfügbar",
+          description: "Führen Sie zuerst die Chrome Extension aus",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error loading extension data:', error);
       toast({
-        title: "Extension-Daten geladen",
-        description: `${savedExtensionData.content?.wordCount || 0} Wörter gefunden`,
-      });
-    } else {
-      toast({
-        title: "Keine Daten verfügbar",
-        description: "Bitte führen Sie zuerst die Chrome Extension aus",
+        title: "Fehler",
+        description: "Daten konnten nicht geladen werden",
         variant: "destructive"
       });
     }
@@ -190,25 +221,19 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {savedExtensionData ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <AlertCircle className="h-5 w-5 text-yellow-500" />
-                      )}
+                      <CheckCircle className="h-5 w-5 text-green-500" />
                       <div>
                         <p className="font-semibold">
-                          {savedExtensionData ? 'Extension-Daten verfügbar' : 'Keine Extension-Daten'}
+                          Extension-Daten laden
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {savedExtensionData 
-                            ? 'Klicken Sie auf "Daten laden", um die automatisch erkannten Inhalte anzuzeigen'
-                            : 'Führen Sie die Chrome Extension auf der Website aus'}
+                          Klicken Sie auf "Daten laden", um automatisch erkannte Inhalte anzuzeigen
                         </p>
                       </div>
                     </div>
                     <Button
                       onClick={handleLoadExtensionData}
-                      disabled={!savedExtensionData || showExtensionData}
+                      disabled={showExtensionData}
                       variant={showExtensionData ? "secondary" : "default"}
                     >
                       <RefreshCw className="h-4 w-4 mr-2" />
