@@ -186,6 +186,82 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
             
             <TabsContent value="automatic" className="space-y-6 mt-6">
           <div className="space-y-6">
+            {/* Backlink-Profil - Mit manuellen Daten wenn vorhanden */}
+            {manualBacklinkData && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">📊 Backlink-Profil (Manuelle Bewertung)</CardTitle>
+                  <CardDescription>
+                    Detaillierte manuelle Analyse des Backlink-Profils
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {manualBacklinkData.totalBacklinks}
+                      </div>
+                      <div className="text-sm text-gray-600">Backlinks gesamt</div>
+                    </div>
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
+                      <div className="text-2xl font-bold score-text-low">
+                        {manualBacklinkData.spamLinks}
+                      </div>
+                      <div className="text-sm text-gray-600">Spam/Toxische Links</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold score-text-medium">
+                        {manualBacklinkData.totalBacklinks - manualBacklinkData.spamLinks}
+                      </div>
+                      <div className="text-sm text-gray-600">Qualitäts-Links</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 mt-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium">Backlink-Qualität</span>
+                        <span className="text-sm font-bold">{manualBacklinkData.qualityScore}%</span>
+                      </div>
+                      <Progress value={manualBacklinkData.qualityScore} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Durchschnittliche Qualität der verlinkenden Seiten
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium">Domain Authority</span>
+                        <span className="text-sm font-bold">{manualBacklinkData.domainAuthority}%</span>
+                      </div>
+                      <Progress value={manualBacklinkData.domainAuthority} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Autorität der verlinkenden Domains
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium">Lokale Relevanz</span>
+                        <span className="text-sm font-bold">{manualBacklinkData.localRelevance}%</span>
+                      </div>
+                      <Progress value={manualBacklinkData.localRelevance} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Relevanz der Links für die lokale Zielgruppe
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {manualBacklinkData.notes && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                      <p className="text-sm font-semibold text-blue-900 mb-1">Zusätzliche Notizen:</p>
+                      <p className="text-sm text-blue-700">{manualBacklinkData.notes}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Übersicht */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                <div className="text-center p-4 bg-blue-50 rounded-lg">
