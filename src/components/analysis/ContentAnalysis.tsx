@@ -9,7 +9,7 @@ import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
-import { useToast } from '@/hooks/use-toast';
+import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
 
 interface ContentAnalysisProps {
   url: string;
@@ -19,71 +19,20 @@ interface ContentAnalysisProps {
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
   const { reviewStatus, updateReviewStatus, savedExtensionData, setSavedExtensionData } = useAnalysisContext();
-  const { toast } = useToast();
+  const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
   
   // Local state to control when to display extension data
   const [showExtensionData, setShowExtensionData] = useState(false);
   
-  // Load extension data manually
-  const handleLoadExtensionData = () => {
-    try {
-      console.log('🔍 Button clicked - checking for extension data...');
-      console.log('localStorage keys:', Object.keys(localStorage));
-      
-      // Read directly from localStorage
-      const storedData = localStorage.getItem('seo_extension_data');
-      console.log('Raw localStorage data:', storedData);
-      
-      if (storedData) {
-        const parsed = JSON.parse(storedData);
-        console.log('Parsed data:', parsed);
-        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-        
-        if (parsed.timestamp > fiveMinutesAgo && parsed.data) {
-          console.log('✅ Valid extension data found');
-          setShowExtensionData(true);
-          // Also save to context for persistence
-          if (setSavedExtensionData) {
-            setSavedExtensionData(parsed.data);
-          }
-          toast({
-            title: "Extension-Daten geladen",
-            description: `${parsed.data.content?.wordCount || 0} Wörter gefunden`,
-          });
-          // Remove after successful load
-          localStorage.removeItem('seo_extension_data');
-          return;
-        } else {
-          console.log('⏰ Data too old or invalid');
-        }
-      } else {
-        console.log('❌ No data in localStorage');
+  // Load extension data from Supabase
+  const handleLoadExtensionData = async () => {
+    const data = await loadLatestExtensionData();
+    
+    if (data) {
+      setShowExtensionData(true);
+      if (setSavedExtensionData) {
+        setSavedExtensionData(data);
       }
-      
-      // Check if already in context
-      console.log('Checking savedExtensionData in context:', !!savedExtensionData);
-      if (savedExtensionData) {
-        console.log('✅ Found data in context');
-        setShowExtensionData(true);
-        toast({
-          title: "Extension-Daten geladen",
-          description: `${savedExtensionData.content?.wordCount || 0} Wörter gefunden`,
-        });
-      } else {
-        console.log('❌ No data in context either');
-        toast({
-          title: "Keine Daten verfügbar",
-          description: "Führen Sie zuerst die Chrome Extension aus",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('❌ Error loading extension data:', error);
-      toast({
-        title: "Fehler",
-        description: "Daten konnten nicht geladen werden",
-        variant: "destructive"
-      });
     }
   };
   
@@ -248,11 +197,11 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                     </div>
                     <Button
                       onClick={handleLoadExtensionData}
-                      disabled={showExtensionData}
+                      disabled={showExtensionData || isLoading}
                       variant={showExtensionData ? "secondary" : "default"}
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      {showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                      <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                      {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
                     </Button>
                   </div>
                 </CardContent>

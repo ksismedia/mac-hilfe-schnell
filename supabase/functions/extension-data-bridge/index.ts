@@ -12,7 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const { action, sessionId, data } = await req.json();
+  const body = await req.json();
+  const { action, sessionId, data } = body;
 
     if (action === 'store') {
       // Store extension data with session ID
@@ -68,6 +69,43 @@ serve(async (req) => {
 
       return new Response(
         JSON.stringify({ success: true, data: result.data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } else if (action === 'retrieve-latest') {
+      // Retrieve the latest extension data (within last 5 minutes)
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const fiveMinutesAgo = new Date();
+      fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+
+      const { data: results, error } = await supabase
+        .from('extension_data_temp')
+        .select('*')
+        .gte('created_at', fiveMinutesAgo.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (!results || results.length === 0) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Keine aktuellen Daten gefunden' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        );
+      }
+
+      const extensionData = results[0];
+
+      // Delete after retrieval
+      await supabase
+        .from('extension_data_temp')
+        .delete()
+        .eq('id', extensionData.id);
+
+      return new Response(
+        JSON.stringify({ success: true, data: extensionData.data }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

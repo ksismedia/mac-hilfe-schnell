@@ -11,7 +11,7 @@ import { useManualData } from '@/hooks/useManualData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
+import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
 
 interface BacklinkAnalysisProps {
   url: string;
@@ -20,7 +20,7 @@ interface BacklinkAnalysisProps {
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
   const { savedExtensionData, setSavedExtensionData } = useAnalysisContext();
-  const { toast } = useToast();
+  const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -28,53 +28,15 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   // Local state to control when to display extension data
   const [showExtensionData, setShowExtensionData] = useState(false);
   
-  // Load extension data manually
-  const handleLoadExtensionData = () => {
-    try {
-      // Read directly from localStorage
-      const storedData = localStorage.getItem('seo_extension_data');
-      
-      if (storedData) {
-        const parsed = JSON.parse(storedData);
-        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-        
-        if (parsed.timestamp > fiveMinutesAgo && parsed.data) {
-          setShowExtensionData(true);
-          // Also save to context for persistence
-          if (setSavedExtensionData) {
-            setSavedExtensionData(parsed.data);
-          }
-          const externalLinksCount = parsed.data.content?.links?.external?.length || 0;
-          toast({
-            title: "Extension-Daten geladen",
-            description: `${externalLinksCount} externe Links gefunden`,
-          });
-          return;
-        }
+  // Load extension data from Supabase
+  const handleLoadExtensionData = async () => {
+    const data = await loadLatestExtensionData();
+    
+    if (data) {
+      setShowExtensionData(true);
+      if (setSavedExtensionData) {
+        setSavedExtensionData(data);
       }
-      
-      // Check if already in context
-      if (savedExtensionData) {
-        setShowExtensionData(true);
-        const externalLinksCount = savedExtensionData.content?.links?.external?.length || 0;
-        toast({
-          title: "Extension-Daten geladen",
-          description: `${externalLinksCount} externe Links gefunden`,
-        });
-      } else {
-        toast({
-          title: "Keine Daten verfügbar",
-          description: "Führen Sie zuerst die Chrome Extension aus",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Error loading extension data:', error);
-      toast({
-        title: "Fehler",
-        description: "Daten konnten nicht geladen werden",
-        variant: "destructive"
-      });
     }
   };
   
@@ -224,11 +186,11 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                     </div>
                     <Button
                       onClick={handleLoadExtensionData}
-                      disabled={showExtensionData}
+                      disabled={showExtensionData || isLoading}
                       variant={showExtensionData ? "secondary" : "default"}
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      {showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                      <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                      {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
                     </Button>
                   </div>
                 </CardContent>
