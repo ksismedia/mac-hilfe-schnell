@@ -34,6 +34,7 @@ import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import ManualDataPrivacyInput from './ManualDataPrivacyInput';
 import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
+import { calculateDataPrivacyScore } from './export/scoreCalculations';
 
 interface DataPrivacyAnalysisProps {
   businessData: {
@@ -120,64 +121,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   }, [businessData.url]);
 
 
-  // Calculate DSGVO score (only legal violations)
+  // Calculate DSGVO score using centralized function
   const getDSGVOScore = () => {
-    const hasManualOverride = manualDataPrivacyData?.overallScore !== undefined;
-    
-    if (!privacyData && !hasManualOverride) return 0;
-    
-    // Start with 100 base score for DSGVO (legal aspects only)
-    let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
-    
-    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
-    const customViolations = manualDataPrivacyData?.customViolations || [];
-    const totalViolations = privacyData?.violations || [];
-    
-    if (!hasManualOverride) {
-      // Subtract points for violations (not deselected)
-      totalViolations.forEach((violation, index) => {
-        if (!deselectedViolations.includes(`auto-${index}`)) {
-          switch (violation.severity) {
-            case 'critical': score -= 15; break;
-            case 'high': score -= 10; break;
-            case 'medium': score -= 5; break;
-            case 'low': score -= 2; break;
-          }
-        }
-      });
-      
-      // Subtract points for custom violations
-      customViolations.forEach(violation => {
-        switch (violation.severity) {
-          case 'critical': score -= 15; break;
-          case 'high': score -= 10; break;
-          case 'medium': score -= 5; break;
-          case 'low': score -= 2; break;
-        }
-      });
-    }
-    
-    // Check if there are any critical violations (not deselected)
-    const hasCriticalViolations = () => {
-      const activeCriticalAuto = totalViolations.some((violation, index) => 
-        (violation.severity === 'critical' || violation.severity === 'high') && !deselectedViolations.includes(`auto-${index}`)
-      );
-      
-      const criticalCustom = customViolations.some(violation => 
-        violation.severity === 'critical' || violation.severity === 'high'
-      );
-      
-      return activeCriticalAuto || criticalCustom;
-    };
-    
-    const finalScore = Math.round(Math.max(0, Math.min(100, score)));
-    
-    // Cap at 59% if there are any critical legal violations, but allow lower scores
-    if (hasCriticalViolations()) {
-      return Math.min(finalScore, 59);
-    }
-    
-    return finalScore;
+    return calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
   };
 
   // Calculate Technical Security score
