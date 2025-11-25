@@ -203,24 +203,46 @@ export const loadSavedAnalysisData = (
     const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
     
     // KRITISCH: Kappe den manuellen overallScore BEVOR er an calculateDataPrivacyScore übergeben wird
+    // Berücksichtige dabei manuelle Neutralisierungen
     let cappedManualData = manualDataPrivacy;
     if (manualDataPrivacy?.overallScore !== undefined && loadedPrivacyData?.violations) {
       const deselected = manualDataPrivacy?.deselectedViolations || [];
       let criticalCount = 0;
       
+      // Zähle nicht-deselektierte und nicht-neutralisierte kritische/high Violations
       loadedPrivacyData.violations.forEach((v: any, i: number) => {
-        if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
-          criticalCount++;
+        if (!deselected.includes(`auto-${i}`)) {
+          // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
+          const isSSLViolation = v.description?.includes('SSL') || 
+                                v.description?.includes('TLS') ||
+                                v.description?.includes('HSTS') ||
+                                v.description?.includes('Verschlüsselung');
+          
+          // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
+          const isCookieViolation = v.description?.includes('Cookie') && 
+                                    v.description?.includes('Banner');
+          
+          const neutralizedBySSL = isSSLViolation && manualDataPrivacy?.hasSSL === true;
+          const neutralizedByCookie = isCookieViolation && manualDataPrivacy?.cookieConsent === true;
+          
+          if (!neutralizedBySSL && !neutralizedByCookie) {
+            if (v.severity === 'critical' || v.severity === 'high') {
+              criticalCount++;
+            }
+          }
         }
       });
       
-      if (manualDataPrivacy.customViolations) {
+      // Zähle custom kritische/high Violations
+      if (manualDataPrivacy?.customViolations) {
         manualDataPrivacy.customViolations.forEach((v: any) => {
-          if (v.severity === 'critical') criticalCount++;
+          if (v.severity === 'critical' || v.severity === 'high') {
+            criticalCount++;
+          }
         });
       }
       
-      // Kappe manuellen Score
+      // Bestimme maximalen Score basierend auf VERBLEIBENDEN kritischen Fehlern
       let maxScore = 100;
       if (criticalCount >= 3) maxScore = 20;
       else if (criticalCount === 2) maxScore = 35;
