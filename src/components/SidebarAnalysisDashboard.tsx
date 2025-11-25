@@ -25,7 +25,7 @@ import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
-import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
+import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore, calculateDataPrivacyScore } from './analysis/export/scoreCalculations';
 import CorporateIdentityAnalysis from './analysis/CorporateIdentityAnalysis';
 import QuoteResponseInput from './analysis/QuoteResponseInput';
 
@@ -167,7 +167,31 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             }
             if (savedAnalysis.manualData?.privacyData) {
               console.log('Setting privacy data from saved analysis');
-              setPrivacyData(savedAnalysis.manualData.privacyData);
+              // KRITISCH: Score muss neu berechnet werden mit Kappung
+              const loadedPrivacyData = savedAnalysis.manualData.privacyData;
+              const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
+              
+              // Berechne Score mit Kappung
+              const recalculatedScore = calculateDataPrivacyScore(
+                savedAnalysis.realData, 
+                loadedPrivacyData, 
+                manualDataPrivacy
+              );
+              
+              // Setze korrigierten Score
+              const correctedPrivacyData = {
+                ...loadedPrivacyData,
+                score: recalculatedScore
+              };
+              
+              console.log('Privacy Score:', {
+                oldScore: loadedPrivacyData.score,
+                newScore: recalculatedScore,
+                violations: loadedPrivacyData.violations?.length,
+                criticalViolations: loadedPrivacyData.violations?.filter((v: any) => v.severity === 'critical').length
+              });
+              
+              setPrivacyData(correctedPrivacyData);
             }
             if (savedAnalysis.manualData?.accessibilityData) {
               console.log('Setting accessibility data from saved analysis');

@@ -1,6 +1,7 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData } from '@/hooks/useManualData';
+import { calculateDataPrivacyScore } from '@/components/analysis/export/scoreCalculations';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -198,7 +199,22 @@ export const loadSavedAnalysisData = (
   // Load cached analysis data (privacy, accessibility, security)
   if (savedAnalysis.manualData?.privacyData && setPrivacyData) {
     console.log('Loading privacy data');
-    setPrivacyData(savedAnalysis.manualData.privacyData);
+    // KRITISCH: Score muss neu berechnet werden mit Kappung
+    const loadedPrivacyData = savedAnalysis.manualData.privacyData;
+    const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
+    
+    // Berechne Score mit Kappung
+    const recalculatedScore = calculateDataPrivacyScore(
+      savedAnalysis.realData, 
+      loadedPrivacyData, 
+      manualDataPrivacy
+    );
+    
+    // Setze korrigierten Score
+    setPrivacyData({
+      ...loadedPrivacyData,
+      score: recalculatedScore
+    });
   }
   
   if (savedAnalysis.manualData?.accessibilityData && setAccessibilityData) {
