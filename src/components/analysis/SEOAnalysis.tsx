@@ -14,12 +14,15 @@ interface SEOAnalysisProps {
 }
 
 const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
-  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
   const { extensionData } = useExtensionData();
   
+  // Use live extension data or fallback to saved extension data
+  const activeExtensionData = extensionData || savedExtensionData;
+  
   // Get extension SEO data
-  const hasExtensionData = extensionData !== null;
-  const extensionSEO = extensionData?.seo;
+  const hasExtensionData = activeExtensionData !== null;
+  const extensionSEO = activeExtensionData?.seo;
   
   // Prüfe ob Fallback-Daten verwendet werden
   const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||

@@ -2,6 +2,57 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { useAIReviewStatus, AIReviewStatus } from '@/hooks/useAIReviewStatus';
 
+interface ExtensionWebsiteData {
+  url: string;
+  domain: string;
+  title: string;
+  seo: {
+    titleTag: string;
+    metaDescription: string;
+    metaKeywords: string;
+    headings: {
+      h1: string[];
+      h2: string[];
+      h3: string[];
+    };
+    altTags: {
+      total: number;
+      withAlt: number;
+      images: Array<{
+        src: string;
+        alt: string;
+        hasAlt: boolean;
+      }>;
+    };
+  };
+  content: {
+    fullText: string;
+    wordCount: number;
+    links: {
+      internal: Array<{ href: string; text: string; title: string }>;
+      external: Array<{ href: string; text: string; title: string }>;
+    };
+  };
+  technical: {
+    hasImprint: boolean;
+    hasPrivacyPolicy: boolean;
+    hasContactForm: boolean;
+    structuredData: any[];
+  };
+  performance: {
+    imageCount: number;
+    scriptCount: number;
+    cssCount: number;
+    resourcesWithoutAlt: number;
+  };
+  contact: {
+    phone: string[];
+    email: string[];
+    address: string[];
+  };
+  extractedAt: string;
+}
+
 interface AnalysisContextType {
   currentAnalysis: SavedAnalysis | null;
   setCurrentAnalysis: (analysis: SavedAnalysis | null) => void;
@@ -10,6 +61,8 @@ interface AnalysisContextType {
   updateReviewStatus: (category: string, isReviewed: boolean, notes?: string) => Promise<AIReviewStatus>;
   isFullyReviewed: () => boolean;
   getUnreviewedCategories: () => string[];
+  savedExtensionData: ExtensionWebsiteData | null;
+  setSavedExtensionData: (data: ExtensionWebsiteData | null) => void;
 }
 
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
@@ -28,6 +81,7 @@ interface AnalysisProviderProps {
 
 export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) => {
   const [currentAnalysis, setCurrentAnalysis] = useState<SavedAnalysis | null>(null);
+  const [savedExtensionData, setSavedExtensionData] = useState<ExtensionWebsiteData | null>(null);
   
   // AI Review Status für KI-VO Compliance
   const {
@@ -65,7 +119,9 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
       reviewStatus,
       updateReviewStatus,
       isFullyReviewed,
-      getUnreviewedCategories
+      getUnreviewedCategories,
+      savedExtensionData,
+      setSavedExtensionData
     }}>
       {children}
     </AnalysisContext.Provider>

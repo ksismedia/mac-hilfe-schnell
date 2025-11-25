@@ -2,6 +2,18 @@
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData } from '@/hooks/useManualData';
 
+interface ExtensionWebsiteData {
+  url: string;
+  domain: string;
+  title: string;
+  seo: any;
+  content: any;
+  technical: any;
+  performance: any;
+  contact: any;
+  extractedAt: string;
+}
+
 export const loadCompetitorServices = (
   competitorServices: CompetitorServices,
   updateCompetitorServices: (competitorName: string, services: string[], source: 'auto' | 'manual') => void
@@ -38,9 +50,18 @@ export const loadSavedAnalysisData = (
   updateManualReputationData?: (data: ManualReputationData) => void,
   setPrivacyData?: (data: any) => void,
   setAccessibilityData?: (data: any) => void,
-  setSecurityData?: (data: any) => void
+  setSecurityData?: (data: any) => void,
+  setSavedExtensionData?: (data: ExtensionWebsiteData | null) => void
 ) => {
-  console.log('Loading saved analysis data:', savedAnalysis.id);
+  console.log('=== Loading Saved Analysis Data ===');
+  console.log('Analysis:', savedAnalysis.name);
+  console.log('Manual Data:', savedAnalysis.manualData);
+
+  // Restore extension data if available
+  if (savedAnalysis.manualData.extensionData && setSavedExtensionData) {
+    console.log('Restoring extension data from saved analysis');
+    setSavedExtensionData(savedAnalysis.manualData.extensionData);
+  }
   
   // Load manual data
   if (savedAnalysis.manualData?.imprint) {
