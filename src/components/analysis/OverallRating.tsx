@@ -175,7 +175,33 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const contentScore = (manualContentData || extensionData) ? calculateContentQualityScore(realData, null, businessData, manualContentData, extensionData) : null;
   const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(accessibilityData, manualAccessibilityData) : null;
   const backlinksScore = (manualBacklinkData || extensionData) ? calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData) : null;
-  const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
+  const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? (() => {
+    let score = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
+    
+    // ABSOLUTE KAPPUNG ERZWINGEN
+    if (privacyData?.violations) {
+      const deselected = manualDataPrivacyData?.deselectedViolations || [];
+      let criticalCount = 0;
+      
+      privacyData.violations.forEach((v: any, i: number) => {
+        if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
+          criticalCount++;
+        }
+      });
+      
+      if (manualDataPrivacyData?.customViolations) {
+        manualDataPrivacyData.customViolations.forEach((v: any) => {
+          if (v.severity === 'critical') criticalCount++;
+        });
+      }
+      
+      if (criticalCount >= 3) score = Math.min(20, score);
+      else if (criticalCount === 2) score = Math.min(35, score);
+      else if (criticalCount === 1) score = Math.min(59, score);
+    }
+    
+    return score;
+  })() : null;
   const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) : null;
   const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : null;
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
