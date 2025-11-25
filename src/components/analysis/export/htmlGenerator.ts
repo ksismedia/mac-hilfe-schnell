@@ -2965,11 +2965,30 @@ export const generateCustomerHTML = ({
               ${backlinksScore}%
             </div>
             <div class="score-details">
-              <p><strong>Backlink-Status:</strong> ${backlinksScore >= 70 ? 'Gut entwickelt' : backlinksScore >= 50 ? 'Durchschnittlich' : 'Ausbaufähig'}</p>
-              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Anzahl und Wachstum der Links von anderen Websites zu Ihrer Seite</p>
-              <p><strong>Domain Authority:</strong> ${backlinksScore >= 70 ? 'Stark' : backlinksScore >= 50 ? 'Mittel' : 'Schwach'}</p>
-              <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Vertrauenswürdigkeit Ihrer Website in den Augen von Suchmaschinen</p>
-              <p><strong>Qualitätsbewertung:</strong> ${backlinksScore >= 70 ? 'Hochwertig' : 'Verbesserungsbedarf'}</p>
+              ${manualBacklinkData ? `
+                <p><strong>Anzahl Backlinks gesamt:</strong> ${manualBacklinkData.totalBacklinks}</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Gesamtzahl der Links von anderen Websites zu Ihrer Seite</p>
+                <p><strong>Spam/Toxische Links:</strong> ${manualBacklinkData.spamLinks}</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Links von minderwertigen oder schädlichen Quellen</p>
+                <p><strong>Backlink-Qualität:</strong> ${manualBacklinkData.qualityScore}%</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Durchschnittliche Qualität der verlinkenden Seiten</p>
+                <p><strong>Domain Authority:</strong> ${manualBacklinkData.domainAuthority}%</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Autorität der verlinkenden Domains</p>
+                <p><strong>Lokale Relevanz:</strong> ${manualBacklinkData.localRelevance}%</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Relevanz der Links für die lokale Zielgruppe</p>
+                ${manualBacklinkData.notes ? `
+                  <div style="margin-top: 16px; padding: 12px; background: #f3f4f6; border-radius: 6px; border-left: 3px solid #3b82f6;">
+                    <p style="margin: 0; color: #374151; font-size: 0.9em;"><strong>Zusätzliche Notizen:</strong></p>
+                    <p style="margin: 8px 0 0 0; color: #6b7280; font-size: 0.85em; line-height: 1.5;">${manualBacklinkData.notes}</p>
+                  </div>
+                ` : ''}
+              ` : `
+                <p><strong>Backlink-Status:</strong> ${backlinksScore >= 70 ? 'Gut entwickelt' : backlinksScore >= 50 ? 'Durchschnittlich' : 'Ausbaufähig'}</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Anzahl und Wachstum der Links von anderen Websites zu Ihrer Seite</p>
+                <p><strong>Domain Authority:</strong> ${backlinksScore >= 70 ? 'Stark' : backlinksScore >= 50 ? 'Mittel' : 'Schwach'}</p>
+                <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">Vertrauenswürdigkeit Ihrer Website in den Augen von Suchmaschinen</p>
+                <p><strong>Qualitätsbewertung:</strong> ${backlinksScore >= 70 ? 'Hochwertig' : 'Verbesserungsbedarf'}</p>
+              `}
             </div>
           </div>
           <div class="progress-container">
