@@ -2397,6 +2397,28 @@ export const generateCustomerHTML = ({
       <p class="gray-text" style="margin-top: 15px;">Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht für: ${realData.company.name}</p>
     </div>
 
+    <!-- Unternehmensdaten -->
+    <div class="section">
+      <div class="section-header"><span>Unternehmensdaten</span></div>
+      <div class="section-content">
+        <div class="company-info">
+          <h3>${realData.company.name}</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div>
+              <p><strong>Website:</strong> ${businessData.url}</p>
+              <p><strong>Branche:</strong> ${businessData.industry.toUpperCase()}</p>
+              <p><strong>Adresse:</strong> ${businessData.address}</p>
+            </div>
+            <div>
+              <p><strong>Telefon:</strong> ${realData.company.phone || 'Nicht erfasst'}</p>
+              <p><strong>E-Mail:</strong> ${realData.company.email || 'Nicht erfasst'}</p>
+              <p><strong>Analysestand:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Executive Summary -->
     <div class="section">
       <div class="section-header"><span>Executive Summary</span></div>
@@ -2648,28 +2670,6 @@ export const generateCustomerHTML = ({
             </div>
           </div>
 
-        </div>
-      </div>
-    </div>
-
-    <!-- Unternehmensdaten -->
-    <div class="section">
-      <div class="section-header"><span>Unternehmensdaten</span></div>
-      <div class="section-content">
-        <div class="company-info">
-          <h3>${realData.company.name}</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
-            <div>
-              <p><strong>Website:</strong> ${businessData.url}</p>
-              <p><strong>Branche:</strong> ${businessData.industry.toUpperCase()}</p>
-              <p><strong>Adresse:</strong> ${businessData.address}</p>
-            </div>
-            <div>
-              <p><strong>Telefon:</strong> ${realData.company.phone || 'Nicht erfasst'}</p>
-              <p><strong>E-Mail:</strong> ${realData.company.email || 'Nicht erfasst'}</p>
-              <p><strong>Analysestand:</strong> ${new Date().toLocaleDateString()}</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
