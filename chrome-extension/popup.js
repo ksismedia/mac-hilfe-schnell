@@ -74,8 +74,9 @@ async function openLovableApp(websiteData = null) {
     return { success: true };
     
   } catch (error) {
-    console.error('❌ Fehler:', error);
-    throw new Error(`Fehler: ${error.message}`);
+    console.error('❌ Fehler in openLovableApp:', error);
+    // WICHTIG: Immer ein Objekt zurückgeben, auch bei Fehler
+    return { success: false, error: error.message };
   }
 }
 
@@ -154,7 +155,7 @@ async function analyzeWebsite() {
     
     if (result?.success) {
       if (websiteData?.url) {
-        showStatus('✓ Daten an App übertragen!', 'success');
+        showStatus('✓ Daten erfolgreich übertragen!', 'success');
       } else {
         showStatus('✓ App geöffnet', 'success');
       }
@@ -164,10 +165,8 @@ async function analyzeWebsite() {
         window.close();
       }, 2000);
     } else {
-      showStatus('✓ App geöffnet', 'success');
-      setTimeout(() => {
-        window.close();
-      }, 2000);
+      // Fehlerfall
+      showStatus(`❌ Fehler: ${result?.error || 'Unbekannter Fehler'}`, 'error');
     }
     
   } catch (error) {
