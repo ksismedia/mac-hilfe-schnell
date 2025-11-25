@@ -32,87 +32,77 @@ async function displayCurrentUrl() {
   }
 }
 
-// Verbesserte Lovable App-Öffnung - sendet Daten an existierenden Tab
+// Neue Edge Function Bridge Methode - sendet Daten über Supabase
 async function openLovableApp(websiteData = null) {
-  console.log('Öffne/Finde Lovable App mit Daten:', websiteData);
+  console.log('Öffne Lovable App mit Edge Function Bridge:', websiteData);
   
   try {
+    if (!websiteData || !websiteData.url) {
+      // Keine Daten, öffne einfach die App
+      await chrome.tabs.create({ 
+        url: LOVABLE_APP_URL,
+        active: true
+      });
+      return { success: true };
+    }
+
+    // Generiere eindeutige Session-ID
+    const sessionId = `ext_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    console.log('📦 Session ID generiert:', sessionId);
+
+    // Sende Daten an Edge Function
+    console.log('📤 Sende Daten an Edge Function...');
+    const response = await fetch('https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/extension-data-bridge', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'store',
+        sessionId: sessionId,
+        data: websiteData
+      })
+    });
+
+    const result = await response.json();
+    console.log('📥 Edge Function Antwort:', result);
+
+    if (!result.success) {
+      throw new Error('Edge Function speichern fehlgeschlagen');
+    }
+
+    // Öffne Lovable App mit Session-ID als URL Parameter
+    const appUrlWithSession = `${LOVABLE_APP_URL}?extensionSession=${sessionId}`;
+    console.log('🚀 Öffne App mit URL:', appUrlWithSession);
+
     // Suche nach bereits geöffneten Lovable-Tabs
     const existingTabs = await chrome.tabs.query({});
     const lovableTabs = existingTabs.filter(tab => 
       tab.url && tab.url.includes('lovable.app')
     );
-    
-    let targetTab = null;
-    
-    // Wenn bereits ein Lovable-Tab offen ist, verwende diesen
+
     if (lovableTabs.length > 0) {
-      targetTab = lovableTabs[0];
-      console.log('Existierender Lovable-Tab gefunden:', targetTab.id);
-      
-      // Bringe Tab in den Vordergrund
-      await chrome.tabs.update(targetTab.id, { active: true });
+      // Update existierenden Tab
+      const targetTab = lovableTabs[0];
+      await chrome.tabs.update(targetTab.id, { 
+        url: appUrlWithSession,
+        active: true 
+      });
       await chrome.windows.update(targetTab.windowId, { focused: true });
+      console.log('✅ Existierender Tab aktualisiert:', targetTab.id);
     } else {
-      // Kein Tab gefunden, erstelle neuen
-      targetTab = await chrome.tabs.create({ 
-        url: LOVABLE_APP_URL,
+      // Erstelle neuen Tab
+      await chrome.tabs.create({ 
+        url: appUrlWithSession,
         active: true
       });
-      console.log('Neuer Lovable-Tab erstellt:', targetTab.id);
+      console.log('✅ Neuer Tab erstellt');
     }
-    
-    // Sende Daten an den Tab
-    if (websiteData && targetTab.id) {
-      // Warte etwas damit die App geladen ist
-      const waitTime = lovableTabs.length > 0 ? 500 : 3000; // Kürzer für existierende Tabs
-      
-      setTimeout(async () => {
-        try {
-          const extensionPayload = {
-            type: 'EXTENSION_WEBSITE_DATA',
-            source: 'seo-analyzer-extension',
-            timestamp: Date.now(),
-            data: websiteData
-          };
-          
-          // Speichere Daten im localStorage und sende PostMessage
-          await chrome.scripting.executeScript({
-            target: { tabId: targetTab.id },
-            func: (payload) => {
-              console.log('Extension: Empfange neue Website-Daten:', payload.data.url);
-              
-              // Speichere in localStorage
-              localStorage.setItem('seo_extension_data', JSON.stringify({
-                data: payload.data,
-                timestamp: payload.timestamp
-              }));
-              
-              // Sende PostMessage an die App
-              window.postMessage(payload, '*');
-              
-              // Trigger CustomEvent für sofortige Verarbeitung
-              const event = new CustomEvent('extensionDataReceived', { 
-                detail: payload 
-              });
-              window.dispatchEvent(event);
-              
-              console.log('✅ Extension-Daten erfolgreich übertragen');
-            },
-            args: [extensionPayload]
-          });
-          
-          console.log('Daten erfolgreich an Tab übertragen:', targetTab.id);
-        } catch (error) {
-          console.error('Fehler beim Datenübertrag:', error);
-        }
-      }, waitTime);
-    }
-    
-    return { success: true, tabId: targetTab.id, isExisting: lovableTabs.length > 0 };
+
+    return { success: true };
     
   } catch (error) {
-    console.error('Fehler beim Öffnen der Lovable App:', error);
+    console.error('❌ Fehler in openLovableApp:', error);
     throw new Error(`App konnte nicht geöffnet werden: ${error.message}`);
   }
 }
@@ -186,13 +176,9 @@ async function analyzeWebsite() {
     
     if (result.success) {
       if (websiteData && websiteData.url) {
-        if (result.isExisting) {
-          showStatus('✓ Daten an geöffnete Analyse gesendet!', 'success');
-        } else {
-          showStatus('✓ Neue Analyse mit Website-Daten gestartet!', 'success');
-        }
+        showStatus('✓ Daten an App übertragen!', 'success');
       } else {
-        showStatus('✓ App geöffnet (ohne Website-Daten)', 'success');
+        showStatus('✓ App geöffnet', 'success');
       }
       
       // Schließe Popup nach 2 Sekunden
