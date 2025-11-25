@@ -433,6 +433,47 @@ export const generateDataPrivacySection = (
   const hasCriticalViolations = activeViolations.some((v: any) => v.severity === 'critical' || v.severity === 'high');
   const hasCriticalTechnicalIssues = hasNoHSTS || hasPoorSSL;
   
+  // Zähle kritische/high Violations nach Neutralisierung
+  const deselected = manualDataPrivacyData?.deselectedViolations || [];
+  const allViolations = privacyData?.violations || [];
+  let criticalCount = 0;
+  let neutralizedCount = 0;
+  
+  allViolations.forEach((v: any, i: number) => {
+    if (!deselected.includes(`auto-${i}`)) {
+      const isSSLViolation = v.description?.includes('SSL') || 
+                            v.description?.includes('TLS') ||
+                            v.description?.includes('HSTS') ||
+                            v.description?.includes('Verschlüsselung');
+      const isCookieViolation = v.description?.includes('Cookie') && 
+                                v.description?.includes('Banner');
+      
+      const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+      const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+      
+      if (neutralizedBySSL || neutralizedByCookie) {
+        neutralizedCount++;
+      } else if (v.severity === 'critical' || v.severity === 'high') {
+        criticalCount++;
+      }
+    }
+  });
+  
+  // Zähle custom kritische/high Violations
+  if (manualDataPrivacyData?.customViolations) {
+    manualDataPrivacyData.customViolations.forEach((v: any) => {
+      if (v.severity === 'critical' || v.severity === 'high') {
+        criticalCount++;
+      }
+    });
+  }
+  
+  // Bestimme Kappung
+  let scoreCap = 100;
+  if (criticalCount >= 3) scoreCap = 20;
+  else if (criticalCount === 2) scoreCap = 35;
+  else if (criticalCount === 1) scoreCap = 59;
+  
   // GETRENNTE BEWERTUNG:
   // DSGVO-Score (rechtliche Aspekte) - Nutze dataPrivacyScore direkt (Caps werden in calculateDataPrivacyScore angewendet)
   const dsgvoScore = dataPrivacyScore;
@@ -471,7 +512,7 @@ export const generateDataPrivacySection = (
             <div id="dsgvo-content" class="section-content" style="display: none;">
                 <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     
-                    <div class="metric-item">
+                     <div class="metric-item">
                         <div class="metric-title">DSGVO-Score</div>
                         <div class="metric-value ${dsgvoScore >= 80 ? 'excellent' : dsgvoScore >= 60 ? 'good' : dsgvoScore >= 40 ? 'warning' : 'danger'}">
                             ${dsgvoScore >= 80 ? 'Vollständig konform' : dsgvoScore >= 60 ? 'Grundlegend konform' : dsgvoScore >= 40 ? 'Verbesserung nötig' : 'Kritische Mängel'}
@@ -485,6 +526,30 @@ export const generateDataPrivacySection = (
                                     <span style="color: ${dsgvoScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${dsgvoScore}%</span>
                                 </div>
                             </div>
+                            ${criticalCount > 0 || neutralizedCount > 0 ? `
+                              <div style="margin-top: 10px; padding: 10px; background: ${criticalCount > 0 ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${criticalCount > 0 ? '#fecaca' : '#bbf7d0'}; border-radius: 6px;">
+                                <div style="font-size: 12px; color: #374151; margin-bottom: 6px;">
+                                  <strong>🔍 Kritische Fehler-Analyse:</strong>
+                                </div>
+                                ${neutralizedCount > 0 ? `
+                                  <div style="font-size: 11px; color: #059669; margin-bottom: 4px;">
+                                    ✓ ${neutralizedCount} kritische Fehler durch manuelle Eingaben neutralisiert
+                                  </div>
+                                ` : ''}
+                                ${criticalCount > 0 ? `
+                                  <div style="font-size: 11px; color: #dc2626; margin-bottom: 4px;">
+                                    ⚠️ ${criticalCount} kritische Fehler verbleibend
+                                  </div>
+                                  <div style="font-size: 11px; color: #7f1d1d; font-weight: bold;">
+                                    📊 Score-Kappung: Maximum ${scoreCap}% möglich
+                                  </div>
+                                ` : `
+                                  <div style="font-size: 11px; color: #059669;">
+                                    ✓ Keine verbleibenden kritischen Fehler
+                                  </div>
+                                `}
+                              </div>
+                            ` : ''}
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Einwilligung (Art. 7), Informationspflichten (Art. 13-14), Drittlandtransfer (Art. 44-49), Rechtsbasis, Tracking-Scripts, Externe Services
                             </div>
