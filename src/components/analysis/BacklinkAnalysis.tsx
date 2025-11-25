@@ -32,12 +32,34 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   // Derive showExtensionData from savedExtensionData - always show if data exists
   const showExtensionData = !!savedExtensionData;
   
-  // Load extension data from Supabase
+  // Load extension data from Supabase and auto-save to current analysis
   const handleLoadExtensionData = async () => {
     const data = await loadLatestExtensionData();
     
-    if (data && setSavedExtensionData) {
+    if (data) {
       setSavedExtensionData(data);
+      
+      // Auto-save to current analysis if one exists
+      if (currentAnalysis) {
+        try {
+          await updateAnalysis(
+            currentAnalysis.id,
+            currentAnalysis.name,
+            currentAnalysis.businessData,
+            currentAnalysis.realData,
+            {
+              ...currentAnalysis.manualData,
+              extensionData: data
+            }
+          );
+          toast.success('Extension-Daten geladen und gespeichert!');
+        } catch (error) {
+          console.error('Fehler beim Auto-Speichern:', error);
+          toast.error('Daten geladen, aber Speichern fehlgeschlagen');
+        }
+      } else {
+        toast.success('Extension-Daten geladen! Speichern Sie die Analyse, um die Daten zu behalten.');
+      }
     }
   };
   
@@ -219,15 +241,6 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                         <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                         {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
                       </Button>
-                      {showExtensionData && currentAnalysis && (
-                        <Button
-                          onClick={handleSaveExtensionData}
-                          variant="default"
-                        >
-                          <Save className="h-4 w-4 mr-2" />
-                          Speichern
-                        </Button>
-                      )}
                     </div>
                   </div>
                 </CardContent>
