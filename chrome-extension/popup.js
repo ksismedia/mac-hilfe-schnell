@@ -32,22 +32,41 @@ async function displayCurrentUrl() {
   }
 }
 
-// Verbesserte Lovable App-Öffnung
+// Verbesserte Lovable App-Öffnung - sendet Daten an existierenden Tab
 async function openLovableApp(websiteData = null) {
-  console.log('Öffne Lovable App mit Daten:', websiteData);
+  console.log('Öffne/Finde Lovable App mit Daten:', websiteData);
   
   try {
-    // Erstelle neuen Tab mit der Lovable App
-    const newTab = await chrome.tabs.create({ 
-      url: LOVABLE_APP_URL,
-      active: true
-    });
+    // Suche nach bereits geöffneten Lovable-Tabs
+    const existingTabs = await chrome.tabs.query({});
+    const lovableTabs = existingTabs.filter(tab => 
+      tab.url && tab.url.includes('lovable.app')
+    );
     
-    console.log('Lovable Tab erstellt:', newTab.id);
+    let targetTab = null;
     
-    // Warte bis Tab geladen ist, dann sende Daten
-    if (websiteData && newTab.id) {
-      // Warte etwas länger damit die App vollständig geladen ist
+    // Wenn bereits ein Lovable-Tab offen ist, verwende diesen
+    if (lovableTabs.length > 0) {
+      targetTab = lovableTabs[0];
+      console.log('Existierender Lovable-Tab gefunden:', targetTab.id);
+      
+      // Bringe Tab in den Vordergrund
+      await chrome.tabs.update(targetTab.id, { active: true });
+      await chrome.windows.update(targetTab.windowId, { focused: true });
+    } else {
+      // Kein Tab gefunden, erstelle neuen
+      targetTab = await chrome.tabs.create({ 
+        url: LOVABLE_APP_URL,
+        active: true
+      });
+      console.log('Neuer Lovable-Tab erstellt:', targetTab.id);
+    }
+    
+    // Sende Daten an den Tab
+    if (websiteData && targetTab.id) {
+      // Warte etwas damit die App geladen ist
+      const waitTime = lovableTabs.length > 0 ? 500 : 3000; // Kürzer für existierende Tabs
+      
       setTimeout(async () => {
         try {
           const extensionPayload = {
@@ -57,30 +76,40 @@ async function openLovableApp(websiteData = null) {
             data: websiteData
           };
           
-          // Speichere Daten im localStorage des neuen Tabs
+          // Speichere Daten im localStorage und sende PostMessage
           await chrome.scripting.executeScript({
-            target: { tabId: newTab.id },
+            target: { tabId: targetTab.id },
             func: (payload) => {
-              console.log('Extension: Speichere Daten in localStorage:', payload);
+              console.log('Extension: Empfange neue Website-Daten:', payload.data.url);
+              
+              // Speichere in localStorage
               localStorage.setItem('seo_extension_data', JSON.stringify({
                 data: payload.data,
                 timestamp: payload.timestamp
               }));
               
-              // Sende auch PostMessage
+              // Sende PostMessage an die App
               window.postMessage(payload, '*');
+              
+              // Trigger CustomEvent für sofortige Verarbeitung
+              const event = new CustomEvent('extensionDataReceived', { 
+                detail: payload 
+              });
+              window.dispatchEvent(event);
+              
+              console.log('✅ Extension-Daten erfolgreich übertragen');
             },
             args: [extensionPayload]
           });
           
-          console.log('Daten erfolgreich übertragen für:', websiteData.url);
+          console.log('Daten erfolgreich an Tab übertragen:', targetTab.id);
         } catch (error) {
           console.error('Fehler beim Datenübertrag:', error);
         }
-      }, 3000);
+      }, waitTime);
     }
     
-    return { success: true, tabId: newTab.id };
+    return { success: true, tabId: targetTab.id, isExisting: lovableTabs.length > 0 };
     
   } catch (error) {
     console.error('Fehler beim Öffnen der Lovable App:', error);
@@ -157,7 +186,11 @@ async function analyzeWebsite() {
     
     if (result.success) {
       if (websiteData && websiteData.url) {
-        showStatus('✓ App geöffnet mit Website-Daten!', 'success');
+        if (result.isExisting) {
+          showStatus('✓ Daten an geöffnete Analyse gesendet!', 'success');
+        } else {
+          showStatus('✓ Neue Analyse mit Website-Daten gestartet!', 'success');
+        }
       } else {
         showStatus('✓ App geöffnet (ohne Website-Daten)', 'success');
       }

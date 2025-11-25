@@ -64,8 +64,6 @@ export const useExtensionData = () => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (isInitialized) return;
-
     // 1. Überprüfe localStorage sofort beim Laden
     const checkLocalStorage = () => {
       try {
@@ -76,6 +74,7 @@ export const useExtensionData = () => {
           const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
           
           if (parsedData.timestamp > fiveMinutesAgo) {
+            console.log('🔄 Neue Extension-Daten empfangen:', parsedData.data.url);
             setExtensionData(parsedData.data);
             setIsFromExtension(true);
             localStorage.removeItem('seo_extension_data');
@@ -95,18 +94,30 @@ export const useExtensionData = () => {
       if (event.data?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.data?.source === 'seo-analyzer-extension' &&
           event.data?.data) {
+        console.log('🔄 Extension-Daten via PostMessage:', event.data.data.url);
         setExtensionData(event.data.data);
         setIsFromExtension(true);
       }
     };
 
-    // 3. Optimized polling with less console noise
+    // 3. CustomEvent-Listener für sofortige Updates
+    const handleExtensionEvent = (event: CustomEvent) => {
+      if (event.detail?.type === 'EXTENSION_WEBSITE_DATA' && 
+          event.detail?.source === 'seo-analyzer-extension' &&
+          event.detail?.data) {
+        console.log('🔄 Extension-Daten via CustomEvent:', event.detail.data.url);
+        setExtensionData(event.detail.data);
+        setIsFromExtension(true);
+      }
+    };
+
+    // 4. Polling nur beim ersten Laden
     let pollCount = 0;
     const maxPolls = 10;
     let pollTimeout: NodeJS.Timeout;
     
     const pollForData = () => {
-      if (pollCount >= maxPolls) {
+      if (pollCount >= maxPolls || isInitialized) {
         setIsInitialized(true);
         return;
       }
@@ -120,22 +131,30 @@ export const useExtensionData = () => {
       pollTimeout = setTimeout(pollForData, 1000);
     };
 
-    // Immediate check
-    const immediateSuccess = checkLocalStorage();
-    
-    // Register event listeners
-    window.addEventListener('message', handleExtensionMessage);
-    
-    // Start polling only if no immediate success
-    if (!immediateSuccess) {
-      pollTimeout = setTimeout(pollForData, 1000);
-    } else {
-      setIsInitialized(true);
+    // Immediate check nur beim ersten Laden
+    if (!isInitialized) {
+      const immediateSuccess = checkLocalStorage();
+      if (immediateSuccess) {
+        setIsInitialized(true);
+      } else {
+        pollTimeout = setTimeout(pollForData, 1000);
+      }
     }
+    
+    // Register event listeners (immer aktiv)
+    window.addEventListener('message', handleExtensionMessage);
+    window.addEventListener('extensionDataReceived', handleExtensionEvent as EventListener);
+    
+    // Polling für neue Daten auch nach Initialisierung
+    const continuousCheckInterval = setInterval(() => {
+      checkLocalStorage();
+    }, 2000);
 
     // Cleanup
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
+      window.removeEventListener('extensionDataReceived', handleExtensionEvent as EventListener);
+      clearInterval(continuousCheckInterval);
       if (pollTimeout) {
         clearTimeout(pollTimeout);
       }
