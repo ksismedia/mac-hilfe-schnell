@@ -18,10 +18,15 @@ import { Save } from 'lucide-react';
 
 interface BacklinkAnalysisProps {
   url: string;
+  manualBacklinkData?: any;
+  updateManualBacklinkData?: (data: any) => void;
 }
 
-const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
-  const { manualBacklinkData, updateManualBacklinkData } = useManualData();
+const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url, manualBacklinkData: propManualBacklinkData, updateManualBacklinkData: propUpdateManualBacklinkData }) => {
+  // Use props if provided, otherwise fall back to hook
+  const hookData = useManualData();
+  const manualBacklinkData = propManualBacklinkData ?? hookData.manualBacklinkData;
+  const updateManualBacklinkData = propUpdateManualBacklinkData ?? hookData.updateManualBacklinkData;
   const { savedExtensionData, setSavedExtensionData, currentAnalysis } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
   const { updateAnalysis } = useSavedAnalyses();

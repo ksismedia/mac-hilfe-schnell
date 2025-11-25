@@ -17,10 +17,15 @@ import { Save } from 'lucide-react';
 interface ContentAnalysisProps {
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
+  manualContentData?: any;
+  updateManualContentData?: (data: any) => void;
 }
 
-const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
-  const { manualContentData, updateManualContentData } = useManualData();
+const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry, manualContentData: propManualContentData, updateManualContentData: propUpdateManualContentData }) => {
+  // Use props if provided, otherwise fall back to hook
+  const hookData = useManualData();
+  const manualContentData = propManualContentData ?? hookData.manualContentData;
+  const updateManualContentData = propUpdateManualContentData ?? hookData.updateManualContentData;
   const { reviewStatus, updateReviewStatus, savedExtensionData, setSavedExtensionData, currentAnalysis } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
   const { updateAnalysis } = useSavedAnalyses();

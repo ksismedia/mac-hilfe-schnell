@@ -46,6 +46,10 @@ interface SEOContentCategoryProps {
   onSecurityDataChange?: (data: any) => void;
   manualAccessibilityData?: any;
   updateManualAccessibilityData?: (data: any) => void;
+  manualContentData?: any;
+  updateManualContentData?: (data: any) => void;
+  manualBacklinkData?: any;
+  updateManualBacklinkData?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -82,6 +86,10 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   onSecurityDataChange,
   manualAccessibilityData,
   updateManualAccessibilityData,
+  manualContentData,
+  updateManualContentData,
+  manualBacklinkData,
+  updateManualBacklinkData
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -154,7 +162,12 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
           )}
 
           {activeTab === 'content' && (
-            <ContentAnalysis url={businessData.url} industry={businessData.industry} />
+            <ContentAnalysis 
+              url={businessData.url} 
+              industry={businessData.industry}
+              manualContentData={manualContentData}
+              updateManualContentData={updateManualContentData}
+            />
           )}
 
           {activeTab === 'local-seo' && (
@@ -167,7 +180,11 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
           )}
 
           {activeTab === 'backlinks' && (
-            <BacklinkAnalysis url={businessData.url} />
+            <BacklinkAnalysis 
+              url={businessData.url}
+              manualBacklinkData={manualBacklinkData}
+              updateManualBacklinkData={updateManualBacklinkData}
+            />
           )}
 
           {activeTab === 'accessibility' && (
