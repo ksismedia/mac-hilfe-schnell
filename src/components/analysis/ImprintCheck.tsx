@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useExtensionData } from '@/hooks/useExtensionData';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData } from '@/hooks/useManualData';
 
@@ -40,15 +41,19 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
   onManualDataChange 
 }) => {
   const { extensionData } = useExtensionData();
+  const { savedExtensionData } = useAnalysisContext();
   const [showManualInput, setShowManualInput] = useState(false);
   const [selectedElements, setSelectedElements] = useState<string[]>(
     manualData?.elements || []
   );
   const { toast } = useToast();
   
+  // Use live extension data or fallback to saved extension data
+  const activeExtensionData = extensionData || savedExtensionData;
+  
   // Get extension technical data
-  const hasExtensionData = extensionData !== null;
-  const hasImprintDetected = extensionData?.technical?.hasImprint;
+  const hasExtensionData = activeExtensionData !== null;
+  const hasImprintDetected = activeExtensionData?.technical?.hasImprint;
 
   const handleElementChange = (element: string, checked: boolean) => {
     if (checked) {

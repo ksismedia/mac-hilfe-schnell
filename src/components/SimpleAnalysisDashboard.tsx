@@ -26,6 +26,8 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { useExtensionData } from '@/hooks/useExtensionData';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore } from './analysis/export/scoreCalculations';
 
@@ -163,6 +165,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // AI Review Status Hook
   const { reviewStatus } = useAIReviewStatus(analysisData?.id);
 
+  // Extension Data Hook
+  const { extensionData } = useExtensionData();
+
+  // Analysis Context for saved extension data
+  const { setSavedExtensionData } = useAnalysisContext();
+
   // Load analysis data or use direct analysis data
   useEffect(() => {
     const loadAnalysisData = async () => {
@@ -256,7 +264,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualReputationData,
             setPrivacyData,
             setAccessibilityData,
-            setSecurityData
+            setSecurityData,
+            setSavedExtensionData
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
@@ -758,6 +767,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
               securityData={securityData}
+              extensionData={extensionData}
             />
             <CustomerHTMLExport
               businessData={businessData}

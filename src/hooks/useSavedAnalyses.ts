@@ -42,6 +42,7 @@ export interface SavedAnalysis {
     privacyData?: any;
     accessibilityData?: any;
     securityData?: any;
+    extensionData?: any;
   };
 }
 

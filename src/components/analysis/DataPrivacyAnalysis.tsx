@@ -31,6 +31,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { DataPrivacyService, DataPrivacyResult, GDPRViolation } from '@/services/DataPrivacyService';
 import { ManualDataPrivacyData } from '@/hooks/useManualData';
 import { useExtensionData } from '@/hooks/useExtensionData';
+import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import ManualDataPrivacyInput from './ManualDataPrivacyInput';
 import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
 
@@ -58,15 +59,19 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   onSecurityDataChange
 }) => {
   const { extensionData } = useExtensionData();
+  const { savedExtensionData } = useAnalysisContext();
   const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [securityLoading, setSecurityLoading] = useState(false);
   
+  // Use live extension data or fallback to saved extension data
+  const activeExtensionData = extensionData || savedExtensionData;
+  
   // Get extension technical data
-  const hasExtensionData = extensionData !== null;
-  const hasPrivacyPolicyDetected = extensionData?.technical?.hasPrivacyPolicy;
-  const hasContactFormDetected = extensionData?.technical?.hasContactForm;
+  const hasExtensionData = activeExtensionData !== null;
+  const hasPrivacyPolicyDetected = activeExtensionData?.technical?.hasPrivacyPolicy;
+  const hasContactFormDetected = activeExtensionData?.technical?.hasContactForm;
 
   const runPrivacyAnalysis = async () => {
     if (!businessData.url) return;

@@ -48,6 +48,7 @@ interface SaveAnalysisDialogProps {
   privacyData?: any;
   accessibilityData?: any;
   securityData?: any;
+  extensionData?: any;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -81,7 +82,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   privacyData,
   accessibilityData,
   securityData,
-  reviewStatus
+  reviewStatus,
+  extensionData
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [analysisName, setAnalysisName] = useState('');
@@ -135,7 +137,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualReputationData: manualReputationData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined,
-        securityData: securityData || undefined
+        securityData: securityData || undefined,
+        extensionData: extensionData || undefined
       };
 
       console.log('=== SAVE ANALYSIS DEBUG ===');

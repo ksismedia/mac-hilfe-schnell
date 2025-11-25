@@ -18,12 +18,15 @@ interface ContentAnalysisProps {
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
   const { extensionData } = useExtensionData();
-  const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
+  
+  // Use live extension data or fallback to saved extension data
+  const activeExtensionData = extensionData || savedExtensionData;
   
   // Get automatic content data from extension
-  const hasExtensionData = extensionData !== null;
-  const contentText = extensionData?.content?.fullText || '';
-  const wordCount = extensionData?.content?.wordCount || 0;
+  const hasExtensionData = activeExtensionData !== null;
+  const contentText = activeExtensionData?.content?.fullText || '';
+  const wordCount = activeExtensionData?.content?.wordCount || 0;
   
   // Branchenspezifische Content-Themen
   const industryContentTopics = {
