@@ -121,18 +121,32 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   }, [businessData.url]);
 
 
-  // Calculate DSGVO score using centralized function with CAP enforcement
+  // Calculate DSGVO score with ABSOLUTE ENFORCEMENT of cap
   const getDSGVOScore = () => {
     let score = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
     
-    // DOPPELTE ABSICHERUNG: Kappung auch hier enforc wenn kritische Violations existieren
+    // BRUTALE KAPPUNG: Zähle kritische Violations DIREKT hier
     if (privacyData?.violations) {
       const deselected = manualDataPrivacyData?.deselectedViolations || [];
-      const criticalCount = privacyData.violations.filter((v: any, i: number) => 
-        v.severity === 'critical' && !deselected.includes(`auto-${i}`)
-      ).length + (manualDataPrivacyData?.customViolations?.filter((v: any) => v.severity === 'critical').length || 0);
+      let criticalCount = 0;
       
-      // Erzwinge Kappung als Fallback
+      // Zähle nicht-deselektierte kritische Violations
+      privacyData.violations.forEach((v: any, i: number) => {
+        if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
+          criticalCount++;
+        }
+      });
+      
+      // Zähle custom kritische Violations
+      if (manualDataPrivacyData?.customViolations) {
+        manualDataPrivacyData.customViolations.forEach((v: any) => {
+          if (v.severity === 'critical') {
+            criticalCount++;
+          }
+        });
+      }
+      
+      // ERZWINGE Kappung - NICHT VERHANDELBAR
       if (criticalCount >= 3) {
         score = Math.min(20, score);
       } else if (criticalCount === 2) {
