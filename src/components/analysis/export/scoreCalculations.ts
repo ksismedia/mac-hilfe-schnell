@@ -1099,45 +1099,20 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   const finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // KRITISCH: Zähle kritische Violations mit Balance zwischen Auto-Erkennung und manueller Korrektur
+  // KRITISCH: Zähle kritische Violations - NUR explizites Deselektieren neutralisiert sie
+  // Manuelle Checkboxen beeinflussen die Score-Berechnung, aber nicht die Kappung
   const criticalCount = (() => {
-    let count = 0;
+    // Alle nicht-deselektierten kritischen Auto-Violations zählen
+    const activeCriticalAuto = totalViolations.filter((violation: any, index: number) => 
+      violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)
+    ).length;
     
-    // Prüfe jede automatische kritische Violation
-    totalViolations.forEach((violation: any, index: number) => {
-      if (violation.severity !== 'critical') return;
-      
-      // Wenn explizit deselektiert, nicht zählen
-      if (deselectedViolations.includes(`auto-${index}`)) return;
-      
-      // Balance: Wenn manuelle Daten die Violation widerlegen, nicht zählen
-      const desc = violation.description?.toLowerCase() || '';
-      
-      // Cookie-Banner Violations werden neutralisiert, wenn manuell als vorhanden markiert
-      if ((desc.includes('cookie-banner') || desc.includes('cookie-consent-banner')) && 
-          (manualDataPrivacyData?.cookiePolicy || manualDataPrivacyData?.cookieConsent)) {
-        return; // Nicht zählen - manuell widerlegt
-      }
-      
-      // Datenschutzerklärung Violations werden neutralisiert, wenn manuell als vorhanden markiert
-      if (desc.includes('datenschutzerklärung') || desc.includes('privacy policy')) {
-        if (manualDataPrivacyData?.privacyPolicy) {
-          return; // Nicht zählen - manuell widerlegt
-        }
-      }
-      
-      // HSTS/Security Violations werden NICHT durch manuelle Checkboxen neutralisiert
-      // (nur durch explizite Deselection in der Violations-Liste)
-      
-      count++;
-    });
-    
-    // Custom Violations zählen immer (wurden bewusst hinzugefügt)
+    // Custom kritische Violations zählen immer
     const criticalCustom = customViolations.filter((violation: any) => 
       violation.severity === 'critical'
     ).length;
     
-    return count + criticalCustom;
+    return activeCriticalAuto + criticalCustom;
   })();
   
   // DSGVO-Score-Caps - IMMER anwenden, auch bei manueller Bewertung
