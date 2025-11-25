@@ -83,13 +83,11 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   const [currentAnalysis, setCurrentAnalysis] = useState<SavedAnalysis | null>(null);
   const [savedExtensionData, setSavedExtensionData] = useState<ExtensionWebsiteData | null>(null);
   
-  // Clear saved extension data when current analysis changes
+  // Only clear extension data when explicitly switching between different saved analyses
   React.useEffect(() => {
     console.log('📊 Current analysis changed:', currentAnalysis?.id);
-    if (!currentAnalysis) {
-      console.log('🧹 Clearing saved extension data (no current analysis)');
-      setSavedExtensionData(null);
-    }
+    // Don't clear extension data just because no analysis is loaded
+    // Extension data should persist independently
   }, [currentAnalysis]);
   
   // AI Review Status für KI-VO Compliance
