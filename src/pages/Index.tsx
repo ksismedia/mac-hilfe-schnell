@@ -38,6 +38,7 @@ const Index = () => {
   const [loadedAnalysisId, setLoadedAnalysisId] = useState<string | undefined>();
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [analysisToLoad, setAnalysisToLoad] = useState<SavedAnalysis | null>(null);
   const { toast } = useToast();
   
   // Extension Data Hook
@@ -210,8 +211,6 @@ const Index = () => {
   };
 
   // Removed handleBusinessDataChange - not needed as business data is stable during analysis
-
-  const [analysisToLoad, setAnalysisToLoad] = useState<SavedAnalysis | null>(null);
 
   const handleLoadSavedAnalysis = (analysis: SavedAnalysis) => {
     console.log('Loading analysis:', analysis.name);
