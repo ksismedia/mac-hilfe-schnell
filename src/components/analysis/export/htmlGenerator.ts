@@ -67,6 +67,8 @@ interface CustomerReportData {
   securityData?: any;
   // DIREKTE WERTE AUS COMPETITOR ANALYSIS
   calculatedOwnCompanyScore?: number;
+  // Chrome Extension Data
+  extensionData?: any;
   // KI-VO Compliance
   hasUnreviewedAIContent?: boolean;
 }

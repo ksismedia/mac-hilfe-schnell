@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FileText, RefreshCw, CheckCircle, AlertCircle, Edit } from 'lucide-react';
 import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface ContentAnalysisProps {
   url: string;
@@ -17,22 +19,32 @@ interface ContentAnalysisProps {
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
   const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
+  const { toast } = useToast();
   
-  // ONLY use savedExtensionData from Context (managed by SimpleAnalysisDashboard)
-  const activeExtensionData = savedExtensionData;
+  // Local state to control when to display extension data
+  const [showExtensionData, setShowExtensionData] = useState(false);
   
-  // Debug: Log when extension data changes
-  React.useEffect(() => {
-    console.log('📝 ContentAnalysis - Extension data from Context:', {
-      hasSavedData: !!savedExtensionData,
-      wordCount: savedExtensionData?.content?.wordCount
-    });
-  }, [savedExtensionData]);
+  // Load extension data manually
+  const handleLoadExtensionData = () => {
+    if (savedExtensionData) {
+      setShowExtensionData(true);
+      toast({
+        title: "Extension-Daten geladen",
+        description: `${savedExtensionData.content?.wordCount || 0} Wörter gefunden`,
+      });
+    } else {
+      toast({
+        title: "Keine Daten verfügbar",
+        description: "Bitte führen Sie zuerst die Chrome Extension aus",
+        variant: "destructive"
+      });
+    }
+  };
   
-  // Get automatic content data from extension
-  const hasExtensionData = activeExtensionData !== null;
-  const contentText = activeExtensionData?.content?.fullText || '';
-  const wordCount = activeExtensionData?.content?.wordCount || 0;
+  // Get automatic content data from extension (only if manually loaded)
+  const hasExtensionData = showExtensionData && savedExtensionData !== null;
+  const contentText = hasExtensionData ? savedExtensionData.content?.fullText || '' : '';
+  const wordCount = hasExtensionData ? savedExtensionData.content?.wordCount || 0 : 0;
   
   // Branchenspezifische Content-Themen
   const industryContentTopics = {
@@ -173,6 +185,39 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
             </TabsList>
             
             <TabsContent value="automatic" className="space-y-6 mt-6">
+              {/* Button to load extension data */}
+              <Card className="mb-6 border-blue-500">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {savedExtensionData ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      )}
+                      <div>
+                        <p className="font-semibold">
+                          {savedExtensionData ? 'Extension-Daten verfügbar' : 'Keine Extension-Daten'}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {savedExtensionData 
+                            ? 'Klicken Sie auf "Daten laden", um die automatisch erkannten Inhalte anzuzeigen'
+                            : 'Führen Sie die Chrome Extension auf der Website aus'}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleLoadExtensionData}
+                      disabled={!savedExtensionData || showExtensionData}
+                      variant={showExtensionData ? "secondary" : "default"}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      {showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
               {/* Automatische Content-Daten von Extension */}
               {hasExtensionData && (
                 <Card className="mb-6">
