@@ -125,28 +125,46 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   const getDSGVOScore = () => {
     let score = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
     
-    // BRUTALE KAPPUNG: Zähle kritische Violations DIREKT hier
+    // Kappung erfolgt bereits in calculateDataPrivacyScore mit Neutralisierung
+    // Hier nur nochmal absichern falls nötig
     if (privacyData?.violations) {
       const deselected = manualDataPrivacyData?.deselectedViolations || [];
       let criticalCount = 0;
       
-      // Zähle nicht-deselektierte kritische Violations
+      // Zähle nicht-deselektierte und nicht-neutralisierte kritische/high Violations
       privacyData.violations.forEach((v: any, i: number) => {
-        if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
-          criticalCount++;
+        if (!deselected.includes(`auto-${i}`)) {
+          // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
+          const isSSLViolation = v.description?.includes('SSL') || 
+                                v.description?.includes('TLS') ||
+                                v.description?.includes('HSTS') ||
+                                v.description?.includes('Verschlüsselung');
+          
+          // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
+          const isCookieViolation = v.description?.includes('Cookie') && 
+                                    v.description?.includes('Banner');
+          
+          const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+          const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+          
+          if (!neutralizedBySSL && !neutralizedByCookie) {
+            if (v.severity === 'critical' || v.severity === 'high') {
+              criticalCount++;
+            }
+          }
         }
       });
       
-      // Zähle custom kritische Violations
+      // Zähle custom kritische/high Violations
       if (manualDataPrivacyData?.customViolations) {
         manualDataPrivacyData.customViolations.forEach((v: any) => {
-          if (v.severity === 'critical') {
+          if (v.severity === 'critical' || v.severity === 'high') {
             criticalCount++;
           }
         });
       }
       
-      // ERZWINGE Kappung - NICHT VERHANDELBAR
+      // ERZWINGE Kappung basierend auf VERBLEIBENDEN Fehlern nach Neutralisierung
       if (criticalCount >= 3) {
         score = Math.min(20, score);
       } else if (criticalCount === 2) {

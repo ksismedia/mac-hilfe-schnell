@@ -1070,15 +1070,38 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   const customViolations = manualDataPrivacyData?.customViolations || [];
   const totalViolations = privacyData?.violations || [];
   
-  // SCHRITT 1: Zähle kritische Violations ZUERST
+  // SCHRITT 1: Zähle kritische und high Violations (beide gelten als "kritisch" für Kappung)
   let criticalCount = 0;
+  
+  // Zähle auto-detected critical/high Violations
   totalViolations.forEach((violation: any, index: number) => {
-    if (violation.severity === 'critical' && !deselectedViolations.includes(`auto-${index}`)) {
-      criticalCount++;
+    if (!deselectedViolations.includes(`auto-${index}`)) {
+      // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
+      const isSSLViolation = violation.description?.includes('SSL') || 
+                            violation.description?.includes('TLS') ||
+                            violation.description?.includes('HSTS') ||
+                            violation.description?.includes('Verschlüsselung');
+      
+      // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
+      const isCookieViolation = violation.description?.includes('Cookie') && 
+                                violation.description?.includes('Banner');
+      
+      // Prüfe ob Violation durch manuelle Eingabe neutralisiert wurde
+      const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+      const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+      
+      // Zähle nur nicht-neutralisierte kritische/high Violations
+      if (!neutralizedBySSL && !neutralizedByCookie) {
+        if (violation.severity === 'critical' || violation.severity === 'high') {
+          criticalCount++;
+        }
+      }
     }
   });
+  
+  // Zähle custom critical/high Violations
   customViolations.forEach((violation: any) => {
-    if (violation.severity === 'critical') {
+    if (violation.severity === 'critical' || violation.severity === 'high') {
       criticalCount++;
     }
   });
@@ -1087,14 +1110,26 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
   
   if (!hasManualOverride) {
-    // Subtract points for violations (not deselected)
+    // Subtract points for violations (not deselected and not neutralized)
     totalViolations.forEach((violation: any, index: number) => {
       if (!deselectedViolations.includes(`auto-${index}`)) {
-        switch (violation.severity) {
-          case 'critical': score -= 30; break;
-          case 'high': score -= 15; break;
-          case 'medium': score -= 8; break;
-          case 'low': score -= 3; break;
+        const isSSLViolation = violation.description?.includes('SSL') || 
+                              violation.description?.includes('TLS') ||
+                              violation.description?.includes('HSTS') ||
+                              violation.description?.includes('Verschlüsselung');
+        const isCookieViolation = violation.description?.includes('Cookie') && 
+                                  violation.description?.includes('Banner');
+        
+        const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+        const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+        
+        if (!neutralizedBySSL && !neutralizedByCookie) {
+          switch (violation.severity) {
+            case 'critical': score -= 30; break;
+            case 'high': score -= 15; break;
+            case 'medium': score -= 8; break;
+            case 'low': score -= 3; break;
+          }
         }
       }
     });
@@ -1112,7 +1147,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // SCHRITT 3: Begrenze auf 0-100
   let finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
-  // SCHRITT 4: ABSOLUTE KAPPUNG - NICHT VERHANDELBAR
+  // SCHRITT 4: KAPPUNG basierend auf VERBLEIBENDEN kritischen Fehlern nach Neutralisierung
   if (criticalCount >= 3) {
     finalScore = Math.min(20, finalScore);
   } else if (criticalCount === 2) {
