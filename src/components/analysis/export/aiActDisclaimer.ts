@@ -88,7 +88,7 @@ export const getCollapsibleComplianceSectionHTML = (hasUnreviewedContent: boolea
   const transparencyContent = getAITransparencyInfoHTML();
   
   return `
-    <div style="margin: 30px 0;">
+    <div style="margin: 30px auto; width: 95%; max-width: 1400px; box-sizing: border-box;">
       <div 
         onclick="toggleSection('legal-compliance-content')" 
         style="cursor: pointer; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 18px 25px; border-radius: 12px; border: 2px solid rgba(251, 191, 36, 0.5); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
