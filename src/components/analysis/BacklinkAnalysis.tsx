@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
-import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,26 +19,22 @@ interface BacklinkAnalysisProps {
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
-  const { extensionData } = useExtensionData();
   const { savedExtensionData } = useAnalysisContext();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
-  // Use live extension data or fallback to saved extension data
-  const activeExtensionData = extensionData || savedExtensionData;
+  // ONLY use savedExtensionData from Context (managed by SimpleAnalysisDashboard)
+  const activeExtensionData = savedExtensionData;
   
   // Debug: Log when extension data changes
   React.useEffect(() => {
-    console.log('🔗 BacklinkAnalysis - Extension data status:');
-    console.log('  - Live extension data:', !!extensionData);
-    console.log('  - Saved extension data:', !!savedExtensionData);
-    console.log('  - Active extension data:', !!activeExtensionData);
-    if (activeExtensionData) {
-      console.log('  - Internal links:', activeExtensionData.content?.links?.internal?.length || 0);
-      console.log('  - External links:', activeExtensionData.content?.links?.external?.length || 0);
-    }
-  }, [extensionData, savedExtensionData, activeExtensionData]);
+    console.log('🔗 BacklinkAnalysis - Extension data from Context:', {
+      hasSavedData: !!savedExtensionData,
+      internalLinks: savedExtensionData?.content?.links?.internal?.length || 0,
+      externalLinks: savedExtensionData?.content?.links?.external?.length || 0
+    });
+  }, [savedExtensionData]);
   
   // Get automatic link data from extension
   const hasExtensionData = activeExtensionData !== null;

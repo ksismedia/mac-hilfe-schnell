@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Image, Video, MessageSquare, Target, Calendar, TrendingUp, Users, Zap, Edit, AlertCircle } from 'lucide-react';
 import { ManualContentInput } from './ManualContentInput';
 import { useManualData } from '@/hooks/useManualData';
-import { useExtensionData } from '@/hooks/useExtensionData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 
@@ -17,22 +16,18 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
-  const { extensionData } = useExtensionData();
   const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
   
-  // Use live extension data or fallback to saved extension data
-  const activeExtensionData = extensionData || savedExtensionData;
+  // ONLY use savedExtensionData from Context (managed by SimpleAnalysisDashboard)
+  const activeExtensionData = savedExtensionData;
   
   // Debug: Log when extension data changes
   React.useEffect(() => {
-    console.log('📝 ContentAnalysis - Extension data status:');
-    console.log('  - Live extension data:', !!extensionData);
-    console.log('  - Saved extension data:', !!savedExtensionData);
-    console.log('  - Active extension data:', !!activeExtensionData);
-    if (activeExtensionData) {
-      console.log('  - Word count:', activeExtensionData.content?.wordCount);
-    }
-  }, [extensionData, savedExtensionData, activeExtensionData]);
+    console.log('📝 ContentAnalysis - Extension data from Context:', {
+      hasSavedData: !!savedExtensionData,
+      wordCount: savedExtensionData?.content?.wordCount
+    });
+  }, [savedExtensionData]);
   
   // Get automatic content data from extension
   const hasExtensionData = activeExtensionData !== null;
