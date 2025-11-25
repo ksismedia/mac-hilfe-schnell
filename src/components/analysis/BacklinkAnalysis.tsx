@@ -29,28 +29,17 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
-  // Local state to control when to display extension data
-  const [showExtensionData, setShowExtensionData] = useState(false);
+  // Derive showExtensionData from savedExtensionData - always show if data exists
+  const showExtensionData = !!savedExtensionData;
   
   // Load extension data from Supabase
   const handleLoadExtensionData = async () => {
     const data = await loadLatestExtensionData();
     
-    if (data) {
-      setShowExtensionData(true);
-      if (setSavedExtensionData) {
-        setSavedExtensionData(data);
-      }
+    if (data && setSavedExtensionData) {
+      setSavedExtensionData(data);
     }
   };
-  
-  // Automatically show extension data if available from saved analysis
-  useEffect(() => {
-    if (savedExtensionData && !showExtensionData) {
-      console.log('🔄 Auto-enabling backlink extension data display from saved analysis');
-      setShowExtensionData(true);
-    }
-  }, [savedExtensionData, showExtensionData]);
   
   // Save extension data to current analysis
   const handleSaveExtensionData = async () => {
