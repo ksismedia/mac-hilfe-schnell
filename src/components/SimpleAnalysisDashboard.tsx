@@ -174,6 +174,19 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   // Use active extension data (live or saved)
   const activeExtensionData = extensionData || savedExtensionData;
   
+  // Automatically save new extension data to context when received
+  useEffect(() => {
+    if (extensionData && extensionData !== savedExtensionData) {
+      console.log('🔄 New extension data received, saving to context:', extensionData.url);
+      setSavedExtensionData(extensionData);
+      
+      toast({
+        title: "Extension-Daten empfangen",
+        description: `Website-Daten von ${extensionData.url} wurden automatisch geladen.`,
+      });
+    }
+  }, [extensionData, savedExtensionData, setSavedExtensionData]);
+  
   // Debug: Log extension data status on every render
   console.log('🔍 Extension Data Status in SimpleAnalysisDashboard:');
   console.log('  - extensionData (live):', extensionData ? 'AVAILABLE' : 'null');
