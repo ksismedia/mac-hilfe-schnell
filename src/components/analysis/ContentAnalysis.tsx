@@ -10,6 +10,9 @@ import { useManualData } from '@/hooks/useManualData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
+import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
+import { toast } from 'sonner';
+import { Save } from 'lucide-react';
 
 interface ContentAnalysisProps {
   url: string;
@@ -18,8 +21,9 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
   const { manualContentData, updateManualContentData } = useManualData();
-  const { reviewStatus, updateReviewStatus, savedExtensionData, setSavedExtensionData } = useAnalysisContext();
+  const { reviewStatus, updateReviewStatus, savedExtensionData, setSavedExtensionData, currentAnalysis } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
+  const { updateAnalysis } = useSavedAnalyses();
   
   // Local state to control when to display extension data
   const [showExtensionData, setShowExtensionData] = useState(false);
@@ -33,6 +37,31 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
       if (setSavedExtensionData) {
         setSavedExtensionData(data);
       }
+    }
+  };
+  
+  // Save extension data to current analysis
+  const handleSaveExtensionData = async () => {
+    if (!currentAnalysis || !savedExtensionData) {
+      toast.error('Keine Analyse oder Extension-Daten verfügbar');
+      return;
+    }
+    
+    try {
+      await updateAnalysis(
+        currentAnalysis.id,
+        currentAnalysis.name,
+        currentAnalysis.businessData,
+        currentAnalysis.realData,
+        {
+          ...currentAnalysis.manualData,
+          extensionData: savedExtensionData
+        }
+      );
+      toast.success('Extension-Daten erfolgreich gespeichert!');
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      toast.error('Fehler beim Speichern der Extension-Daten');
     }
   };
   
@@ -195,14 +224,25 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry }) => {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={handleLoadExtensionData}
-                      disabled={showExtensionData || isLoading}
-                      variant={showExtensionData ? "secondary" : "default"}
-                    >
-                      <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                      {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleLoadExtensionData}
+                        disabled={showExtensionData || isLoading}
+                        variant={showExtensionData ? "secondary" : "default"}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                        {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                      </Button>
+                      {showExtensionData && currentAnalysis && (
+                        <Button
+                          onClick={handleSaveExtensionData}
+                          variant="default"
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          Speichern
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -211,5 +211,11 @@ export const loadSavedAnalysisData = (
     setSecurityData(savedAnalysis.manualData.securityData);
   }
   
+  // Load extension data
+  if (savedAnalysis.manualData?.extensionData && setSavedExtensionData) {
+    console.log('Loading extension data');
+    setSavedExtensionData(savedAnalysis.manualData.extensionData);
+  }
+  
   console.log('Saved analysis data loaded successfully');
 };
