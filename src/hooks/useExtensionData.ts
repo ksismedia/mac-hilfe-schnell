@@ -64,27 +64,37 @@ export const useExtensionData = () => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    console.log('🚀 useExtensionData Hook initialized');
+    
     // 1. Überprüfe localStorage sofort beim Laden
     const checkLocalStorage = () => {
       try {
         const storedData = localStorage.getItem('seo_extension_data');
+        console.log('🔍 Checking localStorage for extension data:', !!storedData);
         
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
           
+          console.log('📦 Found stored data:', {
+            url: parsedData.data?.url,
+            timestamp: parsedData.timestamp,
+            isRecent: parsedData.timestamp > fiveMinutesAgo
+          });
+          
           if (parsedData.timestamp > fiveMinutesAgo) {
-            console.log('🔄 Neue Extension-Daten empfangen:', parsedData.data.url);
+            console.log('✅ Loading fresh extension data from localStorage');
             setExtensionData(parsedData.data);
             setIsFromExtension(true);
             localStorage.removeItem('seo_extension_data');
             return true;
           } else {
+            console.log('⏰ Stored data too old, removing');
             localStorage.removeItem('seo_extension_data');
           }
         }
       } catch (error) {
-        console.warn('Fehler beim Laden aus localStorage:', error);
+        console.warn('❌ Error loading from localStorage:', error);
       }
       return false;
     };
@@ -94,7 +104,7 @@ export const useExtensionData = () => {
       if (event.data?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.data?.source === 'seo-analyzer-extension' &&
           event.data?.data) {
-        console.log('🔄 Extension-Daten via PostMessage:', event.data.data.url);
+        console.log('📨 PostMessage received:', event.data.data.url);
         setExtensionData(event.data.data);
         setIsFromExtension(true);
       }
@@ -105,7 +115,7 @@ export const useExtensionData = () => {
       if (event.detail?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.detail?.source === 'seo-analyzer-extension' &&
           event.detail?.data) {
-        console.log('🔄 Extension-Daten via CustomEvent:', event.detail.data.url);
+        console.log('🎉 CustomEvent received:', event.detail.data.url);
         setExtensionData(event.detail.data);
         setIsFromExtension(true);
       }
@@ -133,15 +143,19 @@ export const useExtensionData = () => {
 
     // Immediate check nur beim ersten Laden
     if (!isInitialized) {
+      console.log('🔎 Initial check for stored data...');
       const immediateSuccess = checkLocalStorage();
       if (immediateSuccess) {
+        console.log('✅ Found data immediately');
         setIsInitialized(true);
       } else {
+        console.log('⏳ Starting polling for data...');
         pollTimeout = setTimeout(pollForData, 1000);
       }
     }
     
     // Register event listeners (immer aktiv)
+    console.log('👂 Registering event listeners...');
     window.addEventListener('message', handleExtensionMessage);
     window.addEventListener('extensionDataReceived', handleExtensionEvent as EventListener);
     
