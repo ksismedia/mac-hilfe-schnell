@@ -842,6 +842,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               privacyData={privacyData}
               accessibilityData={accessibilityData}
               securityData={securityData}
+              extensionData={savedExtensionData}
             />
           </div>
         </div>

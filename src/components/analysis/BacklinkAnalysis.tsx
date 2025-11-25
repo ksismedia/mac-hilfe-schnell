@@ -6,12 +6,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search } from 'lucide-react';
+import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search, RefreshCw } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 interface BacklinkAnalysisProps {
   url: string;
@@ -20,26 +21,36 @@ interface BacklinkAnalysisProps {
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
   const { savedExtensionData } = useAnalysisContext();
+  const { toast } = useToast();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
-  // ONLY use savedExtensionData from Context (managed by SimpleAnalysisDashboard)
-  const activeExtensionData = savedExtensionData;
+  // Local state to control when to display extension data
+  const [showExtensionData, setShowExtensionData] = useState(false);
   
-  // Debug: Log when extension data changes
-  React.useEffect(() => {
-    console.log('🔗 BacklinkAnalysis - Extension data from Context:', {
-      hasSavedData: !!savedExtensionData,
-      internalLinks: savedExtensionData?.content?.links?.internal?.length || 0,
-      externalLinks: savedExtensionData?.content?.links?.external?.length || 0
-    });
-  }, [savedExtensionData]);
+  // Load extension data manually
+  const handleLoadExtensionData = () => {
+    if (savedExtensionData) {
+      setShowExtensionData(true);
+      const externalLinksCount = savedExtensionData.content?.links?.external?.length || 0;
+      toast({
+        title: "Extension-Daten geladen",
+        description: `${externalLinksCount} externe Links gefunden`,
+      });
+    } else {
+      toast({
+        title: "Keine Daten verfügbar",
+        description: "Bitte führen Sie zuerst die Chrome Extension aus",
+        variant: "destructive"
+      });
+    }
+  };
   
-  // Get automatic link data from extension
-  const hasExtensionData = activeExtensionData !== null;
-  const internalLinks = activeExtensionData?.content?.links?.internal || [];
-  const externalLinks = activeExtensionData?.content?.links?.external || [];
+  // Get automatic link data from extension (only if manually loaded)
+  const hasExtensionData = showExtensionData && savedExtensionData !== null;
+  const internalLinks = hasExtensionData ? savedExtensionData.content?.links?.internal || [] : [];
+  const externalLinks = hasExtensionData ? savedExtensionData.content?.links?.external || [] : [];
 
   // Calculate backlink score from manual data
   const calculateBacklinkScore = () => {
@@ -165,6 +176,39 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
             </TabsList>
             
             <TabsContent value="automatic" className="space-y-6 mt-6">
+              {/* Button to load extension data */}
+              <Card className="mb-6 border-blue-500">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {savedExtensionData ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      )}
+                      <div>
+                        <p className="font-semibold">
+                          {savedExtensionData ? 'Extension-Daten verfügbar' : 'Keine Extension-Daten'}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {savedExtensionData 
+                            ? 'Klicken Sie auf "Daten laden", um die automatisch erkannten Links anzuzeigen'
+                            : 'Führen Sie die Chrome Extension auf der Website aus'}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleLoadExtensionData}
+                      disabled={!savedExtensionData || showExtensionData}
+                      variant={showExtensionData ? "secondary" : "default"}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      {showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
           <div className="space-y-6">
             {/* Automatische Link-Daten von Extension */}
             {hasExtensionData && (

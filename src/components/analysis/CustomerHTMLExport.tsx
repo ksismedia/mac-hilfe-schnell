@@ -46,6 +46,7 @@ interface CustomerHTMLExportProps {
   accessibilityData?: any;
   securityData?: any;
   calculatedOwnCompanyScore?: number; // DIREKT AUS COMPETITOR ANALYSIS
+  extensionData?: any; // Chrome Extension data
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -78,7 +79,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   privacyData,
   accessibilityData,
   securityData,
-  calculatedOwnCompanyScore
+  calculatedOwnCompanyScore,
+  extensionData
 }) => {
   const { toast } = useToast();
   
@@ -253,6 +255,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       accessibilityData,
       securityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
+      extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent
     });
     console.log('=== HTML CONTENT GENERATED ===');
@@ -345,6 +348,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       privacyData,
       accessibilityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
+      extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent
     });
 
