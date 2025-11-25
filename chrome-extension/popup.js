@@ -1,4 +1,3 @@
-
 // Popup Script - UI Logic für die Chrome Extension
 console.log('SEO Analyzer Popup geladen');
 
@@ -32,16 +31,16 @@ async function displayCurrentUrl() {
   }
 }
 
-// EINFACHSTE LÖSUNG - Daten als URL Parameter
-async function openLovableApp(websiteData = null) {
-  console.log('Öffne Lovable App:', websiteData ? 'mit Daten' : 'ohne Daten');
+// Lovable App öffnen mit Daten als URL Parameter
+async function openLovableApp(websiteData) {
+  console.log('📱 Öffne Lovable App...');
   
   try {
     let targetUrl = LOVABLE_APP_URL;
     
-    // Wenn wir Daten haben, kodiere sie als URL Parameter
+    // Kodiere Daten als URL Parameter wenn vorhanden
     if (websiteData && websiteData.url) {
-      console.log('📦 Kodiere Website-Daten...');
+      console.log('📦 Kodiere Website-Daten für:', websiteData.url);
       const encodedData = btoa(JSON.stringify(websiteData));
       targetUrl = `${LOVABLE_APP_URL}?extData=${encodedData}`;
       console.log('✅ Daten kodiert, Länge:', encodedData.length);
@@ -71,66 +70,67 @@ async function openLovableApp(websiteData = null) {
       console.log('✅ Neuer Tab erstellt');
     }
 
-    return { success: true };
+    return { success: true, hasData: !!(websiteData && websiteData.url) };
     
   } catch (error) {
-    console.error('❌ Fehler in openLovableApp:', error);
-    // WICHTIG: Immer ein Objekt zurückgeben, auch bei Fehler
+    console.error('❌ Fehler beim Öffnen der App:', error);
     return { success: false, error: error.message };
   }
 }
 
-// Website-Daten extrahieren
+// Website-Daten vom Content Script extrahieren
 async function extractWebsiteData() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
-  if (!tab.url.startsWith('http')) {
+  if (!tab || !tab.url || !tab.url.startsWith('http')) {
     throw new Error('Diese Seite kann nicht analysiert werden');
   }
   
   try {
-    // Versuche Content Script zu kontaktieren
+    // Versuch 1: Content Script direkt kontaktieren
+    console.log('📡 Kontaktiere Content Script...');
     const response = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
     
-    if (response?.success && response?.data) {
-      console.log('Website-Daten erfolgreich extrahiert:', response.data);
+    if (response && response.success && response.data) {
+      console.log('✅ Daten erfolgreich extrahiert:', response.data.url);
       return response.data;
     }
     
     throw new Error('Content Script antwortet nicht korrekt');
     
-  } catch (error) {
-    console.log('Content Script nicht verfügbar, versuche Injection...', error.message);
+  } catch (firstError) {
+    console.log('⚠️ Content Script nicht verfügbar, injiziere neu...');
     
     try {
-      // Injiziere Content Script
+      // Versuch 2: Content Script injizieren
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         files: ['content.js']
       });
       
-      // Warte kurz und versuche erneut
+      // Warte etwas länger für Injection
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      console.log('📡 Versuche erneut nach Injection...');
       const retryResponse = await chrome.tabs.sendMessage(tab.id, { action: 'extractData' });
       
-      if (retryResponse?.success && retryResponse?.data) {
-        console.log('Website-Daten nach Injection erfolgreich extrahiert:', retryResponse.data);
+      if (retryResponse && retryResponse.success && retryResponse.data) {
+        console.log('✅ Daten nach Injection erfolgreich extrahiert:', retryResponse.data.url);
         return retryResponse.data;
       }
       
       throw new Error('Content Script funktioniert nicht korrekt');
       
-    } catch (injectionError) {
-      console.error('Injection fehlgeschlagen:', injectionError);
-      throw new Error('Content Script konnte nicht geladen werden');
+    } catch (secondError) {
+      console.error('❌ Alle Versuche fehlgeschlagen:', secondError);
+      throw new Error('Datenextraktion fehlgeschlagen');
     }
   }
 }
 
 // Hauptfunktion für Website-Analyse
 async function analyzeWebsite() {
-  console.log('Starte Website-Analyse...');
+  console.log('🚀 Starte Website-Analyse...');
   
   try {
     showStatus('Extrahiere Website-Daten...', 'loading');
@@ -140,24 +140,22 @@ async function analyzeWebsite() {
     let websiteData = null;
     try {
       websiteData = await extractWebsiteData();
-      console.log('Website-Daten erfolgreich extrahiert für:', websiteData?.url);
-      
-      if (websiteData && websiteData.url) {
-        showStatus('✓ Daten extrahiert! Öffne App...', 'loading');
-      }
+      console.log('✅ Website-Daten erfolgreich extrahiert');
+      showStatus('✓ Daten extrahiert! Öffne App...', 'loading');
     } catch (extractError) {
-      console.log('Datenextraktion fehlgeschlagen:', extractError.message);
-      showStatus('⚠️ Keine Daten extrahiert, öffne App...', 'loading');
+      console.log('⚠️ Datenextraktion fehlgeschlagen:', extractError.message);
+      showStatus('⚠️ Öffne App ohne Daten...', 'loading');
+      // Weiter ohne Daten
     }
     
     // Öffne Lovable App (mit oder ohne Daten)
     const result = await openLovableApp(websiteData);
     
-    if (result?.success) {
-      if (websiteData?.url) {
-        showStatus('✓ Daten erfolgreich übertragen!', 'success');
+    if (result && result.success) {
+      if (result.hasData) {
+        showStatus('✅ Daten erfolgreich übertragen!', 'success');
       } else {
-        showStatus('✓ App geöffnet', 'success');
+        showStatus('✅ App geöffnet', 'success');
       }
       
       // Schließe Popup nach 2 Sekunden
@@ -165,12 +163,11 @@ async function analyzeWebsite() {
         window.close();
       }, 2000);
     } else {
-      // Fehlerfall
-      showStatus(`❌ Fehler: ${result?.error || 'Unbekannter Fehler'}`, 'error');
+      showStatus(`❌ Fehler: ${result && result.error ? result.error : 'Unbekannter Fehler'}`, 'error');
     }
     
   } catch (error) {
-    console.error('Fehler bei der Analyse:', error);
+    console.error('❌ Fehler bei der Analyse:', error);
     showStatus(`❌ Fehler: ${error.message}`, 'error');
   } finally {
     setTimeout(() => {
@@ -186,7 +183,7 @@ analyzeBtn.addEventListener('click', analyzeWebsite);
 document.addEventListener('DOMContentLoaded', () => {
   displayCurrentUrl();
   hideStatus();
-  console.log('Extension Popup initialisiert');
+  console.log('✅ Extension Popup initialisiert');
 });
 
 // Keyboard-Shortcut (Enter)
