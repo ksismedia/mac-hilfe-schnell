@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData } from '@/hooks/useManualData';
 
@@ -38,11 +39,16 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
   manualData, 
   onManualDataChange 
 }) => {
+  const { extensionData } = useExtensionData();
   const [showManualInput, setShowManualInput] = useState(false);
   const [selectedElements, setSelectedElements] = useState<string[]>(
     manualData?.elements || []
   );
   const { toast } = useToast();
+  
+  // Get extension technical data
+  const hasExtensionData = extensionData !== null;
+  const hasImprintDetected = extensionData?.technical?.hasImprint;
 
   const handleElementChange = (element: string, checked: boolean) => {
     if (checked) {
@@ -123,11 +129,43 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
           <CardDescription>
             {manualData 
               ? `Manuell geprüfte Impressum-Vollständigkeit für ${url}`
-              : `Live-Analyse der rechtlichen Vollständigkeit für ${url}`
+              : (
+                <>
+                  Live-Analyse der rechtlichen Vollständigkeit für {url}
+                  {hasExtensionData && hasImprintDetected && (
+                    <Badge variant="outline" className="ml-2 text-blue-600 border-blue-600">
+                      ✓ Impressum von Extension erkannt
+                    </Badge>
+                  )}
+                </>
+              )
             }
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Extension-Daten Anzeige */}
+          {hasExtensionData && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                {hasImprintDetected ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">
+                      Chrome Extension hat Impressum erkannt
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <span className="text-sm font-medium text-amber-800">
+                      Chrome Extension hat kein Impressum erkannt
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+          
           {showManualInput ? (
             <div className="space-y-4">
               <div className="bg-blue-50 rounded-lg p-4 mb-4">

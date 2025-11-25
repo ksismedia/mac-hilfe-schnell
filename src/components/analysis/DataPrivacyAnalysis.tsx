@@ -30,6 +30,7 @@ import {
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { DataPrivacyService, DataPrivacyResult, GDPRViolation } from '@/services/DataPrivacyService';
 import { ManualDataPrivacyData } from '@/hooks/useManualData';
+import { useExtensionData } from '@/hooks/useExtensionData';
 import ManualDataPrivacyInput from './ManualDataPrivacyInput';
 import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
 
@@ -56,10 +57,16 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   securityData,
   onSecurityDataChange
 }) => {
+  const { extensionData } = useExtensionData();
   const [privacyData, setPrivacyData] = useState<DataPrivacyResult | null>(savedData || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [securityLoading, setSecurityLoading] = useState(false);
+  
+  // Get extension technical data
+  const hasExtensionData = extensionData !== null;
+  const hasPrivacyPolicyDetected = extensionData?.technical?.hasPrivacyPolicy;
+  const hasContactFormDetected = extensionData?.technical?.hasContactForm;
 
   const runPrivacyAnalysis = async () => {
     if (!businessData.url) return;
@@ -399,6 +406,45 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Extension-Daten Anzeige */}
+          {hasExtensionData && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
+              <div className="flex items-center gap-2">
+                {hasPrivacyPolicyDetected ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">
+                      Chrome Extension hat Datenschutzerklärung erkannt
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <span className="text-sm font-medium text-amber-800">
+                      Chrome Extension hat keine Datenschutzerklärung erkannt
+                    </span>
+                  </>
+                )}
+              </div>
+              {hasContactFormDetected !== undefined && (
+                <div className="flex items-center gap-2">
+                  {hasContactFormDetected ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700">
+                        Kontaktformular vorhanden
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-sm text-blue-700">
+                      Kein Kontaktformular gefunden
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          
           {!privacyData && !loading && (
             <div className="text-center py-8">
               <Shield className="h-12 w-12 mx-auto text-accent mb-4" />
