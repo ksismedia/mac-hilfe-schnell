@@ -99,14 +99,28 @@ export const useExtensionData = () => {
       return false;
     };
 
-    // 2. PostMessage-Listener für Extension-Kommunikation
+    // 2. PostMessage-Listener für Extension-Kommunikation (OHNE Origin-Check)
     const handleExtensionMessage = (event: MessageEvent) => {
+      // Check message structure, not origin (Extension can't match origin)
       if (event.data?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.data?.source === 'seo-analyzer-extension' &&
           event.data?.data) {
-        console.log('📨 PostMessage received:', event.data.data.url);
+        console.log('📨 PostMessage received from extension:', event.data.data.url);
+        
+        // Save to state
         setExtensionData(event.data.data);
         setIsFromExtension(true);
+        
+        // ALSO save to localStorage for persistence
+        try {
+          localStorage.setItem('seo_extension_data', JSON.stringify({
+            data: event.data.data,
+            timestamp: event.data.timestamp || Date.now()
+          }));
+          console.log('💾 Saved to localStorage');
+        } catch (e) {
+          console.warn('Could not save to localStorage:', e);
+        }
       }
     };
 
@@ -115,9 +129,22 @@ export const useExtensionData = () => {
       if (event.detail?.type === 'EXTENSION_WEBSITE_DATA' && 
           event.detail?.source === 'seo-analyzer-extension' &&
           event.detail?.data) {
-        console.log('🎉 CustomEvent received:', event.detail.data.url);
+        console.log('🎉 CustomEvent received from extension:', event.detail.data.url);
+        
+        // Save to state
         setExtensionData(event.detail.data);
         setIsFromExtension(true);
+        
+        // ALSO save to localStorage for persistence
+        try {
+          localStorage.setItem('seo_extension_data', JSON.stringify({
+            data: event.detail.data,
+            timestamp: event.detail.timestamp || Date.now()
+          }));
+          console.log('💾 Saved to localStorage');
+        } catch (e) {
+          console.warn('Could not save to localStorage:', e);
+        }
       }
     };
 
