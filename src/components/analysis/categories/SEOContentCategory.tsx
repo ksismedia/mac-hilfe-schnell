@@ -169,6 +169,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               industry={businessData.industry}
               manualContentData={manualContentData}
               updateManualContentData={updateManualContentData}
+              realData={realData}
+              businessData={businessData}
+              keywordsScore={keywordsScore}
             />
           )}
 

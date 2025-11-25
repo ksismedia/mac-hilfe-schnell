@@ -13,15 +13,27 @@ import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { toast } from 'sonner';
 import { Save } from 'lucide-react';
+import { calculateContentQualityScore } from './export/scoreCalculations';
 
 interface ContentAnalysisProps {
   url: string;
   industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
   manualContentData?: any;
   updateManualContentData?: (data: any) => void;
+  realData?: any;
+  businessData?: any;
+  keywordsScore?: number | null;
 }
 
-const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry, manualContentData: propManualContentData, updateManualContentData: propUpdateManualContentData }) => {
+const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ 
+  url, 
+  industry, 
+  manualContentData: propManualContentData, 
+  updateManualContentData: propUpdateManualContentData,
+  realData,
+  businessData,
+  keywordsScore
+}) => {
   // Use props if provided, otherwise fall back to hook
   const hookData = useManualData();
   const manualContentData = propManualContentData ?? hookData.manualContentData;
@@ -148,19 +160,14 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ url, industry, manual
     expertTopics: ['Speziallösungen', 'Beratung', 'Modernisierung', 'Effizienz']
   };
 
-  // Calculate content score from manual data
-  const calculateContentScore = () => {
-    if (!manualContentData) return 0;
-    
-    return Math.round(
-      (manualContentData.textQuality + 
-       manualContentData.contentRelevance + 
-       manualContentData.expertiseLevel + 
-       manualContentData.contentFreshness) / 4
-    );
-  };
-
-  const contentScore = calculateContentScore();
+  // Calculate content score using centralized function
+  const contentScore = calculateContentQualityScore(
+    realData,
+    keywordsScore,
+    businessData || { url },
+    manualContentData,
+    savedExtensionData
+  );
   const hasContentData = manualContentData !== null;
 
   const getScoreColor = (score: number) => {
