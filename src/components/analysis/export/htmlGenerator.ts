@@ -2397,9 +2397,6 @@ export const generateCustomerHTML = ({
       <p class="gray-text" style="margin-top: 15px;">Eine betriebliche Standortbestimmung im Markt und – Wettbewerbsumfeld, digital, analog im Netz und aus Kundensicht für: ${realData.company.name}</p>
     </div>
 
-    <!-- Rechtliche Hinweise & KI-Transparenz (Collapsible) -->
-    ${getCollapsibleComplianceSectionHTML(hasUnreviewedAIContent)}
-
     <!-- Executive Summary -->
     <div class="section">
       <div class="section-header"><span>Executive Summary</span></div>
@@ -4702,6 +4699,9 @@ export const generateCustomerHTML = ({
         </div>
       </div>
     </div>
+
+    <!-- Rechtliche Hinweise & KI-Transparenz (Collapsible) -->
+    ${getCollapsibleComplianceSectionHTML(hasUnreviewedAIContent)}
 
     <!-- Footer -->
     <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(17, 24, 39, 0.6); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3); max-width: 800px; margin-left: auto; margin-right: auto;">
