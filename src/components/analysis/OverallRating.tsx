@@ -8,7 +8,28 @@ import { ChevronRight } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualSocialData, StaffQualificationData, QuoteResponseData, HourlyRateData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualCorporateIdentityData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
-import { calculateLocalSEOScore, calculateStaffQualificationScore, calculateQuoteResponseScore, calculateWorkplaceScore, calculateHourlyRateScore, calculateContentQualityScore, calculateBacklinksScore, calculateAccessibilityScore, calculateDataPrivacyScore, calculateTechnicalSecurityScore, calculateIndustryReviewScore, calculateOnlinePresenceScore, calculateCorporateIdentityScore } from './export/scoreCalculations';
+import { 
+  calculateLocalSEOScore, 
+  calculateStaffQualificationScore, 
+  calculateQuoteResponseScore, 
+  calculateWorkplaceScore, 
+  calculateHourlyRateScore, 
+  calculateContentQualityScore, 
+  calculateBacklinksScore, 
+  calculateAccessibilityScore, 
+  calculateDataPrivacyScore, 
+  calculateTechnicalSecurityScore, 
+  calculateIndustryReviewScore, 
+  calculateOnlinePresenceScore, 
+  calculateCorporateIdentityScore,
+  calculateOnlineQualityAuthorityScore,
+  calculateWebsitePerformanceTechScore,
+  calculateSocialMediaPerformanceScore,
+  calculateMarketEnvironmentScore,
+  calculateCorporateAppearanceScore,
+  calculateServiceQualityScore,
+  calculateOverallScore
+} from './export/scoreCalculations';
 import { getScoreTextDescription } from '@/utils/scoreTextUtils';
 
 // Helper function to calculate Google Reviews Score (same as in scoreCalculations.ts)
@@ -90,192 +111,75 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const defaultKeywordsScore = keywords.length > 0 ? Math.round((keywordsFoundCount / keywords.length) * 100) : 0;
   const currentKeywordsScore = keywordsScore ?? defaultKeywordsScore;
 
-  // Social Media Score - VEREINFACHT
-  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
+  // ========================================
+  // KATEGORIE-SCORES MIT ZENTRALISIERTEN FUNKTIONEN
+  // ========================================
   
-  // Local SEO Score - STRENGE BEWERTUNG MIT HÖCHSTER GEWICHTUNG
+  // Kategorie 1: Online-Qualität · Relevanz · Autorität
+  const cat1Avg = calculateOnlineQualityAuthorityScore(
+    realData,
+    currentKeywordsScore,
+    businessData,
+    privacyData,
+    accessibilityData,
+    manualContentData,
+    manualBacklinkData,
+    manualLocalSEOData,
+    manualDataPrivacyData,
+    manualAccessibilityData,
+    securityData,
+    null // manualReputationData
+  );
+  
+  // Kategorie 2: Webseiten-Performance & Technik
+  const cat2Avg = calculateWebsitePerformanceTechScore(realData, manualConversionData, null);
+  
+  // Kategorie 3: Online-/Web-/Social-Media Performance
+  const cat3Avg = calculateSocialMediaPerformanceScore(
+    realData,
+    manualSocialData,
+    manualIndustryReviewData,
+    manualOnlinePresenceData
+  );
+  
+  // Kategorie 4: Markt & Marktumfeld
+  const cat4Avg = calculateMarketEnvironmentScore(
+    realData,
+    hourlyRateData,
+    staffQualificationData,
+    competitorScore,
+    manualWorkplaceData
+  );
+  
+  // Kategorie 5: Außendarstellung & Erscheinungsbild
+  const cat5Avg = calculateCorporateAppearanceScore(manualCorporateIdentityData);
+  
+  // Kategorie 6: Qualität · Service · Kundenorientierung
+  const cat6Avg = calculateServiceQualityScore(quoteResponseData);
+
+  // Gewichteter Gesamtscore mit dynamischer Gewichtsverteilung
+  const overallScore = calculateOverallScore(cat1Avg, cat2Avg, cat3Avg, cat4Avg, cat5Avg, cat6Avg);
+
+  // Alle Metriken für die Detail-Anzeige - individuelle Scores für Tooltips
+  const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData);
-
-  // Workplace Score - korrigierte Berechnung verwenden
   const workplaceScoreRaw = calculateWorkplaceScore(realData, manualWorkplaceData);
-  const workplaceScore = workplaceScoreRaw === -1 ? 0 : workplaceScoreRaw; // Use 0 for calculation but keep -1 for display
-
-  // Staff Qualification Score - nur bewerten wenn Daten vorhanden
   const staffQualificationScore = calculateStaffQualificationScore(staffQualificationData);
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
-  
-  // Content, Accessibility, Backlinks, Privacy Scores
   const contentScore = manualContentData ? calculateContentQualityScore(realData, null, businessData, manualContentData) : null;
   const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(accessibilityData, manualAccessibilityData) : null;
   const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData) : null;
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData) : null;
-  
-  // Technical Security Score (separate from DSGVO)
   const technicalSecurityScore = privacyData ? calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) : null;
-  
-  // Website Security Score (Safe Browsing)
   const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : null;
-  
-  // Industry Reviews and Online Presence
   const industryReviewScore = manualIndustryReviewData ? calculateIndustryReviewScore(manualIndustryReviewData) : null;
   const onlinePresenceScore = manualOnlinePresenceData ? calculateOnlinePresenceScore(manualOnlinePresenceData) : null;
-  
-  // Hourly Rate Score
   const hourlyRateScore = hourlyRateData && (hourlyRateData.meisterRate > 0 || hourlyRateData.facharbeiterRate > 0 || hourlyRateData.azubiRate > 0 || hourlyRateData.helferRate > 0 || hourlyRateData.serviceRate > 0 || hourlyRateData.installationRate > 0 || hourlyRateData.regionalMeisterRate > 0 || hourlyRateData.regionalFacharbeiterRate > 0 || hourlyRateData.regionalAzubiRate > 0 || hourlyRateData.regionalHelferRate > 0 || hourlyRateData.regionalServiceRate > 0 || hourlyRateData.regionalInstallationRate > 0)
     ? calculateHourlyRateScore(hourlyRateData)
     : null;
-
-  // ========================================
-  // KATEGORISIERUNG DER METRIKEN (wie in htmlGenerator.ts)
-  // ========================================
-  
-  // Basis-Gewichtungen für die 6 Hauptkategorien
-  const baseCat1Weight = 30; // Online-Qualität · Relevanz · Autorität
-  const baseCat2Weight = 20; // Webseiten-Performance & Technik
-  const baseCat3Weight = 20; // Online-/Web-/Social-Media Performance
-  const baseCat4Weight = 10; // Markt & Marktumfeld
-  const baseCat5Weight = 10; // Außendarstellung & Erscheinungsbild
-  const baseCat6Weight = 10; // Qualität · Service · Kundenorientierung
-  
-  // Kategorie 1: Online-Qualität · Relevanz · Autorität
-  const cat1Scores = [
-    realData.seo.score,
-    localSEOScore,
-    realData.imprint.score
-  ].filter(s => s !== null && s !== undefined && s > 0);
-  
-  if (contentScore !== null && contentScore > 0) cat1Scores.push(contentScore);
-  if (accessibilityScore !== null && accessibilityScore > 0) cat1Scores.push(accessibilityScore);
-  if (backlinksScore !== null && backlinksScore > 0) cat1Scores.push(backlinksScore);
-  if (dataPrivacyScore !== null && dataPrivacyScore > 0) cat1Scores.push(dataPrivacyScore);
-  if (technicalSecurityScore !== null && technicalSecurityScore > 0) cat1Scores.push(technicalSecurityScore);
-  if (websiteSecurityScore !== null && websiteSecurityScore > 0) cat1Scores.push(websiteSecurityScore);
-  
-  const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
-  
-  // Kategorie 2: Webseiten-Performance & Technik
-  const conversionScore = manualConversionData ? (manualConversionData.overallScore || 0) : 0;
-  const cat2Scores = [
-    realData.performance.score,
-    realData.mobile.overallScore
-  ].filter(s => s > 0);
-  
-  if (conversionScore > 0) {
-    cat2Scores.push(conversionScore);
-  }
-  
-  const cat2Avg = cat2Scores.length > 0 ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) : 0;
-  
-  // Kategorie 3: Online-/Web-/Social-Media Performance
-  const googleReviewsScore = calculateGoogleReviewsScore(realData);
-  const cat3Scores = [
-    googleReviewsScore,
-    socialMediaScore,
-    realData.socialProof?.overallScore ?? 0
-  ].filter(s => s > 0);
-  
-  if (industryReviewScore !== null && industryReviewScore > 0) cat3Scores.push(industryReviewScore);
-  if (onlinePresenceScore !== null && onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
-  
-  const cat3Avg = cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0;
-  
-  // Kategorie 4: Markt & Marktumfeld
-  const cat4Scores = [
-    competitorScore !== null && competitorScore !== undefined ? competitorScore : (realData.competitors.length > 0 ? Math.min(100, 60 + (realData.competitors.length * 5)) : 30),
-    workplaceScoreRaw !== -1 ? workplaceScoreRaw : 0
-  ].filter(s => s > 0);
-  
-  if (staffQualificationScore !== null && staffQualificationScore > 0) cat4Scores.push(staffQualificationScore);
-  if (hourlyRateScore !== null && hourlyRateScore > 0) cat4Scores.push(hourlyRateScore);
-  
-  const cat4Avg = cat4Scores.length > 0 ? Math.round(cat4Scores.reduce((a, b) => a + b, 0) / cat4Scores.length) : 0;
-  
-  // Kategorie 5: Außendarstellung & Erscheinungsbild
   const corporateIdentityScore = manualCorporateIdentityData ? calculateCorporateIdentityScore(manualCorporateIdentityData) : null;
-  const cat5Scores = [];
-  if (corporateIdentityScore !== null && corporateIdentityScore > 0) cat5Scores.push(corporateIdentityScore);
-  const cat5Avg = cat5Scores.length > 0 ? Math.round(cat5Scores.reduce((a, b) => a + b, 0) / cat5Scores.length) : 0;
-  
-  // Kategorie 6: Qualität · Service · Kundenorientierung
-  const cat6Scores = [];
-  if (quoteResponseScore !== null && quoteResponseScore > 0) cat6Scores.push(quoteResponseScore);
-  const cat6Avg = cat6Scores.length > 0 ? Math.round(cat6Scores.reduce((a, b) => a + b, 0) / cat6Scores.length) : 0;
-  
-  // Dynamische Gewichtsverteilung: Fehlende Kategorien auf vorhandene verteilen
-  let adjustedCat1Weight = baseCat1Weight;
-  let adjustedCat2Weight = baseCat2Weight;
-  let adjustedCat3Weight = baseCat3Weight;
-  let adjustedCat4Weight = baseCat4Weight;
-  let adjustedCat5Weight = baseCat5Weight;
-  let adjustedCat6Weight = baseCat6Weight;
-
-  // Berechne fehlende Gewichte
-  let missingWeight = 0;
-  const categoriesWithData = [];
-  
-  if (cat1Avg > 0) {
-    categoriesWithData.push('cat1');
-  } else {
-    missingWeight += adjustedCat1Weight;
-    adjustedCat1Weight = 0;
-  }
-  
-  if (cat2Avg > 0) {
-    categoriesWithData.push('cat2');
-  } else {
-    missingWeight += adjustedCat2Weight;
-    adjustedCat2Weight = 0;
-  }
-  
-  if (cat3Avg > 0) {
-    categoriesWithData.push('cat3');
-  } else {
-    missingWeight += adjustedCat3Weight;
-    adjustedCat3Weight = 0;
-  }
-  
-  if (cat4Avg > 0) {
-    categoriesWithData.push('cat4');
-  } else {
-    missingWeight += adjustedCat4Weight;
-    adjustedCat4Weight = 0;
-  }
-  
-  if (cat5Avg > 0) {
-    categoriesWithData.push('cat5');
-  } else {
-    missingWeight += adjustedCat5Weight;
-    adjustedCat5Weight = 0;
-  }
-  
-  if (cat6Avg > 0) {
-    categoriesWithData.push('cat6');
-  } else {
-    missingWeight += adjustedCat6Weight;
-    adjustedCat6Weight = 0;
-  }
-
-  // Verteile fehlende Gewichte gleichmäßig auf vorhandene Kategorien
-  if (categoriesWithData.length > 0 && missingWeight > 0) {
-    const additionalWeight = missingWeight / categoriesWithData.length;
-    if (cat1Avg > 0) adjustedCat1Weight += additionalWeight;
-    if (cat2Avg > 0) adjustedCat2Weight += additionalWeight;
-    if (cat3Avg > 0) adjustedCat3Weight += additionalWeight;
-    if (cat4Avg > 0) adjustedCat4Weight += additionalWeight;
-    if (cat5Avg > 0) adjustedCat5Weight += additionalWeight;
-    if (cat6Avg > 0) adjustedCat6Weight += additionalWeight;
-  }
-
-  // Gewichteter Gesamtscore aus den 6 Kategorien mit angepassten Gewichten
-  const totalCategoryWeight = adjustedCat1Weight + adjustedCat2Weight + adjustedCat3Weight + adjustedCat4Weight + adjustedCat5Weight + adjustedCat6Weight;
-  const overallScore = totalCategoryWeight > 0 ? Math.round((
-    cat1Avg * adjustedCat1Weight +
-    cat2Avg * adjustedCat2Weight +
-    cat3Avg * adjustedCat3Weight +
-    cat4Avg * adjustedCat4Weight +
-    cat5Avg * adjustedCat5Weight +
-    cat6Avg * adjustedCat6Weight
-  ) / totalCategoryWeight) : 0;
+  const googleReviewsScore = calculateGoogleReviewsScore(realData);
+  const conversionScore = manualConversionData ? (manualConversionData.overallScore || 0) : 0;
 
   // Alle Metriken für die Detail-Anzeige - GEWICHTE BASIEREN AUF KATEGORIE-ZUGEHÖRIGKEIT
   const baseMetrics = [
