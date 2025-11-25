@@ -176,14 +176,22 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   
   // Automatically save new extension data to context when received
   useEffect(() => {
-    if (extensionData && !savedExtensionData) {
-      console.log('🔄 New extension data received, saving to context:', extensionData.url);
-      setSavedExtensionData(extensionData);
+    if (extensionData) {
+      const currentUrl = extensionData.url;
+      const savedUrl = savedExtensionData?.url;
       
-      toast({
-        title: "Extension-Daten empfangen",
-        description: `Website-Daten von ${extensionData.url} wurden automatisch geladen.`,
-      });
+      // Only update if URL is different or no saved data exists
+      if (currentUrl !== savedUrl) {
+        console.log('🔄 New extension data received, saving to context:', currentUrl);
+        console.log('  Previous URL:', savedUrl);
+        console.log('  Extension data:', extensionData);
+        setSavedExtensionData(extensionData);
+        
+        toast({
+          title: "Extension-Daten empfangen",
+          description: `Website-Daten von ${extensionData.url} wurden automatisch geladen.`,
+        });
+      }
     }
   }, [extensionData, savedExtensionData, setSavedExtensionData]);
   
