@@ -535,6 +535,77 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Critical Error Analysis Box */}
+                  {(() => {
+                    const deselected = manualDataPrivacyData?.deselectedViolations || [];
+                    const allViolations = privacyData?.violations || [];
+                    let criticalCount = 0;
+                    let neutralizedCount = 0;
+                    
+                    allViolations.forEach((v: any, i: number) => {
+                      if (!deselected.includes(`auto-${i}`)) {
+                        const isSSLViolation = v.description?.includes('SSL') || 
+                                              v.description?.includes('TLS') ||
+                                              v.description?.includes('HSTS') ||
+                                              v.description?.includes('Verschlüsselung');
+                        const isCookieViolation = v.description?.includes('Cookie') && 
+                                                  v.description?.includes('Banner');
+                        
+                        const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+                        const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+                        
+                        if (neutralizedBySSL || neutralizedByCookie) {
+                          neutralizedCount++;
+                        } else if (v.severity === 'critical' || v.severity === 'high') {
+                          criticalCount++;
+                        }
+                      }
+                    });
+                    
+                    if (manualDataPrivacyData?.customViolations) {
+                      manualDataPrivacyData.customViolations.forEach((v: any) => {
+                        if (v.severity === 'critical' || v.severity === 'high') {
+                          criticalCount++;
+                        }
+                      });
+                    }
+                    
+                    let scoreCap = 100;
+                    if (criticalCount >= 3) scoreCap = 20;
+                    else if (criticalCount === 2) scoreCap = 35;
+                    else if (criticalCount === 1) scoreCap = 59;
+                    
+                    if (criticalCount > 0 || neutralizedCount > 0) {
+                      return (
+                        <div className={`rounded-lg p-4 border ${criticalCount > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                          <div className="flex items-center gap-2 font-semibold mb-2 text-sm">
+                            🔍 Kritische Fehler-Analyse:
+                          </div>
+                          {neutralizedCount > 0 && (
+                            <div className="text-sm text-green-700 mb-1">
+                              ✓ {neutralizedCount} kritische Fehler durch manuelle Eingaben neutralisiert
+                            </div>
+                          )}
+                          {criticalCount > 0 ? (
+                            <>
+                              <div className="text-sm text-red-700 mb-1">
+                                ⚠️ {criticalCount} kritische Fehler verbleibend
+                              </div>
+                              <div className="text-sm text-red-900 font-bold">
+                                📊 Score-Kappung: Maximum {scoreCap}% möglich
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-sm text-green-700">
+                              ✓ Keine verbleibenden kritischen Fehler
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                  
                   {/* Legal Warning for GDPR Violations specifically in GDPR section */}
                   {getAllViolations().some(v => v.severity === 'high' || v.severity === 'critical') && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
