@@ -202,7 +202,8 @@ export const loadSavedAnalysisData = (
     const loadedPrivacyData = savedAnalysis.manualData.privacyData;
     const manualDataPrivacy = savedAnalysis.manualData?.manualDataPrivacyData;
     
-    // KRITISCH: Kappe auch den manuellen overallScore falls vorhanden
+    // KRITISCH: Kappe den manuellen overallScore BEVOR er an calculateDataPrivacyScore übergeben wird
+    let cappedManualData = manualDataPrivacy;
     if (manualDataPrivacy?.overallScore !== undefined && loadedPrivacyData?.violations) {
       const deselected = manualDataPrivacy?.deselectedViolations || [];
       let criticalCount = 0;
@@ -226,21 +227,24 @@ export const loadSavedAnalysisData = (
       else if (criticalCount === 1) maxScore = 59;
       
       if (manualDataPrivacy.overallScore > maxScore) {
-        // Manuelle Daten mit gekapptem Score laden
+        // Gekappte Version erstellen
+        cappedManualData = {
+          ...manualDataPrivacy,
+          overallScore: maxScore
+        };
+        
+        // Auch im State updaten
         if (updateManualDataPrivacyData) {
-          updateManualDataPrivacyData({
-            ...manualDataPrivacy,
-            overallScore: maxScore
-          });
+          updateManualDataPrivacyData(cappedManualData);
         }
       }
     }
     
-    // Berechne Score mit Kappung
+    // Berechne Score mit dem GEKAPPTEN manualDataPrivacy
     const recalculatedScore = calculateDataPrivacyScore(
       savedAnalysis.realData, 
       loadedPrivacyData, 
-      manualDataPrivacy
+      cappedManualData
     );
     
     // Setze korrigierten Score
