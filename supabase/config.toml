@@ -1,5 +1,8 @@
 project_id = "dfzuijskqjbtpckzzemh"
 
+[functions.extension-data-bridge]
+verify_jwt = false
+
 [functions.check-ssl]
 verify_jwt = false
 

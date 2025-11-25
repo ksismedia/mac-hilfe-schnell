@@ -188,6 +188,30 @@ export type Database = {
         }
         Relationships: []
       }
+      extension_data_temp: {
+        Row: {
+          created_at: string
+          data: Json
+          expires_at: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          expires_at: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          expires_at?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       saved_analyses: {
         Row: {
           business_data: Json
@@ -257,6 +281,7 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_accessibility_cache: { Args: never; Returns: undefined }
+      cleanup_expired_extension_data: { Args: never; Returns: undefined }
       cleanup_old_data: { Args: never; Returns: undefined }
       create_audit_log: {
         Args: {

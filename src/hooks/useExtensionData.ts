@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -62,6 +63,52 @@ export const useExtensionData = () => {
   const [extensionData, setExtensionData] = useState<ExtensionWebsiteData | null>(null);
   const [isFromExtension, setIsFromExtension] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Check URL parameter for extension session
+  useEffect(() => {
+    const checkUrlParameter = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('extensionSession');
+      
+      if (sessionId) {
+        console.log('🔗 Extension session ID found in URL:', sessionId);
+        
+        try {
+          // Retrieve data from Edge Function
+          const { data: result, error } = await supabase.functions.invoke('extension-data-bridge', {
+            body: { action: 'retrieve', sessionId }
+          });
+
+          if (error) {
+            console.error('❌ Error retrieving extension data:', error);
+            return;
+          }
+
+          if (result?.success && result?.data) {
+            console.log('✅ Extension data retrieved from Edge Function:', result.data);
+            setExtensionData(result.data);
+            setIsFromExtension(true);
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('extensionData', JSON.stringify({
+              data: result.data,
+              timestamp: Date.now()
+            }));
+
+            // Clean up URL parameter
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, '', newUrl);
+          }
+        } catch (error) {
+          console.error('❌ Exception retrieving extension data:', error);
+        }
+      }
+      
+      setIsInitialized(true);
+    };
+
+    checkUrlParameter();
+  }, []);
 
   useEffect(() => {
     console.log('🚀 useExtensionData Hook initialized');
