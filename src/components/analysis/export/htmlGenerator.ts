@@ -2423,14 +2423,6 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header"><span>Executive Summary</span></div>
       <div class="section-content">
-        <!-- Gesamtscore als erstes -->
-        <div class="score-overview" style="margin-bottom: 20px;">
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
-            <div class="score-label">Gesamtscore</div>
-          </div>
-        </div>
-
         <!-- Collapsible Kategorie-Aufschlüsselung -->
         <div style="margin-bottom: 30px;">
           <div 
@@ -2670,6 +2662,14 @@ export const generateCustomerHTML = ({
             </div>
           </div>
 
+        </div>
+
+        <!-- Gesamtscore -->
+        <div class="score-overview" style="margin-top: 30px;">
+          <div class="score-card">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
+            <div class="score-label">Gesamtscore</div>
+          </div>
         </div>
       </div>
     </div>
