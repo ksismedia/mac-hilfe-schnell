@@ -12,6 +12,9 @@ import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
+import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
+import { toast } from 'sonner';
+import { Save } from 'lucide-react';
 
 interface BacklinkAnalysisProps {
   url: string;
@@ -19,8 +22,9 @@ interface BacklinkAnalysisProps {
 
 const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
   const { manualBacklinkData, updateManualBacklinkData } = useManualData();
-  const { savedExtensionData, setSavedExtensionData } = useAnalysisContext();
+  const { savedExtensionData, setSavedExtensionData, currentAnalysis } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
+  const { updateAnalysis } = useSavedAnalyses();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -37,6 +41,31 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
       if (setSavedExtensionData) {
         setSavedExtensionData(data);
       }
+    }
+  };
+  
+  // Save extension data to current analysis
+  const handleSaveExtensionData = async () => {
+    if (!currentAnalysis || !savedExtensionData) {
+      toast.error('Keine Analyse oder Extension-Daten verfügbar');
+      return;
+    }
+    
+    try {
+      await updateAnalysis(
+        currentAnalysis.id,
+        currentAnalysis.name,
+        currentAnalysis.businessData,
+        currentAnalysis.realData,
+        {
+          ...currentAnalysis.manualData,
+          extensionData: savedExtensionData
+        }
+      );
+      toast.success('Extension-Daten erfolgreich gespeichert!');
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      toast.error('Fehler beim Speichern der Extension-Daten');
     }
   };
   
@@ -184,14 +213,25 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({ url }) => {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={handleLoadExtensionData}
-                      disabled={showExtensionData || isLoading}
-                      variant={showExtensionData ? "secondary" : "default"}
-                    >
-                      <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                      {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleLoadExtensionData}
+                        disabled={showExtensionData || isLoading}
+                        variant={showExtensionData ? "secondary" : "default"}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                        {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
+                      </Button>
+                      {showExtensionData && currentAnalysis && (
+                        <Button
+                          onClick={handleSaveExtensionData}
+                          variant="default"
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          Speichern
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
