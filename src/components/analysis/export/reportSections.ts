@@ -441,10 +441,11 @@ export const generateDataPrivacySection = (
   
   allViolations.forEach((v: any, i: number) => {
     if (!deselected.includes(`auto-${i}`)) {
-      const isSSLViolation = v.description?.includes('SSL') || 
+      // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+      const isSSLViolation = (v.description?.includes('SSL') || 
                             v.description?.includes('TLS') ||
-                            v.description?.includes('HSTS') ||
-                            v.description?.includes('Verschlüsselung');
+                            v.description?.includes('Verschlüsselung')) &&
+                            !v.description?.includes('HSTS');
       const isCookieViolation = v.description?.includes('Cookie') && 
                                 v.description?.includes('Banner');
       
@@ -473,6 +474,19 @@ export const generateDataPrivacySection = (
   if (criticalCount >= 3) scoreCap = 20;
   else if (criticalCount === 2) scoreCap = 35;
   else if (criticalCount === 1) scoreCap = 59;
+  
+  // Prüfe, ob positive manuelle Eingaben vorhanden sind
+  const hasPositiveManualInputs = manualDataPrivacyData?.hasSSL || 
+                                  manualDataPrivacyData?.cookieConsent || 
+                                  manualDataPrivacyData?.privacyPolicy || 
+                                  manualDataPrivacyData?.gdprCompliant;
+  
+  // Liste der vorhandenen positiven Eingaben
+  const positiveInputsList = [];
+  if (manualDataPrivacyData?.hasSSL) positiveInputsList.push('SSL vorhanden');
+  if (manualDataPrivacyData?.cookieConsent) positiveInputsList.push('Cookie-Banner vorhanden');
+  if (manualDataPrivacyData?.privacyPolicy) positiveInputsList.push('Datenschutzerklärung vorhanden');
+  if (manualDataPrivacyData?.gdprCompliant) positiveInputsList.push('DSGVO-konform markiert');
   
   // GETRENNTE BEWERTUNG:
   // DSGVO-Score (rechtliche Aspekte) - Nutze dataPrivacyScore direkt (Caps werden in calculateDataPrivacyScore angewendet)
@@ -543,6 +557,13 @@ export const generateDataPrivacySection = (
                                   <div style="font-size: 11px; color: #7f1d1d; font-weight: bold;">
                                     📊 Score-Kappung: Maximum ${scoreCap}% möglich
                                   </div>
+                                  ${hasPositiveManualInputs && positiveInputsList.length > 0 ? `
+                                    <div style="margin-top: 8px; padding: 8px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 4px;">
+                                      <div style="font-size: 11px; color: #92400e;">
+                                        <strong>ℹ️ Hinweis:</strong> Trotz manueller Angaben (${positiveInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Fehler nicht höher ausfallen.
+                                      </div>
+                                    </div>
+                                  ` : ''}
                                 ` : `
                                   <div style="font-size: 11px; color: #059669;">
                                     ✓ Keine verbleibenden kritischen Fehler
