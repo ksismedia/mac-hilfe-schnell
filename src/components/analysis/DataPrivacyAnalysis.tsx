@@ -545,10 +545,11 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     
                     allViolations.forEach((v: any, i: number) => {
                       if (!deselected.includes(`auto-${i}`)) {
-                        const isSSLViolation = v.description?.includes('SSL') || 
+                        // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+                        const isSSLViolation = (v.description?.includes('SSL') || 
                                               v.description?.includes('TLS') ||
-                                              v.description?.includes('HSTS') ||
-                                              v.description?.includes('Verschlüsselung');
+                                              v.description?.includes('Verschlüsselung')) &&
+                                              !v.description?.includes('HSTS');
                         const isCookieViolation = v.description?.includes('Cookie') && 
                                                   v.description?.includes('Banner');
                         
@@ -576,6 +577,19 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     else if (criticalCount === 2) scoreCap = 35;
                     else if (criticalCount === 1) scoreCap = 59;
                     
+                    // Prüfe, ob positive manuelle Eingaben vorhanden sind
+                    const hasPositiveManualInputs = manualDataPrivacyData?.hasSSL || 
+                                                    manualDataPrivacyData?.cookieConsent || 
+                                                    manualDataPrivacyData?.privacyPolicy || 
+                                                    manualDataPrivacyData?.gdprCompliant;
+                    
+                    // Liste der vorhandenen positiven Eingaben
+                    const positiveInputsList = [];
+                    if (manualDataPrivacyData?.hasSSL) positiveInputsList.push('SSL vorhanden');
+                    if (manualDataPrivacyData?.cookieConsent) positiveInputsList.push('Cookie-Banner vorhanden');
+                    if (manualDataPrivacyData?.privacyPolicy) positiveInputsList.push('Datenschutzerklärung vorhanden');
+                    if (manualDataPrivacyData?.gdprCompliant) positiveInputsList.push('DSGVO-konform markiert');
+                    
                     if (criticalCount > 0 || neutralizedCount > 0) {
                       return (
                         <div className={`rounded-lg p-4 border ${criticalCount > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
@@ -595,6 +609,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                               <div className="text-sm text-red-900 font-bold">
                                 📊 Score-Kappung: Maximum {scoreCap}% möglich
                               </div>
+                              {hasPositiveManualInputs && positiveInputsList.length > 0 && (
+                                <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded">
+                                  <div className="text-sm text-orange-900">
+                                    <strong>ℹ️ Hinweis:</strong> Trotz manueller Angaben ({positiveInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Fehler nicht höher ausfallen.
+                                  </div>
+                                </div>
+                              )}
                             </>
                           ) : (
                             <div className="text-sm text-green-700">
