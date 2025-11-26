@@ -34,7 +34,7 @@ import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import ManualDataPrivacyInput from './ManualDataPrivacyInput';
 import { SafeBrowsingResult, SafeBrowsingService } from '@/services/SafeBrowsingService';
-import { calculateDataPrivacyScore } from './export/scoreCalculations';
+import { calculateDataPrivacyScore, calculateTechnicalSecurityScore } from './export/scoreCalculations';
 
 interface DataPrivacyAnalysisProps {
   businessData: {
@@ -121,172 +121,14 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   }, [businessData.url]);
 
 
-  // Calculate DSGVO score with ABSOLUTE ENFORCEMENT of cap
+  // Calculate DSGVO score - use centralized function directly
   const getDSGVOScore = () => {
-    let score = calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
-    
-    // Kappung erfolgt bereits in calculateDataPrivacyScore mit Neutralisierung
-    // Hier nur nochmal absichern falls nötig
-    if (privacyData?.violations) {
-      const deselected = manualDataPrivacyData?.deselectedViolations || [];
-      let criticalCount = 0;
-      
-      // Zähle nicht-deselektierte und nicht-neutralisierte kritische/high Violations
-      privacyData.violations.forEach((v: any, i: number) => {
-        if (!deselected.includes(`auto-${i}`)) {
-          // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
-          // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
-          const isSSLViolation = (v.description?.includes('SSL') || 
-                                v.description?.includes('TLS') ||
-                                v.description?.includes('Verschlüsselung')) &&
-                                !v.description?.includes('HSTS');
-          
-          // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
-          const isCookieViolation = v.description?.includes('Cookie') && 
-                                    v.description?.includes('Banner');
-          
-          const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
-          const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
-          
-          if (!neutralizedBySSL && !neutralizedByCookie) {
-            if (v.severity === 'critical' || v.severity === 'high') {
-              criticalCount++;
-            }
-          }
-        }
-      });
-      
-      // Zähle custom kritische/high Violations
-      if (manualDataPrivacyData?.customViolations) {
-        manualDataPrivacyData.customViolations.forEach((v: any) => {
-          if (v.severity === 'critical' || v.severity === 'high') {
-            criticalCount++;
-          }
-        });
-      }
-      
-      // ERZWINGE Kappung basierend auf VERBLEIBENDEN Fehlern nach Neutralisierung
-      if (criticalCount >= 3) {
-        score = Math.min(20, score);
-      } else if (criticalCount === 2) {
-        score = Math.min(35, score);
-      } else if (criticalCount === 1) {
-        score = Math.min(59, score);
-      }
-    }
-    
-    return score;
+    return calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData);
   };
 
-  // Calculate Technical Security score
+  // Calculate Technical Security score - use centralized function directly
   const getTechnicalSecurityScore = () => {
-    if (!privacyData) return 0;
-    
-    // Check if cookie banner is present based on:
-    // 1. Automatic detection
-    // 2. Manual override: if "no cookie banner" violation is deselected AND manual checkboxes indicate compliance
-    const autoCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || false;
-    const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
-    const totalViolations = privacyData?.violations || [];
-    
-    // Find the "no cookie banner" violation
-    const noCookieBannerViolationIndex = totalViolations.findIndex(v => 
-      v.description?.includes('Cookie-Consent-Banner') || 
-      v.description?.includes('Cookie-Banner')
-    );
-    
-    const cookieBannerViolationDeselected = noCookieBannerViolationIndex >= 0 && 
-      deselectedViolations.includes(`auto-${noCookieBannerViolationIndex}`);
-    
-    // Check manual cookie compliance indicators
-    const manualCookieCompliance = manualDataPrivacyData?.cookiePolicy || 
-                                   manualDataPrivacyData?.cookieConsent;
-    
-    // Cookie banner is considered present if:
-    // - Auto-detected OR
-    // - The "no banner" violation was deselected AND manual data indicates compliance
-    const hasCookieBanner = autoCookieBanner || 
-                           (cookieBannerViolationDeselected && manualCookieCompliance);
-    
-    const sslGrade = privacyData?.sslRating;
-    const securityHeaders = privacyData?.realApiData?.securityHeaders;
-    const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
-                     privacyData?.realApiData?.ssl?.hasHSTS;
-    
-    // Check for critical technical issues
-    const hasCriticalIssues = 
-      (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
-      !hasHSTS;
-    
-    // If cookie banner exists and critical issues exist → 59%
-    if (hasCookieBanner && hasCriticalIssues) {
-      return 59;
-    }
-    
-    // If cookie banner exists and NO critical issues → calculate normally
-    if (hasCookieBanner && !hasCriticalIssues) {
-      let score = 0;
-      let componentCount = 0;
-      
-      if (sslGrade) {
-        componentCount++;
-        const sslScore = (() => {
-          switch (sslGrade) {
-            case 'A+': return 100;
-            case 'A': return 95;
-            case 'B': return 80;
-            case 'C': return 70;
-            default: return 60;
-          }
-        })();
-        score += sslScore * 0.6;
-      }
-      
-      if (securityHeaders) {
-        componentCount++;
-        const headers = securityHeaders.headers || {};
-        const csp = headers['Content-Security-Policy']?.present;
-        const xFrame = headers['X-Frame-Options']?.present;
-        const xContent = headers['X-Content-Type-Options']?.present;
-        const referrer = headers['Referrer-Policy']?.present;
-        
-        const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
-        const headerScore = Math.round((presentHeaders / 5) * 100);
-        score += headerScore * 0.4;
-      }
-      
-      return componentCount > 0 ? Math.round(score) : 0;
-    }
-    
-    // If cookie banner does NOT exist → less than 59%
-    let score = 40; // Base score without cookie banner
-    
-    // SSL adjustment
-    if (sslGrade) {
-      const sslBonus = (() => {
-        switch (sslGrade) {
-          case 'A+': return 15;
-          case 'A': return 10;
-          case 'B': return 5;
-          case 'C': return 0;
-          case 'D': return -10;
-          case 'E': return -15;
-          case 'F': return -20;
-          case 'T': return -25;
-          default: return 0;
-        }
-      })();
-      score += sslBonus;
-    }
-    
-    // HSTS adjustment
-    if (hasHSTS) {
-      score += 5;
-    } else {
-      score -= 5;
-    }
-    
-    return Math.max(0, Math.min(58, score)); // Cap at 58% max without cookie banner
+    return calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData);
   };
 
   // Check if there are critical violations despite positive score
