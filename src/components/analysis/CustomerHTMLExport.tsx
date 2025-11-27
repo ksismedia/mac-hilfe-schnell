@@ -188,29 +188,35 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     console.log('✅ KI-VO Check passed - all AI content reviewed');
     
-    // ENSURE securityData is loaded before export
+    // CRITICAL: ALWAYS load security data before export
     let exportSecurityData = securityData;
-    if (!exportSecurityData) {
-      console.log('🔒 Security data missing, loading automatically...');
+    console.log('🔒 Loading security data...');
+    toast({
+      title: 'Lade Sicherheitsdaten...',
+      description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+    });
+    
+    try {
+      const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+      exportSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
+      console.log('✅ Security data loaded successfully:', exportSecurityData);
       toast({
-        title: 'Lade Sicherheitsdaten...',
-        description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+        title: 'Sicherheitsdaten geladen',
+        description: 'Export wird erstellt...',
       });
-      try {
-        const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
-        exportSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-        console.log('✅ Security data loaded for export:', exportSecurityData);
-      } catch (error) {
-        console.error('❌ Failed to load security data:', error);
-        toast({
-          title: 'Warnung',
-          description: 'Sicherheitsdaten konnten nicht geladen werden. Export wird ohne Security-Section fortgesetzt.',
-          variant: 'destructive',
-        });
-      }
-    } else {
-      console.log('✅ Security data already present:', exportSecurityData);
+    } catch (error) {
+      console.error('❌ Failed to load security data:', error);
+      toast({
+        title: 'Fehler',
+        description: 'Sicherheitsdaten konnten nicht geladen werden.',
+        variant: 'destructive',
+      });
+      return; // STOP export if security data cannot be loaded
     }
+    
+    console.log('🔥 FINAL CHECK - exportSecurityData before HTML generation:', exportSecurityData);
+    console.log('🔥 exportSecurityData is null?', exportSecurityData === null);
+    console.log('🔥 exportSecurityData is undefined?', exportSecurityData === undefined);
     
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
@@ -284,6 +290,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       hasUnreviewedAIContent: hasUnreviewedContent
     });
     console.log('=== HTML CONTENT GENERATED ===');
+    console.log('🔥 Was exportSecurityData passed to generateCustomerHTML?', !!exportSecurityData);
+    console.log('🔥 HTML includes "Website-Sicherheit"?', htmlContent.includes('Website-Sicherheit'));
     console.log('HTML includes HANDWERK STARS:', htmlContent.includes('HANDWERK STARS'));
     console.log('HTML includes polygon:', htmlContent.includes('polygon'));
     console.log('HTML includes f4c430:', htmlContent.includes('f4c430'));
@@ -318,28 +326,30 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     console.log('✅ KI-VO Check passed - all AI content reviewed');
     
-    // ENSURE securityData is loaded before download
+    // CRITICAL: ALWAYS load security data before download
     let downloadSecurityData = securityData;
-    if (!downloadSecurityData) {
-      console.log('🔒 Security data missing, loading automatically...');
+    console.log('🔒 Loading security data...');
+    toast({
+      title: 'Lade Sicherheitsdaten...',
+      description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+    });
+    
+    try {
+      const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+      downloadSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
+      console.log('✅ Security data loaded successfully:', downloadSecurityData);
       toast({
-        title: 'Lade Sicherheitsdaten...',
-        description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+        title: 'Sicherheitsdaten geladen',
+        description: 'Download wird erstellt...',
       });
-      try {
-        const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
-        downloadSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-        console.log('✅ Security data loaded for download:', downloadSecurityData);
-      } catch (error) {
-        console.error('❌ Failed to load security data:', error);
-        toast({
-          title: 'Warnung',
-          description: 'Sicherheitsdaten konnten nicht geladen werden. Download wird ohne Security-Section fortgesetzt.',
-          variant: 'destructive',
-        });
-      }
-    } else {
-      console.log('✅ Security data already present:', downloadSecurityData);
+    } catch (error) {
+      console.error('❌ Failed to load security data:', error);
+      toast({
+        title: 'Fehler',
+        description: 'Sicherheitsdaten konnten nicht geladen werden.',
+        variant: 'destructive',
+      });
+      return; // STOP download if security data cannot be loaded
     }
     
     // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
