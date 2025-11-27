@@ -188,31 +188,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     
     console.log('✅ KI-VO Check passed - all AI content reviewed');
     
-    // CRITICAL: ALWAYS load security data before export
-    let exportSecurityData = securityData;
-    console.log('🔒 Loading security data...');
-    toast({
-      title: 'Lade Sicherheitsdaten...',
-      description: 'Google Safe Browsing Prüfung wird durchgeführt.',
-    });
-    
-    try {
-      const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
-      exportSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-      console.log('✅ Security data loaded successfully:', exportSecurityData);
-      toast({
-        title: 'Sicherheitsdaten geladen',
-        description: 'Export wird erstellt...',
-      });
-    } catch (error) {
-      console.error('❌ Failed to load security data:', error);
-      toast({
-        title: 'Fehler',
-        description: 'Sicherheitsdaten konnten nicht geladen werden.',
-        variant: 'destructive',
-      });
-      return; // STOP export if security data cannot be loaded
-    }
+    // Use existing security data from state (already loaded in SimpleAnalysisDashboard)
+    const exportSecurityData = securityData;
+    console.log('🔒 Using security data from state:', exportSecurityData);
     
     console.log('🔥 FINAL CHECK - exportSecurityData before HTML generation:', exportSecurityData);
     console.log('🔥 exportSecurityData is null?', exportSecurityData === null);
@@ -327,30 +305,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     console.log('✅ KI-VO Check passed - all AI content reviewed');
     
     // CRITICAL: ALWAYS load security data before download
-    let downloadSecurityData = securityData;
-    console.log('🔒 Loading security data...');
-    toast({
-      title: 'Lade Sicherheitsdaten...',
-      description: 'Google Safe Browsing Prüfung wird durchgeführt.',
-    });
-    
-    try {
-      const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
-      downloadSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-      console.log('✅ Security data loaded successfully:', downloadSecurityData);
-      toast({
-        title: 'Sicherheitsdaten geladen',
-        description: 'Download wird erstellt...',
-      });
-    } catch (error) {
-      console.error('❌ Failed to load security data:', error);
-      toast({
-        title: 'Fehler',
-        description: 'Sicherheitsdaten konnten nicht geladen werden.',
-        variant: 'destructive',
-      });
-      return; // STOP download if security data cannot be loaded
-    }
+    // Use existing security data from state (already loaded in SimpleAnalysisDashboard)
+    const downloadSecurityData = securityData;
+    console.log('🔒 Using security data from state for download:', downloadSecurityData);
     
     // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
