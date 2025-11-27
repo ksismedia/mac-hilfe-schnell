@@ -15,7 +15,12 @@ const getScoreColorClass = (score: number) => {
 export const generateWebsiteSecuritySection = (
   securityData?: SafeBrowsingResult | null
 ) => {
+  console.log('🔥🔥🔥 generateWebsiteSecuritySection called with:', securityData);
+  console.log('🔥🔥🔥 securityData is null?', securityData === null);
+  console.log('🔥🔥🔥 securityData is undefined?', securityData === undefined);
+  
   if (!securityData) {
+    console.log('❌❌❌ NO SECURITY DATA - returning N/A section');
     return `
     <!-- Website-Sicherheit -->
     <div class="section">
@@ -33,6 +38,8 @@ export const generateWebsiteSecuritySection = (
     </div>
     `;
   }
+  
+  console.log('✅✅✅ SECURITY DATA PRESENT - generating full section');
 
   // Use SafeBrowsingService for consistent scoring
   const securityScore = SafeBrowsingService.calculateSecurityScore(securityData);
