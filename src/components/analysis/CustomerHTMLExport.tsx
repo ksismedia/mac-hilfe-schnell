@@ -162,13 +162,14 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     return missingElements;
   };
 
-  const generateCustomerReport = () => {
+  const generateCustomerReport = async () => {
     console.log('🔴 GENERATE CUSTOMER REPORT AUFGERUFEN');
-    exportAsCustomerReport();
+    await exportAsCustomerReport();
   };
 
   const exportAsCustomerReport = async () => {
     console.log('🔵 CustomerHTMLExport exportAsCustomerReport called - THIS OPENS IN BROWSER');
+    console.log('🔍 Initial securityData:', securityData);
     
     // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
     if (!isFullyReviewed()) {
@@ -191,13 +192,24 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     let exportSecurityData = securityData;
     if (!exportSecurityData) {
       console.log('🔒 Security data missing, loading automatically...');
+      toast({
+        title: 'Lade Sicherheitsdaten...',
+        description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+      });
       try {
         const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
         exportSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-        console.log('✅ Security data loaded for export');
+        console.log('✅ Security data loaded for export:', exportSecurityData);
       } catch (error) {
         console.error('❌ Failed to load security data:', error);
+        toast({
+          title: 'Warnung',
+          description: 'Sicherheitsdaten konnten nicht geladen werden. Export wird ohne Security-Section fortgesetzt.',
+          variant: 'destructive',
+        });
       }
+    } else {
+      console.log('✅ Security data already present:', exportSecurityData);
     }
     
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
@@ -286,7 +298,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   };
 
   const downloadCustomerReport = async () => {
-    // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
+    console.log('🔴 DOWNLOAD CUSTOMER REPORT CLICKED');
+    console.log('🔍 Initial securityData:', securityData);
+    
+    // KI-VO Compliance Check - BLOCKIERE DOWNLOAD WENN NICHT VOLLSTÄNDIG GEPRÜFT
     if (!isFullyReviewed()) {
       const unreviewed = getUnreviewedCategories();
       console.error('⛔ KI-VO BLOCKIERUNG: Download nicht möglich - ungeprüfte AI-Inhalte:', unreviewed);
@@ -307,13 +322,24 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     let downloadSecurityData = securityData;
     if (!downloadSecurityData) {
       console.log('🔒 Security data missing, loading automatically...');
+      toast({
+        title: 'Lade Sicherheitsdaten...',
+        description: 'Google Safe Browsing Prüfung wird durchgeführt.',
+      });
       try {
         const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
         downloadSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
-        console.log('✅ Security data loaded for download');
+        console.log('✅ Security data loaded for download:', downloadSecurityData);
       } catch (error) {
         console.error('❌ Failed to load security data:', error);
+        toast({
+          title: 'Warnung',
+          description: 'Sicherheitsdaten konnten nicht geladen werden. Download wird ohne Security-Section fortgesetzt.',
+          variant: 'destructive',
+        });
       }
+    } else {
+      console.log('✅ Security data already present:', downloadSecurityData);
     }
     
     // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
@@ -502,8 +528,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
             </Button>
             <Button 
               variant="outline"
-              onClick={() => {
-                generateCustomerReport();
+              onClick={async () => {
+                await generateCustomerReport();
                 setTimeout(() => {
                   window.print();
                 }, 1000);
