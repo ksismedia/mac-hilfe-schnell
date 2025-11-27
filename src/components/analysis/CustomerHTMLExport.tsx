@@ -345,8 +345,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
       manualConversionData: currentManualConversionData || manualConversionData,
       manualMobileData: manualMobileData,
+      manualReputationData: manualReputationData,
       privacyData,
       accessibilityData,
+      securityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent
