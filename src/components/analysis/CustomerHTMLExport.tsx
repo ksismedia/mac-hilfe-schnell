@@ -167,7 +167,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     exportAsCustomerReport();
   };
 
-  const exportAsCustomerReport = () => {
+  const exportAsCustomerReport = async () => {
     console.log('🔵 CustomerHTMLExport exportAsCustomerReport called - THIS OPENS IN BROWSER');
     
     // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
@@ -186,6 +186,19 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     }
     
     console.log('✅ KI-VO Check passed - all AI content reviewed');
+    
+    // ENSURE securityData is loaded before export
+    let exportSecurityData = securityData;
+    if (!exportSecurityData) {
+      console.log('🔒 Security data missing, loading automatically...');
+      try {
+        const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+        exportSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
+        console.log('✅ Security data loaded for export');
+      } catch (error) {
+        console.error('❌ Failed to load security data:', error);
+      }
+    }
     
     // DIREKTER ZUGRIFF AUF DEN GLOBALEN SCORE
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore || 87;
@@ -253,7 +266,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualReputationData: manualReputationData,
       privacyData,
       accessibilityData,
-      securityData,
+      securityData: exportSecurityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent
@@ -272,7 +285,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     }
   };
 
-  const downloadCustomerReport = () => {
+  const downloadCustomerReport = async () => {
     // KI-VO Compliance Check - BLOCKIERE EXPORT WENN NICHT VOLLSTÄNDIG GEPRÜFT
     if (!isFullyReviewed()) {
       const unreviewed = getUnreviewedCategories();
@@ -289,6 +302,19 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     }
     
     console.log('✅ KI-VO Check passed - all AI content reviewed');
+    
+    // ENSURE securityData is loaded before download
+    let downloadSecurityData = securityData;
+    if (!downloadSecurityData) {
+      console.log('🔒 Security data missing, loading automatically...');
+      try {
+        const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
+        downloadSecurityData = await SafeBrowsingService.checkUrl(businessData.url);
+        console.log('✅ Security data loaded for download');
+      } catch (error) {
+        console.error('❌ Failed to load security data:', error);
+      }
+    }
     
     // WICHTIG: Hole den aktuell berechneten Score aus CompetitorAnalysis
     const currentOwnCompanyScore = (window as any).globalOwnCompanyScore || calculatedOwnCompanyScore;
@@ -348,7 +374,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualReputationData: manualReputationData,
       privacyData,
       accessibilityData,
-      securityData,
+      securityData: downloadSecurityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent
