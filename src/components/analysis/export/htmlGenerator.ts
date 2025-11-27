@@ -220,6 +220,9 @@ export const generateCustomerHTML = ({
   hasUnreviewedAIContent = false
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
+  console.log('🔥🔥🔥 CRITICAL: securityData received:', securityData);
+  console.log('🔥🔥🔥 securityData is null?', securityData === null);
+  console.log('🔥🔥🔥 securityData is undefined?', securityData === undefined);
   console.log('HTML Generator received missingImprintElements:', missingImprintElements);
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   console.log('HTML Generator received competitorServices:', competitorServices);

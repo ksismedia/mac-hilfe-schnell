@@ -332,8 +332,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             setSavedExtensionData(analysisData.manualData.extensionData);
           }
           
-          // Automatisch Google Safe Browsing Prüfung starten, wenn keine Daten vorhanden
-          if (!analysisData.manualData?.securityData) {
+          // CRITICAL: Load security data from saved analysis OR fetch new ones
+          if (analysisData.manualData?.securityData) {
+            console.log('🔒 Loading saved security data:', analysisData.manualData.securityData);
+            setSecurityData(analysisData.manualData.securityData);
+          } else {
             console.log('🔒 No security data found, starting Google Safe Browsing check...');
             try {
               const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
