@@ -231,20 +231,24 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                       <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
                         <CheckCircle className="h-5 w-5 text-green-600" />
                         <span className="font-semibold text-green-700">
-                          {webMentions.length} Backlink(s) gefunden ({webMentions.filter(m => !manualBacklinkData?.disabledBacklinks?.includes(m.link)).length} aktiv)
+                          {webMentions.filter(m => !manualBacklinkData?.disabledBacklinks?.includes(m.link)).length} Backlink(s) aktiv
                         </span>
                       </div>
                       
                       <div className="space-y-3">
                         {webMentions.map((mention, index) => {
                           const isDisabled = manualBacklinkData?.disabledBacklinks?.includes(mention.link);
+                          
+                          // Deaktivierte Backlinks nicht anzeigen
+                          if (isDisabled) return null;
+                          
                           return (
-                            <Card key={index} className={`border-l-4 ${isDisabled ? 'border-l-gray-400 opacity-60' : 'border-l-blue-500'}`}>
+                            <Card key={index} className="border-l-4 border-l-blue-500">
                               <CardContent className="pt-4">
                                 <div className="space-y-2">
                                   <div className="flex items-start gap-3">
                                     <Checkbox 
-                                      checked={!isDisabled}
+                                      checked={true}
                                       onCheckedChange={() => toggleBacklinkDisabled(mention.link)}
                                       className="mt-1"
                                     />
@@ -253,22 +257,17 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                                         href={mention.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`font-semibold ${isDisabled ? 'text-gray-400' : 'text-blue-600'} hover:underline flex items-center gap-2`}
+                                        className="font-semibold text-blue-600 hover:underline flex items-center gap-2"
                                       >
                                         {mention.title}
                                         <ExternalLink className="h-4 w-4" />
                                       </a>
-                                      <p className={`text-sm ${isDisabled ? 'text-gray-400' : 'text-gray-600'}`}>
+                                      <p className="text-sm text-gray-600">
                                         {mention.snippet}
                                       </p>
-                                      <p className={`text-xs ${isDisabled ? 'text-gray-300' : 'text-gray-400'}`}>
+                                      <p className="text-xs text-gray-400">
                                         {mention.displayLink}
                                       </p>
-                                      {isDisabled && (
-                                        <Badge variant="outline" className="mt-2 text-gray-500 border-gray-400">
-                                          Deaktiviert
-                                        </Badge>
-                                      )}
                                     </div>
                                   </div>
                                 </div>

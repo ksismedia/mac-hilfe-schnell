@@ -3030,18 +3030,16 @@ export const generateCustomerHTML = ({
           </div>
           
           ${(() => {
-            // Web-Erwähnungen Integration in Backlinks Sektion
+            // Web-Erwähnungen Integration in Backlinks Sektion - nur aktive Erwähnungen anzeigen
             const webMentions = manualReputationData?.searchResults || [];
             const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
             const activeWebMentions = webMentions.filter((m: any) => !disabledBacklinks.includes(m.link));
-            const disabledWebMentions = webMentions.filter((m: any) => disabledBacklinks.includes(m.link));
-            const mentionsCount = webMentions.length;
             const activeMentionsCount = activeWebMentions.length;
             
-            if (mentionsCount > 0 && webMentions.length > 0) {
+            if (activeMentionsCount > 0) {
               return `
               <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <h4 style="color: #374151; margin-bottom: 12px;">🌐 Web-Erwähnungen (${activeMentionsCount} aktiv${disabledWebMentions.length > 0 ? `, ${disabledWebMentions.length} deaktiviert` : ''})</h4>
+                <h4 style="color: #374151; margin-bottom: 12px;">🌐 Web-Erwähnungen (${activeMentionsCount})</h4>
                 <p style="color: #6b7280; font-size: 0.9em; margin-bottom: 12px;">
                   Erwähnungen Ihrer Website auf anderen Plattformen und in Suchergebnissen
                 </p>
@@ -3054,25 +3052,6 @@ export const generateCustomerHTML = ({
                     </p>
                   </div>
                 `).join('')}
-                ${disabledWebMentions.length > 0 ? `
-                  <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed #d1d5db;">
-                    <h5 style="color: #9ca3af; margin-bottom: 8px; font-size: 0.9em;">Deaktivierte Web-Erwähnungen (${disabledWebMentions.length})</h5>
-                    ${disabledWebMentions.slice(0, 3).map((result: any) => `
-                      <div style="background: #f3f4f6; border-radius: 6px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #9ca3af; opacity: 0.7;">
-                        <h6 style="color: #6b7280; margin: 0 0 4px 0; font-size: 0.85em; text-decoration: line-through;">${result.title || 'Unbekannter Titel'}</h6>
-                        <p style="color: #9ca3af; font-size: 0.75em; margin: 0;">
-                          <strong>Quelle:</strong> ${result.displayLink || result.link || 'Unbekannte Quelle'}
-                          <span style="margin-left: 8px; padding: 2px 6px; background: #e5e7eb; border-radius: 4px; font-size: 0.7em;">DEAKTIVIERT</span>
-                        </p>
-                      </div>
-                    `).join('')}
-                    ${disabledWebMentions.length > 3 ? `
-                      <p style="color: #9ca3af; font-size: 0.8em; font-style: italic; margin-top: 8px;">
-                        ... und ${disabledWebMentions.length - 3} weitere deaktivierte Erwähnungen
-                      </p>
-                    ` : ''}
-                  </div>
-                ` : ''}
               </div>
               `;
             } else {
