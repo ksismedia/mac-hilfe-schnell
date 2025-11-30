@@ -73,6 +73,8 @@ Deno.serve(async (req) => {
       planungsbuero: "Planungsbüro - Dienstleistung für Architektur, Planung, Bauleitung",
       "facility-management": "Facility-Management - Dienstleistung für Gebäudeverwaltung, Reinigung, Wartung",
       holzverarbeitung: "Holzverarbeitung - Handwerksbetrieb für Schreinerei, Zimmerei, Möbelbau",
+      baeckerei: "Bäckerei - Handwerksbetrieb für Backwaren, Brot, Konditorei",
+      blechbearbeitung: "Blechbearbeitung/Klempnerei - Handwerksbetrieb für Metallverarbeitung, Dachrinnen, Fassadenverkleidung",
     };
 
     const systemPrompt = `Du bist ein SEO-Experte für Handwerksbetriebe. Analysiere den Website-Inhalt und identifiziere die wichtigsten Keywords für die Branche: ${industryContext[industry] || industry}.
