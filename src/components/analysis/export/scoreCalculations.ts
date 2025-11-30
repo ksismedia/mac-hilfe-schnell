@@ -978,12 +978,71 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
-    // Count critical violations (like DSGVO section)
+    // Count critical violations with NEUTRALIZATION (like DSGVO section)
     let criticalViolationCount = 0;
     if (realData && realData.violations && Array.isArray(realData.violations)) {
-      criticalViolationCount = realData.violations.filter((v: any) => 
+      const criticalViolations = realData.violations.filter((v: any) => 
         v.impact === 'critical' || v.impact === 'serious'
-      ).length;
+      );
+      
+      // Check which violations can be neutralized by manual inputs
+      const neutralizedViolations = criticalViolations.filter((violation: any) => {
+        const vid = violation.id || '';
+        
+        // Keyboard navigation neutralizes keyboard-related violations
+        if (manualAccessibilityData?.keyboardNavigation && 
+            (vid.includes('keyboard') || vid.includes('button-name') || 
+             vid.includes('link-name') || vid.includes('accesskeys'))) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Tastaturnavigation');
+          return true;
+        }
+        
+        // Screen reader compatibility neutralizes ARIA and label violations
+        if (manualAccessibilityData?.screenReaderCompatible && 
+            (vid.includes('aria-') || vid.includes('label') || 
+             vid.includes('role') || vid.includes('landmark'))) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Screen-Reader-Kompatibilität');
+          return true;
+        }
+        
+        // Color contrast neutralizes contrast violations
+        if (manualAccessibilityData?.colorContrast && 
+            (vid.includes('color-contrast') || vid.includes('contrast'))) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Farbkontraste');
+          return true;
+        }
+        
+        // Alt texts neutralize image-alt violations
+        if (manualAccessibilityData?.altTextsPresent && 
+            (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Alt-Texte');
+          return true;
+        }
+        
+        // Focus visibility neutralizes focus violations
+        if (manualAccessibilityData?.focusVisibility && 
+            (vid.includes('focus') || vid.includes('focus-order'))) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Fokus-Sichtbarkeit');
+          return true;
+        }
+        
+        // Text scaling neutralizes viewport and target-size violations
+        if (manualAccessibilityData?.textScaling && 
+            (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+          console.log('🎯 Accessibility: Violation "' + vid + '" neutralisiert durch Text-Skalierung');
+          return true;
+        }
+        
+        return false;
+      });
+      
+      // Only non-neutralized violations count toward capping
+      criticalViolationCount = criticalViolations.length - neutralizedViolations.length;
+      
+      if (neutralizedViolations.length > 0) {
+        console.log('🎯 Accessibility: ' + neutralizedViolations.length + ' kritische Violations durch manuelle Eingaben neutralisiert');
+        console.log('🎯 Accessibility: Verbleibende kritische Violations: ' + criticalViolationCount + ' von ' + criticalViolations.length);
+      }
     }
     
     // COMBINE scores: Both auto and manual data contribute
