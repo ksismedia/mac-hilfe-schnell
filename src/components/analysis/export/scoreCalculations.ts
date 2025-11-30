@@ -850,7 +850,7 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
   }
 };
 
-export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any): number => {
+export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any, webMentions?: any[]): number => {
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
     
@@ -874,9 +874,18 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
       manualScore = Math.max(0, qualityScore - spamPenalty);
     }
     
-    // Web-Erwähnungen berücksichtigen
-    const webMentionsCount = manualReputationData?.webMentionsCount || 0;
-    const webMentionsBonus = Math.min(10, webMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
+    // Web-Erwähnungen berücksichtigen - nur aktive (nicht deaktivierte) Backlinks zählen
+    let activeWebMentionsCount = manualReputationData?.webMentionsCount || 0;
+    
+    // If we have webMentions array and disabled list, calculate active count
+    if (webMentions && Array.isArray(webMentions)) {
+      const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
+      activeWebMentionsCount = webMentions.filter(mention => 
+        !disabledBacklinks.includes(mention.link)
+      ).length;
+    }
+    
+    const webMentionsBonus = Math.min(10, activeWebMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
     
     // Kombiniere verfügbare Scores (nur autoScore und manualScore - KEINE Extension-Daten!)
     const availableScores = [];
