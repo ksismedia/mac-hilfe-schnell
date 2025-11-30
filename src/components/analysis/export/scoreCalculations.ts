@@ -978,29 +978,54 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
+    // Count critical violations (like DSGVO section)
+    let criticalViolationCount = 0;
+    if (realData && realData.violations && Array.isArray(realData.violations)) {
+      criticalViolationCount = realData.violations.filter((v: any) => 
+        v.impact === 'critical' || v.impact === 'serious'
+      ).length;
+    }
+    
     // COMBINE scores: Both auto and manual data contribute
+    let finalScore = 40; // default
+    
     if (hasAutoData && autoScore !== null && hasManualData && manualScore > 0) {
       // When both available: 60% auto (objective) + 40% manual (expert review)
-      const combinedScore = Math.round(autoScore * 0.6 + manualScore * 0.4);
-      console.log('🎯 Accessibility: Combined score - Auto (' + autoScore + ') 60% + Manual (' + manualScore + ') 40% = ' + combinedScore);
-      return Math.max(0, Math.min(100, combinedScore));
-    }
-    
-    if (hasManualData && manualScore > 0) {
+      finalScore = Math.round(autoScore * 0.6 + manualScore * 0.4);
+      console.log('🎯 Accessibility: Combined score - Auto (' + autoScore + ') 60% + Manual (' + manualScore + ') 40% = ' + finalScore);
+    } else if (hasManualData && manualScore > 0) {
       // Only manual data available
+      finalScore = manualScore;
       console.log('🎯 Accessibility: Using only manual score: ' + manualScore);
-      return Math.max(0, Math.min(100, manualScore));
-    }
-    
-    if (hasAutoData && autoScore !== null) {
+    } else if (hasAutoData && autoScore !== null) {
       // Only auto data available
+      finalScore = autoScore;
       console.log('🎯 Accessibility: Using only auto score: ' + autoScore);
-      return Math.max(0, Math.min(100, autoScore));
+    } else {
+      // No data available
+      console.log('🎯 Accessibility: No data available, using default 40');
+      finalScore = 40;
     }
     
-    // No data available
-    console.log('🎯 Accessibility: No data available, using default 40');
-    return 40;
+    // Apply capping based on critical violations (like DSGVO)
+    let cappedScore = finalScore;
+    let scoreCap = 100;
+    
+    if (criticalViolationCount === 1) {
+      scoreCap = 59;
+      cappedScore = Math.min(finalScore, scoreCap);
+      console.log('🎯 Accessibility: 1 kritischer Fehler → Score gekappt auf max 59% (von ' + finalScore + ' auf ' + cappedScore + ')');
+    } else if (criticalViolationCount === 2) {
+      scoreCap = 35;
+      cappedScore = Math.min(finalScore, scoreCap);
+      console.log('🎯 Accessibility: 2 kritische Fehler → Score gekappt auf max 35% (von ' + finalScore + ' auf ' + cappedScore + ')');
+    } else if (criticalViolationCount >= 3) {
+      scoreCap = 20;
+      cappedScore = Math.min(finalScore, scoreCap);
+      console.log('🎯 Accessibility: ' + criticalViolationCount + ' kritische Fehler → Score gekappt auf max 20% (von ' + finalScore + ' auf ' + cappedScore + ')');
+    }
+    
+    return Math.max(0, Math.min(100, cappedScore));
   } catch (error) {
     console.error('🎯 calculateAccessibilityScore error:', error);
     return 40;
