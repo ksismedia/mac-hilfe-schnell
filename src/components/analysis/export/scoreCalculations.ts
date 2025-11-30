@@ -854,30 +854,8 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
     
-    // Extension Data Score - wenn Links vorhanden sind
-    let extensionScore = 0;
-    if (extensionData?.content?.links) {
-      const internalLinks = extensionData.content.links.internal?.length || 0;
-      const externalLinks = extensionData.content.links.external?.length || 0;
-      
-      // Bewertung basierend auf Link-Struktur
-      // Ideal: 10-50 interne Links, 3-10 externe Links
-      let linkScore = 50; // Basis
-      
-      if (internalLinks >= 10 && internalLinks <= 50) {
-        linkScore += 25; // Gute interne Struktur
-      } else if (internalLinks > 0) {
-        linkScore += 15; // Einige interne Links
-      }
-      
-      if (externalLinks >= 3 && externalLinks <= 10) {
-        linkScore += 25; // Gute externe Links
-      } else if (externalLinks > 0) {
-        linkScore += 10; // Einige externe Links
-      }
-      
-      extensionScore = Math.min(100, linkScore);
-    }
+    // NOTE: Extension "external links" are OUTBOUND links, NOT backlinks!
+    // Backlinks come only from web mentions (Google Search) and manual data
     
     // Calculate manual score using the same logic as in BacklinkAnalysis.tsx
     let manualScore: number | undefined = undefined;
@@ -900,11 +878,10 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
     const webMentionsCount = manualReputationData?.webMentionsCount || 0;
     const webMentionsBonus = Math.min(10, webMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen
     
-    // Kombiniere alle verfügbaren Scores gewichtet
+    // Kombiniere verfügbare Scores (nur autoScore und manualScore - KEINE Extension-Daten!)
     const availableScores = [];
-    if (!isNaN(extensionScore) && extensionScore > 0) availableScores.push({ score: extensionScore, weight: 0.3 });
-    if (!isNaN(autoScore) && autoScore > 0) availableScores.push({ score: autoScore, weight: 0.3 });
-    if (manualScore !== undefined && !isNaN(manualScore)) availableScores.push({ score: manualScore, weight: 0.4 });
+    if (!isNaN(autoScore) && autoScore > 0) availableScores.push({ score: autoScore, weight: 0.5 });
+    if (manualScore !== undefined && !isNaN(manualScore)) availableScores.push({ score: manualScore, weight: 0.5 });
     
     if (availableScores.length > 0) {
       const totalWeight = availableScores.reduce((sum, item) => sum + item.weight, 0);

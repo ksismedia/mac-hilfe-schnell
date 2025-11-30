@@ -2985,43 +2985,6 @@ export const generateCustomerHTML = ({
       </div>
       <div id="backlinks-content" class="section-content" style="display: none;">
         
-        ${extensionData?.content?.links ? `
-          <div style="background: #f0f9ff; border-radius: 8px; padding: 16px; margin-bottom: 24px; border-left: 4px solid #3b82f6;">
-            <h4 style="color: #1e40af; margin: 0 0 12px 0;">🤖 Automatisch erkannte Link-Struktur</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
-              <div style="background: white; border-radius: 6px; padding: 12px; text-align: center;">
-                <p style="margin: 0; color: #3b82f6; font-weight: 600; font-size: 1.3em;">${extensionData.content.links.internal?.length || 0}</p>
-                <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 0.9em;">Interne Links</p>
-              </div>
-              <div style="background: white; border-radius: 6px; padding: 12px; text-align: center;">
-                <p style="margin: 0; color: #8b5cf6; font-weight: 600; font-size: 1.3em;">${extensionData.content.links.external?.length || 0}</p>
-                <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 0.9em;">Externe Links</p>
-              </div>
-            </div>
-            ${extensionData.content.links.external && extensionData.content.links.external.length > 0 ? `
-              <div style="margin-top: 12px;">
-                <p style="margin: 0 0 8px 0; color: #374151; font-weight: 600; font-size: 0.95em;">Externe Links (Auswahl):</p>
-                <div style="max-height: 150px; overflow-y: auto;">
-                  ${extensionData.content.links.external.slice(0, 5).map((link: any) => `
-                    <div style="background: white; border-radius: 4px; padding: 8px; margin-bottom: 6px; font-size: 0.85em;">
-                      <p style="margin: 0; color: #3b82f6; word-break: break-all;">${link.text || link.href}</p>
-                      <p style="margin: 2px 0 0 0; color: #9ca3af; font-size: 0.9em;">${link.href}</p>
-                    </div>
-                  `).join('')}
-                  ${extensionData.content.links.external.length > 5 ? `
-                    <p style="margin: 8px 0 0 0; color: #6b7280; font-size: 0.85em; font-style: italic;">
-                      ... und ${extensionData.content.links.external.length - 5} weitere
-                    </p>
-                  ` : ''}
-                </div>
-              </div>
-            ` : ''}
-            <p style="margin: 12px 0 0 0; color: #6b7280; font-size: 0.85em; font-style: italic;">
-              Daten wurden automatisch per Chrome Extension erfasst
-            </p>
-          </div>
-        ` : ''}
-        
         <div class="metric-card warning">
           <h3>Backlink-Profil</h3>
           <div class="score-display">
