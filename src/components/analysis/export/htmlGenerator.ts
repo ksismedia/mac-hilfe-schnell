@@ -1122,8 +1122,7 @@ export const generateCustomerHTML = ({
     const headingScore = realData.seo.headings.h1.length === 1 ? 80 : 
       realData.seo.headings.h1.length > 1 ? 60 : 30;
     const altTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
-      Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 
-      (realData.seo.altTags.total === 0 ? 100 : 0);
+      Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 0;
     
     // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
     const criticalSeoScore = seoScore; // Nutze den bereits vorhandenen seoScore
