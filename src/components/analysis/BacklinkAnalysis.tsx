@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search, RefreshCw } from 'lucide-react';
+import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search, RefreshCw, Info } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
@@ -102,10 +102,9 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     }
   };
   
-  // Get automatic link data from extension (only if manually loaded)
+  // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
+  // Real backlinks come from web mentions (Google Search results)
   const hasExtensionData = showExtensionData && savedExtensionData !== null;
-  const internalLinks = hasExtensionData ? savedExtensionData.content?.links?.internal || [] : [];
-  const externalLinks = hasExtensionData ? savedExtensionData.content?.links?.external || [] : [];
 
   // Calculate backlink score using centralized function
   const backlinkScore = calculateBacklinksScore(
@@ -115,7 +114,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     savedExtensionData
   );
 
-  // Search for web mentions of the URL
+  // Search for web mentions of the URL (REAL BACKLINKS)
   const searchBacklinks = async () => {
     setIsSearching(true);
     setHasSearched(true);
@@ -196,7 +195,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
             </div>
           </CardTitle>
           <CardDescription>
-            Backlink-Profil und Web-Erwähnungen
+            Backlinks sind Links VON anderen Websites AUF diese Seite
             {manualBacklinkData?.notes && (
               <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
                 <strong>Manuelle Notizen:</strong> {manualBacklinkData.notes}
@@ -205,12 +204,25 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="automatic" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="automatic">Automatische Analyse</TabsTrigger>
+          {/* Info-Box: Was sind Backlinks? */}
+          <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-blue-900 mb-1">Was sind Backlinks?</p>
+                <p className="text-sm text-blue-800">
+                  Backlinks sind Links von <strong>anderen Websites</strong>, die auf Ihre Website verweisen. 
+                  Sie sind wichtig für SEO und zeigen, wie relevant und vertrauenswürdig Ihre Website ist.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Tabs defaultValue="web-mentions" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="web-mentions" className="flex items-center gap-2">
                 <Search className="h-4 w-4" />
-                Web-Erwähnungen
+                Web-Erwähnungen (Backlinks)
               </TabsTrigger>
               <TabsTrigger value="manual" className="flex items-center gap-2">
                 <Edit className="h-4 w-4" />
@@ -218,228 +230,11 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="automatic" className="space-y-6 mt-6">
-              {/* Button to load extension data */}
-              <Card className="mb-6 border-blue-500">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                      <div>
-                        <p className="font-semibold">
-                          Extension-Daten laden
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Klicken Sie auf "Daten laden", um automatisch erkannte Links anzuzeigen
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={handleLoadExtensionData}
-                        disabled={showExtensionData || isLoading}
-                        variant={showExtensionData ? "secondary" : "default"}
-                      >
-                        <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                        {isLoading ? 'Lädt...' : showExtensionData ? 'Daten geladen' : 'Daten laden'}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-          <div className="space-y-6">
-            {/* Automatische Link-Daten von Extension */}
-            {hasExtensionData && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Link className="h-5 w-5" />
-                    Link-Struktur (Automatisch erkannt)
-                  </CardTitle>
-                  <CardDescription>
-                    Von der Chrome Extension automatisch extrahierte Link-Daten
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {internalLinks.length}
-                      </div>
-                      <div className="text-sm text-gray-600">Interne Links</div>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {externalLinks.length}
-                      </div>
-                      <div className="text-sm text-gray-600">Externe Links</div>
-                    </div>
-                  </div>
-                  
-                  {externalLinks.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-sm">Externe Links:</h4>
-                      <div className="max-h-40 overflow-y-auto space-y-1">
-                        {externalLinks.slice(0, 10).map((link: any, idx: number) => (
-                          <div key={idx} className="text-xs p-2 bg-gray-50 rounded flex items-center gap-2">
-                            <ExternalLink className="h-3 w-3 text-gray-400 flex-shrink-0" />
-                            <a 
-                              href={link.href} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline truncate"
-                            >
-                              {link.text || link.href}
-                            </a>
-                          </div>
-                        ))}
-                        {externalLinks.length > 10 && (
-                          <p className="text-xs text-gray-500 italic">
-                            ... und {externalLinks.length - 10} weitere
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Backlink-Profil - Mit manuellen Daten wenn vorhanden */}
-            {manualBacklinkData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">📊 Backlink-Profil (Manuelle Bewertung)</CardTitle>
-                  <CardDescription>
-                    Detaillierte manuelle Analyse des Backlink-Profils
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {manualBacklinkData.totalBacklinks}
-                      </div>
-                      <div className="text-sm text-gray-600">Backlinks gesamt</div>
-                    </div>
-                    <div className="text-center p-4 bg-red-50 rounded-lg">
-                      <div className="text-2xl font-bold score-text-low">
-                        {manualBacklinkData.spamLinks}
-                      </div>
-                      <div className="text-sm text-gray-600">Spam/Toxische Links</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold score-text-medium">
-                        {manualBacklinkData.totalBacklinks - manualBacklinkData.spamLinks}
-                      </div>
-                      <div className="text-sm text-gray-600">Qualitäts-Links</div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4 mt-6">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">Backlink-Qualität</span>
-                        <span className="text-sm font-bold">{manualBacklinkData.qualityScore}%</span>
-                      </div>
-                      <Progress value={manualBacklinkData.qualityScore} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Durchschnittliche Qualität der verlinkenden Seiten
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">Domain Authority</span>
-                        <span className="text-sm font-bold">{manualBacklinkData.domainAuthority}%</span>
-                      </div>
-                      <Progress value={manualBacklinkData.domainAuthority} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Autorität der verlinkenden Domains
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium">Lokale Relevanz</span>
-                        <span className="text-sm font-bold">{manualBacklinkData.localRelevance}%</span>
-                      </div>
-                      <Progress value={manualBacklinkData.localRelevance} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Relevanz der Links für die lokale Zielgruppe
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {manualBacklinkData.notes && (
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                      <p className="text-sm font-semibold text-blue-900 mb-1">Zusätzliche Notizen:</p>
-                      <p className="text-sm text-blue-700">{manualBacklinkData.notes}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ) : hasExtensionData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">📊 Backlink-Übersicht (Extension-Daten)</CardTitle>
-                  <CardDescription>
-                    Automatisch erkannte Link-Struktur verfügbar
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <div className="text-lg font-semibold text-blue-900">Interne Links</div>
-                      <div className="text-3xl font-bold text-blue-600">{internalLinks.length}</div>
-                      <div className="text-sm text-blue-700 mt-1">Innerhalb der Website</div>
-                    </div>
-                    <div className="p-4 bg-purple-50 rounded-lg">
-                      <div className="text-lg font-semibold text-purple-900">Externe Links</div>
-                      <div className="text-3xl font-bold text-purple-600">{externalLinks.length}</div>
-                      <div className="text-sm text-purple-700 mt-1">Zu anderen Websites</div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                    <p className="text-sm text-green-800">
-                      <strong>💡 Hinweis:</strong> Diese Daten wurden automatisch von der Chrome Extension erkannt. 
-                      Für eine detaillierte Backlink-Bewertung nutzen Sie bitte den Tab "Manuelle Bewertung", 
-                      um Backlink-Qualität, Domain Authority und lokale Relevanz zu bewerten.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">📊 Backlink-Profil</CardTitle>
-                  <CardDescription>
-                    Keine Backlink-Daten verfügbar
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 space-y-4">
-                    <AlertCircle className="h-12 w-12 mx-auto text-yellow-500" />
-                    <div>
-                      <p className="font-semibold text-gray-700">Keine Backlink-Analyse vorhanden</p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        Bitte verwenden Sie den Tab "Manuelle Bewertung", um Backlink-Daten einzugeben.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-            </TabsContent>
-            
             <TabsContent value="web-mentions" className="space-y-6 mt-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center justify-between">
-                    Web-Erwähnungen
+                    Web-Erwähnungen (Echte Backlinks)
                     <Button 
                       onClick={searchBacklinks} 
                       disabled={isSearching}
@@ -451,7 +246,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                     </Button>
                   </CardTitle>
                   <CardDescription>
-                    Online-Erwähnungen Ihrer Website auf anderen Domains
+                    Links von anderen Websites, die auf diese Seite verweisen
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -488,7 +283,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                       <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
                         <CheckCircle className="h-5 w-5 text-green-600" />
                         <span className="font-semibold text-green-700">
-                          {webMentions.length} Web-Erwähnung(en) gefunden
+                          {webMentions.length} Backlink(s) gefunden
                         </span>
                       </div>
                       
@@ -525,12 +320,88 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                   )}
                 </CardContent>
               </Card>
+              
+              {/* Backlink-Profil - Mit manuellen Daten wenn vorhanden */}
+              {manualBacklinkData && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">📊 Backlink-Profil (Manuelle Bewertung)</CardTitle>
+                    <CardDescription>
+                      Detaillierte manuelle Analyse des Backlink-Profils
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {manualBacklinkData.totalBacklinks}
+                        </div>
+                        <div className="text-sm text-gray-600">Backlinks gesamt</div>
+                      </div>
+                      <div className="text-center p-4 bg-red-50 rounded-lg">
+                        <div className="text-2xl font-bold score-text-low">
+                          {manualBacklinkData.spamLinks}
+                        </div>
+                        <div className="text-sm text-gray-600">Spam/Toxische Links</div>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 rounded-lg">
+                        <div className="text-2xl font-bold score-text-medium">
+                          {manualBacklinkData.totalBacklinks - manualBacklinkData.spamLinks}
+                        </div>
+                        <div className="text-sm text-gray-600">Qualitäts-Links</div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4 mt-6">
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium">Backlink-Qualität</span>
+                          <span className="text-sm font-bold">{manualBacklinkData.qualityScore}%</span>
+                        </div>
+                        <Progress value={manualBacklinkData.qualityScore} className="h-2" />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Durchschnittliche Qualität der verlinkenden Seiten
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium">Domain Authority</span>
+                          <span className="text-sm font-bold">{manualBacklinkData.domainAuthority}%</span>
+                        </div>
+                        <Progress value={manualBacklinkData.domainAuthority} className="h-2" />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Autorität der verlinkenden Domains
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium">Lokale Relevanz</span>
+                          <span className="text-sm font-bold">{manualBacklinkData.localRelevance}%</span>
+                        </div>
+                        <Progress value={manualBacklinkData.localRelevance} className="h-2" />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Relevanz der Links für die lokale Zielgruppe
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {manualBacklinkData.notes && (
+                      <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <p className="text-sm font-semibold text-blue-900 mb-1">Zusätzliche Notizen:</p>
+                        <p className="text-sm text-blue-700">{manualBacklinkData.notes}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
             
-            <TabsContent value="manual" className="mt-6">
-              <ManualBacklinkInput 
-                onSave={updateManualBacklinkData}
+            <TabsContent value="manual" className="space-y-6 mt-6">
+              <ManualBacklinkInput
                 initialData={manualBacklinkData}
+                onSave={updateManualBacklinkData}
               />
             </TabsContent>
           </Tabs>
