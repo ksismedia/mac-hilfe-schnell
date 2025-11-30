@@ -60,6 +60,12 @@ const CompanyServicesInput: React.FC<CompanyServicesInputProps> = ({
         'Frische Brötchen', 'Brot & Backwaren', 'Kuchen & Torten', 'Frühstücksangebot', 
         'Cafe-Betrieb', 'Catering', 'Bio-Backwaren', 'Konditorei-Spezialitäten', 
         'Sonderanfertigungen', 'Partyservice'
+      ],
+      'blechbearbeitung': [
+        'Blechzuschnitt', 'Kantarbeiten', 'Schweißarbeiten', 'Laserschneiden',
+        'Dachrinnen', 'Dachentwässerung', 'Fassadenverkleidung', 'Abdichtungen',
+        'Metallverarbeitung', 'Edelstahlarbeiten', 'Kupferarbeiten', 'Aluminiumarbeiten',
+        'Blechdächer', 'Fassaden', 'Lüftungsbau', 'Reparaturservice'
       ]
     };
     return standardServices[industry as keyof typeof standardServices] || [];

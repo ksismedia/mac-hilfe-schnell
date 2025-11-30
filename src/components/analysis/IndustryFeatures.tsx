@@ -8,7 +8,7 @@ interface IndustryFeaturesProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
   };
 }
 
@@ -219,6 +219,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           { name: "Montage-Service", found: true, importance: "hoch" }
         ]
       }
+    ],
+    blechbearbeitung: [
+      {
+        group: "Beratung & Service",
+        features: [
+          { name: "Kostenlose Beratung", found: true, importance: "hoch" },
+          { name: "Vor-Ort-Termin", found: true, importance: "hoch" },
+          { name: "CAD-Planung", found: false, importance: "mittel" },
+          { name: "24h Notdienst", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Metallbearbeitung",
+        features: [
+          { name: "Blechzuschnitt", found: true, importance: "hoch" },
+          { name: "Kantarbeiten", found: true, importance: "hoch" },
+          { name: "Schweißarbeiten", found: true, importance: "hoch" },
+          { name: "Laserschneiden", found: false, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Klempnerei & Dacharbeiten",
+        features: [
+          { name: "Dachentwässerung", found: true, importance: "hoch" },
+          { name: "Dachrinnen", found: true, importance: "hoch" },
+          { name: "Fassadenverkleidung", found: true, importance: "mittel" },
+          { name: "Abdichtungen", found: true, importance: "mittel" }
+        ]
+      }
     ]
   };
 
@@ -257,7 +286,8 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
     stukateur: 'Stukateure',
     planungsbuero: 'Planungsbüro Versorgungstechnik',
     'facility-management': 'Facility-Management & Gebäudereinigung',
-    holzverarbeitung: 'Holzverarbeitung (Schreiner/Tischler)'
+    holzverarbeitung: 'Holzverarbeitung (Schreiner/Tischler)',
+    blechbearbeitung: 'Blechbearbeitung/Klempnerei'
   };
 
   return (
@@ -463,6 +493,22 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
                        <div className="flex items-start gap-2">
                          <span className="text-yellow-600">!</span>
                          <span><strong>Trend:</strong> Antike Restaurierung als Differenzierungsmerkmal</span>
+                       </div>
+                     </>
+                   )}
+                   {businessData.industry === 'blechbearbeitung' && (
+                     <>
+                       <div className="flex items-start gap-2">
+                         <span className="text-green-600">✓</span>
+                         <span><strong>Positiv:</strong> Klempnerei-Kompetenz wird hervorgehoben</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Empfehlung:</strong> Laserschneiden-Technologie für präzisere Arbeit</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Trend:</strong> CAD-Planung als zusätzlicher Service</span>
                        </div>
                      </>
                    )}

@@ -52,7 +52,7 @@ export interface StaffQualificationData {
 
 interface StaffQualificationInputProps {
   businessData: {
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
   };
   data: StaffQualificationData | null;
   onUpdate: (data: StaffQualificationData | null) => void;
@@ -114,6 +114,14 @@ const industrySpecificQualifications = {
     'Sicherheitstechnik',
     'Reinigungsdienstleister Qualifikation',
     'Wartung technischer Anlagen'
+  ],
+  blechbearbeitung: [
+    'Schweißfachmann/-frau',
+    'Metallbauer-Meister',
+    'WIG/MAG-Schweißen Zertifikat',
+    'Klempner-Meister',
+    'Dachdecker-Fachkraft',
+    'CNC-Blechbearbeitung'
   ]
 };
 

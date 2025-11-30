@@ -129,6 +129,13 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
         'frühstück', 'cafe', 'kuchen', 'torte', 'backhaus', 'bäcker',
         'handwerk', 'traditional', 'frisch', 'regional', 'vollkorn', 'bio',
         'feinbäckerei', 'meisterbetrieb', 'bäckermeister', 'backstube', 'tradition'
+      ],
+      'blechbearbeitung': [
+        'blechbearbeitung', 'klempner', 'klempnerei', 'spengler', 'blechner',
+        'dachrinne', 'dachentwässerung', 'fassadenverkleidung', 'metallbau',
+        'blechzuschnitt', 'kantarbeiten', 'schweißarbeiten', 'laserschneiden',
+        'metallverarbeitung', 'edelstahl', 'zink', 'kupfer', 'aluminium',
+        'dachklempner', 'abdichtung', 'meisterbetrieb', 'handwerker'
       ]
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];
