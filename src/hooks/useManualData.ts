@@ -175,6 +175,7 @@ export interface ManualBacklinkData {
   localRelevance: number; // 1-100 Score
   spamLinks: number;
   notes?: string;
+  disabledBacklinks?: string[]; // URLs of manually disabled backlinks
 }
 
 export interface ManualDataPrivacyData {
