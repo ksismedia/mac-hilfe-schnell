@@ -3183,6 +3183,118 @@ export const generateCustomerHTML = ({
         </div>
         ` : ''}
         
+        ${(() => {
+          // Critical Violations Analysis with Neutralization for HTML Export
+          if (!accessibilityData || !accessibilityData.violations) {
+            return '';
+          }
+          
+          const violations = accessibilityData.violations || [];
+          const criticalViolations = violations.filter((v: any) => 
+            v.impact === 'critical' || v.impact === 'serious'
+          );
+          
+          if (criticalViolations.length === 0) return '';
+          
+          // Check which violations are neutralized
+          const neutralizedViolations = criticalViolations.filter((violation: any) => {
+            const vid = violation.id || '';
+            
+            if (manualAccessibilityData?.keyboardNavigation && 
+                (vid.includes('keyboard') || vid.includes('button-name') || 
+                 vid.includes('link-name') || vid.includes('accesskeys'))) {
+              return true;
+            }
+            
+            if (manualAccessibilityData?.screenReaderCompatible && 
+                (vid.includes('aria-') || vid.includes('label') || 
+                 vid.includes('role') || vid.includes('landmark'))) {
+              return true;
+            }
+            
+            if (manualAccessibilityData?.colorContrast && 
+                (vid.includes('color-contrast') || vid.includes('contrast'))) {
+              return true;
+            }
+            
+            if (manualAccessibilityData?.altTextsPresent && 
+                (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+              return true;
+            }
+            
+            if (manualAccessibilityData?.focusVisibility && 
+                (vid.includes('focus') || vid.includes('focus-order'))) {
+              return true;
+            }
+            
+            if (manualAccessibilityData?.textScaling && 
+                (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+              return true;
+            }
+            
+            return false;
+          });
+          
+          const remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+          const neutralizedCount = neutralizedViolations.length;
+          
+          let scoreCap = 100;
+          if (remainingCriticalCount === 1) scoreCap = 59;
+          else if (remainingCriticalCount === 2) scoreCap = 35;
+          else if (remainingCriticalCount >= 3) scoreCap = 20;
+          
+          // Check for positive manual inputs
+          const hasPositiveManualInputs = manualAccessibilityData?.keyboardNavigation || 
+                                          manualAccessibilityData?.screenReaderCompatible || 
+                                          manualAccessibilityData?.colorContrast || 
+                                          manualAccessibilityData?.altTextsPresent || 
+                                          manualAccessibilityData?.focusVisibility || 
+                                          manualAccessibilityData?.textScaling;
+          
+          const positiveInputsList = [];
+          if (manualAccessibilityData?.keyboardNavigation) positiveInputsList.push('Tastaturnavigation');
+          if (manualAccessibilityData?.screenReaderCompatible) positiveInputsList.push('Screen-Reader-kompatibel');
+          if (manualAccessibilityData?.colorContrast) positiveInputsList.push('Farbkontraste ausreichend');
+          if (manualAccessibilityData?.altTextsPresent) positiveInputsList.push('Alt-Texte vorhanden');
+          if (manualAccessibilityData?.focusVisibility) positiveInputsList.push('Fokus-Sichtbarkeit');
+          if (manualAccessibilityData?.textScaling) positiveInputsList.push('Text-Skalierung');
+          
+          if (remainingCriticalCount > 0 || neutralizedCount > 0) {
+            return `
+              <div style="border-radius: 8px; padding: 15px; border: 2px solid ${remainingCriticalCount > 0 ? '#fca5a5' : '#86efac'}; background: ${remainingCriticalCount > 0 ? '#fef2f2' : '#f0fdf4'}; margin-top: 15px;">
+                <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                  🔍 Kritische Fehler-Analyse:
+                </div>
+                ${neutralizedCount > 0 ? `
+                  <div style="font-size: 11px; color: #059669; margin-bottom: 4px;">
+                    ✓ ${neutralizedCount} kritische Violation(s) durch manuelle Eingaben neutralisiert
+                  </div>
+                ` : ''}
+                ${remainingCriticalCount > 0 ? `
+                  <div style="font-size: 11px; color: #dc2626; margin-bottom: 4px;">
+                    ⚠️ ${remainingCriticalCount} kritische Violation(s) verbleibend
+                  </div>
+                  <div style="font-size: 11px; color: #7f1d1d; font-weight: bold;">
+                    📊 Score-Kappung: Maximum ${scoreCap}% möglich
+                  </div>
+                  ${hasPositiveManualInputs && positiveInputsList.length > 0 ? `
+                    <div style="margin-top: 8px; padding: 8px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 4px;">
+                      <div style="font-size: 11px; color: #92400e;">
+                        <strong>ℹ️ Hinweis:</strong> Trotz manueller Angaben (${positiveInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Violations nicht höher ausfallen.
+                      </div>
+                    </div>
+                  ` : ''}
+                ` : `
+                  <div style="font-size: 11px; color: #059669;">
+                    ✓ Keine verbleibenden kritischen Violations
+                  </div>
+                `}
+              </div>
+            `;
+          }
+          return '';
+        })()}
+        
         <!-- Collapsible Untersektionen -->
         <div class="collapsible" onclick="toggleSection('wcag-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
           <h4 style="color: #fbbf24; margin: 0;">▶ WCAG 2.1 Compliance Details</h4>

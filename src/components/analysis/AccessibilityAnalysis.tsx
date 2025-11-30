@@ -280,6 +280,118 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 );
               })()}
 
+              {/* Critical Violations Analysis with Neutralization */}
+              {(() => {
+                const currentData = getCurrentAccessibilityData();
+                if (!currentData || !currentData.violations) return null;
+                
+                const criticalViolations = currentData.violations.filter((v: AccessibilityViolation) => 
+                  v.impact === 'critical' || v.impact === 'serious'
+                );
+                
+                if (criticalViolations.length === 0) return null;
+                
+                // Check which violations are neutralized by manual inputs
+                const neutralizedViolations = criticalViolations.filter((violation: AccessibilityViolation) => {
+                  const vid = violation.id || '';
+                  
+                  if (manualAccessibilityData?.keyboardNavigation && 
+                      (vid.includes('keyboard') || vid.includes('button-name') || 
+                       vid.includes('link-name') || vid.includes('accesskeys'))) {
+                    return true;
+                  }
+                  
+                  if (manualAccessibilityData?.screenReaderCompatible && 
+                      (vid.includes('aria-') || vid.includes('label') || 
+                       vid.includes('role') || vid.includes('landmark'))) {
+                    return true;
+                  }
+                  
+                  if (manualAccessibilityData?.colorContrast && 
+                      (vid.includes('color-contrast') || vid.includes('contrast'))) {
+                    return true;
+                  }
+                  
+                  if (manualAccessibilityData?.altTextsPresent && 
+                      (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+                    return true;
+                  }
+                  
+                  if (manualAccessibilityData?.focusVisibility && 
+                      (vid.includes('focus') || vid.includes('focus-order'))) {
+                    return true;
+                  }
+                  
+                  if (manualAccessibilityData?.textScaling && 
+                      (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+                    return true;
+                  }
+                  
+                  return false;
+                });
+                
+                const remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+                const neutralizedCount = neutralizedViolations.length;
+                
+                let scoreCap = 100;
+                if (remainingCriticalCount === 1) scoreCap = 59;
+                else if (remainingCriticalCount === 2) scoreCap = 35;
+                else if (remainingCriticalCount >= 3) scoreCap = 20;
+                
+                // Check for positive manual inputs
+                const hasPositiveManualInputs = manualAccessibilityData?.keyboardNavigation || 
+                                                manualAccessibilityData?.screenReaderCompatible || 
+                                                manualAccessibilityData?.colorContrast || 
+                                                manualAccessibilityData?.altTextsPresent || 
+                                                manualAccessibilityData?.focusVisibility || 
+                                                manualAccessibilityData?.textScaling;
+                
+                const positiveInputsList = [];
+                if (manualAccessibilityData?.keyboardNavigation) positiveInputsList.push('Tastaturnavigation');
+                if (manualAccessibilityData?.screenReaderCompatible) positiveInputsList.push('Screen-Reader-kompatibel');
+                if (manualAccessibilityData?.colorContrast) positiveInputsList.push('Farbkontraste ausreichend');
+                if (manualAccessibilityData?.altTextsPresent) positiveInputsList.push('Alt-Texte vorhanden');
+                if (manualAccessibilityData?.focusVisibility) positiveInputsList.push('Fokus-Sichtbarkeit');
+                if (manualAccessibilityData?.textScaling) positiveInputsList.push('Text-Skalierung');
+                
+                if (remainingCriticalCount > 0 || neutralizedCount > 0) {
+                  return (
+                    <div className={`rounded-lg p-4 border ${remainingCriticalCount > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                      <div className="flex items-center gap-2 font-semibold mb-2 text-sm">
+                        🔍 Kritische Fehler-Analyse:
+                      </div>
+                      {neutralizedCount > 0 && (
+                        <div className="text-sm text-green-700 mb-1">
+                          ✓ {neutralizedCount} kritische Violation(s) durch manuelle Eingaben neutralisiert
+                        </div>
+                      )}
+                      {remainingCriticalCount > 0 ? (
+                        <>
+                          <div className="text-sm text-red-700 mb-1">
+                            ⚠️ {remainingCriticalCount} kritische Violation(s) verbleibend
+                          </div>
+                          <div className="text-sm text-red-900 font-bold">
+                            📊 Score-Kappung: Maximum {scoreCap}% möglich
+                          </div>
+                          {hasPositiveManualInputs && positiveInputsList.length > 0 && (
+                            <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded">
+                              <div className="text-sm text-orange-900">
+                                <strong>ℹ️ Hinweis:</strong> Trotz manueller Angaben ({positiveInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Violations nicht höher ausfallen.
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="text-sm text-green-700">
+                          ✓ Keine verbleibenden kritischen Violations
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Score Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="border-blue-200">
