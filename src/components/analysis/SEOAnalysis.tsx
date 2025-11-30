@@ -60,21 +60,25 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     },
     // PRIORISIERE Extension-Daten für Alt-Tags wenn verfügbar
     altTags: useExtensionAltTags ? {
-      imagesTotal: extensionSEO.altTags.total,
-      imagesWithAlt: extensionSEO.altTags.withAlt,
-      coverage: extensionSEO.altTags.total > 0 ? 
-        Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100) : 100,
-      score: extensionSEO.altTags.total > 0 ? 
-        Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100) : 100,
+      imagesTotal: extensionSEO.altTags.total || 0,
+      imagesWithAlt: extensionSEO.altTags.withAlt || 0,
+      coverage: (extensionSEO.altTags.total !== undefined && extensionSEO.altTags.total > 0) ? 
+        Math.round(((extensionSEO.altTags.withAlt || 0) / extensionSEO.altTags.total) * 100) : 
+        (extensionSEO.altTags.total === 0 ? 100 : 0),
+      score: (extensionSEO.altTags.total !== undefined && extensionSEO.altTags.total > 0) ? 
+        Math.round(((extensionSEO.altTags.withAlt || 0) / extensionSEO.altTags.total) * 100) : 
+        (extensionSEO.altTags.total === 0 ? 100 : 0),
       isRealData: true,
       source: 'extension'
     } : {
-      imagesTotal: realData.seo.altTags.total,
-      imagesWithAlt: realData.seo.altTags.withAlt,
-      coverage: realData.seo.altTags.total > 0 ? 
-        Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
-      score: realData.seo.altTags.total > 0 ? 
-        Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 100,
+      imagesTotal: realData.seo.altTags.total || 0,
+      imagesWithAlt: realData.seo.altTags.withAlt || 0,
+      coverage: (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
+        Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 
+        (realData.seo.altTags.total === 0 ? 100 : 0),
+      score: (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
+        Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 
+        (realData.seo.altTags.total === 0 ? 100 : 0),
       isRealData: !isUsingFallbackData,
       source: 'pagespeed'
     },
