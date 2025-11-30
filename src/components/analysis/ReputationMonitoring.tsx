@@ -38,15 +38,27 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
   const [reputationScore, setReputationScore] = useState(0);
   const [additionalSearchTerms, setAdditionalSearchTerms] = useState<string>('');
 
-  // Initialize from saved data
+  // Initialize from saved data and filter out own domain
   useEffect(() => {
     if (manualReputationData) {
-      setSearchResults(manualReputationData.searchResults || []);
+      // Filter old data to remove own domain mentions
+      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+      const filteredResults = (manualReputationData.searchResults || []).filter((item: SearchResult) => {
+        const itemDomain = (item.displayLink || item.link || '')
+          .replace('https://', '')
+          .replace('http://', '')
+          .replace('www.', '')
+          .split('/')[0];
+        
+        return itemDomain !== cleanUrl;
+      });
+      
+      setSearchResults(filteredResults);
       setReputationScore(manualReputationData.reputationScore || 0);
       setHasSearched(true);
       setAdditionalSearchTerms(manualReputationData.additionalSearchTerms || '');
     }
-  }, [manualReputationData]);
+  }, [manualReputationData, url]);
 
   const performReputationSearch = async () => {
     setIsSearching(true);

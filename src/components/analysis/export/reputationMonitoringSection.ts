@@ -15,7 +15,8 @@ const getScoreColorClass = (score: number) => {
 };
 
 export const generateReputationMonitoringSection = (
-  manualReputationData?: ManualReputationData | null
+  manualReputationData?: ManualReputationData | null,
+  url?: string
 ) => {
   // If no data available, show N/A section
   if (!manualReputationData || !manualReputationData.searchResults) {
@@ -46,10 +47,24 @@ export const generateReputationMonitoringSection = (
     `;
   }
 
+  // Filter out own domain from results (for old saved data)
+  let searchResults = manualReputationData.searchResults || [];
+  if (url) {
+    const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+    searchResults = searchResults.filter((item: any) => {
+      const itemDomain = (item.displayLink || item.link || '')
+        .replace('https://', '')
+        .replace('http://', '')
+        .replace('www.', '')
+        .split('/')[0];
+      
+      return itemDomain !== cleanUrl;
+    });
+  }
+  
   const reputationScore = manualReputationData.reputationScore || 0;
-  const mentionsCount = manualReputationData.webMentionsCount || 0;
+  const mentionsCount = searchResults.length; // Use filtered count
   const sentiment = manualReputationData.sentiment || 'neutral';
-  const searchResults = manualReputationData.searchResults || [];
   const lastChecked = manualReputationData.lastChecked 
     ? new Date(manualReputationData.lastChecked).toLocaleDateString('de-DE')
     : 'Unbekannt';
