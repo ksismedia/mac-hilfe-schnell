@@ -110,8 +110,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
   const backlinkScore = calculateBacklinksScore(
     realData,
     manualBacklinkData,
-    manualReputationData,
-    savedExtensionData
+    manualReputationData
   );
 
   // Search for web mentions of the URL (REAL BACKLINKS)

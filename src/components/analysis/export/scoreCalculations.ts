@@ -162,7 +162,7 @@ export const calculateOnlineQualityAuthorityScore = (
     
     const localSEOScore = calculateLocalSEOScore(businessData, realData, manualLocalSEOData) || 0;
     const contentQualityScore = calculateContentQualityScore(realData, keywordsScore, businessData, manualContentData, extensionData) || 0;
-    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData) || 0;
+    const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData) || 0;
     const accessibilityScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData) || 0;
     
     // GETRENNTE SCORES für DSGVO, Technische Sicherheit und Website-Sicherheit
@@ -850,7 +850,7 @@ export const calculateContentQualityScore = (realData: any, keywordScore: number
   }
 };
 
-export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any, extensionData?: any): number => {
+export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, manualReputationData?: any): number => {
   try {
     const autoScore = Number(realData?.backlinks?.score) || 0;
     

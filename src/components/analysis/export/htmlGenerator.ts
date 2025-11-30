@@ -292,7 +292,7 @@ export const generateCustomerHTML = ({
   
   // Calculate additional scores - MIT MANUELLEN DATEN UND EXTENSION DATEN
   const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData, extensionData);
-  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData);
+  const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData);
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   
