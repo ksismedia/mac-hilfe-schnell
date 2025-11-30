@@ -34,10 +34,9 @@ const calculateTechnicalSEOScore = (realData: RealBusinessData): number => {
   if (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) {
     const altTagRatio = (realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total;
     score += Math.round(altTagRatio * 25);
-  } else if (realData.seo.altTags.total === 0) {
-    score += 25; // Volle Punkte wenn keine Bilder (keine Fehler möglich)
   } else {
-    score += 12; // Neutral wenn Daten nicht verfügbar
+    // Keine Punkte wenn keine Bilder oder Daten nicht verfügbar
+    score += 0;
   }
   factors += 25;
   
