@@ -337,10 +337,44 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
     return className;
   };
 
-  // Helper function to render a data section with source label
-  const renderDataSection = (title: string, icon: any, manualSection: any, autoSection: any, renderContent: (data: any, source: 'manual' | 'auto') => React.ReactNode) => {
+  // Helper function to calculate average between manual and auto data
+  const calculateAverage = (manualValue: number | undefined, autoValue: number) => {
+    if (manualValue !== undefined && manualValue !== null) {
+      return Math.round((manualValue + autoValue) / 2);
+    }
+    return autoValue;
+  };
+
+  // Helper function to render a data section with averaged values
+  const renderDataSection = (title: string, icon: any, manualSection: any, autoSection: any, renderContent: (data: any, avgScore: number) => React.ReactNode) => {
     const hasManual = manualSection && (Array.isArray(manualSection) ? manualSection.length > 0 : Object.keys(manualSection).some(k => manualSection[k] !== undefined && manualSection[k] !== null));
     const hasAuto = autoSection && (Array.isArray(autoSection) ? autoSection.length > 0 : Object.keys(autoSection).some(k => autoSection[k] !== undefined && autoSection[k] !== null));
+
+    if (!hasManual && !hasAuto) {
+      return (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              {icon}
+              {title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-500 text-sm">Keine Daten verfügbar</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Calculate average score
+    const avgScore = calculateAverage(manualSection?.score, autoSection?.score || 0);
+
+    // Merge data, preferring manual values when available
+    const mergedData = {
+      ...autoSection,
+      ...(hasManual ? manualSection : {}),
+      score: avgScore
+    };
 
     return (
       <Card className="mb-6">
@@ -350,22 +384,19 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
             {title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {hasAuto && (
-            <div className="border-l-4 border-blue-500 pl-4">
-              <Badge variant="outline" className="mb-3">🤖 Automatisch erkannt</Badge>
-              {renderContent(autoSection, 'auto')}
-            </div>
+        <CardContent>
+          {hasManual && hasAuto && (
+            <Badge variant="outline" className="mb-3">
+              📊 Durchschnitt aus automatischer und manueller Bewertung
+            </Badge>
           )}
-          {hasManual && (
-            <div className="border-l-4 border-green-500 pl-4">
-              <Badge variant="secondary" className="mb-3">✏️ Manuell eingegeben</Badge>
-              {renderContent(manualSection, 'manual')}
-            </div>
+          {hasManual && !hasAuto && (
+            <Badge variant="secondary" className="mb-3">✏️ Manuell eingegeben</Badge>
           )}
-          {!hasManual && !hasAuto && (
-            <p className="text-gray-500 text-sm">Keine Daten verfügbar</p>
+          {!hasManual && hasAuto && (
+            <Badge variant="outline" className="mb-3">🤖 Automatisch erkannt</Badge>
           )}
+          {renderContent(mergedData, avgScore)}
         </CardContent>
       </Card>
     );
@@ -406,7 +437,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
             <MapPin className="h-5 w-5" />,
             manualLocalSEOData?.googleMyBusiness,
             autoLocalSEOData?.googleMyBusiness,
-            (data, source) => (
+            (data, avgScore) => (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
@@ -447,10 +478,13 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                 </div>
                 
                 <div className="mt-4">
-                  <div className="mb-2">
-                    <span className="text-sm font-medium">GMB Optimierung</span>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>GMB Optimierung</span>
+                    <span className={`font-medium ${getScoreColor(avgScore)}`}>
+                      {avgScore}%
+                    </span>
                   </div>
-                  <Progress value={data.score} className="h-4" />
+                  <Progress value={avgScore} className="h-3" />
                 </div>
               </>
             )
@@ -462,7 +496,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
             <Globe className="h-5 w-5" />,
             manualLocalSEOData?.localCitations,
             autoLocalSEOData?.localCitations,
-            (data, source) => (
+            (data, avgScore) => (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="text-center">
@@ -502,6 +536,16 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                     </div>
                   ))}
                 </div>
+                
+                <div className="mt-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Einheitlichkeit der Firmendaten</span>
+                    <span className={`font-medium ${getScoreColor(avgScore)}`}>
+                      {avgScore}%
+                    </span>
+                  </div>
+                  <Progress value={avgScore} className="h-3" />
+                </div>
               </>
             )
           )}
@@ -509,11 +553,13 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
           {/* Local Keywords */}
           {renderDataSection(
             "Lokale Keyword-Rankings",
-            <></>,
-            manualLocalSEOData?.localKeywords?.ranking,
-            autoLocalSEOData?.localKeywords?.ranking,
-            (data, source) => (
-              <div className="space-y-3">{data.map((keyword: any, index: number) => (
+            <Star className="h-5 w-5" />,
+            manualLocalSEOData?.localKeywords?.ranking?.length > 0 ? manualLocalSEOData.localKeywords : null,
+            autoLocalSEOData?.localKeywords?.ranking?.length > 0 ? autoLocalSEOData.localKeywords : null,
+            (data, avgScore) => (
+              <>
+                <div className="space-y-3">
+                  {data.ranking?.map((keyword: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <span className="font-medium">{keyword.keyword}</span>
@@ -537,17 +583,28 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                       </div>
                     </div>
                   ))}
-              </div>
+                </div>
+                
+                <div className="mt-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Durchschnittliche Ranking-Position</span>
+                    <span className={`font-medium ${getScoreColor(avgScore)}`}>
+                      {avgScore}%
+                    </span>
+                  </div>
+                  <Progress value={avgScore} className="h-3" />
+                </div>
+              </>
             )
           )}
 
           {/* On-Page Local Faktoren */}
           {renderDataSection(
             "On-Page Local Faktoren",
-            <></>,
+            <Phone className="h-5 w-5" />,
             manualLocalSEOData?.onPageLocal,
             autoLocalSEOData?.onPageLocal,
-            (data, source) => (
+            (data, avgScore) => (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -590,11 +647,25 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
                   </div>
                 </div>
                 
-                <div className="mt-4">
-                  <div className="mb-2">
-                    <span className="text-sm font-medium">Lokaler Content</span>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Lokaler Content Score</span>
+                      <span className={`font-medium ${getScoreColor(data.localContent)}`}>
+                        {data.localContent}%
+                      </span>
+                    </div>
+                    <Progress value={data.localContent} className="h-3" />
                   </div>
-                  <Progress value={data.localContent} className="h-4" />
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Gesamtbewertung lokale Optimierung</span>
+                      <span className={`font-medium ${getScoreColor(avgScore)}`}>
+                        {avgScore}%
+                      </span>
+                    </div>
+                    <Progress value={avgScore} className="h-3" />
+                  </div>
                 </div>
               </>
             )
