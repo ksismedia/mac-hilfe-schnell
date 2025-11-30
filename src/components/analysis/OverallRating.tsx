@@ -174,7 +174,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
   const quoteResponseScore = calculateQuoteResponseScore(quoteResponseData);
   const contentScore = (manualContentData || extensionData) ? calculateContentQualityScore(realData, null, businessData, manualContentData, extensionData) : null;
   const accessibilityScore = (manualAccessibilityData || accessibilityData) ? calculateAccessibilityScore(accessibilityData, manualAccessibilityData) : null;
-  const backlinksScore = (manualBacklinkData || extensionData) ? calculateBacklinksScore(realData, manualBacklinkData, manualReputationData, extensionData) : null;
+  const backlinksScore = manualBacklinkData ? calculateBacklinksScore(realData, manualBacklinkData, manualReputationData) : null;
   const dataPrivacyScore = (manualDataPrivacyData || privacyData) 
     ? calculateDataPrivacyScore(realData, privacyData, manualDataPrivacyData)
     : null;
