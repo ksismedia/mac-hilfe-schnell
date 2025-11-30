@@ -1355,32 +1355,50 @@ export const generateCustomerHTML = ({
 
     const scoreClass = localSEOScore >= 90 ? 'yellow' : localSEOScore >= 61 ? 'green' : 'red';
 
-    // Render helper for data sections
-    const renderSection = (title: string, icon: string, manualSection: any, autoSection: any, renderContent: (data: any, isManual: boolean) => string) => {
+    // Helper function to calculate average between manual and auto data
+    const calculateAverage = (manualValue: number | undefined, autoValue: number) => {
+      if (manualValue !== undefined && manualValue !== null) {
+        return Math.round((manualValue + autoValue) / 2);
+      }
+      return autoValue;
+    };
+
+    // Render helper for data sections with averaged values
+    const renderSection = (title: string, icon: string, manualSection: any, autoSection: any, renderContent: (data: any, avgScore: number) => string) => {
       const hasManual = manualSection && Object.keys(manualSection).some(k => manualSection[k] !== undefined && manualSection[k] !== null && manualSection[k] !== 0);
       const hasAuto = autoSection && Object.keys(autoSection).some(k => autoSection[k] !== undefined && autoSection[k] !== null && autoSection[k] !== 0);
 
       if (!hasManual && !hasAuto) return '';
 
+      // Calculate average score
+      const avgScore = calculateAverage(manualSection?.score, autoSection?.score || 0);
+
+      // Merge data, preferring manual values when available
+      const mergedData = {
+        ...autoSection,
+        ...(hasManual ? manualSection : {}),
+        score: avgScore
+      };
+
       return `
         <div style="margin-top: 20px;">
           <h4>${icon} ${title}</h4>
-          ${hasAuto ? `
-            <div style="border-left: 4px solid #3b82f6; padding-left: 15px; margin: 15px 0; background: rgba(59, 130, 246, 0.05); border-radius: 4px; padding: 15px;">
-              <div style="display: inline-block; padding: 4px 8px; background: #e0e7ff; color: #3b82f6; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
-                🤖 Automatisch erkannt
-              </div>
-              ${renderContent(autoSection, false)}
+          ${hasManual && hasAuto ? `
+            <div style="display: inline-block; padding: 4px 8px; background: #e0f2fe; color: #0369a1; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
+              📊 Durchschnitt aus automatischer und manueller Bewertung
             </div>
-          ` : ''}
-          ${hasManual ? `
-            <div style="border-left: 4px solid #10b981; padding-left: 15px; margin: 15px 0; background: rgba(16, 185, 129, 0.05); border-radius: 4px; padding: 15px;">
-              <div style="display: inline-block; padding: 4px 8px; background: #d1fae5; color: #10b981; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
-                ✏️ Manuell eingegeben
-              </div>
-              ${renderContent(manualSection, true)}
+          ` : hasManual ? `
+            <div style="display: inline-block; padding: 4px 8px; background: #d1fae5; color: #10b981; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
+              ✏️ Manuell eingegeben
             </div>
-          ` : ''}
+          ` : `
+            <div style="display: inline-block; padding: 4px 8px; background: #e0e7ff; color: #3b82f6; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
+              🤖 Automatisch erkannt
+            </div>
+          `}
+          <div style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-top: 10px;">
+            ${renderContent(mergedData, avgScore)}
+          </div>
         </div>
       `;
     };
@@ -1397,13 +1415,13 @@ export const generateCustomerHTML = ({
           '🏢',
           manualData?.googleMyBusiness,
           autoData.googleMyBusiness,
-          (data, isManual) => `
+          (data, avgScore) => `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
               <div>
                 <p><strong>Status:</strong> ${data.claimed ? '✅ Beansprucht' : '❌ Nicht beansprucht'}</p>
-                ${!isManual ? '<p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>' : ''}
+                <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>
                 <p><strong>Verifiziert:</strong> ${data.verified ? '✅ Ja' : '❌ Nein'}</p>
-                ${!isManual ? '<p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>' : ''}
+                <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>
                 <p><strong>Vollständigkeit:</strong> ${data.complete}%</p>
               </div>
               <div>
@@ -1412,7 +1430,7 @@ export const generateCustomerHTML = ({
                 <p><strong>Letztes Update:</strong> ${data.lastUpdate}</p>
               </div>
             </div>
-            ${generateProgressBar(data.score, 'GMB Optimierung')}
+            ${generateProgressBar(avgScore, 'GMB Optimierung')}
           `
         )}
 
@@ -1421,8 +1439,8 @@ export const generateCustomerHTML = ({
           '🌐',
           manualData?.localCitations,
           autoData.localCitations,
-          (data, isManual) => `
-            ${!isManual ? '<p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten in Online-Verzeichnissen erscheinen</p>' : ''}
+          (data, avgScore) => `
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0;">Wie oft und wie einheitlich Ihre Unternehmensdaten in Online-Verzeichnissen erscheinen</p>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0;">
               <div style="text-align: center;">
                 <div class="citation-total">${data.totalCitations}</div>
@@ -1452,7 +1470,7 @@ export const generateCustomerHTML = ({
                 `).join('')}
               </div>
             ` : ''}
-            ${generateProgressBar(data.score, 'Einheitlichkeit der Firmendaten')}
+            ${generateProgressBar(avgScore, 'Einheitlichkeit der Firmendaten')}
           `
         )}
 
@@ -1461,8 +1479,8 @@ export const generateCustomerHTML = ({
           '🎯',
           manualData?.localKeywords?.ranking?.length > 0 ? manualData.localKeywords : null,
           autoData.localKeywords.ranking?.length > 0 ? autoData.localKeywords : null,
-          (data, isManual) => `
-            ${!isManual ? '<p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0;">Ihre Platzierung in Google bei lokalen Suchbegriffen</p>' : ''}
+          (data, avgScore) => `
+            <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0;">Ihre Platzierung in Google bei lokalen Suchbegriffen</p>
             <div style="display: grid; gap: 10px; margin-top: 10px;">
               ${data.ranking.map(keyword => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 6px; border: 1px solid #e5e7eb;">
@@ -1477,7 +1495,7 @@ export const generateCustomerHTML = ({
                 </div>
               `).join('')}
             </div>
-            ${generateProgressBar(data.score, 'Durchschnittliche Ranking-Position')}
+            ${generateProgressBar(avgScore, 'Durchschnittliche Ranking-Position')}
           `
         )}
 
@@ -1486,7 +1504,7 @@ export const generateCustomerHTML = ({
           '📍',
           manualData?.onPageLocal,
           autoData.onPageLocal,
-          (data, isManual) => `
+          (data, avgScore) => `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
               <div>
                 <p><strong>📍 Adresse sichtbar:</strong> ${data.addressVisible ? '✅ Ja' : '❌ Nein'}</p>
@@ -1495,11 +1513,11 @@ export const generateCustomerHTML = ({
               <div>
                 <p><strong>🕒 Öffnungszeiten:</strong> ${data.openingHours ? '✅ Ja' : '❌ Nein'}</p>
                 <p><strong>🏷️ Local Schema:</strong> ${data.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
-                ${!isManual ? '<p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Strukturierte Daten für Google</p>' : ''}
+                <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Strukturierte Daten für Google</p>
               </div>
             </div>
             ${generateProgressBar(data.localContent, 'Lokaler Content Score')}
-            ${generateProgressBar(data.score, 'Gesamtbewertung lokale Optimierung')}
+            ${generateProgressBar(avgScore, 'Gesamtbewertung lokale Optimierung')}
           `
         )}
 
