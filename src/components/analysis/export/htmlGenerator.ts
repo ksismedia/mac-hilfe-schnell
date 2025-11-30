@@ -1121,8 +1121,9 @@ export const generateCustomerHTML = ({
       (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25;
     const headingScore = realData.seo.headings.h1.length === 1 ? 80 : 
       realData.seo.headings.h1.length > 1 ? 60 : 30;
-    const altTagsScore = realData.seo.altTags.total > 0 ? 
-      Math.round((realData.seo.altTags.withAlt / realData.seo.altTags.total) * 100) : 0;
+    const altTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
+      Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 
+      (realData.seo.altTags.total === 0 ? 100 : 0);
     
     // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
     const criticalSeoScore = seoScore; // Nutze den bereits vorhandenen seoScore
@@ -1161,7 +1162,7 @@ export const generateCustomerHTML = ({
               ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})`)}
             </div>
             <div>
-              <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt}/${realData.seo.altTags.total} Bilder</p>
+              <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder</p>
               ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)`)}
             </div>
           </div>
