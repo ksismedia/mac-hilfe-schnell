@@ -81,16 +81,27 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
       console.log('Has items?', results?.items?.length);
 
       if (results && results.items && results.items.length > 0) {
-        setSearchResults(results.items);
+        // Filter out own domain from results (we want EXTERNAL mentions only)
+        const filteredResults = results.items.filter((item: SearchResult) => {
+          const itemDomain = (item.displayLink || item.link || '')
+            .replace('https://', '')
+            .replace('http://', '')
+            .replace('www.', '')
+            .split('/')[0];
+          
+          return itemDomain !== cleanUrl;
+        });
         
-        // Berechne Reputation Score basierend auf Anzahl und Art der Erwähnungen
+        setSearchResults(filteredResults);
+        
+        // Berechne Reputation Score basierend auf Anzahl und Art der Erwähnungen (nur externe Erwähnungen)
         const positiveKeywords = ['gut', 'sehr gut', 'empfehlung', 'professionell', 'zuverlässig', 'kompetent', 'freundlich', 'qualität'];
         const negativeKeywords = ['schlecht', 'unzufrieden', 'nicht empfehlenswert', 'probleme', 'beschwerde', 'mangelhaft'];
         
         let positiveCount = 0;
         let negativeCount = 0;
         
-        results.items.forEach((item: SearchResult) => {
+        filteredResults.forEach((item: SearchResult) => {
           const text = (item.title + ' ' + item.snippet).toLowerCase();
           positiveKeywords.forEach(keyword => {
             if (text.includes(keyword)) positiveCount++;
@@ -100,24 +111,24 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           });
         });
 
-        // Score basierend auf Anzahl der Erwähnungen und Sentiment
-        const baseScore = Math.min(results.items.length * 8, 70); // Max 70 für Erwähnungen
+        // Score basierend auf Anzahl der EXTERNEN Erwähnungen und Sentiment
+        const baseScore = Math.min(filteredResults.length * 8, 70); // Max 70 für Erwähnungen
         const sentimentBonus = Math.min((positiveCount / Math.max(negativeCount, 1)) * 15, 30);
         const finalScore = Math.min(Math.round(baseScore + sentimentBonus), 100);
         
         setReputationScore(finalScore);
-        setSearchResults(results.items);
+        setSearchResults(filteredResults);
         
         // Determine sentiment
         const sentimentValue = positiveCount > negativeCount ? 'positive' : 
                               negativeCount > positiveCount ? 'negative' : 'neutral';
         
-        // Save to manual data
+        // Save to manual data (only external mentions)
         if (updateReputationData) {
           updateReputationData({
-            searchResults: results.items,
+            searchResults: filteredResults,
             reputationScore: finalScore,
-            webMentionsCount: results.items.length,
+            webMentionsCount: filteredResults.length,
             sentiment: sentimentValue,
             lastChecked: new Date().toISOString(),
             additionalSearchTerms: additionalSearchTerms,
