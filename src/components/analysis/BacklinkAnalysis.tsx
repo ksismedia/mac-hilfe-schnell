@@ -8,13 +8,8 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Link, AlertCircle, CheckCircle, Edit, Search, RefreshCw, Info } from 'lucide-react';
 import { ManualBacklinkInput } from './ManualBacklinkInput';
 import { useManualData } from '@/hooks/useManualData';
-import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
-import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
-import { toast } from 'sonner';
-import { Save } from 'lucide-react';
 import { calculateBacklinksScore } from './export/scoreCalculations';
 
 interface BacklinkAnalysisProps {
@@ -36,75 +31,12 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
   const hookData = useManualData();
   const manualBacklinkData = propManualBacklinkData ?? hookData.manualBacklinkData;
   const updateManualBacklinkData = propUpdateManualBacklinkData ?? hookData.updateManualBacklinkData;
-  const { savedExtensionData, setSavedExtensionData, currentAnalysis } = useAnalysisContext();
-  const { loadLatestExtensionData, isLoading } = useExtensionDataLoader();
-  const { updateAnalysis } = useSavedAnalyses();
   const [webMentions, setWebMentions] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
-  // Derive showExtensionData from savedExtensionData - always show if data exists
-  const showExtensionData = !!savedExtensionData;
-  
-  // Load extension data from Supabase and auto-save to current analysis
-  const handleLoadExtensionData = async () => {
-    const data = await loadLatestExtensionData();
-    
-    if (data) {
-      setSavedExtensionData(data);
-      
-      // Auto-save to current analysis if one exists
-      if (currentAnalysis) {
-        try {
-          await updateAnalysis(
-            currentAnalysis.id,
-            currentAnalysis.name,
-            currentAnalysis.businessData,
-            currentAnalysis.realData,
-            {
-              ...currentAnalysis.manualData,
-              extensionData: data
-            }
-          );
-          toast.success('Extension-Daten geladen und gespeichert!');
-        } catch (error) {
-          console.error('Fehler beim Auto-Speichern:', error);
-          toast.error('Daten geladen, aber Speichern fehlgeschlagen');
-        }
-      } else {
-        toast.success('Extension-Daten geladen! Speichern Sie die Analyse, um die Daten zu behalten.');
-      }
-    }
-  };
-  
-  // Save extension data to current analysis
-  const handleSaveExtensionData = async () => {
-    if (!currentAnalysis || !savedExtensionData) {
-      toast.error('Keine Analyse oder Extension-Daten verfügbar');
-      return;
-    }
-    
-    try {
-      await updateAnalysis(
-        currentAnalysis.id,
-        currentAnalysis.name,
-        currentAnalysis.businessData,
-        currentAnalysis.realData,
-        {
-          ...currentAnalysis.manualData,
-          extensionData: savedExtensionData
-        }
-      );
-      toast.success('Extension-Daten erfolgreich gespeichert!');
-    } catch (error) {
-      console.error('Fehler beim Speichern:', error);
-      toast.error('Fehler beim Speichern der Extension-Daten');
-    }
-  };
-  
   // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
-  // Real backlinks come from web mentions (Google Search results)
-  const hasExtensionData = showExtensionData && savedExtensionData !== null;
+  // Real backlinks only come from web mentions (Google Search results) and manual data
 
   // Calculate backlink score using centralized function
   const backlinkScore = calculateBacklinksScore(
