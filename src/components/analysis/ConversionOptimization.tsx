@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ConversionOptimizationProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
   manualConversionData?: ManualConversionData | null;
 }
 

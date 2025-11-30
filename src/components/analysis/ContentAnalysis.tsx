@@ -17,7 +17,7 @@ import { calculateContentQualityScore } from './export/scoreCalculations';
 
 interface ContentAnalysisProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
   manualContentData?: any;
   updateManualContentData?: (data: any) => void;
   realData?: any;
