@@ -24,6 +24,15 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
   const hasExtensionData = activeExtensionData !== null;
   const extensionSEO = activeExtensionData?.seo;
   
+  // DEBUG: Log alt-tags data sources
+  console.log('🔍 SEO Alt-Tags Debug:', {
+    hasExtensionData,
+    extensionSEOExists: !!extensionSEO,
+    extensionAltTags: extensionSEO?.altTags,
+    realDataAltTags: realData?.seo?.altTags,
+    url
+  });
+  
   // Prüfe ob Fallback-Daten verwendet werden
   const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||
                                realData?.seo.metaDescription === 'Website-Inhalte konnten nicht abgerufen werden';
