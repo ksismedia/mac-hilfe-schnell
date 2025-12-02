@@ -902,6 +902,44 @@ export const generateCustomerHTML = ({
     const hasRealData = accessibilityData?.checkedWithRealAPI || false;
     const lighthouseVersion = accessibilityData?.lighthouseVersion;
     
+    // Berechne kritische Violations für Kappungs-Erklärung
+    const criticalViolations = realViolations.filter((v: any) => 
+      v.impact === 'critical' || v.impact === 'serious'
+    );
+    
+    // Neutralisierung durch manuelle Eingaben prüfen
+    const neutralizedViolations = criticalViolations.filter((violation: any) => {
+      const vid = violation.id || '';
+      if (manualAccessibilityData?.keyboardNavigation && 
+          (vid.includes('keyboard') || vid.includes('button-name') || vid.includes('link-name') || vid.includes('accesskeys'))) return true;
+      if (manualAccessibilityData?.screenReaderCompatible && 
+          (vid.includes('aria-') || vid.includes('label') || vid.includes('role') || vid.includes('landmark'))) return true;
+      if (manualAccessibilityData?.colorContrast && 
+          (vid.includes('color-contrast') || vid.includes('contrast'))) return true;
+      if (manualAccessibilityData?.altTextsPresent && 
+          (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) return true;
+      if (manualAccessibilityData?.focusVisibility && 
+          (vid.includes('focus') || vid.includes('focus-order'))) return true;
+      if (manualAccessibilityData?.textScaling && 
+          (vid.includes('meta-viewport') || vid.includes('target-size'))) return true;
+      return false;
+    });
+    
+    const remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+    let scoreCap = 100;
+    if (remainingCriticalCount === 1) scoreCap = 59;
+    else if (remainingCriticalCount === 2) scoreCap = 35;
+    else if (remainingCriticalCount >= 3) scoreCap = 20;
+    
+    // Manuelle Eingaben für Erklärung sammeln
+    const manualInputsList: string[] = [];
+    if (manualAccessibilityData?.keyboardNavigation) manualInputsList.push('Tastaturnavigation');
+    if (manualAccessibilityData?.screenReaderCompatible) manualInputsList.push('Screen-Reader-kompatibel');
+    if (manualAccessibilityData?.colorContrast) manualInputsList.push('Farbkontraste ausreichend');
+    if (manualAccessibilityData?.altTextsPresent) manualInputsList.push('Alt-Texte vorhanden');
+    if (manualAccessibilityData?.focusVisibility) manualInputsList.push('Fokus-Sichtbarkeit');
+    if (manualAccessibilityData?.textScaling) manualInputsList.push('Text-Skalierung');
+    
     // Gruppiere Violations nach Impact
     const violationsByImpact = realViolations.reduce((acc: any, v: any) => {
       const impact = v.impact || 'moderate';
@@ -933,6 +971,38 @@ export const generateCustomerHTML = ({
         ];
 
     const scoreClass = accessibilityScore >= 80 ? 'yellow' : accessibilityScore >= 60 ? 'green' : 'red';
+    
+    // Kappungs-Erklärung für HTML generieren
+    const cappingExplanationHTML = remainingCriticalCount > 0 ? `
+      <div style="margin: 15px 0; padding: 15px; border-radius: 8px; background: #fef3c7; border: 2px solid #f59e0b;">
+        <h4 style="color: #92400e; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+          📊 Score-Kappung aktiv
+        </h4>
+        <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">
+          <strong>Grund:</strong> ${remainingCriticalCount} kritische/schwere Barrierefreiheit-Violation${remainingCriticalCount > 1 ? 'en' : ''} verbleibend
+        </p>
+        <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">
+          <strong>Auswirkung:</strong> Maximaler Score auf <strong>${scoreCap}%</strong> begrenzt
+        </p>
+        ${neutralizedViolations.length > 0 ? `
+          <p style="color: #059669; margin: 0 0 8px 0; font-size: 13px;">
+            ✓ ${neutralizedViolations.length} Violation${neutralizedViolations.length > 1 ? 'en' : ''} durch manuelle Eingaben neutralisiert
+          </p>
+        ` : ''}
+        ${manualInputsList.length > 0 && remainingCriticalCount > 0 ? `
+          <p style="color: #92400e; margin: 0; font-size: 13px; font-style: italic;">
+            ℹ️ Trotz manueller Angaben (${manualInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Violations nicht höher ausfallen.
+          </p>
+        ` : ''}
+      </div>
+    ` : (neutralizedViolations.length > 0 ? `
+      <div style="margin: 15px 0; padding: 15px; border-radius: 8px; background: #f0fdf4; border: 2px solid #86efac;">
+        <h4 style="color: #059669; margin: 0 0 10px 0;">✓ Kritische Fehler neutralisiert</h4>
+        <p style="color: #065f46; margin: 0; font-size: 14px;">
+          ${neutralizedViolations.length} kritische Violation${neutralizedViolations.length > 1 ? 'en' : ''} durch manuelle Eingaben (${manualInputsList.join(', ')}) neutralisiert. Keine Score-Kappung erforderlich.
+        </p>
+      </div>
+    ` : '');
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -955,6 +1025,9 @@ export const generateCustomerHTML = ({
             </div>
           </div>
         ` : ''}
+        
+        ${cappingExplanationHTML}
+        
         <h3 class="header-${getAccessibilityComplianceColorClass(accessibilityScore)}" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
           <span>Barrierefreiheit & Zugänglichkeit ${hasRealData ? '<span style="color: #10b981; font-size: 14px;">Echte PageSpeed Insights Prüfung</span>' : ''}</span>
           <span class="score-tile ${getAccessibilityComplianceColorClass(accessibilityScore)}">${displayAccessibilityScore}</span>
