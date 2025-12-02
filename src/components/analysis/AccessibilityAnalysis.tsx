@@ -39,12 +39,30 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   // Helper function to merge manual and automatic accessibility data
+  // IMMER zentralisierte Score-Berechnung verwenden für Konsistenz mit HTML-Export
   const getEffectiveAccessibilityData = () => {
+    // IMMER den zentralisierten Score berechnen - kombiniert auto + manual Daten
+    const calculatedScore = calculateAccessibilityScore(accessibilityData, manualAccessibilityData);
+    
+    console.log('🎯 Accessibility Score berechnet:', {
+      calculatedScore,
+      hasAutoData: !!accessibilityData,
+      hasManualData: !!manualAccessibilityData,
+      autoDataScore: accessibilityData?.score,
+      autoDataViolations: accessibilityData?.violations?.length
+    });
+    
+    // Wenn automatische Daten vorhanden - diese als Basis verwenden, aber mit berechnetem Score
+    if (accessibilityData) {
+      return {
+        ...accessibilityData,
+        score: calculatedScore, // IMMER den zentralisiert berechneten Score verwenden
+        dataSource: manualAccessibilityData ? "combined" as const : "automatic" as const
+      };
+    }
+    
+    // Nur manuelle Daten vorhanden
     if (manualAccessibilityData) {
-      // Calculate score based on enabled features
-      const finalScore = calculateAccessibilityScore(null, manualAccessibilityData);
-      
-      // Check if all features are enabled
       const allFeaturesEnabled = 
         manualAccessibilityData.keyboardNavigation &&
         manualAccessibilityData.screenReaderCompatible &&
@@ -53,26 +71,24 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
         manualAccessibilityData.focusVisibility &&
         manualAccessibilityData.textScaling;
       
-      console.log('Manual Accessibility Score berechnet:', finalScore, 'Alle Features aktiviert:', allFeaturesEnabled);
-      
       return {
-        score: finalScore,
-        wcagLevel: finalScore >= 95 ? 'AA' : finalScore >= 70 ? 'A' : 'partial',
-        violations: allFeaturesEnabled ? [] : [], // No violations if manually assessed
+        score: calculatedScore,
+        wcagLevel: calculatedScore >= 95 ? 'AA' : calculatedScore >= 70 ? 'A' : 'partial',
+        violations: [], // Keine automatischen Violations ohne API-Daten
         passes: [],
         incomplete: [],
         legalRisk: {
-          level: (finalScore === 100 ? 'very-low' : finalScore >= 80 ? 'low' : finalScore >= 60 ? 'medium' : 'high') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
-          score: finalScore,
+          level: (calculatedScore === 100 ? 'very-low' : calculatedScore >= 80 ? 'low' : calculatedScore >= 60 ? 'medium' : 'high') as 'very-low' | 'low' | 'medium' | 'high' | 'critical',
+          score: calculatedScore,
           factors: manualAccessibilityData.notes ? [manualAccessibilityData.notes] : ['Manuelle Bewertung'],
-          recommendations: finalScore === 100 ? ['Weiterhin alle Standards einhalten'] : ['Fehlende Features implementieren']
+          recommendations: calculatedScore === 100 ? ['Weiterhin alle Standards einhalten'] : ['Fehlende Features implementieren']
         },
         dataSource: "manual" as const,
         manualNotes: manualAccessibilityData.notes
       };
     }
     
-    return accessibilityData;
+    return null;
   };
 
   // Get the effective accessibility data (manual overrides automatic)
