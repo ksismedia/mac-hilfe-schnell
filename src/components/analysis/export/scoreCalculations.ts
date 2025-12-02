@@ -1045,6 +1045,47 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       }
     }
     
+    // NEU: Manuelle Eingaben können auch kritische Violations HINZUFÜGEN
+    // Wenn User explizit sagt "Alt-Texte NICHT vorhanden" (obwohl SEO sie erkennt),
+    // dann ist das eine manuelle kritische Violation
+    if (manualAccessibilityData) {
+      // Prüfe ob manuelle Daten explizit gesetzt wurden (nicht nur default)
+      const hasExplicitManualData = manualAccessibilityData.keyboardNavigation !== undefined ||
+                                     manualAccessibilityData.screenReaderCompatible !== undefined ||
+                                     manualAccessibilityData.colorContrast !== undefined ||
+                                     manualAccessibilityData.altTextsPresent !== undefined ||
+                                     manualAccessibilityData.focusVisibility !== undefined ||
+                                     manualAccessibilityData.textScaling !== undefined;
+      
+      if (hasExplicitManualData) {
+        // Alt-Texte explizit als NICHT vorhanden markiert → kritische Violation
+        if (manualAccessibilityData.altTextsPresent === false) {
+          criticalViolationCount++;
+          console.log('🎯 Accessibility: Alt-Texte manuell als NICHT vorhanden markiert → +1 kritische Violation (VoiceOver-Problem)');
+        }
+        
+        // Screen-Reader-Kompatibilität explizit als NICHT vorhanden markiert → kritische Violation  
+        if (manualAccessibilityData.screenReaderCompatible === false) {
+          criticalViolationCount++;
+          console.log('🎯 Accessibility: Screen-Reader-Kompatibilität manuell als NICHT vorhanden markiert → +1 kritische Violation');
+        }
+        
+        // Farbkontraste explizit als NICHT ausreichend markiert → kritische Violation
+        if (manualAccessibilityData.colorContrast === false) {
+          criticalViolationCount++;
+          console.log('🎯 Accessibility: Farbkontraste manuell als NICHT ausreichend markiert → +1 kritische Violation');
+        }
+        
+        // Tastaturnavigation explizit als NICHT vorhanden markiert → kritische Violation
+        if (manualAccessibilityData.keyboardNavigation === false) {
+          criticalViolationCount++;
+          console.log('🎯 Accessibility: Tastaturnavigation manuell als NICHT vorhanden markiert → +1 kritische Violation');
+        }
+      }
+    }
+    
+    console.log('🎯 Accessibility: Finale kritische Violation-Anzahl: ' + criticalViolationCount);
+    
     // COMBINE scores: Both auto and manual data contribute
     let finalScore = 40; // default
     

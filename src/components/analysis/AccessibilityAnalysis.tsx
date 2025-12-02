@@ -299,13 +299,11 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               {/* Critical Violations Analysis with Neutralization */}
               {(() => {
                 const currentData = getCurrentAccessibilityData();
-                if (!currentData || !currentData.violations) return null;
                 
-                const criticalViolations = currentData.violations.filter((v: AccessibilityViolation) => 
+                // Automatische kritische Violations
+                const criticalViolations = (currentData?.violations || []).filter((v: AccessibilityViolation) => 
                   v.impact === 'critical' || v.impact === 'serious'
                 );
-                
-                if (criticalViolations.length === 0) return null;
                 
                 // Check which violations are neutralized by manual inputs
                 const neutralizedViolations = criticalViolations.filter((violation: AccessibilityViolation) => {
@@ -346,8 +344,27 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                   return false;
                 });
                 
-                const remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+                let remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
                 const neutralizedCount = neutralizedViolations.length;
+                
+                // NEU: Manuell hinzugefügte kritische Violations (wenn User explizit Features als NICHT vorhanden markiert)
+                const manualCriticalViolations: string[] = [];
+                if (manualAccessibilityData?.altTextsPresent === false) {
+                  manualCriticalViolations.push('Alt-Texte nicht VoiceOver-kompatibel');
+                  remainingCriticalCount++;
+                }
+                if (manualAccessibilityData?.screenReaderCompatible === false) {
+                  manualCriticalViolations.push('Screen-Reader-Kompatibilität fehlt');
+                  remainingCriticalCount++;
+                }
+                if (manualAccessibilityData?.colorContrast === false) {
+                  manualCriticalViolations.push('Farbkontraste nicht ausreichend');
+                  remainingCriticalCount++;
+                }
+                if (manualAccessibilityData?.keyboardNavigation === false) {
+                  manualCriticalViolations.push('Tastaturnavigation fehlt');
+                  remainingCriticalCount++;
+                }
                 
                 let scoreCap = 100;
                 if (remainingCriticalCount === 1) scoreCap = 59;
@@ -370,7 +387,8 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 if (manualAccessibilityData?.focusVisibility) positiveInputsList.push('Fokus-Sichtbarkeit');
                 if (manualAccessibilityData?.textScaling) positiveInputsList.push('Text-Skalierung');
                 
-                if (remainingCriticalCount > 0 || neutralizedCount > 0) {
+                // Zeige Box wenn kritische Violations (auto oder manuell) oder Neutralisierungen vorhanden
+                if (remainingCriticalCount > 0 || neutralizedCount > 0 || manualCriticalViolations.length > 0) {
                   return (
                     <div className={`rounded-lg p-4 border ${remainingCriticalCount > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
                       <div className="flex items-center gap-2 font-semibold mb-2 text-sm">
@@ -381,10 +399,20 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                           ✓ {neutralizedCount} kritische Violation(s) durch manuelle Eingaben neutralisiert
                         </div>
                       )}
+                      {manualCriticalViolations.length > 0 && (
+                        <div className="text-sm text-red-700 mb-2 p-2 bg-red-100 rounded">
+                          <div className="font-semibold mb-1">⚠️ Manuell gemeldete Probleme:</div>
+                          <ul className="list-disc list-inside">
+                            {manualCriticalViolations.map((v, i) => (
+                              <li key={i}>{v}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       {remainingCriticalCount > 0 ? (
                         <>
                           <div className="text-sm text-red-700 mb-1">
-                            ⚠️ {remainingCriticalCount} kritische Violation(s) verbleibend
+                            ⚠️ {remainingCriticalCount} kritische Violation(s) insgesamt
                           </div>
                           <div className="text-sm text-red-900 font-bold">
                             📊 Score-Kappung: Maximum {scoreCap}% möglich

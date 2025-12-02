@@ -925,13 +925,33 @@ export const generateCustomerHTML = ({
       return false;
     });
     
-    const remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+    let remainingCriticalCount = criticalViolations.length - neutralizedViolations.length;
+    
+    // NEU: Manuell hinzugefügte kritische Violations (wenn User explizit Features als NICHT vorhanden markiert)
+    const manualCriticalViolations: string[] = [];
+    if (manualAccessibilityData?.altTextsPresent === false) {
+      manualCriticalViolations.push('Alt-Texte nicht VoiceOver-kompatibel');
+      remainingCriticalCount++;
+    }
+    if (manualAccessibilityData?.screenReaderCompatible === false) {
+      manualCriticalViolations.push('Screen-Reader-Kompatibilität fehlt');
+      remainingCriticalCount++;
+    }
+    if (manualAccessibilityData?.colorContrast === false) {
+      manualCriticalViolations.push('Farbkontraste nicht ausreichend');
+      remainingCriticalCount++;
+    }
+    if (manualAccessibilityData?.keyboardNavigation === false) {
+      manualCriticalViolations.push('Tastaturnavigation fehlt');
+      remainingCriticalCount++;
+    }
+    
     let scoreCap = 100;
     if (remainingCriticalCount === 1) scoreCap = 59;
     else if (remainingCriticalCount === 2) scoreCap = 35;
     else if (remainingCriticalCount >= 3) scoreCap = 20;
     
-    // Manuelle Eingaben für Erklärung sammeln
+    // Manuelle Eingaben für Erklärung sammeln (positive)
     const manualInputsList: string[] = [];
     if (manualAccessibilityData?.keyboardNavigation) manualInputsList.push('Tastaturnavigation');
     if (manualAccessibilityData?.screenReaderCompatible) manualInputsList.push('Screen-Reader-kompatibel');
@@ -979,9 +999,17 @@ export const generateCustomerHTML = ({
           📊 Score-Kappung aktiv
         </h4>
         <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">
-          <strong>Grund:</strong> ${remainingCriticalCount} kritische/schwere Barrierefreiheit-Violation${remainingCriticalCount > 1 ? 'en' : ''} verbleibend
+          <strong>Grund:</strong> ${remainingCriticalCount} kritische/schwere Barrierefreiheit-Violation${remainingCriticalCount > 1 ? 'en' : ''} insgesamt
         </p>
-        <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">
+        ${manualCriticalViolations.length > 0 ? `
+          <div style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px; margin: 8px 0;">
+            <p style="color: #991b1b; margin: 0 0 5px 0; font-size: 13px; font-weight: bold;">⚠️ Manuell gemeldete Probleme:</p>
+            <ul style="margin: 0; padding-left: 20px; color: #991b1b; font-size: 13px;">
+              ${manualCriticalViolations.map(v => `<li>${v}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+        <p style="color: #92400e; margin: 8px 0; font-size: 14px;">
           <strong>Auswirkung:</strong> Maximaler Score auf <strong>${scoreCap}%</strong> begrenzt
         </p>
         ${neutralizedViolations.length > 0 ? `
@@ -991,7 +1019,7 @@ export const generateCustomerHTML = ({
         ` : ''}
         ${manualInputsList.length > 0 && remainingCriticalCount > 0 ? `
           <p style="color: #92400e; margin: 0; font-size: 13px; font-style: italic;">
-            ℹ️ Trotz manueller Angaben (${manualInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Violations nicht höher ausfallen.
+            ℹ️ Trotz positiver manueller Angaben (${manualInputsList.join(', ')}) kann die Bewertung aufgrund der kritischen Violations nicht höher ausfallen.
           </p>
         ` : ''}
       </div>
