@@ -259,6 +259,12 @@ export interface ManualLocalSEOData {
   notes?: string;
 }
 
+export interface ManualSEOData {
+  // Deselected SEO issues - these will not count as errors
+  deselectedIssues: string[]; // IDs: 'titleTag', 'metaDescription', 'headingStructure', 'altTags'
+  notes?: string;
+}
+
 export interface PlatformReview {
   platformName: string;
   rating: number;
@@ -415,6 +421,7 @@ export const useManualData = () => {
   const [manualConversionData, setManualConversionData] = useState<ManualConversionData | null>(null);
   const [manualMobileData, setManualMobileData] = useState<ManualMobileData | null>(null);
   const [manualReputationData, setManualReputationData] = useState<ManualReputationData | null>(null);
+  const [manualSEOData, setManualSEOData] = useState<ManualSEOData | null>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -553,6 +560,11 @@ export const useManualData = () => {
     console.log('Manual Reputation Data Updated:', data);
   }, []);
 
+  const updateManualSEOData = useCallback((data: ManualSEOData | null) => {
+    setManualSEOData(data);
+    console.log('Manual SEO Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -600,5 +612,7 @@ export const useManualData = () => {
     updateManualMobileData,
     manualReputationData,
     updateManualReputationData,
+    manualSEOData,
+    updateManualSEOData,
   };
 };
