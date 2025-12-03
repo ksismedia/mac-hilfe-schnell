@@ -156,7 +156,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualMobileData,
     updateManualMobileData,
     manualReputationData,
-    updateManualReputationData
+    updateManualReputationData,
+    manualSEOData,
+    updateManualSEOData
   } = useManualData();
 
   // Access saved analyses hook
@@ -620,6 +622,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             manualBacklinkData={manualBacklinkData}
             updateManualBacklinkData={updateManualBacklinkData}
             manualReputationData={manualReputationData}
+            manualSEOData={manualSEOData}
+            updateManualSEOData={updateManualSEOData}
           />
         );
       case 'website-performance-tech':
