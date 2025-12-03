@@ -7,13 +7,17 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ManualSEOData } from '@/hooks/useManualData';
 
 interface SEOAnalysisProps {
   url: string;
   realData?: RealBusinessData;
+  manualSEOData?: ManualSEOData | null;
+  onManualSEODataChange?: (data: ManualSEOData | null) => void;
 }
 
-const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
+const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData, onManualSEODataChange }) => {
   const { reviewStatus, updateReviewStatus, savedExtensionData } = useAnalysisContext();
   const { extensionData } = useExtensionData();
   
@@ -39,6 +43,30 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
 
   // Priorisiere Extension-Daten wenn verfügbar, sonst verwende realData, sonst Fallback
   const useExtensionAltTags = hasExtensionData && extensionSEO?.altTags;
+
+  // Check if an issue is deselected
+  const isIssueDeselected = (issueId: string): boolean => {
+    return manualSEOData?.deselectedIssues?.includes(issueId) || false;
+  };
+
+  // Toggle issue deselection
+  const toggleIssueDeselection = (issueId: string) => {
+    if (!onManualSEODataChange) return;
+
+    const currentDeselected = manualSEOData?.deselectedIssues || [];
+    let newDeselected: string[];
+
+    if (currentDeselected.includes(issueId)) {
+      newDeselected = currentDeselected.filter(id => id !== issueId);
+    } else {
+      newDeselected = [...currentDeselected, issueId];
+    }
+
+    onManualSEODataChange({
+      ...manualSEOData,
+      deselectedIssues: newDeselected,
+    });
+  };
   
   const seoData = realData ? {
     titleTag: {
@@ -122,16 +150,45 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     overallScore: 0
   };
 
-  const getStatusIcon = (score: number) => {
-    if (score >= 90) return <CheckCircle className="h-5 w-5 text-yellow-500" />;  // 90-100% gold
-    if (score >= 61) return <AlertCircle className="h-5 w-5 text-green-500" />;   // 61-89% green
-    return <XCircle className="h-5 w-5 text-red-500" />;                         // 0-60% red
+  // Determine which issues have problems (score < 70)
+  const hasIssue = {
+    titleTag: seoData.titleTag.score < 70,
+    metaDescription: seoData.metaDescription.score < 70,
+    headingStructure: seoData.headingStructure.score < 70,
+    altTags: seoData.altTags.score < 70,
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-yellow-600";  // 90-100% gold
-    if (score >= 61) return "text-green-600";   // 61-89% grün
-    return "text-red-600";                      // 0-60% rot
+  // Calculate effective scores (consider deselections)
+  const getEffectiveScore = (issueId: string, originalScore: number): number => {
+    if (isIssueDeselected(issueId) && originalScore < 70) {
+      // If issue is deselected and was problematic, treat as resolved (score 80)
+      return 80;
+    }
+    return originalScore;
+  };
+
+  const getStatusIcon = (score: number, issueId?: string) => {
+    const effectiveScore = issueId ? getEffectiveScore(issueId, score) : score;
+    const isDeselected = issueId ? isIssueDeselected(issueId) : false;
+    
+    if (isDeselected && score < 70) {
+      return <CheckCircle className="h-5 w-5 text-blue-500" />; // Deselected issue
+    }
+    if (effectiveScore >= 90) return <CheckCircle className="h-5 w-5 text-yellow-500" />;
+    if (effectiveScore >= 61) return <AlertCircle className="h-5 w-5 text-green-500" />;
+    return <XCircle className="h-5 w-5 text-red-500" />;
+  };
+
+  const getScoreColor = (score: number, issueId?: string) => {
+    const effectiveScore = issueId ? getEffectiveScore(issueId, score) : score;
+    const isDeselected = issueId ? isIssueDeselected(issueId) : false;
+    
+    if (isDeselected && score < 70) {
+      return "text-blue-600"; // Deselected issue
+    }
+    if (effectiveScore >= 90) return "text-yellow-600";
+    if (effectiveScore >= 61) return "text-green-600";
+    return "text-red-600";
   };
 
   const getDataSourceBadge = (isRealData: boolean) => {
@@ -152,7 +209,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     }
   };
 
-  const getTitleTagRating = (score: number, length: number) => {
+  const getTitleTagRating = (score: number) => {
     if (score >= 90) return "Exzellent - perfekte Länge und Struktur";
     if (score >= 80) return "Sehr gut - ideal für Suchmaschinen";
     if (score >= 70) return "Gut - könnte optimiert werden";
@@ -160,7 +217,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     return "Unzureichend - dringend überarbeiten";
   };
 
-  const getMetaDescriptionRating = (score: number, length: number) => {
+  const getMetaDescriptionRating = (score: number) => {
     if (score >= 90) return "Exzellent - optimal für Suchergebnisse";
     if (score >= 80) return "Sehr gut - ansprechend formuliert";
     if (score >= 70) return "Gut - könnte prägnanter sein";
@@ -183,6 +240,30 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
     if (score >= 60) return "Ausreichend - einige Bilder ohne Beschreibung";
     if (score >= 40) return "Mangelhaft - viele Bilder fehlen";
     return "Unzureichend - Alt-Tags fehlen größtenteils";
+  };
+
+  // Render deselection checkbox if there's an issue
+  const renderDeselectionCheckbox = (issueId: string, label: string) => {
+    if (!hasIssue[issueId as keyof typeof hasIssue]) return null;
+    
+    return (
+      <div className="flex items-center gap-2 mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
+        <Checkbox
+          id={`deselect-${issueId}`}
+          checked={isIssueDeselected(issueId)}
+          onCheckedChange={() => toggleIssueDeselection(issueId)}
+        />
+        <label 
+          htmlFor={`deselect-${issueId}`}
+          className="text-sm text-amber-800 cursor-pointer"
+        >
+          Fehler abwählen: {label}
+        </label>
+        {isIssueDeselected(issueId) && (
+          <Badge className="bg-blue-100 text-blue-800 text-xs">Abgewählt</Badge>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -259,18 +340,35 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
               </div>
             )}
 
+            {/* Hinweis zur Fehler-Abwahl */}
+            {onManualSEODataChange && (Object.values(hasIssue).some(v => v)) && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-5 w-5 text-blue-600" />
+                  <h4 className="font-semibold text-blue-800">Manuelle Fehler-Abwahl möglich</h4>
+                </div>
+                <p className="text-sm text-blue-700">
+                  Bei automatisch erkannten SEO-Problemen können Sie Fehler manuell abwählen, wenn diese nicht relevant sind 
+                  oder bewusst so umgesetzt wurden. Abgewählte Fehler werden in der Bewertung nicht berücksichtigt.
+                </p>
+              </div>
+            )}
+
             {/* Title Tag */}
-            <div className="border rounded-lg p-4">
+            <div className={`border rounded-lg p-4 ${isIssueDeselected('titleTag') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
-                    {getStatusIcon(seoData.titleTag.score)}
+                    {getStatusIcon(seoData.titleTag.score, 'titleTag')}
                     Title-Tag
                   </h3>
                   {getDataSourceBadge(seoData.titleTag.isRealData)}
+                  {isIssueDeselected('titleTag') && (
+                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
+                  )}
                 </div>
-                <span className={`font-bold ${getScoreColor(seoData.titleTag.score)}`}>
-                  {seoData.titleTag.score}/100
+                <span className={`font-bold ${getScoreColor(seoData.titleTag.score, 'titleTag')}`}>
+                  {isIssueDeselected('titleTag') && seoData.titleTag.score < 70 ? '80' : seoData.titleTag.score}/100
                 </span>
               </div>
               <div className="space-y-3">
@@ -282,26 +380,30 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.titleTag.length} Zeichen</span>
-                  <span className={`font-medium ${getScoreColor(seoData.titleTag.score)}`}>
-                    {getTitleTagRating(seoData.titleTag.score, seoData.titleTag.length)}
+                  <span className={`font-medium ${getScoreColor(seoData.titleTag.score, 'titleTag')}`}>
+                    {isIssueDeselected('titleTag') ? 'Fehler abgewählt' : getTitleTagRating(seoData.titleTag.score)}
                   </span>
                 </div>
-                <Progress value={seoData.titleTag.score} className="h-2" />
+                <Progress value={getEffectiveScore('titleTag', seoData.titleTag.score)} className="h-2" />
+                {renderDeselectionCheckbox('titleTag', 'Title-Tag ist bewusst so gestaltet')}
               </div>
             </div>
 
             {/* Meta Description */}
-            <div className="border rounded-lg p-4">
+            <div className={`border rounded-lg p-4 ${isIssueDeselected('metaDescription') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
-                    {getStatusIcon(seoData.metaDescription.score)}
+                    {getStatusIcon(seoData.metaDescription.score, 'metaDescription')}
                     Meta Description
                   </h3>
                   {getDataSourceBadge(seoData.metaDescription.isRealData)}
+                  {isIssueDeselected('metaDescription') && (
+                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
+                  )}
                 </div>
-                <span className={`font-bold ${getScoreColor(seoData.metaDescription.score)}`}>
-                  {seoData.metaDescription.score}/100
+                <span className={`font-bold ${getScoreColor(seoData.metaDescription.score, 'metaDescription')}`}>
+                  {isIssueDeselected('metaDescription') && seoData.metaDescription.score < 70 ? '80' : seoData.metaDescription.score}/100
                 </span>
               </div>
               <div className="space-y-3">
@@ -313,26 +415,30 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.metaDescription.length} Zeichen</span>
-                  <span className={`font-medium ${getScoreColor(seoData.metaDescription.score)}`}>
-                    {getMetaDescriptionRating(seoData.metaDescription.score, seoData.metaDescription.length)}
+                  <span className={`font-medium ${getScoreColor(seoData.metaDescription.score, 'metaDescription')}`}>
+                    {isIssueDeselected('metaDescription') ? 'Fehler abgewählt' : getMetaDescriptionRating(seoData.metaDescription.score)}
                   </span>
                 </div>
-                <Progress value={seoData.metaDescription.score} className="h-2" />
+                <Progress value={getEffectiveScore('metaDescription', seoData.metaDescription.score)} className="h-2" />
+                {renderDeselectionCheckbox('metaDescription', 'Meta Description ist bewusst so gestaltet')}
               </div>
             </div>
 
             {/* Überschriftenstruktur */}
-            <div className="border rounded-lg p-4">
+            <div className={`border rounded-lg p-4 ${isIssueDeselected('headingStructure') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
-                    {getStatusIcon(seoData.headingStructure.score)}
+                    {getStatusIcon(seoData.headingStructure.score, 'headingStructure')}
                     Überschriftenstruktur
                   </h3>
                   {getDataSourceBadge(seoData.headingStructure.isRealData)}
+                  {isIssueDeselected('headingStructure') && (
+                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
+                  )}
                 </div>
-                <span className={`font-bold ${getScoreColor(seoData.headingStructure.score)}`}>
-                  {seoData.headingStructure.score}/100
+                <span className={`font-bold ${getScoreColor(seoData.headingStructure.score, 'headingStructure')}`}>
+                  {isIssueDeselected('headingStructure') && seoData.headingStructure.score < 70 ? '80' : seoData.headingStructure.score}/100
                 </span>
               </div>
               <div className="space-y-3">
@@ -353,19 +459,20 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                     <div className="text-gray-600">H3 Tags</div>
                   </div>
                 </div>
-                <Progress value={seoData.headingStructure.score} className="h-2" />
-                <p className={`text-sm font-medium ${getScoreColor(seoData.headingStructure.score)}`}>
-                  {getHeadingRating(seoData.headingStructure.score, seoData.headingStructure.h1Count)}
+                <Progress value={getEffectiveScore('headingStructure', seoData.headingStructure.score)} className="h-2" />
+                <p className={`text-sm font-medium ${getScoreColor(seoData.headingStructure.score, 'headingStructure')}`}>
+                  {isIssueDeselected('headingStructure') ? 'Fehler abgewählt' : getHeadingRating(seoData.headingStructure.score, seoData.headingStructure.h1Count)}
                 </p>
+                {renderDeselectionCheckbox('headingStructure', 'Überschriftenstruktur ist bewusst so gewählt')}
               </div>
             </div>
 
             {/* Alt-Tags */}
-            <div className="border rounded-lg p-4">
+            <div className={`border rounded-lg p-4 ${isIssueDeselected('altTags') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
-                    {getStatusIcon(seoData.altTags.score)}
+                    {getStatusIcon(seoData.altTags.score, 'altTags')}
                     Alt-Tags für Bilder
                   </h3>
                   {seoData.altTags.source === 'extension' ? (
@@ -376,9 +483,12 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   ) : (
                     getDataSourceBadge(seoData.altTags.isRealData)
                   )}
+                  {isIssueDeselected('altTags') && (
+                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
+                  )}
                 </div>
-                <span className={`font-bold ${getScoreColor(seoData.altTags.score)}`}>
-                  {seoData.altTags.score}/100
+                <span className={`font-bold ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
+                  {isIssueDeselected('altTags') && seoData.altTags.score < 70 ? '80' : seoData.altTags.score}/100
                 </span>
               </div>
               <div className="space-y-3">
@@ -389,12 +499,29 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData }) => {
                   <span>Bilder mit Alt-Tags:</span>
                   <span className="font-semibold">{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
                 </div>
-                <Progress value={seoData.altTags.coverage} className="h-2" />
-                <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score)}`}>
-                  {getAltTagRating(seoData.altTags.score)}
+                <Progress value={isIssueDeselected('altTags') && seoData.altTags.coverage < 70 ? 80 : seoData.altTags.coverage} className="h-2" />
+                <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
+                  {isIssueDeselected('altTags') ? 'Fehler abgewählt' : getAltTagRating(seoData.altTags.score)}
                 </p>
+                {renderDeselectionCheckbox('altTags', 'Alt-Tags sind bewusst nicht gesetzt oder nicht relevant')}
               </div>
             </div>
+
+            {/* Zusammenfassung abgewählter Fehler */}
+            {manualSEOData?.deselectedIssues && manualSEOData.deselectedIssues.length > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-2">Abgewählte SEO-Fehler ({manualSEOData.deselectedIssues.length})</h4>
+                <ul className="text-sm text-blue-700 list-disc list-inside">
+                  {manualSEOData.deselectedIssues.includes('titleTag') && <li>Title-Tag</li>}
+                  {manualSEOData.deselectedIssues.includes('metaDescription') && <li>Meta Description</li>}
+                  {manualSEOData.deselectedIssues.includes('headingStructure') && <li>Überschriftenstruktur</li>}
+                  {manualSEOData.deselectedIssues.includes('altTags') && <li>Alt-Tags für Bilder</li>}
+                </ul>
+                <p className="text-xs text-blue-600 mt-2">
+                  Diese Fehler wurden manuell abgewählt und fließen nicht negativ in die Bewertung ein.
+                </p>
+              </div>
+            )}
 
             {/* Status-Hinweis für echte Daten */}
             {realData && !isUsingFallbackData && (

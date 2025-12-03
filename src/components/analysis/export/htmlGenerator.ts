@@ -1,7 +1,7 @@
 
 
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualReputationData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { 
@@ -62,6 +62,7 @@ interface CustomerReportData {
   manualConversionData?: ManualConversionData | null;
   manualMobileData?: ManualMobileData | null;
   manualReputationData?: ManualReputationData | null;
+  manualSEOData?: ManualSEOData | null;
   privacyData?: any;
   accessibilityData?: any;
   securityData?: any;
@@ -1215,19 +1216,46 @@ export const generateCustomerHTML = ({
     // SEO-Score kritischer bewerten
     const seoScore = realData.seo.score;
     
+    // Check deselected issues from manualSEOData
+    const deselectedIssues = manualSEOData?.deselectedIssues || [];
+    const isTitleTagDeselected = deselectedIssues.includes('titleTag');
+    const isMetaDescriptionDeselected = deselectedIssues.includes('metaDescription');
+    const isHeadingStructureDeselected = deselectedIssues.includes('headingStructure');
+    const isAltTagsDeselected = deselectedIssues.includes('altTags');
+    
     // Detaillierte Bewertung basierend auf SEOAnalysis Komponente
-    const titleTagScore = realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? 
+    const rawTitleTagScore = realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? 
       (realData.seo.titleTag.length <= 70 ? 85 : 65) : 25;
-    const metaDescriptionScore = realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? 
+    const rawMetaDescriptionScore = realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? 
       (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25;
-    const headingScore = realData.seo.headings.h1.length === 1 ? 80 : 
+    const rawHeadingScore = realData.seo.headings.h1.length === 1 ? 80 : 
       realData.seo.headings.h1.length > 1 ? 60 : 30;
-    const altTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
+    const rawAltTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
       Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 0;
+    
+    // Apply deselection (treat deselected issues with score < 70 as 80)
+    const titleTagScore = (isTitleTagDeselected && rawTitleTagScore < 70) ? 80 : rawTitleTagScore;
+    const metaDescriptionScore = (isMetaDescriptionDeselected && rawMetaDescriptionScore < 70) ? 80 : rawMetaDescriptionScore;
+    const headingScore = (isHeadingStructureDeselected && rawHeadingScore < 70) ? 80 : rawHeadingScore;
+    const altTagsScore = (isAltTagsDeselected && rawAltTagsScore < 70) ? 80 : rawAltTagsScore;
     
     // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
     const criticalSeoScore = seoScore; // Nutze den bereits vorhandenen seoScore
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
+
+    // Generate deselected issues info
+    const deselectedInfo = deselectedIssues.length > 0 ? `
+      <div style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+        <h5 style="color: #3b82f6; margin: 0 0 8px 0;">ℹ️ Manuell abgewählte SEO-Fehler (${deselectedIssues.length})</h5>
+        <ul style="margin: 0; padding-left: 20px; color: #4b5563;">
+          ${isTitleTagDeselected ? '<li>Title-Tag - manuell als nicht relevant markiert</li>' : ''}
+          ${isMetaDescriptionDeselected ? '<li>Meta Description - manuell als nicht relevant markiert</li>' : ''}
+          ${isHeadingStructureDeselected ? '<li>Überschriftenstruktur - manuell als nicht relevant markiert</li>' : ''}
+          ${isAltTagsDeselected ? '<li>Alt-Tags - manuell als nicht relevant markiert</li>' : ''}
+        </ul>
+        <p style="margin: 8px 0 0 0; font-size: 12px; color: #6b7280;">Diese Fehler wurden bei der manuellen Überprüfung als bewusst so gestaltet oder nicht relevant eingestuft und fließen nicht negativ in die Bewertung ein.</p>
+      </div>
+    ` : '';
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -1249,23 +1277,24 @@ export const generateCustomerHTML = ({
         <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
           <h4>📋 Technische SEO-Details</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-            <div>
-              <p><strong>Title-Tag:</strong> ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)`)}
+            <div${isTitleTagDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
+              <p><strong>Title-Tag:</strong> ${isTitleTagDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)${isTitleTagDeselected ? ' - Fehler abgewählt' : ''}`)}
             </div>
-            <div>
-              <p><strong>Meta Description:</strong> ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)`)}
+            <div${isMetaDescriptionDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
+              <p><strong>Meta Description:</strong> ${isMetaDescriptionDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)${isMetaDescriptionDeselected ? ' - Fehler abgewählt' : ''}`)}
             </div>
-            <div>
-              <p><strong>Überschriftenstruktur:</strong> ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
-              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})`)}
+            <div${isHeadingStructureDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
+              <p><strong>Überschriftenstruktur:</strong> ${isHeadingStructureDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
+              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})${isHeadingStructureDeselected ? ' - Fehler abgewählt' : ''}`)}
             </div>
-            <div>
-              <p><strong>Alt-Tags:</strong> ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder</p>
-              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)`)}
+            <div${isAltTagsDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
+              <p><strong>Alt-Tags:</strong> ${isAltTagsDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder</p>
+              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)${isAltTagsDeselected ? ' - Fehler abgewählt' : ''}`)}
             </div>
           </div>
+          ${deselectedInfo}
         </div>
         
         <!-- Branchenrelevante Keywords -->
