@@ -208,6 +208,7 @@ export const generateCustomerHTML = ({
   manualConversionData,
   manualMobileData,
   manualReputationData,
+  manualSEOData,
   privacyData,
   staffQualificationData,
   quoteResponseData,
