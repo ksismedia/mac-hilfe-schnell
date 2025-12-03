@@ -260,8 +260,10 @@ export interface ManualLocalSEOData {
 }
 
 export interface ManualSEOData {
-  // Deselected SEO issues - these will not count as errors
-  deselectedIssues: string[]; // IDs: 'titleTag', 'metaDescription', 'headingStructure', 'altTags'
+  // Confirmed SEO elements - unconfirmed elements count as errors
+  confirmedElements: string[]; // IDs: 'titleTag', 'metaDescription', 'headingStructure', 'altTags'
+  // Explicitly rejected elements - these count as errors regardless of auto-detected score
+  rejectedElements: string[]; // Same IDs - user says this element is NOT OK
   notes?: string;
 }
 
