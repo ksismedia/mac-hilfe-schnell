@@ -1217,12 +1217,18 @@ export const generateCustomerHTML = ({
     // SEO-Score kritischer bewerten
     const seoScore = realData.seo.score;
     
-    // Check deselected issues from manualSEOData
-    const deselectedIssues = manualSEOData?.deselectedIssues || [];
-    const isTitleTagDeselected = deselectedIssues.includes('titleTag');
-    const isMetaDescriptionDeselected = deselectedIssues.includes('metaDescription');
-    const isHeadingStructureDeselected = deselectedIssues.includes('headingStructure');
-    const isAltTagsDeselected = deselectedIssues.includes('altTags');
+    // Check confirmed/rejected elements from manualSEOData
+    const confirmedElements = manualSEOData?.confirmedElements || [];
+    const rejectedElements = manualSEOData?.rejectedElements || [];
+    
+    const isTitleTagConfirmed = confirmedElements.includes('titleTag');
+    const isTitleTagRejected = rejectedElements.includes('titleTag');
+    const isMetaDescriptionConfirmed = confirmedElements.includes('metaDescription');
+    const isMetaDescriptionRejected = rejectedElements.includes('metaDescription');
+    const isHeadingStructureConfirmed = confirmedElements.includes('headingStructure');
+    const isHeadingStructureRejected = rejectedElements.includes('headingStructure');
+    const isAltTagsConfirmed = confirmedElements.includes('altTags');
+    const isAltTagsRejected = rejectedElements.includes('altTags');
     
     // Detaillierte Bewertung basierend auf SEOAnalysis Komponente
     const rawTitleTagScore = realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? 
@@ -1234,29 +1240,55 @@ export const generateCustomerHTML = ({
     const rawAltTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
       Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 0;
     
-    // Apply deselection (treat deselected issues with score < 70 as 80)
-    const titleTagScore = (isTitleTagDeselected && rawTitleTagScore < 70) ? 80 : rawTitleTagScore;
-    const metaDescriptionScore = (isMetaDescriptionDeselected && rawMetaDescriptionScore < 70) ? 80 : rawMetaDescriptionScore;
-    const headingScore = (isHeadingStructureDeselected && rawHeadingScore < 70) ? 80 : rawHeadingScore;
-    const altTagsScore = (isAltTagsDeselected && rawAltTagsScore < 70) ? 80 : rawAltTagsScore;
+    // Apply rejection penalty (cap at 30 if rejected)
+    const titleTagScore = isTitleTagRejected ? Math.min(rawTitleTagScore, 30) : rawTitleTagScore;
+    const metaDescriptionScore = isMetaDescriptionRejected ? Math.min(rawMetaDescriptionScore, 30) : rawMetaDescriptionScore;
+    const headingScore = isHeadingStructureRejected ? Math.min(rawHeadingScore, 30) : rawHeadingScore;
+    const altTagsScore = isAltTagsRejected ? Math.min(rawAltTagsScore, 30) : rawAltTagsScore;
     
     // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
-    const criticalSeoScore = seoScore; // Nutze den bereits vorhandenen seoScore
+    const criticalSeoScore = seoScore;
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
-    // Generate deselected issues info
-    const deselectedInfo = deselectedIssues.length > 0 ? `
-      <div style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
-        <h5 style="color: #3b82f6; margin: 0 0 8px 0;">ℹ️ Manuell abgewählte SEO-Fehler (${deselectedIssues.length})</h5>
-        <ul style="margin: 0; padding-left: 20px; color: #4b5563;">
-          ${isTitleTagDeselected ? '<li>Title-Tag - manuell als nicht relevant markiert</li>' : ''}
-          ${isMetaDescriptionDeselected ? '<li>Meta Description - manuell als nicht relevant markiert</li>' : ''}
-          ${isHeadingStructureDeselected ? '<li>Überschriftenstruktur - manuell als nicht relevant markiert</li>' : ''}
-          ${isAltTagsDeselected ? '<li>Alt-Tags - manuell als nicht relevant markiert</li>' : ''}
+    // Generate rejected elements info
+    const rejectedInfo = rejectedElements.length > 0 ? `
+      <div style="margin-top: 15px; padding: 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
+        <h5 style="color: #dc2626; margin: 0 0 8px 0;">⚠️ Nicht bestätigte SEO-Elemente (${rejectedElements.length} Fehler)</h5>
+        <ul style="margin: 0; padding-left: 20px; color: #991b1b;">
+          ${isTitleTagRejected ? '<li>Title-Tag - als fehlerhaft markiert</li>' : ''}
+          ${isMetaDescriptionRejected ? '<li>Meta Description - als fehlerhaft markiert</li>' : ''}
+          ${isHeadingStructureRejected ? '<li>Überschriftenstruktur - als fehlerhaft markiert</li>' : ''}
+          ${isAltTagsRejected ? '<li>Alt-Tags - als fehlerhaft markiert</li>' : ''}
         </ul>
-        <p style="margin: 8px 0 0 0; font-size: 12px; color: #6b7280;">Diese Fehler wurden bei der manuellen Überprüfung als bewusst so gestaltet oder nicht relevant eingestuft und fließen nicht negativ in die Bewertung ein.</p>
+        <p style="margin: 8px 0 0 0; font-size: 12px; color: #b91c1c;">Diese Elemente wurden bei der manuellen Überprüfung als fehlerhaft eingestuft und fließen negativ in die Bewertung ein.</p>
       </div>
     ` : '';
+
+    // Generate confirmed elements info
+    const confirmedInfo = confirmedElements.length > 0 ? `
+      <div style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px;">
+        <h5 style="color: #16a34a; margin: 0 0 8px 0;">✓ Bestätigte SEO-Elemente (${confirmedElements.length})</h5>
+        <ul style="margin: 0; padding-left: 20px; color: #166534;">
+          ${isTitleTagConfirmed ? '<li>Title-Tag - bestätigt</li>' : ''}
+          ${isMetaDescriptionConfirmed ? '<li>Meta Description - bestätigt</li>' : ''}
+          ${isHeadingStructureConfirmed ? '<li>Überschriftenstruktur - bestätigt</li>' : ''}
+          ${isAltTagsConfirmed ? '<li>Alt-Tags - bestätigt</li>' : ''}
+        </ul>
+      </div>
+    ` : '';
+
+    // Helper function to get element style based on status
+    const getElementStyle = (isConfirmed: boolean, isRejected: boolean) => {
+      if (isRejected) return ' style="border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 6px;"';
+      if (isConfirmed) return ' style="border: 2px solid #22c55e; background: rgba(34, 197, 94, 0.1); padding: 8px; border-radius: 6px;"';
+      return '';
+    };
+
+    const getStatusBadge = (isConfirmed: boolean, isRejected: boolean) => {
+      if (isRejected) return '<span style="color: #dc2626; font-weight: bold;"> ✗ Fehler</span>';
+      if (isConfirmed) return '<span style="color: #16a34a; font-weight: bold;"> ✓ OK</span>';
+      return '<span style="color: #d97706;"> (Nicht bewertet)</span>';
+    };
 
     return `
       <div class="metric-card ${scoreClass}">
@@ -1278,24 +1310,25 @@ export const generateCustomerHTML = ({
         <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
           <h4>📋 Technische SEO-Details</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-            <div${isTitleTagDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
-              <p><strong>Title-Tag:</strong> ${isTitleTagDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)${isTitleTagDeselected ? ' - Fehler abgewählt' : ''}`)}
+            <div${getElementStyle(isTitleTagConfirmed, isTitleTagRejected)}>
+              <p><strong>Title-Tag:</strong>${getStatusBadge(isTitleTagConfirmed, isTitleTagRejected)} ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)`)}
             </div>
-            <div${isMetaDescriptionDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
-              <p><strong>Meta Description:</strong> ${isMetaDescriptionDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)${isMetaDescriptionDeselected ? ' - Fehler abgewählt' : ''}`)}
+            <div${getElementStyle(isMetaDescriptionConfirmed, isMetaDescriptionRejected)}>
+              <p><strong>Meta Description:</strong>${getStatusBadge(isMetaDescriptionConfirmed, isMetaDescriptionRejected)} ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
+              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)`)}
             </div>
-            <div${isHeadingStructureDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
-              <p><strong>Überschriftenstruktur:</strong> ${isHeadingStructureDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
-              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})${isHeadingStructureDeselected ? ' - Fehler abgewählt' : ''}`)}
+            <div${getElementStyle(isHeadingStructureConfirmed, isHeadingStructureRejected)}>
+              <p><strong>Überschriftenstruktur:</strong>${getStatusBadge(isHeadingStructureConfirmed, isHeadingStructureRejected)} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
+              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})`)}
             </div>
-            <div${isAltTagsDeselected ? ' style="opacity: 0.7; border: 1px dashed #3b82f6; padding: 8px; border-radius: 6px;"' : ''}>
-              <p><strong>Alt-Tags:</strong> ${isAltTagsDeselected ? '<span style="color: #3b82f6;">(Abgewählt)</span>' : ''} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder</p>
-              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${altTagsScore}% Abdeckung)${isAltTagsDeselected ? ' - Fehler abgewählt' : ''}`)}
+            <div${getElementStyle(isAltTagsConfirmed, isAltTagsRejected)}>
+              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected)} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder</p>
+              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${rawAltTagsScore}% Abdeckung)`)}
             </div>
           </div>
-          ${deselectedInfo}
+          ${rejectedInfo}
+          ${confirmedInfo}
         </div>
         
         <!-- Branchenrelevante Keywords -->

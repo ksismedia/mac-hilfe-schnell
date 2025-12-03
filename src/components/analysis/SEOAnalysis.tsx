@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, AlertTriangle, Database, Wifi, Check, X } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
 import { ManualSEOData } from '@/hooks/useManualData';
 
 interface SEOAnalysisProps {
@@ -28,43 +28,50 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
   const hasExtensionData = activeExtensionData !== null;
   const extensionSEO = activeExtensionData?.seo;
   
-  // DEBUG: Log alt-tags data sources
-  console.log('🔍 SEO Alt-Tags Debug:', {
-    hasExtensionData,
-    extensionSEOExists: !!extensionSEO,
-    extensionAltTags: extensionSEO?.altTags,
-    realDataAltTags: realData?.seo?.altTags,
-    url
-  });
-  
   // Prüfe ob Fallback-Daten verwendet werden
   const isUsingFallbackData = realData?.seo.titleTag === 'Konnte nicht geladen werden' ||
                                realData?.seo.metaDescription === 'Website-Inhalte konnten nicht abgerufen werden';
 
-  // Priorisiere Extension-Daten wenn verfügbar, sonst verwende realData, sonst Fallback
+  // Priorisiere Extension-Daten wenn verfügbar
   const useExtensionAltTags = hasExtensionData && extensionSEO?.altTags;
 
-  // Check if an issue is deselected
-  const isIssueDeselected = (issueId: string): boolean => {
-    return manualSEOData?.deselectedIssues?.includes(issueId) || false;
+  // Check if element is confirmed (user says it's OK)
+  const isElementConfirmed = (elementId: string): boolean => {
+    return manualSEOData?.confirmedElements?.includes(elementId) || false;
   };
 
-  // Toggle issue deselection
-  const toggleIssueDeselection = (issueId: string) => {
+  // Check if element is rejected (user says it's NOT OK)
+  const isElementRejected = (elementId: string): boolean => {
+    return manualSEOData?.rejectedElements?.includes(elementId) || false;
+  };
+
+  // Get element status: 'confirmed' | 'rejected' | 'pending'
+  const getElementStatus = (elementId: string): 'confirmed' | 'rejected' | 'pending' => {
+    if (isElementConfirmed(elementId)) return 'confirmed';
+    if (isElementRejected(elementId)) return 'rejected';
+    return 'pending';
+  };
+
+  // Set element status
+  const setElementStatus = (elementId: string, status: 'confirmed' | 'rejected' | 'pending') => {
     if (!onManualSEODataChange) return;
 
-    const currentDeselected = manualSEOData?.deselectedIssues || [];
-    let newDeselected: string[];
+    const currentConfirmed = manualSEOData?.confirmedElements || [];
+    const currentRejected = manualSEOData?.rejectedElements || [];
 
-    if (currentDeselected.includes(issueId)) {
-      newDeselected = currentDeselected.filter(id => id !== issueId);
-    } else {
-      newDeselected = [...currentDeselected, issueId];
+    let newConfirmed = currentConfirmed.filter(id => id !== elementId);
+    let newRejected = currentRejected.filter(id => id !== elementId);
+
+    if (status === 'confirmed') {
+      newConfirmed = [...newConfirmed, elementId];
+    } else if (status === 'rejected') {
+      newRejected = [...newRejected, elementId];
     }
 
     onManualSEODataChange({
       ...manualSEOData,
-      deselectedIssues: newDeselected,
+      confirmedElements: newConfirmed,
+      rejectedElements: newRejected,
     });
   };
   
@@ -95,7 +102,6 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
         realData.seo.headings.h1.length > 1 ? 60 : 30,
       isRealData: !isUsingFallbackData
     },
-    // PRIORISIERE Extension-Daten für Alt-Tags wenn verfügbar
     altTags: useExtensionAltTags ? {
       imagesTotal: extensionSEO.altTags.total || 0,
       imagesWithAlt: extensionSEO.altTags.withAlt || 0,
@@ -117,78 +123,44 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
     },
     overallScore: realData.seo.score
   } : {
-    // Fallback-Daten
-    titleTag: {
-      present: true,
-      length: 65,
-      content: "Daten werden geladen...",
-      score: 85,
-      isRealData: false
-    },
-    metaDescription: {
-      present: true,
-      length: 155,
-      content: "Daten werden geladen...",
-      score: 92,
-      isRealData: false
-    },
-    headingStructure: {
-      h1Count: 1,
-      h2Count: 4,
-      h3Count: 8,
-      structure: "Wird analysiert...",
-      score: 78,
-      isRealData: false
-    },
-    altTags: {
-      imagesTotal: 0,
-      imagesWithAlt: 0,
-      coverage: 0,
-      score: 0,
-      isRealData: false
-    },
+    titleTag: { present: true, length: 0, content: "Daten werden geladen...", score: 0, isRealData: false },
+    metaDescription: { present: true, length: 0, content: "Daten werden geladen...", score: 0, isRealData: false },
+    headingStructure: { h1Count: 0, h2Count: 0, h3Count: 0, structure: "Wird analysiert...", score: 0, isRealData: false },
+    altTags: { imagesTotal: 0, imagesWithAlt: 0, coverage: 0, score: 0, isRealData: false },
     overallScore: 0
   };
 
-  // Determine which issues have problems (score < 70)
-  const hasIssue = {
-    titleTag: seoData.titleTag.score < 70,
-    metaDescription: seoData.metaDescription.score < 70,
-    headingStructure: seoData.headingStructure.score < 70,
-    altTags: seoData.altTags.score < 70,
-  };
-
-  // Calculate effective scores (consider deselections)
-  const getEffectiveScore = (issueId: string, originalScore: number): number => {
-    if (isIssueDeselected(issueId) && originalScore < 70) {
-      // If issue is deselected and was problematic, treat as resolved (score 80)
-      return 80;
+  // Calculate effective score based on confirmation status
+  // Rejected = score capped at 30, Pending = original score, Confirmed = original score
+  const getEffectiveScore = (elementId: string, originalScore: number): number => {
+    const status = getElementStatus(elementId);
+    if (status === 'rejected') {
+      return Math.min(originalScore, 30); // Cap at 30 if rejected
     }
     return originalScore;
   };
 
-  const getStatusIcon = (score: number, issueId?: string) => {
-    const effectiveScore = issueId ? getEffectiveScore(issueId, score) : score;
-    const isDeselected = issueId ? isIssueDeselected(issueId) : false;
+  const getStatusIcon = (score: number, elementId: string) => {
+    const status = getElementStatus(elementId);
+    const effectiveScore = getEffectiveScore(elementId, score);
     
-    if (isDeselected && score < 70) {
-      return <CheckCircle className="h-5 w-5 text-blue-500" />; // Deselected issue
+    if (status === 'rejected') {
+      return <XCircle className="h-5 w-5 text-red-500" />;
     }
-    if (effectiveScore >= 90) return <CheckCircle className="h-5 w-5 text-yellow-500" />;
-    if (effectiveScore >= 61) return <AlertCircle className="h-5 w-5 text-green-500" />;
-    return <XCircle className="h-5 w-5 text-red-500" />;
+    if (status === 'confirmed') {
+      return <CheckCircle className="h-5 w-5 text-green-500" />;
+    }
+    // Pending - show based on auto score
+    if (effectiveScore >= 70) return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+    return <AlertTriangle className="h-5 w-5 text-amber-500" />;
   };
 
-  const getScoreColor = (score: number, issueId?: string) => {
-    const effectiveScore = issueId ? getEffectiveScore(issueId, score) : score;
-    const isDeselected = issueId ? isIssueDeselected(issueId) : false;
-    
-    if (isDeselected && score < 70) {
-      return "text-blue-600"; // Deselected issue
-    }
-    if (effectiveScore >= 90) return "text-yellow-600";
-    if (effectiveScore >= 61) return "text-green-600";
-    return "text-red-600";
+  const getScoreColor = (score: number, elementId: string) => {
+    const status = getElementStatus(elementId);
+    if (status === 'rejected') return "text-red-600";
+    if (status === 'confirmed') return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-amber-600";
   };
 
   const getDataSourceBadge = (isRealData: boolean) => {
@@ -242,29 +214,45 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
     return "Unzureichend - Alt-Tags fehlen größtenteils";
   };
 
-  // Render deselection checkbox if there's an issue
-  const renderDeselectionCheckbox = (issueId: string, label: string) => {
-    if (!hasIssue[issueId as keyof typeof hasIssue]) return null;
+  // Render confirmation buttons for each element
+  const renderConfirmationButtons = (elementId: string, label: string) => {
+    if (!onManualSEODataChange) return null;
+    
+    const status = getElementStatus(elementId);
     
     return (
-      <div className="flex items-center gap-2 mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
-        <Checkbox
-          id={`deselect-${issueId}`}
-          checked={isIssueDeselected(issueId)}
-          onCheckedChange={() => toggleIssueDeselection(issueId)}
-        />
-        <label 
-          htmlFor={`deselect-${issueId}`}
-          className="text-sm text-amber-800 cursor-pointer"
+      <div className="flex items-center gap-2 mt-3 p-3 bg-muted/50 border border-border rounded-lg">
+        <span className="text-sm font-medium mr-2">Bewertung:</span>
+        <Button
+          size="sm"
+          variant={status === 'confirmed' ? 'default' : 'outline'}
+          className={status === 'confirmed' ? 'bg-green-600 hover:bg-green-700' : ''}
+          onClick={() => setElementStatus(elementId, status === 'confirmed' ? 'pending' : 'confirmed')}
         >
-          Fehler abwählen: {label}
-        </label>
-        {isIssueDeselected(issueId) && (
-          <Badge className="bg-blue-100 text-blue-800 text-xs">Abgewählt</Badge>
+          <Check className="h-4 w-4 mr-1" />
+          Bestätigt
+        </Button>
+        <Button
+          size="sm"
+          variant={status === 'rejected' ? 'default' : 'outline'}
+          className={status === 'rejected' ? 'bg-red-600 hover:bg-red-700' : ''}
+          onClick={() => setElementStatus(elementId, status === 'rejected' ? 'pending' : 'rejected')}
+        >
+          <X className="h-4 w-4 mr-1" />
+          Nicht bestätigt
+        </Button>
+        {status !== 'pending' && (
+          <Badge className={status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+            {status === 'confirmed' ? 'OK' : 'Fehler'}
+          </Badge>
         )}
       </div>
     );
   };
+
+  // Count rejected elements for summary
+  const rejectedCount = (manualSEOData?.rejectedElements || []).length;
+  const confirmedCount = (manualSEOData?.confirmedElements || []).length;
 
   return (
     <div className="space-y-6">
@@ -274,7 +262,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
             SEO-Auswertung
           </CardTitle>
           <CardDescription>
-            SEO-Analyse für {url} - Datenquellen werden pro Bereich angezeigt
+            SEO-Analyse für {url} - Bitte bestätigen oder ablehnen Sie die erkannten Elemente
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -292,70 +280,47 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                     <p className="text-blue-700 bg-white p-2 rounded mt-1 text-xs">
                       {extensionSEO.titleTag || 'Nicht gefunden'}
                     </p>
-                    <span className="text-xs text-blue-600">Länge: {extensionSEO.titleTag?.length || 0} Zeichen</span>
                   </div>
                   <div>
                     <span className="font-medium text-blue-900">Meta Description:</span>
                     <p className="text-blue-700 bg-white p-2 rounded mt-1 text-xs">
                       {extensionSEO.metaDescription || 'Nicht gefunden'}
                     </p>
-                    <span className="text-xs text-blue-600">Länge: {extensionSEO.metaDescription?.length || 0} Zeichen</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-blue-900">Überschriften:</span>
-                    <div className="bg-white p-2 rounded mt-1 space-y-1">
-                      <div className="text-xs text-blue-700">H1: {extensionSEO.headings?.h1?.length || 0}</div>
-                      <div className="text-xs text-blue-700">H2: {extensionSEO.headings?.h2?.length || 0}</div>
-                      <div className="text-xs text-blue-700">H3: {extensionSEO.headings?.h3?.length || 0}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-blue-900">Alt-Tags:</span>
-                    <div className="bg-white p-2 rounded mt-1">
-                      <div className="text-xs text-blue-700">
-                        {extensionSEO.altTags?.withAlt || 0} von {extensionSEO.altTags?.total || 0} Bildern
-                      </div>
-                      <div className="text-xs text-blue-600 mt-1">
-                        {extensionSEO.altTags?.total > 0 
-                          ? `${Math.round((extensionSEO.altTags.withAlt / extensionSEO.altTags.total) * 100)}% abgedeckt`
-                          : 'Keine Bilder gefunden'}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
             )}
             
-            {/* Globale Warnung bei Fallback-Daten */}
-            {isUsingFallbackData && (
+            {/* Hinweis zur Bewertung */}
+            {onManualSEODataChange && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle className="h-5 w-5 text-amber-600" />
-                  <h4 className="font-semibold text-amber-800">Website konnte nicht vollständig analysiert werden</h4>
+                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                  <h4 className="font-semibold text-amber-800">Manuelle Bewertung erforderlich</h4>
                 </div>
                 <p className="text-sm text-amber-700">
-                  Die Website {url} konnte nicht vollständig gescannt werden (möglicherweise durch CORS-Schutz oder Sicherheitseinstellungen). 
-                  Bereiche mit Fallback-Daten sind entsprechend gekennzeichnet.
+                  Bitte überprüfen Sie jedes SEO-Element und bestätigen oder lehnen Sie es ab. 
+                  <strong> Nicht bestätigte Elemente werden als Fehler gewertet</strong> und fließen negativ in die Bewertung ein.
                 </p>
               </div>
             )}
 
-            {/* Hinweis zur Fehler-Abwahl */}
-            {onManualSEODataChange && (Object.values(hasIssue).some(v => v)) && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertCircle className="h-5 w-5 text-blue-600" />
-                  <h4 className="font-semibold text-blue-800">Manuelle Fehler-Abwahl möglich</h4>
+            {/* Summary of confirmed/rejected */}
+            {(confirmedCount > 0 || rejectedCount > 0) && (
+              <div className="flex gap-4 p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm"><strong>{confirmedCount}</strong> bestätigt</span>
                 </div>
-                <p className="text-sm text-blue-700">
-                  Bei automatisch erkannten SEO-Problemen können Sie Fehler manuell abwählen, wenn diese nicht relevant sind 
-                  oder bewusst so umgesetzt wurden. Abgewählte Fehler werden in der Bewertung nicht berücksichtigt.
-                </p>
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm"><strong>{rejectedCount}</strong> nicht bestätigt (Fehler)</span>
+                </div>
               </div>
             )}
 
             {/* Title Tag */}
-            <div className={`border rounded-lg p-4 ${isIssueDeselected('titleTag') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
+            <div className={`border rounded-lg p-4 ${getElementStatus('titleTag') === 'rejected' ? 'border-red-300 bg-red-50/30' : getElementStatus('titleTag') === 'confirmed' ? 'border-green-300 bg-green-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -363,34 +328,31 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                     Title-Tag
                   </h3>
                   {getDataSourceBadge(seoData.titleTag.isRealData)}
-                  {isIssueDeselected('titleTag') && (
-                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
-                  )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.titleTag.score, 'titleTag')}`}>
-                  {isIssueDeselected('titleTag') && seoData.titleTag.score < 70 ? '80' : seoData.titleTag.score}/100
+                  {getEffectiveScore('titleTag', seoData.titleTag.score)}/100
                 </span>
               </div>
               <div className="space-y-3">
-                <p className="text-xs text-gray-500 italic">
-                  Der Seitentitel erscheint in Suchergebnissen und Browser-Tabs. Ideal sind 50-70 Zeichen mit wichtigen Keywords am Anfang.
+                <p className="text-xs text-muted-foreground italic">
+                  Der Seitentitel erscheint in Suchergebnissen und Browser-Tabs. Ideal sind 50-70 Zeichen.
                 </p>
-                <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                <p className="text-sm bg-muted p-2 rounded">
                   "{seoData.titleTag.content}"
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.titleTag.length} Zeichen</span>
                   <span className={`font-medium ${getScoreColor(seoData.titleTag.score, 'titleTag')}`}>
-                    {isIssueDeselected('titleTag') ? 'Fehler abgewählt' : getTitleTagRating(seoData.titleTag.score)}
+                    {getElementStatus('titleTag') === 'rejected' ? 'Als Fehler markiert' : getTitleTagRating(seoData.titleTag.score)}
                   </span>
                 </div>
                 <Progress value={getEffectiveScore('titleTag', seoData.titleTag.score)} className="h-2" />
-                {renderDeselectionCheckbox('titleTag', 'Title-Tag ist bewusst so gestaltet')}
+                {renderConfirmationButtons('titleTag', 'Title-Tag')}
               </div>
             </div>
 
             {/* Meta Description */}
-            <div className={`border rounded-lg p-4 ${isIssueDeselected('metaDescription') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
+            <div className={`border rounded-lg p-4 ${getElementStatus('metaDescription') === 'rejected' ? 'border-red-300 bg-red-50/30' : getElementStatus('metaDescription') === 'confirmed' ? 'border-green-300 bg-green-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -398,34 +360,31 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                     Meta Description
                   </h3>
                   {getDataSourceBadge(seoData.metaDescription.isRealData)}
-                  {isIssueDeselected('metaDescription') && (
-                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
-                  )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.metaDescription.score, 'metaDescription')}`}>
-                  {isIssueDeselected('metaDescription') && seoData.metaDescription.score < 70 ? '80' : seoData.metaDescription.score}/100
+                  {getEffectiveScore('metaDescription', seoData.metaDescription.score)}/100
                 </span>
               </div>
               <div className="space-y-3">
-                <p className="text-xs text-gray-500 italic">
-                  Die Kurzbeschreibung wird unter Ihrem Seitentitel in Google angezeigt. Optimal sind 120-160 Zeichen mit klarem Mehrwert.
+                <p className="text-xs text-muted-foreground italic">
+                  Die Kurzbeschreibung wird unter Ihrem Seitentitel in Google angezeigt. Optimal sind 120-160 Zeichen.
                 </p>
-                <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                <p className="text-sm bg-muted p-2 rounded">
                   "{seoData.metaDescription.content}"
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Länge: {seoData.metaDescription.length} Zeichen</span>
                   <span className={`font-medium ${getScoreColor(seoData.metaDescription.score, 'metaDescription')}`}>
-                    {isIssueDeselected('metaDescription') ? 'Fehler abgewählt' : getMetaDescriptionRating(seoData.metaDescription.score)}
+                    {getElementStatus('metaDescription') === 'rejected' ? 'Als Fehler markiert' : getMetaDescriptionRating(seoData.metaDescription.score)}
                   </span>
                 </div>
                 <Progress value={getEffectiveScore('metaDescription', seoData.metaDescription.score)} className="h-2" />
-                {renderDeselectionCheckbox('metaDescription', 'Meta Description ist bewusst so gestaltet')}
+                {renderConfirmationButtons('metaDescription', 'Meta Description')}
               </div>
             </div>
 
             {/* Überschriftenstruktur */}
-            <div className={`border rounded-lg p-4 ${isIssueDeselected('headingStructure') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
+            <div className={`border rounded-lg p-4 ${getElementStatus('headingStructure') === 'rejected' ? 'border-red-300 bg-red-50/30' : getElementStatus('headingStructure') === 'confirmed' ? 'border-green-300 bg-green-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -433,42 +392,39 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                     Überschriftenstruktur
                   </h3>
                   {getDataSourceBadge(seoData.headingStructure.isRealData)}
-                  {isIssueDeselected('headingStructure') && (
-                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
-                  )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.headingStructure.score, 'headingStructure')}`}>
-                  {isIssueDeselected('headingStructure') && seoData.headingStructure.score < 70 ? '80' : seoData.headingStructure.score}/100
+                  {getEffectiveScore('headingStructure', seoData.headingStructure.score)}/100
                 </span>
               </div>
               <div className="space-y-3">
-                <p className="text-xs text-gray-500 italic">
-                  Überschriften gliedern Ihre Inhalte für Leser und Suchmaschinen. Ideal ist genau eine H1 als Hauptüberschrift, gefolgt von H2 und H3 für Unterkapitel.
+                <p className="text-xs text-muted-foreground italic">
+                  Überschriften gliedern Ihre Inhalte. Ideal ist genau eine H1 als Hauptüberschrift.
                 </p>
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div className="text-center">
                     <div className="font-bold text-lg">{seoData.headingStructure.h1Count}</div>
-                    <div className="text-gray-600">H1 Tags</div>
+                    <div className="text-muted-foreground">H1 Tags</div>
                   </div>
                   <div className="text-center">
                     <div className="font-bold text-lg">{seoData.headingStructure.h2Count}</div>
-                    <div className="text-gray-600">H2 Tags</div>
+                    <div className="text-muted-foreground">H2 Tags</div>
                   </div>
                   <div className="text-center">
                     <div className="font-bold text-lg">{seoData.headingStructure.h3Count}</div>
-                    <div className="text-gray-600">H3 Tags</div>
+                    <div className="text-muted-foreground">H3 Tags</div>
                   </div>
                 </div>
                 <Progress value={getEffectiveScore('headingStructure', seoData.headingStructure.score)} className="h-2" />
                 <p className={`text-sm font-medium ${getScoreColor(seoData.headingStructure.score, 'headingStructure')}`}>
-                  {isIssueDeselected('headingStructure') ? 'Fehler abgewählt' : getHeadingRating(seoData.headingStructure.score, seoData.headingStructure.h1Count)}
+                  {getElementStatus('headingStructure') === 'rejected' ? 'Als Fehler markiert' : getHeadingRating(seoData.headingStructure.score, seoData.headingStructure.h1Count)}
                 </p>
-                {renderDeselectionCheckbox('headingStructure', 'Überschriftenstruktur ist bewusst so gewählt')}
+                {renderConfirmationButtons('headingStructure', 'Überschriftenstruktur')}
               </div>
             </div>
 
             {/* Alt-Tags */}
-            <div className={`border rounded-lg p-4 ${isIssueDeselected('altTags') ? 'border-blue-300 bg-blue-50/30' : ''}`}>
+            <div className={`border rounded-lg p-4 ${getElementStatus('altTags') === 'rejected' ? 'border-red-300 bg-red-50/30' : getElementStatus('altTags') === 'confirmed' ? 'border-green-300 bg-green-50/30' : ''}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -483,42 +439,39 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                   ) : (
                     getDataSourceBadge(seoData.altTags.isRealData)
                   )}
-                  {isIssueDeselected('altTags') && (
-                    <Badge className="bg-blue-100 text-blue-800">Abgewählt</Badge>
-                  )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
-                  {isIssueDeselected('altTags') && seoData.altTags.score < 70 ? '80' : seoData.altTags.score}/100
+                  {getEffectiveScore('altTags', seoData.altTags.score)}/100
                 </span>
               </div>
               <div className="space-y-3">
-                <p className="text-xs text-gray-500 italic">
-                  Alt-Texte beschreiben Bilder für Suchmaschinen und Screenreader. Jedes Bild sollte eine aussagekräftige Beschreibung haben.
+                <p className="text-xs text-muted-foreground italic">
+                  Alt-Texte beschreiben Bilder für Suchmaschinen und Screenreader.
                 </p>
                 <div className="flex justify-between text-sm">
                   <span>Bilder mit Alt-Tags:</span>
                   <span className="font-semibold">{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
                 </div>
-                <Progress value={isIssueDeselected('altTags') && seoData.altTags.coverage < 70 ? 80 : seoData.altTags.coverage} className="h-2" />
+                <Progress value={getEffectiveScore('altTags', seoData.altTags.coverage)} className="h-2" />
                 <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
-                  {isIssueDeselected('altTags') ? 'Fehler abgewählt' : getAltTagRating(seoData.altTags.score)}
+                  {getElementStatus('altTags') === 'rejected' ? 'Als Fehler markiert' : getAltTagRating(seoData.altTags.score)}
                 </p>
-                {renderDeselectionCheckbox('altTags', 'Alt-Tags sind bewusst nicht gesetzt oder nicht relevant')}
+                {renderConfirmationButtons('altTags', 'Alt-Tags')}
               </div>
             </div>
 
-            {/* Zusammenfassung abgewählter Fehler */}
-            {manualSEOData?.deselectedIssues && manualSEOData.deselectedIssues.length > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-800 mb-2">Abgewählte SEO-Fehler ({manualSEOData.deselectedIssues.length})</h4>
-                <ul className="text-sm text-blue-700 list-disc list-inside">
-                  {manualSEOData.deselectedIssues.includes('titleTag') && <li>Title-Tag</li>}
-                  {manualSEOData.deselectedIssues.includes('metaDescription') && <li>Meta Description</li>}
-                  {manualSEOData.deselectedIssues.includes('headingStructure') && <li>Überschriftenstruktur</li>}
-                  {manualSEOData.deselectedIssues.includes('altTags') && <li>Alt-Tags für Bilder</li>}
+            {/* Zusammenfassung nicht bestätigter Fehler */}
+            {rejectedCount > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h4 className="font-semibold text-red-800 mb-2">⚠️ Nicht bestätigte SEO-Elemente ({rejectedCount})</h4>
+                <ul className="text-sm text-red-700 list-disc list-inside">
+                  {manualSEOData?.rejectedElements?.includes('titleTag') && <li>Title-Tag - als Fehler markiert</li>}
+                  {manualSEOData?.rejectedElements?.includes('metaDescription') && <li>Meta Description - als Fehler markiert</li>}
+                  {manualSEOData?.rejectedElements?.includes('headingStructure') && <li>Überschriftenstruktur - als Fehler markiert</li>}
+                  {manualSEOData?.rejectedElements?.includes('altTags') && <li>Alt-Tags für Bilder - als Fehler markiert</li>}
                 </ul>
-                <p className="text-xs text-blue-600 mt-2">
-                  Diese Fehler wurden manuell abgewählt und fließen nicht negativ in die Bewertung ein.
+                <p className="text-xs text-red-600 mt-2">
+                  Diese Elemente wurden als fehlerhaft markiert und fließen negativ in die Gesamtbewertung ein.
                 </p>
               </div>
             )}
