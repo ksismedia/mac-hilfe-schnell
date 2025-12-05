@@ -480,7 +480,7 @@ export const calculateLocalSEOScore = (businessData: any, realData: any, manualD
     
     if (!isNaN(autoScore) && autoScore > 0 && manualScore !== undefined && !isNaN(manualScore)) {
       const combined = Math.round(autoScore * 0.6 + manualScore * 0.4);
-      return isNaN(combined) ? 75 : Math.max(0, Math.min(100, combined));
+      return isNaN(combined) ? 0 : Math.max(0, Math.min(100, combined));
     }
     
     if (manualScore !== undefined && !isNaN(manualScore)) {
@@ -491,10 +491,12 @@ export const calculateLocalSEOScore = (businessData: any, realData: any, manualD
       return Math.max(0, Math.min(100, autoScore));
     }
     
-    return 75;
+    // Kein Fallback auf Standardwert - gibt 0 zurück wenn keine Daten vorhanden
+    console.log('📍 Local SEO: Keine Daten für Score-Berechnung vorhanden');
+    return 0;
   } catch (error) {
     console.error('📍 calculateLocalSEOScore error:', error);
-    return 75;
+    return 0;
   }
 };
 
