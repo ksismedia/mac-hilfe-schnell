@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, Phone, Mail, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 
 export interface QuoteResponseData {
-  responseTime: string; // '1-hour', '2-4-hours', '4-8-hours', '1-day', '2-3-days', 'over-3-days'
+  responseTime: string; // '1-hour', '2-4-hours', '4-8-hours', '1-day', '2-3-days', 'over-3-days', 'no-response'
   contactMethods: {
     phone: boolean;
     email: boolean;
@@ -70,6 +70,11 @@ const QuoteResponseInput: React.FC<QuoteResponseInputProps> = ({ data, onDataCha
   };
 
   const calculateScore = () => {
+    // Wenn keine Antwort erhalten wurde, ist der Score maximal 10%
+    if (formData.responseTime === 'no-response') {
+      return 10;
+    }
+    
     let score = 0;
     
     // Reaktionszeit (40% der Bewertung)
@@ -168,8 +173,17 @@ const QuoteResponseInput: React.FC<QuoteResponseInputProps> = ({ data, onDataCha
               <SelectItem value="1-day">1 Tag</SelectItem>
               <SelectItem value="2-3-days">2-3 Tage</SelectItem>
               <SelectItem value="over-3-days">Über 3 Tage</SelectItem>
+              <SelectItem value="no-response" className="text-destructive">Keine Antwort erhalten</SelectItem>
             </SelectContent>
           </Select>
+          {formData.responseTime === 'no-response' && (
+            <div className="bg-destructive/10 border border-destructive/30 p-3 rounded-lg flex items-start gap-2 mt-2">
+              <AlertCircle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-destructive">
+                Keine Antwort auf eine Kundenanfrage ist ein kritisches Qualitätsproblem. Der maximale Score ist auf 10% begrenzt.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Kontaktmöglichkeiten */}
