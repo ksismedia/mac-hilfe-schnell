@@ -27,9 +27,9 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [realLocalSEOData, setRealLocalSEOData] = useState<any>(null);
 
-  // Verwende manuelle Daten wenn vorhanden, sonst berechne Score
-  // WICHTIG: Übergebe auch manualData an die Score-Berechnung
-  const overallScore = manualData?.overallScore ?? calculateLocalSEOScore(businessData, realData, manualData);
+  // WICHTIG: Immer den Score neu berechnen, nicht den gespeicherten overallScore verwenden
+  // calculateLocalSEOScore berücksichtigt bereits alle manualData-Felder
+  const overallScore = calculateLocalSEOScore(businessData, realData, manualData);
 
   // Lade echte Local SEO Daten beim Mount
   useEffect(() => {
