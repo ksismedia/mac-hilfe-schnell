@@ -589,6 +589,11 @@ export const calculateQuoteResponseScore = (data: any): number => {
   // Echte Berechnung basierend auf Quote Response Daten
   if (!data) return 0; // Keine Bewertung wenn keine Daten vorhanden
   
+  // KRITISCH: Wenn keine Antwort erhalten wurde, ist der Score maximal 10%
+  if (data.responseTime === 'no-response') {
+    return 10;
+  }
+  
   let score = 0;
   
   // Response Time (40%)
@@ -603,7 +608,9 @@ export const calculateQuoteResponseScore = (data: any): number => {
       ? 20
       : data.responseTime === '2-3-days'
       ? 10
-      : 0; // 'over-3-days' or no response time
+      : data.responseTime === 'over-3-days'
+      ? 5
+      : 0;
   score += responseTimeScore;
 
   // Contact Methods (30%)
