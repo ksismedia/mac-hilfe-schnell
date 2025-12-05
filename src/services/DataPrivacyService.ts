@@ -104,13 +104,29 @@ export class DataPrivacyService {
   static async analyzeDataPrivacy(url: string, realData?: RealBusinessData): Promise<DataPrivacyResult> {
     console.log('Starting real data privacy analysis for:', url);
     
-    const hostname = new URL(url).hostname;
+    // Validate URL before processing
+    if (!url || typeof url !== 'string' || url.trim() === '') {
+      throw new Error('Keine gültige URL angegeben. Bitte geben Sie eine vollständige URL ein (z.B. https://example.com)');
+    }
+    
+    // Ensure URL has protocol
+    let validUrl = url.trim();
+    if (!validUrl.startsWith('http://') && !validUrl.startsWith('https://')) {
+      validUrl = 'https://' + validUrl;
+    }
+    
+    let hostname: string;
+    try {
+      hostname = new URL(validUrl).hostname;
+    } catch (e) {
+      throw new Error(`Ungültige URL: "${url}". Bitte geben Sie eine gültige URL ein (z.B. https://example.com)`);
+    }
     
     // Parallel API calls for faster results
     const [sslResult, securityHeadersResult, cookieBannerResult] = await Promise.all([
       this.checkSSLWithAPI(hostname),
-      this.checkSecurityHeaders(url),
-      this.detectCookieBanner(url)
+      this.checkSecurityHeaders(validUrl),
+      this.detectCookieBanner(validUrl)
     ]);
 
     console.log('SSL Result:', sslResult);
