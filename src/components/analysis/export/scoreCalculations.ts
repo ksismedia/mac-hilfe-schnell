@@ -1,5 +1,5 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualWorkplaceData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualWorkplaceData, ManualSEOData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateWorkplaceScore as newCalculateWorkplaceScore } from '@/utils/workplaceScoreCalculation';
 
@@ -137,6 +137,62 @@ export const hasWorkplaceData = (
 
 // New 6-category scoring functions
 
+// Calculate SEO score with manual confirmations/rejections
+export const calculateSEOScore = (
+  realData: RealBusinessData,
+  manualSEOData?: ManualSEOData | null
+): number => {
+  const baseScore = realData?.seo?.score || 0;
+  
+  // If no manual SEO data, return base score
+  if (!manualSEOData) {
+    return baseScore;
+  }
+  
+  const confirmedElements = manualSEOData.confirmedElements || [];
+  const rejectedElements = manualSEOData.rejectedElements || [];
+  
+  // Define SEO elements and their individual scores
+  const seoElements = [
+    { id: 'titleTag', baseScore: realData?.seo?.titleTag !== 'Kein Title-Tag gefunden' ? 
+      (realData?.seo?.titleTag?.length <= 70 ? 85 : 65) : 25 },
+    { id: 'metaDescription', baseScore: realData?.seo?.metaDescription !== 'Keine Meta-Description gefunden' ? 
+      (realData?.seo?.metaDescription?.length <= 160 ? 90 : 70) : 25 },
+    { id: 'headingStructure', baseScore: realData?.seo?.headings?.h1?.length === 1 ? 80 : 
+      realData?.seo?.headings?.h1?.length > 1 ? 60 : 30 },
+    { id: 'altTags', baseScore: (realData?.seo?.altTags?.total > 0) ? 
+      Math.round((realData?.seo?.altTags?.withAlt / realData?.seo?.altTags?.total) * 100) : 0 }
+  ];
+  
+  let totalScore = 0;
+  let elementCount = 0;
+  
+  for (const element of seoElements) {
+    let effectiveScore = element.baseScore;
+    
+    // Rejected elements are capped at 30
+    if (rejectedElements.includes(element.id)) {
+      effectiveScore = Math.min(effectiveScore, 30);
+    }
+    // Confirmed elements keep their score (no change needed)
+    // Pending elements (not confirmed, not rejected) also keep base score
+    
+    totalScore += effectiveScore;
+    elementCount++;
+  }
+  
+  const calculatedScore = elementCount > 0 ? Math.round(totalScore / elementCount) : baseScore;
+  
+  console.log('📊 SEO Score calculation:', {
+    baseScore,
+    confirmedElements,
+    rejectedElements,
+    calculatedScore
+  });
+  
+  return calculatedScore;
+};
+
 export const calculateOnlineQualityAuthorityScore = (
   realData: RealBusinessData,
   keywordsScore: number | null,
@@ -150,7 +206,8 @@ export const calculateOnlineQualityAuthorityScore = (
   manualAccessibilityData?: any,
   securityData?: any,
   manualReputationData?: any,
-  extensionData?: any
+  extensionData?: any,
+  manualSEOData?: ManualSEOData | null
 ): number => {
   try {
     console.log('🔍 calculateOnlineQualityAuthorityScore called');
@@ -170,7 +227,8 @@ export const calculateOnlineQualityAuthorityScore = (
     const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) || 0;
     const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : 0;
     
-    const seoScore = realData?.seo?.score || 0;
+    // Use calculateSEOScore with manual confirmations
+    const seoScore = calculateSEOScore(realData, manualSEOData);
     const imprintScore = realData?.imprint?.score || 0;
     
     // Validate all scores are numbers
