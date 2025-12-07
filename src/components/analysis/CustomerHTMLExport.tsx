@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualReputationData, useManualData } from '@/hooks/useManualData';
+import { ManualCompetitor, ManualSocialData, CompanyServices, CompetitorServices, ManualCorporateIdentityData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData, useManualData } from '@/hooks/useManualData';
 import { FileText, Users, ChartBar, Download } from 'lucide-react';
 import { generateCustomerHTML } from './export/htmlGenerator';
 import { calculateSimpleSocialScore } from './export/simpleSocialScore';
@@ -40,6 +40,7 @@ interface CustomerHTMLExportProps {
   manualConversionData?: ManualConversionData | null;
   manualMobileData?: ManualMobileData | null;
   manualReputationData?: ManualReputationData | null;
+  manualSEOData?: ManualSEOData | null;
   manualKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }>;
   keywordScore?: number;
   privacyData?: any;
@@ -74,6 +75,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   manualConversionData,
   manualMobileData,
   manualReputationData,
+  manualSEOData,
   manualKeywordData,
   keywordScore,
   privacyData,
@@ -100,7 +102,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     manualLocalSEOData: currentManualLocalSEOData,
     manualIndustryReviewData: currentManualIndustryReviewData,
     manualOnlinePresenceData: currentManualOnlinePresenceData,
-    manualConversionData: currentManualConversionData
+    manualConversionData: currentManualConversionData,
+    manualSEOData: currentManualSEOData
   } = useManualData();
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -260,6 +263,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualConversionData: currentManualConversionData || manualConversionData,
       manualMobileData: manualMobileData,
       manualReputationData: manualReputationData,
+      manualSEOData: currentManualSEOData || manualSEOData,
       privacyData,
       accessibilityData,
       securityData: exportSecurityData,
@@ -365,6 +369,7 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualConversionData: currentManualConversionData || manualConversionData,
       manualMobileData: manualMobileData,
       manualReputationData: manualReputationData,
+      manualSEOData: currentManualSEOData || manualSEOData,
       privacyData,
       accessibilityData,
       securityData: downloadSecurityData,
