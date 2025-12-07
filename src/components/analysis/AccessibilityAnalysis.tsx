@@ -281,6 +281,26 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
             console.log('🔍 ACCESSIBILITY DEBUG - Current Data:', currentData);
             console.log('🔍 ACCESSIBILITY DEBUG - Raw accessibilityData:', accessibilityData);
             console.log('🔍 ACCESSIBILITY DEBUG - manualAccessibilityData:', manualAccessibilityData);
+            
+            // Fallback: If accessibilityData exists but getCurrentAccessibilityData returns null, show reload option
+            if (!currentData && accessibilityData) {
+              return (
+                <div className="text-center py-8">
+                  <AlertCircle className="h-12 w-12 mx-auto text-amber-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                    Daten konnten nicht verarbeitet werden
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Die gespeicherten Accessibility-Daten haben ein unerwartetes Format.
+                  </p>
+                  <Button onClick={runAccessibilityTest} className="bg-blue-600 hover:bg-blue-700">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Erneut prüfen
+                  </Button>
+                </div>
+              );
+            }
+            
             return currentData && (
             <div className="space-y-6">
               {/* Legal Warning for Accessibility Issues */}
