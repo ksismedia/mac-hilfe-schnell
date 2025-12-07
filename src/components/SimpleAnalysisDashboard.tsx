@@ -335,11 +335,15 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           }
           
           // CRITICAL: Load security data from saved analysis OR fetch new ones
-          if (analysisData.manualData?.securityData) {
-            console.log('🔒 Loading saved security data:', analysisData.manualData.securityData);
-            setSecurityData(analysisData.manualData.securityData);
+          // Ignoriere gespeicherte Daten mit Fehlern - führe stattdessen eine neue Prüfung durch
+          const savedSecurityData = analysisData.manualData?.securityData;
+          const hasValidSavedData = savedSecurityData && !savedSecurityData.error && savedSecurityData.isSafe !== null;
+          
+          if (hasValidSavedData) {
+            console.log('🔒 Loading valid saved security data:', savedSecurityData);
+            setSecurityData(savedSecurityData);
           } else {
-            console.log('🔒 No security data found, starting Google Safe Browsing check...');
+            console.log('🔒 No valid security data found (or has error), starting fresh Google Safe Browsing check...');
             try {
               const { SafeBrowsingService } = await import('@/services/SafeBrowsingService');
               const securityResult = await SafeBrowsingService.checkUrl(businessData.url);
