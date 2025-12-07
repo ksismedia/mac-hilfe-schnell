@@ -102,12 +102,26 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     setSecurityLoading(true);
     
     try {
-      console.log('Starte Safe Browsing-Prüfung...');
+      console.log('Starte Safe Browsing-Prüfung für:', businessData.url);
       const result = await SafeBrowsingService.checkUrl(businessData.url);
-      onSecurityDataChange?.(result);
       console.log('Safe Browsing-Prüfung abgeschlossen:', result);
+      
+      // Immer das Ergebnis speichern, auch wenn es einen Fehler enthält
+      if (onSecurityDataChange) {
+        onSecurityDataChange(result);
+      }
     } catch (err) {
       console.error('Safe Browsing-Prüfung Fehler:', err);
+      // Bei unerwarteten Fehlern trotzdem ein Ergebnis setzen
+      if (onSecurityDataChange) {
+        onSecurityDataChange({
+          url: businessData.url,
+          isSafe: null,
+          threats: [],
+          checkedAt: new Date().toISOString(),
+          error: err instanceof Error ? err.message : 'Unbekannter Fehler'
+        });
+      }
     } finally {
       setSecurityLoading(false);
     }
