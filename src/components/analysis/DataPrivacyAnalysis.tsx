@@ -97,21 +97,29 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   };
 
   const runSecurityCheck = async () => {
-    if (!businessData.url) return;
+    console.log('🔒 runSecurityCheck aufgerufen, URL:', businessData?.url);
+    
+    if (!businessData?.url) {
+      console.error('❌ Keine URL für Sicherheitsprüfung vorhanden');
+      return;
+    }
     
     setSecurityLoading(true);
     
     try {
-      console.log('Starte Safe Browsing-Prüfung für:', businessData.url);
+      console.log('🔒 Starte Safe Browsing-Prüfung für:', businessData.url);
       const result = await SafeBrowsingService.checkUrl(businessData.url);
-      console.log('Safe Browsing-Prüfung abgeschlossen:', result);
+      console.log('✅ Safe Browsing-Prüfung abgeschlossen:', result);
       
-      // Immer das Ergebnis speichern, auch wenn es einen Fehler enthält
+      // Immer das Ergebnis speichern
       if (onSecurityDataChange) {
         onSecurityDataChange(result);
+        console.log('✅ Security data aktualisiert');
+      } else {
+        console.warn('⚠️ onSecurityDataChange ist nicht definiert');
       }
     } catch (err) {
-      console.error('Safe Browsing-Prüfung Fehler:', err);
+      console.error('❌ Safe Browsing-Prüfung Fehler:', err);
       // Bei unerwarteten Fehlern trotzdem ein Ergebnis setzen
       if (onSecurityDataChange) {
         onSecurityDataChange({
