@@ -64,6 +64,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
     if (accessibilityData) {
       return {
         ...accessibilityData,
+        violations: accessibilityData.violations || [], // Ensure violations array exists
         score: calculatedScore, // IMMER den zentralisiert berechneten Score verwenden
         dataSource: manualAccessibilityData ? "combined" as const : "automatic" as const
       };
@@ -285,7 +286,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               {/* Legal Warning for Accessibility Issues */}
               {(() => {
                 const currentData = getCurrentAccessibilityData();
-                return (currentData && (currentData.violations.length > 0 || currentData.score < 90)) && (
+                return (currentData && ((currentData.violations?.length || 0) > 0 || currentData.score < 90)) && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />
