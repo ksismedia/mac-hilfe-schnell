@@ -39,7 +39,14 @@ Deno.serve(async (req) => {
       );
     }
     
-    if (url.length > 2048) {
+    // Automatisch https:// hinzufügen wenn fehlt
+    let normalizedUrl = url.trim();
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = 'https://' + normalizedUrl;
+      console.log('check-safe-browsing: Added https:// prefix, normalized URL:', normalizedUrl);
+    }
+    
+    if (normalizedUrl.length > 2048) {
       return new Response(
         JSON.stringify({ error: 'URL exceeds maximum length of 2048 characters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -48,13 +55,14 @@ Deno.serve(async (req) => {
     
     // Validate URL format
     try {
-      const parsedUrl = new URL(url);
+      const parsedUrl = new URL(normalizedUrl);
       if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
         throw new Error('Invalid protocol');
       }
     } catch {
+      console.error('check-safe-browsing: Invalid URL format:', normalizedUrl);
       return new Response(
-        JSON.stringify({ error: 'Invalid URL format' }),
+        JSON.stringify({ error: 'Invalid URL format', url: normalizedUrl }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -64,7 +72,7 @@ Deno.serve(async (req) => {
       throw new Error('GOOGLE_API_KEY is not configured');
     }
 
-    console.log('Checking Safe Browsing status for:', url);
+    console.log('Checking Safe Browsing status for:', normalizedUrl);
 
     const response = await fetch(
       `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${GOOGLE_API_KEY}`,
@@ -87,7 +95,7 @@ Deno.serve(async (req) => {
             ],
             platformTypes: ['ANY_PLATFORM'],
             threatEntryTypes: ['URL'],
-            threatEntries: [{ url }],
+            threatEntries: [{ url: normalizedUrl }],
           },
         }),
       }
@@ -103,7 +111,7 @@ Deno.serve(async (req) => {
     
     // Format the response
     const result = {
-      url,
+      url: normalizedUrl,
       isSafe: !data.matches || data.matches.length === 0,
       threats: data.matches ? data.matches.map((match: ThreatMatch) => ({
         type: match.threatType,
