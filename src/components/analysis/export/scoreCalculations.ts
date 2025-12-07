@@ -140,7 +140,8 @@ export const hasWorkplaceData = (
 // Calculate SEO score with manual confirmations/rejections
 export const calculateSEOScore = (
   realData: RealBusinessData,
-  manualSEOData?: ManualSEOData | null
+  manualSEOData?: ManualSEOData | null,
+  extensionData?: any
 ): number => {
   const baseScore = realData?.seo?.score || 0;
   
@@ -152,6 +153,17 @@ export const calculateSEOScore = (
   const confirmedElements = manualSEOData.confirmedElements || [];
   const rejectedElements = manualSEOData.rejectedElements || [];
   
+  // Alt-Tags: Priorisiere Extension-Daten, wenn verfügbar (wie in SEOAnalysis.tsx)
+  const useExtensionAltTags = extensionData?.seo?.altTags;
+  const altTagsTotal = useExtensionAltTags 
+    ? (extensionData.seo.altTags.total || 0) 
+    : (realData?.seo?.altTags?.total || 0);
+  const altTagsWithAlt = useExtensionAltTags 
+    ? (extensionData.seo.altTags.withAlt || 0) 
+    : (realData?.seo?.altTags?.withAlt || 0);
+  const altTagsScore = (altTagsTotal > 0) ? 
+    Math.round((altTagsWithAlt / altTagsTotal) * 100) : 0;
+  
   // Define SEO elements and their individual scores
   const seoElements = [
     { id: 'titleTag', baseScore: realData?.seo?.titleTag !== 'Kein Title-Tag gefunden' ? 
@@ -160,8 +172,7 @@ export const calculateSEOScore = (
       (realData?.seo?.metaDescription?.length <= 160 ? 90 : 70) : 25 },
     { id: 'headingStructure', baseScore: realData?.seo?.headings?.h1?.length === 1 ? 80 : 
       realData?.seo?.headings?.h1?.length > 1 ? 60 : 30 },
-    { id: 'altTags', baseScore: (realData?.seo?.altTags?.total > 0) ? 
-      Math.round((realData?.seo?.altTags?.withAlt / realData?.seo?.altTags?.total) * 100) : 0 }
+    { id: 'altTags', baseScore: altTagsScore }
   ];
   
   let totalScore = 0;
@@ -227,8 +238,8 @@ export const calculateOnlineQualityAuthorityScore = (
     const technicalSecurityScore = calculateTechnicalSecurityScore(privacyData, manualDataPrivacyData) || 0;
     const websiteSecurityScore = securityData ? (securityData.isSafe === true ? 100 : securityData.isSafe === false ? 0 : 50) : 0;
     
-    // Use calculateSEOScore with manual confirmations
-    const seoScore = calculateSEOScore(realData, manualSEOData);
+    // Use calculateSEOScore with manual confirmations and extension data
+    const seoScore = calculateSEOScore(realData, manualSEOData, extensionData);
     const imprintScore = realData?.imprint?.score || 0;
     
     // Validate all scores are numbers
