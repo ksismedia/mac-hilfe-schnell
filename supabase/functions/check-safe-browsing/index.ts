@@ -18,17 +18,23 @@ interface ThreatMatch {
 }
 
 Deno.serve(async (req) => {
+  console.log('check-safe-browsing: Request received, method:', req.method);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { url }: SafeBrowsingRequest = await req.json();
+    const body = await req.json();
+    console.log('check-safe-browsing: Request body:', JSON.stringify(body));
+    
+    const { url } = body as SafeBrowsingRequest;
     
     // Input validation
     if (!url || typeof url !== 'string') {
+      console.error('check-safe-browsing: URL missing or invalid, received:', url);
       return new Response(
-        JSON.stringify({ error: 'URL is required and must be a string' }),
+        JSON.stringify({ error: 'URL is required and must be a string', receivedUrl: url }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
