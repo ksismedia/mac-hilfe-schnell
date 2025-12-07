@@ -678,12 +678,21 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                             <strong>⚠️ Dringende Handlungsempfehlung:</strong> Kontaktieren Sie umgehend einen IT-Sicherheitsexperten, um die identifizierten Bedrohungen zu beseitigen. Der Betrieb einer Website mit erkannten Sicherheitsbedrohungen kann rechtliche Konsequenzen haben und das Vertrauen Ihrer Kunden gefährden.
                           </div>
                         </>
+                      ) : securityData.error ? (
+                        // Bei Fehler: Zeige Button für neue Prüfung statt Fehlermeldung
+                        <div className="text-center py-4">
+                          <p className="text-sm text-muted-foreground mb-3">Sicherheitsprüfung wird durchgeführt...</p>
+                          <Button onClick={runSecurityCheck} variant="outline">
+                            <ShieldAlert className="h-4 w-4 mr-2" />
+                            Sicherheitsprüfung starten
+                          </Button>
+                        </div>
                       ) : (
                         <Alert>
                           <Info className="h-4 w-4" />
                           <AlertTitle>Status unbekannt</AlertTitle>
                           <AlertDescription>
-                            Der Sicherheitsstatus konnte nicht eindeutig ermittelt werden. {securityData.error && `Fehler: ${securityData.error}`}
+                            Der Sicherheitsstatus konnte nicht eindeutig ermittelt werden.
                           </AlertDescription>
                         </Alert>
                       )}
