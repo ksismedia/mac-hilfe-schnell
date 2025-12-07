@@ -134,7 +134,9 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     manualDataPrivacyData,
     manualAccessibilityData,
     securityData,
-    null // manualReputationData
+    null, // manualReputationData
+    null, // extensionData
+    null  // manualSEOData
   );
   
   // Kategorie 2: Webseiten-Performance & Technik

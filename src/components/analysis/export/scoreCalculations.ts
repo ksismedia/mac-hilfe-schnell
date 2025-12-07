@@ -384,7 +384,7 @@ export const calculateSEOContentScore = (
   privacyData: any,
   accessibilityData: any
 ): number => {
-  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null, null, null, null);
+  return calculateOnlineQualityAuthorityScore(realData, keywordsScore, businessData, privacyData, accessibilityData, null, null, null, null, null, null, null, null, null);
 };
 
 export const calculatePerformanceMobileScore = (realData: RealBusinessData, manualConversionData?: any, manualMobileData?: any): number => {

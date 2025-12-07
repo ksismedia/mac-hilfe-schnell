@@ -501,7 +501,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     
     const onlineQualityAuthority = calculateOnlineQualityAuthorityScore(
       realData, keywordsScore, businessData, privacyData, accessibilityData, 
-      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData, securityData, savedExtensionData
+      manualContentData, manualBacklinkData, manualLocalSEOData, manualDataPrivacyData, manualAccessibilityData, securityData, null, savedExtensionData, manualSEOData
     );
     
     console.log('✅ onlineQualityAuthority score:', onlineQualityAuthority);
