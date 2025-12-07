@@ -23,7 +23,7 @@ export const generateReputationMonitoringSection = (
     return `
       <div class="section">
         <div class="section-header">
-          <span>💬 Reputation Monitoring</span>
+          <span>Reputation Monitoring</span>
           <div class="header-score-circle red">N/A</div>
         </div>
         <div class="section-content">
@@ -80,7 +80,7 @@ export const generateReputationMonitoringSection = (
   return `
     <div class="section">
       <div class="section-header">
-        <span>💬 Reputation Monitoring</span>
+        <span>Reputation Monitoring</span>
         <div class="header-score-circle ${getScoreColorClass(reputationScore)}">${reputationScore}%</div>
       </div>
       <div class="section-content">
