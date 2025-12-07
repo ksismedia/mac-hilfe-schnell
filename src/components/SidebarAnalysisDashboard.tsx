@@ -129,7 +129,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualMobileData,
     updateManualMobileData,
     manualReputationData,
-    updateManualReputationData
+    updateManualReputationData,
+    manualSEOData,
+    updateManualSEOData
   } = useManualData();
 
   // Access saved analyses hook
@@ -224,6 +226,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               updateManualConversionData,
               updateManualMobileData,
               updateManualReputationData,
+              updateManualSEOData,
               setPrivacyData,
               setAccessibilityData,
               setSecurityData,
@@ -418,6 +421,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateManualDataPrivacyData={updateManualDataPrivacyData}
             manualLocalSEOData={manualLocalSEOData}
             onManualLocalSEOChange={updateManualLocalSEOData}
+            manualSEOData={manualSEOData}
+            updateManualSEOData={updateManualSEOData}
           />
         );
       case 'website-performance-tech':
@@ -566,6 +571,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualIndustryReviewData={manualIndustryReviewData}
                   manualOnlinePresenceData={manualOnlinePresenceData}
                   manualConversionData={manualConversionData}
+                  manualSEOData={manualSEOData}
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
                 />

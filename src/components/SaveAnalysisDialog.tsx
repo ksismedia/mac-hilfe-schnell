@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useToast } from '@/hooks/use-toast';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, HourlyRateData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualSEOData } from '@/hooks/useManualData';
 import { Save } from 'lucide-react';
 import { AIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,6 +45,7 @@ interface SaveAnalysisDialogProps {
   manualConversionData?: ManualConversionData | null;
   manualMobileData?: ManualMobileData | null;
   manualReputationData?: any;
+  manualSEOData?: ManualSEOData | null;
   privacyData?: any;
   accessibilityData?: any;
   securityData?: any;
@@ -79,6 +80,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   manualConversionData,
   manualMobileData,
   manualReputationData,
+  manualSEOData,
   privacyData,
   accessibilityData,
   securityData,
@@ -144,6 +146,7 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         manualConversionData: manualConversionData || undefined,
         manualMobileData: manualMobileData || undefined,
         manualReputationData: manualReputationData || undefined,
+        manualSEOData: manualSEOData || undefined,
         privacyData: privacyData || undefined,
         accessibilityData: accessibilityData || undefined,
         securityData: securityData || undefined,

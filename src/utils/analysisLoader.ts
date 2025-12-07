@@ -1,6 +1,6 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData } from '@/hooks/useManualData';
+import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData } from '@/hooks/useManualData';
 import { calculateDataPrivacyScore } from '@/components/analysis/export/scoreCalculations';
 
 interface ExtensionWebsiteData {
@@ -49,6 +49,7 @@ export const loadSavedAnalysisData = (
   updateManualConversionData?: (data: ManualConversionData) => void,
   updateManualMobileData?: (data: ManualMobileData) => void,
   updateManualReputationData?: (data: ManualReputationData) => void,
+  updateManualSEOData?: (data: ManualSEOData | null) => void,
   setPrivacyData?: (data: any) => void,
   setAccessibilityData?: (data: any) => void,
   setSecurityData?: (data: any) => void,
@@ -194,6 +195,11 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.manualReputationData && updateManualReputationData) {
     console.log('Loading manual reputation data');
     updateManualReputationData(savedAnalysis.manualData.manualReputationData);
+  }
+  
+  if (savedAnalysis.manualData?.manualSEOData && updateManualSEOData) {
+    console.log('Loading manual SEO data');
+    updateManualSEOData(savedAnalysis.manualData.manualSEOData);
   }
   
   // Load cached analysis data (privacy, accessibility, security)
