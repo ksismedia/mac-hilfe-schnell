@@ -38,6 +38,14 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Sync accessibilityData when savedData changes (e.g., when loading a saved analysis)
+  useEffect(() => {
+    if (savedData) {
+      console.log('📥 Updating accessibilityData from savedData:', savedData);
+      setAccessibilityData(savedData);
+    }
+  }, [savedData]);
+
   // Helper function to merge manual and automatic accessibility data
   // IMMER zentralisierte Score-Berechnung verwenden für Konsistenz mit HTML-Export
   const getEffectiveAccessibilityData = () => {
