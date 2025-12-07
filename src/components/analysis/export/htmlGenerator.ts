@@ -296,6 +296,10 @@ export const generateCustomerHTML = ({
   // Calculate additional scores - MIT MANUELLEN DATEN UND EXTENSION DATEN
   const contentQualityScore = calculateContentQualityScore(realData, keywordScore || null, businessData, manualContentData, extensionData);
   const backlinksScore = calculateBacklinksScore(realData, manualBacklinkData, manualReputationData);
+  
+  // Berechneter SEO-Score mit Extension-Daten und manuellen Bestätigungen
+  const calculatedSEOScore = calculateSEOScore(realData, manualSEOData, extensionData);
+  
   console.log('🔥 HTML Generator about to calculate accessibility score with:', { manualAccessibilityData });
   console.log('🔥 HTML Generator calculated actualAccessibilityScore:', actualAccessibilityScore);
   
@@ -1316,7 +1320,7 @@ export const generateCustomerHTML = ({
         </div>
         ${generateProgressBar(
           criticalSeoScore,
-          `${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 61 ? 'Sehr gute SEO-Basis' : 'Dringende SEO-Verbesserungen erforderlich'}`
+          `${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 61 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'Dringende SEO-Verbesserungen erforderlich'}`
         )}
         
         <!-- Detaillierte SEO-Analyse basierend auf tatsächlichen Werten -->
@@ -2836,22 +2840,22 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header">
         <span>SEO-Bestandsanalyse</span>
-        <div class="header-score-circle ${getScoreColorClass(realData.seo.score)}">${realData.seo.score}%</div>
+        <div class="header-score-circle ${getScoreColorClass(calculatedSEOScore)}">${calculatedSEOScore}%</div>
       </div>
       <div class="section-content">
         <div class="metric-card">
           <h3>SEO-Bestandsanalyse</h3>
           <div class="score-display">
-            <div class="score-circle" data-score="${getScoreRange(realData.seo.score)}">${realData.seo.score}%</div>
+            <div class="score-circle" data-score="${getScoreRange(calculatedSEOScore)}">${calculatedSEOScore}%</div>
             <div class="score-details">
-              <p><strong>Sichtbarkeit:</strong> ${realData.seo.score >= 90 ? 'Exzellent' : realData.seo.score >= 61 ? 'Hoch' : 'Niedrig'}</p>
-              <p><strong>Empfehlung:</strong> ${realData.seo.score >= 90 ? 'Exzellente SEO-Basis – Behalten Sie diesen Standard bei!' : realData.seo.score >= 61 ? 'Sehr gute SEO-Basis' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+              <p><strong>Sichtbarkeit:</strong> ${calculatedSEOScore >= 90 ? 'Exzellent' : calculatedSEOScore >= 80 ? 'Hoch' : calculatedSEOScore >= 61 ? 'Mittel' : 'Niedrig'}</p>
+              <p><strong>Empfehlung:</strong> ${calculatedSEOScore >= 90 ? 'Exzellente SEO-Basis – Behalten Sie diesen Standard bei!' : calculatedSEOScore >= 80 ? 'Sehr gute SEO-Basis' : calculatedSEOScore >= 61 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
             </div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
-              <div class="progress-fill" data-score="${getScoreRange(realData.seo.score)}" style="width: ${realData.seo.score}%; display: flex; align-items: center; justify-content: center;">
-                <span style="color: ${realData.seo.score >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${realData.seo.score}%</span>
+              <div class="progress-fill" data-score="${getScoreRange(calculatedSEOScore)}" style="width: ${calculatedSEOScore}%; display: flex; align-items: center; justify-content: center;">
+                <span style="color: ${calculatedSEOScore >= 90 ? '#000' : '#fff'}; font-weight: bold; font-size: 12px;">${calculatedSEOScore}%</span>
               </div>
             </div>
           </div>
