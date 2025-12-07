@@ -457,7 +457,9 @@ export const generateCustomerHTML = ({
     manualDataPrivacyData,
     manualAccessibilityData,
     securityData,
-    manualReputationData
+    manualReputationData,
+    extensionData,
+    manualSEOData
   );
   
   // Kategorie 2: Webseiten-Performance & Technik
