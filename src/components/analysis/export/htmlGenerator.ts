@@ -1240,8 +1240,17 @@ export const generateCustomerHTML = ({
       (realData.seo.metaDescription.length <= 160 ? 90 : 70) : 25;
     const rawHeadingScore = realData.seo.headings.h1.length === 1 ? 80 : 
       realData.seo.headings.h1.length > 1 ? 60 : 30;
-    const rawAltTagsScore = (realData.seo.altTags.total !== undefined && realData.seo.altTags.total > 0) ? 
-      Math.round(((realData.seo.altTags.withAlt || 0) / realData.seo.altTags.total) * 100) : 0;
+    
+    // Alt-Tags: Priorisiere Extension-Daten, wenn verfügbar (wie in SEOAnalysis.tsx)
+    const useExtensionAltTags = extensionData?.seo?.altTags;
+    const altTagsTotal = useExtensionAltTags 
+      ? (extensionData.seo.altTags.total || 0) 
+      : (realData.seo.altTags.total || 0);
+    const altTagsWithAlt = useExtensionAltTags 
+      ? (extensionData.seo.altTags.withAlt || 0) 
+      : (realData.seo.altTags.withAlt || 0);
+    const rawAltTagsScore = (altTagsTotal > 0) ? 
+      Math.round((altTagsWithAlt / altTagsTotal) * 100) : 0;
     
     // Apply rejection penalty (cap at 30 if rejected)
     const titleTagScore = isTitleTagRejected ? Math.min(rawTitleTagScore, 30) : rawTitleTagScore;
@@ -1327,8 +1336,8 @@ export const generateCustomerHTML = ({
               ${generateProgressBar(headingScore, `H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}`)}
             </div>
             <div${getElementStyle(isAltTagsConfirmed, isAltTagsRejected)}>
-              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected)} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
-              ${generateProgressBar(altTagsScore, `${rawAltTagsScore}% Abdeckung`)}
+              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected)} ${altTagsWithAlt}/${altTagsTotal} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
+              ${generateProgressBar(altTagsScore, `${rawAltTagsScore}% Abdeckung${useExtensionAltTags ? ' (Chrome Extension)' : ''}`)}
             </div>
           </div>
           ${rejectedInfo}
