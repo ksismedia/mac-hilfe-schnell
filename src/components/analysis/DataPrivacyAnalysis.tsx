@@ -648,7 +648,18 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     </div>
                   ) : (
                     <>
-                      {securityData.isSafe === true ? (
+                      {/* Priorität 1: Bei Fehler oder null -> Button für neue Prüfung */}
+                      {(securityData.error || securityData.isSafe === null) ? (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {securityData.error ? 'Vorherige Prüfung fehlgeschlagen. Bitte erneut versuchen.' : 'Sicherheitsstatus unbekannt.'}
+                          </p>
+                          <Button onClick={runSecurityCheck} variant="outline">
+                            <ShieldAlert className="h-4 w-4 mr-2" />
+                            Sicherheitsprüfung starten
+                          </Button>
+                        </div>
+                      ) : securityData.isSafe === true ? (
                         <Alert className="bg-green-50 border-green-200">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           <AlertTitle className="text-green-800">Keine Bedrohungen gefunden</AlertTitle>
@@ -656,19 +667,19 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                             Die Website wurde von Google Safe Browsing als sicher eingestuft. Es wurden keine Malware, Phishing-Versuche oder andere schädliche Inhalte erkannt.
                           </AlertDescription>
                         </Alert>
-                      ) : securityData.isSafe === false ? (
+                      ) : (
                         <>
                           <Alert variant="destructive">
                             <AlertTriangle className="h-4 w-4" />
                             <AlertTitle>Sicherheitsbedrohungen erkannt!</AlertTitle>
                             <AlertDescription>
-                              Google Safe Browsing hat {securityData.threats.length} Bedrohung{securityData.threats.length > 1 ? 'en' : ''} auf dieser Website identifiziert.
+                              Google Safe Browsing hat {securityData.threats?.length || 0} Bedrohung{(securityData.threats?.length || 0) > 1 ? 'en' : ''} auf dieser Website identifiziert.
                             </AlertDescription>
                           </Alert>
                           
                           <div className="space-y-3">
                             <h4 className="font-semibold text-destructive">Erkannte Bedrohungen:</h4>
-                            {securityData.threats.map((threat: any, index: number) => (
+                            {securityData.threats?.map((threat: any, index: number) => (
                               <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
                                 <div className="flex items-start gap-2">
                                   <XCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
@@ -683,26 +694,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                           </div>
                           
                           <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
-                            <strong>⚠️ Dringende Handlungsempfehlung:</strong> Kontaktieren Sie umgehend einen IT-Sicherheitsexperten, um die identifizierten Bedrohungen zu beseitigen. Der Betrieb einer Website mit erkannten Sicherheitsbedrohungen kann rechtliche Konsequenzen haben und das Vertrauen Ihrer Kunden gefährden.
+                            <strong>⚠️ Dringende Handlungsempfehlung:</strong> Kontaktieren Sie umgehend einen IT-Sicherheitsexperten, um die identifizierten Bedrohungen zu beseitigen.
                           </div>
                         </>
-                      ) : securityData.error ? (
-                        // Bei Fehler: Zeige Button für neue Prüfung statt Fehlermeldung
-                        <div className="text-center py-4">
-                          <p className="text-sm text-muted-foreground mb-3">Sicherheitsprüfung wird durchgeführt...</p>
-                          <Button onClick={runSecurityCheck} variant="outline">
-                            <ShieldAlert className="h-4 w-4 mr-2" />
-                            Sicherheitsprüfung starten
-                          </Button>
-                        </div>
-                      ) : (
-                        <Alert>
-                          <Info className="h-4 w-4" />
-                          <AlertTitle>Status unbekannt</AlertTitle>
-                          <AlertDescription>
-                            Der Sicherheitsstatus konnte nicht eindeutig ermittelt werden.
-                          </AlertDescription>
-                        </Alert>
                       )}
                       
                       <div className="text-sm text-muted-foreground">
