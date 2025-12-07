@@ -38,8 +38,15 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Debug logging for initial mount
+  useEffect(() => {
+    console.log('🔍 ACCESSIBILITY MOUNT - savedData prop:', savedData);
+    console.log('🔍 ACCESSIBILITY MOUNT - Initial state:', accessibilityData);
+  }, []);
+
   // Sync accessibilityData when savedData changes (e.g., when loading a saved analysis)
   useEffect(() => {
+    console.log('🔍 ACCESSIBILITY EFFECT - savedData changed:', savedData);
     if (savedData) {
       console.log('📥 Updating accessibilityData from savedData:', savedData);
       setAccessibilityData(savedData);
@@ -287,7 +294,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
             console.log('🔍 ACCESSIBILITY DEBUG - Raw accessibilityData:', accessibilityData);
             console.log('🔍 ACCESSIBILITY DEBUG - manualAccessibilityData:', manualAccessibilityData);
             
-            // Fallback: If accessibilityData exists but getCurrentAccessibilityData returns null, show reload option
+            // Case 1: No data at all - show "Start Test" button (already handled above)
+            if (!currentData && !accessibilityData && !loading) {
+              return null; // Let the existing "Jetzt prüfen" button above handle this
+            }
+            
+            // Case 2: accessibilityData exists but getCurrentAccessibilityData returns null (format error)
             if (!currentData && accessibilityData) {
               return (
                 <div className="text-center py-8">
@@ -306,7 +318,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
               );
             }
             
-            return currentData && (
+            // Case 3: No currentData - return null to avoid rendering empty content
+            if (!currentData) {
+              return null;
+            }
+            
+            return (
             <div className="space-y-6">
               {/* Legal Warning for Accessibility Issues */}
               {(() => {
