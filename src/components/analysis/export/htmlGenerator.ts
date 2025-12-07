@@ -1288,15 +1288,9 @@ export const generateCustomerHTML = ({
       return '';
     };
 
-    const getStatusBadge = (isConfirmed: boolean, isRejected: boolean, elementScore?: number) => {
+    const getStatusBadge = (isConfirmed: boolean, isRejected: boolean) => {
       if (isRejected) return '<span style="color: #dc2626; font-weight: bold;"> ✗ Fehler</span>';
-      if (isConfirmed) {
-        // Show warning if confirmed but score is low (< 50%)
-        if (elementScore !== undefined && elementScore < 50) {
-          return '<span style="color: #d97706; font-weight: bold;"> ✓ Bestätigt (Score: ' + elementScore + '%)</span>';
-        }
-        return '<span style="color: #16a34a; font-weight: bold;"> ✓ OK</span>';
-      }
+      if (isConfirmed) return '<span style="color: #16a34a; font-weight: bold;"> ✓ Bestätigt</span>';
       return '<span style="color: #d97706;"> (Nicht bewertet)</span>';
     };
 
@@ -1321,20 +1315,20 @@ export const generateCustomerHTML = ({
           <h4>📋 Technische SEO-Details</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
             <div${getElementStyle(isTitleTagConfirmed, isTitleTagRejected)}>
-              <p><strong>Title-Tag:</strong>${getStatusBadge(isTitleTagConfirmed, isTitleTagRejected, rawTitleTagScore)} ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(titleTagScore, `Score: ${titleTagScore}% (${realData.seo.titleTag.length} Zeichen)`)}
+              <p><strong>Title-Tag:</strong>${getStatusBadge(isTitleTagConfirmed, isTitleTagRejected)} ${realData.seo.titleTag !== 'Kein Title-Tag gefunden' ? (realData.seo.titleTag.length <= 70 ? 'Optimal' : 'Zu lang') : 'Fehlt'} - Score: ${rawTitleTagScore}%</p>
+              ${generateProgressBar(titleTagScore, `${realData.seo.titleTag.length} Zeichen`)}
             </div>
             <div${getElementStyle(isMetaDescriptionConfirmed, isMetaDescriptionRejected)}>
-              <p><strong>Meta Description:</strong>${getStatusBadge(isMetaDescriptionConfirmed, isMetaDescriptionRejected, rawMetaDescriptionScore)} ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'}</p>
-              ${generateProgressBar(metaDescriptionScore, `Score: ${metaDescriptionScore}% (${realData.seo.metaDescription.length} Zeichen)`)}
+              <p><strong>Meta Description:</strong>${getStatusBadge(isMetaDescriptionConfirmed, isMetaDescriptionRejected)} ${realData.seo.metaDescription !== 'Keine Meta-Description gefunden' ? (realData.seo.metaDescription.length <= 160 ? 'Optimal' : 'Zu lang') : 'Fehlt'} - Score: ${rawMetaDescriptionScore}%</p>
+              ${generateProgressBar(metaDescriptionScore, `${realData.seo.metaDescription.length} Zeichen`)}
             </div>
             <div${getElementStyle(isHeadingStructureConfirmed, isHeadingStructureRejected)}>
-              <p><strong>Überschriftenstruktur:</strong>${getStatusBadge(isHeadingStructureConfirmed, isHeadingStructureRejected, rawHeadingScore)} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'}</p>
-              ${generateProgressBar(headingScore, `Score: ${headingScore}% (H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length})`)}
+              <p><strong>Überschriftenstruktur:</strong>${getStatusBadge(isHeadingStructureConfirmed, isHeadingStructureRejected)} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'} - Score: ${rawHeadingScore}%</p>
+              ${generateProgressBar(headingScore, `H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}`)}
             </div>
             <div${getElementStyle(isAltTagsConfirmed, isAltTagsRejected)}>
-              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected, rawAltTagsScore)} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder mit Alt-Text</p>
-              ${generateProgressBar(altTagsScore, `Score: ${altTagsScore}% (${rawAltTagsScore}% Abdeckung)`)}
+              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected)} ${realData.seo.altTags.withAlt || 0}/${realData.seo.altTags.total || 0} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
+              ${generateProgressBar(altTagsScore, `${rawAltTagsScore}% Abdeckung`)}
             </div>
           </div>
           ${rejectedInfo}
