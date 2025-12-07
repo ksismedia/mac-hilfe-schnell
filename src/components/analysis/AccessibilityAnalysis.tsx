@@ -678,10 +678,10 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                                   WCAG {violation.wcagLevel}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
-                                  {violation.nodes.length} Element(e) betroffen
+                                  {violation.nodes?.length || 0} Element(e) betroffen
                                 </span>
                               </div>
-                              {violation.nodes[0]?.failureSummary && (
+                              {violation.nodes?.[0]?.failureSummary && (
                                 <p className="text-xs text-muted-foreground mb-2 font-mono bg-muted/50 p-2 rounded">
                                   {violation.nodes[0].failureSummary}
                                 </p>
