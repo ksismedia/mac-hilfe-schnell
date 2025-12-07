@@ -22,7 +22,8 @@ import {
   calculateSocialMediaPerformanceScore,
   calculateMarketEnvironmentScore,
   calculateCorporateAppearanceScore,
-  calculateServiceQualityScore
+  calculateServiceQualityScore,
+  calculateSEOScore
 } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { generateWebsiteSecuritySection } from './websiteSecuritySection';
@@ -1246,8 +1247,9 @@ export const generateCustomerHTML = ({
     const headingScore = isHeadingStructureRejected ? Math.min(rawHeadingScore, 30) : rawHeadingScore;
     const altTagsScore = isAltTagsRejected ? Math.min(rawAltTagsScore, 30) : rawAltTagsScore;
     
-    // Verwende realData.seo.score für Konsistenz statt eigene Berechnung
-    const criticalSeoScore = seoScore;
+    // Berechne den korrigierten SEO-Score basierend auf bestätigten/abgelehnten Elementen
+    const calculatedSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
+    const criticalSeoScore = calculatedSeoScore;
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
     // Generate rejected elements info
