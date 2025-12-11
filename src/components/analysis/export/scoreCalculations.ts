@@ -1334,6 +1334,44 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
         case 'low': score -= 3; break;
       }
     });
+    
+    // NEUE DSGVO-PARAMETER - Bonus/Malus
+    // Datenschutzbeauftragter (Art. 37) - Bonus
+    if (manualDataPrivacyData?.dataProtectionOfficer) {
+      score += 5;
+    }
+    
+    // Verarbeitungsverzeichnis (Art. 30) - Bonus
+    if (manualDataPrivacyData?.processingRegister) {
+      score += 5;
+    }
+    
+    // Drittland-Transfer (Art. 44-49) - Malus wenn ohne Details
+    if (manualDataPrivacyData?.thirdCountryTransfer) {
+      // Prüfe ob Tracking-Scripts oder externe Dienste AVV haben
+      const externalServices = manualDataPrivacyData?.externalServices || [];
+      const servicesWithoutAVV = externalServices.filter((s: any) => s.thirdCountry && !s.dataProcessingAgreement);
+      
+      if (servicesWithoutAVV.length > 0) {
+        score -= 10; // Drittland-Transfer ohne AVV ist ein Problem
+      }
+    }
+    
+    // Tracking-Scripts - Malus wenn ohne Consent-Anforderung
+    const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+    const scriptsWithoutConsent = trackingScripts.filter((s: any) => 
+      (s.type === 'marketing' || s.type === 'analytics') && !s.consentRequired
+    );
+    if (scriptsWithoutConsent.length > 0) {
+      score -= scriptsWithoutConsent.length * 5; // Pro Script ohne Consent -5 Punkte
+    }
+    
+    // Externe Dienste ohne AVV - Malus
+    const externalServices = manualDataPrivacyData?.externalServices || [];
+    const servicesWithoutAVV = externalServices.filter((s: any) => !s.dataProcessingAgreement);
+    if (servicesWithoutAVV.length > 0) {
+      score -= servicesWithoutAVV.length * 3; // Pro Dienst ohne AVV -3 Punkte
+    }
   }
   
   // SCHRITT 3: Begrenze auf 0-100

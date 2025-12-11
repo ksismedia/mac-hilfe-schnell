@@ -183,7 +183,12 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     manualDataPrivacyData?.gdprCompliant, 
     manualDataPrivacyData?.cookieConsent, 
     manualDataPrivacyData?.dataProcessingAgreement, 
-    manualDataPrivacyData?.dataSubjectRights, 
+    manualDataPrivacyData?.dataSubjectRights,
+    manualDataPrivacyData?.dataProtectionOfficer,
+    manualDataPrivacyData?.processingRegister,
+    manualDataPrivacyData?.thirdCountryTransfer,
+    manualDataPrivacyData?.trackingScripts,
+    manualDataPrivacyData?.externalServices,
     privacyData?.violations
   ]);
 
@@ -571,31 +576,59 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span>Art. 7 - Einwilligung</span>
-                          <span className={`${privacyData?.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData?.hasConsentBanner ? 'Vorhanden' : 'Fehlend'}
+                          <span className={`${privacyData?.hasConsentBanner || manualDataPrivacyData?.cookieConsent ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasConsentBanner || manualDataPrivacyData?.cookieConsent ? 'Vorhanden' : 'Fehlend'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Art. 13-14 - Informationspflichten</span>
-                          <span className={`${privacyData?.hasPrivacyPolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData?.hasPrivacyPolicy ? 'Erfüllt' : 'Mangelhaft'}
+                          <span className={`${privacyData?.hasPrivacyPolicy || manualDataPrivacyData?.privacyPolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasPrivacyPolicy || manualDataPrivacyData?.privacyPolicy ? 'Erfüllt' : 'Mangelhaft'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span>Art. 44-49 - Drittlandtransfer</span>
-                          <span className={`${(privacyData?.trackingScripts || []).some((s: any) => s.thirdCountryTransfer) ? 'text-red-600' : 'text-green-600'} font-semibold`}>
-                            {(privacyData?.trackingScripts || []).some((s: any) => s.thirdCountryTransfer) ? 'Risiko erkannt' : 'Konform'}
+                          <span>Art. 28 - Auftragsverarbeitung</span>
+                          <span className={`${manualDataPrivacyData?.dataProcessingAgreement ? 'text-green-600' : 'text-amber-600'} font-semibold`}>
+                            {manualDataPrivacyData?.dataProcessingAgreement ? 'Dokumentiert' : 'Nicht angegeben'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Art. 30 - Verarbeitungsverzeichnis</span>
+                          <span className={`${manualDataPrivacyData?.processingRegister ? 'text-green-600' : 'text-amber-600'} font-semibold`}>
+                            {manualDataPrivacyData?.processingRegister ? 'Vorhanden' : 'Nicht angegeben'}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Art. 37 - Datenschutzbeauftragter</span>
+                          <span className={`${manualDataPrivacyData?.dataProtectionOfficer ? 'text-green-600' : 'text-amber-600'} font-semibold`}>
+                            {manualDataPrivacyData?.dataProtectionOfficer ? 'Bestellt' : 'Nicht angegeben'}
                           </span>
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span>Tracking-Scripts</span>
-                          <span className="font-semibold">{(privacyData?.trackingScripts || []).length} erkannt</span>
+                          <span>Art. 44-49 - Drittlandtransfer</span>
+                          <span className={`${manualDataPrivacyData?.thirdCountryTransfer ? 'text-amber-600' : 'text-green-600'} font-semibold`}>
+                            {manualDataPrivacyData?.thirdCountryTransfer ? 'Vorhanden' : 'Nicht angegeben'}
+                          </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span>Externe Services</span>
-                          <span className="font-semibold">{(privacyData?.externalServices || []).length} geprüft</span>
+                          <span>Tracking-Scripts</span>
+                          <span className="font-semibold">
+                            {(manualDataPrivacyData?.trackingScripts || []).length} erfasst
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Externe Dienste</span>
+                          <span className="font-semibold">
+                            {(manualDataPrivacyData?.externalServices || []).length} erfasst
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Betroffenenrechte</span>
+                          <span className={`${manualDataPrivacyData?.dataSubjectRights ? 'text-green-600' : 'text-amber-600'} font-semibold`}>
+                            {manualDataPrivacyData?.dataSubjectRights ? 'Gewährleistet' : 'Nicht angegeben'}
+                          </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Rechtsbasis</span>
@@ -605,6 +638,40 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Tracking-Scripts und Externe Dienste Details */}
+                    {((manualDataPrivacyData?.trackingScripts || []).length > 0 || (manualDataPrivacyData?.externalServices || []).length > 0) && (
+                      <div className="mt-4 pt-4 border-t border-border/50">
+                        {(manualDataPrivacyData?.trackingScripts || []).length > 0 && (
+                          <div className="mb-3">
+                            <h5 className="text-xs font-semibold text-muted-foreground mb-2">Erfasste Tracking-Scripts:</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {(manualDataPrivacyData?.trackingScripts || []).map((script: any) => (
+                                <Badge key={script.id} variant={script.consentRequired ? 'outline' : 'destructive'} className="text-xs">
+                                  {script.name} ({script.type})
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {(manualDataPrivacyData?.externalServices || []).length > 0 && (
+                          <div>
+                            <h5 className="text-xs font-semibold text-muted-foreground mb-2">Erfasste externe Dienste:</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {(manualDataPrivacyData?.externalServices || []).map((service: any) => (
+                                <Badge 
+                                  key={service.id} 
+                                  variant={service.dataProcessingAgreement ? 'outline' : 'destructive'} 
+                                  className="text-xs"
+                                >
+                                  {service.name} {service.dataProcessingAgreement ? '✓ AVV' : '✗ AVV'}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

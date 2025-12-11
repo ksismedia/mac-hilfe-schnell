@@ -987,6 +987,101 @@ export const generateDataPrivacySection = (
                           `;
                         })()}
                     </div>
+
+                    <!-- DSGVO Compliance Checkliste -->
+                    <div class="metric-item" style="grid-column: span 2;">
+                        <div class="metric-title">DSGVO-Compliance Checkliste</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                            <div style="font-size: 13px;">
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Art. 7 - Einwilligung</span>
+                                    <span style="color: ${privacyData?.hasConsentBanner || manualDataPrivacyData?.cookieConsent ? '#059669' : '#dc2626'}; font-weight: 600;">
+                                        ${privacyData?.hasConsentBanner || manualDataPrivacyData?.cookieConsent ? '✓ Vorhanden' : '✗ Fehlend'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Art. 13-14 - Informationspflichten</span>
+                                    <span style="color: ${privacyData?.hasPrivacyPolicy || manualDataPrivacyData?.privacyPolicy ? '#059669' : '#dc2626'}; font-weight: 600;">
+                                        ${privacyData?.hasPrivacyPolicy || manualDataPrivacyData?.privacyPolicy ? '✓ Erfüllt' : '✗ Mangelhaft'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Art. 28 - Auftragsverarbeitung</span>
+                                    <span style="color: ${manualDataPrivacyData?.dataProcessingAgreement ? '#059669' : '#d97706'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.dataProcessingAgreement ? '✓ Dokumentiert' : '○ Nicht angegeben'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Art. 30 - Verarbeitungsverzeichnis</span>
+                                    <span style="color: ${manualDataPrivacyData?.processingRegister ? '#059669' : '#d97706'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.processingRegister ? '✓ Vorhanden' : '○ Nicht angegeben'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                    <span>Art. 37 - Datenschutzbeauftragter</span>
+                                    <span style="color: ${manualDataPrivacyData?.dataProtectionOfficer ? '#059669' : '#d97706'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.dataProtectionOfficer ? '✓ Bestellt' : '○ Nicht angegeben'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="font-size: 13px;">
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Art. 44-49 - Drittlandtransfer</span>
+                                    <span style="color: ${manualDataPrivacyData?.thirdCountryTransfer ? '#d97706' : '#059669'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.thirdCountryTransfer ? '⚠ Vorhanden' : '✓ Nicht relevant'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Betroffenenrechte</span>
+                                    <span style="color: ${manualDataPrivacyData?.dataSubjectRights ? '#059669' : '#d97706'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.dataSubjectRights ? '✓ Gewährleistet' : '○ Nicht angegeben'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Tracking-Scripts erfasst</span>
+                                    <span style="font-weight: 600;">${(manualDataPrivacyData?.trackingScripts || []).length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span>Externe Dienste erfasst</span>
+                                    <span style="font-weight: 600;">${(manualDataPrivacyData?.externalServices || []).length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                    <span>Dienste mit AVV</span>
+                                    <span style="font-weight: 600; color: ${(manualDataPrivacyData?.externalServices || []).filter((s: any) => s.dataProcessingAgreement).length === (manualDataPrivacyData?.externalServices || []).length && (manualDataPrivacyData?.externalServices || []).length > 0 ? '#059669' : (manualDataPrivacyData?.externalServices || []).length === 0 ? '#6b7280' : '#d97706'};">
+                                        ${(manualDataPrivacyData?.externalServices || []).filter((s: any) => s.dataProcessingAgreement).length}/${(manualDataPrivacyData?.externalServices || []).length}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        ${(manualDataPrivacyData?.trackingScripts || []).length > 0 || (manualDataPrivacyData?.externalServices || []).length > 0 ? `
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                            ${(manualDataPrivacyData?.trackingScripts || []).length > 0 ? `
+                            <div style="margin-bottom: 12px;">
+                                <strong style="font-size: 12px; color: #6b7280;">Erfasste Tracking-Scripts:</strong>
+                                <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
+                                    ${(manualDataPrivacyData?.trackingScripts || []).map((s: any) => `
+                                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: ${s.consentRequired ? '#f0f9ff' : '#fef2f2'}; color: ${s.consentRequired ? '#0369a1' : '#dc2626'}; border: 1px solid ${s.consentRequired ? '#bae6fd' : '#fecaca'};">
+                                            ${s.name} (${s.type})${s.consentRequired ? '' : ' ⚠'}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${(manualDataPrivacyData?.externalServices || []).length > 0 ? `
+                            <div>
+                                <strong style="font-size: 12px; color: #6b7280;">Erfasste externe Dienste:</strong>
+                                <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
+                                    ${(manualDataPrivacyData?.externalServices || []).map((s: any) => `
+                                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: ${s.dataProcessingAgreement ? '#f0fdf4' : '#fef2f2'}; color: ${s.dataProcessingAgreement ? '#166534' : '#dc2626'}; border: 1px solid ${s.dataProcessingAgreement ? '#bbf7d0' : '#fecaca'};">
+                                            ${s.name} ${s.dataProcessingAgreement ? '✓ AVV' : '✗ AVV'}${s.thirdCountry ? ' 🌍' : ''}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
                 
                 ${technicalSecurityScore < 90 ? `
