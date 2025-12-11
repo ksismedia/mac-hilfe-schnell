@@ -748,16 +748,21 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       manualDataPrivacyData?.thirdCountryTransfer !== undefined ||
                       (manualDataPrivacyData?.trackingScripts || []).length > 0 ||
                       (manualDataPrivacyData?.externalServices || []).length > 0) && (
-                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <div className="flex items-start gap-2 text-amber-800 text-sm">
-                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <strong>Hinweis zur Bewertung:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
-                            (Verarbeitungsverzeichnis, Datenschutzbeauftragter, Drittlandtransfer, Tracking-Scripts, externe Dienste) 
-                            erfolgte auf Basis manueller Angaben. Für die Richtigkeit und Vollständigkeit dieser Angaben sowie 
-                            die rechtliche Konformität kann keine Gewährleistung übernommen werden. 
-                            <strong> Bei Zweifeln empfehlen wir die Konsultation eines spezialisierten Rechtsanwalts.</strong>
-                          </div>
+                      <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                          <Scale className="h-5 w-5" />
+                          Rechtlicher Hinweis: Manuelle DSGVO-Prüfung
+                        </div>
+                        <p className="text-red-700 text-sm mb-3">
+                          <strong>Wichtig:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
+                          (Verarbeitungsverzeichnis, Datenschutzbeauftragter, Drittlandtransfer, Tracking-Scripts, externe Dienste) 
+                          erfolgte auf Basis manueller Angaben. Für die Richtigkeit und Vollständigkeit dieser Angaben sowie 
+                          die rechtliche Konformität kann keine Gewährleistung übernommen werden.
+                        </p>
+                        <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                          <strong>⚠️ Empfehlung:</strong> Bei Zweifeln an der DSGVO-Konformität empfehlen wir ausdrücklich 
+                          die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                          Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
                         </div>
                       </div>
                     )}
