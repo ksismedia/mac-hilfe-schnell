@@ -514,13 +514,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       </p>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className={`text-4xl font-bold ${getScoreColor(getDSGVOScore())} mb-2`}>
                         {getDSGVOScore()}%
                       </div>
                       <Badge variant={getScoreBadge(getDSGVOScore())}>
-                        {privacyData.gdprComplianceLevel}
+                        {privacyData?.gdprComplianceLevel || 'Unbekannt'}
                       </Badge>
                     </div>
                     <div className="space-y-2 text-sm">
@@ -530,11 +530,11 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       </div>
                       <div className="flex justify-between">
                         <span>Bußgeldrisiko:</span>
-                        <span className="text-warning">{privacyData.legalRisk.level}</span>
+                        <span className="text-warning">{privacyData?.legalRisk?.level || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Rechtliches Risiko:</span>
-                        <span>{privacyData.legalRisk.potentialFine}</span>
+                        <span>{privacyData?.legalRisk?.potentialFine || 'N/A'}</span>
                       </div>
                     </div>
                   </div>
@@ -571,31 +571,31 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span>Art. 7 - Einwilligung</span>
-                          <span className={`${privacyData.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.hasConsentBanner ? 'Vorhanden' : 'Fehlend'}
+                          <span className={`${privacyData?.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasConsentBanner ? 'Vorhanden' : 'Fehlend'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Art. 13-14 - Informationspflichten</span>
-                          <span className={`${privacyData.hasPrivacyPolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.hasPrivacyPolicy ? 'Erfüllt' : 'Mangelhaft'}
+                          <span className={`${privacyData?.hasPrivacyPolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasPrivacyPolicy ? 'Erfüllt' : 'Mangelhaft'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Art. 44-49 - Drittlandtransfer</span>
-                          <span className={`${privacyData.trackingScripts.some(s => s.thirdCountryTransfer) ? 'text-red-600' : 'text-green-600'} font-semibold`}>
-                            {privacyData.trackingScripts.some(s => s.thirdCountryTransfer) ? 'Risiko erkannt' : 'Konform'}
+                          <span className={`${(privacyData?.trackingScripts || []).some((s: any) => s.thirdCountryTransfer) ? 'text-red-600' : 'text-green-600'} font-semibold`}>
+                            {(privacyData?.trackingScripts || []).some((s: any) => s.thirdCountryTransfer) ? 'Risiko erkannt' : 'Konform'}
                           </span>
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span>Tracking-Scripts</span>
-                          <span className="font-semibold">{privacyData.trackingScripts.length} erkannt</span>
+                          <span className="font-semibold">{(privacyData?.trackingScripts || []).length} erkannt</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Externe Services</span>
-                          <span className="font-semibold">{privacyData.externalServices.length} geprüft</span>
+                          <span className="font-semibold">{(privacyData?.externalServices || []).length} geprüft</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Rechtsbasis</span>
@@ -736,14 +736,14 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-600 mb-2">
-                        {privacyData.sslRating}
+                        {privacyData?.sslRating || 'N/A'}
                       </div>
                       <div className="text-sm text-muted-foreground">SSL-Rating</div>
                       <Lock className="h-4 w-4 mx-auto text-green-600 mt-1" />
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-warning mb-2">
-                        {privacyData.cookieCount + (manualDataPrivacyData?.manualCookies?.length || 0)}
+                        {(privacyData?.cookieCount || 0) + (manualDataPrivacyData?.manualCookies?.length || 0)}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Cookies gesamt
@@ -757,8 +757,8 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-600 mb-2">
-                        {privacyData.cookies.filter(c => c.category === 'strictly-necessary').length + 
-                         (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'strictly-necessary').length || 0)}
+                        {(privacyData?.cookies || []).filter((c: any) => c.category === 'strictly-necessary').length + 
+                         (manualDataPrivacyData?.manualCookies?.filter((c: any) => c.category === 'strictly-necessary').length || 0)}
                       </div>
                       <div className="text-sm text-muted-foreground">Notwendige Cookies</div>
                       <CheckCircle className="h-4 w-4 mx-auto text-green-600 mt-1" />
@@ -833,20 +833,20 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span>HTTPS-Verschlüsselung</span>
-                          <span className={`${privacyData.sslRating !== 'F' ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.sslRating}
+                          <span className={`${(privacyData?.sslRating || 'F') !== 'F' ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.sslRating || 'N/A'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Cookie-Banner</span>
-                          <span className={`${privacyData.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.hasConsentBanner ? 'Implementiert' : 'Nicht vorhanden'}
+                          <span className={`${privacyData?.hasConsentBanner ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasConsentBanner ? 'Implementiert' : 'Nicht vorhanden'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Cookie-Policy</span>
-                          <span className={`${privacyData.hasCookiePolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
-                            {privacyData.hasCookiePolicy ? 'Vorhanden' : 'Fehlend'}
+                          <span className={`${privacyData?.hasCookiePolicy ? 'text-green-600' : 'text-red-600'} font-semibold`}>
+                            {privacyData?.hasCookiePolicy ? 'Vorhanden' : 'Fehlend'}
                           </span>
                         </div>
                       </div>
@@ -854,15 +854,15 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         <div className="flex items-center justify-between">
                           <span>Analytics-Cookies</span>
                           <span className="font-semibold text-orange-600">
-                            {privacyData.cookies.filter(c => c.category === 'analytics').length + 
-                             (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'analytics').length || 0)}
+                            {(privacyData?.cookies || []).filter((c: any) => c.category === 'analytics').length + 
+                             (manualDataPrivacyData?.manualCookies?.filter((c: any) => c.category === 'analytics').length || 0)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Marketing-Cookies</span>
                           <span className="font-semibold text-red-600">
-                            {privacyData.cookies.filter(c => c.category === 'marketing').length + 
-                             (manualDataPrivacyData?.manualCookies?.filter(c => c.category === 'marketing').length || 0)}
+                            {(privacyData?.cookies || []).filter((c: any) => c.category === 'marketing').length + 
+                             (manualDataPrivacyData?.manualCookies?.filter((c: any) => c.category === 'marketing').length || 0)}
                           </span>
                         </div>
                       </div>
@@ -891,7 +891,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     <CardContent>
                       <div className="space-y-4">
                         {/* Auto-detected violations */}
-                        {privacyData.violations.map((violation: GDPRViolation, index: number) => {
+                        {(privacyData?.violations || []).map((violation: GDPRViolation, index: number) => {
                           const isDeselected = manualDataPrivacyData?.deselectedViolations?.includes(`auto-${index}`);
                           return (
                             <div 
