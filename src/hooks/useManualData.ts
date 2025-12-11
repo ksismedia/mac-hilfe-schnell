@@ -186,6 +186,28 @@ export interface ManualDataPrivacyData {
   cookieConsent: boolean;
   dataProcessingAgreement: boolean;
   dataSubjectRights: boolean;
+  // Neue DSGVO-Parameter
+  thirdCountryTransfer: boolean; // Art. 44-49 DSGVO
+  thirdCountryTransferDetails?: string; // Details zu Drittland-Transfers
+  dataProtectionOfficer: boolean; // Art. 37 DSGVO - Datenschutzbeauftragter
+  processingRegister: boolean; // Art. 30 DSGVO - Verarbeitungsverzeichnis
+  // Tracking-Scripts
+  trackingScripts: Array<{
+    id: string;
+    name: string;
+    type: 'analytics' | 'marketing' | 'social' | 'other';
+    provider: string;
+    consentRequired: boolean;
+  }>;
+  // Externe Dienste / Auftragsverarbeiter
+  externalServices: Array<{
+    id: string;
+    name: string;
+    purpose: string;
+    dataProcessingAgreement: boolean;
+    thirdCountry: boolean;
+    country?: string;
+  }>;
   deselectedViolations: string[]; // IDs of violations that were manually deselected
   customViolations: Array<{
     id: string;

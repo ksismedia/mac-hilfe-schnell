@@ -56,6 +56,12 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     cookieConsent: false,
     dataProcessingAgreement: false,
     dataSubjectRights: false,
+    thirdCountryTransfer: false,
+    thirdCountryTransferDetails: '',
+    dataProtectionOfficer: false,
+    processingRegister: false,
+    trackingScripts: [],
+    externalServices: [],
     deselectedViolations: [],
     customViolations: [],
     manualCookies: [],
@@ -77,7 +83,20 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     purpose: ''
   });
 
-  // Sync with prop data when it changes
+  const [newTrackingScript, setNewTrackingScript] = useState({
+    name: '',
+    type: 'analytics' as 'analytics' | 'marketing' | 'social' | 'other',
+    provider: '',
+    consentRequired: true
+  });
+
+  const [newExternalService, setNewExternalService] = useState({
+    name: '',
+    purpose: '',
+    dataProcessingAgreement: false,
+    thirdCountry: false,
+    country: ''
+  });
   useEffect(() => {
     if (data) {
       setCurrentData(data);
@@ -139,6 +158,59 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   const removeManualCookie = (id: string) => {
     updateData({
       manualCookies: (currentData.manualCookies || []).filter(c => c.id !== id)
+    });
+  };
+
+  const addTrackingScript = () => {
+    if (newTrackingScript.name) {
+      const script = {
+        id: `tracking-${Date.now()}`,
+        ...newTrackingScript
+      };
+      
+      updateData({
+        trackingScripts: [...(currentData.trackingScripts || []), script]
+      });
+      
+      setNewTrackingScript({
+        name: '',
+        type: 'analytics',
+        provider: '',
+        consentRequired: true
+      });
+    }
+  };
+
+  const removeTrackingScript = (id: string) => {
+    updateData({
+      trackingScripts: (currentData.trackingScripts || []).filter(s => s.id !== id)
+    });
+  };
+
+  const addExternalService = () => {
+    if (newExternalService.name && newExternalService.purpose) {
+      const service = {
+        id: `service-${Date.now()}`,
+        ...newExternalService
+      };
+      
+      updateData({
+        externalServices: [...(currentData.externalServices || []), service]
+      });
+      
+      setNewExternalService({
+        name: '',
+        purpose: '',
+        dataProcessingAgreement: false,
+        thirdCountry: false,
+        country: ''
+      });
+    }
+  };
+
+  const removeExternalService = (id: string) => {
+    updateData({
+      externalServices: (currentData.externalServices || []).filter(s => s.id !== id)
     });
   };
 
@@ -244,6 +316,264 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
               />
             </div>
           </div>
+        </div>
+
+        {/* Erweiterte DSGVO-Parameter */}
+        <div className="border-t pt-6 space-y-4">
+          <h4 className="font-semibold text-foreground">Erweiterte DSGVO-Parameter</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="dpo" className="flex flex-col">
+                  <span>Datenschutzbeauftragter</span>
+                  <span className="text-xs text-muted-foreground font-normal">Art. 37 DSGVO</span>
+                </Label>
+                <Switch
+                  id="dpo"
+                  checked={currentData.dataProtectionOfficer}
+                  onCheckedChange={(checked) => updateData({ dataProtectionOfficer: checked })}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <Label htmlFor="processing-register" className="flex flex-col">
+                  <span>Verarbeitungsverzeichnis</span>
+                  <span className="text-xs text-muted-foreground font-normal">Art. 30 DSGVO</span>
+                </Label>
+                <Switch
+                  id="processing-register"
+                  checked={currentData.processingRegister}
+                  onCheckedChange={(checked) => updateData({ processingRegister: checked })}
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="third-country" className="flex flex-col">
+                  <span>Drittland-Transfer</span>
+                  <span className="text-xs text-muted-foreground font-normal">Art. 44-49 DSGVO</span>
+                </Label>
+                <Switch
+                  id="third-country"
+                  checked={currentData.thirdCountryTransfer}
+                  onCheckedChange={(checked) => updateData({ thirdCountryTransfer: checked })}
+                />
+              </div>
+              
+              {currentData.thirdCountryTransfer && (
+                <div className="space-y-2">
+                  <Label htmlFor="third-country-details">Drittland-Details</Label>
+                  <Input
+                    id="third-country-details"
+                    placeholder="z.B. USA (Google Analytics), Irland (Meta)"
+                    value={currentData.thirdCountryTransferDetails || ''}
+                    onChange={(e) => updateData({ thirdCountryTransferDetails: e.target.value })}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Tracking-Scripts Section */}
+        <div className="border-t pt-6 space-y-4">
+          <h4 className="font-semibold text-foreground flex items-center gap-2">
+            📊 Tracking-Scripts
+          </h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="script-name">Script-Name *</Label>
+              <Input
+                id="script-name"
+                placeholder="z.B. Google Analytics"
+                value={newTrackingScript.name}
+                onChange={(e) => setNewTrackingScript(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="script-type">Typ *</Label>
+              <Select 
+                value={newTrackingScript.type} 
+                onValueChange={(value: 'analytics' | 'marketing' | 'social' | 'other') => 
+                  setNewTrackingScript(prev => ({ ...prev, type: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="analytics">Analytics</SelectItem>
+                  <SelectItem value="marketing">Marketing/Werbung</SelectItem>
+                  <SelectItem value="social">Social Media</SelectItem>
+                  <SelectItem value="other">Sonstiges</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="script-provider">Anbieter</Label>
+              <Input
+                id="script-provider"
+                placeholder="z.B. Google, Meta"
+                value={newTrackingScript.provider}
+                onChange={(e) => setNewTrackingScript(prev => ({ ...prev, provider: e.target.value }))}
+              />
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Switch
+              id="consent-required"
+              checked={newTrackingScript.consentRequired}
+              onCheckedChange={(checked) => setNewTrackingScript(prev => ({ ...prev, consentRequired: checked }))}
+            />
+            <Label htmlFor="consent-required">Einwilligung erforderlich</Label>
+          </div>
+          
+          <Button 
+            onClick={addTrackingScript}
+            disabled={!newTrackingScript.name}
+            className="w-full"
+            variant="outline"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Tracking-Script hinzufügen
+          </Button>
+          
+          {/* Display Tracking Scripts */}
+          {(currentData.trackingScripts || []).length > 0 && (
+            <div className="space-y-2">
+              <h5 className="text-sm font-medium">Hinzugefügte Scripts ({(currentData.trackingScripts || []).length})</h5>
+              {(currentData.trackingScripts || []).map((script) => (
+                <div key={script.id} className="flex items-center gap-3 p-2 border rounded-lg bg-muted/30">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{script.name}</span>
+                      <Badge variant="outline">{script.type}</Badge>
+                      {script.consentRequired && <Badge variant="destructive" className="text-xs">Consent</Badge>}
+                    </div>
+                    {script.provider && <span className="text-xs text-muted-foreground">{script.provider}</span>}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeTrackingScript(script.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Externe Dienste / Auftragsverarbeiter Section */}
+        <div className="border-t pt-6 space-y-4">
+          <h4 className="font-semibold text-foreground flex items-center gap-2">
+            🌐 Externe Dienste / Auftragsverarbeiter
+            <span className="text-xs text-muted-foreground font-normal">(Art. 28 DSGVO)</span>
+          </h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="service-name">Dienstname *</Label>
+              <Input
+                id="service-name"
+                placeholder="z.B. Mailchimp, AWS"
+                value={newExternalService.name}
+                onChange={(e) => setNewExternalService(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="service-purpose">Zweck *</Label>
+              <Input
+                id="service-purpose"
+                placeholder="z.B. E-Mail-Marketing, Hosting"
+                value={newExternalService.purpose}
+                onChange={(e) => setNewExternalService(prev => ({ ...prev, purpose: e.target.value }))}
+              />
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="service-avv"
+                checked={newExternalService.dataProcessingAgreement}
+                onCheckedChange={(checked) => setNewExternalService(prev => ({ ...prev, dataProcessingAgreement: checked }))}
+              />
+              <Label htmlFor="service-avv">AVV vorhanden</Label>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Switch
+                id="service-third-country"
+                checked={newExternalService.thirdCountry}
+                onCheckedChange={(checked) => setNewExternalService(prev => ({ ...prev, thirdCountry: checked }))}
+              />
+              <Label htmlFor="service-third-country">Drittland</Label>
+            </div>
+            
+            {newExternalService.thirdCountry && (
+              <Input
+                placeholder="Land (z.B. USA)"
+                value={newExternalService.country || ''}
+                onChange={(e) => setNewExternalService(prev => ({ ...prev, country: e.target.value }))}
+                className="w-32"
+              />
+            )}
+          </div>
+          
+          <Button 
+            onClick={addExternalService}
+            disabled={!newExternalService.name || !newExternalService.purpose}
+            className="w-full"
+            variant="outline"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Externen Dienst hinzufügen
+          </Button>
+          
+          {/* Display External Services */}
+          {(currentData.externalServices || []).length > 0 && (
+            <div className="space-y-2">
+              <h5 className="text-sm font-medium">Hinzugefügte Dienste ({(currentData.externalServices || []).length})</h5>
+              {(currentData.externalServices || []).map((service) => (
+                <div key={service.id} className="flex items-center gap-3 p-2 border rounded-lg bg-muted/30">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{service.name}</span>
+                      <span className="text-xs text-muted-foreground">({service.purpose})</span>
+                      {service.dataProcessingAgreement ? (
+                        <Badge variant="outline" className="bg-green-50 text-green-700">AVV ✓</Badge>
+                      ) : (
+                        <Badge variant="destructive" className="text-xs">Kein AVV</Badge>
+                      )}
+                      {service.thirdCountry && (
+                        <Badge variant="secondary" className="text-xs">
+                          Drittland{service.country ? `: ${service.country}` : ''}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeExternalService(service.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Overall Score Slider */}
