@@ -1349,8 +1349,9 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   console.log('🛡️ DSGVO Kritische Fehler: ' + criticalErrors.length + ' gefunden, ' + 
               neutralizedCount + ' neutralisiert, ' + nonNeutralizedCount + ' verbleibend');
   
-  // SCHRITT 2: Berechne Basis-Score - KEINE ABZÜGE für neutralisierte Violations
-  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
+  // SCHRITT 2: Berechne Basis-Score
+  // WICHTIG: 100% nur möglich wenn ALLE Pflichtparameter explizit erfüllt sind
+  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 70; // Start bei 70%, nicht 100%
   
   if (!hasManualOverride) {
     // Subtract points ONLY for violations that are NOT deselected AND NOT neutralized
@@ -1388,16 +1389,42 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       }
     });
     
-    // NEUE DSGVO-PARAMETER - Bonus/Malus (zusätzlich zur Kappung)
-    // Datenschutzbeauftragter (Art. 37) - Bonus
-    if (manualDataPrivacyData?.dataProtectionOfficer) {
-      score += 5;
+    // NEUE DSGVO-PFLICHTPARAMETER - ohne explizite Bestätigung KEIN 100%
+    // Verarbeitungsverzeichnis (Art. 30) - PFLICHT für 100%
+    if (manualDataPrivacyData?.processingRegister === true) {
+      score += 10; // Bonus für erfüllte Pflicht
+      console.log('🛡️ DSGVO: Verarbeitungsverzeichnis vorhanden → +10 Punkte');
+    } else if (manualDataPrivacyData?.processingRegister === false) {
+      score -= 10; // Malus für explizit nicht vorhanden
+      console.log('🛡️ DSGVO: Verarbeitungsverzeichnis explizit nicht vorhanden → -10 Punkte');
     }
+    // undefined = "Nicht angegeben" → kein Bonus, Score bleibt bei Basis
     
-    // Verarbeitungsverzeichnis (Art. 30) - Bonus
-    if (manualDataPrivacyData?.processingRegister) {
-      score += 5;
+    // Datenschutzbeauftragter (Art. 37) - PFLICHT für 100%
+    if (manualDataPrivacyData?.dataProtectionOfficer === true) {
+      score += 10; // Bonus für erfüllte Pflicht
+      console.log('🛡️ DSGVO: Datenschutzbeauftragter vorhanden → +10 Punkte');
+    } else if (manualDataPrivacyData?.dataProtectionOfficer === false) {
+      score -= 5; // Malus für explizit nicht vorhanden (nicht so kritisch wenn klein)
+      console.log('🛡️ DSGVO: Datenschutzbeauftragter explizit nicht vorhanden → -5 Punkte');
     }
+    // undefined = "Nicht angegeben" → kein Bonus, Score bleibt bei Basis
+    
+    // Drittland-Transfer (Art. 44-49) - muss dokumentiert sein für 100%
+    if (manualDataPrivacyData?.thirdCountryTransfer === false) {
+      // Kein Drittland-Transfer = gut
+      score += 5;
+      console.log('🛡️ DSGVO: Kein Drittland-Transfer → +5 Punkte');
+    } else if (manualDataPrivacyData?.thirdCountryTransfer === true && manualDataPrivacyData?.thirdCountryTransferDetails) {
+      // Drittland-Transfer mit Dokumentation = akzeptabel
+      score += 3;
+      console.log('🛡️ DSGVO: Drittland-Transfer mit Dokumentation → +3 Punkte');
+    } else if (manualDataPrivacyData?.thirdCountryTransfer === true && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+      // Drittland-Transfer OHNE Dokumentation = kritisch
+      score -= 15;
+      console.log('🛡️ DSGVO: Drittland-Transfer ohne Dokumentation → -15 Punkte');
+    }
+    // undefined = "Nicht angegeben" → kein Bonus/Malus
     
     // Tracking-Scripts ohne Consent - Malus (pro Script)
     const scriptsWithoutConsent = trackingScripts.filter((s: any) => 
@@ -1411,11 +1438,6 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     const servicesWithoutAVV = externalServices.filter((s: any) => s.thirdCountry && !s.dataProcessingAgreement);
     if (servicesWithoutAVV.length > 0) {
       score -= servicesWithoutAVV.length * 8; // Pro Dienst ohne AVV -8 Punkte
-    }
-    
-    // Drittland-Transfer ohne Details - Malus
-    if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
-      score -= 15;
     }
   }
   
