@@ -663,6 +663,11 @@ export const calculateQuoteResponseScore = (data: any): number => {
     return 10;
   }
   
+  // KRITISCH: Nach 2 Tagen keine Reaktion - maximal 15%
+  if (data.responseTime === 'no-response-2-days') {
+    return 15;
+  }
+  
   let score = 0;
   
   // Response Time (40%)

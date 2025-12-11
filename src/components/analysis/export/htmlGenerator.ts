@@ -4752,6 +4752,7 @@ export const generateCustomerHTML = ({
               case '1-day': return '1 Tag';
               case '2-3-days': return '2-3 Tage';
               case 'over-3-days': return 'Über 3 Tage';
+              case 'no-response-2-days': return 'Nach 2 Tagen keine Reaktion';
               case 'no-response': return 'Keine Antwort erhalten';
               default: return time;
             }
@@ -4772,9 +4773,18 @@ export const generateCustomerHTML = ({
           
           ${quoteResponseData.responseTime === 'no-response' ? `
           <div style="margin: 20px 0; padding: 15px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; border-left: 4px solid #ef4444;">
-            <h4 style="margin: 0 0 8px 0; color: #dc2626;">⚠️ Kritisches Problem: Keine Antwort auf Kundenanfrage</h4>
+            <h4 style="margin: 0 0 8px 0; color: #dc2626;">⚠️ Sehr kritisches Problem: Keine Antwort auf Kundenanfrage</h4>
             <p style="margin: 0; color: #7f1d1d;">
-              Die Testanfrage wurde nicht beantwortet. Dies ist ein schwerwiegendes Qualitätsproblem, das potenzielle Kunden abschreckt und zu Umsatzverlusten führt. Der Score ist auf maximal 10% begrenzt.
+              Die Testanfrage wurde nicht beantwortet. Dies ist ein gravierendes Qualitätsproblem, das potenzielle Kunden abschreckt und zu erheblichen Umsatzverlusten führt. Der Score ist auf maximal 10% begrenzt.
+            </p>
+          </div>
+          ` : ''}
+          
+          ${quoteResponseData.responseTime === 'no-response-2-days' ? `
+          <div style="margin: 20px 0; padding: 15px; background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 8px; border-left: 4px solid #f97316;">
+            <h4 style="margin: 0 0 8px 0; color: #ea580c;">⚠️ Kritisches Problem: Nach 2 Tagen keine Reaktion</h4>
+            <p style="margin: 0; color: #9a3412;">
+              Innerhalb von 2 Tagen erfolgte keine Reaktion auf die Kundenanfrage. Dies signalisiert mangelnden Kundenservice und führt häufig zu Auftragsverlust. Kunden erwarten zeitnahe Rückmeldungen – idealerweise innerhalb von 24 Stunden. Der Score ist auf maximal 15% begrenzt.
             </p>
           </div>
           ` : ''}
@@ -4782,11 +4792,12 @@ export const generateCustomerHTML = ({
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
             <div>
               <h4>Reaktionszeit auf Anfragen</h4>
-              <div style="font-size: 2em; font-weight: bold; color: ${quoteResponseData.responseTime === 'no-response' ? '#ef4444' : responseTimeHours <= 2 ? '#10b981' : responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'};">
+              <div style="font-size: 2em; font-weight: bold; color: ${quoteResponseData.responseTime === 'no-response' || quoteResponseData.responseTime === 'no-response-2-days' ? '#ef4444' : responseTimeHours <= 2 ? '#10b981' : responseTimeHours <= 24 ? '#f59e0b' : '#ef4444'};">
                 ${germanResponseTime}
               </div>
               <p style="margin-top: 10px; color: #6b7280;">
-                ${quoteResponseData.responseTime === 'no-response' ? 'Kritisch: Kundenanfragen werden nicht beantwortet' :
+                ${quoteResponseData.responseTime === 'no-response' ? 'Sehr kritisch: Kundenanfragen werden nicht beantwortet' :
+                  quoteResponseData.responseTime === 'no-response-2-days' ? 'Kritisch: Keine zeitnahe Reaktion auf Kundenanfragen' :
                   responseTimeHours <= 2 ? 'Exzellente Reaktionszeit' : 
                   responseTimeHours <= 24 ? 'Gute Reaktionszeit, aber optimierbar' : 
                   'Reaktionszeit sollte verbessert werden'}
