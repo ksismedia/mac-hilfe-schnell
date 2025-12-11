@@ -409,9 +409,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   {(() => {
                     const deselected = manualDataPrivacyData?.deselectedViolations || [];
                     const allViolations = privacyData?.violations || [];
-                    let criticalCount = 0;
-                    let neutralizedCount = 0;
+                    const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+                    const externalServices = manualDataPrivacyData?.externalServices || [];
                     
+                    // Sammle alle kritischen Fehler mit Details
+                    const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
+                    
+                    // 1. Auto-detected Violations
                     allViolations.forEach((v: any, i: number) => {
                       if (!deselected.includes(`auto-${i}`)) {
                         // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
@@ -425,32 +429,76 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
                         const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
                         
-                        if (neutralizedBySSL || neutralizedByCookie) {
-                          neutralizedCount++;
-                        } else if (v.severity === 'critical' || v.severity === 'high') {
-                          criticalCount++;
+                        if (v.severity === 'critical' || v.severity === 'high') {
+                          criticalErrors.push({
+                            source: 'Automatische Erkennung',
+                            description: v.description || 'Auto-detected violation',
+                            neutralized: neutralizedBySSL || neutralizedByCookie,
+                            neutralizedBy: neutralizedBySSL ? 'SSL-Zertifikat vorhanden' : 
+                                          neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
+                          });
                         }
                       }
                     });
                     
-                    if (manualDataPrivacyData?.customViolations) {
-                      manualDataPrivacyData.customViolations.forEach((v: any) => {
-                        if (v.severity === 'critical' || v.severity === 'high') {
-                          criticalCount++;
-                        }
+                    // 2. Custom Violations
+                    manualDataPrivacyData?.customViolations?.forEach((v: any) => {
+                      if (v.severity === 'critical' || v.severity === 'high') {
+                        criticalErrors.push({
+                          source: 'Manuell hinzugefügt',
+                          description: v.description || 'Custom violation',
+                          neutralized: false
+                        });
+                      }
+                    });
+                    
+                    // 3. NEUE DSGVO-Parameter als kritische Fehler
+                    // Tracking-Scripts ohne Consent (Marketing/Analytics)
+                    trackingScripts.forEach((script: any) => {
+                      if ((script.type === 'marketing' || script.type === 'analytics') && !script.consentRequired) {
+                        criticalErrors.push({
+                          source: 'Tracking ohne Consent',
+                          description: `Tracking-Script "${script.name}" (${script.type === 'marketing' ? 'Marketing' : 'Analytics'}) ohne Consent-Anforderung`,
+                          neutralized: false
+                        });
+                      }
+                    });
+                    
+                    // Externe Dienste mit Drittland-Transfer OHNE AVV
+                    externalServices.forEach((service: any) => {
+                      if (service.thirdCountry && !service.dataProcessingAgreement) {
+                        criticalErrors.push({
+                          source: 'Drittland ohne AVV',
+                          description: `Externer Dienst "${service.name}"${service.country ? ` (${service.country})` : ''} in Drittland ohne AVV/DPA`,
+                          neutralized: false
+                        });
+                      }
+                    });
+                    
+                    // Drittland-Transfer ohne Details
+                    if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+                      criticalErrors.push({
+                        source: 'Drittland-Transfer',
+                        description: 'Drittland-Transfer aktiviert, aber keine Dokumentation der Rechtsgrundlage (Art. 44-49)',
+                        neutralized: false
                       });
                     }
                     
+                    const neutralizedErrors = criticalErrors.filter(e => e.neutralized);
+                    const remainingErrors = criticalErrors.filter(e => !e.neutralized);
+                    
                     let scoreCap = 100;
-                    if (criticalCount >= 3) scoreCap = 20;
-                    else if (criticalCount === 2) scoreCap = 35;
-                    else if (criticalCount === 1) scoreCap = 59;
+                    if (remainingErrors.length >= 3) scoreCap = 20;
+                    else if (remainingErrors.length === 2) scoreCap = 35;
+                    else if (remainingErrors.length === 1) scoreCap = 59;
                     
                     // Prüfe, ob positive manuelle Eingaben vorhanden sind
                     const hasPositiveManualInputs = manualDataPrivacyData?.hasSSL || 
                                                     manualDataPrivacyData?.cookieConsent || 
                                                     manualDataPrivacyData?.privacyPolicy || 
-                                                    manualDataPrivacyData?.gdprCompliant;
+                                                    manualDataPrivacyData?.gdprCompliant ||
+                                                    manualDataPrivacyData?.dataProtectionOfficer ||
+                                                    manualDataPrivacyData?.processingRegister;
                     
                     // Liste der vorhandenen positiven Eingaben
                     const positiveInputsList = [];
@@ -458,24 +506,45 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     if (manualDataPrivacyData?.cookieConsent) positiveInputsList.push('Cookie-Banner vorhanden');
                     if (manualDataPrivacyData?.privacyPolicy) positiveInputsList.push('Datenschutzerklärung vorhanden');
                     if (manualDataPrivacyData?.gdprCompliant) positiveInputsList.push('DSGVO-konform markiert');
+                    if (manualDataPrivacyData?.dataProtectionOfficer) positiveInputsList.push('Datenschutzbeauftragter benannt');
+                    if (manualDataPrivacyData?.processingRegister) positiveInputsList.push('Verarbeitungsverzeichnis vorhanden');
                     
-                    if (criticalCount > 0 || neutralizedCount > 0) {
+                    if (criticalErrors.length > 0) {
                       return (
-                        <div className={`rounded-lg p-4 border ${criticalCount > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                        <div className={`rounded-lg p-4 border ${remainingErrors.length > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
                           <div className="flex items-center gap-2 font-semibold mb-2 text-sm">
-                            🔍 Kritische Fehler-Analyse:
+                            🔍 Kritische Fehler-Analyse ({criticalErrors.length} erkannt):
                           </div>
-                          {neutralizedCount > 0 && (
-                            <div className="text-sm text-green-700 mb-1">
-                              ✓ {neutralizedCount} kritische Fehler durch manuelle Eingaben neutralisiert
+                          
+                          {neutralizedErrors.length > 0 && (
+                            <div className="mb-3">
+                              <div className="text-sm text-green-700 font-medium mb-1">
+                                ✓ {neutralizedErrors.length} Fehler durch manuelle Eingaben neutralisiert:
+                              </div>
+                              <ul className="text-xs text-green-600 ml-4 space-y-0.5">
+                                {neutralizedErrors.map((err, i) => (
+                                  <li key={i}>• {err.description} <span className="text-green-500">(neutralisiert durch: {err.neutralizedBy})</span></li>
+                                ))}
+                              </ul>
                             </div>
                           )}
-                          {criticalCount > 0 ? (
-                            <>
-                              <div className="text-sm text-red-700 mb-1">
-                                ⚠️ {criticalCount} kritische Fehler verbleibend
+                          
+                          {remainingErrors.length > 0 && (
+                            <div className="mb-3">
+                              <div className="text-sm text-red-700 font-medium mb-1">
+                                ⚠️ {remainingErrors.length} kritische Fehler verbleibend:
                               </div>
-                              <div className="text-sm text-red-900 font-bold">
+                              <ul className="text-xs text-red-600 ml-4 space-y-0.5">
+                                {remainingErrors.map((err, i) => (
+                                  <li key={i}>• <span className="text-red-500">[{err.source}]</span> {err.description}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {remainingErrors.length > 0 ? (
+                            <>
+                              <div className="text-sm text-red-900 font-bold mt-2 p-2 bg-red-100 rounded">
                                 📊 Score-Kappung: Maximum {scoreCap}% möglich
                               </div>
                               {hasPositiveManualInputs && positiveInputsList.length > 0 && (
@@ -487,8 +556,8 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                               )}
                             </>
                           ) : (
-                            <div className="text-sm text-green-700">
-                              ✓ Keine verbleibenden kritischen Fehler
+                            <div className="text-sm text-green-700 font-medium mt-2">
+                              ✓ Alle kritischen Fehler neutralisiert - keine Score-Kappung
                             </div>
                           )}
                         </div>
