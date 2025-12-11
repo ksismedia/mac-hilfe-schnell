@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.check-safe-browsing]
 verify_jwt = false
+
+[functions.detect-cookie-banner]
+verify_jwt = false
