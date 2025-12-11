@@ -988,6 +988,118 @@ export const generateDataPrivacySection = (
                         })()}
                     </div>
 
+                    <!-- Kritische Fehler-Analyse Box mit Score-Kappung -->
+                    ${(() => {
+                      const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
+                      const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+                      const externalServices = manualDataPrivacyData?.externalServices || [];
+                      
+                      // Sammle kritische Fehler
+                      const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
+                      
+                      // 1. Auto-detected Violations
+                      (privacyData?.violations || []).forEach((v: any, i: number) => {
+                        if (!deselectedViolations.includes(`auto-${i}`)) {
+                          const isSSLViolation = (v.description?.includes('SSL') || v.description?.includes('TLS') || v.description?.includes('Verschlüsselung')) && !v.description?.includes('HSTS');
+                          const isCookieViolation = v.description?.includes('Cookie') && v.description?.includes('Banner');
+                          
+                          const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
+                          const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
+                          
+                          if (v.severity === 'critical' || v.severity === 'high') {
+                            criticalErrors.push({
+                              source: 'Auto',
+                              description: v.description || 'Auto-detected violation',
+                              neutralized: neutralizedBySSL || neutralizedByCookie,
+                              neutralizedBy: neutralizedBySSL ? 'SSL vorhanden' : neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
+                            });
+                          }
+                        }
+                      });
+                      
+                      // 2. Custom Violations
+                      (manualDataPrivacyData?.customViolations || []).forEach((v: any) => {
+                        if (v.severity === 'critical' || v.severity === 'high') {
+                          criticalErrors.push({ source: 'Manuell', description: v.description || 'Custom violation', neutralized: false });
+                        }
+                      });
+                      
+                      // 3. Tracking-Scripts ohne Consent
+                      trackingScripts.forEach((s: any) => {
+                        if ((s.type === 'marketing' || s.type === 'analytics') && !s.consentRequired) {
+                          criticalErrors.push({ source: 'Tracking', description: `"${s.name}" (${s.type}) ohne Consent`, neutralized: false });
+                        }
+                      });
+                      
+                      // 4. Externe Dienste in Drittland ohne AVV
+                      externalServices.forEach((s: any) => {
+                        if (s.thirdCountry && !s.dataProcessingAgreement) {
+                          criticalErrors.push({ source: 'Drittland', description: `"${s.name}"${s.country ? ` (${s.country})` : ''} ohne AVV`, neutralized: false });
+                        }
+                      });
+                      
+                      // 5. Drittland-Transfer ohne Details
+                      if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+                        criticalErrors.push({ source: 'Art. 44-49', description: 'Drittland-Transfer ohne Dokumentation der Rechtsgrundlage', neutralized: false });
+                      }
+                      
+                      const neutralizedErrors = criticalErrors.filter(e => e.neutralized);
+                      const remainingErrors = criticalErrors.filter(e => !e.neutralized);
+                      
+                      let scoreCap = 100;
+                      if (remainingErrors.length >= 3) scoreCap = 20;
+                      else if (remainingErrors.length === 2) scoreCap = 35;
+                      else if (remainingErrors.length === 1) scoreCap = 59;
+                      
+                      if (criticalErrors.length === 0) return '';
+                      
+                      const positiveInputs = [];
+                      if (manualDataPrivacyData?.hasSSL) positiveInputs.push('SSL');
+                      if (manualDataPrivacyData?.cookieConsent) positiveInputs.push('Cookie-Banner');
+                      if (manualDataPrivacyData?.privacyPolicy) positiveInputs.push('DSE');
+                      if (manualDataPrivacyData?.dataProtectionOfficer) positiveInputs.push('DSB');
+                      if (manualDataPrivacyData?.processingRegister) positiveInputs.push('VV');
+                      
+                      return `
+                    <div class="metric-item" style="grid-column: span 2;">
+                        <div class="metric-title">🔍 Kritische Fehler-Analyse (DSGVO)</div>
+                        <div style="padding: 12px; border-radius: 8px; background: ${remainingErrors.length > 0 ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${remainingErrors.length > 0 ? '#fecaca' : '#bbf7d0'}; margin-top: 8px;">
+                            <div style="font-size: 13px; margin-bottom: 8px;">
+                                <strong>Erkannte kritische Fehler: ${criticalErrors.length}</strong>
+                            </div>
+                            ${neutralizedErrors.length > 0 ? `
+                            <div style="font-size: 12px; color: #166534; margin-bottom: 8px;">
+                                ✓ ${neutralizedErrors.length} Fehler durch manuelle Eingaben neutralisiert:
+                                <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 11px;">
+                                    ${neutralizedErrors.map(e => `<li>${e.description} <span style="color: #059669;">(${e.neutralizedBy})</span></li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            ${remainingErrors.length > 0 ? `
+                            <div style="font-size: 12px; color: #991b1b; margin-bottom: 8px;">
+                                ⚠️ ${remainingErrors.length} kritische Fehler verbleibend:
+                                <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 11px;">
+                                    ${remainingErrors.map(e => `<li><span style="color: #dc2626;">[${e.source}]</span> ${e.description}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div style="font-size: 13px; font-weight: bold; color: #991b1b; padding: 8px; background: #fee2e2; border-radius: 4px;">
+                                📊 Score-Kappung: Maximum ${scoreCap}% erreichbar
+                            </div>
+                            ${positiveInputs.length > 0 ? `
+                            <div style="margin-top: 8px; font-size: 11px; color: #92400e; padding: 6px 8px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 4px;">
+                                <strong>ℹ️</strong> Trotz positiver Angaben (${positiveInputs.join(', ')}) ist die Bewertung aufgrund verbleibender kritischer Fehler gekappt.
+                            </div>
+                            ` : ''}
+                            ` : `
+                            <div style="font-size: 12px; color: #166534; font-weight: 500;">
+                                ✓ Alle kritischen Fehler neutralisiert - keine Score-Kappung
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                      `;
+                    })()}
+
                     <!-- DSGVO Compliance Checkliste -->
                     <div class="metric-item" style="grid-column: span 2;">
                         <div class="metric-title">DSGVO-Compliance Checkliste</div>
@@ -1027,8 +1139,8 @@ export const generateDataPrivacySection = (
                             <div style="font-size: 13px;">
                                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">
                                     <span>Art. 44-49 - Drittlandtransfer</span>
-                                    <span style="color: ${manualDataPrivacyData?.thirdCountryTransfer ? '#d97706' : '#059669'}; font-weight: 600;">
-                                        ${manualDataPrivacyData?.thirdCountryTransfer ? '⚠ Vorhanden' : '✓ Nicht relevant'}
+                                    <span style="color: ${manualDataPrivacyData?.thirdCountryTransfer ? (manualDataPrivacyData?.thirdCountryTransferDetails ? '#d97706' : '#dc2626') : '#059669'}; font-weight: 600;">
+                                        ${manualDataPrivacyData?.thirdCountryTransfer ? (manualDataPrivacyData?.thirdCountryTransferDetails ? '⚠ Dokumentiert' : '✗ Undokumentiert') : '✓ Nicht relevant'}
                                     </span>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb;">

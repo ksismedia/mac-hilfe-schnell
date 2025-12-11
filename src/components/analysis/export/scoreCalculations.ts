@@ -1260,9 +1260,10 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   const totalViolations = privacyData?.violations || [];
   
   // SCHRITT 1: Zähle kritische und high Violations (beide gelten als "kritisch" für Kappung)
-  let criticalCount = 0;
+  // Struktur wie bei Accessibility: Liste der kritischen Fehler mit Neutralisierung
+  let criticalErrors: { id: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
   
-  // Zähle auto-detected critical/high Violations
+  // 1A: Auto-detected Violations
   totalViolations.forEach((violation: any, index: number) => {
     if (!deselectedViolations.includes(`auto-${index}`)) {
       // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
@@ -1280,21 +1281,73 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
       const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
       
-      // Zähle nur nicht-neutralisierte kritische/high Violations
-      if (!neutralizedBySSL && !neutralizedByCookie) {
-        if (violation.severity === 'critical' || violation.severity === 'high') {
-          criticalCount++;
-        }
+      if (violation.severity === 'critical' || violation.severity === 'high') {
+        criticalErrors.push({
+          id: `auto-${index}`,
+          description: violation.description || 'Auto-detected violation',
+          neutralized: neutralizedBySSL || neutralizedByCookie,
+          neutralizedBy: neutralizedBySSL ? 'SSL-Zertifikat vorhanden' : 
+                        neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
+        });
       }
     }
   });
   
-  // Zähle custom critical/high Violations
-  customViolations.forEach((violation: any) => {
+  // 1B: Custom Violations (können nicht neutralisiert werden)
+  customViolations.forEach((violation: any, index: number) => {
     if (violation.severity === 'critical' || violation.severity === 'high') {
-      criticalCount++;
+      criticalErrors.push({
+        id: `custom-${index}`,
+        description: violation.description || 'Custom violation',
+        neutralized: false
+      });
     }
   });
+  
+  // 1C: NEUE DSGVO-PARAMETER als kritische Fehler
+  const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+  const externalServices = manualDataPrivacyData?.externalServices || [];
+  
+  // Tracking-Scripts ohne Consent-Anforderung (Marketing/Analytics) = kritischer Fehler
+  trackingScripts.forEach((script: any, index: number) => {
+    if ((script.type === 'marketing' || script.type === 'analytics') && !script.consentRequired) {
+      criticalErrors.push({
+        id: `tracking-${index}`,
+        description: `Tracking-Script "${script.name}" (${script.type}) ohne Consent-Anforderung`,
+        neutralized: false
+      });
+      console.log('🛡️ DSGVO: Tracking-Script ohne Consent als kritischer Fehler: ' + script.name);
+    }
+  });
+  
+  // Externe Dienste mit Drittland-Transfer OHNE AVV = kritischer Fehler
+  externalServices.forEach((service: any, index: number) => {
+    if (service.thirdCountry && !service.dataProcessingAgreement) {
+      criticalErrors.push({
+        id: `service-${index}`,
+        description: `Externer Dienst "${service.name}" in Drittland ohne AVV/DPA`,
+        neutralized: false
+      });
+      console.log('🛡️ DSGVO: Externer Dienst in Drittland ohne AVV als kritischer Fehler: ' + service.name);
+    }
+  });
+  
+  // Drittland-Transfer aktiviert aber keine Details angegeben = kritischer Fehler
+  if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+    criticalErrors.push({
+      id: 'third-country-no-details',
+      description: 'Drittland-Transfer ohne Dokumentation der Rechtsgrundlage (Art. 44-49)',
+      neutralized: false
+    });
+    console.log('🛡️ DSGVO: Drittland-Transfer ohne Details als kritischer Fehler');
+  }
+  
+  // Zähle nicht-neutralisierte kritische Fehler
+  const nonNeutralizedCount = criticalErrors.filter(e => !e.neutralized).length;
+  const neutralizedCount = criticalErrors.filter(e => e.neutralized).length;
+  
+  console.log('🛡️ DSGVO Kritische Fehler: ' + criticalErrors.length + ' gefunden, ' + 
+              neutralizedCount + ' neutralisiert, ' + nonNeutralizedCount + ' verbleibend');
   
   // SCHRITT 2: Berechne Basis-Score - KEINE ABZÜGE für neutralisierte Violations
   let score = hasManualOverride ? manualDataPrivacyData.overallScore : 100;
@@ -1335,7 +1388,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       }
     });
     
-    // NEUE DSGVO-PARAMETER - Bonus/Malus
+    // NEUE DSGVO-PARAMETER - Bonus/Malus (zusätzlich zur Kappung)
     // Datenschutzbeauftragter (Art. 37) - Bonus
     if (manualDataPrivacyData?.dataProtectionOfficer) {
       score += 5;
@@ -1346,31 +1399,23 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       score += 5;
     }
     
-    // Drittland-Transfer (Art. 44-49) - Malus wenn ohne Details
-    if (manualDataPrivacyData?.thirdCountryTransfer) {
-      // Prüfe ob Tracking-Scripts oder externe Dienste AVV haben
-      const externalServices = manualDataPrivacyData?.externalServices || [];
-      const servicesWithoutAVV = externalServices.filter((s: any) => s.thirdCountry && !s.dataProcessingAgreement);
-      
-      if (servicesWithoutAVV.length > 0) {
-        score -= 10; // Drittland-Transfer ohne AVV ist ein Problem
-      }
-    }
-    
-    // Tracking-Scripts - Malus wenn ohne Consent-Anforderung
-    const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+    // Tracking-Scripts ohne Consent - Malus (pro Script)
     const scriptsWithoutConsent = trackingScripts.filter((s: any) => 
       (s.type === 'marketing' || s.type === 'analytics') && !s.consentRequired
     );
     if (scriptsWithoutConsent.length > 0) {
-      score -= scriptsWithoutConsent.length * 5; // Pro Script ohne Consent -5 Punkte
+      score -= scriptsWithoutConsent.length * 10; // Pro Script ohne Consent -10 Punkte
     }
     
-    // Externe Dienste ohne AVV - Malus
-    const externalServices = manualDataPrivacyData?.externalServices || [];
-    const servicesWithoutAVV = externalServices.filter((s: any) => !s.dataProcessingAgreement);
+    // Externe Dienste ohne AVV bei Drittland - Malus (pro Dienst)
+    const servicesWithoutAVV = externalServices.filter((s: any) => s.thirdCountry && !s.dataProcessingAgreement);
     if (servicesWithoutAVV.length > 0) {
-      score -= servicesWithoutAVV.length * 3; // Pro Dienst ohne AVV -3 Punkte
+      score -= servicesWithoutAVV.length * 8; // Pro Dienst ohne AVV -8 Punkte
+    }
+    
+    // Drittland-Transfer ohne Details - Malus
+    if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+      score -= 15;
     }
   }
   
@@ -1378,15 +1423,23 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   let finalScore = Math.round(Math.max(0, Math.min(100, score)));
   
   // SCHRITT 4: KAPPUNG basierend auf VERBLEIBENDEN kritischen Fehlern nach Neutralisierung
-  if (criticalCount >= 3) {
-    finalScore = Math.min(20, finalScore);
-  } else if (criticalCount === 2) {
-    finalScore = Math.min(35, finalScore);
-  } else if (criticalCount === 1) {
-    finalScore = Math.min(59, finalScore);
+  // (Gleiche Logik wie bei Barrierefreiheit und Technische Sicherheit)
+  let scoreCap = 100;
+  if (nonNeutralizedCount >= 3) {
+    scoreCap = 20;
+    console.log('🛡️ DSGVO: ' + nonNeutralizedCount + ' kritische Fehler → Score gekappt auf max 20%');
+  } else if (nonNeutralizedCount === 2) {
+    scoreCap = 35;
+    console.log('🛡️ DSGVO: 2 kritische Fehler → Score gekappt auf max 35%');
+  } else if (nonNeutralizedCount === 1) {
+    scoreCap = 59;
+    console.log('🛡️ DSGVO: 1 kritischer Fehler → Score gekappt auf max 59%');
   }
   
-  return finalScore;
+  const cappedScore = Math.min(finalScore, scoreCap);
+  console.log('🛡️ DSGVO: Finaler Score: ' + cappedScore + ' (von ' + finalScore + ', Cap: ' + scoreCap + ')');
+  
+  return cappedScore;
 };
 
 // Berechnet Technische Sicherheit
