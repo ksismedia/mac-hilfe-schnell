@@ -580,13 +580,20 @@ export const generateDataPrivacySection = (
                               manualDataPrivacyData?.thirdCountryTransfer !== undefined ||
                               (manualDataPrivacyData?.trackingScripts || []).length > 0 ||
                               (manualDataPrivacyData?.externalServices || []).length > 0) ? `
-                              <div style="margin-top: 10px; padding: 10px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px;">
-                                <div style="font-size: 11px; color: #92400e;">
-                                  <strong>ℹ️ Hinweis zur Bewertung:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
+                              <div style="margin-top: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: #991b1b; font-weight: 600; margin-bottom: 8px; font-size: 13px;">
+                                  ⚖️ Rechtlicher Hinweis: Manuelle DSGVO-Prüfung
+                                </div>
+                                <p style="font-size: 12px; color: #b91c1c; margin-bottom: 10px;">
+                                  <strong>Wichtig:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
                                   (Verarbeitungsverzeichnis, Datenschutzbeauftragter, Drittlandtransfer, Tracking-Scripts, externe Dienste) 
                                   erfolgte auf Basis manueller Angaben. Für die Richtigkeit und Vollständigkeit dieser Angaben sowie 
-                                  die rechtliche Konformität kann keine Gewährleistung übernommen werden. 
-                                  <strong>Bei Zweifeln empfehlen wir die Konsultation eines spezialisierten Rechtsanwalts.</strong>
+                                  die rechtliche Konformität kann keine Gewährleistung übernommen werden.
+                                </p>
+                                <div style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px; color: #991b1b; font-size: 11px;">
+                                  <strong>⚠️ Empfehlung:</strong> Bei Zweifeln an der DSGVO-Konformität empfehlen wir ausdrücklich 
+                                  die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+                                  Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
                                 </div>
                               </div>
                             ` : ''}
