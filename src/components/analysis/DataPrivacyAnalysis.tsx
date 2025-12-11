@@ -867,6 +867,46 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Security Headers Section */}
+                    <div className="mt-4 pt-4 border-t border-blue-200">
+                      <h5 className="font-semibold mb-2 flex items-center gap-2 text-gray-700">
+                        <Shield className="h-4 w-4" />
+                        Security Headers
+                      </h5>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                        {(() => {
+                          const securityHeaders = privacyData?.realApiData?.securityHeaders?.headers;
+                          const sslData = privacyData?.realApiData?.ssl;
+                          const hasHSTS = sslData?.hasHSTS === true || securityHeaders?.['Strict-Transport-Security']?.present === true;
+                          
+                          const headers = [
+                            { name: 'HSTS', present: hasHSTS, critical: true },
+                            { name: 'CSP', present: securityHeaders?.['Content-Security-Policy']?.present },
+                            { name: 'X-Frame-Options', present: securityHeaders?.['X-Frame-Options']?.present },
+                            { name: 'X-Content-Type', present: securityHeaders?.['X-Content-Type-Options']?.present },
+                            { name: 'Referrer-Policy', present: securityHeaders?.['Referrer-Policy']?.present },
+                          ];
+                          
+                          return headers.map((header, index) => (
+                            <div key={index} className={`flex items-center gap-1 ${header.critical && !header.present ? 'text-red-600 font-semibold' : ''}`}>
+                              {header.present ? (
+                                <CheckCircle className="h-3 w-3 text-green-600" />
+                              ) : (
+                                <XCircle className="h-3 w-3 text-red-600" />
+                              )}
+                              <span>{header.name}</span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                      {privacyData?.realApiData?.ssl?.analysisComplete === false && (
+                        <div className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+                          <Info className="h-3 w-3" />
+                          SSL Labs Analyse nicht vollständig abgeschlossen (Timeout)
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
