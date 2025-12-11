@@ -575,6 +575,21 @@ export const generateDataPrivacySection = (
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
                                 <strong>Untersuchte Parameter:</strong> Einwilligung (Art. 7), Informationspflichten (Art. 13-14), Drittlandtransfer (Art. 44-49), Rechtsbasis, Tracking-Scripts, Externe Services
                             </div>
+                            ${(manualDataPrivacyData?.processingRegister !== undefined || 
+                              manualDataPrivacyData?.dataProtectionOfficer !== undefined ||
+                              manualDataPrivacyData?.thirdCountryTransfer !== undefined ||
+                              (manualDataPrivacyData?.trackingScripts || []).length > 0 ||
+                              (manualDataPrivacyData?.externalServices || []).length > 0) ? `
+                              <div style="margin-top: 10px; padding: 10px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px;">
+                                <div style="font-size: 11px; color: #92400e;">
+                                  <strong>ℹ️ Hinweis zur Bewertung:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
+                                  (Verarbeitungsverzeichnis, Datenschutzbeauftragter, Drittlandtransfer, Tracking-Scripts, externe Dienste) 
+                                  erfolgte auf Basis manueller Angaben. Für die Richtigkeit und Vollständigkeit dieser Angaben sowie 
+                                  die rechtliche Konformität kann keine Gewährleistung übernommen werden. 
+                                  <strong>Bei Zweifeln empfehlen wir die Konsultation eines spezialisierten Rechtsanwalts.</strong>
+                                </div>
+                              </div>
+                            ` : ''}
                         </div>
                     </div>
 

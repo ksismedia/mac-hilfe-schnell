@@ -1351,7 +1351,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   // SCHRITT 2: Berechne Basis-Score
   // WICHTIG: 100% nur möglich wenn ALLE Pflichtparameter explizit erfüllt sind
-  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 70; // Start bei 70%, nicht 100%
+  let score = hasManualOverride ? manualDataPrivacyData.overallScore : 75; // Start bei 75%, nicht 100%
   
   if (!hasManualOverride) {
     // Subtract points ONLY for violations that are NOT deselected AND NOT neutralized
