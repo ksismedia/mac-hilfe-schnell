@@ -741,6 +741,26 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         )}
                       </div>
                     )}
+                    
+                    {/* Rechtlicher Hinweis für manuelle Prüfungen */}
+                    {(manualDataPrivacyData?.processingRegister !== undefined || 
+                      manualDataPrivacyData?.dataProtectionOfficer !== undefined ||
+                      manualDataPrivacyData?.thirdCountryTransfer !== undefined ||
+                      (manualDataPrivacyData?.trackingScripts || []).length > 0 ||
+                      (manualDataPrivacyData?.externalServices || []).length > 0) && (
+                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <div className="flex items-start gap-2 text-amber-800 text-sm">
+                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <strong>Hinweis zur Bewertung:</strong> Die Prüfung der erweiterten DSGVO-Parameter 
+                            (Verarbeitungsverzeichnis, Datenschutzbeauftragter, Drittlandtransfer, Tracking-Scripts, externe Dienste) 
+                            erfolgte auf Basis manueller Angaben. Für die Richtigkeit und Vollständigkeit dieser Angaben sowie 
+                            die rechtliche Konformität kann keine Gewährleistung übernommen werden. 
+                            <strong> Bei Zweifeln empfehlen wir die Konsultation eines spezialisierten Rechtsanwalts.</strong>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
