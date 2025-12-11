@@ -33,6 +33,22 @@ serve(async (req) => {
 
     console.log('Checking SSL for hostname:', hostname);
 
+    // First, do a direct HTTPS check to get HSTS header
+    let directHSTSCheck: boolean | null = null;
+    let directSSLCheck = false;
+    
+    try {
+      const directResponse = await fetch(`https://${hostname}`, {
+        method: 'HEAD',
+        headers: { 'User-Agent': 'Handwerk-Stars-Analyzer' }
+      });
+      directSSLCheck = directResponse.ok || directResponse.status < 500;
+      directHSTSCheck = directResponse.headers.has('strict-transport-security');
+      console.log('Direct HSTS check:', directHSTSCheck, 'SSL works:', directSSLCheck);
+    } catch (e) {
+      console.log('Direct HTTPS check failed:', e);
+    }
+
     // Start SSL Labs analysis
     const analyzeResponse = await fetch(
       `https://api.ssllabs.com/api/v3/analyze?host=${encodeURIComponent(hostname)}&publish=off&startNew=on&all=done`,
@@ -63,32 +79,58 @@ serve(async (req) => {
       attempts++;
     }
 
+    // Check if analysis completed or timed out
+    const analysisComplete = result.status === 'READY';
+    const timedOut = attempts >= maxAttempts && result.status !== 'READY';
+
     if (result.status === 'ERROR') {
       console.error('SSL Labs analysis error:', result);
+      // Return direct check results as fallback
       return new Response(
         JSON.stringify({ 
-          error: 'SSL analysis failed',
-          details: result.statusMessage || 'Unknown error'
+          success: true,
+          data: {
+            grade: 'Unknown',
+            hasSSL: directSSLCheck,
+            protocol: directSSLCheck ? 'https' : 'http',
+            hasCertificate: directSSLCheck,
+            certificateValid: directSSLCheck,
+            supportsHTTPS: directSSLCheck,
+            hasHSTS: directHSTSCheck,
+            vulnerabilities: null,
+            chainIssues: 0,
+            analysisComplete: false,
+            timedOut: false,
+            errorMessage: result.statusMessage || 'SSL Labs analysis failed'
+          }
         }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Extract relevant data
     const endpoint = result.endpoints?.[0];
-    const grade = endpoint?.grade || 'Unknown';
-    const hasSSL = result.protocol === 'https' || result.endpoints?.length > 0;
+    const grade = endpoint?.grade || (timedOut ? 'Timeout' : 'Unknown');
+    const hasSSL = result.protocol === 'https' || result.endpoints?.length > 0 || directSSLCheck;
+    
+    // Use SSL Labs HSTS result if available, otherwise use direct check
+    const sslLabsHSTS = endpoint?.details?.hstsPolicy?.status === 'present';
+    const hasHSTS = analysisComplete ? sslLabsHSTS : directHSTSCheck;
     
     const details = {
       grade,
       hasSSL,
-      protocol: result.protocol,
-      hasCertificate: endpoint?.details?.cert !== undefined,
-      certificateValid: endpoint?.details?.cert?.notAfter ? new Date(endpoint.details.cert.notAfter) > new Date() : false,
-      supportsHTTPS: endpoint?.details?.protocols?.some((p: any) => p.name === 'TLS') || false,
-      hasHSTS: endpoint?.details?.hstsPolicy?.status === 'present',
-      vulnerabilities: endpoint?.details?.vulnBeast || endpoint?.details?.poodle || endpoint?.details?.heartbleed,
+      protocol: hasSSL ? 'https' : 'http',
+      hasCertificate: endpoint?.details?.cert !== undefined || directSSLCheck,
+      certificateValid: endpoint?.details?.cert?.notAfter 
+        ? new Date(endpoint.details.cert.notAfter) > new Date() 
+        : directSSLCheck,
+      supportsHTTPS: endpoint?.details?.protocols?.some((p: any) => p.name === 'TLS') || directSSLCheck,
+      hasHSTS,
+      vulnerabilities: endpoint?.details?.vulnBeast || endpoint?.details?.poodle || endpoint?.details?.heartbleed || null,
       chainIssues: endpoint?.details?.certChains?.[0]?.issues || 0,
+      analysisComplete,
+      timedOut,
     };
 
     console.log('SSL check completed:', details);

@@ -322,7 +322,13 @@ export class DataPrivacyService {
       });
     }
 
-    if (sslResult && !sslResult.hasHSTS) {
+    // HSTS-Prüfung - verwende sslResult ODER securityHeaders als Fallback
+    const hasHSTSFromSSL = sslResult?.hasHSTS === true;
+    const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+    const hasHSTS = hasHSTSFromSSL || hasHSTSFromHeaders;
+    
+    // Nur als Violation markieren wenn wir sicher wissen dass es fehlt (nicht bei null/undefined)
+    if (sslResult?.hasHSTS === false && !hasHSTSFromHeaders) {
       violations.push({
         article: 'Art. 32 DSGVO',
         severity: 'critical',
@@ -368,6 +374,31 @@ export class DataPrivacyService {
           description: 'X-Frame-Options Header fehlt (Clickjacking-Schutz)',
           recommendation: 'X-Frame-Options: SAMEORIGIN oder DENY setzen',
           fineRisk: 'Abmahnung möglich',
+          legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_32'
+        });
+      }
+      
+      // Zusätzliche Security Header Prüfungen
+      if (!securityHeaders.headers['X-Content-Type-Options']?.present) {
+        violations.push({
+          article: 'Art. 32 DSGVO',
+          severity: 'low',
+          category: 'security',
+          description: 'X-Content-Type-Options Header fehlt (MIME-Sniffing-Schutz)',
+          recommendation: 'X-Content-Type-Options: nosniff setzen',
+          fineRisk: 'Gering',
+          legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_32'
+        });
+      }
+      
+      if (!securityHeaders.headers['Referrer-Policy']?.present) {
+        violations.push({
+          article: 'Art. 32 DSGVO',
+          severity: 'low',
+          category: 'security',
+          description: 'Referrer-Policy Header fehlt (Datenweitergabe-Kontrolle)',
+          recommendation: 'Referrer-Policy Header konfigurieren',
+          fineRisk: 'Gering',
           legalReference: 'https://eur-lex.europa.eu/eli/reg/2016/679/art_32'
         });
       }
