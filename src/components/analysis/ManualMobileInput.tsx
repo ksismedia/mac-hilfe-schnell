@@ -121,7 +121,8 @@ const ManualMobileInput: React.FC<ManualMobileInputProps> = ({ initialData, onDa
     else touchScore += 2;
     
     // Tap Distance (10 Punkte)
-    if (data.tapDistance === 'sufficient' || data.tapDistance === 'good') touchScore += 10;
+    if (data.tapDistance === 'good') touchScore += 10;
+    else if (data.tapDistance === 'sufficient') touchScore += 6;
     else touchScore += 4;
     
     // Scroll Behavior (10 Punkte)

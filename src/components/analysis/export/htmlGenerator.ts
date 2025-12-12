@@ -1881,11 +1881,11 @@ export const generateCustomerHTML = ({
               </div>
             </div>
             <div>
-              <p><strong>Tap-Abstände:</strong> ${mobileScore >= 60 ? 'Ausreichend' : 'Zu gering'}</p>
+              <p><strong>Tap-Abstände:</strong> ${manualMobileData?.tapDistance === 'good' ? 'Ausgezeichnet' : manualMobileData?.tapDistance === 'sufficient' ? 'Ausreichend' : mobileScore >= 60 ? 'Ausreichend' : 'Zu gering'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(mobileScore >= 60 ? 85 : 35)}" style="width: ${mobileScore >= 60 ? 85 : 35}%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-weight: bold; font-size: 12px;">${mobileScore >= 60 ? 85 : 35}%</span>
+                  <div class="progress-fill" data-score="${getScoreRange(manualMobileData?.tapDistance === 'good' ? 100 : manualMobileData?.tapDistance === 'sufficient' ? 60 : mobileScore >= 60 ? 60 : 40)}" style="width: ${manualMobileData?.tapDistance === 'good' ? 100 : manualMobileData?.tapDistance === 'sufficient' ? 60 : mobileScore >= 60 ? 60 : 40}%; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: bold; font-size: 12px;">${manualMobileData?.tapDistance === 'good' ? 100 : manualMobileData?.tapDistance === 'sufficient' ? 60 : mobileScore >= 60 ? 60 : 40}%</span>
                   </div>
                 </div>
               </div>
