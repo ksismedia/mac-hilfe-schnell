@@ -1,20 +1,28 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { RefreshCw, Clock } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
+import { GoogleAPIService } from '@/services/GoogleAPIService';
+import { toast } from 'sonner';
 
 interface PerformanceAnalysisProps {
   url: string;
   realData: RealBusinessData;
+  onPerformanceUpdate?: (newPerformanceData: RealBusinessData['performance']) => void;
 }
 
-const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData }) => {
+const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData, onPerformanceUpdate }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
-  const performanceData = realData.performance;
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [localPerformanceData, setLocalPerformanceData] = useState<RealBusinessData['performance'] | null>(null);
+  
+  const performanceData = localPerformanceData || realData.performance;
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
@@ -28,12 +36,72 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
     return "destructive";                       // rot (0-60%)
   };
 
+  const handleRefreshPerformance = async () => {
+    if (!url) {
+      toast.error('Keine URL für die Performance-Messung vorhanden');
+      return;
+    }
+
+    setIsRefreshing(true);
+    toast.info('Performance-Messung gestartet... Dies kann 10-25 Sekunden dauern.');
+
+    try {
+      const pageSpeedData = await GoogleAPIService.getPageSpeedInsights(url);
+      
+      if (pageSpeedData?._timeout) {
+        toast.warning('Die Messung hat zu lange gedauert. Bitte versuchen Sie es später erneut.');
+        setIsRefreshing(false);
+        return;
+      }
+
+      if (pageSpeedData?.lighthouseResult) {
+        const lighthouse = pageSpeedData.lighthouseResult;
+        const performanceScore = Math.round((lighthouse.categories?.performance?.score || 0) * 100);
+        
+        const newPerformanceData: RealBusinessData['performance'] = {
+          loadTime: parseFloat((lighthouse.audits?.['speed-index']?.numericValue / 1000 || 3).toFixed(1)),
+          lcp: parseFloat((lighthouse.audits?.['largest-contentful-paint']?.numericValue / 1000 || 2.5).toFixed(1)),
+          fid: Math.round(lighthouse.audits?.['max-potential-fid']?.numericValue || 100),
+          cls: parseFloat((lighthouse.audits?.['cumulative-layout-shift']?.numericValue || 0.1).toFixed(2)),
+          score: performanceScore
+        };
+
+        setLocalPerformanceData(newPerformanceData);
+        
+        if (onPerformanceUpdate) {
+          onPerformanceUpdate(newPerformanceData);
+        }
+
+        toast.success(`Performance-Messung abgeschlossen: ${performanceScore}%`);
+      } else {
+        toast.error('Keine Performance-Daten erhalten. Bitte versuchen Sie es später erneut.');
+      }
+    } catch (error) {
+      console.error('Performance refresh error:', error);
+      toast.error('Fehler bei der Performance-Messung');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Performance-Analyse (Live-Messung)
+            <div className="flex items-center gap-2">
+              Performance-Analyse (Live-Messung)
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefreshPerformance}
+                disabled={isRefreshing}
+                className="ml-2"
+              >
+                <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Messung läuft...' : 'Neu messen'}
+              </Button>
+            </div>
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                 performanceData.score >= 90 ? 'bg-yellow-400 text-black' : 
@@ -50,6 +118,16 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {isRefreshing && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3">
+                <RefreshCw className="h-5 w-5 text-blue-600 animate-spin" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800">Performance-Messung läuft...</p>
+                  <p className="text-xs text-blue-600">Dies kann 10-25 Sekunden dauern. Bitte warten.</p>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -97,6 +175,7 @@ const PerformanceAnalysis: React.FC<PerformanceAnalysisProps> = ({ url, realData
               <h4 className="font-semibold text-blue-800 mb-2">✓ Live-Performance-Messung</h4>
               <p className="text-sm text-blue-700">
                 Diese Werte wurden direkt beim Aufruf von {url} gemessen und spiegeln die reale Performance wider.
+                {localPerformanceData && <span className="font-medium"> (Aktualisiert)</span>}
               </p>
             </div>
 
