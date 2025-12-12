@@ -746,8 +746,14 @@ export const generateDataPrivacySection = (
                         <div class="metric-title">SSL-Rating</div>
                         ${(() => {
                           const sslData = privacyData?.realApiData?.ssl;
+                          const securityHeaders = privacyData?.realApiData?.securityHeaders;
                           const sslRating = privacyData?.sslRating || 'F';
                           const hasRealData = privacyData?.realApiData?.checkedWithRealAPIs;
+                          
+                          // HSTS aus BEIDEN Quellen prüfen (SSL Labs ODER Security Headers Edge Function)
+                          const hasHSTSFromSSL = sslData?.hasHSTS === true;
+                          const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+                          const hasHSTS = hasHSTSFromSSL || hasHSTSFromHeaders;
                           
                           let sslScore = 0;
                           let sslStatus = 'Nicht verschlüsselt';
@@ -787,7 +793,9 @@ export const generateDataPrivacySection = (
                                 </div>
                             </div>
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
-                                <strong>Untersuchte Parameter:</strong> Zertifikat ${sslData?.hasCertificate ? '✓' : '✗'}, Verschlüsselungsstärke, HSTS ${sslData?.hasHSTS ? '✓' : '✗'}, Sicherheitslücken ${sslData?.vulnerabilities ? '⚠️' : '✓'}
+                                <strong>Untersuchte Parameter:</strong> Zertifikat ${sslData?.hasCertificate ? '✓' : '✗'}, Verschlüsselungsstärke, HSTS ${hasHSTS ? '✓' : '✗'}, Sicherheitslücken ${sslData?.vulnerabilities ? '⚠️' : '✓'}
+                            </div>
+                        </div>
                             </div>
                         </div>
                           `;
