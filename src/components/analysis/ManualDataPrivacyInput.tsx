@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
@@ -16,31 +16,103 @@ import { ManualDataPrivacyData } from '@/hooks/useManualData';
 interface ManualDataPrivacyInputProps {
   data: ManualDataPrivacyData | null;
   onDataChange: (data: ManualDataPrivacyData) => void;
-  privacyData?: any; // Benötigt für Violations-Check
+  privacyData?: any;
 }
+
+// Default-Werte für ManualDataPrivacyData
+const getDefaultData = (): ManualDataPrivacyData => ({
+  hasSSL: true,
+  cookiePolicy: false,
+  privacyPolicy: false,
+  gdprCompliant: false,
+  cookieConsent: false,
+  dataProcessingAgreement: false,
+  dataSubjectRights: false,
+  thirdCountryTransfer: false,
+  thirdCountryTransferDetails: '',
+  dataProtectionOfficer: false,
+  processingRegister: false,
+  trackingScripts: [],
+  externalServices: [],
+  deselectedViolations: [],
+  customViolations: [],
+  manualCookies: [],
+  overallScore: undefined,
+  notes: ''
+});
 
 const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange, privacyData }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   
-  // Berechne maximalen erlaubten Score basierend auf kritischen Violations
+  // REF um die aktuellen Daten zu speichern - überlebt Re-Renders
+  const dataRef = useRef<ManualDataPrivacyData>(data || getDefaultData());
+  
+  // LOKALER STATE für UI-Updates - initialisiert aus data oder defaults
+  const [localData, setLocalData] = useState<ManualDataPrivacyData>(() => {
+    const initial = data || getDefaultData();
+    // Deep copy arrays
+    return {
+      ...initial,
+      trackingScripts: initial.trackingScripts ? [...initial.trackingScripts] : [],
+      externalServices: initial.externalServices ? [...initial.externalServices] : [],
+      deselectedViolations: initial.deselectedViolations ? [...initial.deselectedViolations] : [],
+      customViolations: initial.customViolations ? [...initial.customViolations] : [],
+      manualCookies: initial.manualCookies ? [...initial.manualCookies] : []
+    };
+  });
+  
+  // Sync ref mit localData
+  useEffect(() => {
+    dataRef.current = localData;
+  }, [localData]);
+  
+  // Sync von Props NUR wenn Props gefüllte Arrays haben (nicht leere überschreiben)
+  useEffect(() => {
+    if (data) {
+      const propsHasTrackingScripts = data.trackingScripts && data.trackingScripts.length > 0;
+      const propsHasExternalServices = data.externalServices && data.externalServices.length > 0;
+      
+      // Nur übernehmen wenn Props Daten haben
+      if (propsHasTrackingScripts || propsHasExternalServices) {
+        setLocalData(prev => ({
+          ...data,
+          trackingScripts: propsHasTrackingScripts ? [...data.trackingScripts] : prev.trackingScripts,
+          externalServices: propsHasExternalServices ? [...data.externalServices] : prev.externalServices,
+          deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : prev.deselectedViolations,
+          customViolations: data.customViolations ? [...data.customViolations] : prev.customViolations,
+          manualCookies: data.manualCookies ? [...data.manualCookies] : prev.manualCookies
+        }));
+      } else {
+        // Übernehme nur non-array Felder, behalte lokale Arrays
+        setLocalData(prev => ({
+          ...data,
+          trackingScripts: prev.trackingScripts,
+          externalServices: prev.externalServices,
+          deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : prev.deselectedViolations,
+          customViolations: data.customViolations ? [...data.customViolations] : prev.customViolations,
+          manualCookies: data.manualCookies ? [...data.manualCookies] : prev.manualCookies
+        }));
+      }
+    }
+  }, [data?.hasSSL, data?.cookiePolicy, data?.privacyPolicy, data?.gdprCompliant, data?.cookieConsent,
+      data?.dataProcessingAgreement, data?.dataSubjectRights, data?.thirdCountryTransfer,
+      data?.dataProtectionOfficer, data?.processingRegister]);
+  
+  // Berechne maximalen erlaubten Score
   const getMaxAllowedScore = () => {
     if (!privacyData?.violations) return 100;
-    
-    const deselected = data?.deselectedViolations || [];
+    const deselected = localData.deselectedViolations || [];
     let criticalCount = 0;
-    
     privacyData.violations.forEach((v: any, i: number) => {
       if (v.severity === 'critical' && !deselected.includes(`auto-${i}`)) {
         criticalCount++;
       }
     });
-    
-    if (data?.customViolations) {
-      data.customViolations.forEach((v: any) => {
+    if (localData.customViolations) {
+      localData.customViolations.forEach((v: any) => {
         if (v.severity === 'critical') criticalCount++;
       });
     }
-    
     if (criticalCount >= 3) return 20;
     if (criticalCount === 2) return 35;
     if (criticalCount === 1) return 59;
@@ -49,28 +121,8 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   
   const maxScore = getMaxAllowedScore();
   
-  // LÖSUNG: Arbeite DIREKT mit dem Parent-State (data prop) statt lokalem State
-  // Das vermeidet alle Sync-Probleme zwischen lokalem State und Parent
-  const currentData: ManualDataPrivacyData = data || {
-    hasSSL: true,
-    cookiePolicy: false,
-    privacyPolicy: false,
-    gdprCompliant: false,
-    cookieConsent: false,
-    dataProcessingAgreement: false,
-    dataSubjectRights: false,
-    thirdCountryTransfer: false,
-    thirdCountryTransferDetails: '',
-    dataProtectionOfficer: false,
-    processingRegister: false,
-    trackingScripts: [],
-    externalServices: [],
-    deselectedViolations: [],
-    customViolations: [],
-    manualCookies: [],
-    overallScore: undefined,
-    notes: ''
-  };
+  // Verwende localData als currentData für die UI
+  const currentData = localData;
   
   const [newViolation, setNewViolation] = useState({
     description: '',
@@ -101,12 +153,15 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     country: ''
   });
 
-  // Direkte Update-Funktion - sendet sofort an Parent, kein lokaler State
-  const updateData = (updates: Partial<ManualDataPrivacyData>) => {
-    const updatedData = { ...currentData, ...updates };
-    // Direkt an Parent senden - kein lokaler State dazwischen
-    onDataChange(updatedData);
-  };
+  // Update-Funktion - aktualisiert lokalen State UND sendet an Parent
+  const updateData = useCallback((updates: Partial<ManualDataPrivacyData>) => {
+    setLocalData(prev => {
+      const updatedData = { ...prev, ...updates };
+      // Sofort an Parent senden
+      onDataChange(updatedData);
+      return updatedData;
+    });
+  }, [onDataChange]);
 
   const addCustomViolation = () => {
     if (newViolation.description && newViolation.category) {
@@ -258,14 +313,14 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
 
   const [isSaved, setIsSaved] = useState(false);
 
-  // Reset saved state when data prop changes from outside
+  // Reset saved state when localData changes (user made a change)
   useEffect(() => {
     setIsSaved(false);
-  }, [data]);
+  }, [localData]);
 
   const handleSaveChanges = () => {
-    // Da wir jetzt direkt mit Parent-State arbeiten, ist "Speichern" 
-    // nur noch eine visuelle Bestätigung - Daten sind bereits im Parent
+    // Explizit nochmal an Parent senden zur Sicherheit
+    onDataChange(localData);
     setIsSaved(true);
   };
 
