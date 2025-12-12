@@ -99,6 +99,8 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   });
   // Sync from props - only update if props data changes and is not null
   useEffect(() => {
+    console.log('🔄 ManualDataPrivacyInput useEffect triggered. Props data:', data);
+    console.log('🔄 Current local state:', currentData);
     if (data) {
       console.log('📥 ManualDataPrivacyInput: Syncing data from props:', data);
       setCurrentData(data);
@@ -109,6 +111,7 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     const updatedData = { ...currentData, ...updates };
     console.log('📤 ManualDataPrivacyInput: Sending data update to parent:', updatedData);
     setCurrentData(updatedData);
+    // Sofort an Parent senden, damit Daten bei Tab-Wechsel erhalten bleiben
     onDataChange(updatedData);
   };
 

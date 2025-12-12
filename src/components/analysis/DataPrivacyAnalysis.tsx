@@ -67,7 +67,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   const [securityLoading, setSecurityLoading] = useState(false);
   
   // Debug logging for manual data
+  console.log('🔍 DataPrivacyAnalysis: Component rendered');
   console.log('🔍 DataPrivacyAnalysis: manualDataPrivacyData received:', manualDataPrivacyData);
+  console.log('🔍 DataPrivacyAnalysis: onManualDataChange exists:', !!onManualDataChange);
   
   // Use live extension data or fallback to saved extension data
   const activeExtensionData = extensionData || savedExtensionData;
