@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// Tabs nicht mehr verwendet - eigene Tab-Logik für Persistenz
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
   Shield, 
@@ -65,11 +65,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [securityLoading, setSecurityLoading] = useState(false);
-  
-  // Debug logging for manual data
-  console.log('🔍 DataPrivacyAnalysis: Component rendered');
-  console.log('🔍 DataPrivacyAnalysis: manualDataPrivacyData received:', manualDataPrivacyData);
-  console.log('🔍 DataPrivacyAnalysis: onManualDataChange exists:', !!onManualDataChange);
+  const [activeInternalTab, setActiveInternalTab] = useState<'analysis' | 'manual'>('analysis');
   
   // Use live extension data or fallback to saved extension data
   const activeExtensionData = extensionData || savedExtensionData;
@@ -364,13 +360,33 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
           )}
 
           {privacyData && (
-            <Tabs defaultValue="analysis" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="analysis">Automatische Analyse</TabsTrigger>
-                <TabsTrigger value="manual">Manuelle Eingabe</TabsTrigger>
-              </TabsList>
+            <div className="w-full">
+              {/* Custom Tab Navigation - verhindert Unmounting */}
+              <div className="grid w-full grid-cols-2 bg-muted p-1 rounded-lg mb-6">
+                <button
+                  onClick={() => setActiveInternalTab('analysis')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeInternalTab === 'analysis'
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Automatische Analyse
+                </button>
+                <button
+                  onClick={() => setActiveInternalTab('manual')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeInternalTab === 'manual'
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Manuelle Eingabe
+                </button>
+              </div>
               
-              <TabsContent value="analysis" className="space-y-6">
+              {/* Tab Content - BEIDE bleiben gemounted, nur per CSS versteckt */}
+              <div className={activeInternalTab === 'analysis' ? 'block space-y-6' : 'hidden'}>
                 {/* Legal Warning for Data Privacy Issues */}
                 {(getAllViolations().length > 0 || getDSGVOScore() < 90) && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -1225,9 +1241,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     Erneut prüfen
                   </Button>
                 </div>
-              </TabsContent>
+              </div>
               
-              <TabsContent value="manual" className="space-y-6">
+              <div className={activeInternalTab === 'manual' ? 'block space-y-6' : 'hidden'}>
                 {onManualDataChange && (
                   <ManualDataPrivacyInput
                     data={manualDataPrivacyData}
@@ -1235,8 +1251,8 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     privacyData={privacyData}
                   />
                 )}
-              </TabsContent>
-            </Tabs>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
