@@ -233,51 +233,27 @@ export class DataPrivacyService {
   }
 
   /**
-   * Prüft Security Headers mit SecurityHeaders.io API
+   * Prüft Security Headers über Edge Function (vermeidet CORS-Probleme)
    */
   private static async checkSecurityHeaders(url: string): Promise<SecurityHeadersResult | null> {
     try {
-      const hostname = new URL(url).hostname;
       const response = await fetch(
-        `https://securityheaders.com/?q=${encodeURIComponent(hostname)}&followRedirects=on`,
-        { 
-          headers: { 
-            'Accept': 'application/json',
-            'User-Agent': 'Handwerk-Stars-Analyzer'
-          } 
+        `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/check-security-headers`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
         }
       );
 
-      // SecurityHeaders.io doesn't have a public JSON API, so we'll do a basic fetch
-      // and check response headers directly
-      const testResponse = await fetch(url, { method: 'HEAD' }).catch(() => null);
-      
-      if (!testResponse) return null;
+      if (!response.ok) {
+        console.error('Security headers check failed:', response.status);
+        return null;
+      }
 
-      const headers = testResponse.headers;
-      const result = {
-        score: 0,
-        grade: 'F',
-        headers: {
-          'Content-Security-Policy': { present: headers.has('content-security-policy') },
-          'X-Frame-Options': { present: headers.has('x-frame-options') },
-          'X-Content-Type-Options': { present: headers.has('x-content-type-options') },
-          'Strict-Transport-Security': { present: headers.has('strict-transport-security') },
-          'Referrer-Policy': { present: headers.has('referrer-policy') }
-        }
-      };
-
-      // Calculate score
-      const presentHeaders = Object.values(result.headers).filter(h => h.present).length;
-      result.score = (presentHeaders / 5) * 100;
-      
-      if (result.score >= 90) result.grade = 'A';
-      else if (result.score >= 70) result.grade = 'B';
-      else if (result.score >= 50) result.grade = 'C';
-      else if (result.score >= 30) result.grade = 'D';
-      else result.grade = 'F';
-
-      return result;
+      const result = await response.json();
+      console.log('Security headers result from edge function:', result);
+      return result.success ? result.data : null;
     } catch (error) {
       console.error('Error checking security headers:', error);
       return null;
