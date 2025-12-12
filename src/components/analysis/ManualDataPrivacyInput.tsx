@@ -118,18 +118,41 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     thirdCountry: false,
     country: ''
   });
-  // Sync from props - only update if props data changes and is not null
+  // Sync from props - only update if props data changes and has actual array data
+  // WICHTIG: Nicht überschreiben wenn lokaler State bereits Daten hat und Props leer sind
   useEffect(() => {
     console.log('🔄 ManualDataPrivacyInput useEffect triggered. Props data:', data);
     console.log('🔄 Props trackingScripts:', data?.trackingScripts);
     console.log('🔄 Props externalServices:', data?.externalServices);
+    console.log('🔄 Current local trackingScripts:', currentData.trackingScripts);
+    console.log('🔄 Current local externalServices:', currentData.externalServices);
+    
     if (data) {
-      console.log('📥 ManualDataPrivacyInput: Syncing data from props');
-      // Deep copy um Referenzprobleme zu vermeiden
+      // Nur synchronisieren wenn Props Arrays haben ODER lokaler State leer ist
+      const propsHasTrackingScripts = data.trackingScripts && data.trackingScripts.length > 0;
+      const propsHasExternalServices = data.externalServices && data.externalServices.length > 0;
+      const localHasTrackingScripts = currentData.trackingScripts && currentData.trackingScripts.length > 0;
+      const localHasExternalServices = currentData.externalServices && currentData.externalServices.length > 0;
+      
+      console.log('📥 ManualDataPrivacyInput: Syncing decision - propsHasTrackingScripts:', propsHasTrackingScripts, 'localHasTrackingScripts:', localHasTrackingScripts);
+      console.log('📥 ManualDataPrivacyInput: Syncing decision - propsHasExternalServices:', propsHasExternalServices, 'localHasExternalServices:', localHasExternalServices);
+      
+      // Merge-Strategie: Behalte lokale Daten wenn Props leer sind aber lokaler State gefüllt ist
+      const mergedTrackingScripts = propsHasTrackingScripts 
+        ? [...data.trackingScripts] 
+        : (localHasTrackingScripts ? [...currentData.trackingScripts] : []);
+      
+      const mergedExternalServices = propsHasExternalServices 
+        ? [...data.externalServices] 
+        : (localHasExternalServices ? [...currentData.externalServices] : []);
+      
+      console.log('📥 ManualDataPrivacyInput: Final merged trackingScripts:', mergedTrackingScripts);
+      console.log('📥 ManualDataPrivacyInput: Final merged externalServices:', mergedExternalServices);
+      
       setCurrentData({
         ...data,
-        trackingScripts: data.trackingScripts ? [...data.trackingScripts] : [],
-        externalServices: data.externalServices ? [...data.externalServices] : [],
+        trackingScripts: mergedTrackingScripts,
+        externalServices: mergedExternalServices,
         deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : [],
         customViolations: data.customViolations ? [...data.customViolations] : [],
         manualCookies: data.manualCookies ? [...data.manualCookies] : []
@@ -139,7 +162,12 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
 
   const updateData = (updates: Partial<ManualDataPrivacyData>) => {
     const updatedData = { ...currentData, ...updates };
-    console.log('📤 ManualDataPrivacyInput: Sending data update to parent:', updatedData);
+    console.log('📤 ManualDataPrivacyInput: Sending data update to parent');
+    console.log('📤 updates:', updates);
+    console.log('📤 currentData before merge:', currentData);
+    console.log('📤 updatedData after merge:', updatedData);
+    console.log('📤 updatedData.trackingScripts:', updatedData.trackingScripts);
+    console.log('📤 updatedData.externalServices:', updatedData.externalServices);
     setCurrentData(updatedData);
     // Sofort an Parent senden, damit Daten bei Tab-Wechsel erhalten bleiben
     onDataChange(updatedData);
