@@ -548,6 +548,9 @@ export const useManualData = () => {
   }, []);
 
   const updateManualDataPrivacyData = useCallback((data: ManualDataPrivacyData | null) => {
+    console.log('🔒 useManualData: updateManualDataPrivacyData called with:', data);
+    console.log('🔒 trackingScripts in update:', data?.trackingScripts);
+    console.log('🔒 externalServices in update:', data?.externalServices);
     setManualDataPrivacyData(data);
     console.log('Manual Data Privacy Data Updated:', data);
   }, []);
