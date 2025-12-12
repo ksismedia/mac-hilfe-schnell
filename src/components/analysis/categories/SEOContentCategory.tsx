@@ -99,15 +99,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
-  // Debug log for data privacy data
-  console.log('📋 SEOContentCategory rendered');
-  console.log('📋 manualDataPrivacyData:', manualDataPrivacyData);
-  console.log('📋 trackingScripts:', manualDataPrivacyData?.trackingScripts);
-  console.log('📋 externalServices:', manualDataPrivacyData?.externalServices);
-
   const handleTabChange = (value: string) => {
-    console.log('🔀 SEOContentCategory Tab changed to:', value);
-    console.log('🔀 Current manualDataPrivacyData:', manualDataPrivacyData);
     setActiveTab(value);
   };
 
@@ -151,18 +143,19 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
           ))}
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content - ALLE Komponenten bleiben gemounted, nur per CSS versteckt */}
+        {/* Dies verhindert Datenverlust bei Tab-Wechsel */}
         <div className="w-full">
-          {activeTab === 'seo' && (
+          <div className={activeTab === 'seo' ? 'block' : 'hidden'}>
             <SEOAnalysis 
               realData={realData} 
               url={businessData.url}
               manualSEOData={manualSEOData}
               onManualSEODataChange={updateManualSEOData}
             />
-          )}
+          </div>
 
-          {activeTab === 'keywords' && (
+          <div className={activeTab === 'keywords' ? 'block' : 'hidden'}>
             <KeywordAnalysis 
               url={businessData.url}
               industry={businessData.industry}
@@ -173,13 +166,12 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               loadedKeywordData={manualKeywordData}
               onNavigateToNextCategory={() => {
                 onNavigateToCategory?.('performance-mobile');
-                // Auch zum Content Tab wechseln als Alternative
                 setActiveTab('content');
               }}
             />
-          )}
+          </div>
 
-          {activeTab === 'content' && (
+          <div className={activeTab === 'content' ? 'block' : 'hidden'}>
             <ContentAnalysis 
               url={businessData.url} 
               industry={businessData.industry}
@@ -189,18 +181,18 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               businessData={businessData}
               keywordsScore={keywordsScore}
             />
-          )}
+          </div>
 
-          {activeTab === 'local-seo' && (
+          <div className={activeTab === 'local-seo' ? 'block' : 'hidden'}>
             <LocalSEO 
               businessData={businessData} 
               realData={realData}
               manualData={manualLocalSEOData}
               onManualDataChange={onManualLocalSEOChange}
             />
-          )}
+          </div>
 
-          {activeTab === 'backlinks' && (
+          <div className={activeTab === 'backlinks' ? 'block' : 'hidden'}>
             <BacklinkAnalysis 
               url={businessData.url}
               manualBacklinkData={manualBacklinkData}
@@ -208,9 +200,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               realData={realData}
               manualReputationData={manualReputationData}
             />
-          )}
+          </div>
 
-          {activeTab === 'accessibility' && (
+          <div className={activeTab === 'accessibility' ? 'block' : 'hidden'}>
             <AccessibilityAnalysis 
               businessData={businessData}
               realData={realData} 
@@ -219,9 +211,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               manualAccessibilityData={manualAccessibilityData}
               updateManualAccessibilityData={updateManualAccessibilityData}
             />
-          )}
+          </div>
 
-          {activeTab === 'privacy' && (
+          <div className={activeTab === 'privacy' ? 'block' : 'hidden'}>
             <DataPrivacyAnalysis 
               businessData={businessData}
               realData={realData}
@@ -232,18 +224,18 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               securityData={securityData}
               onSecurityDataChange={onSecurityDataChange}
             />
-          )}
+          </div>
 
-          {activeTab === 'imprint' && (
+          <div className={activeTab === 'imprint' ? 'block' : 'hidden'}>
             <ImprintCheck 
               url={businessData.url}
               realData={realData}
               manualData={manualImprintData}
               onManualDataChange={updateImprintData}
             />
-          )}
+          </div>
 
-          {activeTab === 'competitors' && (
+          <div className={activeTab === 'competitors' ? 'block' : 'hidden'}>
             <CompetitorAnalysis 
               address={businessData.address}
               industry={businessData.industry}
@@ -261,11 +253,11 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               onRestoreCompetitorChange={removeDeletedCompetitor}
               onCompanyScoreChange={onCompanyScoreChange}
             />
-          )}
+          </div>
 
-          {activeTab === 'industry' && (
+          <div className={activeTab === 'industry' ? 'block' : 'hidden'}>
             <IndustryFeatures businessData={businessData} />
-          )}
+          </div>
         </div>
       </div>
     </div>
