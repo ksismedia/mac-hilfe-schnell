@@ -471,6 +471,21 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     // Sammle alle kritischen Fehler mit Details
                     const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
                     
+                    // 0. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
+                    const securityHeaders = privacyData?.realApiData?.securityHeaders;
+                    const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
+                    const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+                    const hasHSTS = hasHSTSFromSSL || hasHSTSFromHeaders;
+                    
+                    // Fehlender HSTS ist ein kritischer Fehler (wenn wir Daten haben und HSTS fehlt)
+                    if (securityHeaders && !hasHSTS) {
+                      criticalErrors.push({
+                        source: 'Auto',
+                        description: 'HSTS-Header fehlt (HTTP Strict Transport Security)',
+                        neutralized: false
+                      });
+                    }
+                    
                     // 1. Auto-detected Violations
                     allViolations.forEach((v: any, i: number) => {
                       if (!deselected.includes(`auto-${i}`)) {

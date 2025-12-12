@@ -440,6 +440,25 @@ export const generateDataPrivacySection = (
   let criticalCount = 0;
   let neutralizedCount = 0;
   
+  // Liste der kritischen Fehler für detaillierte Anzeige
+  const criticalErrorsList: { source: string; description: string; article?: string; recommendation?: string }[] = [];
+  
+  // 0. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
+  const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
+  const hasHSTSFromSecurityHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+  const hasHSTSHeaderData = hasHSTSFromSSL || hasHSTSFromSecurityHeaders;
+  
+  // Fehlender HSTS ist ein kritischer Fehler (wenn wir Security Headers Daten haben und HSTS fehlt)
+  if (securityHeaders && !hasHSTSHeaderData) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Auto',
+      description: 'HSTS-Header fehlt (HTTP Strict Transport Security)',
+      article: 'Art. 32 DSGVO',
+      recommendation: 'HSTS-Header auf dem Server konfigurieren'
+    });
+  }
+  
   allViolations.forEach((v: any, i: number) => {
     if (!deselected.includes(`auto-${i}`)) {
       // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
@@ -449,6 +468,11 @@ export const generateDataPrivacySection = (
                             !v.description?.includes('HSTS');
       const isCookieViolation = v.description?.includes('Cookie') && 
                                 v.description?.includes('Banner');
+      // Überspringe HSTS-Violations aus allViolations wenn wir sie schon oben hinzugefügt haben
+      const isHSTSViolation = v.description?.includes('HSTS');
+      if (isHSTSViolation && securityHeaders) {
+        return; // Schon oben behandelt
+      }
       
       const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
       const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
@@ -457,6 +481,12 @@ export const generateDataPrivacySection = (
         neutralizedCount++;
       } else if (v.severity === 'critical' || v.severity === 'high') {
         criticalCount++;
+        criticalErrorsList.push({
+          source: 'Auto',
+          description: v.description || 'Auto-detected violation',
+          article: v.article,
+          recommendation: v.recommendation
+        });
       }
     }
   });
@@ -466,6 +496,12 @@ export const generateDataPrivacySection = (
     manualDataPrivacyData.customViolations.forEach((v: any) => {
       if (v.severity === 'critical' || v.severity === 'high') {
         criticalCount++;
+        criticalErrorsList.push({
+          source: 'Manuell',
+          description: v.description || 'Custom violation',
+          article: v.article,
+          recommendation: v.recommendation
+        });
       }
     });
   }
@@ -544,7 +580,7 @@ export const generateDataPrivacySection = (
                             ${criticalCount > 0 || neutralizedCount > 0 ? `
                               <div style="margin-top: 10px; padding: 10px; background: ${criticalCount > 0 ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${criticalCount > 0 ? '#fecaca' : '#bbf7d0'}; border-radius: 6px;">
                                 <div style="font-size: 12px; color: #374151; margin-bottom: 6px;">
-                                  <strong>🔍 Kritische Fehler-Analyse:</strong>
+                                  <strong>🔍 Kritische Fehler-Analyse (DSGVO):</strong>
                                 </div>
                                 ${neutralizedCount > 0 ? `
                                   <div style="font-size: 11px; color: #059669; margin-bottom: 4px;">
@@ -552,16 +588,23 @@ export const generateDataPrivacySection = (
                                   </div>
                                 ` : ''}
                                 ${criticalCount > 0 ? `
-                                  <div style="font-size: 11px; color: #dc2626; margin-bottom: 4px;">
-                                    ⚠️ ${criticalCount} kritische Fehler verbleibend
+                                  <div style="font-size: 11px; color: #dc2626; margin-bottom: 8px;">
+                                    ⚠️ ${criticalCount} kritische Fehler verbleibend:
                                   </div>
-                                  <div style="font-size: 11px; color: #7f1d1d; font-weight: bold;">
-                                    📊 Score-Kappung: Maximum ${scoreCap}% möglich
+                                  <div style="margin-left: 8px; margin-bottom: 8px;">
+                                    ${criticalErrorsList.map(err => `
+                                      <div style="font-size: 11px; color: #b91c1c; margin-bottom: 2px;">
+                                        <span style="color: #dc2626;">[${err.source}]</span> ${err.description}
+                                      </div>
+                                    `).join('')}
+                                  </div>
+                                  <div style="font-size: 11px; color: #7f1d1d; font-weight: bold; background: #fee2e2; padding: 8px; border-radius: 4px;">
+                                    📊 Score-Kappung: Maximum ${scoreCap}% erreichbar
                                   </div>
                                   ${hasPositiveManualInputs && positiveInputsList.length > 0 ? `
                                     <div style="margin-top: 8px; padding: 8px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 4px;">
                                       <div style="font-size: 11px; color: #92400e;">
-                                        <strong>ℹ️ Hinweis:</strong> Trotz manueller Angaben (${positiveInputsList.join(', ')}) kann die Bewertung aufgrund der verbleibenden kritischen Fehler nicht höher ausfallen.
+                                        <strong>ℹ️</strong> Trotz positiver Angaben (${positiveInputsList.join(', ')}) ist die Bewertung aufgrund verbleibender kritischer Fehler gekappt.
                                       </div>
                                     </div>
                                   ` : ''}
@@ -643,17 +686,38 @@ export const generateDataPrivacySection = (
                     </div>
                 </div>
                 
-                ${activeViolations.length > 0 ? `
+                ${(() => {
+                  // Kombiniere activeViolations mit kritischen Fehlern (z.B. HSTS)
+                  const combinedViolations = [...activeViolations];
+                  
+                  // HSTS-Fehler hinzufügen wenn nicht schon in activeViolations enthalten
+                  if (securityHeaders && !hasHSTSFromSSL && !hasHSTSFromSecurityHeaders) {
+                    const hstsAlreadyIncluded = activeViolations.some((v: any) => 
+                      v.description?.includes('HSTS')
+                    );
+                    if (!hstsAlreadyIncluded) {
+                      combinedViolations.push({
+                        severity: 'high',
+                        category: 'security',
+                        description: 'HSTS-Header fehlt (HTTP Strict Transport Security)',
+                        article: 'Art. 32 DSGVO',
+                        recommendation: 'HSTS-Header auf dem Server konfigurieren'
+                      });
+                    }
+                  }
+                  
+                  if (combinedViolations.length > 0) {
+                    return `
                   <div class="metric-item" style="grid-column: 1 / -1;">
                     <h4 style="color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                       🚨 Detaillierte DSGVO-Verstöße
                     </h4>
                     <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px;">
                       <div style="display: grid; gap: 15px;">
-                        ${activeViolations.map((violation, index) => `
-                          <div style="border-left: 4px solid ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
-                            <strong style="color: ${violation.severity === 'high' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; display: block; margin-bottom: 8px; font-size: 16px;">
-                              ${violation.severity === 'high' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🟢 Info'}: ${violation.category}
+                        ${combinedViolations.map((violation: any) => `
+                          <div style="border-left: 4px solid ${violation.severity === 'high' || violation.severity === 'critical' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; padding-left: 15px; background: white; border-radius: 6px; padding: 12px;">
+                            <strong style="color: ${violation.severity === 'high' || violation.severity === 'critical' ? '#dc2626' : violation.severity === 'medium' ? '#d97706' : '#059669'}; display: block; margin-bottom: 8px; font-size: 16px;">
+                              ${violation.severity === 'high' || violation.severity === 'critical' ? '🔴 Kritisch' : violation.severity === 'medium' ? '🟡 Wichtig' : '🟢 Info'}: ${violation.category}
                             </strong>
                             <div style="margin-bottom: 8px; padding: 8px; background: #f8fafc; border-radius: 4px;">
                               <strong style="color: #374151; font-size: 14px;">Problem:</strong>
@@ -673,7 +737,7 @@ export const generateDataPrivacySection = (
                           </div>
                         `).join('')}
                       </div>
-                      ${activeViolations.filter(v => v.severity === 'high').length > 0 ? `
+                      ${combinedViolations.filter((v: any) => v.severity === 'high' || v.severity === 'critical').length > 0 ? `
                         <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px;">
                           <strong style="color: #374151; display: block; margin-bottom: 8px;">💰 Bußgeldrisiko</strong>
                           <p style="margin: 0; color: #374151; font-size: 14px;">
@@ -683,7 +747,9 @@ export const generateDataPrivacySection = (
                       ` : ''}
                     </div>
                   </div>
-                ` : `
+                `;
+                  } else {
+                    return `
                   <div class="metric-item" style="grid-column: 1 / -1;">
                     <h4 style="color: #059669; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                       ✅ DSGVO-Konformität erreicht
@@ -694,9 +760,11 @@ export const generateDataPrivacySection = (
                       </p>
                     </div>
                   </div>
-                `}
+                `;
+                  }
+                })()}
                 
-                ${activeViolations.length > 0 && dataPrivacyScore < 90 ? `
+                ${(activeViolations.length > 0 || criticalCount > 0) && dataPrivacyScore < 90 ? `
                     <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 20px; background: #fef2f2; border: 2px solid #fecaca;">
                         <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
                             ⚖️ RECHTLICHER HINWEIS: DSGVO-Verstöße erkannt
