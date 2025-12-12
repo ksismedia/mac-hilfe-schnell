@@ -250,21 +250,47 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
                         (currentData.trackingScripts?.length || 0) > 0 ||
                         (currentData.externalServices?.length || 0) > 0;
 
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Reset saved state when data changes
+  useEffect(() => {
+    setIsSaved(false);
+  }, [currentData]);
+
+  const handleSaveChanges = () => {
+    console.log('💾 ManualDataPrivacyInput: Saving changes explicitly');
+    onDataChange(currentData);
+    setIsSaved(true);
+  };
+
   return (
     <>
       <Card className="border-accent">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-accent">
-            <Shield className="h-5 w-5" />
-            Manuelle Datenschutz-Eingabe
-          </CardTitle>
-          {hasFilledData && (
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-accent">
+              <Shield className="h-5 w-5" />
+              Manuelle Datenschutz-Eingabe
+            </CardTitle>
+            <Button 
+              onClick={handleSaveChanges}
+              variant={isSaved ? "outline" : "default"}
+              className={isSaved ? "bg-green-100 text-green-700 border-green-300" : "bg-accent hover:bg-accent/90"}
+            >
+              {isSaved ? (
+                <>✓ Übernommen</>
+              ) : (
+                <>Änderungen übernehmen</>
+              )}
+            </Button>
+          </div>
+          {hasFilledData && !isSaved && (
             <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-800 flex items-center gap-2">
                 <span className="text-amber-500">⚠️</span>
                 <span>
-                  <strong>Hinweis:</strong> Ihre Eingaben werden automatisch beim Tab-Wechsel beibehalten. 
-                  Vergessen Sie nicht, die Analyse oben zu <strong>speichern</strong>, damit die Daten dauerhaft erhalten bleiben.
+                  <strong>Hinweis:</strong> Klicken Sie auf "Änderungen übernehmen" bevor Sie den Tab wechseln. 
+                  Speichern Sie danach die Analyse dauerhaft.
                 </span>
               </p>
             </div>
