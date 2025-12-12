@@ -73,13 +73,13 @@ export class GoogleAPIService {
     }
   }
 
-  // Secure PageSpeed Insights API via edge function
-  static async getPageSpeedInsights(url: string): Promise<any> {
+  // Secure PageSpeed Insights API via edge function with timeout handling
+  static async getPageSpeedInsights(url: string, timeout: number = 25000): Promise<any> {
     try {
-      console.log('Analyzing PageSpeed via edge function:', url);
+      console.log('Analyzing PageSpeed via edge function:', url, '(timeout:', timeout, 'ms)');
       
       const { data, error } = await supabase.functions.invoke('google-pagespeed-proxy', {
-        body: { url, strategy: 'mobile' }
+        body: { url, strategy: 'mobile', timeout }
       });
 
       if (error) {
@@ -87,8 +87,19 @@ export class GoogleAPIService {
         return null;
       }
       
+      if (data?.timeout) {
+        console.warn('PageSpeed request timed out - returning partial data');
+        return {
+          lighthouseResult: {
+            categories: { performance: { score: null } },
+            audits: {}
+          },
+          _timeout: true
+        };
+      }
+      
       if (data && !data.error) {
-        console.log('Real PageSpeed data retrieved successfully');
+        console.log('Real PageSpeed data retrieved successfully', data._cached ? '(from cache)' : '');
         return data;
       }
       
