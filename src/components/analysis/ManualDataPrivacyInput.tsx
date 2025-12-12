@@ -48,26 +48,36 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   };
   
   const maxScore = getMaxAllowedScore();
-  const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(data || {
-    hasSSL: true,
-    cookiePolicy: false,
-    privacyPolicy: false,
-    gdprCompliant: false,
-    cookieConsent: false,
-    dataProcessingAgreement: false,
-    dataSubjectRights: false,
-    thirdCountryTransfer: false,
-    thirdCountryTransferDetails: '',
-    dataProtectionOfficer: false,
-    processingRegister: false,
-    trackingScripts: [],
-    externalServices: [],
-    deselectedViolations: [],
-    customViolations: [],
-    manualCookies: [],
-    overallScore: undefined,
-    notes: ''
-  });
+  // WICHTIG: Initialer State muss aus dem Prop kommen, nicht aus Defaults!
+  const getInitialData = (): ManualDataPrivacyData => {
+    if (data) {
+      console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Prop-Daten:', data);
+      return data;
+    }
+    console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Default-Werten');
+    return {
+      hasSSL: true,
+      cookiePolicy: false,
+      privacyPolicy: false,
+      gdprCompliant: false,
+      cookieConsent: false,
+      dataProcessingAgreement: false,
+      dataSubjectRights: false,
+      thirdCountryTransfer: false,
+      thirdCountryTransferDetails: '',
+      dataProtectionOfficer: false,
+      processingRegister: false,
+      trackingScripts: [],
+      externalServices: [],
+      deselectedViolations: [],
+      customViolations: [],
+      manualCookies: [],
+      overallScore: undefined,
+      notes: ''
+    };
+  };
+  
+  const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(getInitialData);
   
   const [newViolation, setNewViolation] = useState({
     description: '',
