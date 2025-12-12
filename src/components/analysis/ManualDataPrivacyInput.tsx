@@ -49,12 +49,23 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   
   const maxScore = getMaxAllowedScore();
   // WICHTIG: Initialer State muss aus dem Prop kommen, nicht aus Defaults!
+  // Arrays müssen explizit kopiert werden, um Referenzprobleme zu vermeiden
   const getInitialData = (): ManualDataPrivacyData => {
     if (data) {
       console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Prop-Daten:', data);
-      return data;
+      console.log('🚀 trackingScripts in Props:', data.trackingScripts);
+      console.log('🚀 externalServices in Props:', data.externalServices);
+      // Deep copy um Referenzprobleme zu vermeiden
+      return {
+        ...data,
+        trackingScripts: data.trackingScripts ? [...data.trackingScripts] : [],
+        externalServices: data.externalServices ? [...data.externalServices] : [],
+        deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : [],
+        customViolations: data.customViolations ? [...data.customViolations] : [],
+        manualCookies: data.manualCookies ? [...data.manualCookies] : []
+      };
     }
-    console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Default-Werten');
+    console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Default-Werten (data ist null/undefined)');
     return {
       hasSSL: true,
       cookiePolicy: false,
@@ -110,10 +121,19 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   // Sync from props - only update if props data changes and is not null
   useEffect(() => {
     console.log('🔄 ManualDataPrivacyInput useEffect triggered. Props data:', data);
-    console.log('🔄 Current local state:', currentData);
+    console.log('🔄 Props trackingScripts:', data?.trackingScripts);
+    console.log('🔄 Props externalServices:', data?.externalServices);
     if (data) {
-      console.log('📥 ManualDataPrivacyInput: Syncing data from props:', data);
-      setCurrentData(data);
+      console.log('📥 ManualDataPrivacyInput: Syncing data from props');
+      // Deep copy um Referenzprobleme zu vermeiden
+      setCurrentData({
+        ...data,
+        trackingScripts: data.trackingScripts ? [...data.trackingScripts] : [],
+        externalServices: data.externalServices ? [...data.externalServices] : [],
+        deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : [],
+        customViolations: data.customViolations ? [...data.customViolations] : [],
+        manualCookies: data.manualCookies ? [...data.manualCookies] : []
+      });
     }
   }, [data]);
 
@@ -178,14 +198,19 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   };
 
   const addTrackingScript = () => {
+    console.log('➕ addTrackingScript called. newTrackingScript:', newTrackingScript);
+    console.log('➕ Current trackingScripts before add:', currentData.trackingScripts);
     if (newTrackingScript.name) {
       const script = {
         id: `tracking-${Date.now()}`,
         ...newTrackingScript
       };
       
+      const updatedScripts = [...(currentData.trackingScripts || []), script];
+      console.log('➕ Updated trackingScripts:', updatedScripts);
+      
       updateData({
-        trackingScripts: [...(currentData.trackingScripts || []), script]
+        trackingScripts: updatedScripts
       });
       
       setNewTrackingScript({
@@ -204,14 +229,19 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   };
 
   const addExternalService = () => {
+    console.log('➕ addExternalService called. newExternalService:', newExternalService);
+    console.log('➕ Current externalServices before add:', currentData.externalServices);
     if (newExternalService.name && newExternalService.purpose) {
       const service = {
         id: `service-${Date.now()}`,
         ...newExternalService
       };
       
+      const updatedServices = [...(currentData.externalServices || []), service];
+      console.log('➕ Updated externalServices:', updatedServices);
+      
       updateData({
-        externalServices: [...(currentData.externalServices || []), service]
+        externalServices: updatedServices
       });
       
       setNewExternalService({
