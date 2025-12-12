@@ -391,7 +391,7 @@ const ManualMobileInput: React.FC<ManualMobileInputProps> = ({ initialData, onDa
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="good">Ausgezeichnet (10 Punkte)</SelectItem>
-                      <SelectItem value="sufficient">Ausreichend (10 Punkte)</SelectItem>
+                      <SelectItem value="sufficient">Ausreichend (6 Punkte)</SelectItem>
                       <SelectItem value="insufficient">Unzureichend (4 Punkte)</SelectItem>
                     </SelectContent>
                   </Select>
