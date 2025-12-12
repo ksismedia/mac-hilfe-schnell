@@ -100,7 +100,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   const [activeTab, setActiveTab] = useState("seo");
 
   const handleTabChange = (value: string) => {
-    console.log('Tab changed to:', value);
+    console.log('🔀 SEOContentCategory Tab changed to:', value);
+    console.log('🔀 Current manualDataPrivacyData:', manualDataPrivacyData);
     setActiveTab(value);
   };
 
