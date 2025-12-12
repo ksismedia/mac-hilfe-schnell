@@ -48,47 +48,29 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   };
   
   const maxScore = getMaxAllowedScore();
-  // WICHTIG: Initialer State muss aus dem Prop kommen, nicht aus Defaults!
-  // Arrays müssen explizit kopiert werden, um Referenzprobleme zu vermeiden
-  const getInitialData = (): ManualDataPrivacyData => {
-    if (data) {
-      console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Prop-Daten:', data);
-      console.log('🚀 trackingScripts in Props:', data.trackingScripts);
-      console.log('🚀 externalServices in Props:', data.externalServices);
-      // Deep copy um Referenzprobleme zu vermeiden
-      return {
-        ...data,
-        trackingScripts: data.trackingScripts ? [...data.trackingScripts] : [],
-        externalServices: data.externalServices ? [...data.externalServices] : [],
-        deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : [],
-        customViolations: data.customViolations ? [...data.customViolations] : [],
-        manualCookies: data.manualCookies ? [...data.manualCookies] : []
-      };
-    }
-    console.log('🚀 ManualDataPrivacyInput: Initialisierung mit Default-Werten (data ist null/undefined)');
-    return {
-      hasSSL: true,
-      cookiePolicy: false,
-      privacyPolicy: false,
-      gdprCompliant: false,
-      cookieConsent: false,
-      dataProcessingAgreement: false,
-      dataSubjectRights: false,
-      thirdCountryTransfer: false,
-      thirdCountryTransferDetails: '',
-      dataProtectionOfficer: false,
-      processingRegister: false,
-      trackingScripts: [],
-      externalServices: [],
-      deselectedViolations: [],
-      customViolations: [],
-      manualCookies: [],
-      overallScore: undefined,
-      notes: ''
-    };
-  };
   
-  const [currentData, setCurrentData] = useState<ManualDataPrivacyData>(getInitialData);
+  // LÖSUNG: Arbeite DIREKT mit dem Parent-State (data prop) statt lokalem State
+  // Das vermeidet alle Sync-Probleme zwischen lokalem State und Parent
+  const currentData: ManualDataPrivacyData = data || {
+    hasSSL: true,
+    cookiePolicy: false,
+    privacyPolicy: false,
+    gdprCompliant: false,
+    cookieConsent: false,
+    dataProcessingAgreement: false,
+    dataSubjectRights: false,
+    thirdCountryTransfer: false,
+    thirdCountryTransferDetails: '',
+    dataProtectionOfficer: false,
+    processingRegister: false,
+    trackingScripts: [],
+    externalServices: [],
+    deselectedViolations: [],
+    customViolations: [],
+    manualCookies: [],
+    overallScore: undefined,
+    notes: ''
+  };
   
   const [newViolation, setNewViolation] = useState({
     description: '',
@@ -118,58 +100,11 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     thirdCountry: false,
     country: ''
   });
-  // Sync from props - only update if props data changes and has actual array data
-  // WICHTIG: Nicht überschreiben wenn lokaler State bereits Daten hat und Props leer sind
-  useEffect(() => {
-    console.log('🔄 ManualDataPrivacyInput useEffect triggered. Props data:', data);
-    console.log('🔄 Props trackingScripts:', data?.trackingScripts);
-    console.log('🔄 Props externalServices:', data?.externalServices);
-    console.log('🔄 Current local trackingScripts:', currentData.trackingScripts);
-    console.log('🔄 Current local externalServices:', currentData.externalServices);
-    
-    if (data) {
-      // Nur synchronisieren wenn Props Arrays haben ODER lokaler State leer ist
-      const propsHasTrackingScripts = data.trackingScripts && data.trackingScripts.length > 0;
-      const propsHasExternalServices = data.externalServices && data.externalServices.length > 0;
-      const localHasTrackingScripts = currentData.trackingScripts && currentData.trackingScripts.length > 0;
-      const localHasExternalServices = currentData.externalServices && currentData.externalServices.length > 0;
-      
-      console.log('📥 ManualDataPrivacyInput: Syncing decision - propsHasTrackingScripts:', propsHasTrackingScripts, 'localHasTrackingScripts:', localHasTrackingScripts);
-      console.log('📥 ManualDataPrivacyInput: Syncing decision - propsHasExternalServices:', propsHasExternalServices, 'localHasExternalServices:', localHasExternalServices);
-      
-      // Merge-Strategie: Behalte lokale Daten wenn Props leer sind aber lokaler State gefüllt ist
-      const mergedTrackingScripts = propsHasTrackingScripts 
-        ? [...data.trackingScripts] 
-        : (localHasTrackingScripts ? [...currentData.trackingScripts] : []);
-      
-      const mergedExternalServices = propsHasExternalServices 
-        ? [...data.externalServices] 
-        : (localHasExternalServices ? [...currentData.externalServices] : []);
-      
-      console.log('📥 ManualDataPrivacyInput: Final merged trackingScripts:', mergedTrackingScripts);
-      console.log('📥 ManualDataPrivacyInput: Final merged externalServices:', mergedExternalServices);
-      
-      setCurrentData({
-        ...data,
-        trackingScripts: mergedTrackingScripts,
-        externalServices: mergedExternalServices,
-        deselectedViolations: data.deselectedViolations ? [...data.deselectedViolations] : [],
-        customViolations: data.customViolations ? [...data.customViolations] : [],
-        manualCookies: data.manualCookies ? [...data.manualCookies] : []
-      });
-    }
-  }, [data]);
 
+  // Direkte Update-Funktion - sendet sofort an Parent, kein lokaler State
   const updateData = (updates: Partial<ManualDataPrivacyData>) => {
     const updatedData = { ...currentData, ...updates };
-    console.log('📤 ManualDataPrivacyInput: Sending data update to parent');
-    console.log('📤 updates:', updates);
-    console.log('📤 currentData before merge:', currentData);
-    console.log('📤 updatedData after merge:', updatedData);
-    console.log('📤 updatedData.trackingScripts:', updatedData.trackingScripts);
-    console.log('📤 updatedData.externalServices:', updatedData.externalServices);
-    setCurrentData(updatedData);
-    // Sofort an Parent senden, damit Daten bei Tab-Wechsel erhalten bleiben
+    // Direkt an Parent senden - kein lokaler State dazwischen
     onDataChange(updatedData);
   };
 
@@ -323,14 +258,14 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
 
   const [isSaved, setIsSaved] = useState(false);
 
-  // Reset saved state when data changes
+  // Reset saved state when data prop changes from outside
   useEffect(() => {
     setIsSaved(false);
-  }, [currentData]);
+  }, [data]);
 
   const handleSaveChanges = () => {
-    console.log('💾 ManualDataPrivacyInput: Saving changes explicitly');
-    onDataChange(currentData);
+    // Da wir jetzt direkt mit Parent-State arbeiten, ist "Speichern" 
+    // nur noch eine visuelle Bestätigung - Daten sind bereits im Parent
     setIsSaved(true);
   };
 
