@@ -15,6 +15,7 @@ interface PerformanceMobileCategoryProps {
   updateManualConversionData?: (data: ManualConversionData) => void;
   manualMobileData?: ManualMobileData | null;
   updateManualMobileData?: (data: ManualMobileData) => void;
+  onPerformanceUpdate?: (newPerformanceData: RealBusinessData['performance']) => void;
 }
 
 const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
@@ -23,7 +24,8 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
   manualConversionData,
   updateManualConversionData,
   manualMobileData,
-  updateManualMobileData
+  updateManualMobileData,
+  onPerformanceUpdate
 }) => {
   
   return (
@@ -42,7 +44,11 @@ const PerformanceMobileCategory: React.FC<PerformanceMobileCategoryProps> = ({
         </TabsList>
 
         <TabsContent value="performance">
-          <PerformanceAnalysis realData={realData} url={businessData.url} />
+          <PerformanceAnalysis 
+            realData={realData} 
+            url={businessData.url} 
+            onPerformanceUpdate={onPerformanceUpdate}
+          />
         </TabsContent>
 
         <TabsContent value="mobile">
