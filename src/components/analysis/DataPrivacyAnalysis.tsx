@@ -136,12 +136,47 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     }
   };
 
+  // Automatische Nachprüfung der Security Headers wenn diese fehlen
+  const checkSecurityHeadersIfMissing = async () => {
+    if (!privacyData?.realApiData?.securityHeaders && businessData.url) {
+      console.log('🔄 Security Headers fehlen - führe automatische Nachprüfung durch...');
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data, error } = await supabase.functions.invoke('check-security-headers', {
+          body: { url: businessData.url }
+        });
+        
+        if (data?.success && data?.data) {
+          console.log('✅ Security Headers nachgeladen:', data.data);
+          // Update privacyData with new security headers
+          const updatedPrivacyData = {
+            ...privacyData,
+            realApiData: {
+              ...privacyData?.realApiData,
+              securityHeaders: data.data,
+              checkedWithRealAPIs: true
+            }
+          };
+          setPrivacyData(updatedPrivacyData as DataPrivacyResult);
+          onDataChange?.(updatedPrivacyData as DataPrivacyResult);
+        }
+      } catch (err) {
+        console.error('❌ Fehler beim Nachladen der Security Headers:', err);
+      }
+    }
+  };
+
   useEffect(() => {
     // Auto-load security check on mount if no data exists
     if (!securityData && businessData.url && onSecurityDataChange) {
       runSecurityCheck();
     }
-  }, [businessData.url]);
+    
+    // Auto-check security headers if missing from saved analysis
+    if (privacyData && !privacyData?.realApiData?.securityHeaders) {
+      checkSecurityHeadersIfMissing();
+    }
+  }, [businessData.url, privacyData?.realApiData?.securityHeaders]);
 
 
   // Calculate DSGVO score - use centralized function directly
