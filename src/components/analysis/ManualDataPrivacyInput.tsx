@@ -97,14 +97,17 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     thirdCountry: false,
     country: ''
   });
+  // Sync from props - only update if props data changes and is not null
   useEffect(() => {
     if (data) {
+      console.log('📥 ManualDataPrivacyInput: Syncing data from props:', data);
       setCurrentData(data);
     }
   }, [data]);
 
   const updateData = (updates: Partial<ManualDataPrivacyData>) => {
     const updatedData = { ...currentData, ...updates };
+    console.log('📤 ManualDataPrivacyInput: Sending data update to parent:', updatedData);
     setCurrentData(updatedData);
     onDataChange(updatedData);
   };
@@ -234,6 +237,19 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     }
   };
 
+  // Check if there are unsaved changes (any field is filled)
+  const hasFilledData = currentData.cookiePolicy || 
+                        currentData.privacyPolicy || 
+                        currentData.gdprCompliant || 
+                        currentData.cookieConsent ||
+                        currentData.dataProcessingAgreement ||
+                        currentData.dataSubjectRights ||
+                        currentData.thirdCountryTransfer ||
+                        currentData.dataProtectionOfficer ||
+                        currentData.processingRegister ||
+                        (currentData.trackingScripts?.length || 0) > 0 ||
+                        (currentData.externalServices?.length || 0) > 0;
+
   return (
     <>
       <Card className="border-accent">
@@ -242,6 +258,17 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
             <Shield className="h-5 w-5" />
             Manuelle Datenschutz-Eingabe
           </CardTitle>
+          {hasFilledData && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800 flex items-center gap-2">
+                <span className="text-amber-500">⚠️</span>
+                <span>
+                  <strong>Hinweis:</strong> Ihre Eingaben werden automatisch beim Tab-Wechsel beibehalten. 
+                  Vergessen Sie nicht, die Analyse oben zu <strong>speichern</strong>, damit die Daten dauerhaft erhalten bleiben.
+                </span>
+              </p>
+            </div>
+          )}
         </CardHeader>
       <CardContent className="space-y-6">
         {/* DSGVO Compliance Checkboxes */}

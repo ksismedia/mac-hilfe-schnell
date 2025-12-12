@@ -103,7 +103,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
     manualIndustryReviewData: currentManualIndustryReviewData,
     manualOnlinePresenceData: currentManualOnlinePresenceData,
     manualConversionData: currentManualConversionData,
-    manualSEOData: currentManualSEOData
+    manualSEOData: currentManualSEOData,
+    manualDataPrivacyData: currentManualDataPrivacyData,
+    manualBacklinkData: currentManualBacklinkData,
+    manualContentData: currentManualContentData
   } = useManualData();
   // Function to get missing imprint elements with detailed descriptions for customer report
   const getMissingImprintElements = () => {
@@ -253,10 +256,10 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       manualImprintData,
       staffQualificationData,
       quoteResponseData,
-      manualContentData,
+      manualContentData: currentManualContentData || manualContentData,
       manualAccessibilityData: currentManualAccessibilityData || manualAccessibilityData,
-      manualBacklinkData,
-      manualDataPrivacyData,
+      manualBacklinkData: currentManualBacklinkData || manualBacklinkData,
+      manualDataPrivacyData: currentManualDataPrivacyData || manualDataPrivacyData,
       manualLocalSEOData: currentManualLocalSEOData || manualLocalSEOData,
       manualIndustryReviewData: currentManualIndustryReviewData || manualIndustryReviewData,
       manualOnlinePresenceData: currentManualOnlinePresenceData || manualOnlinePresenceData,
