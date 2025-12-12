@@ -106,6 +106,16 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       });
     }
   };
+
+  const handlePerformanceUpdate = (newPerformanceData: RealBusinessData['performance']) => {
+    if (realData) {
+      console.log('📊 Updating performance data:', newPerformanceData);
+      setRealData({
+        ...realData,
+        performance: newPerformanceData
+      });
+    }
+  };
   
   const { toast } = useToast();
 
@@ -639,6 +649,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualConversionData={updateManualConversionData}
             manualMobileData={manualMobileData}
             updateManualMobileData={updateManualMobileData}
+            onPerformanceUpdate={handlePerformanceUpdate}
           />
         );
       case 'social-media-performance':

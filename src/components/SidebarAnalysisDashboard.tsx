@@ -79,6 +79,16 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     setCurrentOwnCompanyScore(score);
     console.log('SidebarAnalysisDashboard - Received score from CompetitorAnalysis:', score);
   };
+
+  const handlePerformanceUpdate = (newPerformanceData: RealBusinessData['performance']) => {
+    if (realData) {
+      console.log('📊 Updating performance data:', newPerformanceData);
+      setRealData({
+        ...realData,
+        performance: newPerformanceData
+      });
+    }
+  };
   
   const { toast } = useToast();
 
@@ -435,6 +445,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             updateManualConversionData={updateManualConversionData}
             manualMobileData={manualMobileData}
             updateManualMobileData={updateManualMobileData}
+            onPerformanceUpdate={handlePerformanceUpdate}
           />
         );
       case 'social-media-performance':
