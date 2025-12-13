@@ -58,6 +58,25 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
   // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
   // Real backlinks only come from web mentions (Google Search results) and manual data
 
+  // Helper function to update parent state while preserving all local values
+  const persistBacklinkData = (updates: Partial<any>) => {
+    const currentData = {
+      ...manualBacklinkData,
+      disabledBacklinks: localDisabledBacklinks,
+      webMentions: webMentions
+    };
+    console.log('🔗 persistBacklinkData - before:', { 
+      disabledBacklinks: currentData.disabledBacklinks?.length,
+      webMentions: currentData.webMentions?.length 
+    });
+    const newData = { ...currentData, ...updates };
+    console.log('🔗 persistBacklinkData - after:', { 
+      disabledBacklinks: newData.disabledBacklinks?.length,
+      webMentions: newData.webMentions?.length 
+    });
+    updateManualBacklinkData(newData);
+  };
+
   // Toggle backlink disabled status
   const toggleBacklinkDisabled = (backlinkUrl: string) => {
     const isCurrentlyDisabled = localDisabledBacklinks.includes(backlinkUrl);
@@ -71,12 +90,8 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     // Update local state immediately for UI
     setLocalDisabledBacklinks(newDisabledList);
     
-    // Persist both disabledBacklinks AND webMentions to parent
-    updateManualBacklinkData({
-      ...manualBacklinkData,
-      disabledBacklinks: newDisabledList,
-      webMentions: webMentions
-    });
+    // Persist to parent - explicitly pass updated disabledBacklinks
+    persistBacklinkData({ disabledBacklinks: newDisabledList });
   };
 
   // Calculate backlink score using centralized function (now considers disabled backlinks)
@@ -112,16 +127,14 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
         
         setWebMentions(filteredResults);
         
-        // Save webMentions to manualBacklinkData for persistence and export
-        updateManualBacklinkData({
-          ...manualBacklinkData,
+        // Save webMentions using helper function that preserves all local state
+        persistBacklinkData({
           webMentions: filteredResults,
           lastSearched: new Date().toISOString()
         });
       } else {
         setWebMentions([]);
-        updateManualBacklinkData({
-          ...manualBacklinkData,
+        persistBacklinkData({
           webMentions: [],
           lastSearched: new Date().toISOString()
         });
@@ -409,11 +422,18 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                   webMentions: webMentions
                 }}
                 onSave={(data) => {
-                  // Ensure we preserve local state when saving manual input
-                  updateManualBacklinkData({
-                    ...data,
-                    disabledBacklinks: localDisabledBacklinks,
-                    webMentions: webMentions
+                  console.log('🔗 ManualBacklinkInput onSave - preserving local state:', {
+                    localDisabledBacklinks: localDisabledBacklinks.length,
+                    webMentions: webMentions.length
+                  });
+                  // Use persistBacklinkData to ensure all local state is preserved
+                  persistBacklinkData({
+                    totalBacklinks: data.totalBacklinks,
+                    qualityScore: data.qualityScore,
+                    domainAuthority: data.domainAuthority,
+                    localRelevance: data.localRelevance,
+                    spamLinks: data.spamLinks,
+                    notes: data.notes
                   });
                 }}
               />
