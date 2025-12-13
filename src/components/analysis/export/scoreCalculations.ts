@@ -1533,80 +1533,109 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
                    securityHeaders?.hsts || 
                    privacyData?.realApiData?.ssl?.hasHSTS;
   
-  // Check for critical technical issues
-  const hasCriticalIssues = 
-    (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) ||
-    !hasHSTS;
+  // KRITISCHE FEHLER SAMMELN für differenzierte Kappung
+  const criticalSecurityErrors: Array<{id: string, description: string}> = [];
   
-  // If cookie banner exists and critical issues exist → 59%
-  if (hasCookieBanner && hasCriticalIssues) {
-    return 59;
+  // 1. SSL-Grade kritisch (D, E, F, T)
+  if (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) {
+    criticalSecurityErrors.push({
+      id: 'ssl-critical',
+      description: `SSL-Zertifikat mit kritischer Bewertung (${sslGrade})`
+    });
+    console.log('🔒 Technische Sicherheit: Kritisches SSL-Zertifikat (' + sslGrade + ')');
   }
   
-  // If cookie banner exists and NO critical issues → calculate normally
-  if (hasCookieBanner && !hasCriticalIssues) {
-    let score = 0;
-    let componentCount = 0;
-    
-    if (sslGrade) {
-      componentCount++;
-      const sslScore = (() => {
-        switch (sslGrade) {
-          case 'A+': return 100;
-          case 'A': return 95;
-          case 'A-': return 90;
-          case 'B': return 80;
-          case 'C': return 70;
-          default: return 60;
-        }
-      })();
-      score += sslScore * 0.6;
-    }
-    
-    if (securityHeaders) {
-      componentCount++;
-      const headers = securityHeaders.headers || {};
-      const csp = headers['Content-Security-Policy']?.present || securityHeaders.csp;
-      const xFrame = headers['X-Frame-Options']?.present || securityHeaders.xFrameOptions;
-      const xContent = headers['X-Content-Type-Options']?.present || securityHeaders.xContentTypeOptions;
-      const referrer = headers['Referrer-Policy']?.present || securityHeaders.referrerPolicy;
-      
-      const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
-      const headerScore = Math.round((presentHeaders / 5) * 100);
-      score += headerScore * 0.4;
-    }
-    
-    return componentCount > 0 ? Math.round(score) : 0;
+  // 2. HSTS fehlt - KRITISCHER Fehler (wird NICHT durch SSL neutralisiert!)
+  if (!hasHSTS) {
+    criticalSecurityErrors.push({
+      id: 'hsts-missing',
+      description: 'HSTS-Header (Strict-Transport-Security) fehlt'
+    });
+    console.log('🔒 Technische Sicherheit: Fehlender HSTS-Header als kritischer Fehler');
   }
   
-  // If cookie banner does NOT exist → less than 59%
-  let score = 40; // Base score without cookie banner
+  // 3. Cookie-Banner fehlt
+  if (!hasCookieBanner) {
+    criticalSecurityErrors.push({
+      id: 'cookie-banner-missing',
+      description: 'Cookie-Consent-Banner fehlt'
+    });
+    console.log('🔒 Technische Sicherheit: Fehlender Cookie-Banner als kritischer Fehler');
+  }
   
-  // SSL adjustment
+  const criticalErrorCount = criticalSecurityErrors.length;
+  console.log('🔒 Technische Sicherheit: ' + criticalErrorCount + ' kritische Fehler gefunden');
+  
+  // KAPPUNG basierend auf Anzahl kritischer Fehler
+  let scoreCap = 100;
+  if (criticalErrorCount >= 3) {
+    scoreCap = 20;
+    console.log('🔒 Technische Sicherheit: 3+ kritische Fehler → Score gekappt auf max 20%');
+  } else if (criticalErrorCount === 2) {
+    scoreCap = 35;
+    console.log('🔒 Technische Sicherheit: 2 kritische Fehler → Score gekappt auf max 35%');
+  } else if (criticalErrorCount === 1) {
+    scoreCap = 59;
+    console.log('🔒 Technische Sicherheit: 1 kritischer Fehler → Score gekappt auf max 59%');
+  }
+  
+  // SCORE-BERECHNUNG
+  let score = 0;
+  let componentCount = 0;
+  
+  // SSL-Bewertung (60% Gewicht)
   if (sslGrade) {
-    const sslBonus = (() => {
+    componentCount++;
+    const sslScore = (() => {
       switch (sslGrade) {
-        case 'A+': return 15;
-        case 'A': return 10;
-        case 'A-': return 8;
-        case 'B': return 5;
-        case 'C': return 0;
-        case 'D': return -10;
-        case 'E': return -15;
-        case 'F': return -20;
-        case 'T': return -25;
-        default: return 0;
+        case 'A+': return 100;
+        case 'A': return 95;
+        case 'A-': return 90;
+        case 'B': return 80;
+        case 'C': return 70;
+        case 'D': return 50;
+        case 'E': return 30;
+        case 'F': return 10;
+        case 'T': return 5;
+        default: return 60;
       }
     })();
-    score += sslBonus;
+    score += sslScore * 0.6;
   }
   
-  // HSTS adjustment
-  if (hasHSTS) {
-    score += 5;
+  // Security Headers (40% Gewicht)
+  if (securityHeaders) {
+    componentCount++;
+    const headers = securityHeaders.headers || {};
+    const csp = headers['Content-Security-Policy']?.present || securityHeaders.csp;
+    const xFrame = headers['X-Frame-Options']?.present || securityHeaders.xFrameOptions;
+    const xContent = headers['X-Content-Type-Options']?.present || securityHeaders.xContentTypeOptions;
+    const referrer = headers['Referrer-Policy']?.present || securityHeaders.referrerPolicy;
+    
+    const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
+    const headerScore = Math.round((presentHeaders / 5) * 100);
+    score += headerScore * 0.4;
+  }
+  
+  // Wenn keine Komponenten vorhanden, Basis-Score
+  if (componentCount === 0) {
+    score = 50;
   } else {
-    score -= 5;
+    score = Math.round(score);
   }
   
-  return Math.max(0, Math.min(58, score)); // Cap at 58% max without cookie banner
+  // Cookie-Banner Bonus/Malus
+  if (hasCookieBanner) {
+    score += 10;
+  } else {
+    score -= 10;
+  }
+  
+  // FINALE KAPPUNG anwenden
+  const finalScore = Math.max(0, Math.min(100, score));
+  const cappedScore = Math.min(finalScore, scoreCap);
+  
+  console.log('🔒 Technische Sicherheit: Finaler Score: ' + cappedScore + ' (von ' + finalScore + ', Cap: ' + scoreCap + ')');
+  
+  return cappedScore;
 };
