@@ -16,7 +16,8 @@ const getScoreColorClass = (score: number) => {
 
 export const generateReputationMonitoringSection = (
   manualReputationData?: ManualReputationData | null,
-  url?: string
+  url?: string,
+  manualBacklinkData?: any
 ) => {
   // If no data available, show N/A section
   if (!manualReputationData || !manualReputationData.searchResults) {
@@ -47,8 +48,10 @@ export const generateReputationMonitoringSection = (
     `;
   }
 
-  // Filter out own domain from results (for old saved data)
+  // Filter out own domain and disabled backlinks from results
   let searchResults = manualReputationData.searchResults || [];
+  const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
+  
   if (url) {
     const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
     searchResults = searchResults.filter((item: any) => {
@@ -58,8 +61,12 @@ export const generateReputationMonitoringSection = (
         .replace('www.', '')
         .split('/')[0];
       
-      return itemDomain !== cleanUrl;
+      // Filter out own domain AND disabled backlinks
+      return itemDomain !== cleanUrl && !disabledBacklinks.includes(item.link);
     });
+  } else {
+    // Even without URL, filter out disabled backlinks
+    searchResults = searchResults.filter((item: any) => !disabledBacklinks.includes(item.link));
   }
   
   const reputationScore = manualReputationData.reputationScore || 0;

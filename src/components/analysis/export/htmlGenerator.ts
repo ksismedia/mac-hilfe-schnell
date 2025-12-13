@@ -3283,7 +3283,7 @@ export const generateCustomerHTML = ({
 
     ${generateWebsiteSecuritySection(securityData)}
 
-    ${generateReputationMonitoringSection(manualReputationData, businessData.url)}
+    ${generateReputationMonitoringSection(manualReputationData, businessData.url, manualBacklinkData)}
 
     <!-- Rechtssicherheit & Impressum -->
     <div class="section">
