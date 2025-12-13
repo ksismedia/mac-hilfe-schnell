@@ -3297,8 +3297,8 @@ export const generateCustomerHTML = ({
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(impressumScore)}">${impressumScore}%</div>
             <div class="score-details">
-              <p><strong>Impressum:</strong> ${impressumScore >= 80 ? 'Vollständig' : impressumScore >= 60 ? 'Größtenteils vorhanden' : 'Unvollständig'}</p>
-              <p><strong>Empfehlung:</strong> ${impressumScore >= 90 ? 'Vollständig rechtlich abgesichert – Weiter so!' : impressumScore >= 80 ? 'Rechtlich abgesichert' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+              <p><strong>Impressum:</strong> ${impressumScore >= 90 ? 'Vollständig' : impressumScore >= 60 ? 'Teilweise vollständig' : 'Unvollständig'}</p>
+              <p><strong>Empfehlung:</strong> ${impressumScore >= 90 ? 'Vollständig rechtlich abgesichert – Weiter so!' : impressumScore >= 60 ? 'Teilweise rechtlich abgesichert, fehlende Angaben ergänzen' : 'Rechtliche Pflichtangaben ergänzen'}</p>
             </div>
           </div>
           <div class="progress-container">
