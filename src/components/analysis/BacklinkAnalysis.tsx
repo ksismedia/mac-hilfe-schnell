@@ -32,9 +32,9 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
   const hookData = useManualData();
   const manualBacklinkData = propManualBacklinkData ?? hookData.manualBacklinkData;
   const updateManualBacklinkData = propUpdateManualBacklinkData ?? hookData.updateManualBacklinkData;
-  const [webMentions, setWebMentions] = useState<any[]>([]);
+  const [webMentions, setWebMentions] = useState<any[]>(propManualBacklinkData?.webMentions || []);
   const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [hasSearched, setHasSearched] = useState(!!(propManualBacklinkData?.webMentions?.length));
   
   // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
   // Real backlinks only come from web mentions (Google Search results) and manual data
@@ -85,8 +85,20 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
         });
         
         setWebMentions(filteredResults);
+        
+        // Save webMentions to manualBacklinkData for persistence and export
+        updateManualBacklinkData({
+          ...manualBacklinkData,
+          webMentions: filteredResults,
+          lastSearched: new Date().toISOString()
+        });
       } else {
         setWebMentions([]);
+        updateManualBacklinkData({
+          ...manualBacklinkData,
+          webMentions: [],
+          lastSearched: new Date().toISOString()
+        });
       }
     } catch (error) {
       console.error('Backlink search error:', error);
@@ -96,9 +108,19 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     }
   };
 
+  // Sync webMentions from props when loading a different analysis
   useEffect(() => {
-    // Auto-start search on mount
-    searchBacklinks();
+    if (propManualBacklinkData?.webMentions) {
+      setWebMentions(propManualBacklinkData.webMentions);
+      setHasSearched(true);
+    }
+  }, [propManualBacklinkData?.webMentions]);
+
+  useEffect(() => {
+    // Only auto-search if no saved webMentions and not already searched
+    if (!webMentions.length && !hasSearched && !isSearching) {
+      searchBacklinks();
+    }
   }, [url]);
 
   const getQualityColor = (quality: string) => {
