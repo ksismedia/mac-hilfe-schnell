@@ -36,28 +36,45 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(!!(propManualBacklinkData?.webMentions?.length));
   
+  // Local state for disabledBacklinks to ensure immediate UI updates
+  const [localDisabledBacklinks, setLocalDisabledBacklinks] = useState<string[]>(
+    propManualBacklinkData?.disabledBacklinks || []
+  );
+  
+  // Sync local state when props change (loading different analysis)
+  useEffect(() => {
+    setLocalDisabledBacklinks(propManualBacklinkData?.disabledBacklinks || []);
+  }, [propManualBacklinkData?.disabledBacklinks]);
+  
   // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
   // Real backlinks only come from web mentions (Google Search results) and manual data
 
   // Toggle backlink disabled status
   const toggleBacklinkDisabled = (backlinkUrl: string) => {
-    const currentDisabled = manualBacklinkData?.disabledBacklinks || [];
-    const isCurrentlyDisabled = currentDisabled.includes(backlinkUrl);
+    const isCurrentlyDisabled = localDisabledBacklinks.includes(backlinkUrl);
     
     const newDisabledList = isCurrentlyDisabled
-      ? currentDisabled.filter(url => url !== backlinkUrl)
-      : [...currentDisabled, backlinkUrl];
+      ? localDisabledBacklinks.filter((url: string) => url !== backlinkUrl)
+      : [...localDisabledBacklinks, backlinkUrl];
     
+    console.log('🔗 toggleBacklinkDisabled:', { backlinkUrl, isCurrentlyDisabled, newDisabledList, currentWebMentions: webMentions.length });
+    
+    // Update local state immediately for UI
+    setLocalDisabledBacklinks(newDisabledList);
+    
+    // Persist both disabledBacklinks AND webMentions to parent
     updateManualBacklinkData({
       ...manualBacklinkData,
-      disabledBacklinks: newDisabledList
+      disabledBacklinks: newDisabledList,
+      webMentions: webMentions
     });
   };
 
   // Calculate backlink score using centralized function (now considers disabled backlinks)
+  // Use localDisabledBacklinks to ensure score reflects current UI state
   const backlinkScore = calculateBacklinksScore(
     realData,
-    manualBacklinkData,
+    { ...manualBacklinkData, disabledBacklinks: localDisabledBacklinks, webMentions },
     manualReputationData,
     webMentions
   );
@@ -253,13 +270,13 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                       <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
                         <CheckCircle className="h-5 w-5 text-green-600" />
                         <span className="font-semibold text-green-700">
-                          {webMentions.filter(m => !manualBacklinkData?.disabledBacklinks?.includes(m.link)).length} Backlink(s) aktiv
+                          {webMentions.filter(m => !localDisabledBacklinks.includes(m.link)).length} Backlink(s) aktiv
                         </span>
                       </div>
                       
                       <div className="space-y-3">
                         {webMentions.map((mention, index) => {
-                          const isDisabled = manualBacklinkData?.disabledBacklinks?.includes(mention.link);
+                          const isDisabled = localDisabledBacklinks.includes(mention.link);
                           
                           return (
                             <Card key={index} className={`border-l-4 ${isDisabled ? 'border-l-gray-300 opacity-50' : 'border-l-blue-500'}`}>
