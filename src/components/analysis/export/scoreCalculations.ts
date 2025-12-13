@@ -958,14 +958,20 @@ export const calculateBacklinksScore = (realData: any, manualBacklinkData: any, 
     }
     
     // Web-Erwähnungen berücksichtigen - nur aktive (nicht deaktivierte) Backlinks zählen
-    let activeWebMentionsCount = manualReputationData?.webMentionsCount || 0;
+    // Priority: 1. webMentions parameter, 2. manualBacklinkData.webMentions (persisted), 3. manualReputationData count
+    let activeWebMentionsCount = 0;
+    const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
     
-    // If we have webMentions array and disabled list, calculate active count
-    if (webMentions && Array.isArray(webMentions)) {
-      const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
-      activeWebMentionsCount = webMentions.filter(mention => 
+    // Use webMentions from parameter or from manualBacklinkData (persisted from BacklinkAnalysis search)
+    const mentionsToUse = webMentions || manualBacklinkData?.webMentions;
+    
+    if (mentionsToUse && Array.isArray(mentionsToUse)) {
+      activeWebMentionsCount = mentionsToUse.filter((mention: any) => 
         !disabledBacklinks.includes(mention.link)
       ).length;
+    } else {
+      // Fallback to count from manualReputationData
+      activeWebMentionsCount = manualReputationData?.webMentionsCount || 0;
     }
     
     const webMentionsBonus = Math.min(10, activeWebMentionsCount * 1); // Max 10 Bonus-Punkte durch Web-Erwähnungen

@@ -3230,7 +3230,8 @@ export const generateCustomerHTML = ({
           
           ${(() => {
             // Web-Erwähnungen Integration in Backlinks Sektion - nur aktive Erwähnungen anzeigen
-            const webMentions = manualReputationData?.searchResults || [];
+            // Use webMentions from manualBacklinkData (from BacklinkAnalysis search), NOT from manualReputationData
+            const webMentions = manualBacklinkData?.webMentions || [];
             const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
             const activeWebMentions = webMentions.filter((m: any) => !disabledBacklinks.includes(m.link));
             const activeMentionsCount = activeWebMentions.length;

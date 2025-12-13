@@ -176,6 +176,8 @@ export interface ManualBacklinkData {
   spamLinks: number;
   notes?: string;
   disabledBacklinks?: string[]; // URLs of manually disabled backlinks
+  webMentions?: any[]; // Web mentions from backlink search (persisted for export)
+  lastSearched?: string; // ISO timestamp of last search
 }
 
 export interface ManualDataPrivacyData {
