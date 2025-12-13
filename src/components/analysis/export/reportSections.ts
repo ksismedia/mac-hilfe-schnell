@@ -1095,10 +1095,32 @@ export const generateDataPrivacySection = (
                       // Sammle kritische Fehler
                       const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
                       
+                      // 0. HSTS-Header explizit prüfen (KRITISCH - wird NICHT durch SSL neutralisiert!)
+                      const securityHeaders = privacyData?.realApiData?.securityHeaders || privacyData?.securityHeaders;
+                      const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
+                      const hasHSTSFromSecurityHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+                      const hasHSTSHeaderData = hasHSTSFromSSL || hasHSTSFromSecurityHeaders;
+                      
+                      // Wenn Security Headers Daten vorhanden sind und HSTS fehlt → kritischer Fehler
+                      if (securityHeaders && !hasHSTSHeaderData) {
+                        const existingHSTSViolation = (privacyData?.violations || []).some((v: any) => 
+                          v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security')
+                        );
+                        if (!existingHSTSViolation) {
+                          criticalErrors.push({
+                            source: 'Security',
+                            description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
+                            neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
+                          });
+                        }
+                      }
+                      
                       // 1. Auto-detected Violations
                       (privacyData?.violations || []).forEach((v: any, i: number) => {
                         if (!deselectedViolations.includes(`auto-${i}`)) {
-                          const isSSLViolation = (v.description?.includes('SSL') || v.description?.includes('TLS') || v.description?.includes('Verschlüsselung')) && !v.description?.includes('HSTS');
+                          // WICHTIG: HSTS-Violations werden NICHT durch SSL neutralisiert!
+                          const isHSTSViolation = v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security');
+                          const isSSLViolation = (v.description?.includes('SSL') || v.description?.includes('TLS') || v.description?.includes('Verschlüsselung')) && !isHSTSViolation;
                           const isCookieViolation = v.description?.includes('Cookie') && v.description?.includes('Banner');
                           
                           const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
@@ -1139,6 +1161,18 @@ export const generateDataPrivacySection = (
                       // 5. Drittland-Transfer ohne Details
                       if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
                         criticalErrors.push({ source: 'Art. 44-49', description: 'Drittland-Transfer ohne Dokumentation der Rechtsgrundlage', neutralized: false });
+                      }
+                      
+                      // 6. Cookie-Banner fehlt - als kritischer Fehler
+                      const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                                             privacyData?.cookieBanner?.detected || 
+                                             manualDataPrivacyData?.cookieConsent;
+                      if (!hasCookieBanner) {
+                        criticalErrors.push({
+                          source: 'TTDSG',
+                          description: 'Cookie-Consent-Banner nicht erkannt',
+                          neutralized: false
+                        });
                       }
                       
                       const neutralizedErrors = criticalErrors.filter(e => e.neutralized);
