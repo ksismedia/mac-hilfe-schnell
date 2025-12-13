@@ -239,16 +239,13 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
                         {webMentions.map((mention, index) => {
                           const isDisabled = manualBacklinkData?.disabledBacklinks?.includes(mention.link);
                           
-                          // Deaktivierte Backlinks nicht anzeigen
-                          if (isDisabled) return null;
-                          
                           return (
-                            <Card key={index} className="border-l-4 border-l-blue-500">
+                            <Card key={index} className={`border-l-4 ${isDisabled ? 'border-l-gray-300 opacity-50' : 'border-l-blue-500'}`}>
                               <CardContent className="pt-4">
                                 <div className="space-y-2">
                                   <div className="flex items-start gap-3">
                                     <Checkbox 
-                                      checked={true}
+                                      checked={!isDisabled}
                                       onCheckedChange={() => toggleBacklinkDisabled(mention.link)}
                                       className="mt-1"
                                     />
