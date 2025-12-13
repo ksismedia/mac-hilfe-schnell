@@ -41,10 +41,19 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     propManualBacklinkData?.disabledBacklinks || []
   );
   
-  // Sync local state when props change (loading different analysis)
+  // Track initial URL to detect when a different analysis is loaded
+  const [initialUrl, setInitialUrl] = useState(url);
+  
+  // Only sync local state when loading a DIFFERENT analysis (URL changes)
   useEffect(() => {
-    setLocalDisabledBacklinks(propManualBacklinkData?.disabledBacklinks || []);
-  }, [propManualBacklinkData?.disabledBacklinks]);
+    if (url !== initialUrl) {
+      console.log('🔗 Loading different analysis - syncing disabledBacklinks from props');
+      setLocalDisabledBacklinks(propManualBacklinkData?.disabledBacklinks || []);
+      setWebMentions(propManualBacklinkData?.webMentions || []);
+      setHasSearched(!!(propManualBacklinkData?.webMentions?.length));
+      setInitialUrl(url);
+    }
+  }, [url, initialUrl, propManualBacklinkData]);
   
   // NOTE: Extension "external links" are OUTBOUND links (from the site), NOT backlinks!
   // Real backlinks only come from web mentions (Google Search results) and manual data
@@ -125,13 +134,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
     }
   };
 
-  // Sync webMentions from props when loading a different analysis
-  useEffect(() => {
-    if (propManualBacklinkData?.webMentions) {
-      setWebMentions(propManualBacklinkData.webMentions);
-      setHasSearched(true);
-    }
-  }, [propManualBacklinkData?.webMentions]);
+  // NOTE: webMentions sync is now handled in the URL-change useEffect above
 
   useEffect(() => {
     // Only auto-search if no saved webMentions and not already searched
