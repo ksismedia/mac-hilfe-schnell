@@ -4302,21 +4302,9 @@ export const generateCustomerHTML = ({
               <strong>Gesamt-Score:</strong>
             </p>
             <div style="display: grid; gap: 6px; margin-bottom: 12px; font-size: 0.95em;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Content-Vielfalt:</span>
-                <span style="font-weight: bold;">${diversityScore} Punkte</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Content-Menge:</span>
-                <span style="font-weight: bold;">${quantityScore} Punkte</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Content-Relevanz:</span>
-                <span style="font-weight: bold;">${Math.round(relevanceScore)} Punkte</span>
-              </div>
               <div style="border-top: 2px solid ${categoryColor}; padding-top: 8px; margin-top: 4px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: bold;">Gesamt:</span>
-                <span style="font-size: 1.4em; font-weight: bold; color: ${categoryColor};">${calculatedOverallScore} Punkte</span>
+                <span style="font-weight: bold;">Gesamt-Score:</span>
+                <span style="font-size: 1.4em; font-weight: bold; color: ${categoryColor};">${calculatedOverallScore}%</span>
               </div>
             </div>
             <p style="margin: 0; color: #64748b;">
