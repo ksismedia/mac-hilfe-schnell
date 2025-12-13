@@ -400,8 +400,19 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
             
             <TabsContent value="manual" className="space-y-6 mt-6">
               <ManualBacklinkInput
-                initialData={manualBacklinkData}
-                onSave={updateManualBacklinkData}
+                initialData={{
+                  ...manualBacklinkData,
+                  disabledBacklinks: localDisabledBacklinks,
+                  webMentions: webMentions
+                }}
+                onSave={(data) => {
+                  // Ensure we preserve local state when saving manual input
+                  updateManualBacklinkData({
+                    ...data,
+                    disabledBacklinks: localDisabledBacklinks,
+                    webMentions: webMentions
+                  });
+                }}
               />
             </TabsContent>
           </Tabs>
