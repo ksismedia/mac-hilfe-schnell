@@ -948,7 +948,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
                   fontSize: '20px',
                   color: isActive ? '#000' : getScoreColor(category.score)
                 }}>
-                  {Math.round(category.score)} Punkte
+                  {Math.round(category.score)}%
                 </div>
               </button>
             );
