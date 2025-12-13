@@ -1347,6 +1347,27 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     console.log('🛡️ DSGVO: Drittland-Transfer ohne Details als kritischer Fehler');
   }
   
+  // 1D: HSTS-Header aus realApiData.securityHeaders prüfen
+  // KRITISCH: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+  const securityHeaders = privacyData?.realApiData?.securityHeaders;
+  const hstsPresent = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+  
+  if (securityHeaders && !hstsPresent) {
+    // Prüfe ob bereits eine HSTS-Violation in den Auto-Violations existiert
+    const hasExistingHSTSViolation = criticalErrors.some(e => 
+      e.description?.includes('HSTS') || e.description?.includes('Strict-Transport-Security')
+    );
+    
+    if (!hasExistingHSTSViolation) {
+      criticalErrors.push({
+        id: 'hsts-missing',
+        description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
+        neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
+      });
+      console.log('🛡️ DSGVO: Fehlender HSTS-Header als kritischer Fehler hinzugefügt');
+    }
+  }
+  
   // Zähle nicht-neutralisierte kritische Fehler
   const nonNeutralizedCount = criticalErrors.filter(e => !e.neutralized).length;
   const neutralizedCount = criticalErrors.filter(e => e.neutralized).length;
@@ -1362,10 +1383,13 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
     // Subtract points ONLY for violations that are NOT deselected AND NOT neutralized
     totalViolations.forEach((violation: any, index: number) => {
       if (!deselectedViolations.includes(`auto-${index}`)) {
-        const isSSLViolation = violation.description?.includes('SSL') || 
+        // WICHTIG: HSTS ist NICHT durch SSL neutralisierbar! Separater Security-Header.
+        const isHSTSViolation = violation.description?.includes('HSTS') || 
+                               violation.description?.includes('Strict-Transport-Security');
+        const isSSLViolation = (violation.description?.includes('SSL') || 
                               violation.description?.includes('TLS') ||
-                              violation.description?.includes('HSTS') ||
-                              violation.description?.includes('Verschlüsselung');
+                              violation.description?.includes('Verschlüsselung')) &&
+                              !isHSTSViolation; // HSTS explizit ausschließen
         const isCookieViolation = violation.description?.includes('Cookie') && 
                                   violation.description?.includes('Banner');
         
