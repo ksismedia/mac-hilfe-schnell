@@ -25,11 +25,24 @@ export const ManualBacklinkInput: React.FC<ManualBacklinkInputProps> = ({
     domainAuthority: initialData?.domainAuthority || 30,
     localRelevance: initialData?.localRelevance || 70,
     spamLinks: initialData?.spamLinks || 0,
-    notes: initialData?.notes || ''
+    notes: initialData?.notes || '',
+    // Preserve existing data that shouldn't be overwritten
+    disabledBacklinks: initialData?.disabledBacklinks || [],
+    webMentions: initialData?.webMentions || [],
+    lastSearched: initialData?.lastSearched
   });
 
   const handleSave = () => {
-    onSave(data);
+    // Merge with initialData to preserve disabledBacklinks and webMentions
+    const mergedData = {
+      ...initialData,
+      ...data,
+      // Explicitly preserve these from initialData in case they were updated elsewhere
+      disabledBacklinks: initialData?.disabledBacklinks || data.disabledBacklinks || [],
+      webMentions: initialData?.webMentions || data.webMentions || [],
+      lastSearched: initialData?.lastSearched || data.lastSearched
+    };
+    onSave(mergedData);
     toast({
       title: "Backlink-Daten gespeichert",
       description: "Die manuelle Backlink-Bewertung wurde erfolgreich gespeichert.",
