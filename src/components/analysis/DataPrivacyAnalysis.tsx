@@ -482,7 +482,21 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
                     const addedErrorTypes = new Set<string>();
                     
-                    // 0. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
+                    // 0A. Cookie-Banner Prüfung (VOR Auto-Violations)
+                    const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                                           privacyData?.hasConsentBanner || 
+                                           manualDataPrivacyData?.cookieConsent;
+                    
+                    if (!hasCookieBanner) {
+                      criticalErrors.push({
+                        source: 'Auto',
+                        description: 'Cookie-Consent-Banner nicht erkannt',
+                        neutralized: false
+                      });
+                      addedErrorTypes.add('COOKIE_BANNER');
+                    }
+                    
+                    // 0B. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
                     const securityHeaders = privacyData?.realApiData?.securityHeaders;
                     const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
                     const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
