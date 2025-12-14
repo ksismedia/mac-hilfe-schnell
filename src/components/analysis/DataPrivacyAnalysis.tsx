@@ -517,6 +517,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     // Sammle alle kritischen Fehler mit Details
                     const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
                     
+                    // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
+                    const addedErrorTypes = new Set<string>();
+                    
                     // 0. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
                     const securityHeaders = privacyData?.realApiData?.securityHeaders;
                     const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
@@ -530,6 +533,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         description: 'HSTS-Header fehlt (HTTP Strict Transport Security)',
                         neutralized: false
                       });
+                      addedErrorTypes.add('HSTS');
                     }
                     
                     // 1. Auto-detected Violations
@@ -541,13 +545,18 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                                               v.description?.includes('Verschlüsselung')) &&
                                               !v.description?.includes('HSTS');
                         const isCookieViolation = v.description?.includes('Cookie') && 
-                                                  v.description?.includes('Banner');
+                                                  (v.description?.includes('Banner') || v.description?.includes('Consent'));
                         
                         // Überspringe HSTS-Violations wenn wir sie schon oben hinzugefügt haben
                         const isHSTSViolation = v.description?.includes('HSTS') || 
                                                v.description?.includes('Strict-Transport-Security');
-                        if (isHSTSViolation && securityHeaders && !hasHSTS) {
+                        if (isHSTSViolation && addedErrorTypes.has('HSTS')) {
                           return; // Schon oben behandelt
+                        }
+                        
+                        // Überspringe Cookie-Banner-Violations wenn bereits hinzugefügt (verhindert Duplikate)
+                        if (isCookieViolation && addedErrorTypes.has('COOKIE_BANNER')) {
+                          return; // Cookie-Banner bereits als Fehler erfasst
                         }
                         
                         const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
@@ -555,12 +564,16 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         
                         if (v.severity === 'critical' || v.severity === 'high') {
                           criticalErrors.push({
-                            source: 'Automatische Erkennung',
+                            source: 'Auto',
                             description: v.description || 'Auto-detected violation',
                             neutralized: neutralizedBySSL || neutralizedByCookie,
                             neutralizedBy: neutralizedBySSL ? 'SSL-Zertifikat vorhanden' : 
                                           neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
                           });
+                          
+                          // Markiere Fehlertyp als hinzugefügt
+                          if (isHSTSViolation) addedErrorTypes.add('HSTS');
+                          if (isCookieViolation) addedErrorTypes.add('COOKIE_BANNER');
                         }
                       }
                     });
