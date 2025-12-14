@@ -447,47 +447,9 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     <Scale className="h-5 w-5" />
                     DSGVO-Konformität
                     {(() => {
-                      // Berechne den effektiven Score MIT UI-Kappung
-                      const deselected = manualDataPrivacyData?.deselectedViolations || [];
-                      const allViolations = privacyData?.violations || [];
-                      const securityHeaders = privacyData?.realApiData?.securityHeaders;
-                      const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
-                      const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
-                      const hasHSTS = hasHSTSFromSSL || hasHSTSFromHeaders;
-                      
-                      let remainingCount = 0;
-                      
-                      // HSTS fehlt
-                      if (securityHeaders && !hasHSTS) remainingCount++;
-                      
-                      // Auto-Violations (critical/high, nicht neutralisiert, keine Duplikate)
-                      const seenDescriptions = new Set<string>();
-                      if (securityHeaders && !hasHSTS) seenDescriptions.add('HSTS');
-                      
-                      allViolations.forEach((v: any, i: number) => {
-                        if (!deselected.includes(`auto-${i}`) && (v.severity === 'critical' || v.severity === 'high')) {
-                          const isHSTS = v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security');
-                          const isCookie = v.description?.includes('Cookie') && v.description?.includes('Banner');
-                          const isSSL = (v.description?.includes('SSL') || v.description?.includes('TLS')) && !isHSTS;
-                          
-                          if (isHSTS && seenDescriptions.has('HSTS')) return;
-                          if (isCookie && seenDescriptions.has('Cookie')) return;
-                          
-                          const neutralized = (isSSL && manualDataPrivacyData?.hasSSL) || 
-                                            (isCookie && manualDataPrivacyData?.cookieConsent);
-                          if (!neutralized) {
-                            remainingCount++;
-                            if (isCookie) seenDescriptions.add('Cookie');
-                          }
-                        }
-                      });
-                      
-                      let scoreCap = 100;
-                      if (remainingCount >= 3) scoreCap = 20;
-                      else if (remainingCount === 2) scoreCap = 35;
-                      else if (remainingCount === 1) scoreCap = 59;
-                      
-                      const effectiveScore = Math.min(getDSGVOScore(), scoreCap);
+                      // getDSGVOScore() gibt bereits den gekappten Score zurück
+                      // (calculateDataPrivacyScore wendet Kappung basierend auf kritischen Fehlern an)
+                      const effectiveScore = getDSGVOScore();
                       
                       return (
                         <div 
