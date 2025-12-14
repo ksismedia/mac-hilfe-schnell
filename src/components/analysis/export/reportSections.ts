@@ -570,7 +570,7 @@ export const generateDataPrivacySection = (
                         </div>
                         <div class="progress-container">
                             <div class="progress-label">
-                                <span>DSGVO Art. 5-22 Compliance <span style="font-size: 11px; color: #6b7280;">(Einhaltung der Datenschutzgrundsätze und Nutzerrechte gemäß DSGVO, z. B. Rechtmäßigkeit, Transparenz, Löschung und Auskunftspflicht)</span></span>
+                                <span>Bewertung nach DSGVO Art. 5-22, ePrivacy-VO und TTDSG <span style="font-size: 11px; color: #6b7280;">(Einhaltung der Datenschutzgrundsätze und Nutzerrechte, z. B. Rechtmäßigkeit, Transparenz, Löschung und Auskunftspflicht)</span></span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" data-score="${dsgvoScore < 60 ? '0-60' : dsgvoScore < 80 ? '60-80' : '80-100'}" style="width: ${dsgvoScore}%; display: flex; align-items: center; justify-content: center;">
