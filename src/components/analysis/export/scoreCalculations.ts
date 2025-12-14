@@ -1277,6 +1277,21 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
   const addedErrorTypes = new Set<string>();
   
+  // 0A: Cookie-Banner Status prüfen (VOR Auto-Violations)
+  const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                         privacyData?.cookieBanner?.detected || 
+                         manualDataPrivacyData?.cookieConsent;
+  
+  if (!hasCookieBanner) {
+    criticalErrors.push({
+      id: 'cookie-banner-missing',
+      description: 'Cookie-Consent-Banner nicht erkannt',
+      neutralized: false
+    });
+    addedErrorTypes.add('COOKIE_BANNER');
+    console.log('🛡️ DSGVO: Fehlender Cookie-Banner als kritischer Fehler hinzugefügt');
+  }
+  
   // 1A: Auto-detected Violations
   totalViolations.forEach((violation: any, index: number) => {
     if (!deselectedViolations.includes(`auto-${index}`)) {
