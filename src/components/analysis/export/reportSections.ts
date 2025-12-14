@@ -1095,6 +1095,9 @@ export const generateDataPrivacySection = (
                       // Sammle kritische Fehler
                       const criticalErrors: { source: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
                       
+                      // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
+                      const addedErrorTypes = new Set<string>();
+                      
                       // 0. HSTS-Header explizit prüfen (KRITISCH - wird NICHT durch SSL neutralisiert!)
                       const securityHeaders = privacyData?.realApiData?.securityHeaders || privacyData?.securityHeaders;
                       const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
@@ -1103,16 +1106,27 @@ export const generateDataPrivacySection = (
                       
                       // Wenn Security Headers Daten vorhanden sind und HSTS fehlt → kritischer Fehler
                       if (securityHeaders && !hasHSTSHeaderData) {
-                        const existingHSTSViolation = (privacyData?.violations || []).some((v: any) => 
-                          v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security')
-                        );
-                        if (!existingHSTSViolation) {
-                          criticalErrors.push({
-                            source: 'Security',
-                            description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
-                            neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
-                          });
-                        }
+                        criticalErrors.push({
+                          source: 'Security',
+                          description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
+                          neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
+                        });
+                        addedErrorTypes.add('HSTS');
+                      }
+                      
+                      // Cookie-Banner Status prüfen
+                      const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                                             privacyData?.cookieBanner?.detected || 
+                                             manualDataPrivacyData?.cookieConsent;
+                      
+                      // Wenn Cookie-Banner fehlt, als kritischen Fehler hinzufügen (nur einmal!)
+                      if (!hasCookieBanner) {
+                        criticalErrors.push({
+                          source: 'TTDSG',
+                          description: 'Cookie-Consent-Banner nicht erkannt',
+                          neutralized: false
+                        });
+                        addedErrorTypes.add('COOKIE_BANNER');
                       }
                       
                       // 1. Auto-detected Violations
@@ -1121,7 +1135,18 @@ export const generateDataPrivacySection = (
                           // WICHTIG: HSTS-Violations werden NICHT durch SSL neutralisiert!
                           const isHSTSViolation = v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security');
                           const isSSLViolation = (v.description?.includes('SSL') || v.description?.includes('TLS') || v.description?.includes('Verschlüsselung')) && !isHSTSViolation;
-                          const isCookieViolation = v.description?.includes('Cookie') && v.description?.includes('Banner');
+                          const isCookieViolation = v.description?.includes('Cookie') && 
+                                                    (v.description?.includes('Banner') || v.description?.includes('Consent'));
+                          
+                          // Überspringe HSTS-Violations wenn bereits hinzugefügt
+                          if (isHSTSViolation && addedErrorTypes.has('HSTS')) {
+                            return;
+                          }
+                          
+                          // Überspringe Cookie-Banner-Violations wenn bereits hinzugefügt
+                          if (isCookieViolation && addedErrorTypes.has('COOKIE_BANNER')) {
+                            return;
+                          }
                           
                           const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
                           const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
@@ -1133,6 +1158,10 @@ export const generateDataPrivacySection = (
                               neutralized: neutralizedBySSL || neutralizedByCookie,
                               neutralizedBy: neutralizedBySSL ? 'SSL vorhanden' : neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
                             });
+                            
+                            // Markiere Fehlertyp als hinzugefügt
+                            if (isHSTSViolation) addedErrorTypes.add('HSTS');
+                            if (isCookieViolation) addedErrorTypes.add('COOKIE_BANNER');
                           }
                         }
                       });
@@ -1161,18 +1190,6 @@ export const generateDataPrivacySection = (
                       // 5. Drittland-Transfer ohne Details
                       if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
                         criticalErrors.push({ source: 'Art. 44-49', description: 'Drittland-Transfer ohne Dokumentation der Rechtsgrundlage', neutralized: false });
-                      }
-                      
-                      // 6. Cookie-Banner fehlt - als kritischer Fehler
-                      const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
-                                             privacyData?.cookieBanner?.detected || 
-                                             manualDataPrivacyData?.cookieConsent;
-                      if (!hasCookieBanner) {
-                        criticalErrors.push({
-                          source: 'TTDSG',
-                          description: 'Cookie-Consent-Banner nicht erkannt',
-                          neutralized: false
-                        });
                       }
                       
                       const neutralizedErrors = criticalErrors.filter(e => e.neutralized);

@@ -1274,19 +1274,28 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   // Struktur wie bei Accessibility: Liste der kritischen Fehler mit Neutralisierung
   let criticalErrors: { id: string; description: string; neutralized: boolean; neutralizedBy?: string }[] = [];
   
+  // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
+  const addedErrorTypes = new Set<string>();
+  
   // 1A: Auto-detected Violations
   totalViolations.forEach((violation: any, index: number) => {
     if (!deselectedViolations.includes(`auto-${index}`)) {
       // SSL/TLS-bezogene Violations → können durch hasSSL neutralisiert werden
       // WICHTIG: HSTS ist ein separater Security-Header und wird NICHT durch SSL neutralisiert!
+      const isHSTSViolation = violation.description?.includes('HSTS') || 
+                             violation.description?.includes('Strict-Transport-Security');
       const isSSLViolation = (violation.description?.includes('SSL') || 
                             violation.description?.includes('TLS') ||
                             violation.description?.includes('Verschlüsselung')) &&
-                            !violation.description?.includes('HSTS');
+                            !isHSTSViolation;
       
       // Cookie-Banner Violation → kann durch cookieConsent neutralisiert werden
       const isCookieViolation = violation.description?.includes('Cookie') && 
-                                violation.description?.includes('Banner');
+                                (violation.description?.includes('Banner') || violation.description?.includes('Consent'));
+      
+      // Überspringe wenn bereits hinzugefügt (verhindert Duplikate)
+      if (isHSTSViolation && addedErrorTypes.has('HSTS')) return;
+      if (isCookieViolation && addedErrorTypes.has('COOKIE_BANNER')) return;
       
       // Prüfe ob Violation durch manuelle Eingabe neutralisiert wurde
       const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
@@ -1300,6 +1309,10 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
           neutralizedBy: neutralizedBySSL ? 'SSL-Zertifikat vorhanden' : 
                         neutralizedByCookie ? 'Cookie-Consent vorhanden' : undefined
         });
+        
+        // Markiere Fehlertyp als hinzugefügt
+        if (isHSTSViolation) addedErrorTypes.add('HSTS');
+        if (isCookieViolation) addedErrorTypes.add('COOKIE_BANNER');
       }
     }
   });
@@ -1393,20 +1406,14 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   const securityHeaders = privacyData?.realApiData?.securityHeaders;
   const hstsPresent = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
   
-  if (securityHeaders && !hstsPresent) {
-    // Prüfe ob bereits eine HSTS-Violation in den Auto-Violations existiert
-    const hasExistingHSTSViolation = criticalErrors.some(e => 
-      e.description?.includes('HSTS') || e.description?.includes('Strict-Transport-Security')
-    );
-    
-    if (!hasExistingHSTSViolation) {
-      criticalErrors.push({
-        id: 'hsts-missing',
-        description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
-        neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
-      });
-      console.log('🛡️ DSGVO: Fehlender HSTS-Header als kritischer Fehler hinzugefügt');
-    }
+  if (securityHeaders && !hstsPresent && !addedErrorTypes.has('HSTS')) {
+    criticalErrors.push({
+      id: 'hsts-missing',
+      description: 'HSTS-Header (Strict-Transport-Security) fehlt - kritische Sicherheitslücke',
+      neutralized: false // HSTS kann NICHT durch SSL neutralisiert werden!
+    });
+    addedErrorTypes.add('HSTS');
+    console.log('🛡️ DSGVO: Fehlender HSTS-Header als kritischer Fehler hinzugefügt');
   }
   
   // Zähle nicht-neutralisierte kritische Fehler
