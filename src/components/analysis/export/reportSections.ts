@@ -443,7 +443,26 @@ export const generateDataPrivacySection = (
   // Liste der kritischen Fehler für detaillierte Anzeige
   const criticalErrorsList: { source: string; description: string; article?: string; recommendation?: string }[] = [];
   
-  // 0. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
+  // Track bereits hinzugefügte Fehlertypen um Duplikate zu vermeiden
+  const addedErrorTypes = new Set<string>();
+  
+  // 0A. Cookie-Banner Prüfung (VOR Auto-Violations)
+  const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                         privacyData?.hasConsentBanner || 
+                         manualDataPrivacyData?.cookieConsent;
+  
+  if (!hasCookieBanner) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Auto',
+      description: 'Cookie-Consent-Banner nicht erkannt',
+      article: 'Art. 7 DSGVO',
+      recommendation: 'Cookie-Consent-Banner implementieren'
+    });
+    addedErrorTypes.add('COOKIE_BANNER');
+  }
+  
+  // 0B. HSTS-Header Prüfung aus Security Headers (unabhängig von Violations)
   const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
   const hasHSTSFromSecurityHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
   const hasHSTSHeaderData = hasHSTSFromSSL || hasHSTSFromSecurityHeaders;
@@ -457,6 +476,7 @@ export const generateDataPrivacySection = (
       article: 'Art. 32 DSGVO',
       recommendation: 'HSTS-Header auf dem Server konfigurieren'
     });
+    addedErrorTypes.add('HSTS');
   }
   
   allViolations.forEach((v: any, i: number) => {

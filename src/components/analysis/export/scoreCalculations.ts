@@ -1279,7 +1279,7 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   
   // 0A: Cookie-Banner Status prüfen (VOR Auto-Violations)
   const hasCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
-                         privacyData?.cookieBanner?.detected || 
+                         privacyData?.hasConsentBanner || 
                          manualDataPrivacyData?.cookieConsent;
   
   if (!hasCookieBanner) {
