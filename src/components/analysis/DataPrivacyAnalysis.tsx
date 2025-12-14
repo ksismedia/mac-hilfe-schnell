@@ -497,6 +497,13 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         const isCookieViolation = v.description?.includes('Cookie') && 
                                                   v.description?.includes('Banner');
                         
+                        // Überspringe HSTS-Violations wenn wir sie schon oben hinzugefügt haben
+                        const isHSTSViolation = v.description?.includes('HSTS') || 
+                                               v.description?.includes('Strict-Transport-Security');
+                        if (isHSTSViolation && securityHeaders && !hasHSTS) {
+                          return; // Schon oben behandelt
+                        }
+                        
                         const neutralizedBySSL = isSSLViolation && manualDataPrivacyData?.hasSSL === true;
                         const neutralizedByCookie = isCookieViolation && manualDataPrivacyData?.cookieConsent === true;
                         
