@@ -446,15 +446,61 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                   <CardTitle className="flex items-center gap-2 text-destructive">
                     <Scale className="h-5 w-5" />
                     DSGVO-Konformität
-                    <div 
-                      className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                        getDSGVOScore() >= 90 ? 'bg-yellow-400 text-black' : 
-                        getDSGVOScore() >= 61 ? 'bg-green-500 text-white' : 
-                        'bg-red-500 text-white'
-                      }`}
-                    >
-                      {getDSGVOScore()}%
-                    </div>
+                    {(() => {
+                      // Berechne den effektiven Score MIT UI-Kappung
+                      const deselected = manualDataPrivacyData?.deselectedViolations || [];
+                      const allViolations = privacyData?.violations || [];
+                      const securityHeaders = privacyData?.realApiData?.securityHeaders;
+                      const hasHSTSFromSSL = privacyData?.realApiData?.ssl?.hasHSTS === true;
+                      const hasHSTSFromHeaders = securityHeaders?.headers?.['Strict-Transport-Security']?.present === true;
+                      const hasHSTS = hasHSTSFromSSL || hasHSTSFromHeaders;
+                      
+                      let remainingCount = 0;
+                      
+                      // HSTS fehlt
+                      if (securityHeaders && !hasHSTS) remainingCount++;
+                      
+                      // Auto-Violations (critical/high, nicht neutralisiert, keine Duplikate)
+                      const seenDescriptions = new Set<string>();
+                      if (securityHeaders && !hasHSTS) seenDescriptions.add('HSTS');
+                      
+                      allViolations.forEach((v: any, i: number) => {
+                        if (!deselected.includes(`auto-${i}`) && (v.severity === 'critical' || v.severity === 'high')) {
+                          const isHSTS = v.description?.includes('HSTS') || v.description?.includes('Strict-Transport-Security');
+                          const isCookie = v.description?.includes('Cookie') && v.description?.includes('Banner');
+                          const isSSL = (v.description?.includes('SSL') || v.description?.includes('TLS')) && !isHSTS;
+                          
+                          if (isHSTS && seenDescriptions.has('HSTS')) return;
+                          if (isCookie && seenDescriptions.has('Cookie')) return;
+                          
+                          const neutralized = (isSSL && manualDataPrivacyData?.hasSSL) || 
+                                            (isCookie && manualDataPrivacyData?.cookieConsent);
+                          if (!neutralized) {
+                            remainingCount++;
+                            if (isCookie) seenDescriptions.add('Cookie');
+                          }
+                        }
+                      });
+                      
+                      let scoreCap = 100;
+                      if (remainingCount >= 3) scoreCap = 20;
+                      else if (remainingCount === 2) scoreCap = 35;
+                      else if (remainingCount === 1) scoreCap = 59;
+                      
+                      const effectiveScore = Math.min(getDSGVOScore(), scoreCap);
+                      
+                      return (
+                        <div 
+                          className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                            effectiveScore >= 90 ? 'bg-yellow-400 text-black' : 
+                            effectiveScore >= 61 ? 'bg-green-500 text-white' : 
+                            'bg-red-500 text-white'
+                          }`}
+                        >
+                          {effectiveScore}%
+                        </div>
+                      );
+                    })()}
                   </CardTitle>
                   <CardDescription>
                     Bewertung nach DSGVO Art. 5-22, ePrivacy-VO und TTDSG
