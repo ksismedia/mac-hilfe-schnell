@@ -1572,87 +1572,80 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
     return 0;
   }
   
-  // Check if cookie banner is present based on:
-  // 1. Automatic detection
-  // 2. Manual override: if "no cookie banner" violation is deselected AND manual checkboxes indicate compliance
-  const autoCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
-                          privacyData?.cookieBanner?.detected || 
-                          false;
-  const deselectedViolations = manualDataPrivacyData?.deselectedViolations || [];
-  const totalViolations = privacyData?.violations || [];
-  
-  // Find the "no cookie banner" violation
-  const noCookieBannerViolationIndex = totalViolations.findIndex((v: any) => 
-    v.description?.includes('Cookie-Consent-Banner') || 
-    v.description?.includes('Cookie-Banner')
-  );
-  
-  const cookieBannerViolationDeselected = noCookieBannerViolationIndex >= 0 && 
-    deselectedViolations.includes(`auto-${noCookieBannerViolationIndex}`);
-  
-  // Check manual cookie compliance indicators
-  const manualCookieCompliance = manualDataPrivacyData?.cookiePolicy || 
-                                 manualDataPrivacyData?.cookieConsent;
-  
-  // Cookie banner is considered present if:
-  // - Auto-detected OR
-  // - The "no banner" violation was deselected AND manual data indicates compliance
-  const hasCookieBanner = autoCookieBanner || 
-                         (cookieBannerViolationDeselected && manualCookieCompliance);
-  
+  // === DATEN SAMMELN ===
   const sslGrade = privacyData.sslGrade || privacyData?.sslRating;
   const securityHeaders = privacyData.securityHeaders || privacyData?.realApiData?.securityHeaders;
   const hasHSTS = securityHeaders?.headers?.['Strict-Transport-Security']?.present || 
                    securityHeaders?.hsts || 
                    privacyData?.realApiData?.ssl?.hasHSTS;
   
-  // KRITISCHE FEHLER SAMMELN für differenzierte Kappung
-  const criticalSecurityErrors: Array<{id: string, description: string}> = [];
+  // Cookie-Banner Status prüfen
+  const autoCookieBanner = privacyData?.realApiData?.cookieBanner?.detected || 
+                          privacyData?.cookieBanner?.detected || 
+                          false;
+  const manualCookieBanner = manualDataPrivacyData?.cookiePolicy || 
+                             manualDataPrivacyData?.cookieConsent ||
+                             manualDataPrivacyData?.hasCookieBanner;
+  const hasCookieBanner = autoCookieBanner || manualCookieBanner;
   
-  // 1. SSL-Grade kritisch (D, E, F, T)
+  // Manuelle SSL-Bestätigung
+  const manualSSLConfirmed = manualDataPrivacyData?.sslPresent || 
+                              manualDataPrivacyData?.httpsEnabled;
+  
+  // === KRITISCHE FEHLER SAMMELN (wie bei DSGVO) ===
+  const criticalErrors: Array<{id: string, description: string, neutralized: boolean, neutralizedBy?: string}> = [];
+  
+  // 1. SSL-Grade kritisch (D, E, F, T) - kann durch manuelle SSL-Bestätigung neutralisiert werden
   if (sslGrade && ['D', 'E', 'F', 'T'].includes(sslGrade)) {
-    criticalSecurityErrors.push({
+    const neutralized = manualSSLConfirmed === true;
+    criticalErrors.push({
       id: 'ssl-critical',
-      description: `SSL-Zertifikat mit kritischer Bewertung (${sslGrade})`
+      description: `SSL-Zertifikat mit kritischer Bewertung (${sslGrade})`,
+      neutralized,
+      neutralizedBy: neutralized ? 'Manuelle SSL-Bestätigung' : undefined
     });
-    console.log('🔒 Technische Sicherheit: Kritisches SSL-Zertifikat (' + sslGrade + ')');
   }
   
   // 2. HSTS fehlt - KRITISCHER Fehler (wird NICHT durch SSL neutralisiert!)
   if (!hasHSTS) {
-    criticalSecurityErrors.push({
+    criticalErrors.push({
       id: 'hsts-missing',
-      description: 'HSTS-Header (Strict-Transport-Security) fehlt'
+      description: 'HSTS-Header (Strict-Transport-Security) fehlt',
+      neutralized: false // HSTS kann nicht manuell neutralisiert werden
     });
-    console.log('🔒 Technische Sicherheit: Fehlender HSTS-Header als kritischer Fehler');
   }
   
-  // 3. Cookie-Banner fehlt
-  if (!hasCookieBanner) {
-    criticalSecurityErrors.push({
+  // 3. Cookie-Banner fehlt - kann durch manuelle Eingabe neutralisiert werden
+  if (!autoCookieBanner) {
+    const neutralized = manualCookieBanner === true;
+    criticalErrors.push({
       id: 'cookie-banner-missing',
-      description: 'Cookie-Consent-Banner fehlt'
+      description: 'Cookie-Consent-Banner fehlt',
+      neutralized,
+      neutralizedBy: neutralized ? 'Manuelle Cookie-Banner-Bestätigung' : undefined
     });
-    console.log('🔒 Technische Sicherheit: Fehlender Cookie-Banner als kritischer Fehler');
   }
   
-  const criticalErrorCount = criticalSecurityErrors.length;
-  console.log('🔒 Technische Sicherheit: ' + criticalErrorCount + ' kritische Fehler gefunden');
+  // Nur nicht-neutralisierte Fehler zählen für Kappung
+  const activeErrors = criticalErrors.filter(e => !e.neutralized);
+  const activeCriticalCount = activeErrors.length;
   
-  // KAPPUNG basierend auf Anzahl kritischer Fehler
+  console.log('🔒 Technische Sicherheit: ' + criticalErrors.length + ' kritische Fehler, ' + activeCriticalCount + ' nicht neutralisiert');
+  
+  // === KAPPUNG basierend auf aktiven kritischen Fehlern (wie bei DSGVO) ===
   let scoreCap = 100;
-  if (criticalErrorCount >= 3) {
+  if (activeCriticalCount >= 3) {
     scoreCap = 20;
-    console.log('🔒 Technische Sicherheit: 3+ kritische Fehler → Score gekappt auf max 20%');
-  } else if (criticalErrorCount === 2) {
+    console.log('🔒 Technische Sicherheit: 3+ aktive kritische Fehler → Score gekappt auf max 20%');
+  } else if (activeCriticalCount === 2) {
     scoreCap = 35;
-    console.log('🔒 Technische Sicherheit: 2 kritische Fehler → Score gekappt auf max 35%');
-  } else if (criticalErrorCount === 1) {
+    console.log('🔒 Technische Sicherheit: 2 aktive kritische Fehler → Score gekappt auf max 35%');
+  } else if (activeCriticalCount === 1) {
     scoreCap = 59;
-    console.log('🔒 Technische Sicherheit: 1 kritischer Fehler → Score gekappt auf max 59%');
+    console.log('🔒 Technische Sicherheit: 1 aktiver kritischer Fehler → Score gekappt auf max 59%');
   }
   
-  // SCORE-BERECHNUNG
+  // === SCORE-BERECHNUNG ===
   let score = 0;
   let totalWeight = 0;
   
@@ -1673,6 +1666,10 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
       }
     })();
     score += sslScore * 0.5;
+    totalWeight += 0.5;
+  } else if (manualSSLConfirmed) {
+    // Wenn kein SSL-Rating aber manuell bestätigt → 80% annehmen
+    score += 80 * 0.5;
     totalWeight += 0.5;
   }
   
@@ -1698,15 +1695,14 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
   
   // Normalisieren wenn nicht alle Komponenten vorhanden
   if (totalWeight > 0 && totalWeight < 1) {
-    // Nur vorhandene Komponenten normalisieren
     score = Math.round(score / totalWeight);
   } else if (totalWeight === 0) {
-    score = 50; // Basis-Score wenn keine Daten
+    score = 50;
   } else {
     score = Math.round(score);
   }
   
-  // FINALE KAPPUNG anwenden
+  // === FINALE KAPPUNG anwenden ===
   const finalScore = Math.max(0, Math.min(100, score));
   const cappedScore = Math.min(finalScore, scoreCap);
   
