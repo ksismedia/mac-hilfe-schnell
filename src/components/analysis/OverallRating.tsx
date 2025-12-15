@@ -134,13 +134,13 @@ const OverallRating: React.FC<OverallRatingProps> = ({
     manualDataPrivacyData,
     manualAccessibilityData,
     securityData,
-    null, // manualReputationData
-    null, // extensionData
-    null  // manualSEOData
+    manualReputationData,
+    extensionData,
+    null  // manualSEOData - OverallRating hat keinen Zugriff auf manualSEOData
   );
   
   // Kategorie 2: Webseiten-Performance & Technik
-  const cat2Avg = calculateWebsitePerformanceTechScore(realData, manualConversionData, null);
+  const cat2Avg = calculateWebsitePerformanceTechScore(realData, manualConversionData, manualMobileData);
   
   // Kategorie 3: Online-/Web-/Social-Media Performance
   const cat3Avg = calculateSocialMediaPerformanceScore(
