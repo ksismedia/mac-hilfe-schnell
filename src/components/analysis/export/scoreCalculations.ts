@@ -262,13 +262,17 @@ export const calculateOnlineQualityAuthorityScore = (
       }
     }
     
-    // Durchschnitt aus allen 9 Bereichen - nur Scores > 0 berücksichtigen
+    // Durchschnitt aus allen 10 Bereichen - nur Scores > 0 berücksichtigen
+    // Kategorie 1: SEO, Local SEO, Impressum, Keywords, Content, Barrierefreiheit, 
+    //              Backlinks, DSGVO, Technische Sicherheit, Website-Sicherheit
     const cat1Scores = [
       seoScore,
       localSEOScore,
       imprintScore
     ].filter(s => s > 0);
     
+    // Keywords-Score hinzufügen (war bisher nicht enthalten!)
+    if (currentKeywordsScore > 0) cat1Scores.push(currentKeywordsScore);
     if (contentQualityScore > 0) cat1Scores.push(contentQualityScore);
     if (accessibilityScore > 0) cat1Scores.push(accessibilityScore);
     if (backlinksScore > 0) cat1Scores.push(backlinksScore);
