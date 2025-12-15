@@ -1347,43 +1347,39 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
   const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
   const externalServices = manualDataPrivacyData?.externalServices || [];
   
-  // WICHTIG: Pflichtfelder (processingRegister, dataProtectionOfficer) werden NUR als kritische Fehler
-  // gezählt, wenn der Nutzer explizit manuelle DSGVO-Daten eingegeben hat.
-  // Wenn KEINE manuellen Daten vorhanden sind, werden diese Felder nicht als kritische Fehler gezählt,
-  // da sie dann nur informativ/hinweisend sind (nicht für die Bewertung relevant).
-  const hasManualDSGVOData = manualDataPrivacyData && (
-    manualDataPrivacyData.hasSSL !== undefined ||
-    manualDataPrivacyData.cookieConsent !== undefined ||
-    manualDataPrivacyData.processingRegister !== undefined ||
-    manualDataPrivacyData.dataProtectionOfficer !== undefined ||
-    manualDataPrivacyData.thirdCountryTransfer !== undefined ||
-    (trackingScripts && trackingScripts.length > 0) ||
-    (externalServices && externalServices.length > 0) ||
-    (manualDataPrivacyData.deselectedViolations && manualDataPrivacyData.deselectedViolations.length > 0)
-  );
+  // PFLICHTFELDER: Wenn nicht ausgefüllt (undefined) oder explizit false, als kritische Fehler behandeln
+  // Verarbeitungsverzeichnis (Art. 30 DSGVO) - PFLICHTFELD
+  if (manualDataPrivacyData?.processingRegister === undefined) {
+    criticalErrors.push({
+      id: 'processing-register-missing',
+      description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht angegeben',
+      neutralized: false
+    });
+    console.log('🛡️ DSGVO: Verarbeitungsverzeichnis nicht angegeben → kritischer Fehler');
+  } else if (manualDataPrivacyData?.processingRegister === false) {
+    criticalErrors.push({
+      id: 'processing-register-no',
+      description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht vorhanden',
+      neutralized: false
+    });
+    console.log('🛡️ DSGVO: Verarbeitungsverzeichnis explizit nicht vorhanden → kritischer Fehler');
+  }
   
-  // PFLICHTFELDER: NUR als kritische Fehler behandeln wenn der Nutzer manuelle Daten eingegeben hat
-  // und die Pflichtfelder EXPLIZIT als "false" (nicht vorhanden) markiert hat
-  if (hasManualDSGVOData) {
-    // Verarbeitungsverzeichnis (Art. 30 DSGVO) - nur wenn explizit false
-    if (manualDataPrivacyData?.processingRegister === false) {
-      criticalErrors.push({
-        id: 'processing-register-no',
-        description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht vorhanden',
-        neutralized: false
-      });
-      console.log('🛡️ DSGVO: Verarbeitungsverzeichnis explizit nicht vorhanden → kritischer Fehler');
-    }
-    
-    // Datenschutzbeauftragter (Art. 37 DSGVO) - nur wenn explizit false
-    if (manualDataPrivacyData?.dataProtectionOfficer === false) {
-      criticalErrors.push({
-        id: 'dpo-no',
-        description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht vorhanden',
-        neutralized: false
-      });
-      console.log('🛡️ DSGVO: Datenschutzbeauftragter explizit nicht vorhanden → kritischer Fehler');
-    }
+  // Datenschutzbeauftragter (Art. 37 DSGVO) - PFLICHTFELD
+  if (manualDataPrivacyData?.dataProtectionOfficer === undefined) {
+    criticalErrors.push({
+      id: 'dpo-missing',
+      description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht angegeben',
+      neutralized: false
+    });
+    console.log('🛡️ DSGVO: Datenschutzbeauftragter nicht angegeben → kritischer Fehler');
+  } else if (manualDataPrivacyData?.dataProtectionOfficer === false) {
+    criticalErrors.push({
+      id: 'dpo-no',
+      description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht vorhanden',
+      neutralized: false
+    });
+    console.log('🛡️ DSGVO: Datenschutzbeauftragter explizit nicht vorhanden → kritischer Fehler');
   }
   
   // Tracking-Scripts ohne Consent-Anforderung (Marketing/Analytics) = kritischer Fehler
@@ -1485,26 +1481,32 @@ export const calculateDataPrivacyScore = (realData: any, privacyData: any, manua
       }
     });
     
-    // NEUE DSGVO-PFLICHTPARAMETER - Bewertung nur wenn manuelle Daten vorhanden
-    // Verarbeitungsverzeichnis (Art. 30) - Bonus wenn vorhanden, Malus wenn explizit nicht vorhanden
+    // NEUE DSGVO-PFLICHTPARAMETER - Pflichtfelder werden als kritische Fehler behandelt
+    // Verarbeitungsverzeichnis (Art. 30) - PFLICHT
     if (manualDataPrivacyData?.processingRegister === true) {
       score += 10; // Bonus für erfüllte Pflicht
       console.log('🛡️ DSGVO: Verarbeitungsverzeichnis vorhanden → +10 Punkte');
     } else if (manualDataPrivacyData?.processingRegister === false) {
       score -= 10; // Malus für explizit nicht vorhanden
       console.log('🛡️ DSGVO: Verarbeitungsverzeichnis explizit nicht vorhanden → -10 Punkte');
+    } else {
+      // undefined = "Nicht angegeben" → Malus (Pflichtfeld nicht dokumentiert)
+      score -= 5;
+      console.log('🛡️ DSGVO: Verarbeitungsverzeichnis nicht angegeben → -5 Punkte');
     }
-    // undefined = nicht angegeben → kein Bonus/Malus (Nutzer hat nichts eingegeben)
     
-    // Datenschutzbeauftragter (Art. 37) - Bonus wenn vorhanden, Malus wenn explizit nicht vorhanden
+    // Datenschutzbeauftragter (Art. 37) - PFLICHT
     if (manualDataPrivacyData?.dataProtectionOfficer === true) {
       score += 10; // Bonus für erfüllte Pflicht
       console.log('🛡️ DSGVO: Datenschutzbeauftragter vorhanden → +10 Punkte');
     } else if (manualDataPrivacyData?.dataProtectionOfficer === false) {
       score -= 5; // Malus für explizit nicht vorhanden (nicht so kritisch wenn klein)
       console.log('🛡️ DSGVO: Datenschutzbeauftragter explizit nicht vorhanden → -5 Punkte');
+    } else {
+      // undefined = "Nicht angegeben" → Malus (Pflichtfeld nicht dokumentiert)
+      score -= 5;
+      console.log('🛡️ DSGVO: Datenschutzbeauftragter nicht angegeben → -5 Punkte');
     }
-    // undefined = nicht angegeben → kein Bonus/Malus (Nutzer hat nichts eingegeben)
     
     // Drittland-Transfer (Art. 44-49) - muss dokumentiert sein für 100%
     if (manualDataPrivacyData?.thirdCountryTransfer === false) {
