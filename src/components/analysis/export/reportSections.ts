@@ -526,6 +526,84 @@ export const generateDataPrivacySection = (
     });
   }
   
+  // DSGVO-PFLICHTFELDER als kritische Fehler
+  // Verarbeitungsverzeichnis (Art. 30 DSGVO) - PFLICHTFELD
+  if (manualDataPrivacyData?.processingRegister === undefined) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Pflichtfeld',
+      description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht angegeben',
+      article: 'Art. 30 DSGVO',
+      recommendation: 'Verarbeitungsverzeichnis anlegen und pflegen'
+    });
+  } else if (manualDataPrivacyData?.processingRegister === false) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Pflichtfeld',
+      description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht vorhanden',
+      article: 'Art. 30 DSGVO',
+      recommendation: 'Verarbeitungsverzeichnis anlegen und pflegen'
+    });
+  }
+  
+  // Datenschutzbeauftragter (Art. 37 DSGVO) - PFLICHTFELD
+  if (manualDataPrivacyData?.dataProtectionOfficer === undefined) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Pflichtfeld',
+      description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht angegeben',
+      article: 'Art. 37 DSGVO',
+      recommendation: 'Datenschutzbeauftragten benennen (sofern Pflicht besteht)'
+    });
+  } else if (manualDataPrivacyData?.dataProtectionOfficer === false) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Pflichtfeld',
+      description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht vorhanden',
+      article: 'Art. 37 DSGVO',
+      recommendation: 'Datenschutzbeauftragten benennen (sofern Pflicht besteht)'
+    });
+  }
+  
+  // Tracking-Scripts ohne Consent
+  const trackingScripts = manualDataPrivacyData?.trackingScripts || [];
+  trackingScripts.forEach((script: any) => {
+    if ((script.type === 'marketing' || script.type === 'analytics') && !script.consentRequired) {
+      criticalCount++;
+      criticalErrorsList.push({
+        source: 'Tracking',
+        description: `Tracking-Script "${script.name}" ohne Consent-Anforderung`,
+        article: 'Art. 7 DSGVO / TTDSG',
+        recommendation: 'Consent-Anforderung für Tracking-Scripts implementieren'
+      });
+    }
+  });
+  
+  // Externe Dienste in Drittland ohne AVV
+  const externalServices = manualDataPrivacyData?.externalServices || [];
+  externalServices.forEach((service: any) => {
+    if (service.thirdCountry && !service.dataProcessingAgreement) {
+      criticalCount++;
+      criticalErrorsList.push({
+        source: 'Drittland',
+        description: `Externer Dienst "${service.name}" in Drittland ohne AVV/DPA`,
+        article: 'Art. 28, 44-49 DSGVO',
+        recommendation: 'AVV/DPA mit Drittland-Diensten abschließen'
+      });
+    }
+  });
+  
+  // Drittland-Transfer ohne Dokumentation
+  if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
+    criticalCount++;
+    criticalErrorsList.push({
+      source: 'Drittland',
+      description: 'Drittland-Transfer ohne Dokumentation der Rechtsgrundlage',
+      article: 'Art. 44-49 DSGVO',
+      recommendation: 'Rechtsgrundlage für Drittland-Transfer dokumentieren'
+    });
+  }
+  
   // Bestimme Kappung
   let scoreCap = 100;
   if (criticalCount >= 3) scoreCap = 20;

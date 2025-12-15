@@ -565,8 +565,38 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       }
                     });
                     
-                    // 3. NEUE DSGVO-Parameter als kritische Fehler
-                    // Tracking-Scripts ohne Consent (Marketing/Analytics)
+                    // 3. DSGVO-PFLICHTFELDER als kritische Fehler
+                    // Verarbeitungsverzeichnis (Art. 30 DSGVO) - PFLICHTFELD
+                    if (manualDataPrivacyData?.processingRegister === undefined) {
+                      criticalErrors.push({
+                        source: 'Pflichtfeld',
+                        description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht angegeben',
+                        neutralized: false
+                      });
+                    } else if (manualDataPrivacyData?.processingRegister === false) {
+                      criticalErrors.push({
+                        source: 'Pflichtfeld',
+                        description: 'Verarbeitungsverzeichnis (Art. 30 DSGVO) - nicht vorhanden',
+                        neutralized: false
+                      });
+                    }
+                    
+                    // Datenschutzbeauftragter (Art. 37 DSGVO) - PFLICHTFELD
+                    if (manualDataPrivacyData?.dataProtectionOfficer === undefined) {
+                      criticalErrors.push({
+                        source: 'Pflichtfeld',
+                        description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht angegeben',
+                        neutralized: false
+                      });
+                    } else if (manualDataPrivacyData?.dataProtectionOfficer === false) {
+                      criticalErrors.push({
+                        source: 'Pflichtfeld',
+                        description: 'Datenschutzbeauftragter (Art. 37 DSGVO) - nicht vorhanden',
+                        neutralized: false
+                      });
+                    }
+                    
+                    // 4. Tracking-Scripts ohne Consent (Marketing/Analytics)
                     trackingScripts.forEach((script: any) => {
                       if ((script.type === 'marketing' || script.type === 'analytics') && !script.consentRequired) {
                         criticalErrors.push({
@@ -577,7 +607,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       }
                     });
                     
-                    // Externe Dienste mit Drittland-Transfer OHNE AVV
+                    // 5. Externe Dienste mit Drittland-Transfer OHNE AVV
                     externalServices.forEach((service: any) => {
                       if (service.thirdCountry && !service.dataProcessingAgreement) {
                         criticalErrors.push({
@@ -588,7 +618,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                       }
                     });
                     
-                    // Drittland-Transfer ohne Details
+                    // 6. Drittland-Transfer ohne Details
                     if (manualDataPrivacyData?.thirdCountryTransfer && !manualDataPrivacyData?.thirdCountryTransferDetails) {
                       criticalErrors.push({
                         source: 'Drittland-Transfer',
