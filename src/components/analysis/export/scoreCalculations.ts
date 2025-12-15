@@ -1654,11 +1654,10 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
   
   // SCORE-BERECHNUNG
   let score = 0;
-  let componentCount = 0;
+  let totalWeight = 0;
   
-  // SSL-Bewertung (60% Gewicht)
+  // SSL-Bewertung (bis zu 50% Gewicht)
   if (sslGrade) {
-    componentCount++;
     const sslScore = (() => {
       switch (sslGrade) {
         case 'A+': return 100;
@@ -1673,12 +1672,12 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
         default: return 60;
       }
     })();
-    score += sslScore * 0.6;
+    score += sslScore * 0.5;
+    totalWeight += 0.5;
   }
   
-  // Security Headers (40% Gewicht)
+  // Security Headers (bis zu 30% Gewicht)
   if (securityHeaders) {
-    componentCount++;
     const headers = securityHeaders.headers || {};
     const csp = headers['Content-Security-Policy']?.present || securityHeaders.csp;
     const xFrame = headers['X-Frame-Options']?.present || securityHeaders.xFrameOptions;
@@ -1687,21 +1686,24 @@ export const calculateTechnicalSecurityScore = (privacyData: any, manualDataPriv
     
     const presentHeaders = [csp, xFrame, xContent, hasHSTS, referrer].filter(Boolean).length;
     const headerScore = Math.round((presentHeaders / 5) * 100);
-    score += headerScore * 0.4;
+    score += headerScore * 0.3;
+    totalWeight += 0.3;
   }
   
-  // Wenn keine Komponenten vorhanden, Basis-Score
-  if (componentCount === 0) {
-    score = 50;
+  // Cookie-Banner (20% Gewicht)
+  if (hasCookieBanner) {
+    score += 100 * 0.2;
+  }
+  totalWeight += 0.2;
+  
+  // Normalisieren wenn nicht alle Komponenten vorhanden
+  if (totalWeight > 0 && totalWeight < 1) {
+    // Nur vorhandene Komponenten normalisieren
+    score = Math.round(score / totalWeight);
+  } else if (totalWeight === 0) {
+    score = 50; // Basis-Score wenn keine Daten
   } else {
     score = Math.round(score);
-  }
-  
-  // Cookie-Banner Bonus/Malus
-  if (hasCookieBanner) {
-    score += 10;
-  } else {
-    score -= 10;
   }
   
   // FINALE KAPPUNG anwenden
