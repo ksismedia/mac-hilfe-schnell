@@ -1211,6 +1211,28 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         </div>
                       )}
                     </div>
+                    
+                    {/* Rechtlicher Hinweis bei manuellen Sicherheitsprüfungen */}
+                    {(manualDataPrivacyData?.cookieConsent !== undefined ||
+                      manualDataPrivacyData?.cookiePolicy !== undefined) && (
+                      <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                          <Scale className="h-5 w-5" />
+                          Rechtlicher Hinweis: Manuelle Sicherheitsprüfung
+                        </div>
+                        <p className="text-red-700 text-sm mb-3">
+                          <strong>Wichtig:</strong> Die Prüfung der technischen Sicherheitsparameter 
+                          (SSL-Zertifikat, Cookie-Banner, Security Headers) erfolgte teilweise auf Basis manueller Angaben. 
+                          Für die Richtigkeit und Vollständigkeit dieser Angaben sowie die technische Konformität 
+                          kann keine Gewährleistung übernommen werden.
+                        </p>
+                        <div className="bg-red-100 border border-red-300 rounded p-3 text-red-800 text-sm">
+                          <strong>⚠️ Empfehlung:</strong> Bei Zweifeln an der technischen Sicherheit empfehlen wir 
+                          eine professionelle Sicherheitsüberprüfung durch einen IT-Sicherheitsexperten. 
+                          Nur eine fachkundige Prüfung kann sicherstellen, dass Ihre Systeme aktuellen Sicherheitsstandards entsprechen.
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

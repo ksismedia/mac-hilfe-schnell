@@ -1105,6 +1105,25 @@ export const generateDataPrivacySection = (
                         })()}
                     </div>
 
+                    ${(manualDataPrivacyData?.cookieConsent !== undefined ||
+                      manualDataPrivacyData?.cookiePolicy !== undefined) ? `
+                    <div style="grid-column: 1 / -1; margin-top: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
+                      <div style="display: flex; align-items: center; gap: 8px; color: #991b1b; font-weight: 600; margin-bottom: 8px; font-size: 13px;">
+                        ⚖️ Rechtlicher Hinweis: Manuelle Sicherheitsprüfung
+                      </div>
+                      <p style="font-size: 12px; color: #b91c1c; margin-bottom: 10px;">
+                        <strong>Wichtig:</strong> Die Prüfung der technischen Sicherheitsparameter 
+                        (SSL-Zertifikat, Cookie-Banner, Security Headers) erfolgte teilweise auf Basis manueller Angaben. 
+                        Für die Richtigkeit und Vollständigkeit dieser Angaben sowie die technische Konformität 
+                        kann keine Gewährleistung übernommen werden.
+                      </p>
+                      <div style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px; color: #991b1b; font-size: 11px;">
+                        <strong>⚠️ Empfehlung:</strong> Bei Zweifeln an der technischen Sicherheit empfehlen wir 
+                        eine professionelle Sicherheitsüberprüfung durch einen IT-Sicherheitsexperten. 
+                        Nur eine fachkundige Prüfung kann sicherstellen, dass Ihre Systeme aktuellen Sicherheitsstandards entsprechen.
+                      </div>
+                    </div>
+                    ` : ''}
                     <div class="metric-item">
                         <div class="metric-title">Website-Sicherheit (Google Safe Browsing)</div>
                         ${(() => {
