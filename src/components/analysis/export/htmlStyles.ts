@@ -2,6 +2,44 @@
 export const getHTMLStyles = () => {
   console.log('CSS Styles being applied');
   return `
+/* Navigation Links */
+.nav-category-link {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+}
+.nav-category-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+.nav-category-link:hover h3 {
+  color: #fbbf24 !important;
+}
+.back-to-nav-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 8px;
+  color: #fbbf24;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 30px;
+}
+.back-to-nav-button:hover {
+  background: rgba(251, 191, 36, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+.category-anchor {
+  scroll-margin-top: 20px;
+}
 html, body, * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; overflow-x: hidden; }
 .collapsible:not(.section-header) { 
   transition: all 0.3s ease; 

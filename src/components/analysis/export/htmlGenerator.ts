@@ -2769,55 +2769,59 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-        <!-- Kategorisierte Score-Übersicht -->
-         <div class="categorized-scores">
+        <!-- Kategorisierte Score-Übersicht (Klickbare Navigation) -->
+         <div id="navigation-overview" class="categorized-scores">
           <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
-          <div class="score-category">
+          <a href="#cat-online-qualitaet" class="score-category nav-category-link">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Online-Qualität · Relevanz · Autorität</h3>
+              <h3 style="margin: 0; color: #000000;">📊 Online-Qualität · Relevanz · Autorität</h3>
               ${cat1Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat1Avg)}">${cat1Avg}%</div>` : ''}
             </div>
-          </div>
+          </a>
 
           <!-- Kategorie 2: Webseiten-Performance & Technik -->
-          <div class="score-category">
+          <a href="#cat-performance-technik" class="score-category nav-category-link">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
+              <h3 style="margin: 0; color: #000000;">⚡ Webseiten-Performance & Technik</h3>
               <div class="header-score-circle ${getScoreColorClass(cat2Avg)}">${cat2Avg}%</div>
             </div>
-          </div>
+          </a>
 
           <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
-          <div class="score-category">
+          <a href="#cat-social-media" class="score-category nav-category-link">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
+              <h3 style="margin: 0; color: #000000;">📱 Online-/Web-/Social-Media Performance</h3>
               ${cat3Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat3Avg)}">${cat3Avg}%</div>` : ''}
             </div>
-          </div>
+          </a>
 
           <!-- Kategorie 4: Markt & Marktumfeld -->
-          <div class="score-category">
+          <a href="#cat-markt-umfeld" class="score-category nav-category-link">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Markt & Marktumfeld</h3>
+              <h3 style="margin: 0; color: #000000;">🏢 Markt & Marktumfeld</h3>
               ${cat4Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat4Avg)}">${cat4Avg}%</div>` : ''}
             </div>
-          </div>
+          </a>
 
-          <!-- Kategorie 5: Außendarstellung & Erscheinungsbild -->
-          <div class="score-category">
+          <!-- Kategorie 5: Qualität · Service · Kundenorientierung -->
+          <a href="#cat-qualitaet-service" class="score-category nav-category-link">
             <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
-              ${cat5Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat5Avg)}">${cat5Avg}%</div>` : ''}
-            </div>
-          </div>
-
-          <!-- Kategorie 6: Qualität · Service · Kundenorientierung -->
-          <div class="score-category">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
+              <h3 style="margin: 0; color: #000000;">⭐ Qualität · Service · Kundenorientierung</h3>
               ${cat6Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat6Avg)}">${cat6Avg}%</div>` : ''}
             </div>
-          </div>
+          </a>
+
+          <!-- Kategorie 6: Außendarstellung & Erscheinungsbild -->
+          <a href="#cat-aussendarstellung" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">🎨 Außendarstellung & Erscheinungsbild</h3>
+              ${cat5Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat5Avg)}">${cat5Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <p style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 15px; grid-column: 1 / -1;">
+            💡 Klicken Sie auf eine Kategorie, um direkt zum entsprechenden Abschnitt zu springen
+          </p>
 
         </div>
 
@@ -2832,8 +2836,8 @@ export const generateCustomerHTML = ({
     </div>
 
     <!-- Kategorie-Überschrift: Online-Qualität · Relevanz · Autorität -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-Qualität · Relevanz · Autorität</h2>
+    <div id="cat-online-qualitaet" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">📊 Online-Qualität · Relevanz · Autorität</h2>
     </div>
 
     <!-- SEO-Bestandsanalyse -->
@@ -3570,9 +3574,14 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
+
     <!-- Kategorie-Überschrift: Webseiten-Performance & Technik -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Webseiten-Performance & Technik</h2>
+    <div id="cat-performance-technik" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">⚡ Webseiten-Performance & Technik</h2>
     </div>
 
     <!-- Website Performance -->
@@ -3956,9 +3965,14 @@ export const generateCustomerHTML = ({
     </div>
     ` : ''}
 
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
+
     <!-- Kategorie-Überschrift: Online-/Web-/Social-Media Performance -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Online-/Web-/Social-Media Performance</h2>
+    <div id="cat-social-media" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">📱 Online-/Web-/Social-Media Performance</h2>
     </div>
 
     <!-- Social Media Listening & Monitoring -->
@@ -4544,9 +4558,14 @@ export const generateCustomerHTML = ({
       `;
     })()}
 
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
+
     <!-- Kategorie-Überschrift: Markt & Marktumfeld -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Markt & Marktumfeld</h2>
+    <div id="cat-markt-umfeld" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">🏢 Markt & Marktumfeld</h2>
     </div>
 
     <!-- Wettbewerber-Analyse -->
@@ -4716,10 +4735,15 @@ export const generateCustomerHTML = ({
       ` : '';
     })()}
 
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
+
     <!-- Kategorie-Überschrift: Qualität · Service · Kundenorientierung -->
     ${cat6Avg > 0 ? `
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Qualität · Service · Kundenorientierung</h2>
+    <div id="cat-qualitaet-service" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">⭐ Qualität · Service · Kundenorientierung</h2>
     </div>
     ` : ''}
 
@@ -4879,9 +4903,14 @@ export const generateCustomerHTML = ({
     </div>
     ` : ''}
 
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
+
     <!-- Kategorie-Überschrift: Außendarstellung & Erscheinungsbild -->
-    <div style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
-      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">Außendarstellung & Erscheinungsbild</h2>
+    <div id="cat-aussendarstellung" class="category-anchor" style="padding: 60px 0 30px 40px !important; margin: 0 !important; text-align: center !important;">
+      <h2 style="color: #ffffff !important; font-size: 1.8em !important; font-weight: bold !important; border-bottom: 3px solid #fbbf24 !important; padding-bottom: 10px !important; display: inline-block !important; margin: 0 !important;">🎨 Außendarstellung & Erscheinungsbild</h2>
     </div>
 
     <!-- Corporate Identity & Außendarstellung -->
@@ -4986,6 +5015,11 @@ export const generateCustomerHTML = ({
     </div>
       ` : '';
     })()}
+
+    <!-- Zurück zur Übersicht Button -->
+    <div style="text-align: center; margin: 20px 0 40px 0;">
+      <a href="#navigation-overview" class="back-to-nav-button">⬆️ Zurück zur Übersicht</a>
+    </div>
 
     <!-- Strategische Empfehlungen -->
     <div class="section">
