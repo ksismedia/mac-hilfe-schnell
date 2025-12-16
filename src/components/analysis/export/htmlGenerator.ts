@@ -4772,7 +4772,38 @@ export const generateCustomerHTML = ({
           };
           
           const germanResponseTime = getGermanResponseTime(quoteResponseData.responseTime);
-          const responseTimeHours = parseFloat(quoteResponseData.responseTime);
+          
+          // Korrekte Stunden-Berechnung basierend auf String-Werten
+          const getResponseTimeHours = (time: string): number => {
+            switch (time) {
+              case '1-hour': return 1;
+              case '2-4-hours': return 3;
+              case '4-8-hours': return 6;
+              case '1-day': return 24;
+              case '2-3-days': return 60;
+              case 'over-3-days': return 96;
+              case 'no-response-2-days': return 48;
+              case 'no-response': return 999;
+              default: return parseFloat(time) || 999;
+            }
+          };
+          
+          // Abgestufte Bewertung der Reaktionszeit
+          const getResponseTimeRating = (time: string): string => {
+            switch (time) {
+              case '1-hour': return 'Exzellente Reaktionszeit';
+              case '2-4-hours': return 'Sehr gute Reaktionszeit';
+              case '4-8-hours': return 'Gute Reaktionszeit';
+              case '1-day': return 'Akzeptable Reaktionszeit';
+              case '2-3-days': return 'Reaktionszeit sollte verbessert werden';
+              case 'over-3-days': return 'Sehr lange Reaktionszeit - dringend optimieren';
+              case 'no-response-2-days': return 'Kritisch: Keine zeitnahe Reaktion auf Kundenanfragen';
+              case 'no-response': return 'Sehr kritisch: Kundenanfragen werden nicht beantwortet';
+              default: return 'Reaktionszeit nicht bewertet';
+            }
+          };
+          
+          const responseTimeHours = getResponseTimeHours(quoteResponseData.responseTime);
           const contactMethodsList = [];
           if (quoteResponseData.contactMethods.phone) contactMethodsList.push('Telefon');
           if (quoteResponseData.contactMethods.email) contactMethodsList.push('E-Mail');
@@ -4809,11 +4840,7 @@ export const generateCustomerHTML = ({
                 ${germanResponseTime}
               </div>
               <p style="margin-top: 10px; color: #6b7280;">
-                ${quoteResponseData.responseTime === 'no-response' ? 'Sehr kritisch: Kundenanfragen werden nicht beantwortet' :
-                  quoteResponseData.responseTime === 'no-response-2-days' ? 'Kritisch: Keine zeitnahe Reaktion auf Kundenanfragen' :
-                  responseTimeHours <= 2 ? 'Exzellente Reaktionszeit' : 
-                  responseTimeHours <= 24 ? 'Gute Reaktionszeit, aber optimierbar' : 
-                  'Reaktionszeit sollte verbessert werden'}
+                ${getResponseTimeRating(quoteResponseData.responseTime)}
               </p>
             </div>
             
