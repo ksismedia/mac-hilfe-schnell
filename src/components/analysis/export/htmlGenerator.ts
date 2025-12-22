@@ -2625,20 +2625,17 @@ export const generateCustomerHTML = ({
                 
                 const cat1Avg = cat1Scores.length > 0 ? Math.round(cat1Scores.reduce((a, b) => a + b, 0) / cat1Scores.length) : 0;
 
-                // Kategorie 2: Webseiten-Performance & Technik
+                // Kategorie 2: Webseiten-Performance & Technik (same logic as calculateWebsitePerformanceTechScore)
+                const performanceScore = realData.performance?.score || 0;
+                const mobileScore = manualMobileData?.overallScore || realData.mobile?.overallScore || 0;
                 const conversionScore = manualConversionData?.overallScore || 0;
-                const hasConversionData = conversionScore > 0;
                 
-                const cat2Scores = [
-                  realData.performance.score,
-                  realData.mobile.overallScore
-                ];
+                const cat2Scores: number[] = [];
+                if (performanceScore > 0) cat2Scores.push(performanceScore);
+                if (mobileScore > 0) cat2Scores.push(mobileScore);
+                if (conversionScore > 0) cat2Scores.push(conversionScore);
                 
-                if (hasConversionData) {
-                  cat2Scores.push(conversionScore);
-                }
-                
-                const cat2Avg = Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length);
+                const cat2Avg = cat2Scores.length > 0 ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) : 0;
 
                 // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
                 const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
