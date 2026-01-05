@@ -131,11 +131,13 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
   };
 
   // Calculate effective score based on confirmation status
-  // Rejected = score capped at 30, Pending = original score, Confirmed = original score
+  // Rejected altTags = 0%, other rejected = capped at 30, Pending = original score, Confirmed = original score
   const getEffectiveScore = (elementId: string, originalScore: number): number => {
     const status = getElementStatus(elementId);
     if (status === 'rejected') {
-      return Math.min(originalScore, 30); // Cap at 30 if rejected
+      // Alt-Tags bei Ablehnung: 0% (keine Alt-Texte vorhanden)
+      if (elementId === 'altTags') return 0;
+      return Math.min(originalScore, 30); // Cap at 30 if rejected for other elements
     }
     return originalScore;
   };
@@ -431,13 +433,15 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                     {getStatusIcon(seoData.altTags.score, 'altTags')}
                     Alt-Tags für Bilder
                   </h3>
-                  {seoData.altTags.source === 'extension' ? (
-                    <Badge variant="default" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                      <Database className="h-3 w-3 mr-1" />
-                      Chrome Extension
-                    </Badge>
-                  ) : (
-                    getDataSourceBadge(seoData.altTags.isRealData)
+                  {getElementStatus('altTags') !== 'rejected' && (
+                    seoData.altTags.source === 'extension' ? (
+                      <Badge variant="default" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        <Database className="h-3 w-3 mr-1" />
+                        Chrome Extension
+                      </Badge>
+                    ) : (
+                      getDataSourceBadge(seoData.altTags.isRealData)
+                    )
                   )}
                 </div>
                 <span className={`font-bold ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
@@ -445,17 +449,31 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                 </span>
               </div>
               <div className="space-y-3">
-                <p className="text-xs text-muted-foreground italic">
-                  Alt-Texte beschreiben Bilder für Suchmaschinen und Screenreader.
-                </p>
-                <div className="flex justify-between text-sm">
-                  <span>Bilder mit Alt-Tags:</span>
-                  <span className="font-semibold">{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
-                </div>
-                <Progress value={getEffectiveScore('altTags', seoData.altTags.coverage)} className="h-2" />
-                <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
-                  {getElementStatus('altTags') === 'rejected' ? 'Als Fehler markiert' : getAltTagRating(seoData.altTags.score)}
-                </p>
+                {getElementStatus('altTags') === 'rejected' ? (
+                  <>
+                    <p className="text-sm text-red-600 font-medium">
+                      Keine Alt-Texte bei Bildern vorhanden
+                    </p>
+                    <Progress value={0} className="h-2" />
+                    <p className="text-sm font-medium text-red-600">
+                      0% - Keine Alt-Texte vorhanden
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-muted-foreground italic">
+                      Alt-Texte beschreiben Bilder für Suchmaschinen und Screenreader.
+                    </p>
+                    <div className="flex justify-between text-sm">
+                      <span>Bilder mit Alt-Tags:</span>
+                      <span className="font-semibold">{seoData.altTags.imagesWithAlt}/{seoData.altTags.imagesTotal}</span>
+                    </div>
+                    <Progress value={getEffectiveScore('altTags', seoData.altTags.coverage)} className="h-2" />
+                    <p className={`text-sm font-medium ${getScoreColor(seoData.altTags.score, 'altTags')}`}>
+                      {getAltTagRating(seoData.altTags.score)}
+                    </p>
+                  </>
+                )}
                 {renderConfirmationButtons('altTags', 'Alt-Tags')}
               </div>
             </div>
@@ -468,7 +486,7 @@ const SEOAnalysis: React.FC<SEOAnalysisProps> = ({ url, realData, manualSEOData,
                   {manualSEOData?.rejectedElements?.includes('titleTag') && <li>Title-Tag - als Fehler markiert</li>}
                   {manualSEOData?.rejectedElements?.includes('metaDescription') && <li>Meta Description - als Fehler markiert</li>}
                   {manualSEOData?.rejectedElements?.includes('headingStructure') && <li>Überschriftenstruktur - als Fehler markiert</li>}
-                  {manualSEOData?.rejectedElements?.includes('altTags') && <li>Alt-Tags für Bilder - als Fehler markiert</li>}
+                  {manualSEOData?.rejectedElements?.includes('altTags') && <li>Alt-Tags für Bilder - Keine Alt-Texte vorhanden (0%)</li>}
                 </ul>
                 <p className="text-xs text-red-600 mt-2">
                   Diese Elemente wurden als fehlerhaft markiert und fließen negativ in die Gesamtbewertung ein.
