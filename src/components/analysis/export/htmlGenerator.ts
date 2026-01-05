@@ -1256,26 +1256,30 @@ export const generateCustomerHTML = ({
     const rawAltTagsScore = (altTagsTotal > 0) ? 
       Math.round((altTagsWithAlt / altTagsTotal) * 100) : 0;
     
-    // Apply rejection penalty (cap at 30 if rejected)
+    // Apply rejection penalty (cap at 30 if rejected) - Alt-Tags bei Ablehnung komplett ausschließen (Score 0)
     const titleTagScore = isTitleTagRejected ? Math.min(rawTitleTagScore, 30) : rawTitleTagScore;
     const metaDescriptionScore = isMetaDescriptionRejected ? Math.min(rawMetaDescriptionScore, 30) : rawMetaDescriptionScore;
     const headingScore = isHeadingStructureRejected ? Math.min(rawHeadingScore, 30) : rawHeadingScore;
-    const altTagsScore = isAltTagsRejected ? Math.min(rawAltTagsScore, 30) : rawAltTagsScore;
+    // Bei abgelehnten Alt-Tags: komplett aus Bewertung ausschließen (nur 3 Elemente zählen)
+    const altTagsScore = isAltTagsRejected ? 0 : rawAltTagsScore;
     
     // Berechne den korrigierten SEO-Score basierend auf bestätigten/abgelehnten Elementen
-    const calculatedSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
+    // Bei abgelehnten Alt-Tags nur durch 3 teilen (Alt-Tags ausgeschlossen)
+    const calculatedSeoScore = isAltTagsRejected 
+      ? Math.round((titleTagScore + metaDescriptionScore + headingScore) / 3)
+      : Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
     const criticalSeoScore = calculatedSeoScore;
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
-    // Generate rejected elements info
-    const rejectedInfo = rejectedElements.length > 0 ? `
+    // Generate rejected elements info (Alt-Tags separat behandeln - nicht in Fehlerliste)
+    const nonAltTagRejectedElements = rejectedElements.filter(el => el !== 'altTags');
+    const rejectedInfo = nonAltTagRejectedElements.length > 0 ? `
       <div style="margin-top: 15px; padding: 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
-        <h5 style="color: #dc2626; margin: 0 0 8px 0;">⚠️ Nicht bestätigte SEO-Elemente (${rejectedElements.length} Fehler)</h5>
+        <h5 style="color: #dc2626; margin: 0 0 8px 0;">⚠️ Nicht bestätigte SEO-Elemente (${nonAltTagRejectedElements.length} Fehler)</h5>
         <ul style="margin: 0; padding-left: 20px; color: #991b1b;">
           ${isTitleTagRejected ? '<li>Title-Tag - als fehlerhaft markiert</li>' : ''}
           ${isMetaDescriptionRejected ? '<li>Meta Description - als fehlerhaft markiert</li>' : ''}
           ${isHeadingStructureRejected ? '<li>Überschriftenstruktur - als fehlerhaft markiert</li>' : ''}
-          ${isAltTagsRejected ? '<li>Alt-Tags - als fehlerhaft markiert</li>' : ''}
         </ul>
         <p style="margin: 8px 0 0 0; font-size: 12px; color: #b91c1c;">Diese Elemente wurden bei der manuellen Überprüfung als fehlerhaft eingestuft und fließen negativ in die Bewertung ein.</p>
       </div>
@@ -1339,10 +1343,10 @@ export const generateCustomerHTML = ({
               <p><strong>Überschriftenstruktur:</strong>${getStatusBadge(isHeadingStructureConfirmed, isHeadingStructureRejected)} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'} - Score: ${rawHeadingScore}%</p>
               ${generateProgressBar(headingScore, `H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}`)}
             </div>
-            <div${getElementStyle(isAltTagsConfirmed, isAltTagsRejected)}>
-              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, isAltTagsRejected)} ${altTagsWithAlt}/${altTagsTotal} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
+            ${isAltTagsRejected ? '' : `<div${getElementStyle(isAltTagsConfirmed, false)}>
+              <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, false)} ${altTagsWithAlt}/${altTagsTotal} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
               ${generateProgressBar(altTagsScore, `${rawAltTagsScore}% Abdeckung${useExtensionAltTags ? ' (Chrome Extension)' : ''}`)}
-            </div>
+            </div>`}
           </div>
           ${rejectedInfo}
           ${confirmedInfo}
