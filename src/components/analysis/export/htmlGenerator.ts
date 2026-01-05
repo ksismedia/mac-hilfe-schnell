@@ -1260,14 +1260,11 @@ export const generateCustomerHTML = ({
     const titleTagScore = isTitleTagRejected ? Math.min(rawTitleTagScore, 30) : rawTitleTagScore;
     const metaDescriptionScore = isMetaDescriptionRejected ? Math.min(rawMetaDescriptionScore, 30) : rawMetaDescriptionScore;
     const headingScore = isHeadingStructureRejected ? Math.min(rawHeadingScore, 30) : rawHeadingScore;
-    // Bei abgelehnten Alt-Tags: komplett aus Bewertung ausschließen (nur 3 Elemente zählen)
+    // Bei abgelehnten Alt-Tags: 0% Score, fließt in Bewertung ein
     const altTagsScore = isAltTagsRejected ? 0 : rawAltTagsScore;
     
-    // Berechne den korrigierten SEO-Score basierend auf bestätigten/abgelehnten Elementen
-    // Bei abgelehnten Alt-Tags nur durch 3 teilen (Alt-Tags ausgeschlossen)
-    const calculatedSeoScore = isAltTagsRejected 
-      ? Math.round((titleTagScore + metaDescriptionScore + headingScore) / 3)
-      : Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
+    // Berechne den korrigierten SEO-Score - Alt-Tags mit 0% fließen immer in Bewertung ein
+    const calculatedSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
     const criticalSeoScore = calculatedSeoScore;
     const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
 
@@ -1343,7 +1340,10 @@ export const generateCustomerHTML = ({
               <p><strong>Überschriftenstruktur:</strong>${getStatusBadge(isHeadingStructureConfirmed, isHeadingStructureRejected)} ${realData.seo.headings.h1.length === 1 ? 'Optimal' : realData.seo.headings.h1.length > 1 ? 'Mehrere H1' : 'Keine H1'} - Score: ${rawHeadingScore}%</p>
               ${generateProgressBar(headingScore, `H1: ${realData.seo.headings.h1.length}, H2: ${realData.seo.headings.h2.length}`)}
             </div>
-            ${isAltTagsRejected ? '' : `<div${getElementStyle(isAltTagsConfirmed, false)}>
+            ${isAltTagsRejected ? `<div${getElementStyle(false, true)}>
+              <p><strong>Alt-Tags:</strong><span style="color: #dc2626; font-weight: bold;"> ✗ Nicht vorhanden</span> - Keine Alt-Texte bei Bildern - Score: 0%</p>
+              ${generateProgressBar(0, 'Keine Alt-Texte vorhanden')}
+            </div>` : `<div${getElementStyle(isAltTagsConfirmed, false)}>
               <p><strong>Alt-Tags:</strong>${getStatusBadge(isAltTagsConfirmed, false)} ${altTagsWithAlt}/${altTagsTotal} Bilder mit Alt-Text - Score: ${rawAltTagsScore}%</p>
               ${generateProgressBar(altTagsScore, `${rawAltTagsScore}% Abdeckung${useExtensionAltTags ? ' (Chrome Extension)' : ''}`)}
             </div>`}
