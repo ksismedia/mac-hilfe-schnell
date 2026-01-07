@@ -23,7 +23,10 @@ import {
   calculateMarketEnvironmentScore,
   calculateCorporateAppearanceScore,
   calculateServiceQualityScore,
-  calculateSEOScore
+  calculateSEOScore,
+  calculateImprintScore,
+  CRITICAL_IMPRINT_ELEMENTS,
+  ALL_IMPRINT_ELEMENTS
 } from './scoreCalculations';
 import { generateDataPrivacySection } from './reportSections';
 import { generateWebsiteSecuritySection } from './websiteSecuritySection';
@@ -405,22 +408,21 @@ export const generateCustomerHTML = ({
   // VERWENDE DEN TATSÄCHLICH BERECHNETEN SCORE - Priorisiere übergebenen Score, dann berechneten, dann Fallback
   const competitorComparisonScore = calculatedOwnCompanyScore || finalOwnScore || 75;
   const marketComparisonScore = calculatedOwnCompanyScore || finalOwnScore || 75;
-  // Impressum Analysis - berücksichtigt manuelle Eingaben
-  const requiredElements = [
-    'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
-    'Telefonnummer', 'E-Mail-Adresse', 'Handelsregisternummer', 
-    'USt-IdNr.', 'Kammerzugehörigkeit', 'Berufsbezeichnung', 'Aufsichtsbehörde'
-  ];
+  // Impressum Analysis - berücksichtigt manuelle Eingaben mit Capping bei kritischen Fehlern
+  const imprintResult = calculateImprintScore(realData, manualImprintData);
+  const impressumScore = imprintResult.score;
+  const impressumBaseScore = imprintResult.baseScore;
+  const impressumCappedAt = imprintResult.cappedAt;
+  const missingCriticalImprintElements = imprintResult.missingCriticalElements;
+  const missingCriticalCount = imprintResult.missingCriticalCount;
   
   const finalMissingImprintElements = manualImprintData 
-    ? requiredElements.filter(e => !manualImprintData.elements.includes(e))
+    ? ALL_IMPRINT_ELEMENTS.filter(e => !manualImprintData.elements.includes(e))
     : missingImprintElements;
     
   const foundImprintElements = manualImprintData 
     ? manualImprintData.elements
-    : requiredElements.filter(e => !missingImprintElements.includes(e));
-    
-  const impressumScore = Math.round((foundImprintElements.length / requiredElements.length) * 100);
+    : ALL_IMPRINT_ELEMENTS.filter(e => !missingImprintElements.includes(e));
   
   // Calculate additional scores - use proper calculation
   // Hourly Rate Score - nur berechnen wenn gültige Daten vorhanden
@@ -3305,6 +3307,7 @@ export const generateCustomerHTML = ({
             <div class="score-details">
               <p><strong>Impressum:</strong> ${impressumScore >= 90 ? 'Vollständig' : impressumScore >= 60 ? 'Teilweise vollständig' : 'Unvollständig'}</p>
               <p><strong>Empfehlung:</strong> ${impressumScore >= 90 ? 'Vollständig rechtlich abgesichert – Weiter so!' : impressumScore >= 60 ? 'Teilweise rechtlich abgesichert, fehlende Angaben ergänzen' : 'Rechtliche Pflichtangaben ergänzen'}</p>
+              ${impressumCappedAt !== null ? `<p style="color: #dc2626;"><strong>⚠️ Score gedeckelt:</strong> Max. ${impressumCappedAt}% wegen ${missingCriticalCount} fehlender kritischer Pflichtangabe${missingCriticalCount > 1 ? 'n' : ''}</p>` : ''}
             </div>
           </div>
           <div class="progress-container">
@@ -3315,6 +3318,25 @@ export const generateCustomerHTML = ({
             </div>
           </div>
         </div>
+        
+        ${missingCriticalCount > 0 ? `
+        <!-- Kritische Fehler Warnung -->
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
+          <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚠️ ABMAHNGEFAHR: ${missingCriticalCount} kritische Pflichtangabe${missingCriticalCount > 1 ? 'n' : ''} fehlt/fehlen
+          </h4>
+          <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
+            Die folgenden Angaben sind nach §5 TMG und DSGVO abmahnungsbedroht:
+          </p>
+          <ul style="margin: 0 0 10px 0; padding-left: 20px; color: #991b1b;">
+            ${missingCriticalImprintElements.map(el => `<li style="margin-bottom: 4px;"><strong>${el}</strong></li>`).join('')}
+          </ul>
+          <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
+            <strong>Score-Capping:</strong> Bei ${missingCriticalCount === 1 ? '1 fehlenden kritischen Element' : missingCriticalCount === 2 ? '2 fehlenden kritischen Elementen' : '3+ fehlenden kritischen Elementen'} 
+            ist der maximale Score auf ${impressumCappedAt}% begrenzt ${impressumBaseScore > impressumCappedAt ? `(Basis-Score wäre ${impressumBaseScore}%)` : ''}.
+          </div>
+        </div>
+        ` : ''}
         
         <div class="collapsible" onclick="toggleSection('legal-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
           <h4 style="color: #fbbf24; margin: 0;">▶ Rechts-Details anzeigen</h4>
