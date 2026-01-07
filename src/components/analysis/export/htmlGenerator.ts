@@ -2755,7 +2755,7 @@ export const generateCustomerHTML = ({
                 return categories.map(cat => {
                   const weightPercent = totalWeight > 0 ? Math.round(cat.weight / totalWeight * 1000) / 10 : 0;
                   return `
-                    <div style="color: #374151;">${cat.name}</div>
+                    <div style="color: #ffffff;">${cat.name}</div>
                     <div style="text-align: right;">
                       <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
                     </div>
