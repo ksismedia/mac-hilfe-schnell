@@ -1,7 +1,7 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData } from '@/hooks/useManualData';
-import { calculateDataPrivacyScore } from '@/components/analysis/export/scoreCalculations';
+import { calculateDataPrivacyScore, calculateImprintScore } from '@/components/analysis/export/scoreCalculations';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -70,10 +70,19 @@ export const loadSavedAnalysisData = (
     console.log('Has setter:', !!setSavedExtensionData);
   }
   
-  // Load manual data
+  // Load manual data and recalculate Imprint score with capping logic
   if (savedAnalysis.manualData?.imprint) {
     console.log('Loading imprint data');
     updateImprintData(savedAnalysis.manualData.imprint);
+    
+    // Recalculate Imprint score with capping logic for saved analyses
+    if (savedAnalysis.realData?.imprint) {
+      const recalculatedImprintScore = calculateImprintScore(
+        { imprint: savedAnalysis.realData.imprint } as any,
+        savedAnalysis.manualData.imprint
+      );
+      console.log(`📋 Impressum Score neu berechnet: ${recalculatedImprintScore.score}%${recalculatedImprintScore.cappedAt < 100 ? ` (gekappt wegen ${recalculatedImprintScore.missingCriticalCount} fehlender kritischer Elemente)` : ''}`);
+    }
   }
   
   if (savedAnalysis.manualData?.social) {
