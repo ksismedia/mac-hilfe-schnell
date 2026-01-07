@@ -2814,8 +2814,8 @@ export const generateCustomerHTML = ({
                   { name: 'Webseiten-Performance & Technik', score: cat2Avg, weight: adjustedCat2Weight },
                   { name: 'Online-/Web-/Social-Media Performance', score: cat3Avg, weight: adjustedCat3Weight },
                   { name: 'Markt & Marktumfeld', score: cat4Avg, weight: adjustedCat4Weight },
-                  { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: adjustedCat5Weight },
-                  { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: adjustedCat6Weight }
+                  { name: 'Qualität · Service · Kundenorientierung', score: cat6Avg, weight: adjustedCat6Weight },
+                  { name: 'Außendarstellung & Erscheinungsbild', score: cat5Avg, weight: adjustedCat5Weight }
                 ].filter(cat => cat.score > 0);
 
                 return categories.map(cat => {
