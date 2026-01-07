@@ -574,16 +574,16 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
       score: scores.marketEnvironment
     },
     { 
-      id: 'corporate-appearance', 
-      title: 'Außendarstellung & Erscheinungsbild', 
-      icon: Users, 
-      score: scores.corporateAppearance
-    },
-    { 
       id: 'service-quality', 
       title: 'Qualität · Service · Kundenorientierung', 
       icon: Users, 
       score: scores.serviceQuality
+    },
+    { 
+      id: 'corporate-appearance', 
+      title: 'Außendarstellung & Erscheinungsbild', 
+      icon: Users, 
+      score: scores.corporateAppearance
     }
   ];
 
