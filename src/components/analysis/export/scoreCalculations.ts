@@ -1139,7 +1139,8 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
     }
     
     // Count critical violations with NEUTRALIZATION (like DSGVO section)
-    let criticalViolationCount = 0;
+    // Zähle VERSCHIEDENE Violation-Typen, nicht Anzahl der Vorkommen
+    let criticalViolationTypeCount = 0;
     if (realData && realData.violations && Array.isArray(realData.violations)) {
       const criticalViolations = realData.violations.filter((v: any) => 
         v.impact === 'critical' || v.impact === 'serious'
@@ -1196,13 +1197,13 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
         return false;
       });
       
-      // Only non-neutralized violations count toward capping
-      criticalViolationCount = criticalViolations.length - neutralizedViolations.length;
+      // Only non-neutralized violation TYPES count toward capping
+      criticalViolationTypeCount = criticalViolations.length - neutralizedViolations.length;
       
       if (neutralizedViolations.length > 0) {
-        console.log('🎯 Accessibility: ' + neutralizedViolations.length + ' kritische Violations durch manuelle Eingaben neutralisiert');
-        console.log('🎯 Accessibility: Verbleibende kritische Violations: ' + criticalViolationCount + ' von ' + criticalViolations.length);
+        console.log('🎯 Accessibility: ' + neutralizedViolations.length + ' kritische Violation-Typen durch manuelle Eingaben neutralisiert');
       }
+      console.log('🎯 Accessibility: Verbleibende kritische Violation-Typen: ' + criticalViolationTypeCount + ' von ' + criticalViolations.length);
     }
     
     // NEU: Manuelle Eingaben können auch kritische Violations HINZUFÜGEN
@@ -1220,31 +1221,31 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       if (hasExplicitManualData) {
         // Alt-Texte explizit als NICHT vorhanden markiert → kritische Violation
         if (manualAccessibilityData.altTextsPresent === false) {
-          criticalViolationCount++;
-          console.log('🎯 Accessibility: Alt-Texte manuell als NICHT vorhanden markiert → +1 kritische Violation (VoiceOver-Problem)');
+          criticalViolationTypeCount++;
+          console.log('🎯 Accessibility: Alt-Texte manuell als NICHT vorhanden markiert → +1 kritischer Violation-Typ (VoiceOver-Problem)');
         }
         
         // Screen-Reader-Kompatibilität explizit als NICHT vorhanden markiert → kritische Violation  
         if (manualAccessibilityData.screenReaderCompatible === false) {
-          criticalViolationCount++;
-          console.log('🎯 Accessibility: Screen-Reader-Kompatibilität manuell als NICHT vorhanden markiert → +1 kritische Violation');
+          criticalViolationTypeCount++;
+          console.log('🎯 Accessibility: Screen-Reader-Kompatibilität manuell als NICHT vorhanden markiert → +1 kritischer Violation-Typ');
         }
         
         // Farbkontraste explizit als NICHT ausreichend markiert → kritische Violation
         if (manualAccessibilityData.colorContrast === false) {
-          criticalViolationCount++;
-          console.log('🎯 Accessibility: Farbkontraste manuell als NICHT ausreichend markiert → +1 kritische Violation');
+          criticalViolationTypeCount++;
+          console.log('🎯 Accessibility: Farbkontraste manuell als NICHT ausreichend markiert → +1 kritischer Violation-Typ');
         }
         
         // Tastaturnavigation explizit als NICHT vorhanden markiert → kritische Violation
         if (manualAccessibilityData.keyboardNavigation === false) {
-          criticalViolationCount++;
-          console.log('🎯 Accessibility: Tastaturnavigation manuell als NICHT vorhanden markiert → +1 kritische Violation');
+          criticalViolationTypeCount++;
+          console.log('🎯 Accessibility: Tastaturnavigation manuell als NICHT vorhanden markiert → +1 kritischer Violation-Typ');
         }
       }
     }
     
-    console.log('🎯 Accessibility: Finale kritische Violation-Anzahl: ' + criticalViolationCount);
+    console.log('🎯 Accessibility: Finale kritische Violation-Typ-Anzahl: ' + criticalViolationTypeCount);
     
     // COMBINE scores: Both auto and manual data contribute
     let finalScore = 40; // default
@@ -1267,22 +1268,22 @@ export const calculateAccessibilityScore = (realData: any, manualAccessibilityDa
       finalScore = 40;
     }
     
-    // Apply capping based on critical violations (like DSGVO)
+    // Apply capping based on critical violation TYPES (like DSGVO)
     let cappedScore = finalScore;
     let scoreCap = 100;
     
-    if (criticalViolationCount === 1) {
+    if (criticalViolationTypeCount === 1) {
       scoreCap = 59;
       cappedScore = Math.min(finalScore, scoreCap);
-      console.log('🎯 Accessibility: 1 kritischer Fehler → Score gekappt auf max 59% (von ' + finalScore + ' auf ' + cappedScore + ')');
-    } else if (criticalViolationCount === 2) {
+      console.log('🎯 Accessibility: 1 kritischer Violation-Typ → Score gekappt auf max 59% (von ' + finalScore + ' auf ' + cappedScore + ')');
+    } else if (criticalViolationTypeCount === 2) {
       scoreCap = 35;
       cappedScore = Math.min(finalScore, scoreCap);
-      console.log('🎯 Accessibility: 2 kritische Fehler → Score gekappt auf max 35% (von ' + finalScore + ' auf ' + cappedScore + ')');
-    } else if (criticalViolationCount >= 3) {
+      console.log('🎯 Accessibility: 2 kritische Violation-Typen → Score gekappt auf max 35% (von ' + finalScore + ' auf ' + cappedScore + ')');
+    } else if (criticalViolationTypeCount >= 3) {
       scoreCap = 20;
       cappedScore = Math.min(finalScore, scoreCap);
-      console.log('🎯 Accessibility: ' + criticalViolationCount + ' kritische Fehler → Score gekappt auf max 20% (von ' + finalScore + ' auf ' + cappedScore + ')');
+      console.log('🎯 Accessibility: ' + criticalViolationTypeCount + ' kritische Violation-Typen → Score gekappt auf max 20% (von ' + finalScore + ' auf ' + cappedScore + ')');
     }
     
     return Math.max(0, Math.min(100, cappedScore));
