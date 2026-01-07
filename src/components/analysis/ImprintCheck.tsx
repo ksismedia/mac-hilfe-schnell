@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, AlertCircle, Edit } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, Edit, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualImprintData } from '@/hooks/useManualData';
+import { calculateImprintScore, CRITICAL_IMPRINT_ELEMENTS, ALL_IMPRINT_ELEMENTS } from './export/scoreCalculations';
 
 interface ImprintCheckProps {
   url: string;
@@ -20,19 +21,7 @@ interface ImprintCheckProps {
   onManualDataChange?: (data: ManualImprintData | null) => void;
 }
 
-const requiredElements = [
-  'Firmenname',
-  'Rechtsform',
-  'Geschäftsführer/Inhaber',
-  'Adresse',
-  'Telefonnummer',
-  'E-Mail-Adresse',
-  'Handelsregisternummer',
-  'USt-IdNr.',
-  'Kammerzugehörigkeit',
-  'Berufsbezeichnung',
-  'Aufsichtsbehörde'
-];
+const requiredElements = ALL_IMPRINT_ELEMENTS;
 
 const ImprintCheck: React.FC<ImprintCheckProps> = ({ 
   url, 
@@ -93,13 +82,21 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
   };
 
   // Verwende manuelle Daten falls vorhanden, sonst automatische Erkennung
+  // Berechne den Impressum-Score mit Capping-Logik
+  const imprintScoreResult = calculateImprintScore(realData, manualData);
+  
   const imprintData = manualData ? {
     found: manualData.found,
     foundElements: manualData.elements,
     missingElements: requiredElements.filter(e => !manualData.elements.includes(e)),
-    completeness: Math.round((manualData.elements.length / requiredElements.length) * 100),
-    score: Math.round((manualData.elements.length / requiredElements.length) * 100)
-  } : realData.imprint;
+    completeness: imprintScoreResult.baseScore,
+    score: imprintScoreResult.score
+  } : {
+    ...realData.imprint,
+    score: imprintScoreResult.score
+  };
+  
+  const { missingCriticalCount, missingCriticalElements, cappedAt, baseScore } = imprintScoreResult;
 
   return (
     <div className="space-y-6">
@@ -251,6 +248,33 @@ const ImprintCheck: React.FC<ImprintCheckProps> = ({
               </div>
 
               <Progress value={imprintData.completeness} className="h-3" />
+
+              {/* Score-Capping Warnung bei kritischen Fehlern */}
+              {missingCriticalCount > 0 && (
+                <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-red-800 mb-2">
+                        ⚠️ ABMAHNGEFAHR: {missingCriticalCount} kritische Pflichtangabe{missingCriticalCount > 1 ? 'n' : ''} fehlt/fehlen
+                      </h4>
+                      <p className="text-sm text-red-700 mb-2">
+                        Die folgenden Angaben sind nach §5 TMG und DSGVO abmahnungsbedroht:
+                      </p>
+                      <ul className="list-disc list-inside text-sm text-red-700 mb-3">
+                        {missingCriticalElements.map((el, idx) => (
+                          <li key={idx} className="font-semibold">{el}</li>
+                        ))}
+                      </ul>
+                      <div className="bg-red-100 border border-red-300 rounded p-3 text-sm text-red-800">
+                        <strong>Score-Capping:</strong> Bei {missingCriticalCount === 1 ? '1 fehlenden kritischen Element' : missingCriticalCount === 2 ? '2 fehlenden kritischen Elementen' : '3+ fehlenden kritischen Elementen'} 
+                        ist der maximale Score auf <strong>{cappedAt}%</strong> begrenzt
+                        {baseScore > (cappedAt || 100) ? ` (Basis-Score wäre ${baseScore}%)` : ''}.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {imprintData.foundElements.length > 0 && (
                 <Card>

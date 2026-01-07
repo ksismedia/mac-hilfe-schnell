@@ -1,7 +1,74 @@
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
-import { ManualSocialData, ManualWorkplaceData, ManualSEOData } from '@/hooks/useManualData';
+import { ManualSocialData, ManualWorkplaceData, ManualSEOData, ManualImprintData } from '@/hooks/useManualData';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
 import { calculateWorkplaceScore as newCalculateWorkplaceScore } from '@/utils/workplaceScoreCalculation';
+
+// Kritische Impressum-Elemente (abmahnungsbedroht nach §5 TMG und DSGVO)
+export const CRITICAL_IMPRINT_ELEMENTS = [
+  'Firmenname',
+  'Adresse', 
+  'Geschäftsführer/Inhaber',
+  'E-Mail-Adresse',
+  'Handelsregisternummer'
+];
+
+// Alle Impressum-Elemente
+export const ALL_IMPRINT_ELEMENTS = [
+  'Firmenname', 'Rechtsform', 'Geschäftsführer/Inhaber', 'Adresse', 
+  'Telefonnummer', 'E-Mail-Adresse', 'Handelsregisternummer', 
+  'USt-IdNr.', 'Kammerzugehörigkeit', 'Berufsbezeichnung', 'Aufsichtsbehörde'
+];
+
+// Berechnet den Impressum-Score mit Capping bei fehlenden kritischen Elementen
+export const calculateImprintScore = (
+  realData: RealBusinessData,
+  manualImprintData?: { elements: string[] } | ManualImprintData | null
+): { score: number; missingCriticalCount: number; missingCriticalElements: string[]; cappedAt: number | null; baseScore: number } => {
+  // Bestimme gefundene Elemente
+  const foundElements = manualImprintData?.elements || 
+    (realData?.imprint?.foundElements || []);
+  
+  // Berechne Basis-Score (Vollständigkeit)
+  const baseScore = Math.round((foundElements.length / ALL_IMPRINT_ELEMENTS.length) * 100);
+  
+  // Finde fehlende kritische Elemente
+  const missingCriticalElements = CRITICAL_IMPRINT_ELEMENTS.filter(
+    element => !foundElements.includes(element)
+  );
+  const missingCriticalCount = missingCriticalElements.length;
+  
+  // Score-Capping basierend auf Anzahl fehlender kritischer Elemente
+  let cappedAt: number | null = null;
+  let finalScore = baseScore;
+  
+  if (missingCriticalCount === 1) {
+    cappedAt = 59;
+    finalScore = Math.min(baseScore, 59);
+  } else if (missingCriticalCount === 2) {
+    cappedAt = 35;
+    finalScore = Math.min(baseScore, 35);
+  } else if (missingCriticalCount >= 3) {
+    cappedAt = 20;
+    finalScore = Math.min(baseScore, 20);
+  }
+  
+  console.log('📋 Impressum Score Calculation:', {
+    foundElements,
+    baseScore,
+    missingCriticalElements,
+    missingCriticalCount,
+    cappedAt,
+    finalScore
+  });
+  
+  return {
+    score: finalScore,
+    missingCriticalCount,
+    missingCriticalElements,
+    cappedAt,
+    baseScore
+  };
+};
 
 const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
   const reviews = realData.reviews?.google?.count || 0;
