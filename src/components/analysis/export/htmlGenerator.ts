@@ -3235,43 +3235,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           
-          ${(() => {
-            // Web-Erwähnungen Integration in Backlinks Sektion - nur aktive Erwähnungen anzeigen
-            // Use webMentions from manualBacklinkData (from BacklinkAnalysis search), NOT from manualReputationData
-            const webMentions = manualBacklinkData?.webMentions || [];
-            const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
-            const activeWebMentions = webMentions.filter((m: any) => !disabledBacklinks.includes(m.link));
-            const activeMentionsCount = activeWebMentions.length;
-            
-            if (activeMentionsCount > 0) {
-              return `
-              <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <h4 style="color: #374151; margin-bottom: 12px;">🌐 Web-Erwähnungen (${activeMentionsCount})</h4>
-                <p style="color: #6b7280; font-size: 0.9em; margin-bottom: 12px;">
-                  Erwähnungen Ihrer Website auf anderen Plattformen und in Suchergebnissen
-                </p>
-                ${activeWebMentions.slice(0, 5).map((result: any) => `
-                  <div style="background: #f9fafb; border-radius: 6px; padding: 12px; margin-bottom: 10px; border-left: 3px solid #3b82f6;">
-                    <h5 style="color: #1f2937; margin: 0 0 6px 0; font-size: 0.95em;">${result.title || 'Unbekannter Titel'}</h5>
-                    <p style="color: #6b7280; font-size: 0.85em; margin: 0 0 6px 0;">${result.snippet || result.description || 'Keine Beschreibung verfügbar'}</p>
-                    <p style="color: #9ca3af; font-size: 0.8em; margin: 0;">
-                      <strong>Quelle:</strong> ${result.displayLink || result.link || 'Unbekannte Quelle'}
-                    </p>
-                  </div>
-                `).join('')}
-              </div>
-              `;
-            } else {
-              return `
-              <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <h4 style="color: #9ca3af; margin-bottom: 12px;">🌐 Web-Erwähnungen</h4>
-                <p style="color: #9ca3af; font-size: 0.9em; font-style: italic;">
-                  Keine Web-Erwähnungen erfasst. Führen Sie das Reputation Monitoring durch, um Erwähnungen Ihrer Website im Internet zu finden.
-                </p>
-              </div>
-              `;
-            }
-          })()}
+          <!-- Web-Erwähnungen werden im Reputation Monitoring Bereich angezeigt -->
           
           <div class="recommendations">
             <h4>Backlink-Strategien:</h4>
