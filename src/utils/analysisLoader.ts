@@ -1,7 +1,7 @@
 
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { ManualImprintData, ManualSocialData, ManualWorkplaceData, ManualCompetitor, CompetitorServices, ManualCorporateIdentityData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData } from '@/hooks/useManualData';
-import { calculateDataPrivacyScore, calculateImprintScore } from '@/components/analysis/export/scoreCalculations';
+import { calculateDataPrivacyScore, calculateImprintScore, calculateAccessibilityScore } from '@/components/analysis/export/scoreCalculations';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -308,7 +308,27 @@ export const loadSavedAnalysisData = (
   
   if (savedAnalysis.manualData?.accessibilityData && setAccessibilityData) {
     console.log('Loading accessibility data');
-    setAccessibilityData(savedAnalysis.manualData.accessibilityData);
+    const accessibilityData = savedAnalysis.manualData.accessibilityData;
+    const manualAccessibilityData = savedAnalysis.manualData?.manualAccessibilityData;
+    
+    // Recalculate Accessibility score with capping logic for saved analyses
+    const recalculatedAccessibilityScore = calculateAccessibilityScore(
+      accessibilityData,
+      manualAccessibilityData
+    );
+    
+    // Zähle kritische Violations für Logging
+    const criticalViolations = (accessibilityData?.violations || []).filter((v: any) => 
+      v.impact === 'critical' || v.impact === 'serious'
+    );
+    
+    console.log(`♿ Barrierefreiheit Score neu berechnet: ${recalculatedAccessibilityScore}%${criticalViolations.length > 0 ? ` (${criticalViolations.length} kritische Violation-Typen erkannt)` : ''}`);
+    
+    // Setze korrigierten Score
+    setAccessibilityData({
+      ...accessibilityData,
+      score: recalculatedAccessibilityScore
+    });
   }
   
   if (savedAnalysis.manualData?.securityData && setSecurityData) {
