@@ -2584,8 +2584,72 @@ export const generateCustomerHTML = ({
     <div class="section">
       <div class="section-header"><span>Executive Summary</span></div>
       <div class="section-content">
+        <!-- Kategorisierte Score-Übersicht (Klickbare Navigation) -->
+         <div id="navigation-overview" class="categorized-scores">
+          <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
+          <a href="#cat-online-qualitaet" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Online-Qualität · Relevanz · Autorität</h3>
+              ${cat1Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat1Avg)}">${cat1Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <!-- Kategorie 2: Webseiten-Performance & Technik -->
+          <a href="#cat-performance-technik" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
+              <div class="header-score-circle ${getScoreColorClass(cat2Avg)}">${cat2Avg}%</div>
+            </div>
+          </a>
+
+          <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
+          <a href="#cat-social-media" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
+              ${cat3Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat3Avg)}">${cat3Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <!-- Kategorie 4: Markt & Marktumfeld -->
+          <a href="#cat-markt-umfeld" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Markt & Marktumfeld</h3>
+              ${cat4Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat4Avg)}">${cat4Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <!-- Kategorie 5: Qualität · Service · Kundenorientierung -->
+          <a href="#cat-qualitaet-service" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
+              ${cat6Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat6Avg)}">${cat6Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <!-- Kategorie 6: Außendarstellung & Erscheinungsbild -->
+          <a href="#cat-aussendarstellung" class="score-category nav-category-link">
+            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
+              ${cat5Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat5Avg)}">${cat5Avg}%</div>` : ''}
+            </div>
+          </a>
+
+          <p style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 15px; grid-column: 1 / -1;">
+            💡 Klicken Sie auf eine Kategorie, um direkt zum entsprechenden Abschnitt zu springen
+          </p>
+
+        </div>
+
+        <!-- Gesamtscore -->
+        <div class="score-overview" style="margin-top: 30px;">
+          <div class="score-card">
+            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
+            <div class="score-label">Gesamtscore</div>
+          </div>
+        </div>
+
         <!-- Collapsible Kategorie-Aufschlüsselung -->
-        <div style="margin-bottom: 30px;">
+        <div style="margin-top: 30px;">
           <div 
             onclick="toggleSection('main-categories-content')" 
             style="cursor: pointer; background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%); padding: 18px 25px; border-radius: 12px; border: 2px solid rgba(251, 191, 36, 0.5); display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"
@@ -2767,70 +2831,6 @@ export const generateCustomerHTML = ({
               })()}
             </div>
             <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #9ca3af; font-style: italic;">Die Prozentzahlen in Klammern zeigen die Gewichtung jeder Kategorie am Gesamtscore basierend auf den enthaltenen Einzelmetriken.</p>
-          </div>
-        </div>
-
-        <!-- Kategorisierte Score-Übersicht (Klickbare Navigation) -->
-         <div id="navigation-overview" class="categorized-scores">
-          <!-- Kategorie 1: Online-Qualität · Relevanz · Autorität -->
-          <a href="#cat-online-qualitaet" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Online-Qualität · Relevanz · Autorität</h3>
-              ${cat1Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat1Avg)}">${cat1Avg}%</div>` : ''}
-            </div>
-          </a>
-
-          <!-- Kategorie 2: Webseiten-Performance & Technik -->
-          <a href="#cat-performance-technik" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Webseiten-Performance & Technik</h3>
-              <div class="header-score-circle ${getScoreColorClass(cat2Avg)}">${cat2Avg}%</div>
-            </div>
-          </a>
-
-          <!-- Kategorie 3: Online-/Web-/Social-Media Performance -->
-          <a href="#cat-social-media" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Online-/Web-/Social-Media Performance</h3>
-              ${cat3Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat3Avg)}">${cat3Avg}%</div>` : ''}
-            </div>
-          </a>
-
-          <!-- Kategorie 4: Markt & Marktumfeld -->
-          <a href="#cat-markt-umfeld" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Markt & Marktumfeld</h3>
-              ${cat4Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat4Avg)}">${cat4Avg}%</div>` : ''}
-            </div>
-          </a>
-
-          <!-- Kategorie 5: Qualität · Service · Kundenorientierung -->
-          <a href="#cat-qualitaet-service" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Qualität · Service · Kundenorientierung</h3>
-              ${cat6Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat6Avg)}">${cat6Avg}%</div>` : ''}
-            </div>
-          </a>
-
-          <!-- Kategorie 6: Außendarstellung & Erscheinungsbild -->
-          <a href="#cat-aussendarstellung" class="score-category nav-category-link">
-            <div class="category-header-executive" style="display: flex; align-items: center; justify-content: space-between;">
-              <h3 style="margin: 0; color: #000000;">Außendarstellung & Erscheinungsbild</h3>
-              ${cat5Avg > 0 ? `<div class="header-score-circle ${getScoreColorClass(cat5Avg)}">${cat5Avg}%</div>` : ''}
-            </div>
-          </a>
-
-          <p style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 15px; grid-column: 1 / -1;">
-            💡 Klicken Sie auf eine Kategorie, um direkt zum entsprechenden Abschnitt zu springen
-          </p>
-
-        </div>
-
-        <!-- Gesamtscore -->
-        <div class="score-overview" style="margin-top: 30px;">
-          <div class="score-card">
-            <div class="score-big"><span class="score-tile ${getScoreColorClass(overallScore)}">${overallScore}%</span></div>
-            <div class="score-label">Gesamtscore</div>
           </div>
         </div>
       </div>
