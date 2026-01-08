@@ -634,75 +634,127 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </div>
               </div>
 
-              {/* Violations */}
-              {(getCurrentAccessibilityData()?.violations?.length || 0) > 0 && (
-                <Card className="border-red-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-red-600 flex items-center gap-2">
-                      <XCircle className="h-5 w-5" />
-                      Gefundene Probleme ({getCurrentAccessibilityData()?.violations?.length || 0})
-                    </CardTitle>
-                    <CardDescription>
-                      Diese Punkte sollten behoben werden, um die Barrierefreiheit zu verbessern
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {(getCurrentAccessibilityData()?.violations || []).map((violation: AccessibilityViolation, index) => (
-                        <div 
-                          key={index} 
-                          className={`p-4 rounded-lg border-l-4 ${getImpactColor(violation.impact)}`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {getImpactIcon(violation.impact)}
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-semibold text-foreground">
-                                  {violation.description}
-                                </h4>
-                                <Badge variant="outline" className="text-xs">
-                                  {violation.wcagCriterion}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground mb-2">
-                                {violation.help}
-                              </p>
-                              <div className="flex items-center gap-2 mb-3">
-                                <Badge 
-                                  variant={violation.impact === 'critical' ? 'destructive' : 'outline'} 
+              {/* Violations - Filter neutralisierte Violations heraus */}
+              {(() => {
+                const currentData = getCurrentAccessibilityData();
+                const allViolations = currentData?.violations || [];
+                
+                // Filtere neutralisierte Violations basierend auf manuellen Eingaben
+                const nonNeutralizedViolations = allViolations.filter((violation: AccessibilityViolation) => {
+                  const vid = violation.id || '';
+                  
+                  // Keyboard navigation neutralisiert keyboard-related violations
+                  if (manualAccessibilityData?.keyboardNavigation && 
+                      (vid.includes('keyboard') || vid.includes('button-name') || 
+                       vid.includes('link-name') || vid.includes('accesskeys'))) {
+                    return false; // Neutralisiert
+                  }
+                  
+                  // Screen reader compatibility neutralisiert ARIA und label violations
+                  if (manualAccessibilityData?.screenReaderCompatible && 
+                      (vid.includes('aria-') || vid.includes('label') || 
+                       vid.includes('role') || vid.includes('landmark'))) {
+                    return false;
+                  }
+                  
+                  // Color contrast neutralisiert contrast violations
+                  if (manualAccessibilityData?.colorContrast && 
+                      (vid.includes('color-contrast') || vid.includes('contrast'))) {
+                    return false;
+                  }
+                  
+                  // Alt texts neutralisiert image-alt violations
+                  if (manualAccessibilityData?.altTextsPresent && 
+                      (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+                    return false;
+                  }
+                  
+                  // Focus visibility neutralisiert focus violations
+                  if (manualAccessibilityData?.focusVisibility && 
+                      (vid.includes('focus') || vid.includes('focus-order'))) {
+                    return false;
+                  }
+                  
+                  // Text scaling neutralisiert viewport und target-size violations
+                  if (manualAccessibilityData?.textScaling && 
+                      (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+                    return false;
+                  }
+                  
+                  return true; // Nicht neutralisiert - anzeigen
+                });
+                
+                if (nonNeutralizedViolations.length === 0) return null;
+                
+                return (
+                  <Card className="border-red-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-red-600 flex items-center gap-2">
+                        <XCircle className="h-5 w-5" />
+                        Gefundene Probleme ({nonNeutralizedViolations.length})
+                      </CardTitle>
+                      <CardDescription>
+                        Diese Punkte sollten behoben werden, um die Barrierefreiheit zu verbessern
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {nonNeutralizedViolations.map((violation: AccessibilityViolation, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`p-4 rounded-lg border-l-4 ${getImpactColor(violation.impact)}`}
+                          >
+                            <div className="flex items-start gap-3">
+                              {getImpactIcon(violation.impact)}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h4 className="font-semibold text-foreground">
+                                    {violation.description}
+                                  </h4>
+                                  <Badge variant="outline" className="text-xs">
+                                    {violation.wcagCriterion}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {violation.help}
+                                </p>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Badge 
+                                    variant={violation.impact === 'critical' ? 'destructive' : 'outline'} 
+                                    className="text-xs"
+                                  >
+                                    {violation.impact}
+                                  </Badge>
+                                  <Badge variant="secondary" className="text-xs">
+                                    WCAG {violation.wcagLevel}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">
+                                    {violation.nodes?.length || 0} Element(e) betroffen
+                                  </span>
+                                </div>
+                                {violation.nodes?.[0]?.failureSummary && (
+                                  <p className="text-xs text-muted-foreground mb-2 font-mono bg-muted/50 p-2 rounded">
+                                    {violation.nodes[0].failureSummary}
+                                  </p>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => window.open(violation.helpUrl, '_blank')}
                                   className="text-xs"
                                 >
-                                  {violation.impact}
-                                </Badge>
-                                <Badge variant="secondary" className="text-xs">
-                                  WCAG {violation.wcagLevel}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  {violation.nodes?.length || 0} Element(e) betroffen
-                                </span>
+                                  <ExternalLink className="h-3 w-3 mr-1" />
+                                  WCAG Guideline
+                                </Button>
                               </div>
-                              {violation.nodes?.[0]?.failureSummary && (
-                                <p className="text-xs text-muted-foreground mb-2 font-mono bg-muted/50 p-2 rounded">
-                                  {violation.nodes[0].failureSummary}
-                                </p>
-                              )}
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => window.open(violation.helpUrl, '_blank')}
-                                className="text-xs"
-                              >
-                                <ExternalLink className="h-3 w-3 mr-1" />
-                                WCAG Guideline
-                              </Button>
                             </div>
                           </div>
-                        </div>
                       ))}
                     </div>
                   </CardContent>
                 </Card>
-              )}
+                );
+              })()}
 
               {/* WCAG-konforme Handlungsempfehlungen */}
               <Card className="border-accent">
