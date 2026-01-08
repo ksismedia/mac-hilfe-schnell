@@ -3474,21 +3474,82 @@ export const generateCustomerHTML = ({
         </div>
         
         <div id="wcag-details" style="display: none;">
-          <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-            <h4>🚨 Erkannte Probleme</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-              <div style="padding: 8px; background: rgba(239, 68, 68, 0.2); border-radius: 6px;">
-                <p style="font-weight: bold; color: #dc2626;">CRITICAL</p>
-                <p style="font-size: 0.9em;">Bilder ohne Alt-Text</p>
-                <p style="font-size: 0.8em; color: #666;">3 Vorkommen</p>
+          ${(() => {
+            // Filter violations - remove neutralized ones
+            const allViolations = accessibilityData?.violations || [];
+            
+            // Helper function to check if a violation is neutralized
+            const isNeutralized = (violation: any): boolean => {
+              const vid = violation.id || '';
+              
+              if (manualAccessibilityData?.keyboardNavigation && 
+                  (vid.includes('keyboard') || vid.includes('button-name') || 
+                   vid.includes('link-name') || vid.includes('accesskeys'))) {
+                return true;
+              }
+              
+              if (manualAccessibilityData?.screenReaderCompatible && 
+                  (vid.includes('aria-') || vid.includes('label') || 
+                   vid.includes('role') || vid.includes('landmark'))) {
+                return true;
+              }
+              
+              if (manualAccessibilityData?.colorContrast && 
+                  (vid.includes('color-contrast') || vid.includes('contrast'))) {
+                return true;
+              }
+              
+              if (manualAccessibilityData?.altTextsPresent && 
+                  (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+                return true;
+              }
+              
+              if (manualAccessibilityData?.focusVisibility && 
+                  (vid.includes('focus') || vid.includes('focus-order'))) {
+                return true;
+              }
+              
+              if (manualAccessibilityData?.textScaling && 
+                  (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+                return true;
+              }
+              
+              return false;
+            };
+            
+            // Filter out neutralized violations
+            const nonNeutralizedViolations = allViolations.filter((v: any) => !isNeutralized(v));
+            
+            if (nonNeutralizedViolations.length === 0) {
+              return `
+                <div style="margin-top: 20px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                  <h4 style="color: #22c55e;">✅ Keine aktiven Probleme</h4>
+                  <p style="font-size: 0.9em; color: #666; margin-top: 8px;">
+                    ${allViolations.length > 0 
+                      ? 'Alle erkannten Probleme wurden durch manuelle Eingaben als behoben markiert.' 
+                      : 'Es wurden keine Barrierefreiheit-Probleme erkannt.'}
+                  </p>
+                </div>
+              `;
+            }
+            
+            return `
+              <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                <h4>🚨 Erkannte Probleme (${nonNeutralizedViolations.length})</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                  ${nonNeutralizedViolations.map((v: any) => `
+                    <div style="padding: 8px; background: rgba(${v.impact === 'critical' ? '239, 68, 68' : v.impact === 'serious' ? '245, 158, 11' : '59, 130, 246'}, 0.2); border-radius: 6px;">
+                      <p style="font-weight: bold; color: ${v.impact === 'critical' ? '#dc2626' : v.impact === 'serious' ? '#d97706' : '#3b82f6'};">
+                        ${v.impact === 'critical' ? 'CRITICAL' : v.impact === 'serious' ? 'SERIOUS' : v.impact?.toUpperCase() || 'MODERATE'}
+                      </p>
+                      <p style="font-size: 0.9em;">${v.description || v.help || 'Barrierefreiheit-Problem'}</p>
+                      <p style="font-size: 0.8em; color: #666;">${v.nodes?.length || v.count || 1} Vorkommen</p>
+                    </div>
+                  `).join('')}
+                </div>
               </div>
-              <div style="padding: 8px; background: rgba(245, 158, 11, 0.2); border-radius: 6px;">
-                <p style="font-weight: bold; color: #d97706;">SERIOUS</p>
-                <p style="font-size: 0.9em;">Unzureichender Farbkontrast</p>
-                <p style="font-size: 0.8em; color: #666;">5 Vorkommen</p>
-              </div>
-            </div>
-          </div>
+            `;
+          })()}
         </div>
 
         <div class="collapsible" onclick="toggleSection('legal-requirements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
