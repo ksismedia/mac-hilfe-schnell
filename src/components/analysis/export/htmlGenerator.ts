@@ -971,8 +971,26 @@ export const generateCustomerHTML = ({
     if (manualAccessibilityData?.focusVisibility) manualInputsList.push('Fokus-Sichtbarkeit');
     if (manualAccessibilityData?.textScaling) manualInputsList.push('Text-Skalierung');
     
-    // Gruppiere Violations nach Impact
-    const violationsByImpact = realViolations.reduce((acc: any, v: any) => {
+    // Filtere neutralisierte Violations heraus für die Anzeige
+    const nonNeutralizedViolations = realViolations.filter((violation: any) => {
+      const vid = violation.id || '';
+      if (manualAccessibilityData?.keyboardNavigation && 
+          (vid.includes('keyboard') || vid.includes('button-name') || vid.includes('link-name') || vid.includes('accesskeys'))) return false;
+      if (manualAccessibilityData?.screenReaderCompatible && 
+          (vid.includes('aria-') || vid.includes('label') || vid.includes('role') || vid.includes('landmark'))) return false;
+      if (manualAccessibilityData?.colorContrast && 
+          (vid.includes('color-contrast') || vid.includes('contrast'))) return false;
+      if (manualAccessibilityData?.altTextsPresent && 
+          (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) return false;
+      if (manualAccessibilityData?.focusVisibility && 
+          (vid.includes('focus') || vid.includes('focus-order'))) return false;
+      if (manualAccessibilityData?.textScaling && 
+          (vid.includes('meta-viewport') || vid.includes('target-size'))) return false;
+      return true;
+    });
+    
+    // Gruppiere nur NICHT-neutralisierte Violations nach Impact
+    const violationsByImpact = nonNeutralizedViolations.reduce((acc: any, v: any) => {
       const impact = v.impact || 'moderate';
       if (!acc[impact]) {
         acc[impact] = [];
@@ -981,7 +999,7 @@ export const generateCustomerHTML = ({
       return acc;
     }, {});
     
-    // Erstelle Violations-Array für die Anzeige - IMMER aus echten Daten
+    // Erstelle Violations-Array für die Anzeige - nur nicht-neutralisierte
     const violations = Object.entries(violationsByImpact).map(([impact, vList]: [string, any]) => ({
       impact,
       description: vList[0]?.description || `${impact} Probleme`,
