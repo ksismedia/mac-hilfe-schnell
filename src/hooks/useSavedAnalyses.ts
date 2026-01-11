@@ -8,6 +8,7 @@ export interface SavedAnalysis {
   id: string;
   name: string;
   savedAt: string;
+  deletedAt?: string | null;
   businessData: {
     address: string;
     url: string;
@@ -135,6 +136,7 @@ const createDefaultRealData = (): RealBusinessData => ({
 
 export const useSavedAnalyses = () => {
   const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+  const [trashedAnalyses, setTrashedAnalyses] = useState<SavedAnalysis[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -183,21 +185,27 @@ export const useSavedAnalyses = () => {
 
       if (error) throw error;
 
-      const analyses: SavedAnalysis[] = data.map(item => ({
+      const allAnalyses: SavedAnalysis[] = data.map(item => ({
         id: item.id,
         name: item.name,
         savedAt: item.saved_at,
+        deletedAt: item.deleted_at,
         businessData: item.business_data as SavedAnalysis['businessData'],
         realData: { ...createDefaultRealData(), ...(item.real_data as any) },
         manualData: { competitors: [], competitorServices: {}, removedMissingServices: [], ...(item.manual_data as any) }
       }));
 
-      console.log(`Loaded ${analyses.length} analyses from database`);
+      // Split into active and trashed
+      const active = allAnalyses.filter(a => !a.deletedAt);
+      const trashed = allAnalyses.filter(a => a.deletedAt);
+
+      console.log(`Loaded ${active.length} active and ${trashed.length} trashed analyses from database`);
       
       // Check if we need to migrate localStorage analyses
-      await migrateLocalStorageAnalyses(analyses);
+      await migrateLocalStorageAnalyses(active);
       
-      setSavedAnalyses(analyses);
+      setSavedAnalyses(active);
+      setTrashedAnalyses(trashed);
     } catch (error) {
       console.error('Database error:', error);
       loadAnalysesFromLocalStorage();
@@ -503,7 +511,107 @@ export const useSavedAnalyses = () => {
     }
   }, [savedAnalyses, user]);
 
+  // Soft-delete: Move to trash
   const deleteAnalysis = useCallback(async (id: string) => {
+    const deletedAt = new Date().toISOString();
+    
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('saved_analyses')
+          .update({ deleted_at: deletedAt })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        // Move from active to trashed
+        const analysis = savedAnalyses.find(a => a.id === id);
+        if (analysis) {
+          setSavedAnalyses(prev => prev.filter(a => a.id !== id));
+          setTrashedAnalyses(prev => [{ ...analysis, deletedAt }, ...prev]);
+        }
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'soft_delete',
+          resourceType: 'analysis',
+          resourceId: id
+        });
+      } catch (error) {
+        console.error('Database soft-delete error:', error);
+        throw error;
+      }
+    } else {
+      // For localStorage, also support soft-delete
+      const analysis = savedAnalyses.find(a => a.id === id);
+      if (analysis) {
+        const trashedAnalysis = { ...analysis, deletedAt };
+        setSavedAnalyses(prev => prev.filter(a => a.id !== id));
+        setTrashedAnalyses(prev => [trashedAnalysis, ...prev]);
+        
+        // Update localStorage
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const allAnalyses = JSON.parse(stored);
+          const updated = allAnalyses.map((a: any) => 
+            a.id === id ? { ...a, deletedAt } : a
+          );
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
+      }
+    }
+  }, [savedAnalyses, user]);
+
+  // Restore from trash
+  const restoreAnalysis = useCallback(async (id: string) => {
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('saved_analyses')
+          .update({ deleted_at: null })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        // Move from trashed to active
+        const analysis = trashedAnalyses.find(a => a.id === id);
+        if (analysis) {
+          setTrashedAnalyses(prev => prev.filter(a => a.id !== id));
+          setSavedAnalyses(prev => [{ ...analysis, deletedAt: null }, ...prev]);
+        }
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'restore',
+          resourceType: 'analysis',
+          resourceId: id
+        });
+      } catch (error) {
+        console.error('Database restore error:', error);
+        throw error;
+      }
+    } else {
+      const analysis = trashedAnalyses.find(a => a.id === id);
+      if (analysis) {
+        const restoredAnalysis = { ...analysis, deletedAt: null };
+        setTrashedAnalyses(prev => prev.filter(a => a.id !== id));
+        setSavedAnalyses(prev => [restoredAnalysis, ...prev]);
+        
+        // Update localStorage
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const allAnalyses = JSON.parse(stored);
+          const updated = allAnalyses.map((a: any) => 
+            a.id === id ? { ...a, deletedAt: null } : a
+          );
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
+      }
+    }
+  }, [trashedAnalyses, user]);
+
+  // Permanent delete
+  const permanentlyDeleteAnalysis = useCallback(async (id: string) => {
     if (user) {
       try {
         const { error } = await supabase
@@ -513,24 +621,66 @@ export const useSavedAnalyses = () => {
 
         if (error) throw error;
 
-        setSavedAnalyses(prev => prev.filter(analysis => analysis.id !== id));
+        setTrashedAnalyses(prev => prev.filter(a => a.id !== id));
         
         // Audit log
         await AuditLogService.log({
-          action: 'delete',
+          action: 'permanent_delete',
           resourceType: 'analysis',
           resourceId: id
         });
       } catch (error) {
-        console.error('Database delete error:', error);
+        console.error('Database permanent delete error:', error);
         throw error;
       }
     } else {
-      const updatedAnalyses = savedAnalyses.filter(analysis => analysis.id !== id);
-      setSavedAnalyses(updatedAnalyses);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+      setTrashedAnalyses(prev => prev.filter(a => a.id !== id));
+      
+      // Update localStorage
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const allAnalyses = JSON.parse(stored);
+        const updated = allAnalyses.filter((a: any) => a.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
     }
-  }, [savedAnalyses, user]);
+  }, [user]);
+
+  // Empty trash (permanently delete all trashed)
+  const emptyTrash = useCallback(async () => {
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('saved_analyses')
+          .delete()
+          .not('deleted_at', 'is', null);
+
+        if (error) throw error;
+
+        const count = trashedAnalyses.length;
+        setTrashedAnalyses([]);
+        
+        // Audit log
+        await AuditLogService.log({
+          action: 'empty_trash',
+          resourceType: 'analysis',
+          details: { count }
+        });
+      } catch (error) {
+        console.error('Database empty trash error:', error);
+        throw error;
+      }
+    } else {
+      // Update localStorage
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const allAnalyses = JSON.parse(stored);
+        const updated = allAnalyses.filter((a: any) => !a.deletedAt);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      setTrashedAnalyses([]);
+    }
+  }, [trashedAnalyses, user]);
 
   const loadAnalysis = useCallback((id: string): SavedAnalysis | null => {
     console.log('🔍 Loading analysis with ID:', id);
@@ -636,9 +786,13 @@ export const useSavedAnalyses = () => {
 
   return {
     savedAnalyses,
+    trashedAnalyses,
     saveAnalysis,
     updateAnalysis,
     deleteAnalysis,
+    restoreAnalysis,
+    permanentlyDeleteAnalysis,
+    emptyTrash,
     loadAnalysis,
     exportAnalysis,
     user,

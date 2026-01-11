@@ -5,31 +5,44 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { Save, FolderOpen, Trash2, Download, Calendar, Globe, Upload } from 'lucide-react';
+import { FolderOpen, Trash2, Download, Calendar, Globe, Upload, RotateCcw, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
 
 interface SavedAnalysesManagerProps {
   onLoadAnalysis: (analysis: SavedAnalysis) => void;
 }
 
 // Industry names mapping
-const industryNames = {
+const industryNames: Record<string, string> = {
   'shk': 'Sanitär, Heizung, Klima',
   'maler': 'Maler & Lackierer',
   'elektriker': 'Elektroinstallation',
   'dachdecker': 'Dachdeckerei',
   'stukateur': 'Stuckateur & Trockenbau',
   'planungsbuero': 'Planungsbüro',
-  'facility-management': 'Facility-Management & Gebäudereinigung'
+  'facility-management': 'Facility-Management & Gebäudereinigung',
+  'holzverarbeitung': 'Holzverarbeitung',
+  'baeckerei': 'Bäckerei',
+  'blechbearbeitung': 'Blechbearbeitung'
 };
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {
-  const { savedAnalyses, deleteAnalysis, exportAnalysis, saveAnalysis, user } = useSavedAnalyses();
+  const { 
+    savedAnalyses, 
+    trashedAnalyses, 
+    deleteAnalysis, 
+    restoreAnalysis, 
+    permanentlyDeleteAnalysis, 
+    emptyTrash, 
+    exportAnalysis, 
+    saveAnalysis 
+  } = useSavedAnalyses();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [activeTab, setActiveTab] = useState('active');
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('de-DE', {
@@ -41,10 +54,54 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
     });
   };
 
+  const getDaysUntilPermanentDeletion = (deletedAt: string) => {
+    const deletedDate = new Date(deletedAt);
+    const permanentDeleteDate = new Date(deletedDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const now = new Date();
+    const diffTime = permanentDeleteDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
   const handleLoadAnalysis = (analysis: SavedAnalysis) => {
     console.log('SavedAnalysesManager: Loading analysis:', analysis.name, 'ID:', analysis.id);
     onLoadAnalysis(analysis);
     setIsOpen(false);
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    await deleteAnalysis(id);
+    toast({
+      title: "In Papierkorb verschoben",
+      description: `"${name}" wurde in den Papierkorb verschoben. Wiederherstellung innerhalb von 30 Tagen möglich.`,
+    });
+  };
+
+  const handleRestore = async (id: string, name: string) => {
+    await restoreAnalysis(id);
+    toast({
+      title: "Wiederhergestellt",
+      description: `"${name}" wurde erfolgreich wiederhergestellt.`,
+    });
+    setActiveTab('active');
+  };
+
+  const handlePermanentDelete = async (id: string, name: string) => {
+    await permanentlyDeleteAnalysis(id);
+    toast({
+      title: "Endgültig gelöscht",
+      description: `"${name}" wurde unwiderruflich gelöscht.`,
+      variant: "destructive"
+    });
+  };
+
+  const handleEmptyTrash = async () => {
+    await emptyTrash();
+    toast({
+      title: "Papierkorb geleert",
+      description: "Alle gelöschten Analysen wurden endgültig entfernt.",
+      variant: "destructive"
+    });
   };
 
   const triggerFileUpload = () => {
@@ -80,11 +137,6 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
 
   const handleFileUpload = async (file: File) => {
     console.log('=== FILE UPLOAD START ===');
-    console.log('File:', file);
-    console.log('File name:', file.name);
-    console.log('File size:', file.size);
-    console.log('File type:', file.type);
-    
     setIsImporting(true);
 
     try {
@@ -92,18 +144,13 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         throw new Error('Bitte wählen Sie eine .json Datei aus');
       }
 
-      console.log('Reading file...');
       const text = await file.text();
-      console.log('File content length:', text.length);
-      console.log('File content preview:', text.substring(0, 200));
       
       if (!text.trim()) {
         throw new Error('Die Datei ist leer');
       }
 
-      console.log('Parsing JSON...');
       const importedAnalysis = JSON.parse(text) as SavedAnalysis;
-      console.log('Parsed analysis:', importedAnalysis);
       
       // Erweiterte Validierung
       const requiredFields = ['id', 'name', 'businessData', 'realData'];
@@ -116,8 +163,6 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
       if (!importedAnalysis.businessData.url || !importedAnalysis.businessData.industry) {
         throw new Error('Ungültige Geschäftsdaten in der JSON-Datei');
       }
-
-      console.log('Validation passed, saving analysis...');
       
       // Generiere neue ID für Import
       const importName = `${importedAnalysis.name} (Importiert ${new Date().toLocaleTimeString()})`;
@@ -133,8 +178,6 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         }
       );
 
-      console.log('Analysis saved with ID:', analysisId);
-
       // Erstelle die komplette Analyse-Struktur
       const newAnalysis = {
         id: analysisId,
@@ -149,40 +192,16 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         savedAt: new Date().toISOString()
       };
 
-      console.log('Calling onLoadAnalysis with:', newAnalysis);
-      
-      // Versuche die Analyse zu laden
-      try {
-        onLoadAnalysis(newAnalysis);
-        console.log('onLoadAnalysis called successfully');
-        setIsOpen(false);
-      } catch (error) {
-        console.error('Error calling onLoadAnalysis:', error);
-      }
-      
-      // DIREKTER FALLBACK: Immer zur Analyse-Seite weiterleiten
-      console.log('Executing direct redirect to analysis...');
-      setTimeout(() => {
-        // Setze URL-Parameter und lade die Seite neu
-        const url = new URL(window.location.href);
-        url.searchParams.set('loadAnalysis', analysisId);
-        console.log('Redirecting to:', url.toString());
-        window.location.href = url.toString();
-      }, 1000); // 1 Sekunde Delay für Toast-Anzeige
+      onLoadAnalysis(newAnalysis);
+      setIsOpen(false);
 
       toast({
         title: "Import erfolgreich",
         description: `Analyse "${importName}" wurde erfolgreich importiert.`,
       });
-
-      console.log('=== IMPORT COMPLETED SUCCESSFULLY ===');
       
     } catch (error) {
-      console.error('=== IMPORT ERROR ===');
-      console.error('Error:', error);
-      console.error('Error type:', typeof error);
-      console.error('Error message:', error instanceof Error ? error.message : String(error));
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+      console.error('=== IMPORT ERROR ===', error);
       
       let errorMessage = "Unbekannter Fehler beim Import";
       
@@ -202,9 +221,9 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
     }
   };
 
-  console.log('SavedAnalysesManager render - savedAnalyses:', savedAnalyses.length);
+  const totalCount = savedAnalyses.length + trashedAnalyses.length;
 
-  if (savedAnalyses.length === 0) {
+  if (totalCount === 0) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
@@ -217,7 +236,7 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
           <DialogHeader>
             <DialogTitle>Gespeicherte Analysen</DialogTitle>
           </DialogHeader>
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>Noch keine Analysen gespeichert.</p>
             <p className="text-sm">Speichern Sie Ihre erste Analyse, um sie hier zu sehen.</p>
@@ -233,6 +252,11 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         <Button variant="outline" size="sm">
           <FolderOpen className="h-4 w-4 mr-2" />
           Gespeicherte Analysen ({savedAnalyses.length})
+          {trashedAnalyses.length > 0 && (
+            <Badge variant="secondary" className="ml-2 bg-destructive/10 text-destructive">
+              {trashedAnalyses.length} im Papierkorb
+            </Badge>
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -250,74 +274,201 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
             </Button>
           </div>
         </DialogHeader>
-        <div className="grid gap-4">
-          {savedAnalyses.map((analysis) => (
-            <Card key={analysis.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{analysis.name}</CardTitle>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Globe className="h-4 w-4" />
-                      <span>{analysis.businessData.url}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4" />
-                      <span>Gespeichert: {formatDate(analysis.savedAt)}</span>
-                    </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="active">
+              Aktiv ({savedAnalyses.length})
+            </TabsTrigger>
+            <TabsTrigger value="trash" className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4" />
+              Papierkorb ({trashedAnalyses.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active" className="mt-4">
+            {savedAnalyses.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Keine aktiven Analysen.</p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {savedAnalyses.map((analysis) => (
+                  <Card key={analysis.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <CardTitle className="text-lg">{analysis.name}</CardTitle>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Globe className="h-4 w-4" />
+                            <span>{analysis.businessData.url}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>Gespeichert: {formatDate(analysis.savedAt)}</span>
+                          </div>
+                        </div>
+                        <Badge variant="secondary">
+                          {industryNames[analysis.businessData.industry] || analysis.businessData.industry}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                          <p>{analysis.businessData.address}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => exportAnalysis(analysis.id)}
+                            title="Exportieren"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm" title="In Papierkorb verschieben">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>In Papierkorb verschieben</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Möchten Sie die Analyse "{analysis.name}" in den Papierkorb verschieben? 
+                                  Sie können sie innerhalb von 30 Tagen wiederherstellen.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(analysis.id, analysis.name)}>
+                                  In Papierkorb
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <Button onClick={() => handleLoadAnalysis(analysis)}>
+                            Laden
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="trash" className="mt-4">
+            {trashedAnalyses.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Trash2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Der Papierkorb ist leer.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-destructive/10 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>Analysen werden nach 30 Tagen automatisch endgültig gelöscht.</span>
                   </div>
-                  <Badge variant="secondary">
-                    {industryNames[analysis.businessData.industry]}
-                  </Badge>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
+                        Papierkorb leeren
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Papierkorb leeren</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Möchten Sie wirklich alle {trashedAnalyses.length} Analysen im Papierkorb endgültig löschen? 
+                          Diese Aktion kann nicht rückgängig gemacht werden.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleEmptyTrash} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          Endgültig löschen
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
-                    <p>{analysis.businessData.address}</p>
-                    <p className="mt-1">
-                      Manuelle Eingaben: {Object.values(analysis.manualData).filter(Boolean).length > 0 ? 'Ja' : 'Nein'}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => exportAnalysis(analysis.id)}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Analyse löschen</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Möchten Sie die Analyse "{analysis.name}" wirklich löschen? 
-                            Diese Aktion kann nicht rückgängig gemacht werden.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteAnalysis(analysis.id)}>
-                            Löschen
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Button onClick={() => handleLoadAnalysis(analysis)}>
-                      Laden
-                    </Button>
-                  </div>
+
+                <div className="grid gap-4">
+                  {trashedAnalyses.map((analysis) => (
+                    <Card key={analysis.id} className="hover:shadow-md transition-shadow border-destructive/20">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1">
+                            <CardTitle className="text-lg text-muted-foreground">{analysis.name}</CardTitle>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Globe className="h-4 w-4" />
+                              <span>{analysis.businessData.url}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                              <span>
+                                Gelöscht: {formatDate(analysis.deletedAt!)} 
+                                ({getDaysUntilPermanentDeletion(analysis.deletedAt!)} Tage bis zur endgültigen Löschung)
+                              </span>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="border-destructive/50 text-destructive">
+                            Papierkorb
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRestore(analysis.id, analysis.name)}
+                            className="text-primary"
+                          >
+                            <RotateCcw className="h-4 w-4 mr-2" />
+                            Wiederherstellen
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" size="sm">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Endgültig löschen
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Endgültig löschen</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Möchten Sie die Analyse "{analysis.name}" wirklich endgültig löschen? 
+                                  Diese Aktion kann NICHT rückgängig gemacht werden.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => handlePermanentDelete(analysis.id, analysis.name)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Endgültig löschen
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
