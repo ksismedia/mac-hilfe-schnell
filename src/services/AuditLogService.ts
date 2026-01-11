@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'view' | 'export';
+export type AuditAction = 'create' | 'update' | 'delete' | 'view' | 'export' | 'soft_delete' | 'restore' | 'permanent_delete' | 'empty_trash';
 export type ResourceType = 'analysis' | 'manual_data' | 'export';
 
 interface AuditLogData {

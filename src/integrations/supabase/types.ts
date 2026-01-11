@@ -216,6 +216,7 @@ export type Database = {
         Row: {
           business_data: Json
           created_at: string
+          deleted_at: string | null
           id: string
           manual_data: Json
           name: string
@@ -227,6 +228,7 @@ export type Database = {
         Insert: {
           business_data: Json
           created_at?: string
+          deleted_at?: string | null
           id?: string
           manual_data: Json
           name: string
@@ -238,6 +240,7 @@ export type Database = {
         Update: {
           business_data?: Json
           created_at?: string
+          deleted_at?: string | null
           id?: string
           manual_data?: Json
           name?: string
@@ -283,6 +286,7 @@ export type Database = {
       cleanup_expired_accessibility_cache: { Args: never; Returns: undefined }
       cleanup_expired_extension_data: { Args: never; Returns: undefined }
       cleanup_old_data: { Args: never; Returns: undefined }
+      cleanup_soft_deleted_analyses: { Args: never; Returns: undefined }
       create_audit_log: {
         Args: {
           p_action: string
