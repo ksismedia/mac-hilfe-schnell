@@ -1111,8 +1111,7 @@ export const generateCustomerHTML = ({
                 <p style="color: #1e40af; margin: 0; font-size: 13px;">
                   <strong>ℹ️ Hinweis zum Score:</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
                   Obwohl nur MODERATE-Fehler angezeigt werden, bewertet Lighthouse die gesamte Website-Barrierefreiheit 
-                  anhand zahlreicher Faktoren. Das Kappungsmodell (max. 59%/35%/20%) greift nur bei kritischen (CRITICAL) 
-                  oder schwerwiegenden (SERIOUS) WCAG-Verstößen, nicht bei moderaten Fehlern.
+                  anhand zahlreicher Faktoren negativ.
                 </p>
               </div>
             ` : ''}
