@@ -1105,8 +1105,19 @@ export const generateCustomerHTML = ({
         <div id="wcag-details" style="display: none;">
           <!-- Violations Overview -->
           ${violations.length > 0 ? `
+            ${/* Check if only MODERATE/MINOR violations exist */ 
+              !violations.some(v => v.impact === 'critical' || v.impact === 'serious') ? `
+              <div style="margin-top: 15px; padding: 12px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe;">
+                <p style="color: #1e40af; margin: 0; font-size: 13px;">
+                  <strong>ℹ️ Hinweis zum Score:</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
+                  Obwohl nur MODERATE-Fehler angezeigt werden, bewertet Lighthouse die gesamte Website-Barrierefreiheit 
+                  anhand zahlreicher Faktoren. Das Kappungsmodell (max. 59%/35%/20%) greift nur bei kritischen (CRITICAL) 
+                  oder schwerwiegenden (SERIOUS) WCAG-Verstößen, nicht bei moderaten Fehlern.
+                </p>
+              </div>
+            ` : ''}
             <div class="violations-box" style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #fef2f2; border: 2px solid #fca5a5;">
-              <h4 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Automatisch erkannte Probleme ${hasRealData ? '<span style="color: #10b981; font-size: 12px;">(PageSpeed Insights)</span>' : ''}</h4>
+              <h4 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Erkannte Probleme ${hasRealData ? '<span style="color: #10b981; font-size: 12px;">(PageSpeed Insights)</span>' : ''}</h4>
               <div style="display: grid; gap: 15px;">
                 ${violations.map(v => `
                   <div style="padding: 15px; border-radius: 8px; background: white; border-left: 4px solid ${
