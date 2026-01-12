@@ -686,17 +686,38 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 
                 if (nonNeutralizedViolations.length === 0) return null;
                 
+                // Check if there are any critical/serious violations for capping explanation
+                const hasCriticalOrSerious = nonNeutralizedViolations.some((v: AccessibilityViolation) => 
+                  v.impact === 'critical' || v.impact === 'serious'
+                );
+                const onlyModerateOrMinor = nonNeutralizedViolations.length > 0 && !hasCriticalOrSerious;
+                
                 return (
                   <Card className="border-red-200">
                     <CardHeader>
                       <CardTitle className="text-lg text-red-600 flex items-center gap-2">
                         <XCircle className="h-5 w-5" />
-                        Gefundene Probleme ({nonNeutralizedViolations.length})
+                        Erkannte Probleme ({nonNeutralizedViolations.length})
                       </CardTitle>
                       <CardDescription>
                         Diese Punkte sollten behoben werden, um die Barrierefreiheit zu verbessern
                       </CardDescription>
                     </CardHeader>
+                    
+                    {/* Erklärung: MODERATE-Fehler und Lighthouse-Score */}
+                    {onlyModerateOrMinor && (
+                      <div className="mx-6 mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm text-blue-800">
+                            <strong>Hinweis zum Score:</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
+                            Obwohl nur MODERATE-Fehler angezeigt werden, bewertet Lighthouse die gesamte Website-Barrierefreiheit 
+                            anhand zahlreicher Faktoren. Das Kappungsmodell (max. 59%/35%/20%) greift nur bei kritischen (CRITICAL) 
+                            oder schwerwiegenden (SERIOUS) WCAG-Verstößen, nicht bei moderaten Fehlern.
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <CardContent>
                       <div className="space-y-4">
                         {nonNeutralizedViolations.map((violation: AccessibilityViolation, index: number) => (
