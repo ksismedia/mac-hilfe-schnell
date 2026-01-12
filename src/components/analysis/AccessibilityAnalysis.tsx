@@ -712,8 +712,7 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                           <div className="text-sm text-blue-800">
                             <strong>Hinweis zum Score:</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
                             Obwohl nur MODERATE-Fehler angezeigt werden, bewertet Lighthouse die gesamte Website-Barrierefreiheit 
-                            anhand zahlreicher Faktoren. Das Kappungsmodell (max. 59%/35%/20%) greift nur bei kritischen (CRITICAL) 
-                            oder schwerwiegenden (SERIOUS) WCAG-Verstößen, nicht bei moderaten Fehlern.
+                            anhand zahlreicher Faktoren negativ.
                           </div>
                         </div>
                       </div>
