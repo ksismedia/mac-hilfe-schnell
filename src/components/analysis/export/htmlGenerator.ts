@@ -3589,14 +3589,26 @@ export const generateCustomerHTML = ({
           <div class="header-score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
         </div>
       <div class="section-content">
+        <!-- Permanenter rechtlicher Hinweis - immer anzeigen -->
+        <div style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fffbeb; border: 2px solid #fcd34d;">
+          <h4 style="color: #92400e; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚖️ RECHTLICHER HINWEIS
+          </h4>
+          <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 6px; padding: 12px; color: #92400e; font-size: 13px;">
+            <strong>⚠️ Wichtiger Hinweis:</strong> Diese automatisierte Prüfung ersetzt keine rechtliche Beratung und garantiert keine vollständige Rechtskonformität. 
+            Wir empfehlen ausdrücklich die Einholung einer rechtlichen Beratung durch eine spezialisierte Anwaltskanzlei. 
+            Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+          </div>
+        </div>
+        
         <!-- Hauptbewertung sichtbar -->
         <div class="metric-card">
           <h3>♿ Barrierefreiheit (WCAG 2.1)</h3>
           <div class="score-display">
             <div class="score-circle ${getScoreColorClass(actualAccessibilityScore)}">${actualAccessibilityScore}%</div>
             <div class="score-details">
-              <p><strong>Compliance-Level:</strong> Teilweise konform</p>
-              <p><strong>Empfehlung:</strong> Barrierefreiheit verbessern</p>
+              <p><strong>Compliance-Level:</strong> ${actualAccessibilityScore >= 80 ? 'Konform' : actualAccessibilityScore >= 50 ? 'Teilweise konform' : 'Nicht konform'}</p>
+              <p><strong>Empfehlung:</strong> ${actualAccessibilityScore >= 80 ? 'Barrierefreiheit beibehalten' : 'Barrierefreiheit verbessern'}</p>
             </div>
           </div>
           <div class="progress-container">
