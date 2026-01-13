@@ -1115,11 +1115,12 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        ${violations.length > 0 ? `
-          <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
-            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-              ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
-            </h4>
+        <!-- Permanenter rechtlicher Hinweis - immer anzeigen -->
+        <div style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: ${violations.length > 0 ? '#fef2f2' : '#fffbeb'}; border: 2px solid ${violations.length > 0 ? '#fecaca' : '#fcd34d'};">
+          <h4 style="color: ${violations.length > 0 ? '#dc2626' : '#92400e'}; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚖️ RECHTLICHER HINWEIS${violations.length > 0 ? ': Barrierefreiheit-Verstöße erkannt' : ''}
+          </h4>
+          ${violations.length > 0 ? `
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
               <strong>Warnung:</strong> Die automatisierte Analyse hat <strong>${violations.length} Barrierefreiheit-Probleme</strong> identifiziert. 
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
@@ -1129,11 +1130,13 @@ export const generateCustomerHTML = ({
                 Diese Probleme wurden durch <strong>automatisierte PageSpeed Insights Tests</strong> ermittelt und sollten dringend überprüft werden.
               </p>
             ` : ''}
-            <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-              <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Webseite oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
-            </div>
+          ` : ''}
+          <div style="background: ${violations.length > 0 ? '#fee2e2' : '#fef3c7'}; border: 1px solid ${violations.length > 0 ? '#fecaca' : '#fcd34d'}; border-radius: 6px; padding: 12px; color: ${violations.length > 0 ? '#7f1d1d' : '#92400e'}; font-size: 13px;">
+            <strong>⚠️ Wichtiger Hinweis:</strong> Diese automatisierte Prüfung ersetzt keine rechtliche Beratung und garantiert keine vollständige Rechtskonformität. 
+            Wir empfehlen ausdrücklich die Einholung einer rechtlichen Beratung durch eine spezialisierte Anwaltskanzlei. 
+            Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
           </div>
-        ` : ''}
+        </div>
         
         ${cappingExplanationHTML}
         
