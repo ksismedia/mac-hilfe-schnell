@@ -1998,7 +1998,7 @@ export const generateCustomerHTML = ({
         )}
 
         <div class="recommendations">
-          <h4>Handlungsempfehlungen für lokale SEO:</h4>
+          <h4>Handlungsempfehlungen (Lokale SEO):</h4>
           <ul>
             ${localSEOScore >= 90 ? `
               <li>✅ Behalten Sie Ihre exzellente lokale Online-Präsenz bei</li>
@@ -2242,7 +2242,7 @@ export const generateCustomerHTML = ({
             Keine Wettbewerber zum Vergleich erfasst.
           </p>
           <div class="recommendations">
-            <h4>Empfohlene Maßnahmen:</h4>
+            <h4>Handlungsempfehlungen:</h4>
             <ul>
               <li>Wettbewerbsanalyse durchführen</li>
               <li>Marktposition bestimmen</li>
@@ -2483,7 +2483,7 @@ export const generateCustomerHTML = ({
         
         
         <div class="recommendations">
-          <h4>Strategische Handlungsempfehlungen:</h4>
+          <h4>Handlungsempfehlungen (Wettbewerb):</h4>
           <ul>
             ${(() => {
               // Calculate own company score
@@ -3345,7 +3345,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="recommendations">
-            <h4>Handlungsempfehlungen zur Textqualität:</h4>
+            <h4>Handlungsempfehlungen (Textqualität):</h4>
             <ul>
               ${(() => {
                 const headingScore = realData.seo.headings.h1.length === 1 ? 90 : realData.seo.headings.h1.length > 1 ? 60 : 30;
@@ -3424,7 +3424,7 @@ export const generateCustomerHTML = ({
             </div>
           </div>
           <div class="recommendations">
-            <h4>Handlungsempfehlungen zur Branchenrelevanz:</h4>
+            <h4>Handlungsempfehlungen (Branchenrelevanz):</h4>
             <ul>
               ${(() => {
                 const effectiveKeywordScore = keywordScore !== undefined && keywordScore !== null ? keywordScore : 50;
@@ -4502,7 +4502,7 @@ export const generateCustomerHTML = ({
 
             <!-- Handlungsempfehlungen für Conversion -->
             <div class="recommendations">
-              <h4>Prioritäre Handlungsempfehlungen (Conversion)</h4>
+              <h4>Handlungsempfehlungen (Conversion):</h4>
               <ul>
                 <li><strong>Tracking implementieren:</strong> Conversion-Tracking für Kontaktformular und WhatsApp einrichten</li>
                 <li><strong>Mobile-Optimierung:</strong> E-Mail-CTAs für mobile Geräte optimieren</li>
@@ -4584,7 +4584,7 @@ export const generateCustomerHTML = ({
 
             <!-- Handlungsempfehlungen für User Journey -->
             <div class="recommendations">
-              <h4>Prioritäre Handlungsempfehlungen (User Journey)</h4>
+              <h4>Handlungsempfehlungen (User Journey):</h4>
               <ul>
                 <li><strong>Suchfunktion:</strong> Website-Suche implementieren für bessere Navigation</li>
                 <li><strong>Lesbarkeit verbessern:</strong> Schriftgröße, Kontraste und Zeilenlängen optimieren</li>
@@ -5090,7 +5090,7 @@ export const generateCustomerHTML = ({
 
         <!-- Empfehlungen -->
         <div class="recommendations">
-          <h4>Handlungsempfehlungen für Ihre Online-Präsenz</h4>
+          <h4>Handlungsempfehlungen (Online-Präsenz):</h4>
           <ul>
             ${overallScore >= 90 ? `
               <li>✅ Exzellente Online-Präsenz – Behalten Sie Ihre Content-Strategie bei!</li>
@@ -5172,7 +5172,7 @@ export const generateCustomerHTML = ({
         `}
 
         <div class="recommendations">
-          <h4>Handlungsempfehlungen für Branchenplattformen:</h4>
+          <h4>Handlungsempfehlungen (Branchenplattformen):</h4>
           <ul>
             ${overallScore >= 90 ? `
               <li>✅ Exzellente Präsenz auf Branchenplattformen – Weiter so!</li>
@@ -5356,7 +5356,7 @@ export const generateCustomerHTML = ({
         </div>
 
         <div class="recommendations">
-          <h4>Handlungsempfehlungen zur Personalentwicklung</h4>
+          <h4>Handlungsempfehlungen (Personalentwicklung):</h4>
           <ul>
             ${staffQualificationData.apprentices === 0 ? '<li>Priorität: Qualifikationsgrad der Mitarbeiter erhöhen</li>' : ''}
             ${!staffQualificationData.certifications.digital_skills ? '<li>Zusätzliche Zertifizierungen erwerben (Sicherheit, Digitalisierung)</li>' : ''}
@@ -5654,7 +5654,7 @@ export const generateCustomerHTML = ({
         ` : ''}
 
         <div class="recommendations">
-          <h4>Handlungsempfehlungen zur Optimierung</h4>
+          <h4>Handlungsempfehlungen (Corporate Identity):</h4>
           <ul>
             ${manualCorporateIdentityData.uniformLogo === 'no' || manualCorporateIdentityData.uniformLogo === 'unknown' ? '<li>Einheitliches Logo auf allen Kommunikationskanälen verwenden</li>' : ''}
             ${manualCorporateIdentityData.uniformWorkClothing === 'no' || manualCorporateIdentityData.uniformWorkClothing === 'unknown' ? '<li>Einheitliche Arbeitskleidung mit Firmenlogo für professionellen Auftritt einführen</li>' : ''}

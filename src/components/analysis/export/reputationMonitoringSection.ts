@@ -34,7 +34,7 @@ export const generateReputationMonitoringSection = (
               Keine Daten verfügbar. Reputation Monitoring wurde nicht durchgeführt.
             </p>
             <div class="recommendations">
-              <h4>Empfohlene Maßnahmen:</h4>
+              <h4>Handlungsempfehlungen:</h4>
               <ul>
                 <li>Regelmäßiges Monitoring der Online-Reputation einrichten</li>
                 <li>Erwähnungen des Unternehmens im Web verfolgen</li>
