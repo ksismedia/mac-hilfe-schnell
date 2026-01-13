@@ -325,10 +325,52 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
             
             return (
             <div className="space-y-6">
-              {/* Legal Warning for Accessibility Issues */}
+              {/* Legal Warning for Accessibility Issues - nur bei nicht-neutralisierten Violations */}
               {(() => {
                 const currentData = getCurrentAccessibilityData();
-                return (currentData && ((currentData.violations?.length || 0) > 0 || currentData.score < 90)) && (
+                if (!currentData) return null;
+                
+                // Berechne nicht-neutralisierte Violations wie in der Violations-Anzeige
+                const allViolations = currentData.violations || [];
+                const nonNeutralizedViolations = allViolations.filter((violation: AccessibilityViolation) => {
+                  const vid = violation.id || '';
+                  
+                  if (manualAccessibilityData?.keyboardNavigation && 
+                      (vid.includes('keyboard') || vid.includes('button-name') || 
+                       vid.includes('link-name') || vid.includes('accesskeys'))) {
+                    return false;
+                  }
+                  if (manualAccessibilityData?.screenReaderCompatible && 
+                      (vid.includes('aria-') || vid.includes('label') || 
+                       vid.includes('role') || vid.includes('landmark'))) {
+                    return false;
+                  }
+                  if (manualAccessibilityData?.colorContrast && 
+                      (vid.includes('color-contrast') || vid.includes('contrast'))) {
+                    return false;
+                  }
+                  if (manualAccessibilityData?.altTextsPresent && 
+                      (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) {
+                    return false;
+                  }
+                  if (manualAccessibilityData?.focusVisibility && 
+                      (vid.includes('focus') || vid.includes('focus-order'))) {
+                    return false;
+                  }
+                  if (manualAccessibilityData?.textScaling && 
+                      (vid.includes('meta-viewport') || vid.includes('target-size'))) {
+                    return false;
+                  }
+                  return true;
+                });
+                
+                // Warnung nur anzeigen wenn: nicht-neutralisierte Violations ODER Score < 90 UND keine Neutralisierungen stattgefunden haben
+                const hasNeutralizedAll = allViolations.length > 0 && nonNeutralizedViolations.length === 0;
+                const shouldShowWarning = nonNeutralizedViolations.length > 0 || (currentData.score < 90 && !hasNeutralizedAll);
+                
+                if (!shouldShowWarning) return null;
+                
+                return (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
                     <Scale className="h-5 w-5" />
