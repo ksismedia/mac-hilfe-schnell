@@ -2738,7 +2738,13 @@ export const generateCustomerHTML = ({
                 // Kategorie 3: Online-/Web-/Social-Media Performance (KORRIGIERT: Social Media immer einbeziehen)
                 const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
                 const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
-                const socialProofScore = realData.socialProof?.overallScore ?? 0;
+                const socialProof = realData.socialProof as any;
+                const socialProofScore = Number(socialProof?.overallScore ?? 0);
+                const hasSocialProofData = !!socialProof && (
+                  (Number(socialProof.testimonials) || 0) > 0 ||
+                  (Array.isArray(socialProof.certifications) && socialProof.certifications.length > 0) ||
+                  (Array.isArray(socialProof.awards) && socialProof.awards.length > 0)
+                );
                 
                 // Basis-Scores IMMER einbeziehen (Social Media auch wenn 0)
                 const cat3Scores: number[] = [
@@ -2746,8 +2752,8 @@ export const generateCustomerHTML = ({
                   socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
                 ];
                 
-                // Social Proof nur hinzufügen wenn vorhanden
-                if (socialProofScore > 0) cat3Scores.push(socialProofScore);
+                // Social Proof nur hinzufügen wenn tatsächlich Daten vorhanden
+                if (hasSocialProofData && socialProofScore > 0) cat3Scores.push(socialProofScore);
                 
                 // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
                 if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
