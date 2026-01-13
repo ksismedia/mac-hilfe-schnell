@@ -411,9 +411,16 @@ export const calculateSocialMediaPerformanceScore = (
     socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
   ];
   
-  // Social Proof nur hinzufügen wenn vorhanden
-  if (realData.socialProof?.overallScore && realData.socialProof.overallScore > 0) {
-    cat3Scores.push(realData.socialProof.overallScore);
+  // Social Proof nur hinzufügen wenn tatsächlich Daten vorhanden sind
+  const socialProof = realData.socialProof as any;
+  const hasSocialProofData = !!socialProof && (
+    (Number(socialProof.testimonials) || 0) > 0 ||
+    (Array.isArray(socialProof.certifications) && socialProof.certifications.length > 0) ||
+    (Array.isArray(socialProof.awards) && socialProof.awards.length > 0)
+  );
+
+  if (hasSocialProofData && Number(socialProof.overallScore) > 0) {
+    cat3Scores.push(Number(socialProof.overallScore));
   }
   
   // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
