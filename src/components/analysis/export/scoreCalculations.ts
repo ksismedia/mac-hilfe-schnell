@@ -71,9 +71,17 @@ export const calculateImprintScore = (
 };
 
 const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
-  const reviews = realData.reviews?.google?.count || 0;
-  const rating = realData.reviews?.google?.rating || 0;
+  // Robuste Datenextraktion: Unterstütze beide möglichen Strukturen
+  const reviewsData = realData.reviews?.google || (realData.reviews as any) || {};
+  const reviews = Number(reviewsData.count) || 0;
+  const rating = Number(reviewsData.rating) || 0;
   let score = 0;
+
+  console.log('🔍 calculateGoogleReviewsScore input:', {
+    rawReviews: realData.reviews,
+    extractedRating: rating,
+    extractedCount: reviews
+  });
 
   // Höhere Bewertung der Google Reviews für bessere Wettbewerbsposition
   if (rating > 0) {
@@ -90,7 +98,9 @@ const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
     else score += Math.min(reviews, 10);
   }
 
-  return Math.min(score, 100);
+  const finalScore = Math.min(Math.round(score), 100);
+  console.log('🔍 calculateGoogleReviewsScore result:', finalScore);
+  return finalScore;
 };
 
 const calculateSocialMediaScore = (
