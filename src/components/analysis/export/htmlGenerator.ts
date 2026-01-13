@@ -560,16 +560,16 @@ export const generateCustomerHTML = ({
                 if (isManualData) {
                   const disabled = manualWorkplaceData.disableAutoKununu;
                   if (disabled && !manualWorkplaceData.kununuFound) {
-                    return 'Nicht gefunden';
+                    return '❌ Nicht gefunden';
                   } else if (manualWorkplaceData.kununuFound && manualWorkplaceData.kununuRating) {
                     return `${manualWorkplaceData.kununuRating}/5 (${manualWorkplaceData.kununuReviews || 0} Bewertungen)`;
                   } else {
-                    return 'Nicht gefunden';
+                    return '❌ Nicht gefunden';
                   }
                 } else {
                   return realData.workplace?.kununu?.found && realData.workplace?.kununu?.rating
                     ? `${realData.workplace.kununu.rating}/5 (${realData.workplace.kununu.reviews || 0} Bewertungen)`
-                    : 'Nicht gefunden';
+                    : '❌ Nicht gefunden';
                 }
               })()
             }</p>
@@ -586,16 +586,16 @@ export const generateCustomerHTML = ({
                 if (isManualData) {
                   const disabled = manualWorkplaceData.disableAutoGlassdoor;
                   if (disabled && !manualWorkplaceData.glassdoorFound) {
-                    return 'Nicht gefunden';
+                    return '❌ Nicht gefunden';
                   } else if (manualWorkplaceData.glassdoorFound && manualWorkplaceData.glassdoorRating) {
                     return `${manualWorkplaceData.glassdoorRating}/5 (${manualWorkplaceData.glassdoorReviews || 0} Bewertungen)`;
                   } else {
-                    return 'Nicht gefunden';
+                    return '❌ Nicht gefunden';
                   }
                 } else {
                   return realData.workplace?.glassdoor?.found && realData.workplace?.glassdoor?.rating
                     ? `${realData.workplace.glassdoor.rating}/5 (${realData.workplace.glassdoor.reviews || 0} Bewertungen)`
-                    : 'Nicht gefunden';
+                    : '❌ Nicht gefunden';
                 }
               })()
             }</p>
@@ -1255,7 +1255,7 @@ export const generateCustomerHTML = ({
               </ul>
               <div style="padding: 10px; background: #fef3c7; border-radius: 6px;">
                 <p style="margin: 0; color: #92400e; font-size: 12px;">
-                  <strong>💡 Empfehlung:</strong> Überprüfen Sie die Website-Elemente manuell auf diese Kriterien und ergänzen Sie die Bewertung in der manuellen Eingabemaske.
+                  <strong>Empfehlung:</strong> Überprüfen Sie die Website-Elemente manuell auf diese Kriterien und ergänzen Sie die Bewertung in der manuellen Eingabemaske.
                 </p>
               </div>
             </div>
@@ -1316,7 +1316,7 @@ export const generateCustomerHTML = ({
           <!-- Lighthouse-Score Aufschlüsselung (immer anzeigen) -->
           <div style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
             <p style="color: #60a5fa; margin: 0 0 8px 0; font-size: 14px; font-weight: bold;">
-              📊 Google Lighthouse Accessibility-Score: ${accessibilityScore}%
+              Google Lighthouse Accessibility-Score: ${accessibilityScore}%
             </p>
             <p style="color: #93c5fd; margin: 0 0 6px 0; font-size: 12px;">
               Der technische Basis-Score wird von Google Lighthouse automatisiert ermittelt und prüft über 40 Kriterien:
@@ -1396,7 +1396,7 @@ export const generateCustomerHTML = ({
           if (!hasAnyProblems) {
             return `
               <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">
-                <h4 style="color: #22c55e; margin: 0 0 8px 0;">✅ Keine Handlungsempfehlungen erforderlich</h4>
+              <h4 style="color: #22c55e; margin: 0 0 8px 0;">✅ Keine Handlungsempfehlungen erforderlich</h4>
                 <p style="color: #86efac; margin: 0; font-size: 14px;">Alle erkannten Barrierefreiheit-Probleme wurden manuell als behoben markiert oder es wurden keine Probleme erkannt.</p>
                 ${accessibilityScore < 90 ? `
                 <div style="margin-top: 12px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3);">
@@ -1495,7 +1495,7 @@ export const generateCustomerHTML = ({
                   </ul>
                 ` : '')}
                 <div style="margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 13px; color: #93c5fd;">
-                  <strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden.
+                  <strong>Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden.
                 </div>
               </div>
             </div>
@@ -1861,7 +1861,7 @@ export const generateCustomerHTML = ({
           <h4>${icon} ${title}</h4>
           ${hasManual && hasAuto ? `
             <div style="display: inline-block; padding: 4px 8px; background: #e0f2fe; color: #0369a1; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
-              📊 Durchschnitt aus automatischer und manueller Bewertung
+              Durchschnitt aus automatischer und manueller Bewertung
             </div>
           ` : hasManual ? `
             <div style="display: inline-block; padding: 4px 8px; background: #d1fae5; color: #10b981; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
@@ -1869,7 +1869,7 @@ export const generateCustomerHTML = ({
             </div>
           ` : `
             <div style="display: inline-block; padding: 4px 8px; background: #e0e7ff; color: #3b82f6; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
-              🤖 Automatisch erkannt
+              Automatisch erkannt
             </div>
           `}
           <div style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-top: 10px;">
@@ -1983,12 +1983,12 @@ export const generateCustomerHTML = ({
           (data, avgScore) => `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
               <div>
-                <p><strong>Adresse sichtbar:</strong> ${data.addressVisible ? 'Ja' : 'Nein'}</p>
-                <p><strong>Telefon sichtbar:</strong> ${data.phoneVisible ? 'Ja' : 'Nein'}</p>
+                <p><strong>Adresse sichtbar:</strong> ${data.addressVisible ? '✅ Ja' : '❌ Nein'}</p>
+                <p><strong>Telefon sichtbar:</strong> ${data.phoneVisible ? '✅ Ja' : '❌ Nein'}</p>
               </div>
               <div>
-                <p><strong>Öffnungszeiten:</strong> ${data.openingHours ? 'Ja' : 'Nein'}</p>
-                <p><strong>Local Schema:</strong> ${data.localSchema ? 'Implementiert' : 'Fehlt'}</p>
+                <p><strong>Öffnungszeiten:</strong> ${data.openingHours ? '✅ Ja' : '❌ Nein'}</p>
+                <p><strong>Local Schema:</strong> ${data.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Strukturierte Daten für Google</p>
               </div>
             </div>
@@ -2926,7 +2926,7 @@ export const generateCustomerHTML = ({
           </a>
 
           <p style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 15px; grid-column: 1 / -1;">
-            💡 Klicken Sie auf eine Kategorie, um direkt zum entsprechenden Abschnitt zu springen
+            Klicken Sie auf eine Kategorie, um direkt zum entsprechenden Abschnitt zu springen
           </p>
 
         </div>
@@ -3276,7 +3276,7 @@ export const generateCustomerHTML = ({
             ${(manualKeywordData || realData.keywords).map(keyword => `
               <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
                 <span>${keyword.keyword}</span>
-                <span>${keyword.found ? 'Gefunden' : 'Fehlend'}</span>
+                <span>${keyword.found ? '✅ Gefunden' : '❌ Fehlend'}</span>
               </div>
             `).join('')}
           </div>
@@ -3288,7 +3288,7 @@ export const generateCustomerHTML = ({
           
           ${extensionData?.content?.wordCount ? `
             <div style="background: #f0f9ff; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #3b82f6;">
-              <h4 style="color: #1e40af; margin: 0 0 12px 0;">🤖 Automatisch erkannte Content-Daten</h4>
+              <h4 style="color: #1e40af; margin: 0 0 12px 0;">Automatisch erkannte Content-Daten</h4>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <div>
                   <p style="margin: 0; color: #374151; font-weight: 600; font-size: 1.2em;">${extensionData.content.wordCount}</p>
@@ -3799,7 +3799,7 @@ export const generateCustomerHTML = ({
             return `
               <div style="border-radius: 8px; padding: 15px; border: 2px solid ${remainingCriticalCount > 0 ? '#fca5a5' : '#86efac'}; background: ${remainingCriticalCount > 0 ? '#fef2f2' : '#f0fdf4'}; margin-top: 15px;">
                 <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-                  🔍 Kritische Fehler-Analyse:
+                  Kritische Fehler-Analyse:
                 </div>
                 ${neutralizedCount > 0 ? `
                   <div style="font-size: 11px; color: #059669; margin-bottom: 4px;">
@@ -3811,7 +3811,7 @@ export const generateCustomerHTML = ({
                     ⚠️ ${remainingCriticalCount} kritische Violation(s) verbleibend
                   </div>
                   <div style="font-size: 11px; color: #7f1d1d; font-weight: bold;">
-                    📊 Score-Kappung: Maximum ${scoreCap}% möglich
+                    Score-Kappung: Maximum ${scoreCap}% möglich
                   </div>
                   ${hasPositiveManualInputs && positiveInputsList.length > 0 ? `
                     <div style="margin-top: 8px; padding: 8px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 4px;">
@@ -3927,7 +3927,7 @@ export const generateCustomerHTML = ({
                   </div>
                 ` : ''}
                 ${nonNeutralizedViolations.length > 0 ? `
-                  <h5 style="color: #f59e0b; margin: 10px 0;">🔧 Automatisch erkannte Probleme (${nonNeutralizedViolations.length}):</h5>
+                  <h5 style="color: #f59e0b; margin: 10px 0;">Automatisch erkannte Probleme (${nonNeutralizedViolations.length}):</h5>
                   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
                     ${nonNeutralizedViolations.map((v: any) => `
                       <div style="padding: 8px; background: rgba(${v.impact === 'critical' ? '239, 68, 68' : v.impact === 'serious' ? '245, 158, 11' : '59, 130, 246'}, 0.2); border-radius: 6px;">
@@ -4125,7 +4125,7 @@ export const generateCustomerHTML = ({
               '<strong style="color: #e5e7eb;">' + (v.help || v.description || 'Barrierefreiheit-Problem') + '</strong>' +
               '<span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ' + impactColor + '20; color: ' + impactColor + ';">' + impactLabel + '</span>' +
               '</div>' +
-              (v.helpUrl ? '<a href="' + v.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">📚 WCAG-Dokumentation →</a>' : '') +
+              (v.helpUrl ? '<a href="' + v.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">WCAG-Dokumentation →</a>' : '') +
               '</li>';
           };
           
@@ -4179,7 +4179,7 @@ export const generateCustomerHTML = ({
               '<strong style="color: #fca5a5;">' + p.description + '</strong>' +
               '<span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ' + impactColor + '20; color: ' + impactColor + ';">' + impactLabel + '</span>' +
               '</div>' +
-              (p.helpUrl ? '<a href="' + p.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">📚 WCAG-Dokumentation →</a>' : '') +
+              (p.helpUrl ? '<a href="' + p.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">WCAG-Dokumentation →</a>' : '') +
               '</li>';
           };
           
@@ -4196,12 +4196,12 @@ export const generateCustomerHTML = ({
               manualProblemsHTML +
               '</ul>' : '') +
             (sortedViolations.length > 0 ?
-              '<h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Automatisch erkannte Probleme (' + sortedViolations.length + '):</h4>' +
+              '<h4 style="color: #fbbf24; margin-bottom: 15px;">Automatisch erkannte Probleme (' + sortedViolations.length + '):</h4>' +
               '<ul style="list-style: none; padding: 0; margin: 0;">' +
               sortedViolations.map(generateRecommendationItem).join('') +
               '</ul>' : '') +
             '<div style="margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 13px; color: #93c5fd;">' +
-            '<strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden, um sie aus dieser Liste zu entfernen.' +
+            '<strong>Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden, um sie aus dieser Liste zu entfernen.' +
             '</div>' +
             '</div>' +
             '</div>';
