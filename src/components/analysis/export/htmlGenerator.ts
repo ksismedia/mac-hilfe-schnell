@@ -2735,17 +2735,21 @@ export const generateCustomerHTML = ({
                 
                 const cat2Avg = cat2Scores.length > 0 ? Math.round(cat2Scores.reduce((a, b) => a + b, 0) / cat2Scores.length) : 0;
 
-                // Kategorie 3: Online-/Web-/Social-Media Performance (same logic as OverallRating.tsx)
+                // Kategorie 3: Online-/Web-/Social-Media Performance (KORRIGIERT: Social Media immer einbeziehen)
                 const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
                 const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
                 const socialProofScore = realData.socialProof?.overallScore ?? 0;
                 
-                const cat3Scores = [
+                // Basis-Scores IMMER einbeziehen (Social Media auch wenn 0)
+                const cat3Scores: number[] = [
                   googleReviewScore,
-                  socialMediaScore,
-                  socialProofScore
-                ].filter(s => s > 0);
+                  socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
+                ];
                 
+                // Social Proof nur hinzufügen wenn vorhanden
+                if (socialProofScore > 0) cat3Scores.push(socialProofScore);
+                
+                // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
                 if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
                 if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
                 
