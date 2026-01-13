@@ -1021,44 +1021,57 @@ export const generateCustomerHTML = ({
 
     const scoreClass = accessibilityScore >= 80 ? 'yellow' : accessibilityScore >= 60 ? 'green' : 'red';
 
-    // Dynamische Handlungsempfehlungen (nur aktive / nicht-neutralisierte Probleme)
-    const hasViolation = (match: (id: string) => boolean) =>
-      nonNeutralizedViolations.some((v: any) => match(String(v?.id || '').toLowerCase()));
-
-    const improvementItems: string[] = [];
-
-    const needsAltTexts =
-      manualAccessibilityData?.altTextsPresent === false ||
-      (manualAccessibilityData?.altTextsPresent !== true &&
-        hasViolation((id) => id.includes('image-alt') || id === 'image-alt'));
-    if (needsAltTexts) improvementItems.push('Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)');
-
-    const needsContrast =
-      manualAccessibilityData?.colorContrast === false ||
-      (manualAccessibilityData?.colorContrast !== true &&
-        hasViolation((id) => id.includes('color-contrast') || id.includes('contrast')));
-    if (needsContrast) improvementItems.push('Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)');
-
-    const needsHeadings = hasViolation((id) => id.includes('heading-order') || id.includes('page-has-heading-one'));
-    if (needsHeadings) improvementItems.push('Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1)');
-
-    const needsKeyboard =
-      manualAccessibilityData?.keyboardNavigation === false ||
-      (manualAccessibilityData?.keyboardNavigation !== true &&
-        hasViolation((id) => id.includes('keyboard') || id.includes('accesskeys') || id.includes('focus-order')));
-    if (needsKeyboard) improvementItems.push('Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)');
-
-    const needsScreenReader =
-      manualAccessibilityData?.screenReaderCompatible === false ||
-      (manualAccessibilityData?.screenReaderCompatible !== true &&
-        hasViolation((id) =>
-          id.includes('aria-') || id.includes('label') || id.includes('role') || id.includes('landmark')));
-    if (needsScreenReader) improvementItems.push('Screen Reader-Kompatibilität durch ARIA-Labels verbessern');
-
-    // Best practice: immer sinnvoll als Prozess-Empfehlung
-    improvementItems.push('Automatisierte Accessibility-Tests in Entwicklungsprozess integrieren');
-
-    const improvementItemsHTML = improvementItems.map((item) => `<li>${item}</li>`).join('');
+    // Dynamische Handlungsempfehlungen basierend auf nicht-neutralisierten Violations
+    // Generiere detaillierte Empfehlungen mit Impact-Level und WCAG-Links
+    const generateDetailedRecommendation = (v: any) => {
+      const impactColors: Record<string, string> = {
+        'critical': '#dc2626',
+        'serious': '#ea580c',
+        'moderate': '#d97706',
+        'minor': '#059669'
+      };
+      const impactLabels: Record<string, string> = {
+        'critical': '🔴 KRITISCH',
+        'serious': '🟠 ERNST',
+        'moderate': '🟡 MODERAT',
+        'minor': '🟢 GERING'
+      };
+      const impactColor = impactColors[v.impact] || '#6b7280';
+      const impactLabel = impactLabels[v.impact] || v.impact?.toUpperCase() || 'INFO';
+      
+      return `<li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid ${impactColor};">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+          <strong>${v.help || v.description || 'Barrierefreiheit-Problem'}</strong>
+          <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ${impactColor}20; color: ${impactColor};">${impactLabel}</span>
+        </div>
+        ${v.helpUrl ? `<a href="${v.helpUrl}" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">📚 WCAG-Dokumentation →</a>` : ''}
+      </li>`;
+    };
+    
+    // Sortiere Violations nach Impact (kritisch zuerst)
+    const sortedViolations = [...nonNeutralizedViolations].sort((a: any, b: any) => {
+      const impactOrder: Record<string, number> = { 'critical': 0, 'serious': 1, 'moderate': 2, 'minor': 3 };
+      return (impactOrder[a.impact] ?? 4) - (impactOrder[b.impact] ?? 4);
+    });
+    
+    // Generiere HTML für Violations
+    const violationRecommendationsHTML = sortedViolations.length > 0 
+      ? sortedViolations.map(generateDetailedRecommendation).join('')
+      : '';
+    
+    // Fallback: Wenn keine Violations, aber manuelle negative Eingaben
+    const fallbackItems: string[] = [];
+    if (manualAccessibilityData?.altTextsPresent === false) 
+      fallbackItems.push('<li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)</li>');
+    if (manualAccessibilityData?.colorContrast === false) 
+      fallbackItems.push('<li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)</li>');
+    if (manualAccessibilityData?.keyboardNavigation === false) 
+      fallbackItems.push('<li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)</li>');
+    if (manualAccessibilityData?.screenReaderCompatible === false) 
+      fallbackItems.push('<li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern</li>');
+    
+    const improvementItemsHTML = violationRecommendationsHTML || fallbackItems.join('') || 
+      '<li style="color: #22c55e;">✅ Keine Handlungsempfehlungen erforderlich - alle Probleme wurden behoben.</li>';
 
     // Kappungs-Erklärung für HTML generieren
     const cappingExplanationHTML = remainingCriticalCount > 0 ? `
@@ -1269,18 +1282,28 @@ export const generateCustomerHTML = ({
         </div>
 
         <!-- Verbesserungsvorschläge -->
-        <div class="collapsible success-box" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; border-radius: 8px;">
-          <h4 class="success-text" style="margin: 0;">▶ Verbesserungsvorschläge</h4>
+        ${nonNeutralizedViolations.length > 0 ? `
+        <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0;">▶ Verbesserungsvorschläge (${nonNeutralizedViolations.length} Empfehlungen)</h4>
         </div>
         
         <div id="accessibility-improvements" style="display: none;">
           <div class="recommendations">
-            <h4>Prioritäre Handlungsempfehlungen:</h4>
-            <ul>
+            <h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Prioritäre Handlungsempfehlungen (basierend auf automatischer Analyse):</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
               ${improvementItemsHTML}
             </ul>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 13px; color: #93c5fd;">
+              <strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden, um sie aus dieser Liste zu entfernen.
+            </div>
           </div>
         </div>
+        ` : `
+        <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">
+          <h4 style="color: #22c55e; margin: 0 0 8px 0;">✅ Keine Handlungsempfehlungen erforderlich</h4>
+          <p style="color: #86efac; margin: 0; font-size: 14px;">Alle erkannten Barrierefreiheit-Probleme wurden manuell als behoben markiert oder es wurden keine Probleme erkannt.</p>
+        </div>
+        `}
       </div>
     `;
   };
@@ -3775,22 +3798,88 @@ export const generateCustomerHTML = ({
           </div>
         </div>
 
-        <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <h4 style="color: #22c55e; margin: 0;">▶ Verbesserungsvorschläge</h4>
-        </div>
-        
-        <div id="accessibility-improvements" style="display: none;">
-          <div class="recommendations">
-            <h4>Prioritäre Handlungsempfehlungen:</h4>
-            <ul>
-              ${!manualAccessibilityData?.altTextsPresent ? '<li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>' : ''}
-              ${!manualAccessibilityData?.colorContrast ? '<li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>' : ''}
-              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1) <span style="font-size: 0.9em; color: #666;">(Logischer Aufbau für Screenreader und Orientierung)</span></li>
-              ${!manualAccessibilityData?.keyboardNavigation ? '<li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>' : ''}
-              ${!manualAccessibilityData?.screenReaderCompatible ? '<li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>' : ''}
-            </ul>
-          </div>
-        </div>
+        ${(() => {
+          // Dynamische Verbesserungsvorschläge basierend auf nicht-neutralisierten Violations
+          const allViolations = accessibilityData?.violations || [];
+          
+          // Filtere neutralisierte Violations heraus
+          const nonNeutralizedViolations = allViolations.filter((v: any) => {
+            const vid = v.id || '';
+            if (manualAccessibilityData?.keyboardNavigation && 
+                (vid.includes('keyboard') || vid.includes('button-name') || 
+                 vid.includes('link-name') || vid.includes('accesskeys'))) return false;
+            if (manualAccessibilityData?.screenReaderCompatible && 
+                (vid.includes('aria-') || vid.includes('label') || 
+                 vid.includes('role') || vid.includes('landmark'))) return false;
+            if (manualAccessibilityData?.colorContrast && 
+                (vid.includes('color-contrast') || vid.includes('contrast'))) return false;
+            if (manualAccessibilityData?.altTextsPresent && 
+                (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) return false;
+            if (manualAccessibilityData?.focusVisibility && 
+                (vid.includes('focus') || vid.includes('focus-order'))) return false;
+            if (manualAccessibilityData?.textScaling && 
+                (vid.includes('meta-viewport') || vid.includes('target-size'))) return false;
+            return true;
+          });
+          
+          // Gruppiere nach Impact für bessere Sortierung
+          const criticalViolations = nonNeutralizedViolations.filter((v: any) => v.impact === 'critical');
+          const seriousViolations = nonNeutralizedViolations.filter((v: any) => v.impact === 'serious');
+          const moderateViolations = nonNeutralizedViolations.filter((v: any) => v.impact === 'moderate');
+          const minorViolations = nonNeutralizedViolations.filter((v: any) => v.impact === 'minor');
+          
+          // Generiere Empfehlungs-Items aus Violations
+          const generateRecommendationItem = (v: any) => {
+            const impactColors: Record<string, string> = {
+              'critical': '#dc2626',
+              'serious': '#ea580c',
+              'moderate': '#d97706',
+              'minor': '#059669'
+            };
+            const impactLabels: Record<string, string> = {
+              'critical': '🔴 KRITISCH',
+              'serious': '🟠 ERNST',
+              'moderate': '🟡 MODERAT',
+              'minor': '🟢 GERING'
+            };
+            const impactColor = impactColors[v.impact] || '#6b7280';
+            const impactLabel = impactLabels[v.impact] || v.impact?.toUpperCase();
+            
+            return '<li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid ' + impactColor + ';">' +
+              '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">' +
+              '<strong style="color: #e5e7eb;">' + (v.help || v.description || 'Barrierefreiheit-Problem') + '</strong>' +
+              '<span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ' + impactColor + '20; color: ' + impactColor + ';">' + impactLabel + '</span>' +
+              '</div>' +
+              (v.helpUrl ? '<a href="' + v.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">📚 WCAG-Dokumentation →</a>' : '') +
+              '</li>';
+          };
+          
+          // Alle sortierten Violations zusammenführen
+          const sortedViolations = [...criticalViolations, ...seriousViolations, ...moderateViolations, ...minorViolations];
+          
+          // Falls keine Violations, zeige Erfolgsmeldung
+          if (sortedViolations.length === 0) {
+            return '<div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">' +
+              '<h4 style="color: #22c55e; margin: 0 0 8px 0;">✅ Keine Handlungsempfehlungen erforderlich</h4>' +
+              '<p style="color: #86efac; margin: 0; font-size: 14px;">Alle erkannten Barrierefreiheit-Probleme wurden manuell als behoben markiert oder es wurden keine Probleme erkannt.</p>' +
+              '</div>';
+          }
+          
+          return '<div class="collapsible" onclick="toggleSection(\'accessibility-improvements\')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">' +
+            '<h4 style="color: #fbbf24; margin: 0;">▶ Verbesserungsvorschläge (' + sortedViolations.length + ' Empfehlungen)</h4>' +
+            '</div>' +
+            '<div id="accessibility-improvements" style="display: none;">' +
+            '<div class="recommendations" style="margin-top: 15px;">' +
+            '<h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Prioritäre Handlungsempfehlungen (basierend auf automatischer Analyse):</h4>' +
+            '<ul style="list-style: none; padding: 0; margin: 0;">' +
+            sortedViolations.map(generateRecommendationItem).join('') +
+            '</ul>' +
+            '<div style="margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 13px; color: #93c5fd;">' +
+            '<strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden, um sie aus dieser Liste zu entfernen.' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        })()}
       </div>
     </div>
 
