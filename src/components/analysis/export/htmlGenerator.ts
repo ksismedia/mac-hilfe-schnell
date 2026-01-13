@@ -1254,50 +1254,52 @@ export const generateCustomerHTML = ({
                   </span>
                 </p>
                 ${generateProgressBar(Math.round(Math.max(25, accessibilityScore * 0.9)), '')}
-              </div>
             </div>
-            
-            ${remainingCriticalCount === 0 && manualInputsList.length > 0 ? `
-            <div style="margin-top: 15px; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 2px solid #86efac;">
-              <p style="color: #059669; margin: 0 0 10px 0; font-size: 14px;">
-                <strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (${manualInputsList.join(', ')}).
-              </p>
-              <div style="margin-top: 10px; padding: 10px; background: #ecfdf5; border-radius: 6px; border: 1px solid #a7f3d0;">
-                <p style="color: #047857; margin: 0 0 8px 0; font-size: 13px; font-weight: bold;">
-                  📊 Google Lighthouse Accessibility-Score: ${accessibilityScore}%
-                </p>
-                <p style="color: #065f46; margin: 0 0 6px 0; font-size: 12px;">
-                  Der technische Basis-Score wird von Google Lighthouse automatisiert ermittelt und prüft über 40 Kriterien:
-                </p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px; font-size: 11px; color: #047857;">
-                  <span>• Farbkontraste (Text/Hintergrund)</span>
-                  <span>• ARIA-Attribute & -Rollen</span>
-                  <span>• Dokumentstruktur & Semantik</span>
-                  <span>• Tab-Reihenfolge & Fokus</span>
-                  <span>• Formular-Labels</span>
-                  <span>• Alternativtexte für Bilder</span>
-                </div>
-                <p style="color: #065f46; margin: 8px 0 0 0; font-size: 11px; font-style: italic;">
-                  Die manuelle Prüfung verbessert die rechtliche Compliance, aber für einen höheren Basis-Score müssen technische Aspekte im Quellcode optimiert werden.
-                </p>
-              </div>
-            </div>
-            ` : violations.length > 0 ? `
-            <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 class="error-text" style="margin: 0 0 10px 0;">RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
-              <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
-                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
-                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
-              </p>
-              <p class="error-text" style="margin: 0; font-size: 14px;">
-                <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt.
-                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
-                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
-              </p>
-            </div>
-            ` : ''}
           </div>
+          
+          <!-- Lighthouse-Score Aufschlüsselung (immer anzeigen) -->
+          <div style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
+            <p style="color: #60a5fa; margin: 0 0 8px 0; font-size: 14px; font-weight: bold;">
+              📊 Google Lighthouse Accessibility-Score: ${accessibilityScore}%
+            </p>
+            <p style="color: #93c5fd; margin: 0 0 6px 0; font-size: 12px;">
+              Der technische Basis-Score wird von Google Lighthouse automatisiert ermittelt und prüft über 40 Kriterien:
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px; font-size: 11px; color: #60a5fa;">
+              <span>• Farbkontraste (Text/Hintergrund)</span>
+              <span>• ARIA-Attribute & -Rollen</span>
+              <span>• Dokumentstruktur & Semantik</span>
+              <span>• Tab-Reihenfolge & Fokus</span>
+              <span>• Formular-Labels</span>
+              <span>• Alternativtexte für Bilder</span>
+            </div>
+            <p style="color: #7dd3fc; margin: 8px 0 0 0; font-size: 11px; font-style: italic;">
+              Dieser Score basiert auf technischen Quellcode-Aspekten und kann durch Optimierungen der Website-Struktur verbessert werden.
+            </p>
+          </div>
+            
+          ${remainingCriticalCount === 0 && manualInputsList.length > 0 ? `
+          <div style="margin-top: 15px; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 2px solid #86efac;">
+            <p style="color: #059669; margin: 0; font-size: 14px;">
+              <strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (${manualInputsList.join(', ')}).
+            </p>
+          </div>
+          ` : violations.length > 0 ? `
+          <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
+            <h4 class="error-text" style="margin: 0 0 10px 0;">RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
+            <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
+              Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
+              Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
+            </p>
+            <p class="error-text" style="margin: 0; font-size: 14px;">
+              <strong>Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt.
+              Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
+              Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
+            </p>
+          </div>
+          ` : ''}
         </div>
+      </div>
 
         <!-- Verbesserungsvorschläge -->
         ${nonNeutralizedViolations.length > 0 ? `
