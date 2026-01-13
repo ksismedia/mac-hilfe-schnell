@@ -1305,10 +1305,10 @@ export const generateCustomerHTML = ({
           ${accessibilityScore < 90 ? `
           <div style="margin-top: 12px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3);">
             <p style="color: #93c5fd; margin: 0; font-size: 13px;">
-              <strong>ℹ️ Warum ${accessibilityScore}%?</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
+              <strong>ℹ️ Warum ${accessibilityScore}%?</strong> Der technische Basis-Score aus dem Google Lighthouse Accessibility-Audit beträgt <strong>${accessibilityScore}%</strong>. 
               Lighthouse bewertet die gesamte Website-Barrierefreiheit anhand zahlreicher technischer Kriterien (z.B. Farbkontraste, ARIA-Attribute, 
-              Dokumentstruktur). Die manuelle Bestätigung neutralisiert erkannte Verstöße, beeinflusst aber nicht den technischen Basis-Score. 
-              Für eine höhere Bewertung müssen die technischen Aspekte direkt im Quellcode der Website verbessert werden.
+              Dokumentstruktur). Die manuelle Bestätigung neutralisiert erkannte Verstöße und verbessert die rechtliche Compliance-Bewertung, 
+              beeinflusst aber nicht den technischen Basis-Score. Für eine höhere Bewertung müssen die technischen Aspekte direkt im Quellcode der Website verbessert werden.
             </p>
           </div>
           ` : ''}
