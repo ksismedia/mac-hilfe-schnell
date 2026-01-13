@@ -143,20 +143,57 @@ const calculateSocialMediaScore = (
 export const calculateIndustryReviewScore = (
   manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null
 ): number => {
-  if (!manualIndustryReviewData || !manualIndustryReviewData.overallScore) {
-    return 0;
-  }
-  return manualIndustryReviewData.overallScore;
+  if (!manualIndustryReviewData) return 0;
+
+  const platforms = Array.isArray(manualIndustryReviewData.platforms)
+    ? manualIndustryReviewData.platforms
+    : [];
+
+  // Nur zählen, wenn wirklich Plattform-Daten erfasst wurden (keine leeren Default-Objekte)
+  const hasPlatformData = platforms.some((p: any) => {
+    if (!p) return false;
+    return Boolean(
+      p.platformName ||
+        p.profileUrl ||
+        (Number(p.rating) || 0) > 0 ||
+        (Number(p.reviewCount) || 0) > 0
+    );
+  });
+
+  if (!hasPlatformData) return 0;
+
+  const score = Number(manualIndustryReviewData.overallScore ?? 0);
+  return score > 0 ? score : 0;
 };
 
 // Calculate online presence score
 export const calculateOnlinePresenceScore = (
-  manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
+  manualOnlinePresenceData?: { items: any[]; overallScore?: number; simpleCounts?: any } | null
 ): number => {
-  if (!manualOnlinePresenceData || !manualOnlinePresenceData.overallScore) {
-    return 0;
-  }
-  return manualOnlinePresenceData.overallScore;
+  if (!manualOnlinePresenceData) return 0;
+
+  const items = Array.isArray(manualOnlinePresenceData.items)
+    ? manualOnlinePresenceData.items
+    : [];
+
+  const counts = manualOnlinePresenceData.simpleCounts ?? {};
+  const hasCountData = [
+    'images',
+    'videos',
+    'shorts',
+    'ownImages',
+    'ownVideos',
+    'ownShorts',
+    'foreignImages',
+    'foreignVideos',
+    'foreignShorts'
+  ].some((k) => (Number((counts as any)[k] ?? 0) || 0) > 0);
+
+  // Nur zählen, wenn wirklich Suchergebnis-Daten vorhanden sind
+  if (items.length === 0 && !hasCountData) return 0;
+
+  const score = Number(manualOnlinePresenceData.overallScore ?? 0);
+  return score > 0 ? score : 0;
 };
 
 // Calculate reputation monitoring score
