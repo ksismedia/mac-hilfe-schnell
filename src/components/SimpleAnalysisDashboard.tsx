@@ -527,24 +527,24 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
 
     // Validate all scores
     scores = {
-      onlineQualityAuthority: isNaN(onlineQualityAuthority) ? 50 : Math.max(0, Math.min(100, onlineQualityAuthority)),
-      websitePerformanceTech: isNaN(websitePerformanceTech) ? 50 : Math.max(0, Math.min(100, websitePerformanceTech)),
-      socialMediaPerformance: isNaN(socialMediaPerformance) ? 50 : Math.max(0, Math.min(100, socialMediaPerformance)),
-      marketEnvironment: isNaN(marketEnvironment) ? 50 : Math.max(0, Math.min(100, marketEnvironment)),
-      corporateAppearance: isNaN(corporateAppearance) ? 50 : Math.max(0, Math.min(100, corporateAppearance)),
-      serviceQuality: isNaN(serviceQuality) ? 50 : Math.max(0, Math.min(100, serviceQuality))
+      onlineQualityAuthority: isNaN(onlineQualityAuthority) ? 0 : Math.max(0, Math.min(100, onlineQualityAuthority)),
+      websitePerformanceTech: isNaN(websitePerformanceTech) ? 0 : Math.max(0, Math.min(100, websitePerformanceTech)),
+      socialMediaPerformance: isNaN(socialMediaPerformance) ? 0 : Math.max(0, Math.min(100, socialMediaPerformance)),
+      marketEnvironment: isNaN(marketEnvironment) ? 0 : Math.max(0, Math.min(100, marketEnvironment)),
+      corporateAppearance: isNaN(corporateAppearance) ? 0 : Math.max(0, Math.min(100, corporateAppearance)),
+      serviceQuality: isNaN(serviceQuality) ? 0 : Math.max(0, Math.min(100, serviceQuality))
     };
 
     console.log('✅ Category scores calculated:', scores);
   } catch (error) {
     console.error('🚨 Error calculating category scores:', error);
     scores = {
-      onlineQualityAuthority: 50,
-      websitePerformanceTech: 50,
-      socialMediaPerformance: 50,
-      marketEnvironment: 50,
-      corporateAppearance: 50,
-      serviceQuality: 50
+      onlineQualityAuthority: 0,
+      websitePerformanceTech: 0,
+      socialMediaPerformance: 0,
+      marketEnvironment: 0,
+      corporateAppearance: 0,
+      serviceQuality: 0
     };
   }
 
