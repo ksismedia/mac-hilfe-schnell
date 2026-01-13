@@ -649,17 +649,25 @@ span[style*="font-size: 6px"] {
 
 .recommendations { 
   background: rgba(0, 0, 0, 0.7); 
-  padding: 20px; 
+  padding: 20px 25px; 
   border-radius: 12px; 
   margin-top: 20px; 
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 .recommendations h4 { 
   color: #fbbf24; 
-  margin-bottom: 15px; 
-  font-size: 1.1em; 
-  font-weight: 600;
+  margin-bottom: 18px; 
+  font-size: 1.15em; 
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.recommendations h4:before {
+  content: "★";
+  color: #fbbf24;
+  font-size: 1em;
 }
 .recommendations ul { 
   list-style: none; 
@@ -667,18 +675,20 @@ span[style*="font-size: 6px"] {
   margin: 0;
 }
 .recommendations li { 
-  margin-bottom: 8px; 
-  padding-left: 25px; 
+  margin-bottom: 10px; 
+  padding-left: 28px; 
   position: relative; 
   color: #f5f5f5;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 0.95em;
 }
 .recommendations li:before { 
-  content: "⭐"; 
+  content: "★"; 
   position: absolute; 
   left: 0; 
   color: #fbbf24; 
   font-weight: bold;
+  font-size: 0.9em;
 }
 
 /* Safari PDF-Optimierungen */
