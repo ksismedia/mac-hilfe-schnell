@@ -295,9 +295,13 @@ export const calculateSEOScore = (
   for (const element of seoElements) {
     let effectiveScore = element.baseScore;
     
-    // Rejected elements are capped at 30
+    // Rejected elements: Alt-Tags get 0, others capped at 30
     if (rejectedElements.includes(element.id)) {
-      effectiveScore = Math.min(effectiveScore, 30);
+      if (element.id === 'altTags') {
+        effectiveScore = 0; // Alt-Tags bei Ablehnung: 0% (wie in getSEOAnalysis)
+      } else {
+        effectiveScore = Math.min(effectiveScore, 30);
+      }
     }
     // Confirmed elements keep their score (no change needed)
     // Pending elements (not confirmed, not rejected) also keep base score
