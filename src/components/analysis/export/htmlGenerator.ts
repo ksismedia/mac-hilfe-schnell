@@ -648,11 +648,11 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen:</h4>
           <ul>
             ${workplaceScore >= 90 ? `
-              <li>✅ Exzellente Arbeitgeberbewertungen – Behalten Sie Ihr hohes Niveau bei!</li>
-              <li>✅ Nutzen Sie Ihre starke Positionierung für Recruiting-Kampagnen</li>
-              <li>✅ Teilen Sie positive Bewertungen in Stellenausschreibungen</li>
+              <li>Exzellente Arbeitgeberbewertungen – Behalten Sie Ihr hohes Niveau bei!</li>
+              <li>Nutzen Sie Ihre starke Positionierung für Recruiting-Kampagnen</li>
+              <li>Teilen Sie positive Bewertungen in Stellenausschreibungen</li>
             ` : workplaceScore >= 70 ? `
-              <li>✅ Gute Arbeitgeberbewertungen – weiter so!</li>
+              <li>Gute Arbeitgeberbewertungen – weiter so!</li>
               <li>Ermutigen Sie zufriedene Mitarbeiter zu weiteren Bewertungen</li>
               <li>Reagieren Sie zeitnah auf neue Bewertungen</li>
             ` : workplaceScore >= 50 ? `
@@ -661,10 +661,10 @@ export const generateCustomerHTML = ({
               <li>Mitarbeiterzufriedenheit durch interne Umfragen messen</li>
               <li>Auf bestehende Bewertungen professionell reagieren</li>
             ` : `
-              ${!hasKununu ? '<li>⚠️ Dringend: Kununu-Profil erstellen (wichtigste Plattform in DACH)</li>' : '<li>⚠️ Kununu-Rating durch Verbesserung der Arbeitsbedingungen steigern</li>'}
-              ${!hasGlassdoor ? '<li>⚠️ Glassdoor-Profil anlegen</li>' : '<li>⚠️ Glassdoor-Bewertungen analysieren und Kritikpunkte adressieren</li>'}
-              <li>⚠️ Employer Branding Strategie entwickeln und umsetzen</li>
-              <li>⚠️ Mitarbeiterzufriedenheit systematisch erfassen und verbessern</li>
+              ${!hasKununu ? '<li>WICHTIG: Kununu-Profil erstellen (wichtigste Plattform in DACH)</li>' : '<li>WICHTIG: Kununu-Rating durch Verbesserung der Arbeitsbedingungen steigern</li>'}
+              ${!hasGlassdoor ? '<li>WICHTIG: Glassdoor-Profil anlegen</li>' : '<li>WICHTIG: Glassdoor-Bewertungen analysieren und Kritikpunkte adressieren</li>'}
+              <li>WICHTIG: Employer Branding Strategie entwickeln und umsetzen</li>
+              <li>WICHTIG: Mitarbeiterzufriedenheit systematisch erfassen und verbessern</li>
               <li>Austrittsinterviews nutzen, um Verbesserungspotenziale zu identifizieren</li>
             `}
           </ul>
@@ -1051,10 +1051,10 @@ export const generateCustomerHTML = ({
         'minor': '#059669'
       };
       const impactLabels: Record<string, string> = {
-        'critical': '🔴 KRITISCH',
-        'serious': '🟠 ERNST',
-        'moderate': '🟡 MODERAT',
-        'minor': '🟢 GERING'
+        'critical': 'KRITISCH',
+        'serious': 'ERNST',
+        'moderate': 'MODERAT',
+        'minor': 'GERING'
       };
       const impactColor = impactColors[v.impact] || '#6b7280';
       const impactLabel = impactLabels[v.impact] || v.impact?.toUpperCase() || 'INFO';
@@ -1064,7 +1064,7 @@ export const generateCustomerHTML = ({
           <strong>${v.help || v.description || 'Barrierefreiheit-Problem'}</strong>
           <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ${impactColor}20; color: ${impactColor};">${impactLabel}</span>
         </div>
-        ${v.helpUrl ? `<a href="${v.helpUrl}" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">📚 WCAG-Dokumentation →</a>` : ''}
+        ${v.helpUrl ? `<a href="${v.helpUrl}" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">WCAG-Dokumentation →</a>` : ''}
       </li>`;
     };
     
@@ -1091,13 +1091,13 @@ export const generateCustomerHTML = ({
       fallbackItems.push('<li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern</li>');
     
     const improvementItemsHTML = violationRecommendationsHTML || fallbackItems.join('') || 
-      '<li style="color: #22c55e;">✅ Keine Handlungsempfehlungen erforderlich - alle Probleme wurden behoben.</li>';
+      '<li style="color: #22c55e;">Keine Handlungsempfehlungen erforderlich - alle Probleme wurden behoben.</li>';
 
     // Kappungs-Erklärung für HTML generieren
     const cappingExplanationHTML = remainingCriticalCount > 0 ? `
       <div style="margin: 15px 0; padding: 15px; border-radius: 8px; background: #fef3c7; border: 2px solid #f59e0b;">
         <h4 style="color: #92400e; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-          📊 Score-Kappung aktiv
+          Score-Kappung aktiv
         </h4>
         <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">
           <strong>Grund:</strong> ${remainingCriticalCount} kritische/schwere Barrierefreiheit-Violation${remainingCriticalCount > 1 ? 'en' : ''} insgesamt
@@ -1218,9 +1218,9 @@ export const generateCustomerHTML = ({
                         v.impact === 'serious' ? '#ea580c' :
                         v.impact === 'moderate' ? '#d97706' : '#059669'
                       }; margin: 0; font-size: 14px;">
-                        ${v.impact === 'critical' ? '🔴 KRITISCH' :
-                          v.impact === 'serious' ? '🟠 ERNST' :
-                          v.impact === 'moderate' ? '🟡 MODERAT' : '🟢 GERING'}
+                        ${v.impact === 'critical' ? 'KRITISCH' :
+                          v.impact === 'serious' ? 'ERNST' :
+                          v.impact === 'moderate' ? 'MODERAT' : 'GERING'}
                       </p>
                       <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #6b7280;">
                         ${v.count} ${v.count === 1 ? 'Vorkommen' : 'Vorkommen'}
@@ -1228,7 +1228,7 @@ export const generateCustomerHTML = ({
                     </div>
                     <p style="margin: 8px 0; font-size: 14px; color: #374151;"><strong>${v.help || v.description}</strong></p>
                     ${v.nodes > 0 ? `<p style="margin: 4px 0; font-size: 12px; color: #6b7280;">${v.nodes} betroffene Elemente</p>` : ''}
-                    ${v.helpUrl ? `<p style="margin: 8px 0 0 0;"><a href="${v.helpUrl}" target="_blank" style="color: #2563eb; font-size: 12px; text-decoration: none;">📚 Mehr erfahren</a></p>` : ''}
+                    ${v.helpUrl ? `<p style="margin: 8px 0 0 0;"><a href="${v.helpUrl}" target="_blank" style="color: #2563eb; font-size: 12px; text-decoration: none;">Mehr erfahren →</a></p>` : ''}
                   </div>
                 `).join('')}
               </div>
@@ -1261,7 +1261,7 @@ export const generateCustomerHTML = ({
             </div>
           ` : `
             <div class="success-box" style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0fdf4; border: 2px solid #86efac;">
-              <h4 style="color: #059669; margin: 0 0 10px 0;">✅ Keine kritischen Probleme erkannt</h4>
+              <h4 style="color: #059669; margin: 0 0 10px 0;">Keine kritischen Probleme erkannt</h4>
               <p style="margin: 0; color: #065f46; font-size: 14px;">
                 Die automatische Analyse hat keine Barrierefreiheit-Verstöße gefunden. 
                 ${manualAccessibilityData ? 'Ihre manuellen Eingaben ergänzen diese positive Bewertung.' : 'Führen Sie dennoch eine manuelle Überprüfung durch.'}
@@ -1376,17 +1376,17 @@ export const generateCustomerHTML = ({
           // Sammle manuell gemeldete Probleme
           const manualNegativeInputs: {label: string, wcag: string, impact: string, color: string}[] = [];
           if (manualAccessibilityData?.altTextsPresent === false) 
-            manualNegativeInputs.push({label: 'Alt-Texte für alle Bilder hinzufügen', wcag: 'WCAG 1.1.1 - Nicht-Text-Inhalt', impact: '🔴 KRITISCH', color: '#dc2626'});
+            manualNegativeInputs.push({label: 'Alt-Texte für alle Bilder hinzufügen', wcag: 'WCAG 1.1.1 - Nicht-Text-Inhalt', impact: 'KRITISCH', color: '#dc2626'});
           if (manualAccessibilityData?.colorContrast === false) 
-            manualNegativeInputs.push({label: 'Farbkontraste auf mindestens 4.5:1 erhöhen', wcag: 'WCAG 1.4.3 - Kontrast (Minimum)', impact: '🟠 ERNST', color: '#ea580c'});
+            manualNegativeInputs.push({label: 'Farbkontraste auf mindestens 4.5:1 erhöhen', wcag: 'WCAG 1.4.3 - Kontrast (Minimum)', impact: 'ERNST', color: '#ea580c'});
           if (manualAccessibilityData?.keyboardNavigation === false) 
-            manualNegativeInputs.push({label: 'Tastaturnavigation für alle Funktionen ermöglichen', wcag: 'WCAG 2.1.1 - Tastatur', impact: '🔴 KRITISCH', color: '#dc2626'});
+            manualNegativeInputs.push({label: 'Tastaturnavigation für alle Funktionen ermöglichen', wcag: 'WCAG 2.1.1 - Tastatur', impact: 'KRITISCH', color: '#dc2626'});
           if (manualAccessibilityData?.screenReaderCompatible === false) 
-            manualNegativeInputs.push({label: 'Screen Reader-Kompatibilität durch ARIA-Labels verbessern', wcag: 'WCAG 4.1.2 - Name, Rolle, Wert', impact: '🟠 ERNST', color: '#ea580c'});
+            manualNegativeInputs.push({label: 'Screen Reader-Kompatibilität durch ARIA-Labels verbessern', wcag: 'WCAG 4.1.2 - Name, Rolle, Wert', impact: 'ERNST', color: '#ea580c'});
           if (manualAccessibilityData?.focusVisibility === false) 
-            manualNegativeInputs.push({label: 'Fokus-Sichtbarkeit für interaktive Elemente sicherstellen', wcag: 'WCAG 2.4.7 - Fokus sichtbar', impact: '🟠 ERNST', color: '#ea580c'});
+            manualNegativeInputs.push({label: 'Fokus-Sichtbarkeit für interaktive Elemente sicherstellen', wcag: 'WCAG 2.4.7 - Fokus sichtbar', impact: 'ERNST', color: '#ea580c'});
           if (manualAccessibilityData?.textScaling === false) 
-            manualNegativeInputs.push({label: 'Text-Skalierung auf 200% ohne Informationsverlust ermöglichen', wcag: 'WCAG 1.4.4 - Textgröße ändern', impact: '🟡 MODERAT', color: '#d97706'});
+            manualNegativeInputs.push({label: 'Text-Skalierung auf 200% ohne Informationsverlust ermöglichen', wcag: 'WCAG 1.4.4 - Textgröße ändern', impact: 'MODERAT', color: '#d97706'});
           
           const hasManualProblems = manualNegativeInputs.length > 0;
           const hasAutoProblems = nonNeutralizedViolations.length > 0;
@@ -1446,12 +1446,12 @@ export const generateCustomerHTML = ({
                   </ul>
                 ` : ''}
                 ${hasAutoProblems ? `
-                  <h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Automatisch erkannte Probleme (${nonNeutralizedViolations.length}):</h4>
+                  <h4 style="color: #fbbf24; margin-bottom: 15px;">Automatisch erkannte Probleme (${nonNeutralizedViolations.length}):</h4>
                   <ul style="list-style: none; padding: 0; margin: 0;">
                     ${improvementItemsHTML}
                   </ul>
                 ` : (!hasManualProblems && accessibilityScore < 70 ? `
-                  <h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Empfohlene Verbesserungen (Score: ${accessibilityScore}%)</h4>
+                  <h4 style="color: #fbbf24; margin-bottom: 15px;">Empfohlene Verbesserungen (Score: ${accessibilityScore}%)</h4>
                   <p style="color: #fbbf24; margin: 0 0 12px 0; font-size: 13px;">
                     Der niedrige Lighthouse-Score deutet auf technische Barrierefreiheit-Probleme hin. Überprüfen Sie folgende Bereiche:
                   </p>
@@ -1460,7 +1460,7 @@ export const generateCustomerHTML = ({
                     <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #dc2626;">
                       <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
                         <strong>Alt-Texte für alle Bilder hinzufügen</strong>
-                        <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(220, 38, 38, 0.2); color: #dc2626;">🔴 KRITISCH</span>
+                        <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(220, 38, 38, 0.2); color: #dc2626;">KRITISCH</span>
                       </div>
                       <span style="font-size: 0.85em; color: #60a5fa;">WCAG 1.1.1 - Nicht-Text-Inhalt</span>
                     </li>
@@ -1469,7 +1469,7 @@ export const generateCustomerHTML = ({
                     <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #ea580c;">
                       <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
                         <strong>Farbkontraste überprüfen und optimieren</strong>
-                        <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(234, 88, 12, 0.2); color: #ea580c;">🟠 ERNST</span>
+                        <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(234, 88, 12, 0.2); color: #ea580c;">ERNST</span>
                       </div>
                       <span style="font-size: 0.85em; color: #60a5fa;">WCAG 1.4.3 - Kontrast (Minimum)</span>
                     </li>
@@ -1888,15 +1888,15 @@ export const generateCustomerHTML = ({
 
         ${renderSection(
           'Google My Business',
-          '🏢',
+          '',
           manualData?.googleMyBusiness,
           autoData.googleMyBusiness,
           (data, avgScore) => `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
               <div>
-                <p><strong>Status:</strong> ${data.claimed ? '✅ Beansprucht' : '❌ Nicht beansprucht'}</p>
+                <p><strong>Status:</strong> ${data.claimed ? 'Beansprucht' : 'Nicht beansprucht'}</p>
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Ob das Unternehmen den Google-Eintrag als Inhaber übernommen hat</p>
-                <p><strong>Verifiziert:</strong> ${data.verified ? '✅ Ja' : '❌ Nein'}</p>
+                <p><strong>Verifiziert:</strong> ${data.verified ? 'Ja' : 'Nein'}</p>
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Bestätigung durch Google per Postkarte, Anruf oder E-Mail erfolgt</p>
                 <p><strong>Vollständigkeit:</strong> ${data.complete}%</p>
               </div>
@@ -1912,7 +1912,7 @@ export const generateCustomerHTML = ({
 
         ${renderSection(
           'Lokale Verzeichnisse & Citations',
-          '🌐',
+          '',
           manualData?.localCitations,
           autoData.localCitations,
           (data, avgScore) => `
@@ -1952,7 +1952,7 @@ export const generateCustomerHTML = ({
 
         ${renderSection(
           'Lokale Keyword-Rankings',
-          '🎯',
+          '',
           manualData?.localKeywords?.ranking?.length > 0 ? manualData.localKeywords : null,
           autoData.localKeywords.ranking?.length > 0 ? autoData.localKeywords : null,
           (data, avgScore) => `
@@ -1977,18 +1977,18 @@ export const generateCustomerHTML = ({
 
         ${renderSection(
           'On-Page Local Faktoren',
-          '📍',
+          '',
           manualData?.onPageLocal,
           autoData.onPageLocal,
           (data, avgScore) => `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
               <div>
-                <p><strong>📍 Adresse sichtbar:</strong> ${data.addressVisible ? '✅ Ja' : '❌ Nein'}</p>
-                <p><strong>📞 Telefon sichtbar:</strong> ${data.phoneVisible ? '✅ Ja' : '❌ Nein'}</p>
+                <p><strong>Adresse sichtbar:</strong> ${data.addressVisible ? 'Ja' : 'Nein'}</p>
+                <p><strong>Telefon sichtbar:</strong> ${data.phoneVisible ? 'Ja' : 'Nein'}</p>
               </div>
               <div>
-                <p><strong>🕒 Öffnungszeiten:</strong> ${data.openingHours ? '✅ Ja' : '❌ Nein'}</p>
-                <p><strong>🏷️ Local Schema:</strong> ${data.localSchema ? '✅ Implementiert' : '❌ Fehlt'}</p>
+                <p><strong>Öffnungszeiten:</strong> ${data.openingHours ? 'Ja' : 'Nein'}</p>
+                <p><strong>Local Schema:</strong> ${data.localSchema ? 'Implementiert' : 'Fehlt'}</p>
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 8px 0 0 0;">Strukturierte Daten für Google</p>
               </div>
             </div>
@@ -2001,10 +2001,10 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen (Lokale SEO):</h4>
           <ul>
             ${localSEOScore >= 90 ? `
-              <li>✅ Behalten Sie Ihre exzellente lokale Online-Präsenz bei</li>
-              <li>✅ Pflegen Sie weiterhin Ihr Google My Business Profil aktiv</li>
-              <li>✅ Bleiben Sie mit positiven Kundenbewertungen im Dialog</li>
-              <li>✅ Nutzen Sie Ihre starke Position für weiteres Wachstum</li>
+              <li>Behalten Sie Ihre exzellente lokale Online-Präsenz bei</li>
+              <li>Pflegen Sie weiterhin Ihr Google My Business Profil aktiv</li>
+              <li>Bleiben Sie mit positiven Kundenbewertungen im Dialog</li>
+              <li>Nutzen Sie Ihre starke Position für weiteres Wachstum</li>
             ` : `
               ${manualData || autoData.googleMyBusiness.score < 90 ? '<li>Google My Business Profil vollständig optimieren und regelmäßig aktualisieren (Fotos, Beiträge, Öffnungszeiten pflegen)</li>' : ''}
               ${manualData || autoData.localCitations.score < 80 ? '<li>Einträge in lokalen Verzeichnissen erstellen und NAP-Konsistenz sicherstellen (Name, Adresse, Telefon überall identisch)</li>' : ''}
@@ -2042,9 +2042,9 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen:</h4>
           <ul>
             ${performanceScore >= 90 ? `
-              <li>✅ Exzellente Performance – Behalten Sie Ihre Optimierungen bei!</li>
-              <li>✅ Überwachen Sie die Ladezeiten regelmäßig, um dieses hohe Niveau zu halten</li>
-              <li>✅ Ihre schnelle Website bietet Besuchern ein erstklassiges Nutzererlebnis</li>
+              <li>Exzellente Performance – Behalten Sie Ihre Optimierungen bei!</li>
+              <li>Überwachen Sie die Ladezeiten regelmäßig, um dieses hohe Niveau zu halten</li>
+              <li>Ihre schnelle Website bietet Besuchern ein erstklassiges Nutzererlebnis</li>
             ` : `
               <li>Bilder komprimieren und optimieren (Dateigröße reduzieren ohne sichtbaren Qualitätsverlust)</li>
               <li>Browser-Caching aktivieren (Inhalte beim ersten Besuch speichern für schnelleren Seitenaufbau bei erneutem Besuch)</li>
@@ -2202,10 +2202,10 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen:</h4>
           <ul>
             ${mobileScore >= 90 ? `
-              <li>✅ Hervorragende mobile Optimierung – Top-Erlebnis auf allen Geräten!</li>
-              <li>✅ Behalten Sie Ihre Mobile-First Strategie bei</li>
-              <li>✅ Testen Sie regelmäßig neue mobile Geräte und Bildschirmgrößen</li>
-              <li>✅ Ihre mobile Website ist ein Wettbewerbsvorteil</li>
+              <li>Hervorragende mobile Optimierung – Top-Erlebnis auf allen Geräten!</li>
+              <li>Behalten Sie Ihre Mobile-First Strategie bei</li>
+              <li>Testen Sie regelmäßig neue mobile Geräte und Bildschirmgrößen</li>
+              <li>Ihre mobile Website ist ein Wettbewerbsvorteil</li>
             ` : `
               <li>Mobile-First Design-Strategie implementieren (Website zuerst für Smartphones entwickeln, dann für Desktop anpassen)</li>
               <li>Touch-Interfaces optimieren (min. 44px Buttons) (Schaltflächen groß genug für bequeme Fingerbedienung machen)</li>
@@ -2237,7 +2237,7 @@ export const generateCustomerHTML = ({
     if (allCompetitors.length === 0) {
       return `
         <div class="metric-card warning">
-          <h3>👥 Wettbewerbsanalyse & Marktumfeld</h3>
+          <h3>Wettbewerbsanalyse & Marktumfeld</h3>
           <p class="light-gray-text text-center" style="font-style: italic; margin: 20px 0;">
             Keine Wettbewerber zum Vergleich erfasst.
           </p>
@@ -2279,7 +2279,7 @@ export const generateCustomerHTML = ({
     return `
       <div class="metric-card ${scoreColorClass}">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h3 style="margin: 0;">👥 Wettbewerbsanalyse & Marktumfeld</h3>
+          <h3 style="margin: 0;">Wettbewerbsanalyse & Marktumfeld</h3>
           <div class="score-circle ${scoreColorClass}" style="margin: 0;">${Math.round(ownScore)}%</div>
         </div>
         <div style="margin-bottom: 20px;">
@@ -2744,10 +2744,10 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen:</h4>
           <ul>
             ${socialMediaScore >= 90 ? `
-              <li>✅ Exzellente Social Media Präsenz – Bleiben Sie so aktiv!</li>
-              <li>✅ Nutzen Sie Ihre starke Community für weiteres Wachstum</li>
-              <li>✅ Erwägen Sie innovative Formate (Live-Videos, Reels, Stories)</li>
-              <li>✅ Ihre Reichweite ist ein großer Wettbewerbsvorteil</li>
+              <li>Exzellente Social Media Präsenz – Bleiben Sie so aktiv!</li>
+              <li>Nutzen Sie Ihre starke Community für weiteres Wachstum</li>
+              <li>Erwägen Sie innovative Formate (Live-Videos, Reels, Stories)</li>
+              <li>Ihre Reichweite ist ein großer Wettbewerbsvorteil</li>
             ` : socialMediaScore < 60 ? `
               <li>Erhöhung der Posting-Frequenz</li>
               <li>Aufbau einer größeren Follower-Basis</li>
@@ -3276,7 +3276,7 @@ export const generateCustomerHTML = ({
             ${(manualKeywordData || realData.keywords).map(keyword => `
               <div class="keyword-item ${keyword.found ? 'found' : 'not-found'}">
                 <span>${keyword.keyword}</span>
-                <span>${keyword.found ? '✅ Gefunden' : '❌ Fehlend'}</span>
+                <span>${keyword.found ? 'Gefunden' : 'Fehlend'}</span>
               </div>
             `).join('')}
           </div>
@@ -3284,7 +3284,7 @@ export const generateCustomerHTML = ({
 
         <!-- Textqualität & Content-Struktur -->
         <div class="metric-card good" style="margin-bottom: 30px;">
-          <h3>📖 Textqualität & Content-Struktur</h3>
+          <h3>Textqualität & Content-Struktur</h3>
           
           ${extensionData?.content?.wordCount ? `
             <div style="background: #f0f9ff; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #3b82f6;">
@@ -3354,14 +3354,14 @@ export const generateCustomerHTML = ({
                 
                 if (hasGoodStructure && hasH2) {
                   return `
-                    <li>✅ Gute Überschriftenstruktur – Behalten Sie diese bei!</li>
+                    <li>Gute Überschriftenstruktur – Behalten Sie diese bei!</li>
                     <li>Texte weiterhin in kurze, verständliche Absätze gliedern</li>
                     <li>Fachbegriffe bei Bedarf erklären</li>
                   `;
                 } else {
                   return `
-                    ${realData.seo.headings.h1.length === 0 ? '<li>⚠️ H1-Überschrift hinzufügen (wichtig für SEO)</li>' : ''}
-                    ${realData.seo.headings.h1.length > 1 ? '<li>⚠️ Nur eine H1-Überschrift pro Seite verwenden</li>' : ''}
+                    ${realData.seo.headings.h1.length === 0 ? '<li>WICHTIG: H1-Überschrift hinzufügen (wichtig für SEO)</li>' : ''}
+                    ${realData.seo.headings.h1.length > 1 ? '<li>WICHTIG: Nur eine H1-Überschrift pro Seite verwenden</li>' : ''}
                     ${!hasH2 ? '<li>Mehr H2-Überschriften für bessere Strukturierung nutzen</li>' : ''}
                     <li>Texte in kurze, verständliche Absätze gliedern</li>
                     <li>Fachbegriffe erklären und für Laien verständlich machen</li>
@@ -3433,8 +3433,8 @@ export const generateCustomerHTML = ({
                 
                 if (effectiveKeywordScore >= 90 && foundKeywordsCount >= 3 && hasLocalRef) {
                   return `
-                    <li>✅ Exzellente Branchenrelevanz – Behalten Sie diese Ausrichtung bei!</li>
-                    <li>✅ Gutes Fachvokabular und lokaler Bezug vorhanden</li>
+                    <li>Exzellente Branchenrelevanz – Behalten Sie diese Ausrichtung bei!</li>
+                    <li>Gutes Fachvokabular und lokaler Bezug vorhanden</li>
                     <li>Erwägen Sie Case Studies oder Referenzprojekte hinzuzufügen</li>
                   `;
                 } else if (effectiveKeywordScore >= 70) {
@@ -3446,9 +3446,9 @@ export const generateCustomerHTML = ({
                   `;
                 } else {
                   return `
-                    <li>⚠️ Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe systematisch einbauen</li>
-                    ${foundKeywordsCount < 2 ? '<li>⚠️ Kerndienstleistungen klarer auf der Website benennen</li>' : ''}
-                    ${!hasLocalRef ? '<li>⚠️ Lokalen Bezug dringend hinzufügen (Standort, Einzugsgebiet)</li>' : ''}
+                    <li>WICHTIG: Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe systematisch einbauen</li>
+                    ${foundKeywordsCount < 2 ? '<li>WICHTIG: Kerndienstleistungen klarer auf der Website benennen</li>' : ''}
+                    ${!hasLocalRef ? '<li>WICHTIG: Lokalen Bezug dringend hinzufügen (Standort, Einzugsgebiet)</li>' : ''}
                     <li>Branchenspezifische Problemlösungen kommunizieren</li>
                     <li>Zertifikate und Qualifikationen prominent platzieren</li>
                   `;
@@ -5093,10 +5093,10 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen (Online-Präsenz):</h4>
           <ul>
             ${overallScore >= 90 ? `
-              <li>✅ Exzellente Online-Präsenz – Behalten Sie Ihre Content-Strategie bei!</li>
-              <li>✅ Ihre vielfältigen Inhalte sind ein großer Wettbewerbsvorteil</li>
-              <li>✅ Pflegen Sie weiterhin regelmäßig neue Inhalte ein</li>
-              <li>✅ Erwägen Sie innovative Formate für noch mehr Reichweite</li>
+              <li>Exzellente Online-Präsenz – Behalten Sie Ihre Content-Strategie bei!</li>
+              <li>Ihre vielfältigen Inhalte sind ein großer Wettbewerbsvorteil</li>
+              <li>Pflegen Sie weiterhin regelmäßig neue Inhalte ein</li>
+              <li>Erwägen Sie innovative Formate für noch mehr Reichweite</li>
             ` : `
               ${imageCount === 0 ? '<li><strong>Bilder-Strategie starten:</strong> Beginnen Sie mit hochwertigen Projektfotos auf Google My Business. Ziel: Mindestens 10 Bilder in 3 Monaten</li>' : ''}
               ${imageCount > 0 && imageCount < 10 ? '<li><strong>Bilder-Portfolio erweitern:</strong> Erhöhen Sie auf 15-20 Fotos mit Vorher-Nachher-Vergleichen</li>' : ''}
@@ -5175,10 +5175,10 @@ export const generateCustomerHTML = ({
           <h4>Handlungsempfehlungen (Branchenplattformen):</h4>
           <ul>
             ${overallScore >= 90 ? `
-              <li>✅ Exzellente Präsenz auf Branchenplattformen – Weiter so!</li>
-              <li>✅ Ihre hohe Bewertungsqualität ist ein starkes Aushängeschild</li>
-              <li>✅ Bleiben Sie im Dialog mit Ihren Kunden und antworten Sie weiterhin auf Bewertungen</li>
-              <li>✅ Nutzen Sie Ihre gute Reputation für weitere Empfehlungen</li>
+              <li>Exzellente Präsenz auf Branchenplattformen – Weiter so!</li>
+              <li>Ihre hohe Bewertungsqualität ist ein starkes Aushängeschild</li>
+              <li>Bleiben Sie im Dialog mit Ihren Kunden und antworten Sie weiterhin auf Bewertungen</li>
+              <li>Nutzen Sie Ihre gute Reputation für weitere Empfehlungen</li>
             ` : `
               <li>Profile auf allen relevanten Branchenplattformen pflegen</li>
               <li>Aktiv um Kundenbewertungen bitten nach Projektabschluss</li>
