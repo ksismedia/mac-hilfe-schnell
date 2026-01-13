@@ -364,9 +364,12 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                   return true;
                 });
                 
-                // Warnung nur anzeigen wenn: nicht-neutralisierte Violations ODER Score < 90 UND keine Neutralisierungen stattgefunden haben
-                const hasNeutralizedAll = allViolations.length > 0 && nonNeutralizedViolations.length === 0;
-                const shouldShowWarning = nonNeutralizedViolations.length > 0 || (currentData.score < 90 && !hasNeutralizedAll);
+                // Warnung nur anzeigen, wenn wirklich (nicht-neutralisierte) Verstöße vorliegen
+                // oder der Nutzer explizit manuell gravierende Probleme bestätigt hat.
+                const hasManualNegative = ['altTextsPresent', 'screenReaderCompatible', 'colorContrast', 'keyboardNavigation']
+                  .some((k) => manualAccessibilityData?.[k] === false);
+
+                const shouldShowWarning = nonNeutralizedViolations.length > 0 || hasManualNegative;
                 
                 if (!shouldShowWarning) return null;
                 
