@@ -1170,7 +1170,7 @@ export const generateCustomerHTML = ({
             <div class="violations-box" style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #fef2f2; border: 2px solid #fca5a5;">
               <h4 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Erkannte Probleme ${hasRealData ? '<span style="color: #10b981; font-size: 12px;">(PageSpeed Insights)</span>' : ''}</h4>
               <div style="display: grid; gap: 15px;">
-                ${violations.map(v => `
+          ${violations.map(v => `
                   <div style="padding: 15px; border-radius: 8px; background: white; border-left: 4px solid ${
                     v.impact === 'critical' ? '#dc2626' :
                     v.impact === 'serious' ? '#ea580c' :
@@ -1200,6 +1200,26 @@ export const generateCustomerHTML = ({
                 <p style="margin: 0; font-size: 13px; color: #7f1d1d;">
                   <strong>⚠️ Wichtig:</strong> Diese Probleme wurden automatisch erkannt und erfordern manuelle Überprüfung. 
                   ${manualAccessibilityData ? 'Ihre manuellen Eingaben ergänzen diese Bewertung.' : 'Ergänzen Sie diese Analyse durch manuelle Überprüfung in der Eingabemaske.'}
+                </p>
+              </div>
+            </div>
+          ` : accessibilityScore < 70 ? `
+            <!-- Score niedrig aber keine Violations erkannt - zeige Lighthouse-basierte Erklärung -->
+            <div style="margin-top: 20px; padding: 15px; border-radius: 8px; background: #fffbeb; border: 2px solid #fbbf24;">
+              <h4 style="color: #92400e; margin: 0 0 10px 0;">⚠️ Technische Barrierefreiheit-Probleme erkannt</h4>
+              <p style="margin: 0 0 12px 0; color: #92400e; font-size: 14px;">
+                Der Lighthouse Accessibility-Score von <strong>${accessibilityScore}%</strong> deutet auf technische Probleme hin. Typische Ursachen:
+              </p>
+              <ul style="margin: 0 0 12px 0; padding-left: 20px; color: #92400e; font-size: 13px;">
+                <li><strong>Fehlende Alt-Texte</strong> bei Bildern (WCAG 1.1.1)</li>
+                <li><strong>Unzureichende Farbkontraste</strong> zwischen Text und Hintergrund (WCAG 1.4.3)</li>
+                <li><strong>Fehlende ARIA-Labels</strong> bei interaktiven Elementen</li>
+                <li><strong>Mangelnde Dokumentstruktur</strong> (fehlende Überschriften-Hierarchie)</li>
+                <li><strong>Tastaturnavigation</strong> nicht vollständig umsetzbar</li>
+              </ul>
+              <div style="padding: 10px; background: #fef3c7; border-radius: 6px;">
+                <p style="margin: 0; color: #92400e; font-size: 12px;">
+                  <strong>💡 Empfehlung:</strong> Überprüfen Sie die Website-Elemente manuell auf diese Kriterien und ergänzen Sie die Bewertung in der manuellen Eingabemaske.
                 </p>
               </div>
             </div>
@@ -1316,19 +1336,64 @@ export const generateCustomerHTML = ({
       </div>
 
         <!-- Verbesserungsvorschläge -->
-        ${nonNeutralizedViolations.length > 0 ? `
+        ${nonNeutralizedViolations.length > 0 || accessibilityScore < 70 ? `
         <div class="collapsible" onclick="toggleSection('accessibility-improvements')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
-          <h4 style="color: #fbbf24; margin: 0;">▶ Verbesserungsvorschläge (${nonNeutralizedViolations.length} Empfehlungen)</h4>
+          <h4 style="color: #fbbf24; margin: 0;">▶ Handlungsempfehlungen ${nonNeutralizedViolations.length > 0 ? `(${nonNeutralizedViolations.length} Empfehlungen)` : '(basierend auf Score)'}</h4>
         </div>
         
         <div id="accessibility-improvements" style="display: none;">
           <div class="recommendations">
+            ${nonNeutralizedViolations.length > 0 ? `
             <h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Prioritäre Handlungsempfehlungen (basierend auf automatischer Analyse):</h4>
             <ul style="list-style: none; padding: 0; margin: 0;">
               ${improvementItemsHTML}
             </ul>
+            ` : `
+            <h4 style="color: #fbbf24; margin-bottom: 15px;">🔧 Empfohlene Verbesserungen (Score: ${accessibilityScore}%)</h4>
+            <p style="color: #fbbf24; margin: 0 0 12px 0; font-size: 13px;">
+              Der niedrige Lighthouse-Score deutet auf technische Barrierefreiheit-Probleme hin. Überprüfen Sie folgende Bereiche:
+            </p>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              ${!manualAccessibilityData?.altTextsPresent ? `
+              <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #dc2626;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                  <strong>Alt-Texte für alle Bilder hinzufügen</strong>
+                  <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(220, 38, 38, 0.2); color: #dc2626;">🔴 KRITISCH</span>
+                </div>
+                <span style="font-size: 0.85em; color: #60a5fa;">WCAG 1.1.1 - Nicht-Text-Inhalt</span>
+              </li>
+              ` : ''}
+              ${!manualAccessibilityData?.colorContrast ? `
+              <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #ea580c;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                  <strong>Farbkontraste überprüfen und optimieren</strong>
+                  <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(234, 88, 12, 0.2); color: #ea580c;">🟠 ERNST</span>
+                </div>
+                <span style="font-size: 0.85em; color: #60a5fa;">WCAG 1.4.3 - Kontrast (Minimum)</span>
+              </li>
+              ` : ''}
+              ${!manualAccessibilityData?.keyboardNavigation ? `
+              <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #ea580c;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                  <strong>Tastaturnavigation für alle Funktionen ermöglichen</strong>
+                  <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(234, 88, 12, 0.2); color: #ea580c;">🟠 ERNST</span>
+                </div>
+                <span style="font-size: 0.85em; color: #60a5fa;">WCAG 2.1.1 - Tastatur</span>
+              </li>
+              ` : ''}
+              ${!manualAccessibilityData?.screenReaderCompatible ? `
+              <li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #d97706;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                  <strong>ARIA-Labels für Screenreader optimieren</strong>
+                  <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(217, 119, 6, 0.2); color: #d97706;">🟡 MODERAT</span>
+                </div>
+                <span style="font-size: 0.85em; color: #60a5fa;">WCAG 4.1.2 - Name, Rolle, Wert</span>
+              </li>
+              ` : ''}
+            </ul>
+            `}
             <div style="margin-top: 15px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; font-size: 13px; color: #93c5fd;">
-              <strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden, um sie aus dieser Liste zu entfernen.
+              <strong>💡 Tipp:</strong> Behobene Probleme können in der manuellen Bewertung als erledigt markiert werden.
             </div>
           </div>
         </div>
