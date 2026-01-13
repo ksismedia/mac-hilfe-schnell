@@ -398,20 +398,36 @@ export const calculateSocialMediaPerformanceScore = (
   manualIndustryReviewData?: { platforms: any[]; overallScore?: number } | null,
   manualOnlinePresenceData?: { items: any[]; overallScore?: number } | null
 ): number => {
-  // NEUE LOGIK: Einfacher arithmetischer Durchschnitt (wie htmlGenerator.ts)
+  // KORRIGIERTE LOGIK: Fehlende Social-Media-Kanäle als 0% einbeziehen
   const socialMediaScore = calculateSimpleSocialScore(manualSocialData);
   const googleReviewsScore = calculateGoogleReviewsScore(realData);
   const industryReviewScore = calculateIndustryReviewScore(manualIndustryReviewData);
   const onlinePresenceScore = calculateOnlinePresenceScore(manualOnlinePresenceData);
   
-  const cat3Scores = [
+  // Basis-Scores IMMER einbeziehen (auch wenn 0)
+  // Nur Google Reviews, Social Media und Online-Präsenz sind Pflicht-Komponenten
+  const cat3Scores: number[] = [
     googleReviewsScore,
-    socialMediaScore,
-    realData.socialProof?.overallScore || 0
-  ].filter(s => s > 0);
+    socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
+  ];
   
+  // Social Proof nur hinzufügen wenn vorhanden
+  if (realData.socialProof?.overallScore && realData.socialProof.overallScore > 0) {
+    cat3Scores.push(realData.socialProof.overallScore);
+  }
+  
+  // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
   if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
   if (onlinePresenceScore > 0) cat3Scores.push(onlinePresenceScore);
+  
+  console.log('📊 Social Media Performance Score:', {
+    socialMediaScore,
+    googleReviewsScore,
+    industryReviewScore,
+    onlinePresenceScore,
+    allScores: cat3Scores,
+    result: cat3Scores.length > 0 ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) : 0
+  });
   
   return cat3Scores.length > 0 
     ? Math.round(cat3Scores.reduce((a, b) => a + b, 0) / cat3Scores.length) 
