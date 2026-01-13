@@ -538,6 +538,10 @@ export const generateCustomerHTML = ({
     // Check if there is any meaningful workplace data (either manual or automatic)
     const hasWorkplaceData = workplaceScore !== -1;
     
+    // Determine platform presence for recommendations
+    const hasKununu = !!(manualWorkplaceData?.kununuFound || (realData.workplace?.kununu?.found && realData.workplace?.kununu?.rating));
+    const hasGlassdoor = !!(manualWorkplaceData?.glassdoorFound || (realData.workplace?.glassdoor?.found && realData.workplace?.glassdoor?.rating));
+    
     return `
       <div class="info-box" style="margin-top: 15px; padding: 15px; border-radius: 8px;">
         <h4>Detaillierte Arbeitgeber-Bewertung</h4>
@@ -643,10 +647,26 @@ export const generateCustomerHTML = ({
         <div class="recommendations" style="margin-top: 20px;">
           <h4>Handlungsempfehlungen:</h4>
           <ul>
-            <li>Kununu und Glassdoor Profile aktiv pflegen</li>
-            <li>Mitarbeiterzufriedenheit regelmäßig messen</li>
-            <li>Positive Arbeitgeber-Bewertungen fördern</li>
-            <li>Employer Branding Strategie entwickeln</li>
+            ${workplaceScore >= 90 ? `
+              <li>✅ Exzellente Arbeitgeberbewertungen – Behalten Sie Ihr hohes Niveau bei!</li>
+              <li>✅ Nutzen Sie Ihre starke Positionierung für Recruiting-Kampagnen</li>
+              <li>✅ Teilen Sie positive Bewertungen in Stellenausschreibungen</li>
+            ` : workplaceScore >= 70 ? `
+              <li>✅ Gute Arbeitgeberbewertungen – weiter so!</li>
+              <li>Ermutigen Sie zufriedene Mitarbeiter zu weiteren Bewertungen</li>
+              <li>Reagieren Sie zeitnah auf neue Bewertungen</li>
+            ` : workplaceScore >= 50 ? `
+              ${!hasKununu ? '<li>Kununu-Profil erstellen und aktiv pflegen</li>' : '<li>Kununu-Bewertungen durch Mitarbeiter-Feedback verbessern</li>'}
+              ${!hasGlassdoor ? '<li>Glassdoor-Profil anlegen für internationale Sichtbarkeit</li>' : '<li>Glassdoor-Bewertungen aktiv managen</li>'}
+              <li>Mitarbeiterzufriedenheit durch interne Umfragen messen</li>
+              <li>Auf bestehende Bewertungen professionell reagieren</li>
+            ` : `
+              ${!hasKununu ? '<li>⚠️ Dringend: Kununu-Profil erstellen (wichtigste Plattform in DACH)</li>' : '<li>⚠️ Kununu-Rating durch Verbesserung der Arbeitsbedingungen steigern</li>'}
+              ${!hasGlassdoor ? '<li>⚠️ Glassdoor-Profil anlegen</li>' : '<li>⚠️ Glassdoor-Bewertungen analysieren und Kritikpunkte adressieren</li>'}
+              <li>⚠️ Employer Branding Strategie entwickeln und umsetzen</li>
+              <li>⚠️ Mitarbeiterzufriedenheit systematisch erfassen und verbessern</li>
+              <li>Austrittsinterviews nutzen, um Verbesserungspotenziale zu identifizieren</li>
+            `}
           </ul>
         </div>
       </div>
@@ -3274,10 +3294,28 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Handlungsempfehlungen zur Textqualität:</h4>
             <ul>
-              <li>Texte in kurze, verständliche Absätze gliedern</li>
-              <li>Fachbegriffe erklären und für Laien verständlich machen</li>
-              <li>Bulletpoints und Listen für bessere Lesbarkeit nutzen</li>
-              <li>Call-to-Actions klar und handlungsorientiert formulieren</li>
+              ${(() => {
+                const headingScore = realData.seo.headings.h1.length === 1 ? 90 : realData.seo.headings.h1.length > 1 ? 60 : 30;
+                const hasGoodStructure = headingScore >= 80;
+                const hasH2 = realData.seo.headings.h2.length >= 2;
+                
+                if (hasGoodStructure && hasH2) {
+                  return `
+                    <li>✅ Gute Überschriftenstruktur – Behalten Sie diese bei!</li>
+                    <li>Texte weiterhin in kurze, verständliche Absätze gliedern</li>
+                    <li>Fachbegriffe bei Bedarf erklären</li>
+                  `;
+                } else {
+                  return `
+                    ${realData.seo.headings.h1.length === 0 ? '<li>⚠️ H1-Überschrift hinzufügen (wichtig für SEO)</li>' : ''}
+                    ${realData.seo.headings.h1.length > 1 ? '<li>⚠️ Nur eine H1-Überschrift pro Seite verwenden</li>' : ''}
+                    ${!hasH2 ? '<li>Mehr H2-Überschriften für bessere Strukturierung nutzen</li>' : ''}
+                    <li>Texte in kurze, verständliche Absätze gliedern</li>
+                    <li>Fachbegriffe erklären und für Laien verständlich machen</li>
+                    <li>Bulletpoints und Listen für bessere Lesbarkeit nutzen</li>
+                  `;
+                }
+              })()}
             </ul>
           </div>
         </div>
@@ -3335,62 +3373,68 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Handlungsempfehlungen zur Branchenrelevanz:</h4>
             <ul>
-              <li>Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe verwenden</li>
-              <li>Lokale Referenzen und Projekte hervorheben</li>
-              <li>Branchenspezifische Problemlösungen kommunizieren</li>
-              <li>Zertifikate und Qualifikationen prominent platzieren</li>
+              ${(() => {
+                const effectiveKeywordScore = keywordScore !== undefined && keywordScore !== null ? keywordScore : 50;
+                const foundKeywordsCount = (manualKeywordData || realData.keywords || []).filter(k => k.found).length;
+                const hasLocalRef = !!businessData.address;
+                
+                if (effectiveKeywordScore >= 90 && foundKeywordsCount >= 3 && hasLocalRef) {
+                  return `
+                    <li>✅ Exzellente Branchenrelevanz – Behalten Sie diese Ausrichtung bei!</li>
+                    <li>✅ Gutes Fachvokabular und lokaler Bezug vorhanden</li>
+                    <li>Erwägen Sie Case Studies oder Referenzprojekte hinzuzufügen</li>
+                  `;
+                } else if (effectiveKeywordScore >= 70) {
+                  return `
+                    <li>Gute Basis – erweitern Sie das ${businessData.industry.toUpperCase()}-Fachvokabular</li>
+                    ${foundKeywordsCount < 3 ? '<li>Mehr branchenspezifische Keywords auf der Seite platzieren</li>' : ''}
+                    ${!hasLocalRef ? '<li>Lokale Referenzen und Standort-Bezug hinzufügen</li>' : '<li>Lokale Projekte und Referenzen hervorheben</li>'}
+                    <li>Zertifikate und Qualifikationen prominent platzieren</li>
+                  `;
+                } else {
+                  return `
+                    <li>⚠️ Spezifische ${businessData.industry.toUpperCase()}-Fachbegriffe systematisch einbauen</li>
+                    ${foundKeywordsCount < 2 ? '<li>⚠️ Kerndienstleistungen klarer auf der Website benennen</li>' : ''}
+                    ${!hasLocalRef ? '<li>⚠️ Lokalen Bezug dringend hinzufügen (Standort, Einzugsgebiet)</li>' : ''}
+                    <li>Branchenspezifische Problemlösungen kommunizieren</li>
+                    <li>Zertifikate und Qualifikationen prominent platzieren</li>
+                  `;
+                }
+              })()}
             </ul>
           </div>
         </div>
 
-        <!-- Aktualität -->
-        <div class="metric-card warning" style="margin-bottom: 30px;">
-          <h3>🗓️ Content-Aktualität</h3>
+        <!-- Aktualität - Hinweis ohne hardcodierte Scores -->
+        <div class="info-box" style="margin-bottom: 30px; padding: 20px; border-radius: 8px; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h3 style="color: #fbbf24; margin: 0 0 15px 0;">🗓️ Content-Aktualität</h3>
+          <p style="color: #fbbf24; margin: 0 0 15px 0; font-size: 14px;">
+            <strong>ℹ️ Hinweis:</strong> Die Content-Aktualität kann nicht automatisch geprüft werden und erfordert eine manuelle Bewertung.
+          </p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="status-item">
               <h4>Letzte Aktualisierung</h4>
-              <p><strong>Zu prüfen</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(60)}" style="width: 60%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: #fff; font-weight: bold; font-size: 11px;">60%</span>
-                  </div>
-                </div>
-              </div>
-              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Empfehlung: Quartalweise</p>
+              <p><strong>Manuell zu prüfen</strong></p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Empfehlung: Mindestens quartalsweise</p>
             </div>
             <div class="status-item">
               <h4>News & Updates</h4>
-              <p><strong>Nicht vorhanden</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(25)}" style="width: 25%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: #fff; font-weight: bold; font-size: 11px;">25%</span>
-                  </div>
-                </div>
-              </div>
-              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Blog/News-Bereich fehlt</p>
+              <p><strong>Manuell zu prüfen</strong></p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Blog/News-Bereich vorhanden?</p>
             </div>
             <div class="status-item">
               <h4>Saisonale Inhalte</h4>
-              <p><strong>Nicht erkannt</strong></p>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill" data-score="${getScoreRange(35)}" style="width: 35%; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: #fff; font-weight: bold; font-size: 11px;">35%</span>
-                  </div>
-                </div>
-              </div>
-              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">Winterdienst, Klimaanlagen etc.</p>
+              <p><strong>Manuell zu prüfen</strong></p>
+              <p class="gray-text" style="color: #6b7280; font-size: 0.875rem; margin-top: 8px;">${businessData.industry === 'shk' ? 'Heizungswartung, Klimaanlagen' : businessData.industry === 'elektriker' ? 'E-Mobilität, PV-Anlagen' : 'Saisonale Angebote'}</p>
             </div>
           </div>
-          <div class="recommendations">
-            <h4>Handlungsempfehlungen zur Aktualität:</h4>
+          <div class="recommendations" style="margin-top: 15px;">
+            <h4>Prüfpunkte zur Content-Aktualität:</h4>
             <ul>
-              <li>Regelmäßige Content-Updates (mindestens quartalsweise)</li>
-              <li>Blog oder News-Bereich für aktuelle Themen einrichten</li>
-              <li>Saisonale Services und Angebote zeitgerecht kommunizieren</li>
-              <li>Datum der letzten Aktualisierung sichtbar machen</li>
+              <li>📋 Wann wurde der Website-Content zuletzt aktualisiert?</li>
+              <li>📋 Gibt es einen Blog oder News-Bereich mit regelmäßigen Beiträgen?</li>
+              <li>📋 Werden saisonale Dienstleistungen zeitgerecht beworben?</li>
+              <li>📋 Ist ein Copyright-Datum oder "Zuletzt aktualisiert"-Hinweis sichtbar?</li>
             </ul>
           </div>
         </div>
