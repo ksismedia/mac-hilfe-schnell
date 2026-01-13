@@ -1063,7 +1063,7 @@ export const generateCustomerHTML = ({
 
     return `
       <div class="metric-card ${scoreClass}">
-        ${violations.length > 0 || accessibilityScore < 90 ? `
+        ${violations.length > 0 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #fef2f2; border: 2px solid #fecaca;">
             <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
               ⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt
@@ -1205,7 +1205,7 @@ export const generateCustomerHTML = ({
               </div>
             </div>
             
-            ${accessibilityScore < 90 ? `
+            ${violations.length > 0 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
               <h4 class="error-text" style="margin: 0 0 10px 0;">RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
@@ -3376,7 +3376,34 @@ export const generateCustomerHTML = ({
           </div>
         </div>
         
-        ${actualAccessibilityScore < 90 ? `
+        ${(() => {
+          const allViolations = accessibilityData?.violations || [];
+          const nonNeutralizedViolations = allViolations.filter((v: any) => {
+            const vid = v.id || '';
+            if (manualAccessibilityData?.keyboardNavigation &&
+                (vid.includes('keyboard') || vid.includes('button-name') ||
+                 vid.includes('link-name') || vid.includes('accesskeys'))) return false;
+            if (manualAccessibilityData?.screenReaderCompatible &&
+                (vid.includes('aria-') || vid.includes('label') ||
+                 vid.includes('role') || vid.includes('landmark'))) return false;
+            if (manualAccessibilityData?.colorContrast &&
+                (vid.includes('color-contrast') || vid.includes('contrast'))) return false;
+            if (manualAccessibilityData?.altTextsPresent &&
+                (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) return false;
+            if (manualAccessibilityData?.focusVisibility &&
+                (vid.includes('focus') || vid.includes('focus-order'))) return false;
+            if (manualAccessibilityData?.textScaling &&
+                (vid.includes('meta-viewport') || vid.includes('target-size'))) return false;
+            return true;
+          });
+
+          const hasManualNegative = ['altTextsPresent', 'screenReaderCompatible', 'colorContrast', 'keyboardNavigation']
+            .some((k) => manualAccessibilityData?.[k] === false);
+
+          const shouldShowWarning = nonNeutralizedViolations.length > 0 || hasManualNegative;
+          if (!shouldShowWarning) return '';
+
+          return `
         <!-- Warnung direkt sichtbar -->
         <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
           <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
@@ -3392,7 +3419,8 @@ export const generateCustomerHTML = ({
             Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
           </div>
         </div>
-        ` : ''}
+          `;
+        })()}
         
         ${(() => {
           // Critical Violations Analysis with Neutralization for HTML Export
@@ -3646,9 +3674,12 @@ export const generateCustomerHTML = ({
                 return true;
               });
               
-              // Warnung nur anzeigen wenn: nicht-neutralisierte Violations ODER Score < 90 UND keine Neutralisierungen stattgefunden haben
-              const hasNeutralizedAll = allViolations.length > 0 && nonNeutralizedViolations.length === 0;
-              const shouldShowWarning = nonNeutralizedViolations.length > 0 || (actualAccessibilityScore < 90 && !hasNeutralizedAll);
+              // Warnung nur anzeigen wenn wirklich (nicht-neutralisierte) Verstöße vorliegen
+              // oder der Nutzer explizit manuell gravierende Probleme bestätigt hat.
+              const hasManualNegative = ['altTextsPresent', 'screenReaderCompatible', 'colorContrast', 'keyboardNavigation']
+                .some((k) => manualAccessibilityData?.[k] === false);
+
+              const shouldShowWarning = nonNeutralizedViolations.length > 0 || hasManualNegative;
               
               if (!shouldShowWarning) return '';
               
