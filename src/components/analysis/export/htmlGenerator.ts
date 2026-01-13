@@ -1133,16 +1133,29 @@ export const generateCustomerHTML = ({
       </div>
     ` : '');
 
+    // Prüfe auch manuell gemeldete Probleme für den rechtlichen Hinweis
+    const hasManualNegativeInputs = 
+      manualAccessibilityData?.altTextsPresent === false ||
+      manualAccessibilityData?.colorContrast === false ||
+      manualAccessibilityData?.keyboardNavigation === false ||
+      manualAccessibilityData?.screenReaderCompatible === false ||
+      manualAccessibilityData?.focusVisibility === false ||
+      manualAccessibilityData?.textScaling === false;
+    
+    const hasAnyAccessibilityProblems = violations.length > 0 || hasManualNegativeInputs;
+    const totalProblemCount = violations.length + (hasManualNegativeInputs ? 1 : 0);
+
     return `
       <div class="metric-card ${scoreClass}">
         <!-- Permanenter rechtlicher Hinweis - immer anzeigen -->
-        <div style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: ${violations.length > 0 ? '#fef2f2' : '#fffbeb'}; border: 2px solid ${violations.length > 0 ? '#fecaca' : '#fcd34d'};">
-          <h4 style="color: ${violations.length > 0 ? '#dc2626' : '#92400e'}; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
-            ⚖️ RECHTLICHER HINWEIS${violations.length > 0 ? ': Barrierefreiheit-Verstöße erkannt' : ''}
+        <div style="border-radius: 8px; padding: 15px; margin-bottom: 20px; background: ${hasAnyAccessibilityProblems ? '#fef2f2' : '#fffbeb'}; border: 2px solid ${hasAnyAccessibilityProblems ? '#fecaca' : '#fcd34d'};">
+          <h4 style="color: ${hasAnyAccessibilityProblems ? '#dc2626' : '#92400e'}; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+            ⚖️ RECHTLICHER HINWEIS${hasAnyAccessibilityProblems ? ': Barrierefreiheit-Verstöße erkannt' : ''}
           </h4>
-          ${violations.length > 0 ? `
+          ${hasAnyAccessibilityProblems ? `
             <p style="color: #991b1b; margin: 0 0 10px 0; font-size: 14px;">
-              <strong>Warnung:</strong> Die automatisierte Analyse hat <strong>${violations.length} Barrierefreiheit-Probleme</strong> identifiziert. 
+              <strong>Warnung:</strong> ${violations.length > 0 ? `Die automatisierte Analyse hat <strong>${violations.length} Barrierefreiheit-Probleme</strong> identifiziert.` : ''} 
+              ${hasManualNegativeInputs ? `<strong>Zusätzlich wurden manuell fehlende Barrierefreiheits-Features gemeldet.</strong>` : ''}
               Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
             </p>
             ${hasRealData ? `
@@ -1151,7 +1164,7 @@ export const generateCustomerHTML = ({
               </p>
             ` : ''}
           ` : ''}
-          <div style="background: ${violations.length > 0 ? '#fee2e2' : '#fef3c7'}; border: 1px solid ${violations.length > 0 ? '#fecaca' : '#fcd34d'}; border-radius: 6px; padding: 12px; color: ${violations.length > 0 ? '#7f1d1d' : '#92400e'}; font-size: 13px;">
+          <div style="background: ${hasAnyAccessibilityProblems ? '#fee2e2' : '#fef3c7'}; border: 1px solid ${hasAnyAccessibilityProblems ? '#fecaca' : '#fcd34d'}; border-radius: 6px; padding: 12px; color: ${hasAnyAccessibilityProblems ? '#7f1d1d' : '#92400e'}; font-size: 13px;">
             <strong>⚠️ Wichtiger Hinweis:</strong> Diese automatisierte Prüfung ersetzt keine rechtliche Beratung und garantiert keine vollständige Rechtskonformität. 
             Wir empfehlen ausdrücklich die Einholung einer rechtlichen Beratung durch eine spezialisierte Anwaltskanzlei. 
             Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
@@ -3900,20 +3913,33 @@ export const generateCustomerHTML = ({
               `;
             }
             
+            const totalProblemsCount = nonNeutralizedViolations.length + manualProblems.length;
+            
             return `
               <div style="margin-top: 20px; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-                <h4>🚨 Erkannte Probleme (${nonNeutralizedViolations.length})</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-                  ${nonNeutralizedViolations.map((v: any) => `
-                    <div style="padding: 8px; background: rgba(${v.impact === 'critical' ? '239, 68, 68' : v.impact === 'serious' ? '245, 158, 11' : '59, 130, 246'}, 0.2); border-radius: 6px;">
-                      <p style="font-weight: bold; color: ${v.impact === 'critical' ? '#dc2626' : v.impact === 'serious' ? '#d97706' : '#3b82f6'};">
-                        ${v.impact === 'critical' ? 'CRITICAL' : v.impact === 'serious' ? 'SERIOUS' : v.impact?.toUpperCase() || 'MODERATE'}
-                      </p>
-                      <p style="font-size: 0.9em;">${v.description || v.help || 'Barrierefreiheit-Problem'}</p>
-                      <p style="font-size: 0.8em; color: #666;">${v.nodes?.length || v.count || 1} Vorkommen</p>
-                    </div>
-                  `).join('')}
-                </div>
+                <h4>🚨 Erkannte Probleme (${totalProblemsCount})</h4>
+                ${manualProblems.length > 0 ? `
+                  <div style="margin-bottom: 15px;">
+                    <h5 style="color: #dc2626; margin: 10px 0;">⚠️ Manuell gemeldete Probleme:</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                      ${manualProblems.map(p => `<li style="color: #fca5a5; margin-bottom: 5px;">${p}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+                ${nonNeutralizedViolations.length > 0 ? `
+                  <h5 style="color: #f59e0b; margin: 10px 0;">🔧 Automatisch erkannte Probleme (${nonNeutralizedViolations.length}):</h5>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                    ${nonNeutralizedViolations.map((v: any) => `
+                      <div style="padding: 8px; background: rgba(${v.impact === 'critical' ? '239, 68, 68' : v.impact === 'serious' ? '245, 158, 11' : '59, 130, 246'}, 0.2); border-radius: 6px;">
+                        <p style="font-weight: bold; color: ${v.impact === 'critical' ? '#dc2626' : v.impact === 'serious' ? '#d97706' : '#3b82f6'};">
+                          ${v.impact === 'critical' ? 'CRITICAL' : v.impact === 'serious' ? 'SERIOUS' : v.impact?.toUpperCase() || 'MODERATE'}
+                        </p>
+                        <p style="font-size: 0.9em;">${v.description || v.help || 'Barrierefreiheit-Problem'}</p>
+                        <p style="font-size: 0.8em; color: #666;">${v.nodes?.length || v.count || 1} Vorkommen</p>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
               </div>
             `;
           })()}
