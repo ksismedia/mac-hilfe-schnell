@@ -1220,24 +1220,24 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'Erfüllt' : accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  <span class="score-badge ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 80 ? 'green' : 'red'}">
+                    ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
                 ${generateProgressBar(Math.max(30, accessibilityScore), '')}
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'Konform' : accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
+                  <span class="score-badge ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 80 ? 'green' : 'red'}">
+                    ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
                 ${generateProgressBar(accessibilityScore, '')}
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
-                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 60 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${remainingCriticalCount === 0 && accessibilityScore >= 60 ? 'Grundsätzlich erfüllt' : accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
+                  <span class="score-badge ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 70 ? 'green' : 'red'}">
+                    ${(remainingCriticalCount === 0 && accessibilityScore >= 50) || accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
                 ${generateProgressBar(Math.round(Math.max(25, accessibilityScore * 0.9)), '')}
@@ -3666,36 +3666,53 @@ export const generateCustomerHTML = ({
         <div id="legal-requirements" style="display: none;">
           <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
             <h4 style="color: #1d4ed8;">⚖️ Rechtliche Compliance</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-              <div>
-                <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${actualAccessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
-                  </span>
-                </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                     <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span style="color: ${actualAccessibilityScore >= 80 ? '#22c55e' : '#CD0000'}; font-weight: bold;">
-                    ${actualAccessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
-                  </span>
-                </p>
-                <div class="progress-container" style="margin-top: 5px;">
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${actualAccessibilityScore}%; background-color: ${actualAccessibilityScore >= 90 ? '#22c55e' : '#FF0000'} !important;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
             ${(() => {
-              // Berechne nicht-neutralisierte Violations für konsistente Warnung
+              // Berechne nicht-neutralisierte Violations für Compliance-Anzeige
               const allViolations = accessibilityData?.violations || [];
+              const criticalViolations = allViolations.filter((v: any) => 
+                v.impact === 'critical' || v.impact === 'serious'
+              );
+              
+              // Welche davon sind neutralisiert?
+              const neutralizedViolations = criticalViolations.filter((v: any) => {
+                const vid = v.id || '';
+                if (manualAccessibilityData?.keyboardNavigation && 
+                    (vid.includes('keyboard') || vid.includes('button-name') || 
+                     vid.includes('link-name') || vid.includes('accesskeys'))) return true;
+                if (manualAccessibilityData?.screenReaderCompatible && 
+                    (vid.includes('aria-') || vid.includes('label') || 
+                     vid.includes('role') || vid.includes('landmark'))) return true;
+                if (manualAccessibilityData?.colorContrast && 
+                    (vid.includes('color-contrast') || vid.includes('contrast'))) return true;
+                if (manualAccessibilityData?.altTextsPresent && 
+                    (vid.includes('image-alt') || vid.includes('alt') || vid === 'image-alt')) return true;
+                if (manualAccessibilityData?.focusVisibility && 
+                    (vid.includes('focus') || vid.includes('focus-order'))) return true;
+                if (manualAccessibilityData?.textScaling && 
+                    (vid.includes('meta-viewport') || vid.includes('target-size'))) return true;
+                return false;
+              });
+              
+              let remainingCritical = criticalViolations.length - neutralizedViolations.length;
+              
+              // Manuell gemeldete negative Probleme hinzufügen
+              if (manualAccessibilityData?.altTextsPresent === false) remainingCritical++;
+              if (manualAccessibilityData?.screenReaderCompatible === false) remainingCritical++;
+              if (manualAccessibilityData?.colorContrast === false) remainingCritical++;
+              if (manualAccessibilityData?.keyboardNavigation === false) remainingCritical++;
+              
+              const isCompliant = (remainingCritical === 0 && actualAccessibilityScore >= 50) || actualAccessibilityScore >= 80;
+              
+              // Positive manuelle Inputs für Info-Box
+              const positiveInputsList: string[] = [];
+              if (manualAccessibilityData?.keyboardNavigation) positiveInputsList.push('Tastaturnavigation');
+              if (manualAccessibilityData?.screenReaderCompatible) positiveInputsList.push('Screen-Reader-kompatibel');
+              if (manualAccessibilityData?.colorContrast) positiveInputsList.push('Farbkontraste ausreichend');
+              if (manualAccessibilityData?.altTextsPresent) positiveInputsList.push('Alt-Texte vorhanden');
+              if (manualAccessibilityData?.focusVisibility) positiveInputsList.push('Fokus-Sichtbarkeit');
+              if (manualAccessibilityData?.textScaling) positiveInputsList.push('Text-Skalierung');
+              
+              // Berechne nicht-neutralisierte Violations für konsistente Warnung
               const nonNeutralizedViolations = allViolations.filter((v: any) => {
                 const vid = v.id || '';
                 if (manualAccessibilityData?.keyboardNavigation && 
@@ -3716,28 +3733,44 @@ export const generateCustomerHTML = ({
               });
               
               // Warnung nur anzeigen wenn wirklich (nicht-neutralisierte) Verstöße vorliegen
-              // oder der Nutzer explizit manuell gravierende Probleme bestätigt hat.
               const hasManualNegative = ['altTextsPresent', 'screenReaderCompatible', 'colorContrast', 'keyboardNavigation']
                 .some((k) => manualAccessibilityData?.[k] === false);
-
               const shouldShowWarning = nonNeutralizedViolations.length > 0 || hasManualNegative;
               
-              if (!shouldShowWarning) return '';
+              const complianceColor = isCompliant ? '#22c55e' : '#CD0000';
+              const progressColor = isCompliant ? '#22c55e' : '#FF0000';
               
-              return `
-            <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">
-              <h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
-              <p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">
-                Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. 
-                Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.
-              </p>
-              <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">
-                <strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. 
-                Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. 
-                Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.
-              </div>
-            </div>
-              `;
+              let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">';
+              html += '<div>';
+              html += '<p><strong>EU-Richtlinie 2016/2102:</strong> ';
+              html += '<span style="color: ' + complianceColor + '; font-weight: bold;">' + (isCompliant ? 'Erfüllt' : 'Nicht erfüllt') + '</span></p>';
+              html += '<div class="progress-container" style="margin-top: 5px;"><div class="progress-bar">';
+              html += '<div class="progress-fill" style="width: ' + actualAccessibilityScore + '%; background-color: ' + progressColor + ' !important;"></div></div></div></div>';
+              html += '<div>';
+              html += '<p><strong>WCAG 2.1 Level AA:</strong> ';
+              html += '<span style="color: ' + complianceColor + '; font-weight: bold;">' + (isCompliant ? 'Konform' : 'Nicht konform') + '</span></p>';
+              html += '<div class="progress-container" style="margin-top: 5px;"><div class="progress-bar">';
+              html += '<div class="progress-fill" style="width: ' + actualAccessibilityScore + '%; background-color: ' + progressColor + ' !important;"></div></div></div></div></div>';
+              
+              // Info-Box für neutralisierte Violations
+              if (remainingCritical === 0 && positiveInputsList.length > 0) {
+                html += '<div style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">';
+                html += '<p style="color: #22c55e; margin: 0; font-size: 14px;">';
+                html += '<strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (' + positiveInputsList.join(', ') + '). ';
+                html += 'Der Score basiert auf der allgemeinen Google Lighthouse Accessibility-Bewertung.</p></div>';
+              }
+              
+              // Rechtlicher Warnhinweis
+              if (shouldShowWarning) {
+                html += '<div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 15px; margin-top: 15px;">';
+                html += '<h4 style="color: #dc2626; margin: 0 0 10px 0;">⚠️ RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>';
+                html += '<p style="color: #dc2626; margin: 0 0 10px 0; font-weight: bold;">Warnung: Die automatisierte Analyse hat rechtlich relevante Barrierefreiheit-Probleme identifiziert. Bei Barrierefreiheit-Verstößen drohen Bußgelder bis zu 20 Millionen Euro oder 4% des Jahresumsatzes.</p>';
+                html += '<div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; color: #7f1d1d; font-size: 13px;">';
+                html += '<strong>⚠️ Empfehlung:</strong> Es bestehen Zweifel, ob Ihre Website oder Ihr Online-Angebot den gesetzlichen Anforderungen genügt. Daher empfehlen wir ausdrücklich die Einholung rechtlicher Beratung durch eine spezialisierte Anwaltskanzlei. Nur eine individuelle juristische Prüfung kann sicherstellen, dass Sie rechtlich auf der sicheren Seite sind.';
+                html += '</div></div>';
+              }
+              
+              return html;
             })()}
           </div>
         </div>
@@ -3750,11 +3783,11 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Prioritäre Handlungsempfehlungen:</h4>
             <ul>
-              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>
-              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>
+              ${!manualAccessibilityData?.altTextsPresent ? '<li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1) <span style="font-size: 0.9em; color: #666;">(Bildbeschreibungen für sehbehinderte Nutzer)</span></li>' : ''}
+              ${!manualAccessibilityData?.colorContrast ? '<li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3) <span style="font-size: 0.9em; color: #666;">(Text muss deutlich vom Hintergrund ablesbar sein)</span></li>' : ''}
               <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1) <span style="font-size: 0.9em; color: #666;">(Logischer Aufbau für Screenreader und Orientierung)</span></li>
-              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>
-              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>
+              ${!manualAccessibilityData?.keyboardNavigation ? '<li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1) <span style="font-size: 0.9em; color: #666;">(Website ohne Maus bedienbar machen)</span></li>' : ''}
+              ${!manualAccessibilityData?.screenReaderCompatible ? '<li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern <span style="font-size: 0.9em; color: #666;">(Vorleseprogramme für Blinde unterstützen)</span></li>' : ''}
             </ul>
           </div>
         </div>
