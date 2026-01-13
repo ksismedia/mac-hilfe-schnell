@@ -1302,6 +1302,16 @@ export const generateCustomerHTML = ({
         <div style="margin-top: 15px; padding: 15px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">
           <h4 style="color: #22c55e; margin: 0 0 8px 0;">✅ Keine Handlungsempfehlungen erforderlich</h4>
           <p style="color: #86efac; margin: 0; font-size: 14px;">Alle erkannten Barrierefreiheit-Probleme wurden manuell als behoben markiert oder es wurden keine Probleme erkannt.</p>
+          ${accessibilityScore < 90 ? `
+          <div style="margin-top: 12px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.3);">
+            <p style="color: #93c5fd; margin: 0; font-size: 13px;">
+              <strong>ℹ️ Warum ${accessibilityScore}%?</strong> Der angezeigte Score stammt direkt aus dem Google Lighthouse Accessibility-Audit. 
+              Lighthouse bewertet die gesamte Website-Barrierefreiheit anhand zahlreicher technischer Kriterien (z.B. Farbkontraste, ARIA-Attribute, 
+              Dokumentstruktur). Die manuelle Bestätigung neutralisiert erkannte Verstöße, beeinflusst aber nicht den technischen Basis-Score. 
+              Für eine höhere Bewertung müssen die technischen Aspekte direkt im Quellcode der Website verbessert werden.
+            </p>
+          </div>
+          ` : ''}
         </div>
         `}
       </div>
