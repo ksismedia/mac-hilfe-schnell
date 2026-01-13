@@ -1220,31 +1220,38 @@ export const generateCustomerHTML = ({
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
               <div>
                 <p><strong>EU-Richtlinie 2016/2102:</strong> 
-                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
+                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
+                    ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'Erfüllt' : accessibilityScore >= 80 ? 'Erfüllt' : 'Nicht erfüllt'}
                   </span>
                 </p>
                 ${generateProgressBar(Math.max(30, accessibilityScore), '')}
               </div>
               <div>
                 <p><strong>WCAG 2.1 Level AA:</strong> 
-                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
+                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
+                    ${remainingCriticalCount === 0 && accessibilityScore >= 70 ? 'Konform' : accessibilityScore >= 80 ? 'Konform' : 'Nicht konform'}
                   </span>
                 </p>
                 ${generateProgressBar(accessibilityScore, '')}
               </div>
               <div>
                 <p><strong>BGG (Deutschland):</strong> 
-                  <span class="score-badge ${accessibilityScore >= 81 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
-                    ${accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
+                  <span class="score-badge ${remainingCriticalCount === 0 && accessibilityScore >= 60 ? 'yellow' : accessibilityScore >= 61 ? 'green' : 'red'}">
+                    ${remainingCriticalCount === 0 && accessibilityScore >= 60 ? 'Grundsätzlich erfüllt' : accessibilityScore >= 70 ? 'Grundsätzlich erfüllt' : 'Verbesserung nötig'}
                   </span>
                 </p>
                 ${generateProgressBar(Math.round(Math.max(25, accessibilityScore * 0.9)), '')}
               </div>
             </div>
             
-            ${violations.length > 0 ? `
+            ${remainingCriticalCount === 0 && manualInputsList.length > 0 ? `
+            <div style="margin-top: 15px; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 2px solid #86efac;">
+              <p style="color: #059669; margin: 0; font-size: 14px;">
+                <strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (${manualInputsList.join(', ')}). 
+                Der Score basiert auf der allgemeinen Google Lighthouse Accessibility-Bewertung.
+              </p>
+            </div>
+            ` : violations.length > 0 ? `
             <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
               <h4 class="error-text" style="margin: 0 0 10px 0;">RECHTLICHER HINWEIS: Barrierefreiheit-Verstöße erkannt</h4>
               <p class="error-text" style="margin: 0 0 10px 0; font-weight: bold;">
