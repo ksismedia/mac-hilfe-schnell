@@ -1283,6 +1283,20 @@ export const generateCustomerHTML = ({
             <p style="color: #059669; margin: 0; font-size: 14px;">
               <strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (${manualInputsList.join(', ')}).
             </p>
+            <div style="margin-top: 10px; padding: 10px; background: #ecfdf5; border-radius: 6px; border: 1px solid #a7f3d0;">
+              <p style="color: #047857; margin: 0 0 6px 0; font-size: 12px;">
+                <strong>Was der Lighthouse-Basis-Score umfasst (technische Bewertung):</strong>
+              </p>
+              <ul style="margin: 0; padding-left: 18px; color: #047857; font-size: 11px; line-height: 1.4;">
+                <li>Kontraste, Fokus-Indikatoren und Tastatur-Bedienbarkeit</li>
+                <li>Semantik/Struktur (Überschriften, Landmarken), sinnvolle Reihenfolgen</li>
+                <li>ARIA-Rollen, Labels/Namen für Bedienelemente und Formulare</li>
+                <li>Alternativtexte und sinnvolle Beschriftungen für nicht-textuelle Inhalte</li>
+              </ul>
+              <p style="color: #065f46; margin: 8px 0 0 0; font-size: 11px; font-style: italic;">
+                Hinweis: Der Prozentwert ist keine „Summe“ der angezeigten Violations, sondern eine Gesamteinschätzung vieler technischer Prüfpunkte.
+              </p>
+            </div>
           </div>
           ` : violations.length > 0 ? `
           <div class="warning-box" style="border-radius: 8px; padding: 15px; margin-top: 15px;">
@@ -3822,7 +3836,19 @@ export const generateCustomerHTML = ({
                 html += '<div style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border: 2px solid #22c55e;">';
                 html += '<p style="color: #22c55e; margin: 0; font-size: 14px;">';
                 html += '<strong>✓ Keine aktiven Barrierefreiheit-Verstöße:</strong> Alle kritischen Probleme wurden durch manuelle Bestätigung neutralisiert (' + positiveInputsList.join(', ') + '). ';
-                html += 'Der Score basiert auf der allgemeinen Google Lighthouse Accessibility-Bewertung.</p></div>';
+                html += 'Der Score basiert auf der allgemeinen Google Lighthouse Accessibility-Bewertung.';
+                html += '</p>';
+                html += '<div style="margin-top: 10px; padding: 10px; background: rgba(16, 185, 129, 0.12); border-radius: 6px; border: 1px solid rgba(34, 197, 94, 0.35);">';
+                html += '<div style="color: #22c55e; font-weight: bold; font-size: 12px; margin-bottom: 6px;">Was der Lighthouse-Basis-Score umfasst (technische Bewertung):</div>';
+                html += '<ul style="margin: 0; padding-left: 18px; color: #86efac; font-size: 11px; line-height: 1.4;">';
+                html += '<li>Kontraste, Fokus-Indikatoren und Tastatur-Bedienbarkeit</li>';
+                html += '<li>Semantik/Struktur (Überschriften, Landmarken) und sinnvolle Reihenfolgen</li>';
+                html += '<li>ARIA-Rollen, Labels/Namen für Bedienelemente und Formulare</li>';
+                html += '<li>Alternativtexte und Beschriftungen für nicht-textuelle Inhalte</li>';
+                html += '</ul>';
+                html += '<div style="margin-top: 8px; color: #a7f3d0; font-size: 11px; font-style: italic;">Hinweis: Der Prozentwert ist keine „Summe“ der angezeigten Violations, sondern eine Gesamteinschätzung vieler technischer Prüfpunkte.</div>';
+                html += '</div>';
+                html += '</div>';
               }
               
               // Rechtlicher Warnhinweis
