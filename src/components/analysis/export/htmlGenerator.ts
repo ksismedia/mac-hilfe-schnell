@@ -1020,7 +1020,46 @@ export const generateCustomerHTML = ({
         ];
 
     const scoreClass = accessibilityScore >= 80 ? 'yellow' : accessibilityScore >= 60 ? 'green' : 'red';
-    
+
+    // Dynamische Handlungsempfehlungen (nur aktive / nicht-neutralisierte Probleme)
+    const hasViolation = (match: (id: string) => boolean) =>
+      nonNeutralizedViolations.some((v: any) => match(String(v?.id || '').toLowerCase()));
+
+    const improvementItems: string[] = [];
+
+    const needsAltTexts =
+      manualAccessibilityData?.altTextsPresent === false ||
+      (manualAccessibilityData?.altTextsPresent !== true &&
+        hasViolation((id) => id.includes('image-alt') || id === 'image-alt'));
+    if (needsAltTexts) improvementItems.push('Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)');
+
+    const needsContrast =
+      manualAccessibilityData?.colorContrast === false ||
+      (manualAccessibilityData?.colorContrast !== true &&
+        hasViolation((id) => id.includes('color-contrast') || id.includes('contrast')));
+    if (needsContrast) improvementItems.push('Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)');
+
+    const needsHeadings = hasViolation((id) => id.includes('heading-order') || id.includes('page-has-heading-one'));
+    if (needsHeadings) improvementItems.push('Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1)');
+
+    const needsKeyboard =
+      manualAccessibilityData?.keyboardNavigation === false ||
+      (manualAccessibilityData?.keyboardNavigation !== true &&
+        hasViolation((id) => id.includes('keyboard') || id.includes('accesskeys') || id.includes('focus-order')));
+    if (needsKeyboard) improvementItems.push('Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)');
+
+    const needsScreenReader =
+      manualAccessibilityData?.screenReaderCompatible === false ||
+      (manualAccessibilityData?.screenReaderCompatible !== true &&
+        hasViolation((id) =>
+          id.includes('aria-') || id.includes('label') || id.includes('role') || id.includes('landmark')));
+    if (needsScreenReader) improvementItems.push('Screen Reader-Kompatibilität durch ARIA-Labels verbessern');
+
+    // Best practice: immer sinnvoll als Prozess-Empfehlung
+    improvementItems.push('Automatisierte Accessibility-Tests in Entwicklungsprozess integrieren');
+
+    const improvementItemsHTML = improvementItems.map((item) => `<li>${item}</li>`).join('');
+
     // Kappungs-Erklärung für HTML generieren
     const cappingExplanationHTML = remainingCriticalCount > 0 ? `
       <div style="margin: 15px 0; padding: 15px; border-radius: 8px; background: #fef3c7; border: 2px solid #f59e0b;">
@@ -1231,12 +1270,7 @@ export const generateCustomerHTML = ({
           <div class="recommendations">
             <h4>Prioritäre Handlungsempfehlungen:</h4>
             <ul>
-              <li>Alt-Texte für alle Bilder hinzufügen (WCAG 1.1.1)</li>
-              <li>Farbkontraste auf mindestens 4.5:1 erhöhen (WCAG 1.4.3)</li>
-              <li>Überschriftenstruktur H1-H6 korrekt implementieren (WCAG 1.3.1)</li>
-              <li>Tastaturnavigation für alle Funktionen ermöglichen (WCAG 2.1.1)</li>
-              <li>Screen Reader-Kompatibilität durch ARIA-Labels verbessern</li>
-              <li>Automatisierte Accessibility-Tests in Entwicklungsprozess integrieren</li>
+              ${improvementItemsHTML}
             </ul>
           </div>
         </div>

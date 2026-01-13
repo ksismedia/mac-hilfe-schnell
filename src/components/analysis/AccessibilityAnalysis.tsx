@@ -840,9 +840,13 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                         Kritische Probleme (Level A):
                       </h4>
                       <ul className="text-sm space-y-2 text-muted-foreground">
-                        <li>• Alt-Texte für alle informativen Bilder</li>
+                        {!manualAccessibilityData?.altTextsPresent && (
+                          <li>• Alt-Texte für alle informativen Bilder</li>
+                        )}
                         <li>• Label oder aria-label für Formularfelder</li>
-                        <li>• Tastaturnavigation für alle Funktionen</li>
+                        {!manualAccessibilityData?.keyboardNavigation && (
+                          <li>• Tastaturnavigation für alle Funktionen</li>
+                        )}
                         <li>• Skip-Links zur Hauptnavigation</li>
                       </ul>
                     </div>
@@ -853,10 +857,16 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                         Wichtige Verbesserungen (Level AA):
                       </h4>
                       <ul className="text-sm space-y-2 text-muted-foreground">
-                        <li>• Farbkontrast minimum 4.5:1</li>
+                        {!manualAccessibilityData?.colorContrast && (
+                          <li>• Farbkontrast minimum 4.5:1</li>
+                        )}
                         <li>• Logische Überschriftenstruktur</li>
-                        <li>• Fokus-Indikatoren sichtbar machen</li>
-                        <li>• Zoom bis 200% ohne Datenverlust</li>
+                        {!manualAccessibilityData?.focusVisibility && (
+                          <li>• Fokus-Indikatoren sichtbar machen</li>
+                        )}
+                        {!manualAccessibilityData?.textScaling && (
+                          <li>• Zoom bis 200% ohne Datenverlust</li>
+                        )}
                       </ul>
                     </div>
                     
