@@ -103,7 +103,7 @@ const createDefaultRealData = (): RealBusinessData => ({
       lastPost: '',
       engagement: ''
     },
-    overallScore: 65
+    overallScore: 0  // Kein Dummy-Score - nur echte Daten zählen
   },
   workplace: {
     kununu: {
@@ -122,7 +122,7 @@ const createDefaultRealData = (): RealBusinessData => ({
     testimonials: 0,
     certifications: [],
     awards: [],
-    overallScore: 65
+    overallScore: 0  // Kein Dummy-Score - nur echte Daten zählen
   },
   mobile: {
     responsive: true,
