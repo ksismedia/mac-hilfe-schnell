@@ -7,8 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { FolderOpen, Trash2, Download, Calendar, Globe, Upload, RotateCcw, AlertTriangle } from 'lucide-react';
+import { FolderOpen, Trash2, Download, Calendar, Globe, Upload, RotateCcw, AlertTriangle, FileCode } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { extractAnalysisFromHTML, hasEmbeddedAnalysis } from '@/utils/htmlAnalysisEmbed';
 
 interface SavedAnalysesManagerProps {
   onLoadAnalysis: (analysis: SavedAnalysis) => void;
@@ -104,12 +105,12 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
     });
   };
 
-  const triggerFileUpload = () => {
-    console.log('Triggering file upload...');
+  const triggerFileUpload = (acceptType: 'json' | 'html' = 'json') => {
+    console.log(`Triggering file upload for ${acceptType}...`);
     
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json';
+    input.accept = acceptType === 'json' ? '.json' : '.html,.htm';
     input.style.display = 'none';
     
     input.addEventListener('change', async (event) => {
@@ -122,7 +123,11 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         return;
       }
       
-      await handleFileUpload(file);
+      if (acceptType === 'html') {
+        await handleHTMLImport(file);
+      } else {
+        await handleFileUpload(file);
+      }
     });
     
     // Add to DOM temporarily
@@ -133,6 +138,94 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
     setTimeout(() => {
       document.body.removeChild(input);
     }, 1000);
+  };
+
+  const handleHTMLImport = async (file: File) => {
+    console.log('=== HTML IMPORT START ===');
+    setIsImporting(true);
+
+    try {
+      if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+        throw new Error('Bitte wählen Sie eine HTML-Datei aus');
+      }
+
+      const htmlContent = await file.text();
+      
+      if (!htmlContent.trim()) {
+        throw new Error('Die Datei ist leer');
+      }
+
+      // Check if HTML contains embedded analysis data
+      if (!hasEmbeddedAnalysis(htmlContent)) {
+        throw new Error('Diese HTML-Datei enthält keine eingebetteten Analysedaten. Nur UNNA-Reports ab dieser Version können importiert werden.');
+      }
+
+      // Extract the analysis data
+      const extractedAnalysis = extractAnalysisFromHTML(htmlContent);
+      
+      if (!extractedAnalysis) {
+        throw new Error('Die Analysedaten konnten nicht aus der HTML-Datei extrahiert werden.');
+      }
+
+      // Validate extracted data
+      if (!extractedAnalysis.businessData?.url || !extractedAnalysis.businessData?.industry) {
+        throw new Error('Die extrahierten Geschäftsdaten sind unvollständig.');
+      }
+
+      // Generate import name
+      const importName = `${extractedAnalysis.name || 'HTML-Import'} (Importiert ${new Date().toLocaleTimeString()})`;
+
+      // Save to database/localStorage
+      const analysisId = await saveAnalysis(
+        importName,
+        extractedAnalysis.businessData,
+        extractedAnalysis.realData,
+        extractedAnalysis.manualData || {
+          competitors: [],
+          competitorServices: {},
+          removedMissingServices: []
+        }
+      );
+
+      // Create complete analysis structure for loading
+      const newAnalysis: SavedAnalysis = {
+        id: analysisId,
+        name: importName,
+        businessData: extractedAnalysis.businessData,
+        realData: extractedAnalysis.realData,
+        manualData: extractedAnalysis.manualData || {
+          competitors: [],
+          competitorServices: {},
+          removedMissingServices: []
+        },
+        savedAt: new Date().toISOString()
+      };
+
+      onLoadAnalysis(newAnalysis);
+      setIsOpen(false);
+
+      toast({
+        title: "✅ HTML-Import erfolgreich",
+        description: `Die Analyse "${importName}" wurde aus der HTML-Datei wiederhergestellt.`,
+      });
+
+    } catch (error) {
+      console.error('=== HTML IMPORT ERROR ===', error);
+      
+      let errorMessage = "Unbekannter Fehler beim HTML-Import";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast({
+        title: "HTML-Import fehlgeschlagen",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsImporting(false);
+    }
   };
 
   const handleFileUpload = async (file: File) => {
@@ -263,15 +356,27 @@ const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnaly
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>Gespeicherte Analysen verwalten</DialogTitle>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={triggerFileUpload}
-              disabled={isImporting}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              {isImporting ? 'Importiere...' : 'JSON Import'}
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => triggerFileUpload('html')}
+                disabled={isImporting}
+                title="HTML-Analyse zurückspielen"
+              >
+                <FileCode className="h-4 w-4 mr-2" />
+                {isImporting ? 'Importiere...' : 'HTML Import'}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => triggerFileUpload('json')}
+                disabled={isImporting}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {isImporting ? 'Importiere...' : 'JSON Import'}
+              </Button>
+            </div>
           </div>
         </DialogHeader>
 

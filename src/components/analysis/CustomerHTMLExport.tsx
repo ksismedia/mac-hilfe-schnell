@@ -273,7 +273,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       securityData: exportSecurityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
-      hasUnreviewedAIContent: hasUnreviewedContent
+      hasUnreviewedAIContent: hasUnreviewedContent,
+      analysisName: `UNNA-Report ${businessData.address}`
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('🔥 Was exportSecurityData passed to generateCustomerHTML?', !!exportSecurityData);
@@ -380,7 +381,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       securityData: downloadSecurityData,
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
-      hasUnreviewedAIContent: hasUnreviewedContent
+      hasUnreviewedAIContent: hasUnreviewedContent,
+      analysisName: `UNNA-Report ${businessData.address}`
     });
 
     try {
@@ -389,9 +391,9 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       
-      // Ensure the link is properly configured
+      // Ensure the link is properly configured - use UNNA-Report naming
       link.href = url;
-      link.download = `Social-Listening-Report-${businessData.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.html`;
+      link.download = `UNNA-Report-${businessData.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.html`;
       link.style.display = 'none';
       
       // Add to DOM, click, and clean up
