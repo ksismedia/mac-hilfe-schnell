@@ -361,21 +361,16 @@ export const useSavedAnalyses = () => {
     };
 
      console.log('=== SAVE ANALYSIS ===');
-     
-     // Refresh session to ensure token is valid before saving
-     const { error: refreshError } = await supabase.auth.refreshSession();
-     if (refreshError) {
-       console.warn('Session refresh failed:', refreshError);
-     }
-     
-     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-     if (sessionError) {
-       console.warn('Session check failed:', sessionError);
-     }
-     const sessionUserId = session?.user?.id ?? null;
 
-     console.log('Session user:', sessionUserId ?? 'anonymous');
-     
+     // IMPORTANT: getSession() can be stale in multi-tab scenarios. getUser() validates the JWT.
+     const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+     if (userError) {
+       console.warn('Auth getUser failed:', userError);
+     }
+
+     const sessionUserId = authUser?.id ?? null;
+     console.log('Auth user:', sessionUserId ?? 'anonymous');
+
      if (sessionUserId) {
         try {
           const insertOnce = async () => {
@@ -511,17 +506,13 @@ export const useSavedAnalyses = () => {
       ...manualData 
     };
 
-     // Refresh session to ensure token is valid before updating
-     const { error: refreshError } = await supabase.auth.refreshSession();
-     if (refreshError) {
-       console.warn('Session refresh failed:', refreshError);
+     // IMPORTANT: getSession() can be stale in multi-tab scenarios. getUser() validates the JWT.
+     const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+     if (userError) {
+       console.warn('Auth getUser failed:', userError);
      }
-     
-     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-     if (sessionError) {
-       console.warn('Session check failed:', sessionError);
-     }
-     const sessionUserId = session?.user?.id ?? null;
+
+     const sessionUserId = authUser?.id ?? null;
 
      if (sessionUserId) {
        try {
