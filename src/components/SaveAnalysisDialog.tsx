@@ -220,20 +220,49 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
     } catch (error) {
       console.error('Fehler beim Speichern:', error);
 
+      const err: any = error;
+
+      const messageFromObject =
+        err && typeof err === 'object'
+          ? (typeof err.message === 'string' ? err.message : null)
+          : null;
+
+      const detailsFromObject =
+        err && typeof err === 'object'
+          ? (typeof err.details === 'string' ? err.details : null)
+          : null;
+
+      const hintFromObject =
+        err && typeof err === 'object'
+          ? (typeof err.hint === 'string' ? err.hint : null)
+          : null;
+
+      const codeFromObject =
+        err && typeof err === 'object'
+          ? (typeof err.code === 'string' ? err.code : null)
+          : null;
+
+      const statusFromObject =
+        err && typeof err === 'object'
+          ? (typeof err.status === 'number' ? String(err.status) : null)
+          : null;
+
       const rawMessage =
         error instanceof Error
           ? error.message
           : typeof error === 'string'
             ? error
-            : (() => {
-                try {
-                  return JSON.stringify(error);
-                } catch {
-                  return String(error);
-                }
-              })();
+            : messageFromObject || '';
 
-      const shortMessage = rawMessage && rawMessage.length > 180 ? `${rawMessage.slice(0, 180)}...` : rawMessage;
+      const extraParts = [
+        detailsFromObject ? `Details: ${detailsFromObject}` : null,
+        hintFromObject ? `Hinweis: ${hintFromObject}` : null,
+        codeFromObject ? `Code: ${codeFromObject}` : null,
+        statusFromObject ? `Status: ${statusFromObject}` : null,
+      ].filter(Boolean);
+
+      const combined = [rawMessage, ...extraParts].filter(Boolean).join(' | ');
+      const shortMessage = combined && combined.length > 220 ? `${combined.slice(0, 220)}...` : combined;
 
       toast({
         title: "Speicherfehler",
