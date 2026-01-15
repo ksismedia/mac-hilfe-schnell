@@ -905,6 +905,23 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </CardContent>
               </Card>
 
+              {/* Zusätzliche Bemerkungen aus manueller Bewertung */}
+              {manualAccessibilityData?.notes && (
+                <Card className="border-blue-200 bg-blue-50/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base text-blue-700 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Zusätzliche Bemerkungen zur Barrierefreiheit
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {manualAccessibilityData.notes}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Action Button */}
               <div className="flex gap-3">
                 <Button 
