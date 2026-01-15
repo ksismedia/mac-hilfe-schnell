@@ -1556,6 +1556,15 @@ export const generateCustomerHTML = ({
             </div>
           `;
         })()}
+        
+        ${manualAccessibilityData?.notes ? `
+        <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 4px solid #3b82f6;">
+          <h4 style="color: #60a5fa; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">
+            📝 Zusätzliche Bemerkungen zur Barrierefreiheit
+          </h4>
+          <p style="color: #93c5fd; margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-wrap;">${manualAccessibilityData.notes}</p>
+        </div>
+        ` : ''}
       </div>
     `;
   };
