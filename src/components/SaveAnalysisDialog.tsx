@@ -219,9 +219,25 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
       setAnalysisName('');
     } catch (error) {
       console.error('Fehler beim Speichern:', error);
+
+      const rawMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : (() => {
+                try {
+                  return JSON.stringify(error);
+                } catch {
+                  return String(error);
+                }
+              })();
+
+      const shortMessage = rawMessage && rawMessage.length > 180 ? `${rawMessage.slice(0, 180)}...` : rawMessage;
+
       toast({
         title: "Speicherfehler",
-        description: "Die Analyse konnte nicht gespeichert werden.",
+        description: `Die Analyse konnte nicht gespeichert werden. ${shortMessage || ''}`.trim(),
         variant: "destructive",
       });
     } finally {
