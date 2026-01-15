@@ -377,25 +377,47 @@ export const useSavedAnalyses = () => {
      console.log('Session user:', sessionUserId ?? 'anonymous');
      
      if (sessionUserId) {
-       try {
-         console.log('Inserting into Supabase database...');
-         const { data, error } = await supabase
-           .from('saved_analyses')
-           .insert({
-             name,
-             business_data: businessData as any,
-             real_data: completeRealData as any,
-             manual_data: completeManualData as any,
-             user_id: sessionUserId
-           })
-           .select()
-           .single();
+        try {
+          const insertOnce = async () => {
+            return supabase
+              .from('saved_analyses')
+              .insert({
+                name,
+                business_data: businessData as any,
+                real_data: completeRealData as any,
+                manual_data: completeManualData as any,
+                user_id: sessionUserId
+              })
+              .select()
+              .single();
+          };
 
-         console.log('Database insert result:', { data, error });
-         if (error) {
-           console.error('Database insert error:', error);
-           throw error;
-         }
+          console.log('Inserting into Supabase database...');
+          let { data, error } = await insertOnce();
+
+          // Common failure when token is missing/expired in long-lived multi-tab sessions
+          if (error && typeof error.message === 'string' && error.message.includes('row-level security')) {
+            console.warn('RLS error on insert, retrying once after refreshSession...');
+            await supabase.auth.refreshSession();
+            ({ data, error } = await insertOnce());
+          }
+
+          console.log('Database insert result:', { data, error });
+          if (error) {
+            console.error('Database insert error:', error);
+            const msgParts = [
+              error.message || 'Unbekannter Datenbankfehler',
+              (error as any).details ? `Details: ${(error as any).details}` : null,
+              (error as any).hint ? `Hinweis: ${(error as any).hint}` : null,
+              (error as any).code ? `Code: ${(error as any).code}` : null,
+            ].filter(Boolean);
+
+            if (typeof error.message === 'string' && error.message.includes('row-level security')) {
+              throw new Error('Sitzung abgelaufen oder nicht korrekt angemeldet. Bitte Seite neu laden und ggf. erneut anmelden.');
+            }
+
+            throw new Error(msgParts.join(' | '));
+          }
 
          const newAnalysis: SavedAnalysis = {
            id: data.id,
@@ -503,17 +525,30 @@ export const useSavedAnalyses = () => {
 
      if (sessionUserId) {
        try {
-         const { error } = await supabase
-           .from('saved_analyses')
-           .update({
-             name,
-             business_data: businessData as any,
-             real_data: completeRealData as any,
-             manual_data: completeManualData as any
-           })
-           .eq('id', id);
+          const { error } = await supabase
+            .from('saved_analyses')
+            .update({
+              name,
+              business_data: businessData as any,
+              real_data: completeRealData as any,
+              manual_data: completeManualData as any
+            })
+            .eq('id', id);
 
-         if (error) throw error;
+          if (error) {
+            const msgParts = [
+              error.message || 'Unbekannter Datenbankfehler',
+              (error as any).details ? `Details: ${(error as any).details}` : null,
+              (error as any).hint ? `Hinweis: ${(error as any).hint}` : null,
+              (error as any).code ? `Code: ${(error as any).code}` : null,
+            ].filter(Boolean);
+
+            if (typeof error.message === 'string' && error.message.includes('row-level security')) {
+              throw new Error('Sitzung abgelaufen oder nicht korrekt angemeldet. Bitte Seite neu laden und ggf. erneut anmelden.');
+            }
+
+            throw new Error(msgParts.join(' | '));
+          }
 
          setSavedAnalyses(prev => prev.map(analysis => 
            analysis.id === id 
