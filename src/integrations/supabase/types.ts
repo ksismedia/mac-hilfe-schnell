@@ -235,7 +235,7 @@ export type Database = {
           real_data: Json
           saved_at?: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           business_data?: Json
