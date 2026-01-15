@@ -361,6 +361,13 @@ export const useSavedAnalyses = () => {
     };
 
      console.log('=== SAVE ANALYSIS ===');
+     
+     // Refresh session to ensure token is valid before saving
+     const { error: refreshError } = await supabase.auth.refreshSession();
+     if (refreshError) {
+       console.warn('Session refresh failed:', refreshError);
+     }
+     
      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
      if (sessionError) {
        console.warn('Session check failed:', sessionError);
@@ -368,7 +375,6 @@ export const useSavedAnalyses = () => {
      const sessionUserId = session?.user?.id ?? null;
 
      console.log('Session user:', sessionUserId ?? 'anonymous');
-     console.log('Analysis name:', name);
      
      if (sessionUserId) {
        try {
@@ -483,6 +489,12 @@ export const useSavedAnalyses = () => {
       ...manualData 
     };
 
+     // Refresh session to ensure token is valid before updating
+     const { error: refreshError } = await supabase.auth.refreshSession();
+     if (refreshError) {
+       console.warn('Session refresh failed:', refreshError);
+     }
+     
      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
      if (sessionError) {
        console.warn('Session check failed:', sessionError);
