@@ -33,6 +33,7 @@ import { generateWebsiteSecuritySection } from './websiteSecuritySection';
 import { generateReputationMonitoringSection } from './reputationMonitoringSection';
 import { getLogoHTML } from './logoData';
 import { getCollapsibleComplianceSectionHTML } from './aiActDisclaimer';
+import { createEmbeddedAnalysisBlock } from '@/utils/htmlAnalysisEmbed';
 
 interface CustomerReportData {
   businessData: {
@@ -76,6 +77,8 @@ interface CustomerReportData {
   extensionData?: any;
   // KI-VO Compliance
   hasUnreviewedAIContent?: boolean;
+  // For embedding - name of the analysis
+  analysisName?: string;
 }
 
 // Function to get score range for data attribute
@@ -223,9 +226,61 @@ export const generateCustomerHTML = ({
   securityData,
   calculatedOwnCompanyScore,
   extensionData,
-  hasUnreviewedAIContent = false
+  hasUnreviewedAIContent = false,
+  analysisName
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
+  console.log('🔥🔥🔥 CRITICAL: securityData received:', securityData);
+  console.log('🔥🔥🔥 securityData is null?', securityData === null);
+  console.log('🔥🔥🔥 securityData is undefined?', securityData === undefined);
+  console.log('HTML Generator received missingImprintElements:', missingImprintElements);
+  console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
+  console.log('HTML Generator received competitorServices:', competitorServices);
+  console.log('HTML Generator received manualCompetitors:', manualCompetitors);
+  
+  // Create embedded analysis data for HTML import functionality
+  const embeddedAnalysisData = createEmbeddedAnalysisBlock({
+    id: crypto.randomUUID(),
+    name: analysisName || `UNNA-Report ${businessData.address} ${new Date().toLocaleDateString('de-DE')}`,
+    savedAt: new Date().toISOString(),
+    businessData: {
+      address: businessData.address,
+      url: businessData.url,
+      industry: businessData.industry as any
+    },
+    realData,
+    manualData: {
+      competitors: manualCompetitors || [],
+      competitorServices: competitorServices || {},
+      removedMissingServices: removedMissingServices || [],
+      deletedCompetitors: deletedCompetitors ? Array.from(deletedCompetitors) : [],
+      imprint: manualImprintData ? { found: true, elements: manualImprintData.elements } : undefined,
+      social: manualSocialData || undefined,
+      workplace: manualWorkplaceData || undefined,
+      corporateIdentity: manualCorporateIdentityData || undefined,
+      keywordData: manualKeywordData,
+      keywordScore,
+      companyServices: companyServices,
+      staffQualificationData: staffQualificationData || undefined,
+      hourlyRateData: hourlyRateData || undefined,
+      quoteResponseData: quoteResponseData || undefined,
+      manualContentData: manualContentData || undefined,
+      manualAccessibilityData: manualAccessibilityData || undefined,
+      manualBacklinkData: manualBacklinkData || undefined,
+      manualDataPrivacyData: manualDataPrivacyData || undefined,
+      manualLocalSEOData: manualLocalSEOData || undefined,
+      manualIndustryReviewData: manualIndustryReviewData || undefined,
+      manualOnlinePresenceData: manualOnlinePresenceData || undefined,
+      manualConversionData: manualConversionData || undefined,
+      manualMobileData: manualMobileData || undefined,
+      manualReputationData: manualReputationData || undefined,
+      manualSEOData: manualSEOData || undefined,
+      privacyData: privacyData,
+      accessibilityData: accessibilityData,
+      securityData: securityData,
+      extensionData: extensionData
+    }
+  });
   console.log('🔥🔥🔥 CRITICAL: securityData received:', securityData);
   console.log('🔥🔥🔥 securityData is null?', securityData === null);
   console.log('🔥🔥🔥 securityData is undefined?', securityData === undefined);
@@ -5766,6 +5821,8 @@ export const generateCustomerHTML = ({
         });
       });
     </script>
+    
+    ${embeddedAnalysisData}
   </div>
 </body>
 </html>`;
