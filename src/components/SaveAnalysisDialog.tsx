@@ -183,28 +183,36 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         });
       }
 
-      // Save AI review status if available
+      // Save AI review status if available (wrapped in try-catch to not block main save)
       if (reviewStatus && analysisId) {
-        const { data: { user } } = await supabase.auth.getUser();
-        console.log('Saving AI review status for analysis:', analysisId);
-        
-        for (const [category, status] of Object.entries(reviewStatus)) {
-          if (status.isReviewed) {
-            await supabase
-              .from('ai_review_status')
-              .upsert({
-                analysis_id: analysisId,
-                category_name: category,
-                is_reviewed: status.isReviewed,
-                reviewed_at: status.reviewedAt || new Date().toISOString(),
-                reviewer_id: user?.id || null,
-                review_notes: status.reviewNotes || null
-              }, {
-                onConflict: 'analysis_id,category_name'
-              });
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          console.log('Saving AI review status for analysis:', analysisId);
+          
+          for (const [category, status] of Object.entries(reviewStatus)) {
+            if (status.isReviewed) {
+              const { error: reviewError } = await supabase
+                .from('ai_review_status')
+                .upsert({
+                  analysis_id: analysisId,
+                  category_name: category,
+                  is_reviewed: status.isReviewed,
+                  reviewed_at: status.reviewedAt || new Date().toISOString(),
+                  reviewer_id: user?.id || null,
+                  review_notes: status.reviewNotes || null
+                }, {
+                  onConflict: 'analysis_id,category_name'
+                });
+              
+              if (reviewError) {
+                console.warn('AI review status save warning for category', category, ':', reviewError);
+              }
+            }
           }
+          console.log('AI review status saved successfully');
+        } catch (reviewErr) {
+          console.warn('AI review status save failed (non-blocking):', reviewErr);
         }
-        console.log('AI review status saved successfully');
       }
 
       setIsOpen(false);
