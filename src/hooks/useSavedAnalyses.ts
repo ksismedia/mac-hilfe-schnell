@@ -360,97 +360,112 @@ export const useSavedAnalyses = () => {
       ...manualData 
     };
 
-    console.log('=== SAVE ANALYSIS TO DATABASE ===');
-    console.log('User logged in:', !!user, 'User ID:', user?.id);
-    console.log('Analysis name:', name);
-    
-    if (user) {
-      try {
-        console.log('Inserting into Supabase database...');
-        const { data, error } = await supabase
-          .from('saved_analyses')
-          .insert({
-            name,
-            business_data: businessData as any,
-            real_data: completeRealData as any,
-            manual_data: completeManualData as any,
-            user_id: user.id
-          })
-          .select()
-          .single();
+     console.log('=== SAVE ANALYSIS ===');
+     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+     if (sessionError) {
+       console.warn('Session check failed:', sessionError);
+     }
+     const sessionUserId = session?.user?.id ?? null;
 
-        console.log('Database insert result:', { data, error });
-        if (error) {
-          console.error('Database insert error:', error);
-          throw error;
-        }
+     console.log('Session user:', sessionUserId ?? 'anonymous');
+     console.log('Analysis name:', name);
+     
+     if (sessionUserId) {
+       try {
+         console.log('Inserting into Supabase database...');
+         const { data, error } = await supabase
+           .from('saved_analyses')
+           .insert({
+             name,
+             business_data: businessData as any,
+             real_data: completeRealData as any,
+             manual_data: completeManualData as any,
+             user_id: sessionUserId
+           })
+           .select()
+           .single();
 
-        const newAnalysis: SavedAnalysis = {
-          id: data.id,
-          name: data.name,
-          savedAt: data.saved_at,
-          businessData: data.business_data as SavedAnalysis['businessData'],
-          realData: completeRealData,
-          manualData: completeManualData
-        };
+         console.log('Database insert result:', { data, error });
+         if (error) {
+           console.error('Database insert error:', error);
+           throw error;
+         }
 
-        setSavedAnalyses(prev => [newAnalysis, ...prev]);
-        
-        // Audit log
-        await AuditLogService.log({
-          action: 'create',
-          resourceType: 'analysis',
-          resourceId: newAnalysis.id,
-          resourceName: name,
-          details: { businessData }
-        });
-        
-        return newAnalysis.id;
-      } catch (error) {
-        console.error('Database save error:', error);
-        throw error;
-      }
-    } else {
-      console.log('Saving analysis to localStorage (anonymous user)...');
-      const newAnalysis: SavedAnalysis = {
-        id: crypto.randomUUID(),
-        name,
-        savedAt: new Date().toISOString(),
-        businessData,
-        realData: completeRealData,
-        manualData: completeManualData
-      };
+         const newAnalysis: SavedAnalysis = {
+           id: data.id,
+           name: data.name,
+           savedAt: data.saved_at,
+           businessData: data.business_data as SavedAnalysis['businessData'],
+           realData: completeRealData,
+           manualData: completeManualData
+         };
 
-      console.log('New analysis created:', { id: newAnalysis.id, name: newAnalysis.name });
-      
-      const updatedAnalyses = [newAnalysis, ...savedAnalyses];
-      console.log('Updated analyses array length:', updatedAnalyses.length);
-      
-      const jsonString = JSON.stringify(updatedAnalyses);
-      console.log('JSON string length:', jsonString.length);
-      
-      localStorage.setItem(STORAGE_KEY, jsonString);
-      console.log('Saved to localStorage with key:', STORAGE_KEY);
-      
-      // Verify it was saved
-      const verification = localStorage.getItem(STORAGE_KEY);
-      console.log('Verification - data in localStorage:', verification ? 'exists' : 'MISSING!');
-      console.log('Verification - length:', verification?.length);
-      
-      setSavedAnalyses(updatedAnalyses);
-      console.log('State updated with', updatedAnalyses.length, 'analyses');
-      
-      // Audit log
-      await AuditLogService.log({
-        action: 'create',
-        resourceType: 'analysis',
-        resourceId: newAnalysis.id,
-        resourceName: name,
-        details: { businessData }
-      });
-      
-      return newAnalysis.id;
-    }
+         setSavedAnalyses(prev => [newAnalysis, ...prev]);
+         
+         // Audit log
+         await AuditLogService.log({
+           action: 'create',
+           resourceType: 'analysis',
+           resourceId: newAnalysis.id,
+           resourceName: name,
+           details: { businessData }
+         });
+         
+         return newAnalysis.id;
+       } catch (error) {
+         console.error('Database save error:', error);
+         throw error;
+       }
+     } else {
+       console.log('Saving analysis to localStorage (anonymous user)...');
+       const newAnalysis: SavedAnalysis = {
+         id: crypto.randomUUID(),
+         name,
+         savedAt: new Date().toISOString(),
+         businessData,
+         realData: completeRealData,
+         manualData: completeManualData
+       };
+
+       console.log('New analysis created:', { id: newAnalysis.id, name: newAnalysis.name });
+       
+       const updatedAnalyses = [newAnalysis, ...savedAnalyses];
+       console.log('Updated analyses array length:', updatedAnalyses.length);
+       
+       const jsonString = JSON.stringify(updatedAnalyses);
+       console.log('JSON string length:', jsonString.length);
+
+       try {
+         localStorage.setItem(STORAGE_KEY, jsonString);
+       } catch (e: any) {
+         console.error('localStorage save failed:', e);
+         const msg =
+           e?.name === 'QuotaExceededError'
+             ? 'Browser-Speicher ist voll. Bitte alte Analysen löschen oder anmelden, damit in der Datenbank gespeichert werden kann.'
+             : 'Speichern im Browser ist fehlgeschlagen. Bitte anmelden oder alte Analysen löschen.';
+         throw new Error(msg);
+       }
+       console.log('Saved to localStorage with key:', STORAGE_KEY);
+       
+       // Verify it was saved
+       const verification = localStorage.getItem(STORAGE_KEY);
+       console.log('Verification - data in localStorage:', verification ? 'exists' : 'MISSING!');
+       console.log('Verification - length:', verification?.length);
+       
+       setSavedAnalyses(updatedAnalyses);
+       console.log('State updated with', updatedAnalyses.length, 'analyses');
+       
+       // Audit log
+       await AuditLogService.log({
+         action: 'create',
+         resourceType: 'analysis',
+         resourceId: newAnalysis.id,
+         resourceName: name,
+         details: { businessData }
+       });
+       
+       return newAnalysis.id;
+     }
   }, [savedAnalyses, user]);
 
   const updateAnalysis = useCallback(async (
@@ -468,47 +483,62 @@ export const useSavedAnalyses = () => {
       ...manualData 
     };
 
-    if (user) {
-      try {
-        const { error } = await supabase
-          .from('saved_analyses')
-          .update({
-            name,
-            business_data: businessData as any,
-            real_data: completeRealData as any,
-            manual_data: completeManualData as any
-          })
-          .eq('id', id);
+     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+     if (sessionError) {
+       console.warn('Session check failed:', sessionError);
+     }
+     const sessionUserId = session?.user?.id ?? null;
 
-        if (error) throw error;
+     if (sessionUserId) {
+       try {
+         const { error } = await supabase
+           .from('saved_analyses')
+           .update({
+             name,
+             business_data: businessData as any,
+             real_data: completeRealData as any,
+             manual_data: completeManualData as any
+           })
+           .eq('id', id);
 
-        setSavedAnalyses(prev => prev.map(analysis => 
-          analysis.id === id 
-            ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
-            : analysis
-        ));
-        
-        // Audit log
-        await AuditLogService.log({
-          action: 'update',
-          resourceType: 'analysis',
-          resourceId: id,
-          resourceName: name
-        });
-      } catch (error) {
-        console.error('Database update error:', error);
-        throw error;
-      }
-    } else {
-      const updatedAnalyses = savedAnalyses.map(analysis => 
-        analysis.id === id 
-          ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
-          : analysis
-      );
-      
-      setSavedAnalyses(updatedAnalyses);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-    }
+         if (error) throw error;
+
+         setSavedAnalyses(prev => prev.map(analysis => 
+           analysis.id === id 
+             ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
+             : analysis
+         ));
+         
+         // Audit log
+         await AuditLogService.log({
+           action: 'update',
+           resourceType: 'analysis',
+           resourceId: id,
+           resourceName: name
+         });
+       } catch (error) {
+         console.error('Database update error:', error);
+         throw error;
+       }
+     } else {
+       const updatedAnalyses = savedAnalyses.map(analysis => 
+         analysis.id === id 
+           ? { ...analysis, name, businessData, realData: completeRealData, manualData: completeManualData, savedAt: new Date().toISOString() }
+           : analysis
+       );
+       
+       setSavedAnalyses(updatedAnalyses);
+       try {
+         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+       } catch (e: any) {
+         console.error('localStorage update failed:', e);
+         const msg =
+           e?.name === 'QuotaExceededError'
+             ? 'Browser-Speicher ist voll. Bitte alte Analysen löschen oder anmelden, damit in der Datenbank gespeichert werden kann.'
+             : 'Speichern im Browser ist fehlgeschlagen. Bitte anmelden oder alte Analysen löschen.';
+         throw new Error(msg);
+       }
+     }
   }, [savedAnalyses, user]);
 
   // Soft-delete: Move to trash
