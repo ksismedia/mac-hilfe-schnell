@@ -33,6 +33,22 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
     notes: initialData?.notes || ''
   });
 
+  // Sync state when initialData changes (e.g., when loading a saved analysis)
+  React.useEffect(() => {
+    if (initialData) {
+      setData({
+        keyboardNavigation: initialData.keyboardNavigation || false,
+        screenReaderCompatible: initialData.screenReaderCompatible || false,
+        colorContrast: initialData.colorContrast || false,
+        altTextsPresent: initialData.altTextsPresent || false,
+        focusVisibility: initialData.focusVisibility || false,
+        textScaling: initialData.textScaling || false,
+        overallScore: initialData.overallScore || 70,
+        notes: initialData.notes || ''
+      });
+    }
+  }, [initialData]);
+
   const handleSave = () => {
     onSave(data);
     toast({
