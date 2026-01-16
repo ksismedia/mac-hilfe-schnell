@@ -33,20 +33,39 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
     notes: initialData?.notes || ''
   });
 
+  // Keep a ref to avoid unnecessary state resets (prevents cursor jumping while typing)
+  const dataRef = React.useRef(data);
+  React.useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
   // Sync state when initialData changes (e.g., when loading a saved analysis)
   React.useEffect(() => {
-    if (initialData) {
-      setData({
-        keyboardNavigation: initialData.keyboardNavigation || false,
-        screenReaderCompatible: initialData.screenReaderCompatible || false,
-        colorContrast: initialData.colorContrast || false,
-        altTextsPresent: initialData.altTextsPresent || false,
-        focusVisibility: initialData.focusVisibility || false,
-        textScaling: initialData.textScaling || false,
-        overallScore: initialData.overallScore || 70,
-        notes: initialData.notes || ''
-      });
-    }
+    if (!initialData) return;
+
+    const next: ManualAccessibilityData = {
+      keyboardNavigation: initialData.keyboardNavigation || false,
+      screenReaderCompatible: initialData.screenReaderCompatible || false,
+      colorContrast: initialData.colorContrast || false,
+      altTextsPresent: initialData.altTextsPresent || false,
+      focusVisibility: initialData.focusVisibility || false,
+      textScaling: initialData.textScaling || false,
+      overallScore: initialData.overallScore || 70,
+      notes: initialData.notes || ''
+    };
+
+    const current = dataRef.current;
+    const isSame =
+      current.keyboardNavigation === next.keyboardNavigation &&
+      current.screenReaderCompatible === next.screenReaderCompatible &&
+      current.colorContrast === next.colorContrast &&
+      current.altTextsPresent === next.altTextsPresent &&
+      current.focusVisibility === next.focusVisibility &&
+      current.textScaling === next.textScaling &&
+      current.overallScore === next.overallScore &&
+      (current.notes || '') === (next.notes || '');
+
+    if (!isSame) setData(next);
   }, [initialData]);
 
   const handleSave = () => {
@@ -188,7 +207,15 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
               id="accessibility-notes"
               placeholder="Besondere Beobachtungen zur Barrierefreiheit..."
               value={data.notes}
-              onChange={(e) => setData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => {
+                const value = e.target.value;
+                setData(prev => {
+                  const next = { ...prev, notes: value };
+                  // Ensure notes are reflected in outputs even if the user doesn't click "Speichern"
+                  onSave(next);
+                  return next;
+                });
+              }}
               className="mt-2"
               rows={3}
             />
