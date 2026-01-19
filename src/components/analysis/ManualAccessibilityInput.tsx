@@ -41,6 +41,7 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
   }, [data]);
 
   // Sync state when initialData changes (e.g., when loading a saved analysis)
+  // AND propagate to parent so notes appear in outputs immediately
   React.useEffect(() => {
     if (!initialData) return;
 
@@ -66,8 +67,16 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
       current.overallScore === next.overallScore &&
       (current.notes || '') === (next.notes || '');
 
-    if (!isSame) setData(next);
-  }, [initialData]);
+    if (!isSame) {
+      setData(next);
+      // Sync to parent so notes are available in renderManualNotes & HTML export
+      const serialized = JSON.stringify(next);
+      if (lastSyncedToParentRef.current !== serialized) {
+        lastSyncedToParentRef.current = serialized;
+        onSave(next);
+      }
+    }
+  }, [initialData, onSave]);
 
   const handleSave = () => {
     onSave(data);
