@@ -35,6 +35,7 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
 
   // Keep a ref to avoid unnecessary state resets (prevents cursor jumping while typing)
   const dataRef = React.useRef(data);
+  const lastSyncedToParentRef = React.useRef<string>('');
   React.useEffect(() => {
     dataRef.current = data;
   }, [data]);
