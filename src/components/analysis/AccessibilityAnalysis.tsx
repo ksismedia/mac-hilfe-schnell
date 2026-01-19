@@ -659,6 +659,13 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                                 <li key={index}>• {rec}</li>
                               ))}
                             </ul>
+                            {/* Zusatzbemerkungen direkt nach Empfehlungen */}
+                            {manualNotes && (
+                              <div className="mt-3 p-3 bg-blue-500/10 border-l-4 border-blue-500 rounded">
+                                <p className="text-sm font-semibold text-blue-400 mb-1">Zusatzbemerkungen:</p>
+                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{manualNotes}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                         

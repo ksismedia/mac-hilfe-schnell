@@ -3734,6 +3734,12 @@ export const generateCustomerHTML = ({
             <div class="score-details">
               <p><strong>Compliance-Level:</strong> ${actualAccessibilityScore >= 80 ? 'Konform' : actualAccessibilityScore >= 50 ? 'Teilweise konform' : 'Nicht konform'}</p>
               <p><strong>Empfehlung:</strong> ${actualAccessibilityScore >= 80 ? 'Barrierefreiheit beibehalten' : 'Barrierefreiheit verbessern'}</p>
+              ${typeof manualAccessibilityData?.notes === 'string' && manualAccessibilityData.notes.trim() ? `
+              <div style="margin-top: 10px; padding: 10px; background: rgba(59, 130, 246, 0.15); border-left: 3px solid #3b82f6; border-radius: 4px;">
+                <p style="margin: 0 0 5px 0; font-weight: 600; color: #60a5fa; font-size: 13px;">Zusatzbemerkungen:</p>
+                <p style="margin: 0; color: #93c5fd; font-size: 12px; white-space: pre-wrap;">${escapeHtml(manualAccessibilityData.notes)}</p>
+              </div>
+              ` : ''}
             </div>
           </div>
           <div class="progress-container">
