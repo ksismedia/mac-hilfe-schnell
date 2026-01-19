@@ -137,6 +137,14 @@ const getScoreTileTextColor = (score: number): string => {
   return score >= 0 && score <= 60 ? '#FFFFFF' : '#000000'; // White text on red, black on silver
 };
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
 // Einheitliche Progress-Bar mit Prozentzahl im Balken und Beschreibung darunter
 const generateProgressBar = (score: number, description: string) => {
   const barColor = getScoreColor(score);
@@ -1557,12 +1565,12 @@ export const generateCustomerHTML = ({
           `;
         })()}
         
-        ${manualAccessibilityData?.notes ? `
+        ${typeof manualAccessibilityData?.notes === 'string' && manualAccessibilityData.notes.trim() ? `
         <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 4px solid #3b82f6;">
           <h4 style="color: #60a5fa; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">
-            📝 Zusätzliche Bemerkungen zur Barrierefreiheit
+            Zusätzliche Bemerkungen zur Barrierefreiheit
           </h4>
-          <p style="color: #93c5fd; margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-wrap;">${manualAccessibilityData.notes}</p>
+          <p style="color: #93c5fd; margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(manualAccessibilityData.notes)}</p>
         </div>
         ` : ''}
       </div>

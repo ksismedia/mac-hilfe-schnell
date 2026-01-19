@@ -38,6 +38,31 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const manualNotes =
+    typeof manualAccessibilityData?.notes === 'string'
+      ? manualAccessibilityData.notes.trim()
+      : '';
+
+  const renderManualNotes = () => {
+    if (!manualNotes) return null;
+
+    return (
+      <Card className="mb-6 border-border bg-muted/20">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Zusätzliche Bemerkungen (manuelle Bewertung)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+            {manualNotes}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  };
+
   // Debug logging for initial mount
   useEffect(() => {
     console.log('🔍 ACCESSIBILITY MOUNT - savedData prop:', savedData);
@@ -247,6 +272,8 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
             </TabsList>
             
             <TabsContent value="automatic" className="mt-6">
+              {renderManualNotes()}
+
               {!accessibilityData && !loading && (
                 <div className="text-center py-8">
                   <Eye className="h-12 w-12 mx-auto text-blue-500 mb-4" />
@@ -288,22 +315,6 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </div>
               )}
 
-          {/* Zusätzliche Bemerkungen aus manueller Bewertung - IMMER anzeigen, auch ohne automatische Analyse */}
-          {manualAccessibilityData?.notes && !accessibilityData && !loading && (
-            <Card className="border-blue-200 bg-blue-50/50 mb-6">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base text-blue-700 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Zusätzliche Bemerkungen zur Barrierefreiheit
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                  {manualAccessibilityData.notes}
-                </p>
-              </CardContent>
-            </Card>
-          )}
 
           {(() => {
             const currentData = getCurrentAccessibilityData();
@@ -922,22 +933,6 @@ const AccessibilityAnalysis: React.FC<AccessibilityAnalysisProps> = ({
                 </CardContent>
               </Card>
 
-              {/* Zusätzliche Bemerkungen aus manueller Bewertung */}
-              {manualAccessibilityData?.notes && (
-                <Card className="border-blue-200 bg-blue-50/50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-blue-700 flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Zusätzliche Bemerkungen zur Barrierefreiheit
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {manualAccessibilityData.notes}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
 
               {/* Action Button */}
               <div className="flex gap-3">
