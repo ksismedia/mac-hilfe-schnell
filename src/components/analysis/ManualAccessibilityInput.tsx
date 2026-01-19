@@ -40,6 +40,14 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
     dataRef.current = data;
   }, [data]);
 
+  // Always keep parent state in sync so outputs (UI + HTML export) can render notes
+  React.useEffect(() => {
+    const serialized = JSON.stringify(data);
+    if (lastSyncedToParentRef.current === serialized) return;
+    lastSyncedToParentRef.current = serialized;
+    onSave(data);
+  }, [data, onSave]);
+
   // Sync state when initialData changes (e.g., when loading a saved analysis)
   // AND propagate to parent so notes appear in outputs immediately
   React.useEffect(() => {
@@ -69,14 +77,9 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
 
     if (!isSame) {
       setData(next);
-      // Sync to parent so notes are available in renderManualNotes & HTML export
-      const serialized = JSON.stringify(next);
-      if (lastSyncedToParentRef.current !== serialized) {
-        lastSyncedToParentRef.current = serialized;
-        onSave(next);
-      }
+      // lastSyncedToParentRef will be updated by the sync effect above
     }
-  }, [initialData, onSave]);
+  }, [initialData]);
 
   const handleSave = () => {
     onSave(data);
@@ -219,12 +222,7 @@ export const ManualAccessibilityInput: React.FC<ManualAccessibilityInputProps> =
               value={data.notes}
               onChange={(e) => {
                 const value = e.target.value;
-                setData(prev => {
-                  const next = { ...prev, notes: value };
-                  // Ensure notes are reflected in outputs even if the user doesn't click "Speichern"
-                  onSave(next);
-                  return next;
-                });
+                setData(prev => ({ ...prev, notes: value }));
               }}
               className="mt-2"
               rows={3}
