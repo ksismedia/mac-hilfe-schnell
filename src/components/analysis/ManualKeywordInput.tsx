@@ -136,6 +136,13 @@ const ManualKeywordInput: React.FC<ManualKeywordInputProps> = ({
         'blechzuschnitt', 'kantarbeiten', 'schweißarbeiten', 'laserschneiden',
         'metallverarbeitung', 'edelstahl', 'zink', 'kupfer', 'aluminium',
         'dachklempner', 'abdichtung', 'meisterbetrieb', 'handwerker'
+      ],
+      'innenausbau': [
+        'innenausbau', 'trockenbau', 'akustikdecken', 'bodenbeläge', 'wandverkleidungen',
+        'einbauschränke', 'raumtrennung', 'büroausbau', 'ladenbau', 'messebau',
+        'dachausbau', 'altbausanierung', 'brandschutz', 'schallschutz', 'wärmedämmung',
+        'abhangdecken', 'lichtsysteme', 'meisterbetrieb', 'handwerker', 'sanierung',
+        'renovierung', 'modernisierung', 'umbau', 'ausbau'
       ]
     };
     return suggestions[industry as keyof typeof suggestions] || ['handwerk', 'service'];

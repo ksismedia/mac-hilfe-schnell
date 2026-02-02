@@ -52,7 +52,7 @@ export interface StaffQualificationData {
 
 interface StaffQualificationInputProps {
   businessData: {
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
   };
   data: StaffQualificationData | null;
   onUpdate: (data: StaffQualificationData | null) => void;
@@ -122,6 +122,16 @@ const industrySpecificQualifications = {
     'Klempner-Meister',
     'Dachdecker-Fachkraft',
     'CNC-Blechbearbeitung'
+  ],
+  innenausbau: [
+    'Trockenbau-Fachverarbeiter',
+    'Akustikbau-Spezialist',
+    'Brandschutz-Zertifikat',
+    'WDVS-Fachverarbeiter',
+    'Bodenleger-Qualifikation',
+    'Ladenbau-Spezialist',
+    'Messebau-Erfahrung',
+    'Dachausbau-Zertifikat'
   ]
 };
 
