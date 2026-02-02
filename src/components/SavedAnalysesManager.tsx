@@ -26,7 +26,8 @@ const industryNames: Record<string, string> = {
   'facility-management': 'Facility-Management & Gebäudereinigung',
   'holzverarbeitung': 'Holzverarbeitung',
   'baeckerei': 'Bäckerei',
-  'blechbearbeitung': 'Blechbearbeitung'
+  'blechbearbeitung': 'Blechbearbeitung',
+  'innenausbau': 'Innenausbau'
 };
 
 const SavedAnalysesManager: React.FC<SavedAnalysesManagerProps> = ({ onLoadAnalysis }) => {

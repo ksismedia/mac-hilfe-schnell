@@ -788,7 +788,8 @@ export class BusinessAnalysisService {
       'stukateur': ['Stuckateur', 'Putz', 'Fassaden'],
       'planungsbuero': ['Planung', 'Ingenieurbüro', 'Technik'],
       'facility-management': ['Facility Management', 'Gebäudereinigung', 'Hausmeisterdienst'],
-      'holzverarbeitung': ['Schreiner', 'Tischler', 'Holzverarbeitung']
+      'holzverarbeitung': ['Schreiner', 'Tischler', 'Holzverarbeitung'],
+      'innenausbau': ['Innenausbau', 'Trockenbau', 'Ausbau']
     };
     
     return terms[industry as keyof typeof terms] || ['Handwerk', 'Service', 'Betrieb'];
@@ -850,6 +851,13 @@ export class BusinessAnalysisService {
         'lackierung', 'beizen', 'ölen', 'wachsen', 'hobeln',
         'sägen', 'fräsen', 'verbindungen', 'holzverbindungen',
         'schreinerei', 'tischlerei', 'handwerk', 'möbelbau'
+      ],
+      'innenausbau': [
+        'innenausbau', 'trockenbau', 'akustikdecken', 'bodenbeläge', 'wandverkleidungen',
+        'einbauschränke', 'raumtrennung', 'büroausbau', 'ladenbau', 'messebau',
+        'dachausbau', 'altbausanierung', 'brandschutz', 'schallschutz', 'wärmedämmung',
+        'abhangdecken', 'lichtsysteme', 'sanierung', 'renovierung', 'modernisierung',
+        'umbau', 'ausbau', 'handwerker', 'meisterbetrieb'
       ]
     };
     

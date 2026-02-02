@@ -66,6 +66,12 @@ const CompanyServicesInput: React.FC<CompanyServicesInputProps> = ({
         'Dachrinnen', 'Dachentwässerung', 'Fassadenverkleidung', 'Abdichtungen',
         'Metallverarbeitung', 'Edelstahlarbeiten', 'Kupferarbeiten', 'Aluminiumarbeiten',
         'Blechdächer', 'Fassaden', 'Lüftungsbau', 'Reparaturservice'
+      ],
+      'innenausbau': [
+        'Trockenbau', 'Akustikdecken', 'Bodenbeläge', 'Wandverkleidungen', 
+        'Einbauschränke', 'Raumtrennsysteme', 'Brandschutzverkleidung', 'Dachausbau',
+        'Altbausanierung', 'Ladenbau', 'Messebau', 'Büroausbau',
+        'Lichtsysteme', 'Abhangdecken', 'Schallschutz', 'Wärmedämmung'
       ]
     };
     return standardServices[industry as keyof typeof standardServices] || [];

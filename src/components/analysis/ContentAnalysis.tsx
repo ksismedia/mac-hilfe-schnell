@@ -149,6 +149,12 @@ const ContentAnalysis: React.FC<ContentAnalysisProps> = ({
       coreTopics: ['Gebäudereinigung', 'Hausmeisterdienst', 'Wartung', 'Sicherheitsdienst', 'Grünpflege', 'Energiemanagement'],
       seasonalTopics: ['Winterdienst', 'Gartenpflege Sommer', 'Heizungsablesung', 'Klimawartung'],
       expertTopics: ['Smart Building', 'Nachhaltigkeitsmanagement', 'Compliance', 'Digitales Facility Management']
+    },
+    innenausbau: {
+      name: 'Innenausbau-Betriebe',
+      coreTopics: ['Trockenbau', 'Akustikdecken', 'Bodenbeläge', 'Wandverkleidungen', 'Einbauschränke', 'Raumtrennsysteme'],
+      seasonalTopics: ['Büroausbau vor Umzug', 'Ladenumbau vor Weihnachten', 'Messevorbereitung'],
+      expertTopics: ['Brandschutzverkleidung', '3D-Raumplanung', 'Akustikoptimierung', 'Barrierefreier Ausbau']
     }
   };
 

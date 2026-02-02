@@ -19,7 +19,7 @@ import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
   extensionData?: any;
 }
 
@@ -505,7 +505,7 @@ const Index = () => {
                 </Label>
                 <Select 
                   value={businessData.industry} 
-                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung') => 
+                  onValueChange={(value: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau') => 
                     setBusinessData({...businessData, industry: value})
                   }
                 >
@@ -523,6 +523,7 @@ const Index = () => {
                     <SelectItem value="holzverarbeitung">Holzverarbeitung (Schreiner/Tischler)</SelectItem>
                     <SelectItem value="baeckerei">Bäckereifachbetrieb</SelectItem>
                     <SelectItem value="blechbearbeitung">Blechbearbeitung/Klempnerei</SelectItem>
+                    <SelectItem value="innenausbau">Innenausbau</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

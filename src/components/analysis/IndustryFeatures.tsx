@@ -8,7 +8,7 @@ interface IndustryFeaturesProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
   };
 }
 
@@ -248,6 +248,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           { name: "Abdichtungen", found: true, importance: "mittel" }
         ]
       }
+    ],
+    innenausbau: [
+      {
+        group: "Beratung & Planung",
+        features: [
+          { name: "Kostenlose Beratung", found: true, importance: "hoch" },
+          { name: "3D-Raumplanung", found: false, importance: "mittel" },
+          { name: "Vor-Ort-Aufmaß", found: true, importance: "hoch" },
+          { name: "Festpreisangebot", found: true, importance: "hoch" }
+        ]
+      },
+      {
+        group: "Trockenbau & Akustik",
+        features: [
+          { name: "Trockenbau-Wände", found: true, importance: "hoch" },
+          { name: "Akustikdecken", found: true, importance: "hoch" },
+          { name: "Raumtrennsysteme", found: true, importance: "mittel" },
+          { name: "Brandschutzverkleidung", found: false, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Boden & Oberflächen",
+        features: [
+          { name: "Bodenbeläge", found: true, importance: "hoch" },
+          { name: "Wandverkleidungen", found: true, importance: "hoch" },
+          { name: "Einbauschränke", found: true, importance: "mittel" },
+          { name: "Lichtsysteme", found: false, importance: "niedrig" }
+        ]
+      }
     ]
   };
 
@@ -287,7 +316,8 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
     planungsbuero: 'Planungsbüro Versorgungstechnik',
     'facility-management': 'Facility-Management & Gebäudereinigung',
     holzverarbeitung: 'Holzverarbeitung (Schreiner/Tischler)',
-    blechbearbeitung: 'Blechbearbeitung/Klempnerei'
+    blechbearbeitung: 'Blechbearbeitung/Klempnerei',
+    innenausbau: 'Innenausbau'
   };
 
   return (
