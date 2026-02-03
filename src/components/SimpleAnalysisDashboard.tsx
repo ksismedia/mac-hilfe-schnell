@@ -172,7 +172,11 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualSEOData,
     updateManualSEOData,
     showNationalProviders,
-    updateShowNationalProviders
+    updateShowNationalProviders,
+    showRegionalTrends,
+    updateShowRegionalTrends,
+    regionalTrendsData,
+    updateRegionalTrendsData
   } = useManualData();
 
   // Access saved analyses hook
@@ -650,6 +654,10 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualSEOData={updateManualSEOData}
             showNationalProviders={showNationalProviders}
             onToggleNationalProviders={updateShowNationalProviders}
+            showRegionalTrends={showRegionalTrends}
+            onToggleRegionalTrends={updateShowRegionalTrends}
+            regionalTrendsData={regionalTrendsData}
+            onRegionalTrendsLoaded={updateRegionalTrendsData}
           />
         );
       case 'website-performance-tech':
@@ -886,6 +894,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               securityData={securityData}
               extensionData={activeExtensionData}
               showNationalProviders={showNationalProviders}
+              showRegionalTrends={showRegionalTrends}
+              regionalTrendsData={regionalTrendsData}
             />
             <CustomerHTMLExport
               businessData={businessData}
@@ -921,6 +931,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               securityData={securityData}
               extensionData={savedExtensionData}
               showNationalProviders={showNationalProviders}
+              showRegionalTrends={showRegionalTrends}
+              regionalTrendsData={regionalTrendsData}
             />
           </div>
         </div>

@@ -449,6 +449,8 @@ export const useManualData = () => {
   const [manualReputationData, setManualReputationData] = useState<ManualReputationData | null>(null);
   const [manualSEOData, setManualSEOData] = useState<ManualSEOData | null>(null);
   const [showNationalProviders, setShowNationalProviders] = useState<boolean>(false);
+  const [showRegionalTrends, setShowRegionalTrends] = useState<boolean>(false);
+  const [regionalTrendsData, setRegionalTrendsData] = useState<any>(null);
 
   const updateImprintData = useCallback((data: ManualImprintData | null) => {
     setManualImprintData(data);
@@ -600,6 +602,16 @@ export const useManualData = () => {
     console.log('Show National Providers Updated:', show);
   }, []);
 
+  const updateShowRegionalTrends = useCallback((show: boolean) => {
+    setShowRegionalTrends(show);
+    console.log('Show Regional Trends Updated:', show);
+  }, []);
+
+  const updateRegionalTrendsData = useCallback((data: any) => {
+    setRegionalTrendsData(data);
+    console.log('Regional Trends Data Updated:', data);
+  }, []);
+
   return {
     manualImprintData,
     manualSocialData,
@@ -651,5 +663,9 @@ export const useManualData = () => {
     updateManualSEOData,
     showNationalProviders,
     updateShowNationalProviders,
+    showRegionalTrends,
+    updateShowRegionalTrends,
+    regionalTrendsData,
+    updateRegionalTrendsData,
   };
 };

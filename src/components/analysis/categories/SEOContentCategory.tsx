@@ -10,6 +10,7 @@ import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
 import CompetitorAnalysis from '../CompetitorAnalysis';
 import NationalProvidersSection from '../NationalProvidersSection';
+import RegionalProductTrends from '../RegionalProductTrends';
 import IndustryFeatures from '../IndustryFeatures';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
@@ -56,6 +57,10 @@ interface SEOContentCategoryProps {
   updateManualSEOData?: (data: any) => void;
   showNationalProviders?: boolean;
   onToggleNationalProviders?: (show: boolean) => void;
+  showRegionalTrends?: boolean;
+  onToggleRegionalTrends?: (show: boolean) => void;
+  regionalTrendsData?: any;
+  onRegionalTrendsLoaded?: (data: any) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -100,7 +105,11 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   manualSEOData,
   updateManualSEOData,
   showNationalProviders = false,
-  onToggleNationalProviders
+  onToggleNationalProviders,
+  showRegionalTrends = false,
+  onToggleRegionalTrends,
+  regionalTrendsData,
+  onRegionalTrendsLoaded
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -265,6 +274,18 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
                 industry={businessData.industry}
                 showNationalProviders={showNationalProviders}
                 onToggleNationalProviders={onToggleNationalProviders || (() => {})}
+              />
+            </div>
+            
+            {/* Regionale Produkttrends */}
+            <div className="mt-6">
+              <RegionalProductTrends
+                industry={businessData.industry}
+                region={businessData.address}
+                companyName={businessData.companyName}
+                showInReport={showRegionalTrends}
+                onToggleShowInReport={onToggleRegionalTrends || (() => {})}
+                onTrendsLoaded={onRegionalTrendsLoaded}
               />
             </div>
           </div>

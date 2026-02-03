@@ -82,6 +82,9 @@ interface CustomerReportData {
   analysisName?: string;
   // Überregionale Großanbieter anzeigen
   showNationalProviders?: boolean;
+  // Regionale Produkttrends
+  showRegionalTrends?: boolean;
+  regionalTrendsData?: any;
 }
 
 // Function to get score range for data attribute
@@ -239,7 +242,9 @@ export const generateCustomerHTML = ({
   extensionData,
   hasUnreviewedAIContent = false,
   analysisName,
-  showNationalProviders = false
+  showNationalProviders = false,
+  showRegionalTrends = false,
+  regionalTrendsData
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
   console.log('🔥🔥🔥 CRITICAL: securityData received:', securityData);
@@ -2671,6 +2676,114 @@ export const generateCustomerHTML = ({
         </div>
         
         ${showNationalProviders ? getNationalProvidersSection(businessData.industry) : ''}
+        ${showRegionalTrends && regionalTrendsData ? getRegionalTrendsSection(regionalTrendsData) : ''}
+      </div>
+    `;
+  };
+
+  // Regionale Produkttrends Section
+  const getRegionalTrendsSection = (trendsData: any): string => {
+    if (!trendsData || !trendsData.trends || trendsData.trends.length === 0) {
+      return '';
+    }
+
+    const getRelevanceColor = (relevance: string): { bg: string; text: string; border: string } => {
+      switch (relevance) {
+        case 'high':
+          return { bg: '#dcfce7', text: '#166534', border: '#86efac' };
+        case 'medium':
+          return { bg: '#fef9c3', text: '#854d0e', border: '#fde047' };
+        case 'low':
+          return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+        default:
+          return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+      }
+    };
+
+    const getRelevanceLabel = (relevance: string): string => {
+      switch (relevance) {
+        case 'high':
+          return 'Hohe Relevanz';
+        case 'medium':
+          return 'Mittlere Relevanz';
+        case 'low':
+          return 'Geringe Relevanz';
+        default:
+          return 'Unbekannt';
+      }
+    };
+
+    const formattedDate = new Date(trendsData.generatedAt).toLocaleString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    return `
+      <div style="margin-top: 30px; padding: 20px; background: rgba(124, 58, 237, 0.1); border-radius: 8px; border: 1px solid rgba(124, 58, 237, 0.3);">
+        <h4 style="color: #a78bfa; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          📈 Regionale Produkttrends
+        </h4>
+        
+        <div style="margin-bottom: 16px; padding: 12px; background: rgba(124, 58, 237, 0.15); border-radius: 8px; border-left: 4px solid #7c3aed;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="color: #c4b5fd;">Region: ${trendsData.region}</strong>
+            <span style="font-size: 11px; color: #9ca3af;">Branche: ${trendsData.industry}</span>
+          </div>
+          <p style="color: #c4b5fd; font-size: 13px; margin: 0; line-height: 1.5;">
+            ${trendsData.summary}
+          </p>
+          <p style="font-size: 11px; color: #9ca3af; margin: 8px 0 0 0;">
+            Aktualisiert: ${formattedDate}
+          </p>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <h5 style="color: #e0e7ff; font-size: 14px; font-weight: 600; margin-bottom: 12px;">
+            Identifizierte Markttrends (${trendsData.trends.length})
+          </h5>
+          ${trendsData.trends.map((trend: any, index: number) => {
+            const colors = getRelevanceColor(trend.relevance);
+            return `
+              <div style="padding: 16px; border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 8px; background: rgba(124, 58, 237, 0.05); margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <strong style="color: #c4b5fd; font-size: 15px;">${index + 1}. ${trend.trend}</strong>
+                  <span style="padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border};">
+                    ${getRelevanceLabel(trend.relevance)}
+                  </span>
+                </div>
+                <p style="color: #9ca3af; font-size: 13px; line-height: 1.5; margin: 0;">
+                  ${trend.description}
+                </p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="margin-top: 20px; padding: 16px; background: rgba(124, 58, 237, 0.15); border: 2px solid rgba(196, 181, 253, 0.3); border-radius: 8px;">
+          <h5 style="color: #c4b5fd; margin: 0 0 12px 0; font-size: 14px;">
+            ★ Handlungsempfehlungen basierend auf Markttrends:
+          </h5>
+          <ul style="margin: 0; padding-left: 20px; color: #9ca3af; font-size: 13px; line-height: 1.8;">
+            ${trendsData.trends
+              .filter((t: any) => t.relevance === 'high')
+              .slice(0, 3)
+              .map((t: any) => `<li><strong>${t.trend}:</strong> Prüfen Sie, ob Sie diesen Trend in Ihrem Leistungsangebot abbilden können.</li>`)
+              .join('')}
+            <li>Positionieren Sie sich als regionaler Experte für die identifizierten Trendthemen.</li>
+            <li>Nutzen Sie die Trends für Ihre Marketingkommunikation und Content-Strategie.</li>
+          </ul>
+        </div>
+
+        <div style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <p style="font-size: 11px; color: #fbbf24; margin: 0;">
+            ⚠️ <strong>Hinweis:</strong> Diese Trendanalyse basiert auf KI-gestützter Webrecherche (Perplexity AI) und 
+            stellt eine Momentaufnahme dar. Die Relevanz der Trends kann je nach spezifischer Marktlage variieren. 
+            Eine individuelle Beratung wird empfohlen.
+          </p>
+        </div>
       </div>
     `;
   };
