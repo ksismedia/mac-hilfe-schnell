@@ -48,6 +48,7 @@ interface CustomerHTMLExportProps {
   securityData?: any;
   calculatedOwnCompanyScore?: number; // DIREKT AUS COMPETITOR ANALYSIS
   extensionData?: any; // Chrome Extension data
+  showNationalProviders?: boolean; // Überregionale Großanbieter anzeigen
 }
 
 const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({ 
@@ -82,7 +83,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
   accessibilityData,
   securityData,
   calculatedOwnCompanyScore,
-  extensionData
+  extensionData,
+  showNationalProviders = false
 }) => {
   const { toast } = useToast();
   
@@ -274,7 +276,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent,
-      analysisName: `UNNA-Report ${businessData.address}`
+      analysisName: `UNNA-Report ${businessData.address}`,
+      showNationalProviders
     });
     console.log('=== HTML CONTENT GENERATED ===');
     console.log('🔥 Was exportSecurityData passed to generateCustomerHTML?', !!exportSecurityData);
@@ -382,7 +385,8 @@ const CustomerHTMLExport: React.FC<CustomerHTMLExportProps> = ({
       calculatedOwnCompanyScore: currentOwnCompanyScore,
       extensionData,
       hasUnreviewedAIContent: hasUnreviewedContent,
-      analysisName: `UNNA-Report ${businessData.address}`
+      analysisName: `UNNA-Report ${businessData.address}`,
+      showNationalProviders
     });
 
     try {

@@ -10,6 +10,8 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, CompetitorServices, CompanyServices } from '@/hooks/useManualData';
 import CompanyServicesInput from './CompanyServicesInput';
 import ManualCompetitorInput from './ManualCompetitorInput';
+import NationalProvidersSection from './NationalProvidersSection';
+import { hasNationalProviders } from '@/data/nationalProviders';
 
 interface CompetitorAnalysisProps {
   address: string;
@@ -27,6 +29,8 @@ interface CompetitorAnalysisProps {
   onDeletedCompetitorChange: (competitorName: string) => void;
   onRestoreCompetitorChange: (competitorName: string) => void;
   onCompanyScoreChange?: (score: number) => void;
+  showNationalProviders?: boolean;
+  onToggleNationalProviders?: (show: boolean) => void;
 }
 
 const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({ 
@@ -44,7 +48,9 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
   onCompanyServicesChange,
   onDeletedCompetitorChange,
   onRestoreCompetitorChange,
-  onCompanyScoreChange
+  onCompanyScoreChange,
+  showNationalProviders = false,
+  onToggleNationalProviders
 }) => {
   const [editingServices, setEditingServices] = useState<string | null>(null);
   const [serviceInput, setServiceInput] = useState('');
@@ -487,6 +493,15 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
         competitors={manualCompetitors}
         onCompetitorsChange={onCompetitorsChange}
       />
+
+      {/* Überregionale Großanbieter (nur bei SHK und anderen unterstützten Branchen) */}
+      {hasNationalProviders(industry) && onToggleNationalProviders && (
+        <NationalProvidersSection
+          industry={industry}
+          showNationalProviders={showNationalProviders}
+          onToggleNationalProviders={onToggleNationalProviders}
+        />
+      )}
 
       <Card>
         <CardHeader>

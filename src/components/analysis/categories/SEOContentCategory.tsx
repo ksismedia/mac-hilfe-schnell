@@ -53,6 +53,8 @@ interface SEOContentCategoryProps {
   manualReputationData?: any;
   manualSEOData?: any;
   updateManualSEOData?: (data: any) => void;
+  showNationalProviders?: boolean;
+  onToggleNationalProviders?: (show: boolean) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -95,7 +97,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   updateManualBacklinkData,
   manualReputationData,
   manualSEOData,
-  updateManualSEOData
+  updateManualSEOData,
+  showNationalProviders = false,
+  onToggleNationalProviders
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -252,6 +256,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               onDeletedCompetitorChange={addDeletedCompetitor}
               onRestoreCompetitorChange={removeDeletedCompetitor}
               onCompanyScoreChange={onCompanyScoreChange}
+              showNationalProviders={showNationalProviders}
+              onToggleNationalProviders={onToggleNationalProviders}
             />
           </div>
 

@@ -45,6 +45,7 @@ export interface SavedAnalysis {
     accessibilityData?: any;
     securityData?: any;
     extensionData?: any;
+    showNationalProviders?: boolean;
   };
 }
 
