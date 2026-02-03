@@ -9,6 +9,7 @@ import AccessibilityAnalysis from '../AccessibilityAnalysis';
 import DataPrivacyAnalysis from '../DataPrivacyAnalysis';
 import ImprintCheck from '../ImprintCheck';
 import CompetitorAnalysis from '../CompetitorAnalysis';
+import NationalProvidersSection from '../NationalProvidersSection';
 import IndustryFeatures from '../IndustryFeatures';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 
@@ -256,9 +257,16 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               onDeletedCompetitorChange={addDeletedCompetitor}
               onRestoreCompetitorChange={removeDeletedCompetitor}
               onCompanyScoreChange={onCompanyScoreChange}
-              showNationalProviders={showNationalProviders}
-              onToggleNationalProviders={onToggleNationalProviders}
             />
+            
+            {/* Separate Sektion für überregionale Großanbieter */}
+            <div className="mt-6">
+              <NationalProvidersSection
+                industry={businessData.industry}
+                showNationalProviders={showNationalProviders}
+                onToggleNationalProviders={onToggleNationalProviders || (() => {})}
+              />
+            </div>
           </div>
 
           <div className={activeTab === 'industry' ? 'block' : 'hidden'}>
