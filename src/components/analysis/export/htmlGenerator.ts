@@ -4,6 +4,7 @@ import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import { ManualCompetitor, ManualSocialData, ManualWorkplaceData, ManualImprintData, CompetitorServices, CompanyServices, ManualCorporateIdentityData, StaffQualificationData, QuoteResponseData, ManualContentData, ManualAccessibilityData, ManualBacklinkData, ManualDataPrivacyData, ManualLocalSEOData, ManualIndustryReviewData, ManualOnlinePresenceData, ManualConversionData, ManualMobileData, ManualReputationData, ManualSEOData } from '@/hooks/useManualData';
 import { getHTMLStyles } from './htmlStyles';
 import { calculateSimpleSocialScore } from './simpleSocialScore';
+import { getNationalProvidersByIndustry, NationalProvider } from '@/data/nationalProviders';
 import { 
   calculateOverallScore, 
   calculateHourlyRateScore, 
@@ -79,6 +80,8 @@ interface CustomerReportData {
   hasUnreviewedAIContent?: boolean;
   // For embedding - name of the analysis
   analysisName?: string;
+  // Überregionale Großanbieter anzeigen
+  showNationalProviders?: boolean;
 }
 
 // Function to get score range for data attribute
@@ -235,7 +238,8 @@ export const generateCustomerHTML = ({
   calculatedOwnCompanyScore,
   extensionData,
   hasUnreviewedAIContent = false,
-  analysisName
+  analysisName,
+  showNationalProviders = false
 }: CustomerReportData): string => {
   console.log('🟢 generateCustomerHTML called - MAIN CUSTOMER HTML GENERATOR');
   console.log('🔥🔥🔥 CRITICAL: securityData received:', securityData);
@@ -2664,6 +2668,64 @@ export const generateCustomerHTML = ({
               }
             })()}
           </ul>
+        </div>
+        
+        ${showNationalProviders ? getNationalProvidersSection(businessData.industry) : ''}
+      </div>
+    `;
+  };
+
+  // Überregionale Großanbieter Section
+  const getNationalProvidersSection = (industry: string): string => {
+    const providers = getNationalProvidersByIndustry(industry);
+    
+    if (providers.length === 0) {
+      return '';
+    }
+    
+    return `
+      <div style="margin-top: 30px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
+        <h4 style="color: #818cf8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          🌐 Überregionale Großanbieter (Referenz)
+        </h4>
+        <p style="color: #9ca3af; font-size: 0.9em; margin-bottom: 15px; font-style: italic;">
+          Diese bundesweiten Anbieter dienen nur als Leistungsvergleich und sind keine direkten lokalen Wettbewerber.
+          Sie fließen nicht in die Wettbewerbsbewertung ein.
+        </p>
+        
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; background: rgba(17, 24, 39, 0.6); border-radius: 8px; overflow: hidden;">
+            <thead>
+              <tr style="background: rgba(99, 102, 241, 0.2);">
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Anbieter</th>
+                <th style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Reichweite</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Leistungsportfolio</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${providers.map((provider: NationalProvider) => `
+                <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
+                  <td style="padding: 12px; color: #c7d2fe;">
+                    <strong>${provider.name}</strong>
+                    <br><small style="color: #9ca3af;">${provider.description}</small>
+                  </td>
+                  <td style="padding: 12px; text-align: center; color: #a5b4fc; font-size: 0.9em;">
+                    ${provider.coverage}
+                  </td>
+                  <td style="padding: 12px; color: #9ca3af; font-size: 0.9em;">
+                    ${provider.services.join(', ')}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 6px;">
+          <p style="color: #a5b4fc; font-size: 0.85em; margin: 0;">
+            💡 <strong>Hinweis:</strong> Diese Anbieter operieren bundesweit und sind daher keine direkten lokalen Konkurrenten.
+            Ihr Leistungsportfolio kann als Benchmark für moderne Servicestandards dienen.
+          </p>
         </div>
       </div>
     `;

@@ -170,7 +170,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     manualReputationData,
     updateManualReputationData,
     manualSEOData,
-    updateManualSEOData
+    updateManualSEOData,
+    showNationalProviders,
+    updateShowNationalProviders
   } = useManualData();
 
   // Access saved analyses hook
@@ -346,6 +348,12 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             setSavedExtensionData(analysisData.manualData.extensionData);
           }
           
+          // Restore showNationalProviders setting
+          if (typeof analysisData.manualData?.showNationalProviders === 'boolean') {
+            console.log('📥 Restoring showNationalProviders:', analysisData.manualData.showNationalProviders);
+            updateShowNationalProviders(analysisData.manualData.showNationalProviders);
+          }
+
           // CRITICAL: Load security data from saved analysis OR fetch new ones
           // Ignoriere gespeicherte Daten mit Fehlern - führe stattdessen eine neue Prüfung durch
           const savedSecurityData = analysisData.manualData?.securityData;
@@ -640,6 +648,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             manualReputationData={manualReputationData}
             manualSEOData={manualSEOData}
             updateManualSEOData={updateManualSEOData}
+            showNationalProviders={showNationalProviders}
+            onToggleNationalProviders={updateShowNationalProviders}
           />
         );
       case 'website-performance-tech':
@@ -875,6 +885,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               accessibilityData={accessibilityData}
               securityData={securityData}
               extensionData={activeExtensionData}
+              showNationalProviders={showNationalProviders}
             />
             <CustomerHTMLExport
               businessData={businessData}
@@ -909,6 +920,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               accessibilityData={accessibilityData}
               securityData={securityData}
               extensionData={savedExtensionData}
+              showNationalProviders={showNationalProviders}
             />
           </div>
         </div>
