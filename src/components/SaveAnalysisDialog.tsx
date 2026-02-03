@@ -51,6 +51,8 @@ interface SaveAnalysisDialogProps {
   securityData?: any;
   extensionData?: any;
   showNationalProviders?: boolean;
+  showRegionalTrends?: boolean;
+  regionalTrendsData?: any;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -87,7 +89,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   securityData,
   reviewStatus,
   extensionData,
-  showNationalProviders
+  showNationalProviders,
+  showRegionalTrends,
+  regionalTrendsData
 }) => {
   console.log('🔍 SaveAnalysisDialog Props:');
   console.log('  - extensionData prop:', extensionData ? 'RECEIVED' : 'NULL/UNDEFINED');
@@ -153,7 +157,9 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         accessibilityData: accessibilityData || undefined,
         securityData: securityData || undefined,
         extensionData: extensionData || undefined,
-        showNationalProviders: showNationalProviders || undefined
+        showNationalProviders: showNationalProviders || undefined,
+        showRegionalTrends: showRegionalTrends || undefined,
+        regionalTrendsData: regionalTrendsData || undefined
       };
 
       console.log('=== SAVE ANALYSIS DEBUG ===');

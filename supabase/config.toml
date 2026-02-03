@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.check-security-headers]
 verify_jwt = false
+
+[functions.regional-product-trends]
+verify_jwt = false
