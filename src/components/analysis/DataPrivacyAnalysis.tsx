@@ -284,14 +284,39 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
     onManualDataChange(updatedManualData);
   };
 
-  // Get filtered violations (excluding deselected ones)
+  // Get filtered violations (excluding deselected ones AND neutralized by manual input)
   const getActiveViolations = () => {
     if (!privacyData?.violations) return [];
     
     const deselected = manualDataPrivacyData?.deselectedViolations || [];
-    return privacyData.violations.filter((_, index) => 
-      !deselected.includes(`auto-${index}`)
-    );
+    
+    return privacyData.violations.filter((violation: GDPRViolation, index: number) => {
+      // Bereits deselektiert
+      if (deselected.includes(`auto-${index}`)) return false;
+      
+      // SSL/TLS-Violations durch manuelle SSL-Bestätigung neutralisieren
+      const isHSTSViolation = violation.description?.includes('HSTS') || 
+                              violation.description?.includes('Strict-Transport-Security');
+      const isSSLViolation = (violation.description?.includes('SSL') || 
+                             violation.description?.includes('TLS') ||
+                             violation.description?.includes('Verschlüsselung')) &&
+                             !isHSTSViolation;
+      
+      if (isSSLViolation && manualDataPrivacyData?.hasSSL === true) {
+        return false; // SSL-Violation neutralisiert
+      }
+      
+      // Cookie-Banner-Violations durch manuelle Cookie-Consent-Bestätigung neutralisieren
+      const isCookieViolation = violation.description?.includes('Cookie') && 
+                                (violation.description?.includes('Banner') || 
+                                 violation.description?.includes('Consent'));
+      
+      if (isCookieViolation && manualDataPrivacyData?.cookieConsent === true) {
+        return false; // Cookie-Violation neutralisiert
+      }
+      
+      return true;
+    });
   };
 
   // Get all violations including custom ones
