@@ -53,7 +53,10 @@ export const loadSavedAnalysisData = (
   setPrivacyData?: (data: any) => void,
   setAccessibilityData?: (data: any) => void,
   setSecurityData?: (data: any) => void,
-  setSavedExtensionData?: (data: ExtensionWebsiteData | null) => void
+  setSavedExtensionData?: (data: ExtensionWebsiteData | null) => void,
+  updateShowNationalProviders?: (show: boolean) => void,
+  updateShowRegionalTrends?: (show: boolean) => void,
+  updateRegionalTrendsData?: (data: any) => void
 ) => {
   console.log('=== Loading Saved Analysis Data ===');
   console.log('Analysis:', savedAnalysis.name);
@@ -340,6 +343,23 @@ export const loadSavedAnalysisData = (
   if (savedAnalysis.manualData?.extensionData && setSavedExtensionData) {
     console.log('Loading extension data');
     setSavedExtensionData(savedAnalysis.manualData.extensionData);
+  }
+  
+  // Load national providers toggle
+  if (savedAnalysis.manualData?.showNationalProviders !== undefined && updateShowNationalProviders) {
+    console.log('Loading showNationalProviders:', savedAnalysis.manualData.showNationalProviders);
+    updateShowNationalProviders(savedAnalysis.manualData.showNationalProviders);
+  }
+  
+  // Load regional trends toggle and data
+  if (savedAnalysis.manualData?.showRegionalTrends !== undefined && updateShowRegionalTrends) {
+    console.log('Loading showRegionalTrends:', savedAnalysis.manualData.showRegionalTrends);
+    updateShowRegionalTrends(savedAnalysis.manualData.showRegionalTrends);
+  }
+  
+  if (savedAnalysis.manualData?.regionalTrendsData && updateRegionalTrendsData) {
+    console.log('Loading regionalTrendsData:', savedAnalysis.manualData.regionalTrendsData);
+    updateRegionalTrendsData(savedAnalysis.manualData.regionalTrendsData);
   }
   
   console.log('Saved analysis data loaded successfully');
