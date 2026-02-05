@@ -133,50 +133,41 @@ const Index = () => {
 
   const validateAndSaveApiKey = async (keyToValidate: string) => {
     setIsValidatingApiKey(true);
-    console.log('Validating API key...');
+    // Quick client-side validation only.
+    // We intentionally do NOT call external Google endpoints here because
+    // CORS proxies/network restrictions can falsely reject valid keys.
 
     try {
-      // Use CORS proxy for API validation
-      const testUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=Berlin&key=${keyToValidate}`;
-      const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(testUrl)}`;
-      
-      console.log('Testing API key with URL:', proxiedUrl);
-      const response = await fetch(proxiedUrl);
-      
-      if (!response.ok) {
-        console.error('Network error:', response.status, response.statusText);
-        throw new Error(`Network error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('API validation response:', data);
+      const trimmed = keyToValidate.trim();
 
-      if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
-        console.log('API key is valid, saving...');
-        GoogleAPIService.setApiKey(keyToValidate);
-        setApiKey(keyToValidate);
-        
-        // Clear any loaded analysis when starting new analysis
-        setAnalysisToLoad(null);
-        
-        console.log('Moving to results step...');
-        setStep('results');
-        
-        toast({
-          title: "✅ API-Key erfolgreich",
-          description: "Der Google API-Key wurde erfolgreich validiert und gespeichert.",
-        });
-        
-        return true;
-      } else {
-        console.error('API validation failed with status:', data.status);
-        throw new Error(`API validation failed: ${data.status || 'Unknown error'}`);
+      // Basic sanity checks (no network): prevent empty/obviously wrong input.
+      if (!trimmed) {
+        throw new Error('Bitte geben Sie einen API-Key ein.');
       }
+      if (trimmed.length < 20) {
+        throw new Error('Der API-Key ist zu kurz.');
+      }
+
+      // Save immediately; any real API issues should surface during analysis.
+      GoogleAPIService.setApiKey(trimmed);
+      setApiKey(trimmed);
+
+      // Clear any loaded analysis when starting new analysis
+      setAnalysisToLoad(null);
+
+      setStep('results');
+
+      toast({
+        title: '✅ API-Key gespeichert',
+        description: 'Der API-Key wurde gespeichert. Die Prüfung erfolgt während der Analyse.',
+      });
+
+      return true;
     } catch (error) {
       console.error('API Key validation error:', error);
       toast({
-        title: "❌ Ungültiger API-Key",
-        description: "Der API-Key konnte nicht validiert werden. Überprüfen Sie die Eingabe und Internetverbindung.",
+        title: '❌ Ungültiger API-Key',
+        description: error instanceof Error ? error.message : 'Der API-Key ist ungültig.',
         variant: "destructive",
       });
       return false;
