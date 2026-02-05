@@ -5942,30 +5942,102 @@ export const generateCustomerHTML = ({
       <div id="recommendations-content" class="section-content" style="display: none;">
         <div class="metric-card good">
           <h3>Prioritäten für die Umsetzung</h3>
+          
+          <!-- KRITISCH / SOFORT -->
+          ${(() => {
+            const criticalItems: string[] = [];
+            
+            // DSGVO-Mängel (kritisch bei Score < 60)
+            if (dsgvoScore < 60) {
+              criticalItems.push('⚖️ <strong>DSGVO-Compliance dringend verbessern</strong> (Score: ' + Math.round(dsgvoScore) + '%) - Rechtliche Risiken minimieren');
+            }
+            
+            // Technische Sicherheit (kritisch bei Score < 60)
+            if (technicalSecurityScore < 60) {
+              criticalItems.push('🔒 <strong>Technische Sicherheit verbessern</strong> (Score: ' + Math.round(technicalSecurityScore) + '%) - SSL, HSTS und Security-Headers prüfen');
+            }
+            
+            // Barrierefreiheit (kritisch bei Score < 50)
+            if (accessibilityScore < 50) {
+              criticalItems.push('♿ <strong>Barrierefreiheit dringend verbessern</strong> (Score: ' + Math.round(accessibilityScore) + '%) - BFSG-Konformität sicherstellen');
+            }
+            
+            // Impressum (kritisch bei Score < 60)
+            if (impressumScore < 60) {
+              criticalItems.push('📋 <strong>Impressum vervollständigen</strong> (Score: ' + Math.round(impressumScore) + '%) - Abmahngefahr vermeiden');
+            }
+            
+            // Cookie-Banner fehlt (prüfe aus privacyData)
+            if (privacyData && !privacyData.hasConsentBanner) {
+              criticalItems.push('🍪 <strong>Cookie-Consent-Banner implementieren</strong> - TTDSG § 25 Compliance');
+            }
+            
+            // Performance kritisch
+            if (realData.performance.score < 40) {
+              criticalItems.push('⚡ <strong>Website-Performance kritisch</strong> (Score: ' + realData.performance.score + '%) - Ladezeiten optimieren');
+            }
+            
+            if (criticalItems.length === 0) return '';
+            
+            return `
+          <div class="recommendations" style="border-left: 4px solid #dc2626; padding-left: 15px; margin-bottom: 20px;">
+            <h4 style="color: #dc2626;">🚨 KRITISCH - Sofortige Maßnahmen erforderlich</h4>
+            <ul>
+              ${criticalItems.map(item => '<li>' + item + '</li>').join('')}
+            </ul>
+          </div>`;
+          })()}
+          
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
             <div class="recommendations">
-              <h4>Kurzfristig</h4>
+              <h4>Kurzfristig (1-4 Wochen)</h4>
               <ul>
-                ${impressumScore < 70 ? '<li>Impressum vervollständigen</li>' : ''}
-                ${realData.performance.score < 60 ? '<li>Website-Performance optimieren</li>' : ''}
-                ${realData.reviews.google.count < 10 ? '<li>Google-Bewertungen sammeln</li>' : ''}
+                ${impressumScore >= 60 && impressumScore < 90 ? '<li>Impressum optimieren (' + Math.round(impressumScore) + '%)</li>' : ''}
+                ${dsgvoScore >= 60 && dsgvoScore < 80 ? '<li>DSGVO-Dokumentation vervollständigen (' + Math.round(dsgvoScore) + '%)</li>' : ''}
+                ${technicalSecurityScore >= 60 && technicalSecurityScore < 80 ? '<li>Security-Headers optimieren (' + Math.round(technicalSecurityScore) + '%)</li>' : ''}
+                ${accessibilityScore >= 50 && accessibilityScore < 70 ? '<li>Barrierefreiheit verbessern (' + Math.round(accessibilityScore) + '%)</li>' : ''}
+                ${realData.performance.score >= 40 && realData.performance.score < 60 ? '<li>Website-Performance optimieren (' + realData.performance.score + '%)</li>' : ''}
+                ${realData.reviews.google.count < 10 ? '<li>Google-Bewertungen sammeln (aktuell: ' + realData.reviews.google.count + ')</li>' : ''}
+                ${localSEOScore < 60 ? '<li>Lokale SEO verbessern (' + Math.round(localSEOScore) + '%)</li>' : ''}
               </ul>
             </div>
             <div class="recommendations">
-              <h4>Mittelfristig</h4>
+              <h4>Mittelfristig (1-3 Monate)</h4>
               <ul>
-                ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (aktueller Score: ' + socialMediaScore + '%)</li>' : ''}
-                ${realData.seo.score < 70 ? '<li>SEO-Bestandsanalyse durchführen und optimieren</li>' : ''}
-                <li>Content-Marketing-Strategie entwickeln</li>
+                ${socialMediaScore < 60 ? '<li>Social Media Präsenz ausbauen (' + Math.round(socialMediaScore) + '%)</li>' : ''}
+                ${calculatedSEOScore < 70 ? '<li>SEO-Optimierung durchführen (' + Math.round(calculatedSEOScore) + '%)</li>' : ''}
+                ${contentQualityScore < 70 ? '<li>Content-Qualität verbessern (' + Math.round(contentQualityScore) + '%)</li>' : ''}
+                ${backlinksScore < 60 ? '<li>Backlink-Strategie entwickeln (' + Math.round(backlinksScore) + '%)</li>' : ''}
+                ${realData.mobile.pageSpeedMobile < 70 ? '<li>Mobile Optimierung verbessern (' + realData.mobile.pageSpeedMobile + '%)</li>' : ''}
+                ${corporateIdentityScore < 70 ? '<li>Corporate Identity stärken (' + Math.round(corporateIdentityScore) + '%)</li>' : ''}
+                ${accessibilityScore >= 70 && accessibilityScore < 90 ? '<li>Barrierefreiheit auf WCAG 2.1 AA-Niveau bringen</li>' : ''}
               </ul>
             </div>
             <div class="recommendations">
-              <h4>Langfristig</h4>
+              <h4>Langfristig (3-12 Monate)</h4>
               <ul>
-                <li>Backlink-Strategie implementieren</li>
-                <li>Employer Branding stärken</li>
+                ${backlinksScore >= 60 ? '<li>Backlink-Portfolio kontinuierlich ausbauen</li>' : ''}
+                ${workplaceScore < 70 ? '<li>Employer Branding auf Bewertungsportalen stärken (' + Math.round(workplaceScore) + '%)</li>' : '<li>Employer Branding weiter ausbauen</li>'}
                 <li>Wettbewerbsmonitoring etablieren</li>
+                ${accessibilityScore >= 90 ? '<li>WCAG 2.1 AAA-Konformität anstreben</li>' : ''}
+                ${dsgvoScore >= 80 ? '<li>DSGVO-Compliance regelmäßig auditieren</li>' : ''}
+                <li>Content-Marketing-Strategie langfristig umsetzen</li>
               </ul>
+            </div>
+          </div>
+          
+          <!-- Zusammenfassung der Scores -->
+          <div style="margin-top: 25px; padding: 15px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+            <h4 style="margin-top: 0; color: #fbbf24;">📊 Übersicht der Handlungsbedarfe</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 14px;">
+              <div>DSGVO-Compliance: <span style="color: ${dsgvoScore >= 80 ? '#22c55e' : dsgvoScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(dsgvoScore)}%</span></div>
+              <div>Techn. Sicherheit: <span style="color: ${technicalSecurityScore >= 80 ? '#22c55e' : technicalSecurityScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(technicalSecurityScore)}%</span></div>
+              <div>Barrierefreiheit: <span style="color: ${accessibilityScore >= 80 ? '#22c55e' : accessibilityScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(accessibilityScore)}%</span></div>
+              <div>Impressum: <span style="color: ${impressumScore >= 80 ? '#22c55e' : impressumScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(impressumScore)}%</span></div>
+              <div>SEO: <span style="color: ${calculatedSEOScore >= 80 ? '#22c55e' : calculatedSEOScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(calculatedSEOScore)}%</span></div>
+              <div>Content: <span style="color: ${contentQualityScore >= 80 ? '#22c55e' : contentQualityScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(contentQualityScore)}%</span></div>
+              <div>Local SEO: <span style="color: ${localSEOScore >= 80 ? '#22c55e' : localSEOScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(localSEOScore)}%</span></div>
+              <div>Social Media: <span style="color: ${socialMediaScore >= 80 ? '#22c55e' : socialMediaScore >= 60 ? '#fbbf24' : '#dc2626'}; font-weight: bold;">${Math.round(socialMediaScore)}%</span></div>
             </div>
           </div>
         </div>
