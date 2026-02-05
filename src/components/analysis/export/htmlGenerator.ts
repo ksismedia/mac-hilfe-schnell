@@ -2674,9 +2674,6 @@ export const generateCustomerHTML = ({
             })()}
           </ul>
         </div>
-        
-        ${showNationalProviders ? getNationalProvidersSection(businessData.industry) : ''}
-        ${showRegionalTrends && regionalTrendsData ? getRegionalTrendsSection(regionalTrendsData) : ''}
       </div>
     `;
   };
@@ -2840,6 +2837,153 @@ export const generateCustomerHTML = ({
             Ihr Leistungsportfolio kann als Benchmark für moderne Servicestandards dienen.
           </p>
         </div>
+      </div>
+    `;
+  };
+
+  // Content-only version for standalone section (without wrapper div)
+  const getNationalProvidersContentOnly = (industry: string): string => {
+    const providers = getNationalProvidersByIndustry(industry);
+    
+    if (providers.length === 0) {
+      return '<p style="color: #9ca3af;">Keine überregionalen Anbieter für diese Branche hinterlegt.</p>';
+    }
+    
+    return `
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; background: rgba(17, 24, 39, 0.6); border-radius: 8px; overflow: hidden;">
+          <thead>
+            <tr style="background: rgba(99, 102, 241, 0.2);">
+              <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Anbieter</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Reichweite</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc;">Leistungsportfolio</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${providers.map((provider: NationalProvider) => `
+              <tr style="border-bottom: 1px solid rgba(107, 114, 128, 0.3);">
+                <td style="padding: 12px; color: #c7d2fe;">
+                  <strong>${provider.name}</strong>
+                  <br><small style="color: #9ca3af;">${provider.description}</small>
+                </td>
+                <td style="padding: 12px; text-align: center; color: #a5b4fc; font-size: 0.9em;">
+                  ${provider.coverage}
+                </td>
+                <td style="padding: 12px; color: #9ca3af; font-size: 0.9em;">
+                  ${provider.services.join(', ')}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="margin-top: 15px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 6px;">
+        <p style="color: #a5b4fc; font-size: 0.85em; margin: 0;">
+          💡 <strong>Hinweis:</strong> Diese Anbieter operieren bundesweit und sind daher keine direkten lokalen Konkurrenten.
+          Ihr Leistungsportfolio kann als Benchmark für moderne Servicestandards dienen.
+        </p>
+      </div>
+    `;
+  };
+
+  // Content-only version for regional trends standalone section
+  const getRegionalTrendsContentOnly = (trendsData: any): string => {
+    if (!trendsData || !trendsData.trends || trendsData.trends.length === 0) {
+      return '<p style="color: #9ca3af;">Keine regionalen Produkttrends verfügbar.</p>';
+    }
+
+    const getRelevanceColor = (relevance: string): { bg: string; text: string; border: string } => {
+      switch (relevance) {
+        case 'high':
+          return { bg: '#dcfce7', text: '#166534', border: '#86efac' };
+        case 'medium':
+          return { bg: '#fef9c3', text: '#854d0e', border: '#fde047' };
+        case 'low':
+          return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+        default:
+          return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+      }
+    };
+
+    const getRelevanceLabel = (relevance: string): string => {
+      switch (relevance) {
+        case 'high':
+          return 'Hohe Relevanz';
+        case 'medium':
+          return 'Mittlere Relevanz';
+        case 'low':
+          return 'Geringe Relevanz';
+        default:
+          return 'Unbekannt';
+      }
+    };
+
+    const formattedDate = new Date(trendsData.generatedAt).toLocaleString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    return `
+      <div style="margin-bottom: 16px; padding: 12px; background: rgba(124, 58, 237, 0.15); border-radius: 8px; border-left: 4px solid #7c3aed;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong style="color: #c4b5fd;">Region: ${trendsData.region}</strong>
+          <span style="font-size: 11px; color: #9ca3af;">Branche: ${trendsData.industry}</span>
+        </div>
+        <p style="color: #c4b5fd; font-size: 13px; margin: 0; line-height: 1.5;">
+          ${trendsData.summary}
+        </p>
+        <p style="font-size: 11px; color: #9ca3af; margin: 8px 0 0 0;">
+          Aktualisiert: ${formattedDate}
+        </p>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <h4 style="color: #e0e7ff; font-size: 14px; font-weight: 600; margin-bottom: 12px;">
+          Identifizierte Markttrends (${trendsData.trends.length})
+        </h4>
+        ${trendsData.trends.map((trend: any, index: number) => {
+          const colors = getRelevanceColor(trend.relevance);
+          return `
+            <div style="padding: 16px; border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 8px; background: rgba(124, 58, 237, 0.05); margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <strong style="color: #c4b5fd; font-size: 15px;">${index + 1}. ${trend.trend}</strong>
+                <span style="padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border};">
+                  ${getRelevanceLabel(trend.relevance)}
+                </span>
+              </div>
+              <p style="color: #9ca3af; font-size: 13px; line-height: 1.5; margin: 0;">
+                ${trend.description}
+              </p>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div style="margin-top: 20px; padding: 16px; background: rgba(124, 58, 237, 0.15); border: 2px solid rgba(196, 181, 253, 0.3); border-radius: 8px;">
+        <h4 style="color: #c4b5fd; margin: 0 0 12px 0; font-size: 14px;">
+          ★ Handlungsempfehlungen basierend auf Markttrends:
+        </h4>
+        <ul style="margin: 0; padding-left: 20px; color: #9ca3af; font-size: 13px; line-height: 1.8;">
+          ${trendsData.trends
+            .filter((t: any) => t.relevance === 'high')
+            .slice(0, 3)
+            .map((t: any) => `<li><strong>${t.trend}:</strong> Prüfen Sie, ob Sie diesen Trend in Ihrem Leistungsangebot abbilden können.</li>`)
+            .join('')}
+          <li>Positionieren Sie sich als regionaler Experte für die identifizierten Trendthemen.</li>
+          <li>Nutzen Sie die Trends für Ihre Marketingkommunikation und Content-Strategie.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+        <p style="font-size: 11px; color: #fbbf24; margin: 0;">
+          ⚠️ <strong>Hinweis:</strong> Diese Trendanalyse basiert auf KI-gestützter Webrecherche (Perplexity AI) und 
+          stellt eine Momentaufnahme dar. Die Relevanz der Trends kann je nach spezifischer Marktlage variieren. 
+          Eine individuelle Beratung wird empfohlen.
+        </p>
       </div>
     `;
   };
@@ -5470,6 +5614,41 @@ export const generateCustomerHTML = ({
         ${getCompetitorAnalysis()}
       </div>
     </div>
+
+    <!-- Überregionale Großanbieter (separate Referenz-Sektion, keine Bewertung) -->
+    ${showNationalProviders ? `
+    <div class="section" style="page-break-inside: avoid;">
+      <div class="section-header" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+        <span>🌐 Überregionale Großanbieter (Referenz)</span>
+      </div>
+      <div class="section-content">
+        <div style="padding: 15px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #818cf8;">
+          <p style="color: #a5b4fc; font-size: 0.95em; margin: 0; font-style: italic;">
+            ⚠️ Diese bundesweiten Anbieter dienen nur als Leistungsvergleich und sind keine direkten lokalen Wettbewerber.
+            Sie fließen <strong>nicht</strong> in die Wettbewerbsbewertung ein.
+          </p>
+        </div>
+        ${getNationalProvidersContentOnly(businessData.industry)}
+      </div>
+    </div>
+    ` : ''}
+
+    <!-- Regionale Produkttrends (separate Referenz-Sektion, keine Bewertung) -->
+    ${showRegionalTrends && regionalTrendsData ? `
+    <div class="section" style="page-break-inside: avoid;">
+      <div class="section-header" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
+        <span>📈 Regionale Produkttrends</span>
+      </div>
+      <div class="section-content">
+        <div style="padding: 15px; background: rgba(124, 58, 237, 0.1); border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #a78bfa;">
+          <p style="color: #c4b5fd; font-size: 0.95em; margin: 0; font-style: italic;">
+            ⚠️ Diese Trendanalyse dient als Marktübersicht und fließt <strong>nicht</strong> in die Bewertung ein.
+          </p>
+        </div>
+        ${getRegionalTrendsContentOnly(regionalTrendsData)}
+      </div>
+    </div>
+    ` : ''}
 
     <!-- Stundensatzanalyse -->
     ${hourlyRateData ? `
