@@ -141,7 +141,13 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     manualReputationData,
     updateManualReputationData,
     manualSEOData,
-    updateManualSEOData
+    updateManualSEOData,
+    showNationalProviders,
+    updateShowNationalProviders,
+    showRegionalTrends,
+    updateShowRegionalTrends,
+    regionalTrendsData,
+    updateRegionalTrendsData
   } = useManualData();
 
   // Access saved analyses hook
@@ -240,7 +246,10 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
               setPrivacyData,
               setAccessibilityData,
               setSecurityData,
-              setSavedExtensionData
+              setSavedExtensionData,
+              updateShowNationalProviders,
+              updateShowRegionalTrends,
+              updateRegionalTrendsData
             );
             
             console.log('Saved analysis loaded successfully');

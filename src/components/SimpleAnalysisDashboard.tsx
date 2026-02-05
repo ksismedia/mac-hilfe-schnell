@@ -339,10 +339,14 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             updateManualConversionData,
             updateManualMobileData,
             updateManualReputationData,
+            updateManualSEOData,
             setPrivacyData,
             setAccessibilityData,
             setSecurityData,
-            setSavedExtensionData
+            setSavedExtensionData,
+            updateShowNationalProviders,
+            updateShowRegionalTrends,
+            updateRegionalTrendsData
           );
           
           console.log('=== DIRECT ANALYSIS DATA LOADED SUCCESSFULLY ===');
@@ -350,12 +354,6 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           if (analysisData.manualData?.extensionData) {
             console.log('📥 Restoring extension data:', analysisData.manualData.extensionData.url);
             setSavedExtensionData(analysisData.manualData.extensionData);
-          }
-          
-          // Restore showNationalProviders setting
-          if (typeof analysisData.manualData?.showNationalProviders === 'boolean') {
-            console.log('📥 Restoring showNationalProviders:', analysisData.manualData.showNationalProviders);
-            updateShowNationalProviders(analysisData.manualData.showNationalProviders);
           }
 
           // CRITICAL: Load security data from saved analysis OR fetch new ones

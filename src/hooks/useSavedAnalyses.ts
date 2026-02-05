@@ -46,6 +46,8 @@ export interface SavedAnalysis {
     securityData?: any;
     extensionData?: any;
     showNationalProviders?: boolean;
+    showRegionalTrends?: boolean;
+    regionalTrendsData?: any;
   };
 }
 
