@@ -175,13 +175,13 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-yellow-400 text-black';
-    if (score >= 61) return 'bg-green-500 text-white';
+    if (score >= 60) return 'bg-green-500 text-white';
     return 'bg-red-500 text-white';
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return 'secondary';
-    if (score >= 61) return 'default';
+    if (score >= 60) return 'default';
     return 'destructive';
   };
 
@@ -232,20 +232,20 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
               </div>
               <div className="text-center p-4 border rounded-lg">
                 <Badge variant={getScoreBadge(reputationScore)} className="text-base px-4 py-1">
-                  {reputationScore >= 90 ? 'Ausgezeichnet' : reputationScore >= 61 ? 'Gut' : 'Ausbaufähig'}
+                  {reputationScore >= 90 ? 'Ausgezeichnet' : reputationScore >= 60 ? 'Gut' : 'Ausbaufähig'}
                 </Badge>
                 <p className="text-sm text-muted-foreground mt-2">Online-Reputation</p>
               </div>
               <div className="text-center p-4 border rounded-lg">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  {reputationScore >= 61 ? (
+                  {reputationScore >= 60 ? (
                     <CheckCircle className="h-6 w-6 text-green-500" />
                   ) : (
                     <AlertCircle className="h-6 w-6 text-yellow-500" />
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {reputationScore >= 61 ? 'Positive Präsenz' : 'Verbesserungspotenzial'}
+                  {reputationScore >= 60 ? 'Positive Präsenz' : 'Verbesserungspotenzial'}
                 </p>
               </div>
             </div>
@@ -310,7 +310,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
-                  {reputationScore < 61 && (
+                  {reputationScore < 60 && (
                     <>
                       <li className="flex items-start gap-2">
                         <AlertCircle className="h-4 w-4 mt-0.5 text-yellow-500 flex-shrink-0" />

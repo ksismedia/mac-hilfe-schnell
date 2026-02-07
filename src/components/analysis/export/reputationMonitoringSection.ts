@@ -3,14 +3,14 @@ import { ManualReputationData } from '@/hooks/useManualData';
 // Helper function to get score color
 const getScoreColor = (score: number) => {
   if (score >= 90) return '#FFD700';   // Gold
-  if (score >= 61) return '#22c55e';   // Green
+  if (score >= 60) return '#22c55e';   // Green
   return '#FF0000';                    // Red
 };
 
 // Helper function to get score color class
 const getScoreColorClass = (score: number) => {
   if (score >= 90) return "yellow";
-  if (score >= 61) return "green";
+  if (score >= 60) return "green";
   return "red";
 };
 
@@ -102,7 +102,7 @@ export const generateReputationMonitoringSection = (
             <div class="score-details">
               <p><strong>Reputation-Score:</strong> ${
                 reputationScore >= 90 ? 'Ausgezeichnet' : 
-                reputationScore >= 61 ? 'Gut' : 
+                reputationScore >= 60 ? 'Gut' : 
                 'Ausbaufähig'
               }</p>
               <p style="color: #6b7280; font-size: 0.85rem; margin: 4px 0 12px 0; line-height: 1.4;">
@@ -147,10 +147,10 @@ export const generateReputationMonitoringSection = (
                 Gesamteindruck der Erwähnungen
               </p>
             </div>
-            <div style="background: ${reputationScore >= 61 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)'}; padding: 16px; border-radius: 8px; border-left: 4px solid ${reputationScore >= 61 ? '#22c55e' : '#fbbf24'};">
-              <h4 style="color: ${reputationScore >= 61 ? '#22c55e' : '#fbbf24'}; margin: 0 0 8px 0; font-size: 0.95em;">Bewertung</h4>
-              <p style="font-size: 1.5em; font-weight: bold; margin: 0; color: ${reputationScore >= 61 ? '#22c55e' : '#fbbf24'};">
-                ${reputationScore >= 90 ? 'Ausgezeichnet' : reputationScore >= 61 ? 'Gut' : 'Ausbaufähig'}
+            <div style="background: ${reputationScore >= 60 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)'}; padding: 16px; border-radius: 8px; border-left: 4px solid ${reputationScore >= 60 ? '#22c55e' : '#fbbf24'};">
+              <h4 style="color: ${reputationScore >= 60 ? '#22c55e' : '#fbbf24'}; margin: 0 0 8px 0; font-size: 0.95em;">Bewertung</h4>
+              <p style="font-size: 1.5em; font-weight: bold; margin: 0; color: ${reputationScore >= 60 ? '#22c55e' : '#fbbf24'};">
+                ${reputationScore >= 90 ? 'Ausgezeichnet' : reputationScore >= 60 ? 'Gut' : 'Ausbaufähig'}
               </p>
               <p style="margin: 8px 0 0 0; font-size: 0.85em; color: #6b7280;">
                 Online-Reputation Status
@@ -200,7 +200,7 @@ export const generateReputationMonitoringSection = (
           <div class="recommendations">
             <h4>Handlungsempfehlungen:</h4>
             <ul>
-              ${reputationScore < 61 ? `
+              ${reputationScore < 60 ? `
                 <li>Aktive Online-Präsenz aufbauen durch regelmäßige Social Media Aktivitäten</li>
                 <li>Kunden um Bewertungen auf Google und Branchenportalen bitten</li>
                 <li>Content-Marketing betreiben, um mehr Web-Erwähnungen zu generieren</li>

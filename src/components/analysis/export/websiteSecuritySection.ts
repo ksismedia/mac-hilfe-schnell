@@ -7,8 +7,8 @@ const getScoreColor = (score: number) => {
 };
 
 const getScoreColorClass = (score: number) => {
-  if (score < 61) return "red";       // 0-60% rot
-  if (score < 90) return "green";     // 61-89% grün
+  if (score < 60) return "red";       // 0-59% rot
+  if (score < 90) return "green";     // 60-89% grün
   return "yellow";                    // 90-100% gold
 };
 

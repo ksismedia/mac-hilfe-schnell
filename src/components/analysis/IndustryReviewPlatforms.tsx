@@ -19,13 +19,13 @@ interface IndustryReviewPlatformsProps {
 export const IndustryReviewPlatforms = ({ platforms, overallScore }: IndustryReviewPlatformsProps) => {
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-warning";
-    if (score >= 61) return "text-success";
+    if (score >= 60) return "text-success";
     return "text-destructive";
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return "bg-warning/10 text-warning border-warning/20";
-    if (score >= 61) return "bg-success/10 text-success border-success/20";
+    if (score >= 60) return "bg-success/10 text-success border-success/20";
     return "bg-destructive/10 text-destructive border-destructive/20";
   };
 

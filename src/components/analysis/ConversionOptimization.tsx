@@ -45,13 +45,13 @@ const ConversionOptimization: React.FC<ConversionOptimizationProps> = ({ url, ma
 
   const getScoreBadgeVariant = (score: number) => {
     if (score >= 90) return "secondary";
-    if (score >= 61) return "default";
+    if (score >= 60) return "default";
     return "destructive";
   };
 
   const getScoreColorClass = (score: number) => {
     if (score >= 90) return "bg-yellow-400 text-black";
-    if (score >= 61) return "bg-green-500 text-white";
+    if (score >= 60) return "bg-green-500 text-white";
     return "bg-red-500 text-white";
   };
 

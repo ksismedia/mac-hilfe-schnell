@@ -258,7 +258,7 @@ export function StaffQualificationInput({ businessData, data, onUpdate }: StaffQ
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-yellow-400';
-    if (score >= 61) return 'text-green-400';
+    if (score >= 60) return 'text-green-400';
     return 'text-red-400';
   };
 

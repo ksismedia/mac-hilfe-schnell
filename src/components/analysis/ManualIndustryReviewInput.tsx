@@ -173,7 +173,7 @@ export const ManualIndustryReviewInput = ({ onUpdate, initialData }: ManualIndus
                     Gesamt-Score: 
                     <span className={
                       calculateOverallScore(platforms) >= 90 ? "text-warning ml-1" :
-                      calculateOverallScore(platforms) >= 61 ? "text-success ml-1" :
+                      calculateOverallScore(platforms) >= 60 ? "text-success ml-1" :
                       "text-destructive ml-1"
                     }>
                       {calculateOverallScore(platforms)}%

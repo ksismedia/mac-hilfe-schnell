@@ -161,7 +161,7 @@ const StaffServiceCategory: React.FC<StaffServiceCategoryProps> = ({
               <div 
                 className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold ${
                   Math.round(competitorAnalysis.ownScore) >= 90 ? 'bg-yellow-400 text-black' :
-                  Math.round(competitorAnalysis.ownScore) >= 61 ? 'bg-green-500 text-white' :
+                  Math.round(competitorAnalysis.ownScore) >= 60 ? 'bg-green-500 text-white' :
                   'bg-red-500 text-white'
                 }`}
               >

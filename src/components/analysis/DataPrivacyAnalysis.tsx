@@ -480,7 +480,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                         <div 
                           className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                             effectiveScore >= 90 ? 'bg-yellow-400 text-black' : 
-                            effectiveScore >= 61 ? 'bg-green-500 text-white' : 
+                            effectiveScore >= 60 ? 'bg-green-500 text-white' : 
                             'bg-red-500 text-white'
                           }`}
                         >
@@ -1050,7 +1050,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                     <div 
                       className={`ml-auto flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                         getTechnicalSecurityScore() >= 90 ? 'bg-yellow-400 text-black' : 
-                        getTechnicalSecurityScore() >= 61 ? 'bg-green-500 text-white' : 
+                        getTechnicalSecurityScore() >= 60 ? 'bg-green-500 text-white' : 
                         'bg-red-500 text-white'
                       }`}
                     >

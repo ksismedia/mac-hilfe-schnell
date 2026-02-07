@@ -119,13 +119,13 @@ const QuoteResponseInput: React.FC<QuoteResponseInputProps> = ({ data, onDataCha
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-yellow-600';  // 90-100% gold
-    if (score >= 61) return 'text-green-600';   // 61-89% green
-    return 'text-red-600';                      // 0-60% red
+    if (score >= 60) return 'text-green-600';   // 60-89% green
+    return 'text-red-600';                      // 0-59% red
   };
 
   const getScoreLabel = (score: number) => {
     if (score >= 90) return 'Ausgezeichnet';
-    if (score >= 61) return 'Gut';
+    if (score >= 60) return 'Gut';
     if (score >= 40) return 'Verbesserungsbedarf';
     return 'Kritisch';
   };

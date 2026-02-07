@@ -350,7 +350,9 @@ div.collapsible.section-header {
 .score-circle.green { background: #22c55e !important; color: white !important; }    /* 61-89% */
 .score-circle.yellow { background: #FFD700 !important; color: black !important; }   /* 90-100% */
 .score-circle[data-score="0-60"] { background: #FF0000 !important; color: white !important; }
+.score-circle[data-score="0-59"] { background: #FF0000 !important; color: white !important; }
 .score-circle[data-score="61-89"] { background: #22c55e !important; color: white !important; }
+.score-circle[data-score="60-89"] { background: #22c55e !important; color: white !important; }
 .score-circle[data-score="90-100"] { background: #FFD700 !important; color: black !important; }
 .section-content { 
   padding: 30px; 
@@ -476,11 +478,13 @@ span[style*="font-size: 6px"] {
 }
 
 /* Progress-Fill Farben basierend auf korrekten Wert-Bereichen */
-.progress-fill[data-score="0-60"] { background: #FF0000 !important; } /* Rot 0-60% */
-.progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün 60-80% */
-.progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb 80-100% */
-.progress-fill[data-score="61-89"] { background: #22c55e !important; } /* Grün 61-89% (fallback) */
-.progress-fill[data-score="90-100"] { background: #FFD700 !important; } /* Gelb 90-100% (fallback) */
+.progress-fill[data-score="0-60"] { background: #FF0000 !important; } /* Rot (legacy) */
+.progress-fill[data-score="0-59"] { background: #FF0000 !important; } /* Rot 0-59% */
+.progress-fill[data-score="60-80"] { background: #22c55e !important; } /* Grün (legacy) */
+.progress-fill[data-score="60-89"] { background: #22c55e !important; } /* Grün 60-89% */
+.progress-fill[data-score="80-100"] { background: #FFD700 !important; } /* Gelb (legacy) */
+.progress-fill[data-score="61-89"] { background: #22c55e !important; } /* Grün (legacy fallback) */
+.progress-fill[data-score="90-100"] { background: #FFD700 !important; } /* Gelb 90-100% */
 
 /* Progress-Fill CSS-Klassen für bessere Kontrolle */
 .progress-red { background: #FF0000 !important; }
@@ -572,7 +576,9 @@ span[style*="font-size: 6px"] {
 }
 
 .percentage-btn[data-score="0-60"] { background: #FF0000; color: white !important; }
+.percentage-btn[data-score="0-59"] { background: #FF0000; color: white !important; }
 .percentage-btn[data-score="60-80"] { background: #22c55e; color: white !important; }
+.percentage-btn[data-score="60-89"] { background: #22c55e; color: white !important; }
 .percentage-btn[data-score="80-100"] { background: #FFD700; color: black !important; }
 .percentage-btn[data-score="61-89"] { background: #22c55e; color: white !important; }
 .percentage-btn[data-score="90-100"] { background: #FFD700; color: black !important; }
@@ -819,7 +825,9 @@ table tr {
   }
   
   .progress-fill[data-score="0-60"] { background: #FF0000 !important; }
+  .progress-fill[data-score="0-59"] { background: #FF0000 !important; }
   .progress-fill[data-score="61-89"] { background: #22c55e !important; }
+  .progress-fill[data-score="60-89"] { background: #22c55e !important; }
   .progress-fill[data-score="90-100"] { background: #FFD700 !important; }
   
   .recommendations {
@@ -860,8 +868,16 @@ table tr {
   background-color: #dc2626 !important;
   color: #ffffff !important;
 }
+.score-badge[data-score="0-59"] {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
 
 .score-badge[data-score="60-80"] {
+  background-color: #16a34a !important;
+  color: #ffffff !important;
+}
+.score-badge[data-score="60-89"] {
   background-color: #16a34a !important;
   color: #ffffff !important;
 }
