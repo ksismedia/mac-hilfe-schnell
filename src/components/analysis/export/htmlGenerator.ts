@@ -89,22 +89,22 @@ interface CustomerReportData {
 
 // Function to get score range for data attribute
 const getScoreRange = (score: number) => {
-  if (score < 61) return "0-60";
-  if (score < 90) return "61-89";
+  if (score < 60) return "0-59";
+  if (score < 90) return "60-89";
   return "90-100";
 };
 
 // Function to get score color class
 const getScoreColorClass = (score: number) => {
-  if (score < 61) return "red";       // 0-60% rot
-  if (score < 90) return "green";     // 61-89% grün
+  if (score < 60) return "red";       // 0-59% rot
+  if (score < 90) return "green";     // 60-89% grün
   return "yellow";                    // 90-100% gold
 };
 
 // Function to get score color (hex value for inline styles)
 const getScoreColor = (score: number) => {
-  if (score <= 60) return '#FF0000';   // 0-60% rot
-  if (score <= 89) return '#22c55e';   // 61-89% grün
+  if (score < 60) return '#FF0000';    // 0-59% rot
+  if (score < 90) return '#22c55e';    // 60-89% grün
   return '#FFD700';                    // 90-100% gold
 };
 
@@ -136,11 +136,11 @@ const getCompetitorAnalysisColor = (ownScore: number, avgCompetitorScore: number
 
 // Helper functions for score tile background and text colors
 const getScoreTileBackgroundColor = (score: number): string => {
-  return score >= 0 && score <= 60 ? '#FF0000' : '#E8E8E8'; // Red for 0-60%, silver for 61-100%
+  return score >= 0 && score < 60 ? '#FF0000' : '#E8E8E8'; // Red for 0-59%, silver for 60-100%
 };
 
 const getScoreTileTextColor = (score: number): string => {
-  return score >= 0 && score <= 60 ? '#FFFFFF' : '#000000'; // White text on red, black on silver
+  return score >= 0 && score < 60 ? '#FFFFFF' : '#000000'; // White text on red, black on silver
 };
 
 const escapeHtml = (value: string) =>
@@ -1638,7 +1638,7 @@ export const generateCustomerHTML = ({
     // Berechne den korrigierten SEO-Score - Alt-Tags mit 0% fließen immer in Bewertung ein
     const calculatedSeoScore = Math.round((titleTagScore + metaDescriptionScore + headingScore + altTagsScore) / 4);
     const criticalSeoScore = calculatedSeoScore;
-    const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 61 ? 'green' : 'red';
+    const scoreClass = criticalSeoScore >= 90 ? 'yellow' : criticalSeoScore >= 60 ? 'green' : 'red';
 
     // Generate rejected elements info (Alt-Tags separat behandeln - nicht in Fehlerliste)
     const nonAltTagRejectedElements = rejectedElements.filter(el => el !== 'altTags');
@@ -1688,12 +1688,12 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(criticalSeoScore)}">${criticalSeoScore}%</div>
           <div class="score-details">
-            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 90 ? 'Exzellent' : criticalSeoScore >= 61 ? 'Hoch' : 'Niedrig'}</p>
+            <p><strong>Sichtbarkeit:</strong> ${criticalSeoScore >= 90 ? 'Exzellent' : criticalSeoScore >= 60 ? 'Hoch' : 'Niedrig'}</p>
           </div>
         </div>
         ${generateProgressBar(
           criticalSeoScore,
-          `${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 61 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'Dringende SEO-Verbesserungen erforderlich'}`
+          `${criticalSeoScore >= 90 ? 'Hervorragende SEO-Basis' : criticalSeoScore >= 80 ? 'Sehr gute SEO-Basis' : criticalSeoScore >= 60 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'Dringende SEO-Verbesserungen erforderlich'}`
         )}
         
         <!-- Detaillierte SEO-Analyse basierend auf tatsächlichen Werten -->
@@ -1731,7 +1731,7 @@ export const generateCustomerHTML = ({
             <div>
               <p><strong>Keyword-Analyse:</strong> ${(() => {
                 if (effectiveKeywordScore >= 90) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Exzellent`;
-                if (effectiveKeywordScore >= 61) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Sehr gut`;
+                if (effectiveKeywordScore >= 60) return `${foundKeywords}/${keywordData.length} Keywords gefunden - Sehr gut`;
                 return `${foundKeywords}/${keywordData.length} Keywords gefunden`;
               })()}</p>
               ${generateProgressBar(effectiveKeywordScore, `Hauptsuchbegriffe Ihrer Branche - Basis für Ihre Auffindbarkeit in Suchmaschinen`)}
@@ -1740,7 +1740,7 @@ export const generateCustomerHTML = ({
               <p><strong>Long-Tail Keywords:</strong> ${(() => {
                 const longTailScore = Math.max(20, Math.round(effectiveKeywordScore * 0.6));
                 if (longTailScore >= 90) return 'Hervorragend optimiert';
-                if (longTailScore >= 61) return 'Gut optimiert';
+                if (longTailScore >= 60) return 'Gut optimiert';
                 return 'Verbesserungsbedarf';
               })()}</p>
               ${generateProgressBar(Math.max(20, Math.round(effectiveKeywordScore * 0.6)), `Spezifische Suchbegriffe mit 3+ Wörtern (z.B. "Heizung Notdienst München") - wichtig für gezielte Kundenanfragen`)}
@@ -1750,7 +1750,7 @@ export const generateCustomerHTML = ({
                 const localKeywordScore = businessData.address ? Math.max(40, Math.round(effectiveKeywordScore * 0.9)) : 20;
                 if (!businessData.address) return 'Fehlend';
                 if (localKeywordScore >= 90) return 'Exzellent integriert';
-                if (localKeywordScore >= 61) return 'Gut vorhanden';
+                if (localKeywordScore >= 60) return 'Gut vorhanden';
                 return 'Verbesserungsbedarf';
               })()}</p>
               ${generateProgressBar(Math.round(businessData.address ? Math.max(40, effectiveKeywordScore * 0.9) : 20), `Ortsbezogene Suchbegriffe (z.B. "Elektriker München") - essenziell für lokale Auffindbarkeit`)}
@@ -1904,13 +1904,13 @@ export const generateCustomerHTML = ({
         score: Math.max(25, Math.min(90, realData.seo.score)),
         addressVisible: realData.seo.metaDescription ? realData.seo.metaDescription.includes(businessData.address.split(',')[1]?.trim() || '') : false,
         phoneVisible: realData.seo.score >= 50,
-        openingHours: realData.seo.score >= 61,
+        openingHours: realData.seo.score >= 60,
         localSchema: realData.seo.score >= 90 && realData.seo.headings.h1.length > 0,
         localContent: Math.max(20, Math.min(85, realData.seo.score - 15))
       }
     };
 
-    const scoreClass = localSEOScore >= 90 ? 'yellow' : localSEOScore >= 61 ? 'green' : 'red';
+    const scoreClass = localSEOScore >= 90 ? 'yellow' : localSEOScore >= 60 ? 'green' : 'red';
 
     // Helper function to calculate average between manual and auto data
     const calculateAverage = (manualValue: number | undefined, autoValue: number) => {
@@ -1963,8 +1963,8 @@ export const generateCustomerHTML = ({
     return `
       <div class="metric-card ${scoreClass}">
         <div class="score-details" style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; margin-bottom: 15px;">
-          <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOScore >= 90 ? 'Exzellent' : localSEOScore >= 61 ? 'Sehr gut' : 'Verbesserungsbedarf'}</p>
-          <p><strong>Empfehlung:</strong> ${localSEOScore >= 90 ? 'Hervorragende lokale Präsenz – Behalten Sie diesen Standard bei!' : localSEOScore >= 61 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
+          <p><strong>Lokale Sichtbarkeit:</strong> ${localSEOScore >= 90 ? 'Exzellent' : localSEOScore >= 60 ? 'Sehr gut' : 'Verbesserungsbedarf'}</p>
+          <p><strong>Empfehlung:</strong> ${localSEOScore >= 90 ? 'Hervorragende lokale Präsenz – Behalten Sie diesen Standard bei!' : localSEOScore >= 60 ? 'Gute Basis, weitere Optimierung möglich' : 'Lokale SEO dringend optimieren'}</p>
         </div>
 
         ${renderSection(
@@ -2157,12 +2157,12 @@ export const generateCustomerHTML = ({
         <div class="score-display">
           <div class="score-circle ${getScoreColorClass(mobileScore)}">${mobileScore}%</div>
           <div class="score-details">
-            <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+            <p><strong>Mobile-Freundlichkeit:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
           </div>
         </div>
         ${generateProgressBar(
           mobileScore,
-          `${mobileScore >= 90 ? 'Exzellente mobile Optimierung' : mobileScore >= 61 ? 'Gute mobile Optimierung' : 'Mobile Optimierung sollte verbessert werden'}`
+          `${mobileScore >= 90 ? 'Exzellente mobile Optimierung' : mobileScore >= 60 ? 'Gute mobile Optimierung' : 'Mobile Optimierung sollte verbessert werden'}`
         )}
         
         <!-- Responsive Design -->
@@ -2170,7 +2170,7 @@ export const generateCustomerHTML = ({
           <h4>Responsive Design</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
-              <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Viewport-Konfiguration:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 60 ? 'Gut umgesetzt' : 'Verbesserungsbedarf'}</p>
               <div class="progress-container">
                 <div class="progress-bar">
                   <div class="progress-fill" data-score="${getScoreRange(Math.max(40, mobileScore))}" style="width: ${Math.max(40, mobileScore)}%; display: flex; align-items: center; justify-content: center;">
@@ -2355,7 +2355,7 @@ export const generateCustomerHTML = ({
 
     const maxRadius = getMaxRadius();
     const ownScore = (window as any).globalOwnCompanyScore || 75;
-    const scoreColorClass = ownScore >= 90 ? 'excellent' : ownScore >= 61 ? 'good' : 'poor';
+    const scoreColorClass = ownScore >= 90 ? 'excellent' : ownScore >= 60 ? 'good' : 'poor';
 
     return `
       <div class="metric-card ${scoreColorClass}">
@@ -3513,7 +3513,7 @@ export const generateCustomerHTML = ({
                   return `
                     <div style="color: #ffffff;">${cat.name}</div>
                     <div style="text-align: right;">
-                      <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 61 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
+                      <span style="font-weight: 600; color: ${cat.score >= 90 ? '#f59e0b' : cat.score >= 60 ? '#22c55e' : '#ef4444'};">${cat.score}%</span>
                     </div>
                     <div style="text-align: right; padding-left: 12px;">
                       <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 500;">(${weightPercent}%)</span>
@@ -3545,8 +3545,8 @@ export const generateCustomerHTML = ({
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(calculatedSEOScore)}">${calculatedSEOScore}%</div>
             <div class="score-details">
-              <p><strong>Sichtbarkeit:</strong> ${calculatedSEOScore >= 90 ? 'Exzellent' : calculatedSEOScore >= 80 ? 'Hoch' : calculatedSEOScore >= 61 ? 'Mittel' : 'Niedrig'}</p>
-              <p><strong>Empfehlung:</strong> ${calculatedSEOScore >= 90 ? 'Exzellente SEO-Basis – Behalten Sie diesen Standard bei!' : calculatedSEOScore >= 80 ? 'Sehr gute SEO-Basis' : calculatedSEOScore >= 61 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
+              <p><strong>Sichtbarkeit:</strong> ${calculatedSEOScore >= 90 ? 'Exzellent' : calculatedSEOScore >= 80 ? 'Hoch' : calculatedSEOScore >= 60 ? 'Mittel' : 'Niedrig'}</p>
+              <p><strong>Empfehlung:</strong> ${calculatedSEOScore >= 90 ? 'Exzellente SEO-Basis – Behalten Sie diesen Standard bei!' : calculatedSEOScore >= 80 ? 'Sehr gute SEO-Basis' : calculatedSEOScore >= 60 ? 'Gute SEO-Basis mit Optimierungspotenzial' : 'SEO verbessern, um mehr Kunden zu erreichen'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -4761,7 +4761,7 @@ export const generateCustomerHTML = ({
           <div class="score-display">
             <div class="score-circle" data-score="${getScoreRange(mobileScore)}">${mobileScore}%</div>
             <div class="score-details">
-              <p><strong>Mobile-Friendly:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}</p>
+              <p><strong>Mobile-Friendly:</strong> ${mobileScore >= 90 ? 'Exzellent' : mobileScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}</p>
               <p><strong>Empfehlung:</strong> ${mobileScore >= 90 ? 'Exzellente mobile Optimierung – Hervorragend!' : mobileScore >= 80 ? 'Mobil optimiert' : 'Mobile Optimierung verbessern'}</p>
             </div>
           </div>`;

@@ -189,7 +189,7 @@ const BacklinkAnalysis: React.FC<BacklinkAnalysisProps> = ({
               <div 
                 className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                   backlinkScore >= 90 ? 'bg-yellow-400 text-black' : 
-                  backlinkScore >= 61 ? 'bg-green-500 text-white' : 
+                  backlinkScore >= 60 ? 'bg-green-500 text-white' : 
                   backlinkScore > 0 ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-600'
                 }`}
               >

@@ -27,8 +27,8 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return "secondary";        // gelb (90-100%)
-    if (score >= 61) return "default";          // grün (61-89%)
-    return "destructive";                       // rot (0-60%)
+    if (score >= 60) return "default";          // grün (60-89%)
+    return "destructive";                       // rot (0-59%)
   };
 
   const renderStars = (rating: number) => {
@@ -51,7 +51,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             <div 
               className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
                 socialProofData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                socialProofData.overallScore >= 61 ? 'bg-green-500 text-white' : 
+                socialProofData.overallScore >= 60 ? 'bg-green-500 text-white' : 
                 'bg-red-500 text-white'
               }`}
             >

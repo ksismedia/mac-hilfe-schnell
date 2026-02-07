@@ -284,7 +284,7 @@ const ManualOnlinePresenceInput: React.FC<ManualOnlinePresenceInputProps> = ({
                   </p>
                 </div>
                 <Badge variant={getScoreBadge(overallScore)}>
-                  {overallScore >= 90 ? 'Exzellent' : overallScore >= 61 ? 'Gut' : 'Verbesserungsbedarf'}
+                  {overallScore >= 90 ? 'Exzellent' : overallScore >= 60 ? 'Gut' : 'Verbesserungsbedarf'}
                 </Badge>
               </div>
             )}

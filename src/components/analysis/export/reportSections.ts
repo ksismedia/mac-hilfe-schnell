@@ -654,7 +654,7 @@ export const generateDataPrivacySection = (
             <div class="section-header collapsible" onclick="toggleSection('dsgvo-content')" style="cursor: pointer;">
               <span>▶ DSGVO-Konformität</span>
               <div class="header-score-circle ${(() => {
-                const scoreClass = dsgvoScore >= 90 ? 'yellow' : dsgvoScore >= 61 ? 'green' : 'red';
+                const scoreClass = dsgvoScore >= 90 ? 'yellow' : dsgvoScore >= 60 ? 'green' : 'red';
                 return hasCriticalViolations ? `${scoreClass} critical-border` : scoreClass;
               })()}">${dsgvoScore}%</div>
             </div>
@@ -884,7 +884,7 @@ export const generateDataPrivacySection = (
             <div class="section-header collapsible" onclick="toggleSection('datenschutz-content')" style="cursor: pointer;">
               <span>▶ Datenschutz & Technische Sicherheit</span>
               <div class="header-score-circle ${(() => {
-                const scoreClass = technicalSecurityScore >= 90 ? 'yellow' : technicalSecurityScore >= 61 ? 'green' : 'red';
+                const scoreClass = technicalSecurityScore >= 90 ? 'yellow' : technicalSecurityScore >= 60 ? 'green' : 'red';
                 return (hasNoHSTS || hasPoorSSL) ? `${scoreClass} critical-border` : scoreClass;
               })()}">${technicalSecurityScore}%</div>
             </div>

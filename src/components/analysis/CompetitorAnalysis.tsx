@@ -463,13 +463,13 @@ const CompetitorAnalysis: React.FC<CompetitorAnalysisProps> = ({
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'score-text-high';   // 90-100% gold
-    if (score >= 61) return 'score-text-medium'; // 61-89% grün
-    return 'score-text-low';                     // 0-60% rot
+    if (score >= 60) return 'score-text-medium'; // 60-89% grün
+    return 'score-text-low';                     // 0-59% rot
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return 'secondary';        // gold
-    if (score >= 61) return 'default';          // grün
+    if (score >= 60) return 'default';          // grün
     return 'destructive';                       // rot
   };
 

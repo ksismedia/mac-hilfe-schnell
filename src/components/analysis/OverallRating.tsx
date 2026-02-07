@@ -264,13 +264,13 @@ const OverallRating: React.FC<OverallRatingProps> = ({
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'score-text-high';   // 90-100% gold
-    if (score >= 61) return 'score-text-medium'; // 61-89% grün
-    return 'score-text-low';                     // 0-60% rot
+    if (score >= 60) return 'score-text-medium'; // 60-89% grün
+    return 'score-text-low';                     // 0-59% rot
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return 'secondary'; // gold
-    if (score >= 61) return 'default'; // grün
+    if (score >= 60) return 'default'; // grün
     return 'destructive'; // rot
   };
 
@@ -389,15 +389,15 @@ const OverallRating: React.FC<OverallRatingProps> = ({
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold score-text-medium">
-                  {metrics.filter(m => m.score >= 61 && m.score < 90).length}
+                  {metrics.filter(m => m.score >= 60 && m.score < 90).length}
                 </div>
-                <div className="text-sm text-gray-600">Gut (61-89%)</div>
+                <div className="text-sm text-gray-600">Gut (60-89%)</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold score-text-low">
-                  {metrics.filter(m => m.score < 61).length}
+                  {metrics.filter(m => m.score < 60).length}
                 </div>
-                <div className="text-sm text-gray-600">Verbesserung nötig (&lt;61%)</div>
+                <div className="text-sm text-gray-600">Verbesserung nötig (&lt;60%)</div>
               </div>
             </div>
           </div>

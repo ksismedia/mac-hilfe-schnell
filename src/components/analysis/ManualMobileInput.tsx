@@ -159,13 +159,13 @@ const ManualMobileInput: React.FC<ManualMobileInputProps> = ({ initialData, onDa
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-yellow-600";
-    if (score >= 61) return "text-green-600";
+    if (score >= 60) return "text-green-600";
     return "text-red-600";
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return "secondary";
-    if (score >= 61) return "default";
+    if (score >= 60) return "default";
     return "destructive";
   };
 

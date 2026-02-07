@@ -208,7 +208,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       score: realLocalSEOData.napConsistency.score,
       addressVisible: realLocalSEOData.napConsistency.hasAddress,
       phoneVisible: realLocalSEOData.napConsistency.hasPhone,
-      openingHours: realData.seo.score >= 61,
+      openingHours: realData.seo.score >= 60,
       localSchema: realLocalSEOData.structuredData.hasLocalBusinessSchema,
       localContent: Math.max(25, Math.min(90, realLocalSEOData.napConsistency.score))
     }
@@ -256,7 +256,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
         },
         { 
           keyword: `${businessData.industry} in der Nähe`, 
-          position: realData.seo.score >= 90 ? 3 : realData.seo.score >= 61 ? 8 : 15, 
+          position: realData.seo.score >= 90 ? 3 : realData.seo.score >= 60 ? 8 : 15, 
           volume: realData.seo.score >= 70 ? "hoch" : "mittel" 
         }
       ]
@@ -265,7 +265,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
       score: Math.max(25, Math.min(90, overallScore)),
       addressVisible: realData.seo.metaDescription ? realData.seo.metaDescription.includes(businessData.address.split(',')[1]?.trim() || '') : false,
       phoneVisible: realData.seo.score >= 50,
-      openingHours: realData.seo.score >= 61,
+      openingHours: realData.seo.score >= 60,
       localSchema: realData.seo.score >= 90 && realData.seo.headings.h1.length > 0,
       localContent: Math.max(20, Math.min(85, realData.seo.score - 15))
     }
@@ -276,14 +276,14 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "score-text-high";   // 90-100% gold
-    if (score >= 61) return "score-text-medium"; // 61-89% grün
-    return "score-text-low";                     // 0-60% rot
+    if (score >= 60) return "score-text-medium"; // 60-89% grün
+    return "score-text-low";                     // 0-59% rot
   };
 
   const getScoreBadge = (score: number) => {
     if (score >= 90) return "secondary";        // gold (90-100%)
-    if (score >= 61) return "default";          // grün (61-89%)
-    return "destructive";                       // rot (0-60%)
+    if (score >= 60) return "default";          // grün (60-89%)
+    return "destructive";                       // rot (0-59%)
   };
 
   const getPositionColor = (position: number) => {
@@ -422,7 +422,7 @@ const LocalSEO: React.FC<LocalSEOProps> = ({ businessData, realData, manualData,
         <div 
           className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
             displayScore >= 90 ? 'bg-yellow-400 text-black' : 
-            displayScore >= 61 ? 'bg-green-500 text-white' : 
+            displayScore >= 60 ? 'bg-green-500 text-white' : 
             'bg-red-500 text-white'
           }`}
         >
