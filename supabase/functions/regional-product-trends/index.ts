@@ -69,7 +69,15 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Du bist ein Marktanalyst für die ${industry}-Branche in Deutschland. Analysiere aktuelle Produkttrends und Marktentwicklungen speziell für die Region ${region}. Antworte auf Deutsch und strukturiert.`
+            content: `Du bist ein Marktanalyst für die ${industry}-Branche in Deutschland. Antworte NUR mit einer nummerierten Liste von 5-8 konkreten Produkttrends für die Region ${region}. Jeder Trend MUSS exakt dieses Format haben:
+
+1. **Trendname**: Beschreibung des Trends in 1-2 Sätzen. Relevanz: hoch/mittel/niedrig.
+
+Beispiel:
+1. **Wärmepumpen-Boom**: Die Nachfrage nach Wärmepumpen ist in der Region um 30% gestiegen. Relevanz: hoch.
+2. **Smart Home Integration**: Immer mehr Kunden fragen nach vernetzter Haustechnik. Relevanz: mittel.
+
+WICHTIG: Keine Überschriften, keine Einleitungen, keine Zusammenfassungen. NUR die nummerierte Liste.`
           },
           {
             role: 'user',
@@ -162,59 +170,75 @@ Strukturiere die Antwort mit konkreten Trends, ihrer Relevanz (hoch/mittel/niedr
 function parseTrendsFromResponse(content: string, citations: string[]): ProductTrend[] {
   const trends: ProductTrend[] = [];
   
-  // Split by common delimiters that might indicate separate trends
-  const lines = content.split(/\n/);
-  let currentTrend: Partial<ProductTrend> | null = null;
+  // Match numbered items with bold trend names: "1. **Name**: Description"
+  // Also handles: "1. **Name** — Description" and "1. **Name** Description"
+  const trendPattern = /\d+\.\s*\*\*(.+?)\*\*[:\s—–-]*(.+?)(?=\n\d+\.\s*\*\*|\n*$)/gs;
+  let match;
   
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) continue;
+  while ((match = trendPattern.exec(content)) !== null) {
+    const trendName = match[1].trim();
+    let description = match[2].trim();
     
-    // Check if this is a new trend (starts with number, bullet, or bold marker)
-    const trendMatch = trimmedLine.match(/^(?:\d+[\.\)]|\*|•|-|#{1,3})\s*\**(.+?)\**(?::|$)/);
+    // Skip meta-entries like "Beschreibung", "Relevanz für X", section headers
+    if (/^(beschreibung|relevanz|quelle|zusammenfassung|fazit|einleitung|überblick|marktanalyse)/i.test(trendName)) {
+      continue;
+    }
     
-    if (trendMatch) {
-      // Save previous trend if exists
-      if (currentTrend && currentTrend.trend) {
-        trends.push({
-          trend: currentTrend.trend,
-          description: currentTrend.description || '',
-          relevance: determineRelevance(currentTrend.description || ''),
-          source: citations[0] || undefined,
-        });
-      }
-      
-      // Start new trend
-      currentTrend = {
-        trend: trendMatch[1].replace(/\*\*/g, '').trim(),
-        description: '',
-      };
-    } else if (currentTrend) {
-      // Add to current trend description
-      currentTrend.description = (currentTrend.description || '') + ' ' + trimmedLine;
+    // Extract relevance from description if present
+    let relevance: 'high' | 'medium' | 'low' = 'medium';
+    const relevanceMatch = description.match(/Relevanz:\s*(hoch|mittel|niedrig)/i);
+    if (relevanceMatch) {
+      const r = relevanceMatch[1].toLowerCase();
+      relevance = r === 'hoch' ? 'high' : r === 'niedrig' ? 'low' : 'medium';
+      // Remove the relevance tag from description
+      description = description.replace(/\s*Relevanz:\s*(hoch|mittel|niedrig)\.?\s*/i, '').trim();
+    } else {
+      relevance = determineRelevance(description);
+    }
+    
+    // Clean up citation markers like [1], [2][3]
+    description = description.replace(/\[\d+\]/g, '').trim();
+    
+    if (trendName && description.length > 10) {
+      trends.push({
+        trend: trendName,
+        description,
+        relevance,
+        source: citations[0] || undefined,
+      });
     }
   }
   
-  // Don't forget the last trend
-  if (currentTrend && currentTrend.trend) {
-    trends.push({
-      trend: currentTrend.trend,
-      description: (currentTrend.description || '').trim(),
-      relevance: determineRelevance(currentTrend.description || ''),
-      source: citations[0] || undefined,
-    });
+  // Fallback: if regex didn't match, try simpler line-by-line parsing
+  if (trends.length === 0) {
+    const lines = content.split(/\n/).filter(l => l.trim());
+    for (const line of lines) {
+      const simpleMatch = line.trim().match(/^\d+\.\s*(.+?)[:—–-]\s*(.+)/);
+      if (simpleMatch) {
+        const name = simpleMatch[1].replace(/\*\*/g, '').trim();
+        const desc = simpleMatch[2].replace(/\[\d+\]/g, '').trim();
+        if (name.length > 3 && desc.length > 10 && !/^(beschreibung|relevanz|quelle)/i.test(name)) {
+          trends.push({
+            trend: name,
+            description: desc,
+            relevance: determineRelevance(desc),
+            source: citations[0] || undefined,
+          });
+        }
+      }
+    }
   }
   
-  // If no structured trends found, create a single trend from the content
+  // Last resort fallback
   if (trends.length === 0 && content.length > 50) {
     trends.push({
       trend: 'Marktübersicht',
-      description: content.substring(0, 500),
+      description: content.replace(/\[\d+\]/g, '').substring(0, 500),
       relevance: 'medium',
     });
   }
   
-  return trends.slice(0, 8); // Limit to 8 trends
+  return trends.slice(0, 8);
 }
 
 function determineRelevance(text: string): 'high' | 'medium' | 'low' {
