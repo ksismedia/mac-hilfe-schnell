@@ -2722,7 +2722,7 @@ export const generateCustomerHTML = ({
     return `
       <div style="margin-top: 30px; padding: 20px; background: rgba(124, 58, 237, 0.1); border-radius: 8px; border: 1px solid rgba(124, 58, 237, 0.3);">
         <h4 style="color: #a78bfa; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-          📈 Regionale Produkttrends
+          Regionale Produkttrends
         </h4>
         
         <div style="margin-bottom: 16px; padding: 12px; background: rgba(124, 58, 237, 0.15); border-radius: 8px; border-left: 4px solid #7c3aed;">
@@ -2797,7 +2797,7 @@ export const generateCustomerHTML = ({
     return `
       <div style="margin-top: 30px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
         <h4 style="color: #818cf8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-          🌐 Überregionale Großanbieter (Referenz)
+          Überregionale Großanbieter (Referenz)
         </h4>
         <p style="color: #9ca3af; font-size: 0.9em; margin-bottom: 15px; font-style: italic;">
           Diese bundesweiten Anbieter dienen nur als Leistungsvergleich und sind keine direkten lokalen Wettbewerber.
@@ -5644,7 +5644,7 @@ export const generateCustomerHTML = ({
     ${showNationalProviders ? `
     <div class="section" style="page-break-inside: avoid;">
       <div class="section-header" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
-        <span>🌐 Überregionale Großanbieter (Referenz)</span>
+        <span>Überregionale Großanbieter (Referenz)</span>
       </div>
       <div class="section-content">
         <div style="padding: 15px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #818cf8;">
@@ -5662,7 +5662,7 @@ export const generateCustomerHTML = ({
     ${showRegionalTrends && regionalTrendsData ? `
     <div class="section" style="page-break-inside: avoid;">
       <div class="section-header" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
-        <span>📈 Regionale Produkttrends</span>
+        <span>Regionale Produkttrends</span>
       </div>
       <div class="section-content">
         <div style="padding: 15px; background: rgba(124, 58, 237, 0.1); border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #a78bfa;">

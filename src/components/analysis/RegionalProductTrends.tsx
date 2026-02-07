@@ -121,8 +121,7 @@ const RegionalProductTrends: React.FC<RegionalProductTrendsProps> = ({
     <Card className="border-purple-200">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-purple-700">
-            <TrendingUp className="h-5 w-5" />
+          <CardTitle className="text-purple-700">
             Regionale Produkttrends
           </CardTitle>
           <div className="flex items-center gap-4">
