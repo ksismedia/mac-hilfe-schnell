@@ -5092,7 +5092,6 @@ export const generateCustomerHTML = ({
             <div class="score-circle ${getScoreColorClass(googleReviewScore)}">${googleReviewScore}%</div>
             <div class="score-details">
               <p><strong>Google Bewertung:</strong> ${realData.reviews.google.rating}/5 (${realData.reviews.google.count} Bewertungen)</p>
-              <p><strong>Empfehlung:</strong> ${realData.reviews.google.rating >= 4.7 && googleReviewScore >= 90 ? 'Exzellente Reputation – Weiter so!' : realData.reviews.google.rating >= 4.5 ? 'Sehr gute Reputation' : realData.reviews.google.rating >= 4.0 ? 'Gute Reputation' : realData.reviews.google.rating >= 3.0 ? 'Ausbaufähige Reputation' : 'Bewertungen dringend verbessern'}</p>
             </div>
           </div>
           <div class="progress-container">
@@ -5105,17 +5104,17 @@ export const generateCustomerHTML = ({
         </div>
         
         <!-- Bewertungserklärung -->
-        <div style="margin-top: 20px; padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
-          <h4 style="color: #1e40af; margin: 0 0 12px 0;">So wird der Google-Bewertungs-Score berechnet</h4>
+        <div style="margin-top: 20px; padding: 16px; background: rgba(251, 191, 36, 0.08); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h4 style="color: #fbbf24; margin: 0 0 12px 0; font-size: 1em;">So wird der Google-Bewertungs-Score berechnet</h4>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div>
-              <p style="font-weight: 600; color: #1e3a5f; margin: 0 0 6px 0;">Bewertungsgüte (40% Gewichtung)</p>
-              <p style="color: #4b5563; margin: 0 0 4px 0; font-size: 0.9em;">Berechnung: (Sterne / 5) × 40 Punkte</p>
-              <p style="color: #4b5563; margin: 0; font-size: 0.9em;">Bonus: +5 Punkte für Ratings zwischen 4.2–4.8★ (authentischer Bereich)</p>
+              <p style="font-weight: 600; color: #fbbf24; margin: 0 0 6px 0; font-size: 0.95em;">Bewertungsgüte (40% Gewichtung)</p>
+              <p style="color: #d1d5db; margin: 0 0 4px 0; font-size: 0.9em;">Berechnung: (Sterne / 5) × 40 Punkte</p>
+              <p style="color: #d1d5db; margin: 0; font-size: 0.9em;">Bonus: +5 Punkte für Ratings zwischen 4.2–4.8★ (authentischer Bereich)</p>
             </div>
             <div>
-              <p style="font-weight: 600; color: #1e3a5f; margin: 0 0 6px 0;">Anzahl Bewertungen (60% Gewichtung)</p>
-              <ul style="color: #4b5563; margin: 0; padding-left: 16px; font-size: 0.9em; line-height: 1.6;">
+              <p style="font-weight: 600; color: #fbbf24; margin: 0 0 6px 0; font-size: 0.95em;">Anzahl Bewertungen (60% Gewichtung)</p>
+              <ul style="color: #d1d5db; margin: 0; padding-left: 16px; font-size: 0.9em; line-height: 1.6;">
                 <li>200+ Bewertungen: 60 Punkte (Exzellent)</li>
                 <li>100–199: 48 Punkte (Sehr gut)</li>
                 <li>50–99: 35 Punkte (Gut)</li>
@@ -5125,7 +5124,7 @@ export const generateCustomerHTML = ({
               </ul>
             </div>
           </div>
-          <p style="margin: 12px 0 0 0; padding-top: 10px; border-top: 1px solid rgba(59, 130, 246, 0.15); font-size: 0.85em; color: #6b7280;">
+          <p style="margin: 12px 0 0 0; padding-top: 10px; border-top: 1px solid rgba(251, 191, 36, 0.2); font-size: 0.85em; color: #9ca3af;">
             Die Anzahl der Bewertungen wird stärker gewichtet, da viele Bewertungen im Handwerk ein stärkeres Vertrauenssignal sind als eine perfekte Durchschnittsnote.
           </p>
         </div>
