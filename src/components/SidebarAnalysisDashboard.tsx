@@ -627,6 +627,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   accessibilityData={accessibilityData}
                   securityData={securityData}
                   calculatedOwnCompanyScore={currentOwnCompanyScore}
+                  showNationalProviders={showNationalProviders}
+                  showRegionalTrends={showRegionalTrends}
+                  regionalTrendsData={regionalTrendsData}
                 />
               </div>
             </div>
