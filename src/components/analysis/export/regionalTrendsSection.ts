@@ -81,7 +81,7 @@ export const generateRegionalTrendsSection = (
     <!-- Regionale Produkttrends -->
     <div class="section" style="page-break-inside: avoid;">
       <div class="section-header" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white;">
-        📈 Regionale Produkttrends
+        Regionale Produkttrends
       </div>
       <div class="section-content">
         <div style="margin-bottom: 16px; padding: 12px; background: #f3e8ff; border-radius: 8px; border-left: 4px solid #7c3aed;">

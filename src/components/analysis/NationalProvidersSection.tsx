@@ -29,8 +29,7 @@ const NationalProvidersSection: React.FC<NationalProvidersSectionProps> = ({
     <Card className="border-indigo-200">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-indigo-700">
-            <Globe className="h-5 w-5" />
+          <CardTitle className="text-indigo-700">
             Überregionale Großanbieter
           </CardTitle>
           <div className="flex items-center space-x-2">
