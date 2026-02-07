@@ -443,6 +443,21 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             onManualLocalSEOChange={updateManualLocalSEOData}
             manualSEOData={manualSEOData}
             updateManualSEOData={updateManualSEOData}
+            securityData={securityData}
+            onSecurityDataChange={setSecurityData}
+            manualAccessibilityData={manualAccessibilityData}
+            updateManualAccessibilityData={updateManualAccessibilityData}
+            manualContentData={manualContentData}
+            updateManualContentData={updateManualContentData}
+            manualBacklinkData={manualBacklinkData}
+            updateManualBacklinkData={updateManualBacklinkData}
+            manualReputationData={manualReputationData}
+            showNationalProviders={showNationalProviders}
+            onToggleNationalProviders={updateShowNationalProviders}
+            showRegionalTrends={showRegionalTrends}
+            onToggleRegionalTrends={updateShowRegionalTrends}
+            regionalTrendsData={regionalTrendsData}
+            onRegionalTrendsLoaded={updateRegionalTrendsData}
           />
         );
       case 'website-performance-tech':
