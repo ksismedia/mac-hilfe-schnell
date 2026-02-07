@@ -124,7 +124,7 @@ export const IndustryReviewPlatforms = ({ platforms, overallScore }: IndustryRev
                 <div>
                   <p className="text-muted-foreground">Durchschnittliche Bewertung</p>
                   <p className="font-semibold">
-                    {(platforms.reduce((sum, p) => sum + p.rating, 0) / platforms.length).toFixed(2)}/5
+                    {Math.round(platforms.reduce((sum, p) => sum + p.rating, 0) / platforms.length)}/5
                   </p>
                 </div>
                 <div>

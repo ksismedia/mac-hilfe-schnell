@@ -190,7 +190,7 @@ const generateHourlyRateProgressBar = (ratio: number, description: string) => {
   }
   
   const percentage = Math.round(ratio * 100);
-  const deviation = ((ratio - 1) * 100).toFixed(1);
+  const deviation = Math.round((ratio - 1) * 100);
   const deviationText = ratio > 1 ? `+${deviation}%` : `${deviation}%`;
   const textColor = ratio > 1.1 ? '#000' : '#fff';
   
@@ -866,42 +866,42 @@ export const generateCustomerHTML = ({
         ${hourlyRateData.meisterRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Meister:</strong> ${hourlyRateData.meisterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalMeisterRate > 0 ? `(Regional: ${hourlyRateData.regionalMeisterRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalMeisterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate), `${((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.meisterRate > hourlyRateData.regionalMeisterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalMeisterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate), `${Math.round((hourlyRateData.meisterRate / hourlyRateData.regionalMeisterRate - 1) * 100)}% ${hourlyRateData.meisterRate > hourlyRateData.regionalMeisterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.facharbeiterRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Facharbeiter:</strong> ${hourlyRateData.facharbeiterRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalFacharbeiterRate > 0 ? `(Regional: ${hourlyRateData.regionalFacharbeiterRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalFacharbeiterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate), `${((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate - 1) * 100).toFixed(1)}% ${hourlyRateData.facharbeiterRate > hourlyRateData.regionalFacharbeiterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalFacharbeiterRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate), `${Math.round((hourlyRateData.facharbeiterRate / hourlyRateData.regionalFacharbeiterRate - 1) * 100)}% ${hourlyRateData.facharbeiterRate > hourlyRateData.regionalFacharbeiterRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.azubiRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Azubi:</strong> ${hourlyRateData.azubiRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalAzubiRate > 0 ? `(Regional: ${hourlyRateData.regionalAzubiRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalAzubiRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate), `${((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate - 1) * 100).toFixed(1)}% ${hourlyRateData.azubiRate > hourlyRateData.regionalAzubiRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalAzubiRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate), `${Math.round((hourlyRateData.azubiRate / hourlyRateData.regionalAzubiRate - 1) * 100)}% ${hourlyRateData.azubiRate > hourlyRateData.regionalAzubiRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.helferRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Helfer:</strong> ${hourlyRateData.helferRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalHelferRate > 0 ? `(Regional: ${hourlyRateData.regionalHelferRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalHelferRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate), `${((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate - 1) * 100).toFixed(1)}% ${hourlyRateData.helferRate > hourlyRateData.regionalHelferRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalHelferRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate), `${Math.round((hourlyRateData.helferRate / hourlyRateData.regionalHelferRate - 1) * 100)}% ${hourlyRateData.helferRate > hourlyRateData.regionalHelferRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.serviceRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Service:</strong> ${hourlyRateData.serviceRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalServiceRate > 0 ? `(Regional: ${hourlyRateData.regionalServiceRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalServiceRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate), `${((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate - 1) * 100).toFixed(1)}% ${hourlyRateData.serviceRate > hourlyRateData.regionalServiceRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalServiceRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate), `${Math.round((hourlyRateData.serviceRate / hourlyRateData.regionalServiceRate - 1) * 100)}% ${hourlyRateData.serviceRate > hourlyRateData.regionalServiceRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
         
         ${hourlyRateData.installationRate > 0 ? `
         <div style="margin-bottom: 15px;">
           <p><strong>Installation:</strong> ${hourlyRateData.installationRate}€/h ${regionalAvg > 0 && hourlyRateData.regionalInstallationRate > 0 ? `(Regional: ${hourlyRateData.regionalInstallationRate}€/h)` : ''}</p>
-          ${hourlyRateData.regionalInstallationRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate), `${((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate - 1) * 100).toFixed(1)}% ${hourlyRateData.installationRate > hourlyRateData.regionalInstallationRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
+          ${hourlyRateData.regionalInstallationRate > 0 ? generateHourlyRateProgressBar((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate), `${Math.round((hourlyRateData.installationRate / hourlyRateData.regionalInstallationRate - 1) * 100)}% ${hourlyRateData.installationRate > hourlyRateData.regionalInstallationRate ? 'über' : 'unter'} regionalem Durchschnitt`) : ''}
         </div>
         ` : ''}
       </div>
@@ -911,10 +911,10 @@ export const generateCustomerHTML = ({
         <h3>Bewertung der Preisstrategie</h3>
         <p>${
           localPricingScore >= 85 ? 
-            `Ausgezeichnet! Ihre Preisstrategie ist optimal positioniert (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt). Sie liegen mindestens 10% über dem regionalen Durchschnitt und können damit höhere Margen erzielen.` :
+            `Ausgezeichnet! Ihre Preisstrategie ist optimal positioniert (${percentDiff > 0 ? '+' : ''}${Math.round(percentDiff)}% vom Markt). Sie liegen mindestens 10% über dem regionalen Durchschnitt und können damit höhere Margen erzielen.` :
           localPricingScore >= 60 ? 
-            `Ihre Preise sind akzeptabel (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt), aber es gibt Optimierungspotenzial. Prüfen Sie, ob Preiserhöhungen möglich sind, um näher an oder über 10% über dem Markt zu kommen.` :
-            `Achtung: Ihre Preise liegen deutlich unter dem Markt (${percentDiff > 0 ? '+' : ''}${percentDiff.toFixed(1)}% vom Markt). Sie verschenken Gewinnpotenzial. Eine Preiserhöhung sollte dringend geprüft werden.`
+            `Ihre Preise sind akzeptabel (${percentDiff > 0 ? '+' : ''}${Math.round(percentDiff)}% vom Markt), aber es gibt Optimierungspotenzial. Prüfen Sie, ob Preiserhöhungen möglich sind, um näher an oder über 10% über dem Markt zu kommen.` :
+            `Achtung: Ihre Preise liegen deutlich unter dem Markt (${percentDiff > 0 ? '+' : ''}${Math.round(percentDiff)}% vom Markt). Sie verschenken Gewinnpotenzial. Eine Preiserhöhung sollte dringend geprüft werden.`
         }</p>
       </div>
       ` : ''}
