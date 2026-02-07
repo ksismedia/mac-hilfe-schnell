@@ -752,18 +752,17 @@ export const generateCustomerHTML = ({
     const rating = realData.reviews?.google?.rating || 0;
     let score = 0;
     if (rating > 0) {
-      score += (rating / 5) * 50;
+      let ratingScore = (rating / 5) * 40;
+      if (rating >= 4.2 && rating <= 4.8) ratingScore += 5;
+      score += ratingScore;
     }
-    if (reviews > 0) {
-      if (reviews >= 500) score += 50;
-      else if (reviews >= 200) score += 45;
-      else if (reviews >= 100) score += 40;
-      else if (reviews >= 50) score += 35;
-      else if (reviews >= 20) score += 25;
-      else if (reviews >= 10) score += 15;
-      else score += Math.min(reviews, 10);
-    }
-    return Math.min(score, 100);
+    if (reviews >= 200) score += 60;
+    else if (reviews >= 100) score += 48;
+    else if (reviews >= 50) score += 35;
+    else if (reviews >= 30) score += 25;
+    else if (reviews >= 10) score += 15;
+    else if (reviews >= 1) score += 5;
+    return Math.min(Math.round(score), 100);
   })();
   const reputationScore = googleReviewsScore;
   
@@ -3173,18 +3172,17 @@ export const generateCustomerHTML = ({
     const rating = realData.reviews?.google?.rating || 0;
     let score = 0;
     if (rating > 0) {
-      score += (rating / 5) * 50;
+      let ratingScore = (rating / 5) * 40;
+      if (rating >= 4.2 && rating <= 4.8) ratingScore += 5;
+      score += ratingScore;
     }
-    if (reviews > 0) {
-      if (reviews >= 500) score += 50;
-      else if (reviews >= 200) score += 45;
-      else if (reviews >= 100) score += 40;
-      else if (reviews >= 50) score += 35;
-      else if (reviews >= 20) score += 25;
-      else if (reviews >= 10) score += 15;
-      else score += Math.min(reviews, 10);
-    }
-    return Math.min(score, 100);
+    if (reviews >= 200) score += 60;
+    else if (reviews >= 100) score += 48;
+    else if (reviews >= 50) score += 35;
+    else if (reviews >= 30) score += 25;
+    else if (reviews >= 10) score += 15;
+    else if (reviews >= 1) score += 5;
+    return Math.min(Math.round(score), 100);
   })();
   
   // Collect all available scores for proper average calculation
@@ -5104,6 +5102,32 @@ export const generateCustomerHTML = ({
               </div>
             </div>
           </div>
+        </div>
+        
+        <!-- Bewertungserklärung -->
+        <div style="margin-top: 20px; padding: 16px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
+          <h4 style="color: #1e40af; margin: 0 0 12px 0;">So wird der Google-Bewertungs-Score berechnet</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <p style="font-weight: 600; color: #1e3a5f; margin: 0 0 6px 0;">Bewertungsgüte (40% Gewichtung)</p>
+              <p style="color: #4b5563; margin: 0 0 4px 0; font-size: 0.9em;">Berechnung: (Sterne / 5) × 40 Punkte</p>
+              <p style="color: #4b5563; margin: 0; font-size: 0.9em;">Bonus: +5 Punkte für Ratings zwischen 4.2–4.8★ (authentischer Bereich)</p>
+            </div>
+            <div>
+              <p style="font-weight: 600; color: #1e3a5f; margin: 0 0 6px 0;">Anzahl Bewertungen (60% Gewichtung)</p>
+              <ul style="color: #4b5563; margin: 0; padding-left: 16px; font-size: 0.9em; line-height: 1.6;">
+                <li>200+ Bewertungen: 60 Punkte (Exzellent)</li>
+                <li>100–199: 48 Punkte (Sehr gut)</li>
+                <li>50–99: 35 Punkte (Gut)</li>
+                <li>30–49: 25 Punkte (Akzeptabel)</li>
+                <li>10–29: 15 Punkte (Ausbaufähig)</li>
+                <li>1–9: 5 Punkte (Kritisch)</li>
+              </ul>
+            </div>
+          </div>
+          <p style="margin: 12px 0 0 0; padding-top: 10px; border-top: 1px solid rgba(59, 130, 246, 0.15); font-size: 0.85em; color: #6b7280;">
+            Die Anzahl der Bewertungen wird stärker gewichtet, da viele Bewertungen im Handwerk ein stärkeres Vertrauenssignal sind als eine perfekte Durchschnittsnote.
+          </p>
         </div>
         
         <div class="collapsible" onclick="toggleSection('reputation-details')" style="cursor: pointer; margin-top: 15px; padding: 10px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);">

@@ -251,6 +251,36 @@ const GoogleReviews: React.FC<GoogleReviewsProps> = ({ address, realData, onRevi
                 </Card>
               )}
 
+              {/* Bewertungserklärung */}
+              <Card className="border-blue-200 bg-blue-50/50">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-blue-900 mb-3">So wird der Google-Bewertungs-Score berechnet</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-blue-800 mb-2">Bewertungsgüte (40% Gewichtung)</p>
+                      <p className="text-blue-700 mb-1">Berechnung: (Sterne / 5) × 40 Punkte</p>
+                      <p className="text-blue-700">Bonus: +5 Punkte für Ratings zwischen 4.2–4.8★ (authentischer Bereich)</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-blue-800 mb-2">Anzahl Bewertungen (60% Gewichtung)</p>
+                      <ul className="text-blue-700 space-y-0.5">
+                        <li>• 200+ Bewertungen: 60 Punkte (Exzellent)</li>
+                        <li>• 100–199: 48 Punkte (Sehr gut)</li>
+                        <li>• 50–99: 35 Punkte (Gut)</li>
+                        <li>• 30–49: 25 Punkte (Akzeptabel)</li>
+                        <li>• 10–29: 15 Punkte (Ausbaufähig)</li>
+                        <li>• 1–9: 5 Punkte (Kritisch)</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-blue-200">
+                    <p className="text-xs text-blue-600">
+                      Die Anzahl der Bewertungen wird stärker gewichtet, da viele Bewertungen im Handwerk ein stärkeres Vertrauenssignal sind als eine perfekte Durchschnittsnote.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* API Status Info */}
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
