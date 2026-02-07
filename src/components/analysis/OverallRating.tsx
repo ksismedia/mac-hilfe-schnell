@@ -314,7 +314,7 @@ const OverallRating: React.FC<OverallRatingProps> = ({
           <div className="space-y-6">
             <div className="text-center">
               <div className={`text-6xl font-bold mb-2 ${getScoreColor(overallScore)}`}>
-                {(overallScore/20).toFixed(1)}/5
+                {Math.round(overallScore/20)}/5
               </div>
               <Badge variant={getScoreBadge(overallScore)}>
                 {overallScore}/100 Punkte

@@ -14,7 +14,7 @@ export const generatePricingSection = (
                         <div class="progress-container">
                             <div class="progress-label">
                                 <span>Regionaler Durchschnitt: ${hourlyRateData.regionAverage.toFixed(2)} €</span>
-                                <span>${((hourlyRateData.ownRate / hourlyRateData.regionAverage - 1) * 100).toFixed(1)}%</span>
+                                <span>${Math.round((hourlyRateData.ownRate / hourlyRateData.regionAverage - 1) * 100)}%</span>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${calculateHourlyRateScore()}%"></div>
