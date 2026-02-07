@@ -254,6 +254,8 @@ export const generateCustomerHTML = ({
   console.log('HTML Generator received manualWorkplaceData:', manualWorkplaceData);
   console.log('HTML Generator received competitorServices:', competitorServices);
   console.log('HTML Generator received manualCompetitors:', manualCompetitors);
+  console.log('📈 TRENDS DEBUG: showRegionalTrends =', showRegionalTrends, 'regionalTrendsData =', regionalTrendsData);
+  console.log('🌐 PROVIDERS DEBUG: showNationalProviders =', showNationalProviders);
   
   // Create embedded analysis data for HTML import functionality
   const embeddedAnalysisData = createEmbeddedAnalysisBlock({
