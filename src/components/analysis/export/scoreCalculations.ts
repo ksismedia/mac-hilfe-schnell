@@ -83,20 +83,23 @@ const calculateGoogleReviewsScore = (realData: RealBusinessData): number => {
     extractedCount: reviews
   });
 
-  // Höhere Bewertung der Google Reviews für bessere Wettbewerbsposition
+  // Rating: 40% Gewichtung
   if (rating > 0) {
-    score += (rating / 5) * 50; // Rating contributes 50% (reduziert von 60%)
+    let ratingScore = (rating / 5) * 40;
+    // Sweet-Spot-Bonus: Ratings zwischen 4.2-4.8 gelten als besonders authentisch
+    if (rating >= 4.2 && rating <= 4.8) {
+      ratingScore += 5;
+    }
+    score += ratingScore;
   }
-  if (reviews > 0) {
-    // Stark erhöhte Bewertung der Anzahl der Reviews
-    if (reviews >= 500) score += 50;
-    else if (reviews >= 200) score += 45;
-    else if (reviews >= 100) score += 40;
-    else if (reviews >= 50) score += 35;
-    else if (reviews >= 20) score += 25;
-    else if (reviews >= 10) score += 15;
-    else score += Math.min(reviews, 10);
-  }
+
+  // Anzahl: 60% Gewichtung (7-Stufen-Staffelung)
+  if (reviews >= 200) score += 60;
+  else if (reviews >= 100) score += 48;
+  else if (reviews >= 50) score += 35;
+  else if (reviews >= 30) score += 25;
+  else if (reviews >= 10) score += 15;
+  else if (reviews >= 1) score += 5;
 
   const finalScore = Math.min(Math.round(score), 100);
   console.log('🔍 calculateGoogleReviewsScore result:', finalScore);
