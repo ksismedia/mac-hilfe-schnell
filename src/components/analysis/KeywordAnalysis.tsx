@@ -1,13 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
 import ManualKeywordInput from './ManualKeywordInput';
 import { AIReviewCheckbox } from './AIReviewCheckbox';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
+import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
+import { Download, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface KeywordAnalysisProps {
   url: string;
@@ -22,6 +26,8 @@ interface KeywordAnalysisProps {
 
 const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
+  const { loadLatestExtensionData, isLoading: isLoadingExtension } = useExtensionDataLoader();
+  const [extensionTextLoaded, setExtensionTextLoaded] = useState(false);
   const [keywordData, setKeywordData] = useState(() => {
     const keywords = realData.keywords || [];
     const initialFoundKeywords = keywords.filter(k => k.found).length;
@@ -82,6 +88,55 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     }
   }, [keywordData.foundKeywords]);
 
+  // Extension-Daten laden und Keywords gegen den vollen Text prüfen
+  const handleLoadExtensionData = useCallback(async () => {
+    const extData = await loadLatestExtensionData();
+    if (!extData) return;
+
+    const fullText = (extData.content?.fullText || '').toLowerCase();
+    if (!fullText || fullText.length < 10) {
+      toast.error('Extension-Daten enthalten keinen verwertbaren Text.');
+      return;
+    }
+
+    console.log('Extension-Text geladen:', fullText.length, 'Zeichen');
+
+    // Alle aktuellen Keywords gegen den vollen Extension-Text prüfen
+    const updatedKeywords = keywordData.keywords.map(kw => {
+      const kwLower = kw.keyword.toLowerCase();
+      const found = fullText.includes(kwLower);
+      return {
+        ...kw,
+        found,
+        position: found ? Math.max(1, Math.min(100, Math.round((fullText.indexOf(kwLower) / fullText.length) * 100))) : 0
+      };
+    });
+
+    const foundCount = updatedKeywords.filter(k => k.found).length;
+    let newScore = 0;
+    if (foundCount === 0) {
+      newScore = 0;
+    } else if (updatedKeywords.length < 5) {
+      newScore = Math.round((foundCount / updatedKeywords.length) * 80);
+    } else {
+      const baseScore = (foundCount / updatedKeywords.length) * 100;
+      const keywordBonus = Math.min(10, updatedKeywords.length - 5);
+      newScore = Math.min(100, Math.round(baseScore + keywordBonus));
+    }
+
+    setKeywordData({
+      totalKeywords: updatedKeywords.length,
+      foundKeywords: foundCount,
+      overallDensity: foundCount > 0 ? 2.8 : 0,
+      overallScore: newScore,
+      keywords: updatedKeywords
+    });
+
+    setExtensionTextLoaded(true);
+    onScoreChange?.(newScore);
+    onKeywordDataChange?.(updatedKeywords);
+    toast.success(`Keywords aktualisiert: ${foundCount}/${updatedKeywords.length} auf der Website gefunden`);
+  }, [keywordData.keywords, loadLatestExtensionData, onScoreChange, onKeywordDataChange]);
   const handleManualKeywordsUpdate = (manualKeywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => {
     console.log('=== MANUAL KEYWORDS UPDATE ===');
     console.log('Manual Keywords:', manualKeywords);
@@ -211,13 +266,31 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             Live-Analyse der Website-Inhalte für {industry.toUpperCase()}
             {keywordData.foundKeywords === 0 && (
               <span className="block text-red-600 mt-1">
-                ⚠️ Automatische Analyse fehlgeschlagen - Nutzen Sie die manuelle Eingabe unten
+                ⚠️ Automatische Analyse fehlgeschlagen - Nutzen Sie die manuelle Eingabe oder laden Sie Extension-Daten
               </span>
             )}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {/* Extension-Daten laden Button */}
+            <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
+              <Button
+                onClick={handleLoadExtensionData}
+                disabled={isLoadingExtension}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                {extensionTextLoaded ? <CheckCircle className="w-4 h-4 text-green-500" /> : <Download className="w-4 h-4" />}
+                {isLoadingExtension ? 'Lade...' : extensionTextLoaded ? 'Extension-Daten geladen' : 'Extension-Daten laden'}
+              </Button>
+              <span className="text-sm text-gray-400">
+                {extensionTextLoaded 
+                  ? `✅ Keywords wurden gegen den vollständigen Website-Text geprüft`
+                  : 'Prüft Keywords gegen den vollständigen Website-Text der Chrome Extension'
+                }
+              </span>
+            </div>
             {/* Übersicht */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-blue-50 rounded-lg">
