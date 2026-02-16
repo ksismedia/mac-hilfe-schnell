@@ -178,6 +178,7 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               onKeywordDataChange={onKeywordDataChange}
               loadedKeywordScore={keywordsScore}
               loadedKeywordData={manualKeywordData}
+              companyServices={companyServices?.services}
               onNavigateToNextCategory={() => {
                 onNavigateToCategory?.('performance-mobile');
                 setActiveTab('content');
