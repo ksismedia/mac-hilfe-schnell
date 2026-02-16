@@ -27,24 +27,64 @@ async function displayCurrentUrl() {
 
 const SUPABASE_URL = 'https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/extension-data-bridge';
 
+// Begrenze die Datengröße um HTTP-Fehler zu vermeiden
+function trimData(data) {
+  const trimmed = JSON.parse(JSON.stringify(data));
+  
+  // Bilder-Array begrenzen
+  if (trimmed.content && Array.isArray(trimmed.content.images) && trimmed.content.images.length > 50) {
+    trimmed.content.images = trimmed.content.images.slice(0, 50);
+  }
+  
+  // Links begrenzen
+  if (trimmed.content && trimmed.content.links) {
+    if (Array.isArray(trimmed.content.links.internal) && trimmed.content.links.internal.length > 100) {
+      trimmed.content.links.internal = trimmed.content.links.internal.slice(0, 100);
+    }
+    if (Array.isArray(trimmed.content.links.external) && trimmed.content.links.external.length > 100) {
+      trimmed.content.links.external = trimmed.content.links.external.slice(0, 100);
+    }
+  }
+  
+  // Gesamtgröße prüfen und ggf. große Textfelder kürzen
+  let jsonStr = JSON.stringify(trimmed);
+  if (jsonStr.length > 500000) {
+    if (trimmed.content && typeof trimmed.content.bodyText === 'string' && trimmed.content.bodyText.length > 10000) {
+      trimmed.content.bodyText = trimmed.content.bodyText.substring(0, 10000);
+    }
+    if (trimmed.content && typeof trimmed.content.rawHTML === 'string') {
+      delete trimmed.content.rawHTML;
+    }
+  }
+  
+  return trimmed;
+}
+
 // NEU: Speichere Daten in Supabase (kein neuer Tab!)
 async function storeDataInSupabase(websiteData) {
   try {
     const sessionId = crypto.randomUUID();
     console.log('📤 Speichere Daten in Supabase...');
     
+    const trimmedData = trimData(websiteData);
+    const payload = JSON.stringify({
+      action: 'store',
+      sessionId: sessionId,
+      data: trimmedData
+    });
+    
+    console.log('📦 Payload-Größe:', Math.round(payload.length / 1024), 'KB');
+    
     const response = await fetch(SUPABASE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'store',
-        sessionId: sessionId,
-        data: websiteData
-      })
+      body: payload
     });
     
     if (!response.ok) {
-      throw new Error('Speichern fehlgeschlagen');
+      const errorText = await response.text();
+      console.error('❌ Server-Antwort:', response.status, errorText);
+      throw new Error(`Speichern fehlgeschlagen (${response.status})`);
     }
     
     console.log('✅ Daten gespeichert mit Session ID:', sessionId);
