@@ -9,6 +9,7 @@ interface KeywordRequest {
   websiteContent: string;
   industry: string;
   url: string;
+  companyServices?: string[];
 }
 
 interface Keyword {
@@ -25,7 +26,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { websiteContent, industry, url }: KeywordRequest = await req.json();
+    const { websiteContent, industry, url, companyServices }: KeywordRequest = await req.json();
     
     // Input validation
     if (!websiteContent || typeof websiteContent !== 'string') {
@@ -78,19 +79,25 @@ Deno.serve(async (req) => {
       innenausbau: "Innenausbau - Handwerksbetrieb für Trockenbau, Akustikdecken, Bodenbeläge, Ladenbau, Messebau, Büroausbau",
     };
 
-    const systemPrompt = `Du bist ein SEO-Experte für Handwerksbetriebe. Analysiere den Website-Inhalt und identifiziere die wichtigsten Keywords für die Branche: ${industryContext[industry] || industry}.
+    const servicesContext = companyServices && companyServices.length > 0
+      ? `\n\nDer Betrieb hat folgende Leistungsschwerpunkte: ${companyServices.join(', ')}. Berücksichtige diese bei der Keyword-Auswahl besonders stark.`
+      : '';
+
+    const systemPrompt = `Du bist ein SEO-Experte für Handwerksbetriebe. Analysiere den Website-Inhalt und identifiziere die wichtigsten Keywords für die Branche: ${industryContext[industry] || industry}.${servicesContext}
 
 WICHTIG:
 - Prüfe NUR Keywords, die TATSÄCHLICH im Website-Content vorkommen
 - Bewerte die Relevanz jedes Keywords für die Branche (1-100)
 - Schätze das monatliche Suchvolumen realistisch
 - Gib auch die Position/Häufigkeit des Keywords auf der Seite an (1-100, wobei 1 = sehr prominent)
+${companyServices && companyServices.length > 0 ? '- Generiere Keywords die zu den spezifischen Leistungen des Betriebs passen (z.B. "Trockenbau Firma" statt nur "Innenausbau")' : ''}
 
 Analysiere diese Kategorien:
 1. Hauptdienstleistungen (z.B. "Heizungsinstallation", "Badezimmer", "Notdienst")
 2. Standort-Keywords (z.B. Stadtname + Dienstleistung)
 3. Produktmarken/Technologien (falls erwähnt)
 4. Qualifikationen (z.B. "Meisterbetrieb", "Fachbetrieb")
+${companyServices && companyServices.length > 0 ? `5. Leistungsspezifische Keywords basierend auf: ${companyServices.join(', ')}` : ''}
 
 Antworte NUR mit einem JSON-Array von maximal 15 Keywords im Format:
 {

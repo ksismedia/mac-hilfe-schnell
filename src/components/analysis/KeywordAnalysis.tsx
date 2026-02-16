@@ -15,21 +15,66 @@ import { toast } from 'sonner';
 
 interface KeywordAnalysisProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
   realData: RealBusinessData;
   onScoreChange?: (score: number | null) => void;
   onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;
   loadedKeywordData?: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null;
   loadedKeywordScore?: number | null;
-  onNavigateToNextCategory?: () => void; // Neue Prop für Navigation
+  onNavigateToNextCategory?: () => void;
+  companyServices?: string[];
 }
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory }) => {
+// Generiert leistungsspezifische Keywords aus den Unternehmensleistungen
+const generateServiceKeywords = (services: string[], industry: string): string[] => {
+  if (!services || services.length === 0) return [];
+  
+  const serviceKeywords: string[] = [];
+  
+  for (const service of services) {
+    const lower = service.toLowerCase().trim();
+    if (!lower) continue;
+    
+    // Das Service selbst als Keyword
+    serviceKeywords.push(lower);
+    
+    // Zusammengesetzte Keywords mit typischen Suffixen
+    const suffixes = ['service', 'firma', 'fachbetrieb', 'kosten', 'angebot'];
+    for (const suffix of suffixes.slice(0, 2)) {
+      serviceKeywords.push(`${lower} ${suffix}`);
+    }
+  }
+  
+  return serviceKeywords;
+};
+
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory, companyServices }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading: isLoadingExtension } = useExtensionDataLoader();
   const [extensionTextLoaded, setExtensionTextLoaded] = useState(false);
+  // Merge industry keywords with service-specific keywords
+  const mergeWithServiceKeywords = useCallback((baseKeywords: typeof realData.keywords) => {
+    if (!companyServices || companyServices.length === 0) return baseKeywords;
+    
+    const existingKeywordSet = new Set(baseKeywords.map(k => k.keyword.toLowerCase()));
+    const serviceKws = generateServiceKeywords(companyServices, industry);
+    
+    const additionalKeywords = serviceKws
+      .filter(kw => !existingKeywordSet.has(kw.toLowerCase()))
+      .slice(0, 10) // Max 10 zusätzliche Service-Keywords
+      .map(kw => ({
+        keyword: kw,
+        found: false,
+        volume: 100,
+        position: 0
+      }));
+    
+    return [...baseKeywords, ...additionalKeywords];
+  }, [companyServices, industry]);
+
   const [keywordData, setKeywordData] = useState(() => {
-    const keywords = realData.keywords || [];
+    const baseKeywords = realData.keywords || [];
+    const keywords = mergeWithServiceKeywords(baseKeywords);
     const initialFoundKeywords = keywords.filter(k => k.found).length;
     return {
       totalKeywords: keywords.length,
@@ -42,9 +87,10 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
 
   const [showManualInput, setShowManualInput] = useState(false);
 
-  // Update keywords wenn sich realData ändert (Parameter-Wechsel)
+  // Update keywords wenn sich realData oder companyServices ändern
   useEffect(() => {
-    const keywords = realData.keywords || [];
+    const baseKeywords = realData.keywords || [];
+    const keywords = mergeWithServiceKeywords(baseKeywords);
     const initialFoundKeywords = keywords.filter(k => k.found).length;
     setKeywordData({
       totalKeywords: keywords.length,
@@ -53,7 +99,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       overallScore: keywords.length > 0 ? Math.round((initialFoundKeywords / keywords.length) * 100) : 0,
       keywords: keywords
     });
-  }, [realData, industry]);
+  }, [realData, industry, mergeWithServiceKeywords]);
 
   // Load saved keyword data when available
   useEffect(() => {
