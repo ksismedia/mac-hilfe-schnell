@@ -342,6 +342,7 @@ export interface ManualReputationData {
   sentiment: 'positive' | 'neutral' | 'negative';
   lastChecked?: string;
   additionalSearchTerms?: string;
+  disabledMentions?: string[]; // Links of manually disabled mentions
   notes?: string;
 }
 
