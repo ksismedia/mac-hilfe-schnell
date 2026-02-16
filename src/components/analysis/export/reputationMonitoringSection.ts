@@ -48,9 +48,10 @@ export const generateReputationMonitoringSection = (
     `;
   }
 
-  // Filter out own domain and disabled backlinks from results
+  // Filter out own domain, disabled backlinks, and disabled mentions from results
   let searchResults = manualReputationData.searchResults || [];
   const disabledBacklinks = manualBacklinkData?.disabledBacklinks || [];
+  const disabledMentions = manualReputationData.disabledMentions || [];
   
   if (url) {
     const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
@@ -61,12 +62,12 @@ export const generateReputationMonitoringSection = (
         .replace('www.', '')
         .split('/')[0];
       
-      // Filter out own domain AND disabled backlinks
-      return itemDomain !== cleanUrl && !disabledBacklinks.includes(item.link);
+      // Filter out own domain, disabled backlinks, AND disabled mentions
+      return itemDomain !== cleanUrl && !disabledBacklinks.includes(item.link) && !disabledMentions.includes(item.link);
     });
   } else {
-    // Even without URL, filter out disabled backlinks
-    searchResults = searchResults.filter((item: any) => !disabledBacklinks.includes(item.link));
+    // Even without URL, filter out disabled backlinks and disabled mentions
+    searchResults = searchResults.filter((item: any) => !disabledBacklinks.includes(item.link) && !disabledMentions.includes(item.link));
   }
   
   const reputationScore = manualReputationData.reputationScore || 0;
