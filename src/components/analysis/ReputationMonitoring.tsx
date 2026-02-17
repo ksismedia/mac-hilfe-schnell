@@ -119,16 +119,27 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
 
     try {
       const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '');
-      let searchQuery = `"${companyName}" OR ${cleanUrl}`;
+      
+      // Basis-Suchquery: Firmenname UND Domain zusammen (nicht OR)
+      // Zusätzliche Begriffe werden als alternative Firmennamen behandelt,
+      // aber immer in Kombination mit der Domain oder dem Hauptnamen
+      let searchQuery = `"${companyName}"`;
       
       if (additionalSearchTerms.trim()) {
-        const sanitizedTerms = additionalSearchTerms.trim().split(',')
+        const terms = additionalSearchTerms.trim().split(',')
           .map(term => term.trim())
           .filter(term => term.length > 0 && term.length <= 100)
-          .map(term => `"${term.replace(/"/g, '')}"`)
-          .join(' OR ');
-        if (sanitizedTerms) searchQuery += ` OR ${sanitizedTerms}`;
+          .map(term => `"${term.replace(/"/g, '')}"`);
+        
+        if (terms.length > 0) {
+          // Zusätzliche Begriffe als alternative Firmennamen,
+          // aber ALLE zusammen mit -site:eigene-domain um nur Fremd-Erwähnungen zu finden
+          searchQuery = `(${searchQuery} OR ${terms.join(' OR ')})`;
+        }
       }
+      
+      // Eigene Domain ausschließen direkt in der Suche
+      searchQuery += ` -site:${cleanUrl}`;
       
       const results = await GoogleAPIService.searchWeb(searchQuery, 10);
 
@@ -221,17 +232,18 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           {/* Additional Search Terms Input */}
           <div className="space-y-2">
             <Label htmlFor="additionalSearchTerms">
-              Zusätzliche Suchbegriffe (kommagetrennt)
+              Alternative Firmennamen / Zusatzbegriffe (kommagetrennt)
             </Label>
             <Input
               id="additionalSearchTerms"
-              placeholder='z.B. "Firmenname GmbH", "Geschäftsführer Name"'
+              placeholder='z.B. Schneider & Sohn, Schneider Heizungsbau, Thomas Schneider'
               value={additionalSearchTerms}
               onChange={(e) => setAdditionalSearchTerms(e.target.value.slice(0, 500))}
               maxLength={500}
             />
             <p className="text-xs text-muted-foreground">
-              Geben Sie zusätzliche Namen oder Begriffe ein, nach denen gesucht werden soll
+              Alternative Schreibweisen oder Namen, unter denen die Firma im Web erwähnt werden könnte. 
+              Die Suche findet Seiten, die mindestens einen dieser Begriffe oder den Firmennamen enthalten.
             </p>
           </div>
 
