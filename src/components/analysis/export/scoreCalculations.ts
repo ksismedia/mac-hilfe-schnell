@@ -465,7 +465,7 @@ export const calculateSocialMediaPerformanceScore = (
     socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
   ];
   
-  // Social Proof nur hinzufügen wenn tatsächlich Daten vorhanden sind
+  // Social Proof dynamisch berechnen statt gespeicherten overallScore nutzen
   const socialProof = realData.socialProof as any;
   const hasSocialProofData = !!socialProof && (
     (Number(socialProof.testimonials) || 0) > 0 ||
@@ -473,8 +473,24 @@ export const calculateSocialMediaPerformanceScore = (
     (Array.isArray(socialProof.awards) && socialProof.awards.length > 0)
   );
 
-  if (hasSocialProofData && Number(socialProof.overallScore) > 0) {
-    cat3Scores.push(Number(socialProof.overallScore));
+  const dynamicSocialProofScore = (() => {
+    let score = 0;
+    const gRating = realData?.reviews?.google?.rating || 0;
+    const gCount = realData?.reviews?.google?.count || 0;
+    if (gCount > 0) {
+      score += (gRating / 5) * 25;
+      score += Math.min(25, gCount >= 100 ? 25 : gCount >= 50 ? 20 : gCount >= 20 ? 15 : gCount >= 10 ? 10 : 5);
+    }
+    score += Math.min(15, (Number(socialProof?.testimonials) || 0) * 5);
+    const certs = Array.isArray(socialProof?.certifications) ? socialProof.certifications : [];
+    score += Math.min(20, certs.filter((c: any) => c.verified).length * 10);
+    const awards = Array.isArray(socialProof?.awards) ? socialProof.awards : [];
+    score += Math.min(15, awards.length * 10);
+    return Math.min(100, Math.round(score));
+  })();
+  
+  if (hasSocialProofData || dynamicSocialProofScore > 0) {
+    cat3Scores.push(dynamicSocialProofScore);
   }
   
   // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
