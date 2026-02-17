@@ -118,51 +118,84 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
     setHasSearched(true);
 
     try {
-      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '');
+      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+      const domainOnly = cleanUrl.replace(/\.[a-z]{2,}$/, '').replace(/\./g, ' '); // e.g. "schneider-sohn"
+      const siteExclude = ` -site:${cleanUrl}`;
       
-      // Basis-Suchquery: Firmenname UND Domain zusammen (nicht OR)
-      // Zusätzliche Begriffe werden als alternative Firmennamen behandelt,
-      // aber immer in Kombination mit der Domain oder dem Hauptnamen
-      let searchQuery = `"${companyName}"`;
+      // Extrahiere Stadt/PLZ aus dem Firmennamen oder Zusatzbegriffen
+      const cityMatch = (companyName + ' ' + additionalSearchTerms).match(/\b(\d{5})\s+([A-ZÄÖÜa-zäöüß-]+)/);
+      const city = cityMatch ? cityMatch[2] : '';
       
-      if (additionalSearchTerms.trim()) {
-        const terms = additionalSearchTerms.trim().split(',')
-          .map(term => term.trim())
-          .filter(term => term.length > 0 && term.length <= 100)
-          .map(term => `"${term.replace(/"/g, '')}"`);
-        
-        if (terms.length > 0) {
-          // Zusätzliche Begriffe als alternative Firmennamen,
-          // aber ALLE zusammen mit -site:eigene-domain um nur Fremd-Erwähnungen zu finden
-          searchQuery = `(${searchQuery} OR ${terms.join(' OR ')})`;
-        }
+      // Zusätzliche Begriffe sammeln
+      const extraTerms = additionalSearchTerms.trim()
+        ? additionalSearchTerms.trim().split(',')
+            .map(term => term.trim())
+            .filter(term => term.length > 0 && term.length <= 100)
+            .map(term => term.replace(/"/g, ''))
+        : [];
+
+      // Mehrere gezielte Suchanfragen erstellen
+      const queries: string[] = [];
+      
+      // 1. Firmenname exakt (Hauptsuche)
+      queries.push(`"${companyName}"${siteExclude}`);
+      
+      // 2. Domain-Erwähnungen (andere Seiten die die Domain nennen)
+      queries.push(`"${cleanUrl}"${siteExclude}`);
+      
+      // 3. Firmenname + Stadt (lokale Erwähnungen)
+      if (city) {
+        queries.push(`"${companyName.replace(/\s+in\s+\d{5}\s+\S+/i, '').trim()}" ${city}${siteExclude}`);
       }
       
-      // Eigene Domain ausschließen direkt in der Suche
-      searchQuery += ` -site:${cleanUrl}`;
-      
-      const results = await GoogleAPIService.searchWeb(searchQuery, 10);
+      // 4. Zusätzliche Begriffe einzeln mit Stadt
+      for (const term of extraTerms.slice(0, 3)) {
+        const termQuery = city ? `"${term}" ${city}${siteExclude}` : `"${term}"${siteExclude}`;
+        queries.push(termQuery);
+      }
 
-      if (results?.items?.length > 0) {
-        const filteredResults = results.items.filter((item: SearchResult) => {
-          const itemDomain = (item.displayLink || item.link || '')
-            .replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
-          return itemDomain !== cleanUrl;
-        });
-        
-        setSearchResults(filteredResults);
-        // Keep previous disabled mentions, remove ones no longer in results
-        const validDisabled = disabledMentions.filter(link => filteredResults.some((r: SearchResult) => r.link === link));
+      console.log('Reputation: Running', queries.length, 'search queries:', queries);
+
+      // Alle Suchen parallel ausführen
+      const searchPromises = queries.map(q => GoogleAPIService.searchWeb(q, 10));
+      const allResults = await Promise.all(searchPromises);
+      
+      // Ergebnisse kombinieren und deduplizieren
+      const seenLinks = new Set<string>();
+      const combinedResults: SearchResult[] = [];
+      
+      for (const result of allResults) {
+        if (result?.items) {
+          for (const item of result.items) {
+            // Eigene Domain filtern
+            const itemDomain = (item.displayLink || item.link || '')
+              .replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+            if (itemDomain === cleanUrl) continue;
+            
+            // Duplikate filtern (gleicher Link)
+            if (seenLinks.has(item.link)) continue;
+            seenLinks.add(item.link);
+            
+            combinedResults.push(item);
+          }
+        }
+      }
+
+      console.log('Reputation: Combined', combinedResults.length, 'unique results from', queries.length, 'queries');
+
+      if (combinedResults.length > 0) {
+        setSearchResults(combinedResults);
+        const validDisabled = disabledMentions.filter(link => combinedResults.some(r => r.link === link));
         setDisabledMentions(validDisabled);
         
-        const enabledResults = filteredResults.filter((r: SearchResult) => !validDisabled.includes(r.link));
+        const enabledResults = combinedResults.filter(r => !validDisabled.includes(r.link));
         const { score, sentiment } = calculateReputationFromResults(enabledResults);
         const finalScore = enabledResults.length > 0 ? score : 30;
         setReputationScore(finalScore);
         
         if (updateReputationData) {
           updateReputationData({
-            searchResults: filteredResults,
+            searchResults: combinedResults,
             reputationScore: finalScore,
             webMentionsCount: enabledResults.length,
             sentiment,
