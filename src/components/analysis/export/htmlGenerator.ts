@@ -3390,22 +3390,36 @@ export const generateCustomerHTML = ({
                 // Kategorie 3: Online-/Web-/Social-Media Performance (KORRIGIERT: Social Media immer einbeziehen)
                 const industryReviewScore = manualIndustryReviewData?.overallScore || 0;
                 const onlinePresenceScore = manualOnlinePresenceData?.overallScore || 0;
+                // Social Proof dynamisch berechnen
                 const socialProof = realData.socialProof as any;
-                const socialProofScore = Number(socialProof?.overallScore ?? 0);
                 const hasSocialProofData = !!socialProof && (
                   (Number(socialProof.testimonials) || 0) > 0 ||
                   (Array.isArray(socialProof.certifications) && socialProof.certifications.length > 0) ||
                   (Array.isArray(socialProof.awards) && socialProof.awards.length > 0)
                 );
                 
+                // Dynamische Berechnung: Google Reviews + Testimonials + Zertifizierungen + Auszeichnungen
+                let dynamicSocialProofScore = 0;
+                const gRating = realData?.reviews?.google?.rating || 0;
+                const gCount = realData?.reviews?.google?.count || 0;
+                if (gCount > 0) {
+                  dynamicSocialProofScore += (gRating / 5) * 25;
+                  dynamicSocialProofScore += Math.min(25, gCount >= 100 ? 25 : gCount >= 50 ? 20 : gCount >= 20 ? 15 : gCount >= 10 ? 10 : 5);
+                }
+                dynamicSocialProofScore += Math.min(15, (Number(socialProof?.testimonials) || 0) * 5);
+                const spCerts = Array.isArray(socialProof?.certifications) ? socialProof.certifications : [];
+                dynamicSocialProofScore += Math.min(20, spCerts.filter((c: any) => c.verified).length * 10);
+                const spAwards = Array.isArray(socialProof?.awards) ? socialProof.awards : [];
+                dynamicSocialProofScore += Math.min(15, spAwards.length * 10);
+                dynamicSocialProofScore = Math.min(100, Math.round(dynamicSocialProofScore));
+                
                 // Basis-Scores IMMER einbeziehen (Social Media auch wenn 0)
                 const cat3Scores: number[] = [
                   googleReviewScore,
-                  socialMediaScore  // Social Media Score wird IMMER einbezogen, auch wenn 0
+                  socialMediaScore
                 ];
-                
-                // Social Proof nur hinzufügen wenn tatsächlich Daten vorhanden
-                if (hasSocialProofData && socialProofScore > 0) cat3Scores.push(socialProofScore);
+                // Social Proof hinzufügen wenn Daten vorhanden oder Score > 0
+                if (hasSocialProofData || dynamicSocialProofScore > 0) cat3Scores.push(dynamicSocialProofScore);
                 
                 // Optionale Scores nur hinzufügen wenn eingegeben (> 0)
                 if (industryReviewScore > 0) cat3Scores.push(industryReviewScore);
