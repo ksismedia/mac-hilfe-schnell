@@ -1134,7 +1134,7 @@ export const generateCustomerHTML = ({
       
       return `<li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid ${impactColor};">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
-          <strong>${v.help || v.description || 'Barrierefreiheit-Problem'}</strong>
+          <strong>${escapeHtml(v.help || v.description || 'Barrierefreiheit-Problem')}</strong>
           <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ${impactColor}20; color: ${impactColor};">${impactLabel}</span>
         </div>
         ${v.helpUrl ? `<a href="${v.helpUrl}" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">WCAG-Dokumentation →</a>` : ''}
@@ -1299,7 +1299,7 @@ export const generateCustomerHTML = ({
                         ${v.count} ${v.count === 1 ? 'Vorkommen' : 'Vorkommen'}
                       </span>
                     </div>
-                    <p style="margin: 8px 0; font-size: 14px; color: #374151;"><strong>${v.help || v.description}</strong></p>
+                    <p style="margin: 8px 0; font-size: 14px; color: #374151;"><strong>${escapeHtml(v.help || v.description || '')}</strong></p>
                     ${v.nodes > 0 ? `<p style="margin: 4px 0; font-size: 12px; color: #6b7280;">${v.nodes} betroffene Elemente</p>` : ''}
                     ${v.helpUrl ? `<p style="margin: 8px 0 0 0;"><a href="${v.helpUrl}" target="_blank" style="color: #2563eb; font-size: 12px; text-decoration: none;">Mehr erfahren →</a></p>` : ''}
                   </div>
@@ -4345,7 +4345,7 @@ export const generateCustomerHTML = ({
                         <p style="font-weight: bold; color: ${v.impact === 'critical' ? '#dc2626' : v.impact === 'serious' ? '#d97706' : '#3b82f6'};">
                           ${v.impact === 'critical' ? 'CRITICAL' : v.impact === 'serious' ? 'SERIOUS' : v.impact?.toUpperCase() || 'MODERATE'}
                         </p>
-                        <p style="font-size: 0.9em;">${v.description || v.help || 'Barrierefreiheit-Problem'}</p>
+                        <p style="font-size: 0.9em;">${escapeHtml(v.description || v.help || 'Barrierefreiheit-Problem')}</p>
                         <p style="font-size: 0.8em; color: #666;">${v.nodes?.length || v.count || 1} Vorkommen</p>
                       </div>
                     `).join('')}
@@ -4533,7 +4533,7 @@ export const generateCustomerHTML = ({
             
             return '<li style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid ' + impactColor + ';">' +
               '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">' +
-              '<strong style="color: #e5e7eb;">' + (v.help || v.description || 'Barrierefreiheit-Problem') + '</strong>' +
+              '<strong style="color: #e5e7eb;">' + escapeHtml(v.help || v.description || 'Barrierefreiheit-Problem') + '</strong>' +
               '<span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: ' + impactColor + '20; color: ' + impactColor + ';">' + impactLabel + '</span>' +
               '</div>' +
               (v.helpUrl ? '<a href="' + v.helpUrl + '" target="_blank" style="font-size: 0.85em; color: #60a5fa; text-decoration: none;">WCAG-Dokumentation →</a>' : '') +

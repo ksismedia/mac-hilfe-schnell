@@ -753,7 +753,7 @@ export const generateDataPrivacySection = (
                             ${activeViolations.length > 0 ? `
                             <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
                                 <strong>Erkannte Verstöße:</strong><br>
-                                ${activeViolations.map(v => `• ${v.category}: ${v.description.substring(0, 50)}...`).join('<br>')}
+                                ${activeViolations.map(v => `• ${(v.category || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}: ${(v.description || '').substring(0, 50).replace(/</g, '&lt;').replace(/>/g, '&gt;')}...`).join('<br>')}
                             </div>
                             ` : `
                             <div style="margin-top: 6px; font-size: 11px; color: #6b7280;">
