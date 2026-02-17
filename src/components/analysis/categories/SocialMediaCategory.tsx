@@ -81,7 +81,10 @@ const SocialMediaCategory: React.FC<SocialMediaCategoryProps> = ({
         </TabsContent>
 
         <TabsContent value="social-proof">
-          <SocialProof realData={realData} businessData={businessData} />
+          <SocialProof realData={realData} businessData={businessData} onSocialProofUpdate={(data) => {
+            // Social Proof Daten werden lokal im Component verwaltet
+            console.log('Social Proof aktualisiert:', data);
+          }} />
         </TabsContent>
 
         <TabsContent value="reviews">
