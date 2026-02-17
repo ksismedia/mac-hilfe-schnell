@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Award, Users, MessageSquare, Camera, ThumbsUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, Award, MessageSquare, ThumbsUp, RefreshCw } from 'lucide-react';
 import { RealBusinessData } from '@/services/BusinessAnalysisService';
+import { toast } from 'sonner';
 
 interface SocialProofProps {
   businessData: {
@@ -12,10 +14,14 @@ interface SocialProofProps {
     industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
   };
   realData: RealBusinessData;
+  onSocialProofUpdate?: (data: any) => void;
 }
 
-const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => {
-  const rawSocialProof = realData.socialProof || {
+const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData, onSocialProofUpdate }) => {
+  const [isScanning, setIsScanning] = useState(false);
+  const [localData, setLocalData] = useState<any>(null);
+
+  const rawSocialProof = localData || realData.socialProof || {
     overallScore: 0,
     testimonials: 0,
     certifications: [],
@@ -33,7 +39,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
     const googleRating = realData?.reviews?.google?.rating || 0;
     const googleCount = realData?.reviews?.google?.count || 0;
     if (googleCount > 0) {
-      const ratingScore = (googleRating / 5) * 25; // max 25
+      const ratingScore = (googleRating / 5) * 25;
       const countScore = Math.min(25, googleCount >= 100 ? 25 : googleCount >= 50 ? 20 : googleCount >= 20 ? 15 : googleCount >= 10 ? 10 : 5);
       score += ratingScore + countScore;
     }
@@ -55,6 +61,94 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
   const calculatedScore = calculateSocialProofScore();
   const socialProofData = { ...rawSocialProof, overallScore: calculatedScore };
 
+  const handleRescan = async () => {
+    const url = businessData.url || realData.company?.url;
+    if (!url) {
+      toast.error('Keine URL für die Analyse verfügbar');
+      return;
+    }
+
+    setIsScanning(true);
+    toast.info('Social Proof wird analysiert...');
+
+    try {
+      const response = await fetch(url, { mode: 'no-cors' }).catch(() => null);
+      
+      // Da wir wegen CORS keinen direkten Zugriff haben, nutzen wir eine heuristische Analyse
+      // basierend auf bekannten Mustern für Handwerker-Websites
+      const certKeywords = [
+        { name: 'Handwerkskammer-Mitglied', keywords: ['handwerkskammer', 'hwk', 'meisterbetrieb'] },
+        { name: 'Innungsmitglied', keywords: ['innung', 'innungsbetrieb', 'innungsmitglied'] },
+        { name: 'TÜV-Zertifiziert', keywords: ['tüv', 'tuev', 'tüv-zertifiziert'] },
+        { name: 'ISO-Zertifiziert', keywords: ['iso 9001', 'iso-zertifiziert', 'din iso'] },
+        { name: 'Fachbetrieb', keywords: ['fachbetrieb', 'zertifizierter fachbetrieb'] },
+        { name: 'Energieberater', keywords: ['energieberater', 'energieberatung', 'bafa'] },
+        { name: 'SHK-Fachbetrieb', keywords: ['shk-fachbetrieb', 'shk fachbetrieb'] },
+      ];
+
+      const testimonialKeywords = ['kundenstimme', 'referenz', 'testimonial', 'erfahrung', 'bewertung', 'kundenmeinung', 'das sagen unsere kunden', 'kundenfeedback'];
+      const awardKeywords = ['auszeichnung', 'award', 'preis', 'beste', 'top', 'sieger', 'gewinner'];
+
+      // Versuche den HTML-Inhalt über die Extension oder Proxy zu laden
+      let htmlContent = '';
+      try {
+        const proxyResponse = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+        if (proxyResponse.ok) {
+          htmlContent = (await proxyResponse.text()).toLowerCase();
+        }
+      } catch {
+        console.log('Proxy-Zugriff fehlgeschlagen, nutze heuristische Analyse');
+      }
+
+      let testimonials = 0;
+      const certifications: Array<{ name: string; verified: boolean; visible: boolean }> = [];
+      const awards: Array<{ name: string; source: string; year: number }> = [];
+
+      if (htmlContent) {
+        // Echte HTML-Analyse
+        for (const cert of certKeywords) {
+          const found = cert.keywords.some(kw => htmlContent.includes(kw));
+          if (found) {
+            certifications.push({ name: cert.name, verified: true, visible: true });
+          }
+        }
+
+        for (const kw of testimonialKeywords) {
+          if (htmlContent.includes(kw)) {
+            testimonials++;
+          }
+        }
+
+        for (const kw of awardKeywords) {
+          if (htmlContent.includes(kw)) {
+            awards.push({ name: `Auszeichnung gefunden ("${kw}")`, source: 'Website-Analyse', year: new Date().getFullYear() });
+          }
+        }
+
+        toast.success(`Website analysiert: ${certifications.length} Zertifizierungen, ${testimonials} Testimonial-Hinweise, ${awards.length} Auszeichnungen gefunden`);
+      } else {
+        toast.warning('Website konnte nicht direkt geladen werden. Bitte Extension-Daten nutzen für genauere Ergebnisse.');
+      }
+
+      const newData = {
+        testimonials,
+        certifications,
+        awards,
+        overallScore: 0, // wird dynamisch berechnet
+      };
+
+      setLocalData(newData);
+      if (onSocialProofUpdate) {
+        onSocialProofUpdate(newData);
+      }
+    } catch (error) {
+      console.error('Social Proof Scan fehlgeschlagen:', error);
+      toast.error('Fehler bei der Social Proof Analyse');
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -71,19 +165,39 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Social Proof Analyse (Echte Daten)
-            <div 
-              className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                socialProofData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                socialProofData.overallScore >= 60 ? 'bg-green-500 text-white' : 
-                'bg-red-500 text-white'
-              }`}
-            >
-              {socialProofData.overallScore}%
+            <span>Social Proof Analyse</span>
+            <div className="flex items-center gap-3">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRescan}
+                disabled={isScanning}
+              >
+                {isScanning ? (
+                  <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                {isScanning ? 'Wird analysiert...' : 'Neu analysieren'}
+              </Button>
+              <div 
+                className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
+                  socialProofData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
+                  socialProofData.overallScore >= 60 ? 'bg-green-500 text-white' : 
+                  'bg-red-500 text-white'
+                }`}
+              >
+                {socialProofData.overallScore}%
+              </div>
             </div>
           </CardTitle>
           <CardDescription>
-            Live-Analyse der vertrauensbildenden Elemente auf {realData.company.url}
+            Analyse der vertrauensbildenden Elemente auf {realData.company.url}
+            {localData && (
+              <Badge variant="default" className="ml-2 bg-green-600">
+                Aktualisiert
+              </Badge>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +206,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Star className="h-5 w-5" />
-                Online-Reputation (Live-Daten)
+                Online-Reputation
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -129,13 +243,13 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Award className="h-5 w-5" />
-                Zertifizierungen & Mitgliedschaften (Live-Analyse)
+                Zertifizierungen & Mitgliedschaften
               </CardTitle>
             </CardHeader>
             <CardContent>
               {socialProofData.certifications.length > 0 ? (
                 <div className="space-y-2">
-                  {socialProofData.certifications.map((cert, index) => (
+                  {socialProofData.certifications.map((cert: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <span className="font-medium">{cert.name}</span>
                       <div className="flex gap-2">
@@ -167,13 +281,13 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <ThumbsUp className="h-5 w-5" />
-                Auszeichnungen & Anerkennungen (Live-Analyse)
+                Auszeichnungen & Anerkennungen
               </CardTitle>
             </CardHeader>
             <CardContent>
               {socialProofData.awards.length > 0 ? (
                 <div className="space-y-3">
-                  {socialProofData.awards.map((award, index) => (
+                  {socialProofData.awards.map((award: any, index: number) => (
                     <div key={index} className="p-3 border rounded-lg">
                       <div className="flex items-center justify-between">
                         <div>
@@ -203,7 +317,7 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Kundenstimmen & Testimonials (Live-Analyse)
+                Kundenstimmen & Testimonials
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -225,12 +339,12 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
             </CardContent>
           </Card>
 
-          {/* Echte Daten Hinweis */}
+          {/* Hinweis */}
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-semibold text-green-800 mb-2">✓ Live Social Proof Analyse</h4>
+            <h4 className="font-semibold text-green-800 mb-2">✓ Social Proof Analyse</h4>
             <p className="text-sm text-green-700">
-              Diese Analyse basiert auf einer automatischen Durchsuchung der Website {realData.company.url} 
-              nach vertrauensbildenden Elementen wie Zertifizierungen, Testimonials und Auszeichnungen.
+              Diese Analyse durchsucht die Website {realData.company.url} nach vertrauensbildenden Elementen 
+              wie Zertifizierungen, Testimonials und Auszeichnungen. Klicken Sie "Neu analysieren" um die Suche zu wiederholen.
             </p>
           </div>
         </CardContent>
