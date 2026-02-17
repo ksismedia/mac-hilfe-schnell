@@ -15,7 +15,7 @@ interface SocialProofProps {
 }
 
 const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => {
-  const socialProofData = realData.socialProof || {
+  const rawSocialProof = realData.socialProof || {
     overallScore: 0,
     testimonials: 0,
     certifications: [],
@@ -25,11 +25,35 @@ const SocialProof: React.FC<SocialProofProps> = ({ businessData, realData }) => 
     awards: []
   };
 
-  const getScoreBadge = (score: number) => {
-    if (score >= 90) return "secondary";        // gelb (90-100%)
-    if (score >= 60) return "default";          // grün (60-89%)
-    return "destructive";                       // rot (0-59%)
+  // Dynamisch berechnen statt gespeicherten Wert nutzen
+  const calculateSocialProofScore = () => {
+    let score = 0;
+    
+    // Google Reviews (max 50 Punkte)
+    const googleRating = realData?.reviews?.google?.rating || 0;
+    const googleCount = realData?.reviews?.google?.count || 0;
+    if (googleCount > 0) {
+      const ratingScore = (googleRating / 5) * 25; // max 25
+      const countScore = Math.min(25, googleCount >= 100 ? 25 : googleCount >= 50 ? 20 : googleCount >= 20 ? 15 : googleCount >= 10 ? 10 : 5);
+      score += ratingScore + countScore;
+    }
+    
+    // Testimonials (max 15 Punkte)
+    score += Math.min(15, (rawSocialProof.testimonials || 0) * 5);
+    
+    // Zertifizierungen (max 20 Punkte)
+    const certs = rawSocialProof.certifications || [];
+    score += Math.min(20, certs.filter((c: any) => c.verified).length * 10);
+    
+    // Auszeichnungen (max 15 Punkte)
+    const awards = rawSocialProof.awards || [];
+    score += Math.min(15, awards.length * 10);
+    
+    return Math.min(100, Math.round(score));
   };
+
+  const calculatedScore = calculateSocialProofScore();
+  const socialProofData = { ...rawSocialProof, overallScore: calculatedScore };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
