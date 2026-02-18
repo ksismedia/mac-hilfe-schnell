@@ -323,6 +323,7 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
   const getAllViolations = () => {
     const autoViolations = getActiveViolations();
     const customViolations = manualDataPrivacyData?.customViolations || [];
+    console.log('🔍 getAllViolations - autoViolations:', autoViolations.length, 'customViolations:', customViolations.length, 'customViolations data:', JSON.stringify(customViolations));
     return [...autoViolations, ...customViolations];
   };
 
