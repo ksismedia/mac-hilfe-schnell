@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Search, ExternalLink, AlertCircle, CheckCircle, TrendingUp, MessageSquare } from 'lucide-react';
+import { Search, ExternalLink, AlertCircle, CheckCircle, TrendingUp, MessageSquare, Building2, Globe, MapPin, Briefcase } from 'lucide-react';
 import { GoogleAPIService } from '@/services/GoogleAPIService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ManualReputationData } from '@/hooks/useManualData';
@@ -26,8 +25,8 @@ interface SearchResult {
   displayLink: string;
 }
 
-const positiveKeywords = ['gut', 'sehr gut', 'empfehlung', 'professionell', 'zuverlässig', 'kompetent', 'freundlich', 'qualität'];
-const negativeKeywords = ['schlecht', 'unzufrieden', 'nicht empfehlenswert', 'probleme', 'beschwerde', 'mangelhaft'];
+const positiveKeywords = ['gut', 'sehr gut', 'empfehlung', 'professionell', 'zuverlässig', 'kompetent', 'freundlich', 'qualität', 'top', 'hervorragend', 'super', 'klasse', 'perfekt', 'ausgezeichnet'];
+const negativeKeywords = ['schlecht', 'unzufrieden', 'nicht empfehlenswert', 'probleme', 'beschwerde', 'mangelhaft', 'warnung', 'betrug', 'abzocke', 'unseriös'];
 
 const calculateReputationFromResults = (results: SearchResult[]) => {
   let positiveCount = 0;
@@ -60,12 +59,25 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
   const [disabledMentions, setDisabledMentions] = useState<string[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [reputationScore, setReputationScore] = useState(0);
-  const [additionalSearchTerms, setAdditionalSearchTerms] = useState<string>('');
 
-  // Initialize from saved data and filter out own domain
+  // Eigene Eingabefelder
+  const [inputCompanyName, setInputCompanyName] = useState(companyName || '');
+  const [inputBusinessPurpose, setInputBusinessPurpose] = useState(industry || '');
+  const [inputAddress, setInputAddress] = useState('');
+  const [inputUrl, setInputUrl] = useState(url || '');
+  const [inputAltNames, setInputAltNames] = useState('');
+
+  // Sync from props on mount
+  useEffect(() => {
+    if (companyName && !inputCompanyName) setInputCompanyName(companyName);
+    if (industry && !inputBusinessPurpose) setInputBusinessPurpose(industry);
+    if (url && !inputUrl) setInputUrl(url);
+  }, [companyName, industry, url]);
+
+  // Restore saved search inputs
   useEffect(() => {
     if (manualReputationData) {
-      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+      const cleanUrl = (inputUrl || url).replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
       const filteredResults = (manualReputationData.searchResults || []).filter((item: SearchResult) => {
         const itemDomain = (item.displayLink || item.link || '')
           .replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
@@ -75,9 +87,14 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
       setSearchResults(filteredResults);
       setDisabledMentions(manualReputationData.disabledMentions || []);
       setHasSearched(true);
-      setAdditionalSearchTerms(manualReputationData.additionalSearchTerms || '');
 
-      // Recalculate score based on enabled results only
+      // Restore input fields from saved data
+      if ((manualReputationData as any).inputCompanyName) setInputCompanyName((manualReputationData as any).inputCompanyName);
+      if ((manualReputationData as any).inputBusinessPurpose) setInputBusinessPurpose((manualReputationData as any).inputBusinessPurpose);
+      if ((manualReputationData as any).inputAddress) setInputAddress((manualReputationData as any).inputAddress);
+      if ((manualReputationData as any).inputUrl) setInputUrl((manualReputationData as any).inputUrl);
+      if ((manualReputationData as any).inputAltNames) setInputAltNames((manualReputationData as any).inputAltNames);
+
       const enabledResults = filteredResults.filter(r => !(manualReputationData.disabledMentions || []).includes(r.link));
       const { score } = calculateReputationFromResults(enabledResults);
       setReputationScore(enabledResults.length > 0 ? score : (filteredResults.length > 0 ? 30 : 0));
@@ -90,13 +107,11 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
         ? prev.filter(l => l !== link)
         : [...prev, link];
 
-      // Recalculate score with new disabled list
       const enabledResults = searchResults.filter(r => !newDisabled.includes(r.link));
       const { score, sentiment } = calculateReputationFromResults(enabledResults);
       const finalScore = enabledResults.length > 0 ? score : 30;
       setReputationScore(finalScore);
 
-      // Persist
       if (updateReputationData) {
         updateReputationData({
           searchResults,
@@ -104,84 +119,92 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           webMentionsCount: enabledResults.length,
           sentiment,
           lastChecked: manualReputationData?.lastChecked || new Date().toISOString(),
-          additionalSearchTerms,
+          additionalSearchTerms: inputAltNames,
           disabledMentions: newDisabled,
-        });
+          inputCompanyName, inputBusinessPurpose, inputAddress, inputUrl, inputAltNames,
+        } as any);
       }
 
       return newDisabled;
     });
-  }, [searchResults, updateReputationData, manualReputationData, additionalSearchTerms]);
+  }, [searchResults, updateReputationData, manualReputationData, inputCompanyName, inputBusinessPurpose, inputAddress, inputUrl, inputAltNames]);
 
   const performReputationSearch = async () => {
+    if (!inputCompanyName.trim()) return;
+
     setIsSearching(true);
     setHasSearched(true);
 
     try {
-      const cleanUrl = url.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
-      const domainOnly = cleanUrl.replace(/\.[a-z]{2,}$/, '').replace(/\./g, ' '); // e.g. "schneider-sohn"
-      const siteExclude = ` -site:${cleanUrl}`;
-      
-      // Extrahiere Stadt/PLZ aus dem Firmennamen oder Zusatzbegriffen
-      const cityMatch = (companyName + ' ' + additionalSearchTerms).match(/\b(\d{5})\s+([A-ZÄÖÜa-zäöüß-]+)/);
-      const city = cityMatch ? cityMatch[2] : '';
-      
-      // Zusätzliche Begriffe sammeln
-      const extraTerms = additionalSearchTerms.trim()
-        ? additionalSearchTerms.trim().split(',')
-            .map(term => term.trim())
-            .filter(term => term.length > 0 && term.length <= 100)
-            .map(term => term.replace(/"/g, ''))
+      const cleanUrl = (inputUrl || url).replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
+      const siteExclude = cleanUrl ? ` -site:${cleanUrl}` : '';
+
+      // Stadt aus Adresse extrahieren
+      const addressParts = inputAddress.trim().split(/[,\s]+/);
+      const city = addressParts.find(part => part.length > 2 && !/^\d+$/.test(part) && !/^\d{5}$/.test(part)) || '';
+      const plz = addressParts.find(part => /^\d{5}$/.test(part)) || '';
+
+      // Alternative Namen
+      const altNames = inputAltNames.trim()
+        ? inputAltNames.trim().split(',').map(n => n.trim()).filter(n => n.length > 0 && n.length <= 100)
         : [];
 
-      // Mehrere gezielte Suchanfragen erstellen
+      // Gezielte Suchanfragen basierend auf den Eingabefeldern
       const queries: string[] = [];
-      
-      // 1. Firmenname exakt (Hauptsuche)
-      queries.push(`"${companyName}"${siteExclude}`);
-      
-      // 2. Domain-Erwähnungen (andere Seiten die die Domain nennen)
-      queries.push(`"${cleanUrl}"${siteExclude}`);
-      
-      // 3. Firmenname + Stadt (lokale Erwähnungen)
+
+      // 1. Firmenname exakt
+      queries.push(`"${inputCompanyName.trim()}"${siteExclude}`);
+
+      // 2. Firmenname + Stadt (wenn vorhanden)
       if (city) {
-        queries.push(`"${companyName.replace(/\s+in\s+\d{5}\s+\S+/i, '').trim()}" ${city}${siteExclude}`);
+        queries.push(`"${inputCompanyName.trim()}" "${city}"${siteExclude}`);
       }
-      
-      // 4. Zusätzliche Begriffe einzeln mit Stadt
-      for (const term of extraTerms.slice(0, 3)) {
-        const termQuery = city ? `"${term}" ${city}${siteExclude}` : `"${term}"${siteExclude}`;
-        queries.push(termQuery);
+
+      // 3. Firmenname + Unternehmenszweck
+      if (inputBusinessPurpose.trim()) {
+        queries.push(`"${inputCompanyName.trim()}" ${inputBusinessPurpose.trim()}${siteExclude}`);
+      }
+
+      // 4. Firmenname + Unternehmenszweck + Stadt
+      if (inputBusinessPurpose.trim() && city) {
+        queries.push(`"${inputCompanyName.trim()}" ${inputBusinessPurpose.trim()} ${city}${siteExclude}`);
+      }
+
+      // 5. URL/Domain-Erwähnungen
+      if (cleanUrl) {
+        queries.push(`"${cleanUrl}"${siteExclude}`);
+      }
+
+      // 6. Firmenname + Bewertung/Erfahrung
+      queries.push(`"${inputCompanyName.trim()}" Bewertung OR Erfahrung OR Rezension${siteExclude}`);
+
+      // 7. Alternative Firmennamen
+      for (const altName of altNames.slice(0, 3)) {
+        queries.push(`"${altName}"${city ? ` "${city}"` : ''}${siteExclude}`);
       }
 
       console.log('Reputation: Running', queries.length, 'search queries:', queries);
 
-      // Alle Suchen parallel ausführen
       const searchPromises = queries.map(q => GoogleAPIService.searchWeb(q, 10));
       const allResults = await Promise.all(searchPromises);
       
-      // Ergebnisse kombinieren und deduplizieren
       const seenLinks = new Set<string>();
       const combinedResults: SearchResult[] = [];
       
       for (const result of allResults) {
         if (result?.items) {
           for (const item of result.items) {
-            // Eigene Domain filtern
             const itemDomain = (item.displayLink || item.link || '')
               .replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0];
-            if (itemDomain === cleanUrl) continue;
-            
-            // Duplikate filtern (gleicher Link)
+            if (cleanUrl && itemDomain === cleanUrl) continue;
             if (seenLinks.has(item.link)) continue;
             seenLinks.add(item.link);
-            
             combinedResults.push(item);
           }
         }
       }
 
-      console.log('Reputation: Combined', combinedResults.length, 'unique results from', queries.length, 'queries');
+      console.log('Reputation: Combined', combinedResults.length, 'unique results');
 
       if (combinedResults.length > 0) {
         setSearchResults(combinedResults);
@@ -200,9 +223,10 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
             webMentionsCount: enabledResults.length,
             sentiment,
             lastChecked: new Date().toISOString(),
-            additionalSearchTerms,
+            additionalSearchTerms: inputAltNames,
             disabledMentions: validDisabled,
-          });
+            inputCompanyName, inputBusinessPurpose, inputAddress, inputUrl, inputAltNames,
+          } as any);
         }
       } else {
         setSearchResults([]);
@@ -214,9 +238,10 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
             webMentionsCount: 0,
             sentiment: 'neutral',
             lastChecked: new Date().toISOString(),
-            additionalSearchTerms,
+            additionalSearchTerms: inputAltNames,
             disabledMentions: [],
-          });
+            inputCompanyName, inputBusinessPurpose, inputAddress, inputUrl, inputAltNames,
+          } as any);
         }
       }
     } catch (error) {
@@ -257,32 +282,112 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           )}
         </CardTitle>
         <CardDescription>
-          Online-Reputation und Erwähnungen im Web
+          Sucht gezielt nach Online-Erwähnungen Ihres Unternehmens auf Basis der eingegebenen Daten
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* Additional Search Terms Input */}
-          <div className="space-y-2">
-            <Label htmlFor="additionalSearchTerms">
-              Alternative Firmennamen / Zusatzbegriffe (kommagetrennt)
-            </Label>
-            <Input
-              id="additionalSearchTerms"
-              placeholder='z.B. Schneider & Sohn, Schneider Heizungsbau, Thomas Schneider'
-              value={additionalSearchTerms}
-              onChange={(e) => setAdditionalSearchTerms(e.target.value.slice(0, 500))}
-              maxLength={500}
-            />
-            <p className="text-xs text-muted-foreground">
-              Alternative Schreibweisen oder Namen, unter denen die Firma im Web erwähnt werden könnte. 
-              Die Suche findet Seiten, die mindestens einen dieser Begriffe oder den Firmennamen enthalten.
-            </p>
-          </div>
+          {/* Eingabefelder */}
+          <Card className="border-dashed">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                Suchkriterien festlegen
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Je genauer die Angaben, desto relevanter die Ergebnisse
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="rep-company" className="flex items-center gap-1.5 text-sm">
+                    <Building2 className="h-3.5 w-3.5" />
+                    Firmenname *
+                  </Label>
+                  <Input
+                    id="rep-company"
+                    value={inputCompanyName}
+                    onChange={(e) => setInputCompanyName(e.target.value.slice(0, 200))}
+                    placeholder="z.B. Schneider & Sohn GmbH"
+                    maxLength={200}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="rep-purpose" className="flex items-center gap-1.5 text-sm">
+                    <Briefcase className="h-3.5 w-3.5" />
+                    Unternehmenszweck / Branche
+                  </Label>
+                  <Input
+                    id="rep-purpose"
+                    value={inputBusinessPurpose}
+                    onChange={(e) => setInputBusinessPurpose(e.target.value.slice(0, 200))}
+                    placeholder="z.B. Heizung Sanitär, Malerbetrieb"
+                    maxLength={200}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="rep-address" className="flex items-center gap-1.5 text-sm">
+                    <MapPin className="h-3.5 w-3.5" />
+                    Adresse / Stadt
+                  </Label>
+                  <Input
+                    id="rep-address"
+                    value={inputAddress}
+                    onChange={(e) => setInputAddress(e.target.value.slice(0, 300))}
+                    placeholder="z.B. 59423 Unna oder Musterstraße 1, 59423 Unna"
+                    maxLength={300}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="rep-url" className="flex items-center gap-1.5 text-sm">
+                    <Globe className="h-3.5 w-3.5" />
+                    Website-URL
+                  </Label>
+                  <Input
+                    id="rep-url"
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value.slice(0, 300))}
+                    placeholder="z.B. www.schneider-sohn.de"
+                    maxLength={300}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Eigene Website wird aus den Ergebnissen ausgeschlossen
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="rep-altnames" className="flex items-center gap-1.5 text-sm">
+                  <Search className="h-3.5 w-3.5" />
+                  Alternative Firmennamen (kommagetrennt, optional)
+                </Label>
+                <Input
+                  id="rep-altnames"
+                  value={inputAltNames}
+                  onChange={(e) => setInputAltNames(e.target.value.slice(0, 500))}
+                  placeholder="z.B. Schneider Heizungsbau, Thomas Schneider Sanitär"
+                  maxLength={500}
+                />
+              </div>
+
+              <Button 
+                onClick={performReputationSearch} 
+                disabled={isSearching || !inputCompanyName.trim()}
+                className="w-full"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                {isSearching ? 'Suche läuft...' : hasSearched ? 'Erneut suchen' : 'Reputation analysieren'}
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Score Overview */}
-          {hasSearched && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {hasSearched && !isSearching && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 border rounded-lg">
                 <div className="text-3xl font-bold text-primary mb-1">
                   {enabledResults.length}
@@ -379,7 +484,7 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
           ) : null}
 
           {/* Recommendations */}
-          {hasSearched && (
+          {hasSearched && !isSearching && (
             <Card className="bg-muted/50">
               <CardHeader>
                 <CardTitle className="text-base">Handlungsempfehlungen</CardTitle>
@@ -410,16 +515,6 @@ const ReputationMonitoring: React.FC<ReputationMonitoringProps> = ({
               </CardContent>
             </Card>
           )}
-
-          <Button 
-            onClick={performReputationSearch} 
-            disabled={isSearching}
-            variant="outline"
-            className="w-full"
-          >
-            <Search className="h-4 w-4 mr-2" />
-            {isSearching ? 'Suche läuft...' : 'Erneut suchen'}
-          </Button>
         </div>
       </CardContent>
     </Card>
