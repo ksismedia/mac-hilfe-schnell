@@ -3979,7 +3979,7 @@ export const generateCustomerHTML = ({
       </div>
     </div>
 
-    ${generateDataPrivacySection(dsgvoScore, [...(privacyData?.activeViolations || []), ...(manualDataPrivacyData?.customViolations || [])], manualDataPrivacyData, privacyData, securityData)}
+    ${generateDataPrivacySection(dsgvoScore, privacyData?.activeViolations || [], manualDataPrivacyData, privacyData, securityData)}
 
     ${generateWebsiteSecuritySection(securityData)}
 
