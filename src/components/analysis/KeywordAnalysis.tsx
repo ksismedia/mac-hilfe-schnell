@@ -330,20 +330,28 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     return found ? 'default' : 'destructive';
   };
 
-  const toggleKeywordStatus = (index: number) => {
-    const updatedKeywords = keywordData.keywords.map((kw, i) => 
-      i === index 
-        ? { 
-            ...kw, 
-            found: !kw.found,
-            position: !kw.found ? Math.floor(Math.random() * 20) + 1 : 0
-          }
-        : kw
-    );
+  const toggleKeywordStatus = (keyword: string) => {
+    // Check if keyword exists in keywordData.keywords
+    const existingIndex = keywordData.keywords.findIndex(kw => kw.keyword.toLowerCase() === keyword.toLowerCase());
+    
+    let updatedKeywords: typeof keywordData.keywords;
+    
+    if (existingIndex >= 0) {
+      // Toggle existing keyword
+      updatedKeywords = keywordData.keywords.map((kw, i) => 
+        i === existingIndex 
+          ? { ...kw, found: !kw.found, position: !kw.found ? Math.floor(Math.random() * 20) + 1 : 0 }
+          : kw
+      );
+    } else {
+      // Enriched keyword not in base list - add it
+      const displayedItem = displayedKeywords.find(kw => kw.keyword.toLowerCase() === keyword.toLowerCase());
+      if (!displayedItem) return;
+      updatedKeywords = [...keywordData.keywords, { ...displayedItem, found: !displayedItem.found, position: !displayedItem.found ? Math.floor(Math.random() * 20) + 1 : 0 }];
+    }
     
     const foundKeywords = updatedKeywords.filter(k => k.found).length;
     
-    // Berechne neuen Score basierend auf aktualisierten Keywords
     let newScore = 0;
     if (foundKeywords === 0) {
       newScore = 0;
@@ -362,7 +370,6 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       keywords: updatedKeywords
     });
     
-    // Benachrichtige Parent über Änderungen
     onScoreChange?.(newScore);
     onKeywordDataChange?.(updatedKeywords);
   };
@@ -506,7 +513,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                           <Badge 
                             variant={getVisibilityBadge(item.found)}
                             className="cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => toggleKeywordStatus(keywordData.keywords.indexOf(item))}
+                            onClick={() => toggleKeywordStatus(item.keyword)}
                             title="Klicken um Status zu ändern"
                           >
                             {item.found ? 'Gefunden' : 'Fehlt'}
