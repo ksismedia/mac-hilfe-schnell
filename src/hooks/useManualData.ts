@@ -227,6 +227,7 @@ export interface ManualDataPrivacyData {
   }>;
   overallScore: number; // Manual override score
   notes?: string;
+  privacyPolicyText?: string; // Eingefügter Datenschutzerklärungs-Text für KI-Analyse
 }
 
 export interface LocalSEODirectory {
