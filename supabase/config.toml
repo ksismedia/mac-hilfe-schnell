@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.regional-product-trends]
 verify_jwt = false
+
+[functions.analyze-privacy-policy]
+verify_jwt = false

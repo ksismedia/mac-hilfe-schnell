@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { Plus, Trash2, Shield, AlertTriangle, Cookie } from 'lucide-react';
+import { Plus, Trash2, Shield, AlertTriangle, Cookie, Brain, Loader2, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { toast } from 'sonner';
 import { ManualDataPrivacyData } from '@/hooks/useManualData';
 
 interface ManualDataPrivacyInputProps {
@@ -152,6 +153,12 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     thirdCountry: false,
     country: ''
   });
+
+  // AI Privacy Policy Analysis state
+  const [privacyPolicyText, setPrivacyPolicyText] = useState('');
+  const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+  const [showAiSection, setShowAiSection] = useState(false);
 
   // Update-Funktion - aktualisiert lokalen State UND sendet an Parent
   const updateData = useCallback((updates: Partial<ManualDataPrivacyData>) => {
@@ -319,9 +326,86 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   }, [localData]);
 
   const handleSaveChanges = () => {
-    // Explizit nochmal an Parent senden zur Sicherheit
     onDataChange(localData);
     setIsSaved(true);
+  };
+
+  const handleAiAnalysis = async () => {
+    if (!privacyPolicyText.trim() || privacyPolicyText.trim().length < 50) {
+      toast.error('Bitte fügen Sie einen ausreichend langen Text ein (mind. 50 Zeichen).');
+      return;
+    }
+    setAiAnalysisLoading(true);
+    setAiAnalysisResult(null);
+    try {
+      const response = await fetch(
+        `https://dfzuijskqjbtpckzzemh.supabase.co/functions/v1/analyze-privacy-policy`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ privacyPolicyText: privacyPolicyText.trim() })
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        toast.error(result.error || 'KI-Analyse fehlgeschlagen');
+        return;
+      }
+      if (result.success && result.data) {
+        setAiAnalysisResult(result.data);
+        toast.success('Datenschutzerklärung wurde analysiert!');
+      } else {
+        toast.error('Unerwartete Antwort von der KI');
+      }
+    } catch (error) {
+      console.error('AI analysis error:', error);
+      toast.error('Fehler bei der KI-Analyse');
+    } finally {
+      setAiAnalysisLoading(false);
+    }
+  };
+
+  const applyAiResults = () => {
+    if (!aiAnalysisResult) return;
+    const updates: Partial<ManualDataPrivacyData> = {
+      privacyPolicy: aiAnalysisResult.privacyPolicy ?? currentData.privacyPolicy,
+      cookiePolicy: aiAnalysisResult.cookiePolicy ?? currentData.cookiePolicy,
+      cookieConsent: aiAnalysisResult.cookieConsent ?? currentData.cookieConsent,
+      gdprCompliant: aiAnalysisResult.gdprCompliant ?? currentData.gdprCompliant,
+      dataSubjectRights: aiAnalysisResult.dataSubjectRights ?? currentData.dataSubjectRights,
+      dataProcessingAgreement: aiAnalysisResult.dataProcessingAgreement ?? currentData.dataProcessingAgreement,
+      dataProtectionOfficer: aiAnalysisResult.dataProtectionOfficer ?? currentData.dataProtectionOfficer,
+      processingRegister: aiAnalysisResult.processingRegister ?? currentData.processingRegister,
+      thirdCountryTransfer: aiAnalysisResult.thirdCountryTransfer ?? currentData.thirdCountryTransfer,
+    };
+    if (aiAnalysisResult.thirdCountryTransferDetails) {
+      updates.thirdCountryTransferDetails = aiAnalysisResult.thirdCountryTransferDetails;
+    }
+    // Add detected tracking scripts
+    if (aiAnalysisResult.detectedTrackingScripts?.length > 0) {
+      const newScripts = aiAnalysisResult.detectedTrackingScripts.map((s: any, i: number) => ({
+        id: `ai-tracking-${Date.now()}-${i}`,
+        name: s.name,
+        type: s.type || 'other',
+        provider: s.provider || '',
+        consentRequired: true
+      }));
+      updates.trackingScripts = [...(currentData.trackingScripts || []), ...newScripts];
+    }
+    // Add detected external services
+    if (aiAnalysisResult.detectedExternalServices?.length > 0) {
+      const newServices = aiAnalysisResult.detectedExternalServices.map((s: any, i: number) => ({
+        id: `ai-service-${Date.now()}-${i}`,
+        name: s.name,
+        purpose: s.purpose,
+        dataProcessingAgreement: false,
+        thirdCountry: s.thirdCountry || false,
+        country: s.country || ''
+      }));
+      updates.externalServices = [...(currentData.externalServices || []), ...newServices];
+    }
+    updateData(updates);
+    toast.success('KI-Ergebnisse wurden in die Felder übernommen!');
   };
 
   return (
@@ -358,6 +442,148 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
           )}
         </CardHeader>
       <CardContent className="space-y-6">
+        {/* KI-gestützte Datenschutzerklärung-Analyse */}
+        <div className="border border-accent/30 rounded-lg p-4 space-y-4 bg-accent/5">
+          <button
+            onClick={() => setShowAiSection(!showAiSection)}
+            className="w-full flex items-center justify-between text-left"
+          >
+            <h4 className="font-semibold text-foreground flex items-center gap-2">
+              <Brain className="h-5 w-5 text-accent" />
+              KI-Analyse der Datenschutzerklärung
+            </h4>
+            <Badge variant="outline" className="text-xs">
+              {showAiSection ? 'Einklappen' : 'Aufklappen'}
+            </Badge>
+          </button>
+          
+          {showAiSection && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Kopieren Sie die Datenschutzerklärung der Website hier hinein. Die KI prüft sie auf DSGVO-Konformität und füllt die Felder automatisch aus.
+              </p>
+              
+              <Textarea
+                placeholder="Datenschutzerklärung hier einfügen..."
+                value={privacyPolicyText}
+                onChange={(e) => setPrivacyPolicyText(e.target.value)}
+                className="min-h-[200px] text-xs"
+              />
+              
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">
+                  {privacyPolicyText.length} Zeichen
+                </span>
+              </div>
+              
+              <Button
+                onClick={handleAiAnalysis}
+                disabled={aiAnalysisLoading || privacyPolicyText.trim().length < 50}
+                className="w-full"
+              >
+                {aiAnalysisLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Analysiere Datenschutzerklärung...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="h-4 w-4 mr-2" />
+                    Mit KI analysieren
+                  </>
+                )}
+              </Button>
+              
+              {/* AI Analysis Results */}
+              {aiAnalysisResult && (
+                <div className="space-y-4 border-t pt-4">
+                  <h5 className="font-semibold text-foreground flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    KI-Analyseergebnis
+                  </h5>
+                  
+                  {aiAnalysisResult.summary && (
+                    <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                      {aiAnalysisResult.summary}
+                    </p>
+                  )}
+                  
+                  {/* Checklist Results */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {[
+                      { key: 'privacyPolicy', label: 'Datenschutzerklärung' },
+                      { key: 'cookiePolicy', label: 'Cookie-Richtlinie' },
+                      { key: 'cookieConsent', label: 'Cookie-Consent' },
+                      { key: 'gdprCompliant', label: 'DSGVO-konform' },
+                      { key: 'dataSubjectRights', label: 'Betroffenenrechte' },
+                      { key: 'dataProcessingAgreement', label: 'Auftragsverarbeitung' },
+                      { key: 'dataProtectionOfficer', label: 'Datenschutzbeauftragter' },
+                      { key: 'processingRegister', label: 'Verarbeitungsverzeichnis' },
+                      { key: 'thirdCountryTransfer', label: 'Drittland-Transfer' },
+                    ].map(item => (
+                      <div key={item.key} className="flex items-center gap-2 text-sm">
+                        {aiAnalysisResult[item.key] ? (
+                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                        )}
+                        <span>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Strengths & Weaknesses */}
+                  {aiAnalysisResult.strengths?.length > 0 && (
+                    <div>
+                      <h6 className="text-sm font-medium text-green-700 mb-1">✅ Stärken</h6>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        {aiAnalysisResult.strengths.map((s: string, i: number) => (
+                          <li key={i}>• {s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {aiAnalysisResult.weaknesses?.length > 0 && (
+                    <div>
+                      <h6 className="text-sm font-medium text-destructive mb-1">❌ Schwächen</h6>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        {aiAnalysisResult.weaknesses.map((w: string, i: number) => (
+                          <li key={i}>• {w}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {/* Detected Services Info */}
+                  {(aiAnalysisResult.detectedTrackingScripts?.length > 0 || aiAnalysisResult.detectedExternalServices?.length > 0) && (
+                    <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+                      {aiAnalysisResult.detectedTrackingScripts?.length > 0 && (
+                        <p>📊 {aiAnalysisResult.detectedTrackingScripts.length} Tracking-Script(s) erkannt: {aiAnalysisResult.detectedTrackingScripts.map((s: any) => s.name).join(', ')}</p>
+                      )}
+                      {aiAnalysisResult.detectedExternalServices?.length > 0 && (
+                        <p>🌐 {aiAnalysisResult.detectedExternalServices.length} Externe(r) Dienst(e) erkannt: {aiAnalysisResult.detectedExternalServices.map((s: any) => s.name).join(', ')}</p>
+                      )}
+                    </div>
+                  )}
+                  
+                  <Button
+                    onClick={applyAiResults}
+                    className="w-full bg-accent hover:bg-accent/90"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    KI-Ergebnisse in Felder übernehmen
+                  </Button>
+                  
+                  <p className="text-xs text-muted-foreground text-center">
+                    Die Ergebnisse werden in die manuellen Felder übertragen. Sie können diese danach noch anpassen.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
         {/* DSGVO Compliance Checkboxes */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
