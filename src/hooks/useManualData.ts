@@ -228,6 +228,24 @@ export interface ManualDataPrivacyData {
   overallScore: number; // Manual override score
   notes?: string;
   privacyPolicyText?: string; // Eingefügter Datenschutzerklärungs-Text für KI-Analyse
+  aiPrivacyPolicyAnalysis?: {
+    summary: string;
+    strengths: string[];
+    weaknesses: string[];
+    privacyPolicy: boolean;
+    cookiePolicy: boolean;
+    cookieConsent: boolean;
+    gdprCompliant: boolean;
+    dataSubjectRights: boolean;
+    dataProcessingAgreement: boolean;
+    dataProtectionOfficer: boolean;
+    processingRegister: boolean;
+    thirdCountryTransfer: boolean;
+    thirdCountryTransferDetails?: string;
+    detectedTrackingScripts?: Array<{ name: string; type: string; provider?: string }>;
+    detectedExternalServices?: Array<{ name: string; purpose: string; thirdCountry?: boolean; country?: string }>;
+    analyzedAt: string;
+  };
 }
 
 export interface LocalSEODirectory {
