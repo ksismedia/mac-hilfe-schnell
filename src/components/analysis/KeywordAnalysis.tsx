@@ -12,6 +12,8 @@ import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { useExtensionDataLoader } from '@/hooks/useExtensionDataLoader';
 import { Download, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import IndustryFocusSelector from './IndustryFocusSelector';
+import { industryFocusAreas } from '@/data/industryFocusAreas';
 
 interface KeywordAnalysisProps {
   url: string;
@@ -52,6 +54,14 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading: isLoadingExtension } = useExtensionDataLoader();
   const [extensionTextLoaded, setExtensionTextLoaded] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
+  
+  // Industry focus areas (Schwerpunkte) - must be before mergeWithServiceKeywords
+  const availableFocusAreas = industryFocusAreas[industry] || [];
+  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>(
+    () => availableFocusAreas.map(a => a.id)
+  );
+
   // Merge industry keywords with service-specific keywords
   const mergeWithServiceKeywords = useCallback((baseKeywords: typeof realData.keywords) => {
     if (!companyServices || companyServices.length === 0) return baseKeywords;
@@ -61,7 +71,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     
     const additionalKeywords = serviceKws
       .filter(kw => !existingKeywordSet.has(kw.toLowerCase()))
-      .slice(0, 10) // Max 10 zusätzliche Service-Keywords
+      .slice(0, 10)
       .map(kw => ({
         keyword: kw,
         found: false,
@@ -70,7 +80,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       }));
     
     return [...baseKeywords, ...additionalKeywords];
-  }, [companyServices, industry]);
+  }, [companyServices, industry, selectedFocusAreas, availableFocusAreas]);
 
   const [keywordData, setKeywordData] = useState(() => {
     const baseKeywords = realData.keywords || [];
@@ -84,8 +94,6 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       keywords: keywords
     };
   });
-
-  const [showManualInput, setShowManualInput] = useState(false);
 
   // Update keywords wenn sich realData oder companyServices ändern
   useEffect(() => {
@@ -319,6 +327,13 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {/* Branchen-Schwerpunkte */}
+            <IndustryFocusSelector
+              industry={industry}
+              selectedFocusAreas={selectedFocusAreas}
+              onFocusAreasChange={setSelectedFocusAreas}
+            />
+
             {/* Extension-Daten laden Button */}
             <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
               <Button

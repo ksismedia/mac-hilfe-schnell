@@ -10,6 +10,7 @@ interface KeywordRequest {
   industry: string;
   url: string;
   companyServices?: string[];
+  focusAreas?: string[];
 }
 
 interface Keyword {
@@ -26,7 +27,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { websiteContent, industry, url, companyServices }: KeywordRequest = await req.json();
+    const { websiteContent, industry, url, companyServices, focusAreas }: KeywordRequest = await req.json();
     
     // Input validation
     if (!websiteContent || typeof websiteContent !== 'string') {
@@ -83,7 +84,11 @@ Deno.serve(async (req) => {
       ? `\n\nDer Betrieb hat folgende Leistungsschwerpunkte: ${companyServices.join(', ')}. Berücksichtige diese bei der Keyword-Auswahl besonders stark.`
       : '';
 
-    const systemPrompt = `Du bist ein SEO-Experte für Handwerksbetriebe. Analysiere den Website-Inhalt und identifiziere die wichtigsten Keywords für die Branche: ${industryContext[industry] || industry}.${servicesContext}
+    const focusAreasContext = focusAreas && focusAreas.length > 0
+      ? `\n\nDer Betrieb hat folgende Branchen-Schwerpunkte ausgewählt: ${focusAreas.join(', ')}. Fokussiere die Keyword-Analyse STARK auf diese Teilbereiche und generiere Keywords, die speziell zu diesen Schwerpunkten passen.`
+      : '';
+
+    const systemPrompt = `Du bist ein SEO-Experte für Handwerksbetriebe. Analysiere den Website-Inhalt und identifiziere die wichtigsten Keywords für die Branche: ${industryContext[industry] || industry}.${servicesContext}${focusAreasContext}
 
 WICHTIG:
 - Prüfe NUR Keywords, die TATSÄCHLICH im Website-Content vorkommen
