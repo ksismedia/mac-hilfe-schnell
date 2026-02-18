@@ -36,20 +36,20 @@ const IndustryFocusSelector: React.FC<IndustryFocusSelectorProps> = ({
   };
 
   return (
-    <div className="p-4 bg-yellow-500/10 rounded-lg border-2 border-yellow-500/50">
+    <div className="p-4 bg-accent/10 rounded-lg border-2 border-accent/40">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-sm font-bold text-yellow-400">
-          <Filter className="w-5 h-5 text-yellow-400" />
+        <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+          <Filter className="w-5 h-5 text-accent" />
           🎯 Branchen-Schwerpunkte für Keyword-Analyse
         </div>
         <button
           onClick={handleSelectAll}
-          className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors underline"
+          className="text-xs text-accent hover:text-accent/80 transition-colors underline"
         >
           {selectedFocusAreas.length === focusAreas.length ? 'Alle abwählen' : 'Alle auswählen'}
         </button>
       </div>
-      <p className="text-xs text-gray-300 mb-3">
+      <p className="text-xs text-muted-foreground mb-3">
         Wählen Sie Teilbereiche aus, um die Keyword-Analyse auf diese Schwerpunkte zu fokussieren.
       </p>
       <div className="flex flex-wrap gap-3">
@@ -58,21 +58,21 @@ const IndustryFocusSelector: React.FC<IndustryFocusSelectorProps> = ({
             key={area.id}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer text-sm transition-colors ${
               selectedFocusAreas.includes(area.id)
-                ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-300'
-                : 'bg-gray-700 border border-gray-600 text-gray-300 hover:bg-gray-600'
+                ? 'bg-accent/20 border border-accent/50 text-foreground font-medium'
+                : 'bg-muted border border-border text-muted-foreground hover:bg-muted/80'
             }`}
           >
             <Checkbox
               checked={selectedFocusAreas.includes(area.id)}
               onCheckedChange={() => handleToggle(area.id)}
-              className="h-3.5 w-3.5 border-gray-500 data-[state=checked]:bg-yellow-500 data-[state=checked]:border-yellow-500"
+              className="h-3.5 w-3.5 border-border data-[state=checked]:bg-accent data-[state=checked]:border-accent"
             />
             {area.label}
           </label>
         ))}
       </div>
       {selectedFocusAreas.length > 0 && (
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           {selectedFocusAreas.length} von {focusAreas.length} Schwerpunkt{selectedFocusAreas.length !== 1 ? 'en' : ''} ausgewählt
         </p>
       )}
