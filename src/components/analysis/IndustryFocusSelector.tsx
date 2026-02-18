@@ -36,20 +36,20 @@ const IndustryFocusSelector: React.FC<IndustryFocusSelectorProps> = ({
   };
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
+    <div className="p-4 bg-yellow-500/10 rounded-lg border-2 border-yellow-500/50">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-sm font-medium text-white">
-          <Filter className="w-4 h-4 text-yellow-400" />
-          Branchen-Schwerpunkte
+        <div className="flex items-center gap-2 text-sm font-bold text-yellow-400">
+          <Filter className="w-5 h-5 text-yellow-400" />
+          🎯 Branchen-Schwerpunkte für Keyword-Analyse
         </div>
         <button
           onClick={handleSelectAll}
-          className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors"
+          className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors underline"
         >
           {selectedFocusAreas.length === focusAreas.length ? 'Alle abwählen' : 'Alle auswählen'}
         </button>
       </div>
-      <p className="text-xs text-gray-400 mb-3">
+      <p className="text-xs text-gray-300 mb-3">
         Wählen Sie Teilbereiche aus, um die Keyword-Analyse auf diese Schwerpunkte zu fokussieren.
       </p>
       <div className="flex flex-wrap gap-3">
