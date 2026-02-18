@@ -39,7 +39,8 @@ const getDefaultData = (): ManualDataPrivacyData => ({
   customViolations: [],
   manualCookies: [],
   overallScore: undefined,
-  notes: ''
+  notes: '',
+  privacyPolicyText: ''
 });
 
 const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, onDataChange, privacyData }) => {
@@ -154,11 +155,18 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
     country: ''
   });
 
-  // AI Privacy Policy Analysis state
-  const [privacyPolicyText, setPrivacyPolicyText] = useState('');
+  // AI Privacy Policy Analysis state - initialisiert aus gespeicherten Daten
+  const [privacyPolicyText, setPrivacyPolicyText] = useState(data?.privacyPolicyText || '');
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
   const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
   const [showAiSection, setShowAiSection] = useState(false);
+
+  // Sync privacyPolicyText aus Props
+  useEffect(() => {
+    if (data?.privacyPolicyText && data.privacyPolicyText !== privacyPolicyText) {
+      setPrivacyPolicyText(data.privacyPolicyText);
+    }
+  }, [data?.privacyPolicyText]);
 
   // Update-Funktion - aktualisiert lokalen State UND sendet an Parent
   const updateData = useCallback((updates: Partial<ManualDataPrivacyData>) => {
@@ -466,7 +474,10 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
               <Textarea
                 placeholder="Datenschutzerklärung hier einfügen..."
                 value={privacyPolicyText}
-                onChange={(e) => setPrivacyPolicyText(e.target.value)}
+                onChange={(e) => {
+                  setPrivacyPolicyText(e.target.value);
+                  updateData({ privacyPolicyText: e.target.value });
+                }}
                 className="min-h-[200px] text-xs"
               />
               
