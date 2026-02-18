@@ -170,14 +170,9 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
         ...newViolation
       };
       
-      console.log('🆕 Adding custom violation:', JSON.stringify(violation));
-      console.log('🆕 Current customViolations before add:', JSON.stringify(currentData.customViolations));
-      
       updateData({
         customViolations: [...currentData.customViolations, violation]
       });
-      
-      console.log('🆕 Custom violation added, new count should be:', currentData.customViolations.length + 1);
       
       setNewViolation({
         description: '',
