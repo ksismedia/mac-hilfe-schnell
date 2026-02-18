@@ -876,6 +876,70 @@ export const generateDataPrivacySection = (
                         </div>
                     </div>
                 ` : ''}
+                
+                ${manualDataPrivacyData?.aiPrivacyPolicyAnalysis ? `
+                <div style="margin-top: 25px; padding: 20px; background: #f0f9ff; border: 2px solid ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.gdprCompliant ? '#22c55e' : '#f59e0b'}; border-radius: 8px;">
+                    <h4 style="color: #1e40af; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px; font-size: 16px;">
+                        📋 KI-Analyse der Datenschutzerklärung
+                        <span style="font-size: 11px; color: #6b7280; font-weight: normal; margin-left: auto;">
+                            Analysiert am ${new Date(manualDataPrivacyData.aiPrivacyPolicyAnalysis.analyzedAt).toLocaleDateString('de-DE')}
+                        </span>
+                    </h4>
+                    
+                    ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.summary ? `
+                    <div style="background: #e0f2fe; border-radius: 6px; padding: 12px; margin-bottom: 15px;">
+                        <p style="margin: 0; color: #1e3a5f; font-size: 13px;">${manualDataPrivacyData.aiPrivacyPolicyAnalysis.summary}</p>
+                    </div>
+                    ` : ''}
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                        ${[
+                          { key: 'privacyPolicy', label: 'Datenschutzerklärung' },
+                          { key: 'cookiePolicy', label: 'Cookie-Richtlinie' },
+                          { key: 'cookieConsent', label: 'Cookie-Consent' },
+                          { key: 'gdprCompliant', label: 'DSGVO-konform' },
+                          { key: 'dataSubjectRights', label: 'Betroffenenrechte' },
+                          { key: 'dataProcessingAgreement', label: 'Auftragsverarbeitung' },
+                          { key: 'dataProtectionOfficer', label: 'Datenschutzbeauftragter' },
+                          { key: 'processingRegister', label: 'Verarbeitungsverzeichnis' },
+                          { key: 'thirdCountryTransfer', label: 'Drittland-Transfer' },
+                        ].map(item => `
+                          <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #374151;">
+                            <span style="color: ${(manualDataPrivacyData.aiPrivacyPolicyAnalysis as any)[item.key] ? '#16a34a' : '#dc2626'}; font-size: 16px;">
+                              ${(manualDataPrivacyData.aiPrivacyPolicyAnalysis as any)[item.key] ? '✅' : '❌'}
+                            </span>
+                            ${item.label}
+                          </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.strengths?.length > 0 ? `
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px;">
+                            <h5 style="color: #15803d; margin: 0 0 8px 0; font-size: 13px;">✅ Stärken</h5>
+                            <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #166534;">
+                                ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.strengths.map((s: string) => `<li style="margin-bottom: 3px;">${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.weaknesses?.length > 0 ? `
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px;">
+                            <h5 style="color: #dc2626; margin: 0 0 8px 0; font-size: 13px;">❌ Schwächen</h5>
+                            <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #991b1b;">
+                                ${manualDataPrivacyData.aiPrivacyPolicyAnalysis.weaknesses.map((w: string) => `<li style="margin-bottom: 3px;">${w}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="margin-top: 12px; padding: 10px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px;">
+                        <p style="margin: 0; font-size: 11px; color: #92400e;">
+                            <strong>⚠️ Hinweis:</strong> Diese KI-Analyse ersetzt keine rechtliche Beratung. 
+                            Die Ergebnisse dienen als Orientierungshilfe und sollten von einem Datenschutzexperten verifiziert werden.
+                        </p>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         </div>
 

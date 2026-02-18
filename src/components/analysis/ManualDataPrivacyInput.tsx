@@ -158,8 +158,9 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
   // AI Privacy Policy Analysis state - initialisiert aus gespeicherten Daten
   const [privacyPolicyText, setPrivacyPolicyText] = useState(data?.privacyPolicyText || '');
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
-  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
-  const [showAiSection, setShowAiSection] = useState(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(data?.aiPrivacyPolicyAnalysis || null);
+  const [showAiSection, setShowAiSection] = useState(!!(data?.aiPrivacyPolicyAnalysis || data?.privacyPolicyText));
+  
 
   // Sync privacyPolicyText aus Props
   useEffect(() => {
@@ -361,6 +362,13 @@ const ManualDataPrivacyInput: React.FC<ManualDataPrivacyInputProps> = ({ data, o
       }
       if (result.success && result.data) {
         setAiAnalysisResult(result.data);
+        // Persist AI analysis result
+        updateData({ 
+          aiPrivacyPolicyAnalysis: {
+            ...result.data,
+            analyzedAt: new Date().toISOString()
+          }
+        });
         toast.success('Datenschutzerklärung wurde analysiert!');
       } else {
         toast.error('Unerwartete Antwort von der KI');

@@ -938,6 +938,88 @@ const DataPrivacyAnalysis: React.FC<DataPrivacyAnalysisProps> = ({
                 </CardContent>
               </Card>
 
+              {/* KI-Analyse der Datenschutzerklärung */}
+              {manualDataPrivacyData?.aiPrivacyPolicyAnalysis && (
+                <Card className="border-accent/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-accent">
+                      <FileText className="h-5 w-5" />
+                      KI-Analyse der Datenschutzerklärung
+                      <Badge variant="outline" className="ml-auto text-xs">
+                        Analysiert am {new Date(manualDataPrivacyData.aiPrivacyPolicyAnalysis.analyzedAt).toLocaleDateString('de-DE')}
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>
+                      Automatische Prüfung der Datenschutzerklärung auf DSGVO-Konformität mittels KI
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {manualDataPrivacyData.aiPrivacyPolicyAnalysis.summary && (
+                      <div className="bg-muted/50 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground">
+                          {manualDataPrivacyData.aiPrivacyPolicyAnalysis.summary}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Checklist */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {[
+                        { key: 'privacyPolicy', label: 'Datenschutzerklärung' },
+                        { key: 'cookiePolicy', label: 'Cookie-Richtlinie' },
+                        { key: 'cookieConsent', label: 'Cookie-Consent' },
+                        { key: 'gdprCompliant', label: 'DSGVO-konform' },
+                        { key: 'dataSubjectRights', label: 'Betroffenenrechte' },
+                        { key: 'dataProcessingAgreement', label: 'Auftragsverarbeitung' },
+                        { key: 'dataProtectionOfficer', label: 'Datenschutzbeauftragter' },
+                        { key: 'processingRegister', label: 'Verarbeitungsverzeichnis' },
+                        { key: 'thirdCountryTransfer', label: 'Drittland-Transfer' },
+                      ].map(item => (
+                        <div key={item.key} className="flex items-center gap-2 text-sm">
+                          {(manualDataPrivacyData.aiPrivacyPolicyAnalysis as any)[item.key] ? (
+                            <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                          )}
+                          <span>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {manualDataPrivacyData.aiPrivacyPolicyAnalysis.strengths?.length > 0 && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <h5 className="text-sm font-medium text-green-700 mb-2">✅ Stärken</h5>
+                          <ul className="text-xs text-green-800 space-y-1">
+                            {manualDataPrivacyData.aiPrivacyPolicyAnalysis.strengths.map((s: string, i: number) => (
+                              <li key={i}>• {s}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {manualDataPrivacyData.aiPrivacyPolicyAnalysis.weaknesses?.length > 0 && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                          <h5 className="text-sm font-medium text-destructive mb-2">❌ Schwächen</h5>
+                          <ul className="text-xs text-red-800 space-y-1">
+                            {manualDataPrivacyData.aiPrivacyPolicyAnalysis.weaknesses.map((w: string, i: number) => (
+                              <li key={i}>• {w}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-xs text-amber-800">
+                        <strong>⚠️ Hinweis:</strong> Diese KI-Analyse ersetzt keine rechtliche Beratung. 
+                        Die Ergebnisse dienen als Orientierungshilfe und sollten von einem Datenschutzexperten verifiziert werden.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Website Security (Safe Browsing) Section */}
               <Card className="border-primary">
                 <CardHeader>
