@@ -61,6 +61,8 @@ interface SEOContentCategoryProps {
   onToggleRegionalTrends?: (show: boolean) => void;
   regionalTrendsData?: any;
   onRegionalTrendsLoaded?: (data: any) => void;
+  loadedFocusAreas?: string[] | null;
+  onFocusAreasChange?: (focusAreas: string[]) => void;
 }
 
 const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
@@ -109,7 +111,9 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
   showRegionalTrends = false,
   onToggleRegionalTrends,
   regionalTrendsData,
-  onRegionalTrendsLoaded
+  onRegionalTrendsLoaded,
+  loadedFocusAreas,
+  onFocusAreasChange
 }) => {
   const [activeTab, setActiveTab] = useState("seo");
 
@@ -179,6 +183,8 @@ const SEOContentCategory: React.FC<SEOContentCategoryProps> = ({
               loadedKeywordScore={keywordsScore}
               loadedKeywordData={manualKeywordData}
               companyServices={companyServices?.services}
+              loadedFocusAreas={loadedFocusAreas}
+              onFocusAreasChange={onFocusAreasChange}
               onNavigateToNextCategory={() => {
                 onNavigateToCategory?.('performance-mobile');
                 setActiveTab('content');

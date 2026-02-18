@@ -25,6 +25,8 @@ interface KeywordAnalysisProps {
   loadedKeywordScore?: number | null;
   onNavigateToNextCategory?: () => void;
   companyServices?: string[];
+  loadedFocusAreas?: string[] | null;
+  onFocusAreasChange?: (focusAreas: string[]) => void;
 }
 
 // Generiert leistungsspezifische Keywords aus den Unternehmensleistungen
@@ -50,7 +52,7 @@ const generateServiceKeywords = (services: string[], industry: string): string[]
   return serviceKeywords;
 };
 
-const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory, companyServices }) => {
+const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realData, onScoreChange, onKeywordDataChange, loadedKeywordData, loadedKeywordScore, onNavigateToNextCategory, companyServices, loadedFocusAreas, onFocusAreasChange }) => {
   const { reviewStatus, updateReviewStatus } = useAnalysisContext();
   const { loadLatestExtensionData, isLoading: isLoadingExtension } = useExtensionDataLoader();
   const [extensionTextLoaded, setExtensionTextLoaded] = useState(false);
@@ -59,8 +61,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
   // Industry focus areas (Schwerpunkte) - must be before mergeWithServiceKeywords
   const availableFocusAreas = industryFocusAreas[industry] || [];
   const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>(
-    () => availableFocusAreas.map(a => a.id)
+    () => loadedFocusAreas && loadedFocusAreas.length > 0 
+      ? loadedFocusAreas 
+      : availableFocusAreas.map(a => a.id)
   );
+
+  const handleFocusAreasChange = (areas: string[]) => {
+    setSelectedFocusAreas(areas);
+    onFocusAreasChange?.(areas);
+  };
 
   // Merge industry keywords with service-specific keywords
   const mergeWithServiceKeywords = useCallback((baseKeywords: typeof realData.keywords) => {
@@ -331,7 +340,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             <IndustryFocusSelector
               industry={industry}
               selectedFocusAreas={selectedFocusAreas}
-              onFocusAreasChange={setSelectedFocusAreas}
+              onFocusAreasChange={handleFocusAreasChange}
             />
 
             {/* Extension-Daten laden Button */}
