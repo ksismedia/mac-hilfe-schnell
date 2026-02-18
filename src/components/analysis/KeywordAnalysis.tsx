@@ -72,7 +72,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     onFocusAreasChange?.(areas);
   };
 
-  // Filter keywords by selected focus areas
+  // Filter keywords by selected focus areas AND enrich with focus-area-specific keywords
   const filterByFocusAreas = useCallback((keywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => {
     const industryMapping = focusAreaKeywordMapping[industry];
     if (!industryMapping || selectedFocusAreas.length === 0) return keywords;
@@ -91,6 +91,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     
     if (allowedPatterns.size === 0) return keywords;
     
+    // Filter existing keywords that match
     const filtered = keywords.filter(kw => {
       const kwLower = kw.keyword.toLowerCase();
       for (const pattern of allowedPatterns) {
@@ -101,7 +102,33 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
       return false;
     });
     
-    return filtered.length > 0 ? filtered : keywords;
+    // Enrich: add focus area keywords that aren't already in the list
+    const existingLower = new Set(filtered.map(k => k.keyword.toLowerCase()));
+    const enriched = [...filtered];
+    
+    for (const pattern of allowedPatterns) {
+      if (!existingLower.has(pattern) && pattern.length > 2) {
+        // Check it's not a substring of an existing keyword
+        let alreadyCovered = false;
+        for (const existing of existingLower) {
+          if (existing.includes(pattern) || pattern.includes(existing)) {
+            alreadyCovered = true;
+            break;
+          }
+        }
+        if (!alreadyCovered) {
+          enriched.push({
+            keyword: pattern.charAt(0).toUpperCase() + pattern.slice(1),
+            found: false,
+            volume: 100,
+            position: 0
+          });
+          existingLower.add(pattern);
+        }
+      }
+    }
+    
+    return enriched.length > 0 ? enriched : keywords;
   }, [industry, selectedFocusAreas, availableFocusAreas]);
 
   // Merge industry keywords with service-specific keywords
