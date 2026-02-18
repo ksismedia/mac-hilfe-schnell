@@ -14,6 +14,7 @@ import { Download, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import IndustryFocusSelector from './IndustryFocusSelector';
 import { industryFocusAreas } from '@/data/industryFocusAreas';
+import { focusAreaKeywordMapping } from '@/data/focusAreaKeywordMapping';
 
 interface KeywordAnalysisProps {
   url: string;
@@ -71,11 +72,46 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     onFocusAreasChange?.(areas);
   };
 
+  // Filter keywords by selected focus areas
+  const filterByFocusAreas = useCallback((keywords: Array<{ keyword: string; found: boolean; volume: number; position: number }>) => {
+    const industryMapping = focusAreaKeywordMapping[industry];
+    if (!industryMapping || selectedFocusAreas.length === 0) return keywords;
+    
+    // If all focus areas are selected, don't filter
+    if (selectedFocusAreas.length === availableFocusAreas.length) return keywords;
+    
+    // Collect allowed patterns from selected focus areas
+    const allowedPatterns = new Set<string>();
+    for (const areaId of selectedFocusAreas) {
+      const patterns = industryMapping[areaId];
+      if (patterns) {
+        patterns.forEach(p => allowedPatterns.add(p.toLowerCase()));
+      }
+    }
+    
+    if (allowedPatterns.size === 0) return keywords;
+    
+    const filtered = keywords.filter(kw => {
+      const kwLower = kw.keyword.toLowerCase();
+      for (const pattern of allowedPatterns) {
+        if (kwLower.includes(pattern) || pattern.includes(kwLower)) {
+          return true;
+        }
+      }
+      return false;
+    });
+    
+    return filtered.length > 0 ? filtered : keywords;
+  }, [industry, selectedFocusAreas, availableFocusAreas]);
+
   // Merge industry keywords with service-specific keywords
   const mergeWithServiceKeywords = useCallback((baseKeywords: typeof realData.keywords) => {
-    if (!companyServices || companyServices.length === 0) return baseKeywords;
+    // First filter by focus areas
+    const focusFiltered = filterByFocusAreas(baseKeywords);
     
-    const existingKeywordSet = new Set(baseKeywords.map(k => k.keyword.toLowerCase()));
+    if (!companyServices || companyServices.length === 0) return focusFiltered;
+    
+    const existingKeywordSet = new Set(focusFiltered.map(k => k.keyword.toLowerCase()));
     const serviceKws = generateServiceKeywords(companyServices, industry);
     
     const additionalKeywords = serviceKws
@@ -88,8 +124,8 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
         position: 0
       }));
     
-    return [...baseKeywords, ...additionalKeywords];
-  }, [companyServices, industry, selectedFocusAreas, availableFocusAreas]);
+    return [...focusFiltered, ...additionalKeywords];
+  }, [companyServices, industry, filterByFocusAreas]);
 
   const [keywordData, setKeywordData] = useState(() => {
     const baseKeywords = realData.keywords || [];

@@ -1,3 +1,5 @@
+import { focusAreaKeywordMapping } from '@/data/focusAreaKeywordMapping';
+
 export interface WebsiteContent {
   title: string;
   metaDescription: string;
@@ -248,14 +250,14 @@ export class WebsiteAnalysisService {
       .map(([word]) => word);
   }
 
-  static analyzeKeywordsForIndustry(content: WebsiteContent, industry: string): Array<{
+  static analyzeKeywordsForIndustry(content: WebsiteContent, industry: string, focusAreas?: string[] | null): Array<{
     keyword: string;
     found: boolean;
     position: number;
     volume: number;
     density: number;
   }> {
-    const industryKeywords = this.getIndustryKeywords(industry);
+    const industryKeywords = this.getIndustryKeywords(industry, focusAreas);
     
     // Bereite Text vor - verschiedene Bereiche getrennt für bessere Analyse
     const titleText = (content.title || '').toLowerCase();
@@ -379,7 +381,7 @@ export class WebsiteAnalysisService {
     }
   }
 
-  static getIndustryKeywords(industry: string): string[] {
+  static getIndustryKeywords(industry: string, focusAreas?: string[] | null): string[] {
     const keywords = {
       'shk': [
         // Grundbegriffe
@@ -603,7 +605,39 @@ export class WebsiteAnalysisService {
       ]
     };
     
-    return keywords[industry as keyof typeof keywords] || ['handwerk', 'service', 'betrieb'];
+    const allKeywords = keywords[industry as keyof typeof keywords] || ['handwerk', 'service', 'betrieb'];
+    
+    // Filter by focus areas if provided
+    if (focusAreas && focusAreas.length > 0) {
+      const industryMapping = focusAreaKeywordMapping[industry];
+      if (industryMapping) {
+        // Collect all keyword patterns for selected focus areas
+        const allowedPatterns = new Set<string>();
+        for (const areaId of focusAreas) {
+          const patterns = industryMapping[areaId];
+          if (patterns) {
+            patterns.forEach((p: string) => allowedPatterns.add(p.toLowerCase()));
+          }
+        }
+        
+        // Filter: keep keyword if it matches any allowed pattern
+        if (allowedPatterns.size > 0) {
+          const filtered = allKeywords.filter(kw => {
+            const kwLower = kw.toLowerCase();
+            for (const pattern of allowedPatterns) {
+              if (kwLower.includes(pattern) || pattern.includes(kwLower)) {
+                return true;
+              }
+            }
+            return false;
+          });
+          // Return filtered if we got results, otherwise fall back to all
+          return filtered.length > 0 ? filtered : allKeywords;
+        }
+      }
+    }
+    
+    return allKeywords;
   }
 
   static detectImprintFromContent(content: WebsiteContent): {
