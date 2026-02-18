@@ -340,6 +340,22 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
     onKeywordDataChange?.(updatedKeywords);
   };
 
+  // Always apply focus area filter to displayed keywords
+  const displayedKeywords = React.useMemo(() => {
+    return filterByFocusAreas(keywordData.keywords);
+  }, [keywordData.keywords, filterByFocusAreas]);
+
+  const displayedFoundKeywords = displayedKeywords.filter(k => k.found).length;
+  const displayedScore = React.useMemo(() => {
+    if (displayedKeywords.length === 0) return 0;
+    const found = displayedFoundKeywords;
+    if (found === 0) return 0;
+    if (displayedKeywords.length < 5) return Math.round((found / displayedKeywords.length) * 80);
+    const baseScore = (found / displayedKeywords.length) * 100;
+    const bonus = Math.min(10, displayedKeywords.length - 5);
+    return Math.min(100, Math.round(baseScore + bonus));
+  }, [displayedKeywords, displayedFoundKeywords]);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -347,23 +363,23 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
           <CardTitle className="flex items-center justify-between">
             Keyword-Analyse
             <div className="flex items-center gap-2">
-              {keywordData.foundKeywords === 0 && (
+              {displayedFoundKeywords === 0 && (
                 <Badge variant="destructive">Keine Keywords gefunden</Badge>
               )}
               <div 
                 className={`flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold border-2 border-white shadow-md ${
-                  keywordData.overallScore >= 90 ? 'bg-yellow-400 text-black' : 
-                  keywordData.overallScore >= 60 ? 'bg-green-500 text-white' : 
+                  displayedScore >= 90 ? 'bg-yellow-400 text-black' : 
+                  displayedScore >= 60 ? 'bg-green-500 text-white' : 
                   'bg-red-500 text-white'
                 }`}
               >
-                {keywordData.overallScore}%
+                {displayedScore}%
               </div>
             </div>
           </CardTitle>
           <CardDescription>
             Live-Analyse der Website-Inhalte für {industry.toUpperCase()}
-            {keywordData.foundKeywords === 0 && (
+            {displayedFoundKeywords === 0 && (
               <span className="block text-red-600 mt-1">
                 ⚠️ Automatische Analyse fehlgeschlagen - Nutzen Sie die manuelle Eingabe oder laden Sie Extension-Daten
               </span>
@@ -401,7 +417,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <div className="text-2xl font-bold text-blue-600">
-                  {keywordData.foundKeywords}/{keywordData.totalKeywords}
+                  {displayedFoundKeywords}/{displayedKeywords.length}
                 </div>
                 <div className="text-sm text-gray-600">Keywords gefunden</div>
               </div>
@@ -413,25 +429,19 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </div>
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
-                  {Math.round((keywordData.foundKeywords / keywordData.totalKeywords) * 100)}%
+                  {displayedKeywords.length > 0 ? Math.round((displayedFoundKeywords / displayedKeywords.length) * 100) : 0}%
                 </div>
                 <div className="text-sm text-gray-600">Abdeckung</div>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
-                  {(() => {
-                    const score = keywordData.overallScore;
-                    if (score === null || score === undefined || isNaN(score)) {
-                      return 'N/A';
-                    }
-                    return `${Math.round(score)}%`;
-                  })()}
+                  {displayedScore}%
                 </div>
                 <div className="text-sm text-gray-600">Gesamtscore</div>
               </div>
             </div>
 
-            <Progress value={keywordData.overallScore || 0} className="h-3" />
+            <Progress value={displayedScore} className="h-3" />
 
             {/* Keyword-Tabelle */}
             <Card>
@@ -452,7 +462,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {keywordData.keywords.map((item, index) => (
+                    {displayedKeywords.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium">
                           {item.keyword}
@@ -469,7 +479,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
                           <Badge 
                             variant={getVisibilityBadge(item.found)}
                             className="cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => toggleKeywordStatus(index)}
+                            onClick={() => toggleKeywordStatus(keywordData.keywords.indexOf(item))}
                             title="Klicken um Status zu ändern"
                           >
                             {item.found ? 'Gefunden' : 'Fehlt'}
@@ -483,16 +493,15 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
             </Card>
 
             {/* Manuelle Keyword-Eingabe - Nur wenn nötig */}
-            {keywordData.foundKeywords === 0 && (
+            {displayedFoundKeywords === 0 && (
               <ManualKeywordInput 
                 onKeywordsUpdate={handleManualKeywordsUpdate}
                 industry={industry}
-                currentKeywords={[]} // Leere Liste für neue manuelle Eingabe
+                currentKeywords={[]}
                 onSaveRequested={() => {
                   console.log('Save requested from KeywordAnalysis');
                 }}
                 onNavigateNext={() => {
-                  // Direkte Navigation über die Parent-Komponente
                   onNavigateToNextCategory?.();
                 }}
               />
@@ -505,22 +514,22 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({ url, industry, realDa
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
-                  {keywordData.foundKeywords > 0 && (
+                  {displayedFoundKeywords > 0 && (
                     <li className="flex items-start gap-2">
                       <span className="text-green-600">✓</span>
-                      <span>Gute Keyword-Abdeckung für {keywordData.foundKeywords} von {keywordData.totalKeywords} Hauptbegriffen</span>
+                      <span>Gute Keyword-Abdeckung für {displayedFoundKeywords} von {displayedKeywords.length} Hauptbegriffen</span>
                     </li>
                   )}
-                  {keywordData.foundKeywords < keywordData.totalKeywords && (
+                  {displayedFoundKeywords < displayedKeywords.length && (
                     <li className="flex items-start gap-2">
                       <span className="text-red-600">×</span>
-                      <span>Fehlende Keywords: {keywordData.keywords.filter(k => !k.found).map(k => k.keyword).join(', ')}</span>
+                      <span>Fehlende Keywords: {displayedKeywords.filter(k => !k.found).map(k => k.keyword).join(', ')}</span>
                     </li>
                   )}
                   <li className="flex items-start gap-2">
                     <span className="text-blue-600">ℹ</span>
                     <span>
-                      {keywordData.foundKeywords === 0 
+                      {displayedFoundKeywords === 0 
                         ? 'Die automatische Analyse konnte keine Keywords finden. Nutzen Sie die manuelle Eingabe für eine genaue Bewertung.'
                         : `Diese Analyse basiert auf dem tatsächlichen Inhalt Ihrer Website ${url}`
                       }
