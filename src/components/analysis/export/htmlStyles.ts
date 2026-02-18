@@ -101,6 +101,7 @@ section[class*="section"],
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+  padding: 30px !important;
 }
 /* Preserve responsive grid for score cards */
 .score-overview { 
