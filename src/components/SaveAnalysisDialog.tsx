@@ -53,6 +53,7 @@ interface SaveAnalysisDialogProps {
   showNationalProviders?: boolean;
   showRegionalTrends?: boolean;
   regionalTrendsData?: any;
+  focusAreas?: string[] | null;
 }
 
 const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
@@ -91,7 +92,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
   extensionData,
   showNationalProviders,
   showRegionalTrends,
-  regionalTrendsData
+  regionalTrendsData,
+  focusAreas
 }) => {
   console.log('🔍 SaveAnalysisDialog Props:');
   console.log('  - extensionData prop:', extensionData ? 'RECEIVED' : 'NULL/UNDEFINED');
@@ -159,7 +161,8 @@ const SaveAnalysisDialog: React.FC<SaveAnalysisDialogProps> = ({
         extensionData: extensionData || undefined,
         showNationalProviders: showNationalProviders || undefined,
         showRegionalTrends: showRegionalTrends || undefined,
-        regionalTrendsData: regionalTrendsData || undefined
+        regionalTrendsData: regionalTrendsData || undefined,
+        focusAreas: focusAreas || undefined
       };
 
       console.log('=== SAVE ANALYSIS DEBUG ===');

@@ -61,6 +61,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
+  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[] | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
   const [securityData, setSecurityData] = useState<any>(null);
@@ -182,6 +183,9 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             if (savedAnalysis.manualData?.keywordScore !== undefined) {
               console.log('Setting keyword score from saved analysis:', savedAnalysis.manualData.keywordScore);
               setKeywordsScore(savedAnalysis.manualData.keywordScore);
+            }
+            if ((savedAnalysis.manualData as any)?.focusAreas) {
+              setSelectedFocusAreas((savedAnalysis.manualData as any).focusAreas);
             }
             if (savedAnalysis.manualData?.privacyData) {
               console.log('Setting privacy data from saved analysis');
@@ -458,6 +462,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
             onToggleRegionalTrends={updateShowRegionalTrends}
             regionalTrendsData={regionalTrendsData}
             onRegionalTrendsLoaded={updateRegionalTrendsData}
+            loadedFocusAreas={selectedFocusAreas}
+            onFocusAreasChange={setSelectedFocusAreas}
           />
         );
       case 'website-performance-tech':
@@ -610,6 +616,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
                   manualSEOData={manualSEOData}
                   privacyData={privacyData}
                   accessibilityData={accessibilityData}
+                  focusAreas={selectedFocusAreas}
                 />
                 <CustomerHTMLExport 
                   businessData={businessData}

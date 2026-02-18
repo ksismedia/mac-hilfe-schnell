@@ -68,6 +68,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   const [keywordsScore, setKeywordsScore] = useState<number | null>(null);
   const [currentOwnCompanyScore, setCurrentOwnCompanyScore] = useState<number>(75);
   const [manualKeywordData, setManualKeywordData] = useState<Array<{ keyword: string; found: boolean; volume: number; position: number }> | null>(null);
+  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[] | null>(null);
   const [privacyData, setPrivacyData] = useState<any>(null);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
   const [securityData, setSecurityData] = useState<any>(null);
@@ -264,6 +265,9 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
           }
           if (analysisData.manualData?.keywordScore !== undefined) {
             setKeywordsScore(analysisData.manualData.keywordScore);
+          }
+          if ((analysisData.manualData as any)?.focusAreas) {
+            setSelectedFocusAreas((analysisData.manualData as any).focusAreas);
           }
           if (analysisData.manualData?.privacyData) {
             // KRITISCH: Score muss neu berechnet werden mit Kappung
@@ -656,6 +660,8 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
             onToggleRegionalTrends={updateShowRegionalTrends}
             regionalTrendsData={regionalTrendsData}
             onRegionalTrendsLoaded={updateRegionalTrendsData}
+            loadedFocusAreas={selectedFocusAreas}
+            onFocusAreasChange={setSelectedFocusAreas}
           />
         );
       case 'website-performance-tech':
@@ -894,6 +900,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
               showNationalProviders={showNationalProviders}
               showRegionalTrends={showRegionalTrends}
               regionalTrendsData={regionalTrendsData}
+              focusAreas={selectedFocusAreas}
             />
             <CustomerHTMLExport
               businessData={businessData}
