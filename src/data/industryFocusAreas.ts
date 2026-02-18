@@ -1,0 +1,98 @@
+// Branchenspezifische Schwerpunkte/Teilbereiche für die Keyword-Analyse
+export interface IndustryFocusArea {
+  id: string;
+  label: string;
+}
+
+export const industryFocusAreas: Record<string, IndustryFocusArea[]> = {
+  shk: [
+    { id: 'heizung', label: 'Heizung' },
+    { id: 'sanitaer', label: 'Sanitär' },
+    { id: 'klima', label: 'Klima & Lüftung' },
+    { id: 'solar', label: 'Solar & Wärmepumpe' },
+    { id: 'notdienst', label: 'Notdienst' },
+    { id: 'wartung', label: 'Wartung & Service' },
+  ],
+  maler: [
+    { id: 'innenanstrich', label: 'Innenanstrich' },
+    { id: 'aussenanstrich', label: 'Außenanstrich & Fassade' },
+    { id: 'lackierung', label: 'Lackierarbeiten' },
+    { id: 'tapezieren', label: 'Tapezierarbeiten' },
+    { id: 'daemmung', label: 'Wärmedämmung (WDVS)' },
+    { id: 'bodenbelaege', label: 'Bodenbeläge' },
+  ],
+  elektriker: [
+    { id: 'installation', label: 'Elektroinstallation' },
+    { id: 'smarthome', label: 'Smart Home' },
+    { id: 'photovoltaik', label: 'Photovoltaik' },
+    { id: 'sicherheitstechnik', label: 'Sicherheitstechnik' },
+    { id: 'beleuchtung', label: 'Beleuchtung' },
+    { id: 'emobility', label: 'E-Mobilität / Wallbox' },
+  ],
+  dachdecker: [
+    { id: 'steildach', label: 'Steildach' },
+    { id: 'flachdach', label: 'Flachdach' },
+    { id: 'dachsanierung', label: 'Dachsanierung' },
+    { id: 'daemmung', label: 'Dachdämmung' },
+    { id: 'dachfenster', label: 'Dachfenster' },
+    { id: 'fassade', label: 'Fassade & Verkleidung' },
+  ],
+  stukateur: [
+    { id: 'innenputz', label: 'Innenputz' },
+    { id: 'aussenputz', label: 'Außenputz & Fassade' },
+    { id: 'trockenbau', label: 'Trockenbau' },
+    { id: 'stuck', label: 'Stuckarbeiten' },
+    { id: 'wdvs', label: 'Wärmedämmung (WDVS)' },
+    { id: 'estrich', label: 'Estrich' },
+  ],
+  planungsbuero: [
+    { id: 'architektur', label: 'Architektur' },
+    { id: 'bauleitung', label: 'Bauleitung' },
+    { id: 'energieberatung', label: 'Energieberatung' },
+    { id: 'tragwerksplanung', label: 'Tragwerksplanung' },
+    { id: 'brandschutz', label: 'Brandschutzplanung' },
+    { id: 'gebaeudetechnik', label: 'Gebäudetechnik (TGA)' },
+  ],
+  'facility-management': [
+    { id: 'gebaeudereinigung', label: 'Gebäudereinigung' },
+    { id: 'haustechnik', label: 'Haustechnik & Wartung' },
+    { id: 'winterdienst', label: 'Winterdienst' },
+    { id: 'gruenpflege', label: 'Grünpflege' },
+    { id: 'sicherheit', label: 'Sicherheitsdienst' },
+    { id: 'energiemanagement', label: 'Energiemanagement' },
+  ],
+  holzverarbeitung: [
+    { id: 'schreinerei', label: 'Schreinerei / Tischlerei' },
+    { id: 'zimmerei', label: 'Zimmerei' },
+    { id: 'moebelbau', label: 'Möbelbau' },
+    { id: 'fenster', label: 'Fenster & Türen' },
+    { id: 'treppen', label: 'Treppenbau' },
+    { id: 'holzfassade', label: 'Holzfassade' },
+  ],
+  baeckerei: [
+    { id: 'brot', label: 'Brot & Brötchen' },
+    { id: 'kuchen', label: 'Kuchen & Torten' },
+    { id: 'konditorei', label: 'Konditorei' },
+    { id: 'snacks', label: 'Snacks & Belegte Brötchen' },
+    { id: 'cafe', label: 'Café & Bistro' },
+    { id: 'lieferservice', label: 'Lieferservice & Catering' },
+  ],
+  blechbearbeitung: [
+    { id: 'dachrinnen', label: 'Dachrinnen & Entwässerung' },
+    { id: 'fassadenverkleidung', label: 'Fassadenverkleidung' },
+    { id: 'metallbau', label: 'Metallbau' },
+    { id: 'schweissen', label: 'Schweißarbeiten' },
+    { id: 'blechzuschnitt', label: 'Blechzuschnitt & -bearbeitung' },
+    { id: 'spenglerei', label: 'Spenglerei' },
+  ],
+  innenausbau: [
+    { id: 'trockenbau', label: 'Trockenbau' },
+    { id: 'akustik', label: 'Akustikdecken & -wände' },
+    { id: 'bodenbelaege', label: 'Bodenbeläge' },
+    { id: 'ladenbau', label: 'Ladenbau' },
+    { id: 'messebau', label: 'Messebau' },
+    { id: 'bueroausbau', label: 'Büroausbau' },
+    { id: 'brandschutz', label: 'Brandschutz' },
+    { id: 'altbausanierung', label: 'Altbausanierung' },
+  ],
+};
