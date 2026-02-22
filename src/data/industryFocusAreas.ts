@@ -95,4 +95,13 @@ export const industryFocusAreas: Record<string, IndustryFocusArea[]> = {
     { id: 'brandschutz', label: 'Brandschutz' },
     { id: 'altbausanierung', label: 'Altbausanierung' },
   ],
+  metallverarbeitung: [
+    { id: 'cnc', label: 'CNC-Fertigung' },
+    { id: 'schweissen', label: 'Schweißtechnik' },
+    { id: 'drehen-fraesen', label: 'Drehen & Fräsen' },
+    { id: 'oberflaechenbehandlung', label: 'Oberflächenbehandlung' },
+    { id: 'stahlbau', label: 'Stahlbau & Konstruktion' },
+    { id: 'blechbearbeitung', label: 'Blechbearbeitung' },
+    { id: 'werkzeugbau', label: 'Werkzeug- & Formenbau' },
+  ],
 };

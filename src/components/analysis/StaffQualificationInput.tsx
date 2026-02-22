@@ -52,7 +52,7 @@ export interface StaffQualificationData {
 
 interface StaffQualificationInputProps {
   businessData: {
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau' | 'metallverarbeitung';
   };
   data: StaffQualificationData | null;
   onUpdate: (data: StaffQualificationData | null) => void;
@@ -132,6 +132,16 @@ const industrySpecificQualifications = {
     'Ladenbau-Spezialist',
     'Messebau-Erfahrung',
     'Dachausbau-Zertifikat'
+  ],
+  metallverarbeitung: [
+    'CNC-Fachkraft',
+    'Schweißfachmann/-frau (DVS)',
+    'Zerspanungsmechaniker-Meister',
+    'EN 1090 Zertifizierung',
+    'Werkstoffprüfer-Qualifikation',
+    'CAD/CAM-Programmierer',
+    'Qualitätsmanagement ISO 9001',
+    'Industriemeister Metall'
   ]
 };
 

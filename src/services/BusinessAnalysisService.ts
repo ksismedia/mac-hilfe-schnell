@@ -789,7 +789,8 @@ export class BusinessAnalysisService {
       'planungsbuero': ['Planung', 'Ingenieurbüro', 'Technik'],
       'facility-management': ['Facility Management', 'Gebäudereinigung', 'Hausmeisterdienst'],
       'holzverarbeitung': ['Schreiner', 'Tischler', 'Holzverarbeitung'],
-      'innenausbau': ['Innenausbau', 'Trockenbau', 'Ausbau']
+      'innenausbau': ['Innenausbau', 'Trockenbau', 'Ausbau'],
+      'metallverarbeitung': ['Metallverarbeitung', 'Metallbau', 'Zerspanung']
     };
     
     return terms[industry as keyof typeof terms] || ['Handwerk', 'Service', 'Betrieb'];
@@ -858,6 +859,13 @@ export class BusinessAnalysisService {
         'dachausbau', 'altbausanierung', 'brandschutz', 'schallschutz', 'wärmedämmung',
         'abhangdecken', 'lichtsysteme', 'sanierung', 'renovierung', 'modernisierung',
         'umbau', 'ausbau', 'handwerker', 'meisterbetrieb'
+      ],
+      'metallverarbeitung': [
+        'metallverarbeitung', 'metallbau', 'cnc', 'cnc-drehen', 'cnc-fräsen',
+        'zerspanung', 'schweißen', 'schweißtechnik', 'laserschneiden', 'blechbearbeitung',
+        'stahlbau', 'edelstahl', 'aluminium', 'oberflächenbehandlung', 'werkzeugbau',
+        'formenbau', 'prototypenbau', 'baugruppenmontage', 'qualitätsprüfung',
+        'konstruktion', 'cad', 'cam', 'iso 9001', 'en 1090', 'meisterbetrieb'
       ]
     };
     

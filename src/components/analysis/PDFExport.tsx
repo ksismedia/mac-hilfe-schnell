@@ -11,7 +11,7 @@ interface PDFExportProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau' | 'metallverarbeitung';
   };
   realData: RealBusinessData;
   manualImprintData?: any;

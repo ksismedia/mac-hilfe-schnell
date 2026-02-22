@@ -6,7 +6,7 @@ import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 interface BusinessData {
   address: string;
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau' | 'metallverarbeitung';
 }
 
 interface AnalysisDashboardProps {

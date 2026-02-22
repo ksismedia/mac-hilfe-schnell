@@ -18,7 +18,7 @@ import { focusAreaKeywordMapping } from '@/data/focusAreaKeywordMapping';
 
 interface KeywordAnalysisProps {
   url: string;
-  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
+  industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau' | 'metallverarbeitung';
   realData: RealBusinessData;
   onScoreChange?: (score: number | null) => void;
   onKeywordDataChange?: (keywordData: Array<{ keyword: string; found: boolean; volume: number; position: number }> | null) => void;
