@@ -282,4 +282,34 @@ export const focusAreaKeywordMapping: Record<string, Record<string, string[]>> =
       'altbausanierung', 'sanierung', 'renovierung', 'modernisierung', 'umbau'
     ],
   },
+  metallverarbeitung: {
+    cnc: [
+      'cnc', 'cnc-fertigung', 'cnc-bearbeitung', 'cnc-drehen', 'cnc-fräsen',
+      'cnc-technik', 'programmierung', 'serienproduktion'
+    ],
+    schweissen: [
+      'schweißen', 'schweißtechnik', 'schweißarbeiten', 'wig-schweißen', 'mig-schweißen',
+      'mag-schweißen', 'roboterschweißen', 'schweißkonstruktion', 'schweißnaht'
+    ],
+    'drehen-fraesen': [
+      'drehen', 'fräsen', 'zerspanung', 'zerspanungstechnik', 'drehteile',
+      'frästeile', 'präzisionsteile', 'mechanische bearbeitung'
+    ],
+    oberflaechenbehandlung: [
+      'oberflächenbehandlung', 'beschichtung', 'galvanik', 'pulverbeschichtung',
+      'lackierung', 'eloxieren', 'verchromen', 'verzinken', 'sandstrahlen'
+    ],
+    stahlbau: [
+      'stahlbau', 'stahlkonstruktion', 'metallkonstruktion', 'hallenbau',
+      'stahlträger', 'tragwerk', 'geländer', 'treppen', 'balkone'
+    ],
+    blechbearbeitung: [
+      'blechbearbeitung', 'blechzuschnitt', 'abkanten', 'stanzen', 'laserschneiden',
+      'wasserstrahlschneiden', 'umformen', 'tiefziehen'
+    ],
+    werkzeugbau: [
+      'werkzeugbau', 'formenbau', 'spritzgussformen', 'stanzwerkzeuge',
+      'vorrichtungsbau', 'prototypenbau', 'einzelteilfertigung'
+    ],
+  },
 };

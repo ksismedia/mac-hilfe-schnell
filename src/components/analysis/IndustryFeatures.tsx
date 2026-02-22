@@ -8,7 +8,7 @@ interface IndustryFeaturesProps {
   businessData: {
     address: string;
     url: string;
-    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau';
+    industry: 'shk' | 'maler' | 'elektriker' | 'dachdecker' | 'stukateur' | 'planungsbuero' | 'facility-management' | 'holzverarbeitung' | 'baeckerei' | 'blechbearbeitung' | 'innenausbau' | 'metallverarbeitung';
   };
 }
 
@@ -277,6 +277,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
           { name: "Lichtsysteme", found: false, importance: "niedrig" }
         ]
       }
+    ],
+    metallverarbeitung: [
+      {
+        group: "Fertigung & Technik",
+        features: [
+          { name: "CNC-Bearbeitung", found: true, importance: "hoch" },
+          { name: "Schweißtechnik (WIG/MIG/MAG)", found: true, importance: "hoch" },
+          { name: "Laserschneiden", found: false, importance: "mittel" },
+          { name: "Oberflächenbehandlung", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Qualität & Zertifizierung",
+        features: [
+          { name: "ISO 9001 Zertifizierung", found: true, importance: "hoch" },
+          { name: "Werksprüfzeugnisse", found: true, importance: "hoch" },
+          { name: "Schweißzertifikate (EN 1090)", found: false, importance: "hoch" },
+          { name: "Materialrückverfolgung", found: true, importance: "mittel" }
+        ]
+      },
+      {
+        group: "Service & Beratung",
+        features: [
+          { name: "Technische Beratung", found: true, importance: "hoch" },
+          { name: "CAD/CAM-Konstruktion", found: false, importance: "mittel" },
+          { name: "Prototypenfertigung", found: true, importance: "mittel" },
+          { name: "Lieferservice", found: true, importance: "mittel" }
+        ]
+      }
     ]
   };
 
@@ -317,7 +346,8 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
     'facility-management': 'Facility-Management & Gebäudereinigung',
     holzverarbeitung: 'Holzverarbeitung (Schreiner/Tischler)',
     blechbearbeitung: 'Blechbearbeitung/Klempnerei',
-    innenausbau: 'Innenausbau'
+    innenausbau: 'Innenausbau',
+    metallverarbeitung: 'Metallverarbeitende Betriebe'
   };
 
   return (
@@ -505,7 +535,35 @@ const IndustryFeatures: React.FC<IndustryFeaturesProps> = ({ businessData }) => 
                          <span><strong>Potenzial:</strong> Sicherheitsdienste für Komplettlösungen</span>
                        </div>
                      </>
-                    )}
+                   )}
+                   {businessData.industry === 'innenausbau' && (
+                     <>
+                       <div className="flex items-start gap-2">
+                         <span className="text-green-600">✓</span>
+                         <span><strong>Positiv:</strong> Trockenbau und Akustikdecken werden angeboten</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Empfehlung:</strong> Brandschutzverkleidung als Kompetenz ergänzen</span>
+                       </div>
+                     </>
+                   )}
+                   {businessData.industry === 'metallverarbeitung' && (
+                     <>
+                       <div className="flex items-start gap-2">
+                         <span className="text-green-600">✓</span>
+                         <span><strong>Positiv:</strong> CNC-Fertigung und Schweißtechnik werden hervorgehoben</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-red-600">×</span>
+                         <span><strong>Kritisch:</strong> EN 1090 Schweißzertifikate fehlen – wichtig für Stahlbau-Aufträge</span>
+                       </div>
+                       <div className="flex items-start gap-2">
+                         <span className="text-yellow-600">!</span>
+                         <span><strong>Empfehlung:</strong> Laserschneiden und CAD/CAM-Konstruktion ergänzen</span>
+                       </div>
+                     </>
+                   )}
                    {businessData.industry === 'holzverarbeitung' && (
                      <>
                        <div className="flex items-start gap-2">

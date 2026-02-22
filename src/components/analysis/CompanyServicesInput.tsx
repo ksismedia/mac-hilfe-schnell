@@ -72,6 +72,12 @@ const CompanyServicesInput: React.FC<CompanyServicesInputProps> = ({
         'Einbauschränke', 'Raumtrennsysteme', 'Brandschutzverkleidung', 'Dachausbau',
         'Altbausanierung', 'Ladenbau', 'Messebau', 'Büroausbau',
         'Lichtsysteme', 'Abhangdecken', 'Schallschutz', 'Wärmedämmung'
+      ],
+      'metallverarbeitung': [
+        'CNC-Drehen', 'CNC-Fräsen', 'Schweißarbeiten', 'Laserschneiden',
+        'Blechbearbeitung', 'Stahlbau', 'Oberflächenbehandlung', 'Prototypenbau',
+        'Werkzeugbau', 'Formenbau', 'Baugruppenmontage', 'Edelstahlverarbeitung',
+        'Aluminiumbearbeitung', 'Konstruktion & Entwicklung', 'Qualitätsprüfung', 'Reparaturservice'
       ]
     };
     return standardServices[industry as keyof typeof standardServices] || [];
