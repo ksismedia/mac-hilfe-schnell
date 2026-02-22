@@ -503,7 +503,7 @@ const Index = () => {
                   <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                     <SelectValue placeholder="Branche auswählen" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-700 border-gray-600 z-50 text-white" style={{ backgroundColor: '#374151' }}>
+                  <SelectContent className="bg-gray-700 border-gray-600 z-50 text-white max-h-[400px] overflow-y-auto" style={{ backgroundColor: '#374151' }}>
                     <SelectItem value="shk">SHK (Sanitär, Heizung, Klima)</SelectItem>
                     <SelectItem value="maler">Maler und Lackierer</SelectItem>
                     <SelectItem value="elektriker">Elektriker</SelectItem>
