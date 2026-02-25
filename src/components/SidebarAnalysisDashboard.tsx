@@ -22,7 +22,6 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
 import { useSavedAnalyses } from '@/hooks/useSavedAnalyses';
-import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
 import { calculateOnlineQualityAuthorityScore, calculateWebsitePerformanceTechScore, calculateSocialMediaPerformanceScore, calculateMarketEnvironmentScore, calculateCorporateAppearanceScore, calculateServiceQualityScore, calculateDataPrivacyScore } from './analysis/export/scoreCalculations';
@@ -154,11 +153,8 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   // Access saved analyses hook
   const { loadAnalysis } = useSavedAnalyses();
   
-  // Access analysis context for extension data
-  const { setSavedExtensionData } = useAnalysisContext();
-
-  // AI Review Status Hook
-  const { reviewStatus } = useAIReviewStatus(loadedAnalysisId);
+  // Access analysis context for review status + extension data
+  const { setSavedExtensionData, reviewStatus, setCurrentAnalysis } = useAnalysisContext();
 
   // Load analysis data or load saved analysis
   useEffect(() => {
@@ -174,6 +170,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           
           if (savedAnalysis) {
             console.log('Found saved analysis:', savedAnalysis.name);
+            setCurrentAnalysis(savedAnalysis);
             setRealData(savedAnalysis.realData);
             
             if (savedAnalysis.manualData?.keywordData) {
@@ -277,6 +274,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
           return;
         }
       } else {
+        setCurrentAnalysis(null);
         setIsLoading(true);
         
         try {
@@ -296,7 +294,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
     };
 
     loadAnalysisData();
-  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCorporateIdentityData, updateCompetitors, updateCompetitorServices, updateCompanyServices]);
+  }, [businessData.url, businessData.address, businessData.industry, loadedAnalysisId, toast, loadAnalysis, setCurrentAnalysis, updateImprintData, updateSocialData, updateWorkplaceData, updateCorporateIdentityData, updateCompetitors, updateCompetitorServices, updateCompanyServices]);
 
   if (isLoading) {
     return (
