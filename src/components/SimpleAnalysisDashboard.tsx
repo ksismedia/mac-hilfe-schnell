@@ -24,8 +24,7 @@ import { BusinessAnalysisService, RealBusinessData } from '@/services/BusinessAn
 
 // Hooks
 import { useManualData } from '@/hooks/useManualData';
-import { useSavedAnalyses, SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { useAIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
 import { useExtensionData } from '@/hooks/useExtensionData';
 import { useAnalysisContext } from '@/contexts/AnalysisContext';
 import { loadSavedAnalysisData } from '@/utils/analysisLoader';
@@ -180,17 +179,16 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
     updateRegionalTrendsData
   } = useManualData();
 
-  // Access saved analyses hook
-  const { loadAnalysis } = useSavedAnalyses();
-
-  // AI Review Status Hook
-  const { reviewStatus } = useAIReviewStatus(analysisData?.id);
 
   // Extension Data Hook
   const { extensionData } = useExtensionData();
 
-  // Analysis Context for saved extension data
-  const { setSavedExtensionData, savedExtensionData } = useAnalysisContext();
+  // Analysis Context for review status + saved extension data
+  const { setSavedExtensionData, savedExtensionData, reviewStatus, setCurrentAnalysis } = useAnalysisContext();
+
+  useEffect(() => {
+    setCurrentAnalysis(analysisData ?? null);
+  }, [analysisData, setCurrentAnalysis]);
   
   console.log('🔍 SimpleAnalysisDashboard - Extension Data Status:', {
     hasExtensionData: !!extensionData,
