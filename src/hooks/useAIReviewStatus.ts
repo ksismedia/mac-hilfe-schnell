@@ -2,6 +2,17 @@ import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+export const DEFAULT_AI_REVIEW_CATEGORIES = [
+  'SEO-Analyse',
+  'Performance-Analyse',
+  'Keyword-Analyse',
+  'Content-Qualität',
+  'Barrierefreiheit',
+  'Datenschutz (DSGVO)',
+  'Lokales SEO',
+  'Wettbewerbsanalyse'
+] as const;
+
 export interface AIReviewStatus {
   [category: string]: {
     isReviewed: boolean;
@@ -32,6 +43,13 @@ export const useAIReviewStatus = (analysisId?: string) => {
 
       if (data) {
         const loadedStatus: AIReviewStatus = {};
+
+        // Immer mit den verpflichtenden AI-Act Kategorien starten,
+        // damit es nie zu "0 Kategorien"-Sonderfällen kommt.
+        DEFAULT_AI_REVIEW_CATEGORIES.forEach(category => {
+          loadedStatus[category] = { isReviewed: false };
+        });
+
         data.forEach(item => {
           loadedStatus[item.category_name] = {
             isReviewed: item.is_reviewed,
@@ -40,6 +58,7 @@ export const useAIReviewStatus = (analysisId?: string) => {
             reviewNotes: item.review_notes || undefined
           };
         });
+
         setReviewStatus(loadedStatus);
       }
     };
