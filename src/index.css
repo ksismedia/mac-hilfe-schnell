@@ -209,49 +209,44 @@
 
 /* ============================================
    Dashboard Text-Lesbarkeits-Regeln
-   Das gesamte Dashboard hat einen dunklen Hintergrund.
-   Alle Nicht-Score-Texte werden weiß dargestellt.
+   Äußerer Hintergrund = dunkel → Text weiß.
+   Cards (bg-card, bg-white) = hell → Text schwarz.
    Gold/Rot/Grün Score-Farben bleiben geschützt.
    ============================================ */
 
-/* ALLE Texte im Dashboard: weiß auf dunklem Hintergrund */
+/* Dunkler Äußerer Hintergrund: weiße Texte */
 .analysis-dashboard {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.analysis-dashboard p,
-.analysis-dashboard span,
-.analysis-dashboard div,
-.analysis-dashboard h1,
-.analysis-dashboard h2,
-.analysis-dashboard h3,
-.analysis-dashboard h4,
-.analysis-dashboard h5,
-.analysis-dashboard h6,
-.analysis-dashboard label,
-.analysis-dashboard li,
-.analysis-dashboard td,
-.analysis-dashboard th {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Muted/graue Texte ebenfalls aufhellen */
-.analysis-dashboard .text-muted-foreground,
-.analysis-dashboard .text-gray-300,
-.analysis-dashboard .text-gray-400,
-.analysis-dashboard .text-gray-500,
-.analysis-dashboard .text-gray-600,
-.analysis-dashboard .text-gray-700,
-.analysis-dashboard .text-gray-800,
-.analysis-dashboard .text-slate-300,
-.analysis-dashboard .text-slate-400,
-.analysis-dashboard .text-slate-500,
-.analysis-dashboard .text-slate-600,
-.analysis-dashboard .text-blue-600 {
-  color: rgba(255, 255, 255, 0.85) !important;
+/* ---- Helle Cards: Texte schwarz ---- */
+.analysis-dashboard [class*="bg-card"],
+.analysis-dashboard .bg-white,
+.analysis-dashboard .bg-background {
+  color: rgba(0, 0, 0, 0.85);
 }
 
-/* Score-Farben explizit schützen – dürfen NICHT überschrieben werden */
+.analysis-dashboard [class*="bg-card"] .text-muted-foreground,
+.analysis-dashboard [class*="bg-card"] .text-gray-300,
+.analysis-dashboard [class*="bg-card"] .text-gray-400,
+.analysis-dashboard [class*="bg-card"] .text-gray-500,
+.analysis-dashboard [class*="bg-card"] .text-gray-600,
+.analysis-dashboard [class*="bg-card"] .text-gray-700,
+.analysis-dashboard [class*="bg-card"] .text-gray-800,
+.analysis-dashboard [class*="bg-card"] .text-slate-300,
+.analysis-dashboard [class*="bg-card"] .text-slate-400,
+.analysis-dashboard [class*="bg-card"] .text-slate-500,
+.analysis-dashboard [class*="bg-card"] .text-blue-600 {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Direkt auf dunklem Hintergrund (außerhalb Cards): graue Texte aufhellen */
+.analysis-dashboard > .text-muted-foreground,
+.analysis-dashboard > div > .text-muted-foreground {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Score-Farben schützen – überall, auch in Cards */
 .analysis-dashboard .score-text-high,
 .analysis-dashboard .text-yellow-400,
 .analysis-dashboard .text-yellow-500,
@@ -282,13 +277,16 @@
   color: inherit !important;
 }
 
-/* Badges mit dunklem Text beibehalten (z.B. gelbe Badges) */
+/* Badges: expliziter dunkler/heller Text beibehalten */
 .analysis-dashboard .bg-yellow-400,
 .analysis-dashboard .bg-yellow-500 {
   color: black !important;
 }
 
-/* Buttons mit explizitem dunklem Text beibehalten */
 .analysis-dashboard .text-black {
   color: black !important;
+}
+
+.analysis-dashboard .text-white {
+  color: white !important;
 }
