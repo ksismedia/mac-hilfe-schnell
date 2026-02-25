@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { SavedAnalysis } from '@/hooks/useSavedAnalyses';
-import { useAIReviewStatus, AIReviewStatus } from '@/hooks/useAIReviewStatus';
+import { useAIReviewStatus, AIReviewStatus, DEFAULT_AI_REVIEW_CATEGORIES } from '@/hooks/useAIReviewStatus';
 
 interface ExtensionWebsiteData {
   url: string;
@@ -101,17 +101,7 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   
   // Initialize AI review categories - IMMER, auch ohne gespeicherte Analyse
   React.useEffect(() => {
-    const aiCategories = [
-      'SEO-Analyse',
-      'Performance-Analyse',
-      'Keyword-Analyse',
-      'Content-Qualität',
-      'Barrierefreiheit',
-      'Datenschutz (DSGVO)',
-      'Lokales SEO',
-      'Wettbewerbsanalyse'
-    ];
-    initializeCategories(aiCategories);
+    initializeCategories([...DEFAULT_AI_REVIEW_CATEGORIES]);
   }, [initializeCategories]);
 
   const clearAnalysis = () => {
