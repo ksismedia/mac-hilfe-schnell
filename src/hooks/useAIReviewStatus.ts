@@ -122,11 +122,15 @@ export const useAIReviewStatus = (analysisId?: string) => {
   }, [reviewStatus]);
 
   const initializeCategories = useCallback((categories: string[]) => {
-    const initialStatus: AIReviewStatus = {};
-    categories.forEach(cat => {
-      initialStatus[cat] = { isReviewed: false };
+    setReviewStatus(prev => {
+      const merged = { ...prev };
+      categories.forEach(cat => {
+        if (!merged[cat]) {
+          merged[cat] = { isReviewed: false };
+        }
+      });
+      return merged;
     });
-    setReviewStatus(initialStatus);
   }, []);
 
   return {
