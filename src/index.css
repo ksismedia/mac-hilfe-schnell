@@ -206,3 +206,104 @@
 .progress-accessibility-non-compliant {
   background: hsl(var(--progress-red)) !important;
 }
+
+/* ============================================
+   Dashboard Text-Lesbarkeits-Regeln
+   Gold/Rot/Grün-Farben bleiben unberührt.
+   Alle anderen Texte:
+   - Auf dunklen Hintergründen → weiß
+   - Auf hellen Hintergründen (Cards) → schwarz
+   ============================================ */
+
+/* Dunkler Dashboard-Hintergrund: Graue Texte werden weiß */
+.analysis-dashboard .text-gray-300,
+.analysis-dashboard .text-gray-400,
+.analysis-dashboard .text-gray-500,
+.analysis-dashboard .text-slate-300,
+.analysis-dashboard .text-slate-400,
+.analysis-dashboard .text-slate-500 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.analysis-dashboard .text-gray-600,
+.analysis-dashboard .text-gray-700,
+.analysis-dashboard .text-gray-800 {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Helle Card-Hintergründe innerhalb des Dashboards: Texte werden schwarz */
+.analysis-dashboard .bg-white .text-gray-300,
+.analysis-dashboard .bg-white .text-gray-400,
+.analysis-dashboard .bg-white .text-gray-500,
+.analysis-dashboard .bg-white .text-gray-600,
+.analysis-dashboard .bg-white .text-gray-700,
+.analysis-dashboard .bg-white .text-gray-800,
+.analysis-dashboard [class*="bg-card"] .text-gray-300,
+.analysis-dashboard [class*="bg-card"] .text-gray-400,
+.analysis-dashboard [class*="bg-card"] .text-gray-500,
+.analysis-dashboard [class*="bg-card"] .text-gray-600,
+.analysis-dashboard [class*="bg-card"] .text-gray-700,
+.analysis-dashboard [class*="bg-card"] .text-gray-800,
+.analysis-dashboard .bg-background .text-gray-300,
+.analysis-dashboard .bg-background .text-gray-400,
+.analysis-dashboard .bg-background .text-gray-500,
+.analysis-dashboard .bg-background .text-gray-600,
+.analysis-dashboard .bg-background .text-gray-700,
+.analysis-dashboard .bg-background .text-gray-800 {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Slate-Varianten auf hellen Hintergründen */
+.analysis-dashboard .bg-white .text-slate-300,
+.analysis-dashboard .bg-white .text-slate-400,
+.analysis-dashboard .bg-white .text-slate-500,
+.analysis-dashboard [class*="bg-card"] .text-slate-300,
+.analysis-dashboard [class*="bg-card"] .text-slate-400,
+.analysis-dashboard [class*="bg-card"] .text-slate-500,
+.analysis-dashboard .bg-background .text-slate-300,
+.analysis-dashboard .bg-background .text-slate-400,
+.analysis-dashboard .bg-background .text-slate-500 {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Muted-Foreground auf dunklem Hintergrund lesbarer machen */
+.analysis-dashboard .text-muted-foreground {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.analysis-dashboard .bg-white .text-muted-foreground,
+.analysis-dashboard [class*="bg-card"] .text-muted-foreground,
+.analysis-dashboard .bg-background .text-muted-foreground {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Score-Farben explizit schützen – dürfen NICHT überschrieben werden */
+.analysis-dashboard .score-text-high,
+.analysis-dashboard .text-yellow-400,
+.analysis-dashboard .text-yellow-500,
+.analysis-dashboard .text-yellow-600 {
+  color: hsl(var(--progress-yellow)) !important;
+}
+
+.analysis-dashboard .score-text-low,
+.analysis-dashboard .text-red-400,
+.analysis-dashboard .text-red-500,
+.analysis-dashboard .text-red-600 {
+  color: hsl(var(--progress-red)) !important;
+}
+
+.analysis-dashboard .score-text-medium,
+.analysis-dashboard .text-green-400,
+.analysis-dashboard .text-green-500,
+.analysis-dashboard .text-green-600 {
+  color: hsl(var(--progress-green)) !important;
+}
+
+/* Orange/Amber Warnfarben schützen */
+.analysis-dashboard .text-orange-400,
+.analysis-dashboard .text-orange-500,
+.analysis-dashboard .text-amber-400,
+.analysis-dashboard .text-amber-500,
+.analysis-dashboard .text-amber-600 {
+  color: inherit !important;
+}
