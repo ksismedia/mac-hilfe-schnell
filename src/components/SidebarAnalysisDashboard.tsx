@@ -570,7 +570,7 @@ const SidebarAnalysisDashboard: React.FC<SidebarAnalysisDashboardProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+    <div className="analysis-dashboard w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
       <div className="w-full p-6 space-y-6">
         {/* Header Section */}
         <div className="w-full bg-gray-800/30 rounded-lg p-6 border border-gray-700">

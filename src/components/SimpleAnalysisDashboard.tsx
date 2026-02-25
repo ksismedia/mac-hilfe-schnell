@@ -769,7 +769,7 @@ const SimpleAnalysisDashboard: React.FC<SimpleAnalysisDashboardProps> = ({
   };
 
   return (
-    <div style={{ 
+    <div className="analysis-dashboard" style={{ 
       minHeight: '100vh', 
       background: '#000000',
       padding: '20px'
