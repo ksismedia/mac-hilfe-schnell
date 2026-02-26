@@ -391,27 +391,66 @@ export class BusinessAnalysisService {
   }
 
   private static async getRealPlaceData(companyName: string, address: string, url: string): Promise<any> {
+    const city = this.extractCityFromAddress(address);
     const queries = [
       `${companyName} ${address}`,
-      `${companyName} ${this.extractCityFromAddress(address)}`,
-      url,
+      `${companyName} ${city}`,
       companyName
     ];
+    
+    // Note: URL-only query removed - Google Places often returns wrong companies for URL searches
     
     for (const query of queries) {
       try {
         const result = await GoogleAPIService.getPlaceDetails(query);
         if (result && result.name) {
-          console.log('Found real place data for:', result.name);
-          return result;
+          // Validate that the result actually matches the expected company/location
+          if (this.isPlaceResultValid(result, companyName, city)) {
+            console.log('Found valid place data for:', result.name);
+            return result;
+          } else {
+            console.warn(`Rejected place result "${result.name}" - does not match expected company "${companyName}" in "${city}"`);
+          }
         }
       } catch (error) {
         continue;
       }
     }
     
-    console.log('Using fallback place data');
+    console.log('No matching place data found - returning null');
     return null;
+  }
+
+  /**
+   * Validates that a Google Places result actually matches the expected company.
+   * Prevents wrong companies from being used in the analysis.
+   */
+  private static isPlaceResultValid(result: any, expectedName: string, expectedCity: string): boolean {
+    const resultName = (result.name || '').toLowerCase();
+    const resultAddress = (result.formatted_address || '').toLowerCase();
+    const expName = expectedName.toLowerCase();
+    const expCity = expectedCity.toLowerCase();
+
+    // Check 1: City must match (most important check)
+    const cityMatches = expCity && resultAddress.includes(expCity);
+    
+    // Check 2: Name similarity
+    const nameWords = expName.split(/[\s,]+/).filter((w: string) => w.length > 2);
+    const legalForms = ['gmbh', 'ag', 'kg', 'ohg', 'gbr', 'ug', 'co.', 'e.k.', 'mbh'];
+    const meaningfulWords = nameWords.filter((w: string) => !legalForms.includes(w));
+    
+    const nameMatchCount = meaningfulWords.filter((word: string) => 
+      resultName.includes(word)
+    ).length;
+    
+    const nameMatches = meaningfulWords.length > 0 && nameMatchCount >= Math.ceil(meaningfulWords.length * 0.5);
+
+    // Accept if city matches OR name has strong match
+    if (cityMatches && nameMatches) return true;
+    if (nameMatches && nameMatchCount >= 2) return true;
+    if (cityMatches && nameMatchCount >= 1) return true;
+
+    return false;
   }
 
   private static async getRealPageSpeedData(url: string): Promise<any> {
